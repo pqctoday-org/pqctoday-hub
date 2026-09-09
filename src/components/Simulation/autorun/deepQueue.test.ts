@@ -5,6 +5,7 @@
  * (`estimatedMinutes`) — the engine additions from
  * simulation-unified-play-mechanism-plan-07052026.md.
  */
+import { SIM_TREES } from '@/simulation'
 import { describe, it, expect } from 'vitest'
 import {
   autoRunQueue,
@@ -67,8 +68,13 @@ describe('stepsForPhase', () => {
   })
 
   it('matches gatingStepsForPhaseLevel summed across all of a phase’s bands', () => {
+    // Derive the band levels from the tree rather than hardcoding them: this
+    // read [2, 3], which silently went stale the moment P6 gained its L1 and
+    // L4 bands in W2.4.
     const standard = stepsForPhase('p6', false)
-    const expected = [2, 3].flatMap((lvl) => gatingStepsForPhaseLevel('p6', lvl))
+    const levels = (SIM_TREES.p6?.levels ?? []).map((b) => b.level)
+    const expected = levels.flatMap((lvl) => gatingStepsForPhaseLevel('p6', lvl))
+    expect(levels.length).toBeGreaterThan(0)
     expect(standard.length).toBe(expected.length)
   })
 })

@@ -45,6 +45,25 @@ export function SimPassIntroModal({ pass, onBegin }: { pass: PassIntro; onBegin:
 
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
           <p className="text-[13.5px] leading-relaxed text-muted-foreground">{pass.summary}</p>
+          {/* W7.2 — a chapter states what it costs, what it produces, and ends
+              by asking the learner to account for a change. Effort is measured
+              from this pass's own steps (W7.3), not advertised. */}
+          <dl className="mt-3 space-y-1.5 rounded-lg border border-border bg-muted/40 p-3">
+            <div className="flex justify-between gap-3">
+              <dt className="text-sim-micro text-muted-foreground">Estimated effort</dt>
+              <dd className="text-sim-micro font-bold text-foreground">
+                ~{pass.effortMinutes} min
+              </dd>
+            </div>
+            <div>
+              <dt className="text-sim-micro text-muted-foreground">Evidence this produces</dt>
+              <dd className="text-sim-micro font-semibold text-foreground">{pass.evidence}</dd>
+            </div>
+            <div>
+              <dt className="text-sim-micro text-muted-foreground">Think about as you go</dt>
+              <dd className="text-sim-micro italic text-foreground">{pass.reflection}</dd>
+            </div>
+          </dl>
         </div>
 
         <div className="flex shrink-0 items-center justify-between gap-3 border-t border-border px-6 py-3">

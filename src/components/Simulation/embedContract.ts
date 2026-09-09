@@ -178,6 +178,15 @@ export interface StepCompletionContext {
    *  architecture — caps a step's `minDecisions` so a fixed threshold can
    *  never exceed what a smaller org size actually has to decide. */
   edgeDecisionCapacity: () => number
+  /** recurrence (W2.4): how many DISTINCT reporting periods of the run this
+   *  artifact type has been recorded in. A criterion that says "updated
+   *  quarterly" is satisfied by operating the activity again in a later
+   *  period — never by producing one document once, and never by a page view. */
+  recurrenceCount: (type: NonNullable<TreeStep['artifactType']>) => number
+  /** measure (W2.5): the current value of a named run metric, in its own units.
+   *  Unknown metric ids return null, which never completes a step — an
+   *  unmeasurable criterion must not silently pass. */
+  metricValue: (metricId: string) => number | null
 }
 
 /**
@@ -206,6 +215,17 @@ export function isStepComplete(s: TreeStep, ctx: StepCompletionContext): boolean
       return (
         !!s.minDecisions &&
         ctx.edgeDecisionCount() >= Math.min(s.minDecisions, ctx.edgeDecisionCapacity())
+      )
+    case 'measure': {
+      if (!s.metricId || s.minValue === undefined) return false
+      const v = ctx.metricValue(s.metricId)
+      return v !== null && v >= s.minValue
+    }
+    case 'recurrence':
+      // The prerequisite must have been operated in at least (1 + N) distinct
+      // reporting periods: once to establish it, then again N periods later.
+      return (
+        !!s.recurrenceOf && ctx.recurrenceCount(s.recurrenceOf) >= 1 + (s.recurrenceQuarters ?? 1)
       )
     default:
       return false

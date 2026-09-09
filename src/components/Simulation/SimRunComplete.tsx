@@ -20,6 +20,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Trophy, ShieldCheck, LayoutDashboard, CalendarClock, Users, FileDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { readTrapTally, remediation, phaseName } from './simTrapTally'
+import { personaDebrief, completionTypeNote } from '@/simulation/personaDebrief'
 import {
   GRADE_THRESHOLDS,
   PACE_POINTS_PER_QUARTER_OVER_PAR,
@@ -41,6 +42,11 @@ export interface SimRunCompleteProps {
   objectives: SimRunCompleteObjective[]
   /** Program maturity reached (0–4), on the framework's own ladder. */
   maturity: number
+  /** W7.4 — the seat the player sat in; drives the role-appropriate debrief. */
+  seat?: string
+  /** W7.4 — fraction of this run's evidence the player produced themselves
+   *  (0-1). Used to say plainly whether this was practice or a demonstration. */
+  learnerShare?: number
   /** W2 — true only when the simulation covers every framework criterion AND
    *  the player cleared them. False here means the run finished every exercise
    *  the simulation OFFERS, which is not the same as full framework maturity
@@ -73,6 +79,8 @@ const GRADE_TONE: Record<RunScoreBreakdown['grade'], string> = {
 export function SimRunComplete({
   objectives,
   maturity,
+  seat = 'curious',
+  learnerShare = 1,
   claimsFullFrameworkMaturity = false,
   programEndYear,
   score,
@@ -81,6 +89,7 @@ export function SimRunComplete({
   onClose,
 }: SimRunCompleteProps) {
   const reduce = useReducedMotion()
+  const debrief = personaDebrief(seat)
   const primaryRef = useRef<HTMLButtonElement>(null)
   const trapRef = useFocusTrap(true)
   const allMet = objectives.length > 0 && objectives.every((o) => o.done)
@@ -209,6 +218,34 @@ export function SimRunComplete({
                 : `Critical assets protected and every exercise in this scenario completed on the program timeline, through ${programEndYear}. This is the full scope the simulation currently teaches — not full framework maturity: some framework criteria have no exercise here yet (see Progress).`
               : 'Scenario complete — some objectives finished behind their target dates.'}
           </p>
+
+          {/* W7.4 — a debrief for the seat the player actually sat in. The
+              ceremony used to say the same thing to everyone, which is a
+              sponsor's view: it left an architect without technical evidence,
+              an operator without a cadence and a newcomer without a plain
+              explanation. Sponsorship and assurance are stated separately. */}
+          <div className="mb-4 rounded-lg border border-border bg-muted/40 p-3 text-left">
+            <div className="mb-1.5 font-mono text-sim-micro font-bold uppercase tracking-wide text-primary">
+              Your debrief · {seat}
+            </div>
+            <p className="mb-2 text-xs leading-snug text-muted-foreground">
+              {completionTypeNote(learnerShare)}
+            </p>
+            <p className="mb-2 text-xs leading-snug text-foreground">{debrief.headline}</p>
+            <p className="mb-1.5 text-xs leading-snug text-muted-foreground">
+              <span className="font-bold text-foreground">Next action:</span> {debrief.nextAction}
+            </p>
+            <p className="mb-2 text-xs leading-snug text-muted-foreground">
+              <span className="font-bold text-foreground">Evidence you owe:</span>{' '}
+              {debrief.evidenceObligation}
+            </p>
+            <Link
+              to={debrief.nextStop.to}
+              className="text-xs font-bold text-primary underline decoration-dotted underline-offset-2"
+            >
+              {debrief.nextStop.label} →
+            </Link>
+          </div>
 
           {topTraps.length > 0 && (
             <div className="mb-4 rounded-lg border border-warning/30 bg-warning/5 p-3 text-left">

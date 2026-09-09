@@ -29,6 +29,7 @@ import { phaseName } from './simTrapTally'
 import { SIM_TREES } from '@/simulation'
 import type { RunMode } from './autorun/useSimAutoRunPlayer'
 import {
+  autoRunIntroQueue,
   autoRunQueue,
   autoRunDeepQueue,
   autoRunWalkthroughQueue,
@@ -39,7 +40,7 @@ import {
 /** Which card should open pre-emphasized — derived by the caller from persona /
  *  phase-context (a low-stakes default, not a decision already made for the
  *  player: every card is always fully visible and clickable regardless). */
-export type SimPlayDefaultCard = 'walkthrough' | 'climb' | 'phase'
+export type SimPlayDefaultCard = 'intro' | 'walkthrough' | 'climb' | 'phase'
 
 /** Every scope the modal can start is a real engine `RunMode` now. */
 export type SimPlayChoice = RunMode
@@ -67,10 +68,11 @@ function fmtMin(min: number): string {
 interface CardProps {
   title: string
   scope: string
-  deepScope: string
+  /** Omitted for a card with no deeper variant (the intro is one length). */
+  deepScope?: string
   audience: string
   standardMin: number
-  deepMin: number
+  deepMin?: number
   recommended: boolean
   onPlay: (deep: boolean) => void
   extra?: React.ReactNode
@@ -93,7 +95,8 @@ function PlayCard({
   // Deep-dive content is authored per phase — today only Phase 6 has any, so
   // most phases' delta rounds to 0. A checkbox that's always clickable but
   // silently adds "+0 min" reads as broken; hide it and say so instead.
-  const deepDeltaMin = Math.round(deepMin - standardMin)
+  // A card with no deeper variant (the intro) has no delta at all.
+  const deepDeltaMin = deepMin === undefined ? 0 : Math.round(deepMin - standardMin)
   const hasDeepContent = deepDeltaMin > 0
   const effectiveDeep = deep && hasDeepContent
   return (
@@ -133,7 +136,7 @@ function PlayCard({
       )}
       <div className="mt-1 flex items-center justify-between gap-2">
         <span className="font-mono text-[11px] text-muted-foreground">
-          {fmtMin(effectiveDeep ? deepMin : standardMin)}{' '}
+          {fmtMin(effectiveDeep && deepMin !== undefined ? deepMin : standardMin)}{' '}
           <span className="italic">(approximate)</span>
         </span>
         <Button
@@ -187,6 +190,9 @@ export function SimPlayChoiceModal({
       walkthroughDeep: estimatedMinutes(autoRunWalkthroughQueue(true).map((i) => i.step)),
       climbStandard: estimatedMinutes(autoRunQueue().map((i) => i.step)),
       climbDeep: estimatedMinutes(autoRunDeepQueue().map((i) => i.step)),
+      // W7.1/W7.3 — measured from the same estimator as every other mode, not
+      // an advertised figure. The queue is bounded BY this number.
+      intro: estimatedMinutes(autoRunIntroQueue().map((i) => i.step)),
     }),
     []
   )
@@ -228,6 +234,22 @@ export function SimPlayChoiceModal({
               <span className="font-semibold">{sectorLabel}</span>
             </p>
           )}
+
+          {/* W7.1 — the shortest way in. The previous minimum was the ~45-minute
+              overview, which is a lot to ask before a learner knows whether any
+              of this concerns them. Five beats: what the threat is, one asset,
+              one choice, its consequence, and what it meant. */}
+          <div className="mb-3">
+            <PlayCard
+              title="Start here — 10-minute intro"
+              scope="What the quantum threat actually is, one exposed asset, one decision and its consequence — then a plain-language summary of what you just saw."
+              audience="Anyone new to this — no assessment or background needed"
+              standardMin={durations.intro}
+              recommended={defaultCard === 'intro'}
+              firstFocusRef={defaultCard === 'intro' ? primaryRef : undefined}
+              onPlay={() => onStart('intro')}
+            />
+          </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
             <PlayCard

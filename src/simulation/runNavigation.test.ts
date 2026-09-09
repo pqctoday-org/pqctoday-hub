@@ -141,3 +141,38 @@ describe('the save envelope states its schema version', () => {
     expect(save.version).toBe(SAVE_SCHEMA_VERSION)
   })
 })
+
+describe('the open resource survives a reload (W5.5)', () => {
+  beforeEach(() => s().reset())
+
+  it('remembers which resource was open, not just which tab', () => {
+    s().setActiveTab('resources')
+    s().setOpenStepRef({ kind: 'learn', label: 'Risk', to: '/learn/pqc-risk-management' })
+    const save = JSON.parse(s().exportSave())
+    expect(save.state.activeTab).toBe('resources')
+    expect(save.state.openStepRef).toMatchObject({ to: '/learn/pqc-risk-management' })
+  })
+
+  it('restores it through an export → import round trip', () => {
+    s().setOpenStepRef({ kind: 'learn', label: 'Risk', to: '/learn/pqc-risk-management' })
+    const json = s().exportSave()
+    s().reset()
+    expect(s().openStepRef).toBeNull()
+    expect(s().importSave(json)).toBe(true)
+    expect(s().openStepRef).toMatchObject({ to: '/learn/pqc-risk-management' })
+  })
+
+  it('treats a deliberate return to the board as no resume point', () => {
+    s().setOpenStepRef({ kind: 'learn', label: 'Risk', to: '/learn/pqc-risk-management' })
+    s().setOpenStepRef(null)
+    expect(s().openStepRef).toBeNull()
+  })
+
+  it('rejects a malformed openStepRef rather than restoring a broken pane', () => {
+    const save = JSON.parse(s().exportSave())
+    save.state.openStepRef = 42
+    const result = validateSave(save)
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.errors.join(' ')).toMatch(/openStepRef/)
+  })
+})

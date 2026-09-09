@@ -87,17 +87,50 @@ describe('framework fidelity (drift guard vs framework-2.1.yaml)', () => {
     expect(drift, `maturity-indicator drift:\n${drift.join('\n')}`).toEqual([])
   })
 
-  it('every tree activity id is a real framework activity id', () => {
+  it('every tree activity id is a real framework activity id, or a declared adaptation', () => {
+    // W2.4: an ADAPTATION is a simulator-authored exercise representing an
+    // existing activity operated again over time (the framework's higher
+    // indicators are mostly recurrence, not new activities). It is allowed
+    // ONLY when it names the real source activity it adapts, and it must not
+    // masquerade as a framework activity number of its own — that is what
+    // stops a "3.5"/"6.6" being minted, which is what this guard exists for.
     const bad: string[] = []
     for (const phase of FRAMEWORK_PHASE_IDS) {
       const tree = SIM_TREES[phase]
       if (!tree) continue
       for (const band of tree.levels)
-        for (const act of band.activities)
+        for (const act of band.activities) {
+          if (act.adaptationOf) {
+            if (!activityIdIsReal(phase, act.adaptationOf))
+              bad.push(
+                `${phase}: adaptation "${act.id}" claims source "${act.adaptationOf}", which is not a framework activity`
+              )
+            if (/^\d+\.\d+$/.test(act.id))
+              bad.push(
+                `${phase}: adaptation "${act.id}" is shaped like a framework activity number — use <sourceId>-<slug>`
+              )
+            continue
+          }
           if (!activityIdIsReal(phase, act.id))
             bad.push(`${phase}: activity id "${act.id}" ("${act.title}") not in framework`)
+        }
     }
     expect(bad, `invented/renumbered activities:\n${bad.join('\n')}`).toEqual([])
+  })
+
+  it('every adaptation declares the source activity it represents', () => {
+    // An adaptation with no `adaptationOf` would be an invented activity with
+    // a funny name — the exact thing the guard above must never allow through.
+    const bad: string[] = []
+    for (const phase of FRAMEWORK_PHASE_IDS) {
+      for (const band of SIM_TREES[phase]?.levels ?? [])
+        for (const act of band.activities)
+          if (!activityIdIsReal(phase, act.id) && !act.adaptationOf)
+            bad.push(
+              `${phase}: "${act.id}" is neither a framework activity nor a declared adaptation`
+            )
+    }
+    expect(bad).toEqual([])
   })
 
   it('every framework activity is COVERED by some tree (folded 0.2b/0.2c exempt)', () => {
@@ -122,7 +155,7 @@ describe('framework fidelity (drift guard vs framework-2.1.yaml)', () => {
     expect(missing, `unmapped framework activities:\n${missing.join('\n')}`).toEqual([])
   })
 
-  it('exact-id activity titles are verbatim (merged ranges exempt)', () => {
+  it('exact-id activity titles are verbatim (merged ranges + adaptations exempt)', () => {
     const drift: string[] = []
     for (const phase of FRAMEWORK_PHASE_IDS) {
       const tree = SIM_TREES[phase]

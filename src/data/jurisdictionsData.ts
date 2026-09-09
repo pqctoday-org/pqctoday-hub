@@ -110,6 +110,29 @@ export interface JurisdictionEntry {
    */
   complianceBloc: string
   /**
+   * W4.2 — RULE METADATA. A country-level entry is not a statement that every
+   * organisation in that country is bound: EO 14412 addresses specified federal
+   * systems and excludes national security systems, and the NCSC dates are
+   * staged guidance rather than a cut-off. These fields exist so the app can
+   * say what an instrument actually binds instead of implying universality.
+   *
+   * NOTE: no DATE lives here. Deadlines derive from the timeline CSV, which is
+   * their single source; a second copy would drift.
+   */
+  /** The governing instrument's URL, where one is on file. */
+  instrumentUrl: string
+  /** Which systems/sectors the instrument binds. Empty = NOT RECORDED, which
+   *  callers must render as unknown, never as "applies to you". */
+  appliesTo: string
+  /** Whether the instrument is a requirement or guidance. Empty = unknown. */
+  force: 'requirement' | 'guidance' | ''
+  /** Where appliesTo/force came from: verified national instrument, inherited
+   *  from the EU roadmap for a member state with no national instrument on
+   *  file, or unknown. Makes an unfilled row auditable rather than ambiguous. */
+  scopeBasis: 'national' | 'inherited-eu' | 'unknown' | ''
+  /** Next review date of the instrument, where published. */
+  reviewDate: string
+  /**
    * Whether this entry appears in jurisdiction pickers (Assess, Learn, Sim).
    * false = reference-only: used for COUNTRY_CODE_TO_NAME compliance expansion
    * and assessBridge archetype fallbacks, but not shown in selectors.
@@ -156,6 +179,11 @@ interface RawJurisdictionRow {
   flag_code: string
   region: string
   compliance_bloc: string
+  instrument_url: string
+  applies_to: string
+  force: string
+  scope_basis: string
+  review_date: string
   show_in_picker: string
   eu_member: string
   authority: string
@@ -205,6 +233,9 @@ const EXPECTED_HEADERS: (keyof RawJurisdictionRow)[] = [
   'name',
   'flag_code',
   'region',
+  // Parsed since 2026-07-31 but never declared here, so every load logged
+  // "unexpected columns: [ 'compliance_bloc' ]". Declared now.
+  'compliance_bloc',
   'show_in_picker',
   'eu_member',
   'authority',
@@ -215,6 +246,13 @@ const EXPECTED_HEADERS: (keyof RawJurisdictionRow)[] = [
   'status',
   'deprecated_at',
   'deprecated_reason',
+  // W4.2 — rule metadata. See JurisdictionEntry for what each one may and may
+  // not be used to claim.
+  'instrument_url',
+  'applies_to',
+  'force',
+  'scope_basis',
+  'review_date',
 ]
 
 const { data: allRows } = loadLatestCSV<RawJurisdictionRow, JurisdictionEntry>(
@@ -240,6 +278,11 @@ const { data: allRows } = loadLatestCSV<RawJurisdictionRow, JurisdictionEntry>(
       flagCode: row.flag_code?.trim() || code.toLowerCase(),
       region,
       complianceBloc: row.compliance_bloc?.trim() || '',
+      instrumentUrl: row.instrument_url?.trim() || '',
+      appliesTo: row.applies_to?.trim() || '',
+      force: (row.force?.trim() as JurisdictionEntry['force']) || '',
+      scopeBasis: (row.scope_basis?.trim() as JurisdictionEntry['scopeBasis']) || '',
+      reviewDate: row.review_date?.trim() || '',
       showInPicker: row.show_in_picker?.trim().toLowerCase() === 'yes',
       euMember: row.eu_member?.trim().toLowerCase() === 'yes',
       authority: row.authority?.trim() || '',
@@ -306,6 +349,17 @@ export const COUNTRY_CODE_TO_NAME: Record<string, string> = {
 export const COUNTRY_NAME_TO_COMPLIANCE_BLOC: Record<string, string> = Object.fromEntries(
   ACTIVE_ALL.filter((j) => j.complianceBloc).map((j) => [j.name, j.complianceBloc])
 )
+
+/**
+ * W6.3 — the /compliance region bloc for a jurisdiction CODE.
+ *
+ * COUNTRY_NAME_TO_COMPLIANCE_BLOC is keyed by display NAME because that is what
+ * the compliance CSV carries. An embedded simulation run knows its country as a
+ * CODE, so this is the code-keyed counterpart rather than a second hand-written
+ * map — both derive from the same rows.
+ */
+export const complianceRegionForCountry = (code: string): string | null =>
+  JURISDICTION_BY_CODE[code]?.complianceBloc || null
 
 export const EU_MEMBER_CODES: ReadonlySet<string> = new Set(
   ACTIVE_ALL.filter((j) => j.euMember).map((j) => j.code)

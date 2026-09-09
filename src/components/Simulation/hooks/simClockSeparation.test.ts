@@ -12,7 +12,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import { deriveSimClock } from './useSimClock'
-import { SIM_CRQC_YEAR, COUNTRY_DEADLINE_YEAR } from '@/data/moscaClock'
+import { SIM_CRQC_YEAR, COUNTRY_DEADLINE_YEAR, deadlineScopeFor } from '@/data/moscaClock'
 
 const base = {
   year: 2026,
@@ -61,5 +61,45 @@ describe('threat horizon vs regulatory due date (W4.4)', () => {
     }
     // whichever binds, the planning anchor is never later than either input
     expect(c.horizonYear).toBeLessThanOrEqual(c.threatHorizonYear)
+  })
+})
+
+describe('a country deadline states what it actually binds (W4.2/W4.3)', () => {
+  it('does not let a private organisation inherit a federal mandate from its country', () => {
+    const us = deadlineScopeFor('US')
+    expect(us).not.toBeNull()
+    expect(us!.appliesTo).toMatch(/federal/i)
+    // the audit's specific finding: NSS are excluded from the EO, and the
+    // private sector is not bound by it at all
+    expect(us!.appliesTo).toMatch(/national security systems are excluded/i)
+    expect(us!.appliesTo).toMatch(/private-sector organisations are not bound/i)
+    expect(us!.sourceUrl).toMatch(/^https:\/\//)
+  })
+
+  it('distinguishes guidance from a requirement', () => {
+    // The UK's jurisdiction code in this repo is 'UK' (flag code 'gb'), and
+    // TIMELINE_COUNTRY_DEADLINE_YEAR is keyed the same way. The first version of
+    // this scope table was hand-written in moscaClock.ts under 'GB' — a key no
+    // run ever produces, so it could never have matched. Moving the table into
+    // jurisdictions_*.csv, where the codes are authoritative, surfaced it.
+    expect(deadlineScopeFor('US')!.force).toBe('requirement')
+    expect(deadlineScopeFor('UK')!.force).toBe('guidance')
+    expect(deadlineScopeFor('UK')!.appliesTo).toMatch(/not a single binding cut-off/i)
+    expect(deadlineScopeFor('GB')).toBeNull()
+  })
+
+  it('reports scope for every jurisdiction that has a dated obligation', () => {
+    // Any country with a deadline the clock can bind to should be able to say
+    // what that deadline actually binds — otherwise the sim shows a date with
+    // no scope and the learner infers universality.
+    const missing = Object.keys(COUNTRY_DEADLINE_YEAR).filter((c) => !deadlineScopeFor(c))
+    expect(
+      missing,
+      `deadline with no recorded scope: ${missing.join(', ')} — add applies_to/force to jurisdictions_*.csv`
+    ).toEqual([])
+  })
+
+  it('reports an unrecorded scope as unknown rather than inventing one', () => {
+    expect(deadlineScopeFor('__no_such_country__')).toBeNull()
   })
 })

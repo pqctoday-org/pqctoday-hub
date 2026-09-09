@@ -136,7 +136,13 @@ describe('SimulationView (Mission Control)', () => {
     useAssessmentResultStore.setState({ lastResult: null, completedAt: null })
     renderPage()
     // the gate prompt + a link to start the assessment
-    expect(screen.getByText(/Run your PQC assessment to start the simulation/i)).toBeInTheDocument()
+    // W6.6: the entry screen no longer says "Simulation locked" / "Run your
+    // assessment to start" — a sample path is available right there, so the
+    // old copy described a gate that did not exist.
+    expect(
+      screen.getByText(/Practise on a sample organization, or run it on your own/i)
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/Simulation locked/i)).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Start the assessment/i })).toHaveAttribute(
       'href',
       '/assess'

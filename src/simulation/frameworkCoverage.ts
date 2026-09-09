@@ -128,23 +128,24 @@ export const FRAMEWORK_COVERAGE: FrameworkCoverageCell[] = [
     activityIds: ['0.2', '0.3', '0.4'],
     adaptedTaskIds: [],
     evidence: 'Produce a program charter naming the QRPM and a Year-1 budget structure.',
-    status: 'proxy',
-    note: 'Artifact presence clears the band; the charter content is not assessed.',
+    status: 'outcome',
+    note: 'W2.5: the criterion is "Charter approved; QRPM appointed; Year 1 budget SECURED" — producing a charter document evidences none of those. A measure step now grades the run\'s actual secured-budget percentage against a 60% threshold, so the band evidences the funding condition rather than the existence of paperwork about it.',
   }),
   cell('p0', 3, {
     activityIds: ['0.5'],
     adaptedTaskIds: [],
     evidence:
       'Complete an initial scoping assessment and commit multi-year funding with a standing SteerCo.',
-    status: 'proxy',
+    status: 'outcome',
+    note: 'W2.5: "Multi-year budget COMMITTED" is a funding state, not a scoping document. Graded against secured budget at 90%. The measure step is excluded from its own denominator, so the condition cannot be satisfied by the act of measuring it.',
   }),
   cell('p0', 4, {
-    activityIds: [],
-    adaptedTaskIds: [],
+    activityIds: ['0.3-board-cycle'],
+    adaptedTaskIds: ['0.3-board-cycle'],
     evidence:
-      'Advance a scenario reporting period; reconcile charter/funding with an enterprise-risk entry and a board update, recording owner, review date, decision, and follow-up.',
-    status: 'unsupported',
-    note: 'Recurring board reporting and enterprise-risk integration have no runtime band.',
+      'Advance a reporting period and take the board update again, so quantum risk sits in the enterprise risk register with an owner, review date and follow-up.',
+    status: 'outcome',
+    note: 'Adaptation of activity 0.3. Clears only when the board update is recorded in a LATER reporting period — a single briefing cannot satisfy a recurring cadence.',
   }),
 
   // ── P1 Discovery & Inventory ────────────────────────────────────────────
@@ -160,22 +161,22 @@ export const FRAMEWORK_COVERAGE: FrameworkCoverageCell[] = [
     evidence:
       'Stand up the three inventory tracks and layered discovery; produce a queryable inventory covering Priority-A systems.',
     status: 'proxy',
-    note: 'The ≥70% Tier-1 coverage figure in the criterion is not measured by the exercise.',
+    note: "W2.5 NOT MEASURABLE: the criterion turns on '>=70% Tier-1 coverage' and 'multiple asset data sources cross-referenced'. The run has no discovery-coverage state at all - assets are revealed wholesale by one scoping artifact, so there is no ratio to grade. Would need a per-asset discovery register.",
   }),
   cell('p1', 3, {
     activityIds: ['1.6'],
     adaptedTaskIds: [],
     evidence: 'Establish continuous discovery integrated with change management.',
     status: 'proxy',
-    note: 'The ≥90% coverage figure in the criterion is not measured by the exercise.',
+    note: "W2.5 NOT MEASURABLE: '>=90% coverage' plus CI/CD, CMDB, SBOM and BIA integration. None of those integrations exist as run state; grading this on anything the run does track would measure something the criterion does not say.",
   }),
   cell('p1', 4, {
-    activityIds: [],
-    adaptedTaskIds: [],
+    activityIds: ['1.6-drift-cycle'],
+    adaptedTaskIds: ['1.6-drift-cycle'],
     evidence:
-      'Inject an asset/configuration change; identify discovery drift, update the inventory, and calculate known coverage and remaining gaps.',
-    status: 'unsupported',
-    note: 'Real-time posture, drift detection and measured gap reduction have no runtime band.',
+      'Re-run discovery after the estate changes, then account for the drift: what appeared, what changed, and how much is still unknown.',
+    status: 'outcome',
+    note: 'Adaptation of activity 1.6, gated on re-running the vulnerability watch in a later reporting period.',
   }),
 
   // ── P2 CBOM ─────────────────────────────────────────────────────────────
@@ -190,20 +191,22 @@ export const FRAMEWORK_COVERAGE: FrameworkCoverageCell[] = [
     adaptedTaskIds: [],
     evidence: 'Populate a CycloneDX CBOM from inventory data and link it to the SBOM.',
     status: 'proxy',
+    note: "W2.5 NOT MEASURABLE: 'CycloneDX CBOM operational for Layers 1-2; queryable; SBOM linkage'. The run has no CBOM layer model and no SBOM linkage, so only the artifact's existence can be checked.",
   }),
   cell('p2', 3, {
     activityIds: ['2.3', '2.4–2.5'],
     adaptedTaskIds: [],
     evidence: 'Integrate the CBOM into operational processes with enforced freshness governance.',
-    status: 'proxy',
+    status: 'outcome',
+    note: "W2.5: 'freshness governance ENFORCED' is a cadence, not a CBOM revision. Requires the vulnerability watch re-run in a later reporting period. NOTE: the L3 band's remaining clause, 'CBOM covers Layers 1-3', is NOT evidenced - the run holds no per-layer CBOM state.",
   }),
   cell('p2', 4, {
-    activityIds: [],
-    adaptedTaskIds: [],
+    activityIds: ['2.3-cbom-refresh'],
+    adaptedTaskIds: ['2.3-cbom-refresh'],
     evidence:
-      'Inject a deployment/vendor update; update the linked CBOM, report freshness, and flag unresolved supplier evidence.',
-    status: 'unsupported',
-    note: 'Deployment-driven updates, vendor gap management and compliance reporting have no runtime band.',
+      'Re-issue the CBOM after a deployment or vendor change and report its freshness plus unresolved supplier evidence.',
+    status: 'outcome',
+    note: 'Adaptation of activity 2.3. A CBOM produced once cannot clear it; the refresh must land in a later reporting period.',
   }),
 
   // ── P3 Risk Scoring ─────────────────────────────────────────────────────
@@ -218,22 +221,23 @@ export const FRAMEWORK_COVERAGE: FrameworkCoverageCell[] = [
     adaptedTaskIds: [],
     evidence: 'Score and sequence Tier-1 entries and produce the QRA with a prioritised backlog.',
     status: 'proxy',
+    note: "W2.5 NOT MEASURABLE: 'Formal risk scoring model applied to Tier-1 CBOM entries; prioritized migration backlog exists'. The run holds no per-entry scoring or backlog state - the risk register is a document, not a scored inventory.",
   }),
   cell('p3', 3, {
-    activityIds: [],
-    adaptedTaskIds: [],
+    activityIds: ['3.4-qra-recurring'],
+    adaptedTaskIds: ['3.4-qra-recurring'],
     evidence:
-      'Refresh the QRA after a quarter using expanded inventory and legal/retention inputs, and explain what changed in the priorities.',
-    status: 'unsupported',
-    note: 'Recurrence is an OUTCOME of activity 3.4 over time, not a new numbered activity. Do not mint "3.5".',
+      'Refresh the QRA against the expanded inventory with the legal/retention dimension, and explain which priorities changed.',
+    status: 'outcome',
+    note: 'Adaptation of activity 3.4 operating quarterly. Deliberately NOT a new activity 3.5 — the framework defines only 3.1-3.4.',
   }),
   cell('p3', 4, {
-    activityIds: [],
-    adaptedTaskIds: [],
+    activityIds: ['3.2-event-rescore'],
+    adaptedTaskIds: ['3.2-event-rescore'],
     evidence:
-      'Inject an event that changes exposure or applicability; rescore affected assets and propagate the change into enterprise risk and review evidence.',
-    status: 'unsupported',
-    note: 'Event-driven rescoring is an OUTCOME of activities 3.2–3.4. Do not mint "3.6".',
+      'After an event changes exposure or applicability, re-score the affected assets and carry the change into enterprise risk and review evidence.',
+    status: 'outcome',
+    note: 'Adaptation of activity 3.2 becoming event-driven, requiring two later reporting periods. Deliberately NOT a new activity 3.6.',
   }),
 
   // ── P4 Roadmap & Governance ─────────────────────────────────────────────
@@ -248,21 +252,23 @@ export const FRAMEWORK_COVERAGE: FrameworkCoverageCell[] = [
     adaptedTaskIds: [],
     evidence: 'Approve a resourced multi-year roadmap with a PMO structure and KPI baseline.',
     status: 'proxy',
+    note: "W2.5 NOT MEASURABLE: 'Multi-year roadmap approved; Year 1 plan resourced; KPI baseline set'. Approval and resourcing are external facts the simulation does not model; the KPI baseline exists only as an artifact.",
   }),
   cell('p4', 3, {
     activityIds: ['4.5–4.6'],
     adaptedTaskIds: [],
     evidence:
       'Run the roadmap as a living instrument with milestone gates and maintained dependencies.',
-    status: 'proxy',
+    status: 'outcome',
+    note: "W2.5: 'Quarterly roadmap reviews OPERATIONAL' is a cadence. Requires the KPI tracker re-issued in a later reporting period, so a scheduled review is not the same as a review that happened.",
   }),
   cell('p4', 4, {
     activityIds: ['4.7'],
     adaptedTaskIds: [],
     evidence:
       'Exercise a roadmap contingency trigger; show changed dependencies, resources, milestones, and approved rationale.',
-    status: 'proxy',
-    note: 'A band exists but is cleared by pre-drafting the accelerated-execution-profile artifact; the criterion requires triggers DEFINED AND TESTED.',
+    status: 'outcome',
+    note: "W2.5: 'Roadmap is a LIVING instrument with quarterly updates' requires the execution profile re-issued in a later period.",
   }),
 
   // ── P5 Pilots & Migration ───────────────────────────────────────────────
@@ -277,31 +283,32 @@ export const FRAMEWORK_COVERAGE: FrameworkCoverageCell[] = [
     adaptedTaskIds: [],
     evidence: 'Execute pilots with measurement and a tested rollback procedure.',
     status: 'proxy',
-    note: 'Rollback is described, not exercised.',
+    note: "W2.5 NOT MEASURABLE: '2+ production pilots running with MEASURED RESULTS; rollback procedures tested'. There is no pilot register and no rollback-test state. Would need a pilot mechanic with per-pilot results.",
   }),
   cell('p5', 3, {
     activityIds: ['5.4', '5.5–5.6'],
     adaptedTaskIds: [],
     evidence: 'Scale through waves with defense-in-depth and a data-at-rest strategy.',
-    status: 'proxy',
+    status: 'outcome',
+    note: "W2.5: 'Tier-1 internet-facing systems ON hybrid/PQC' is a deployment state. Graded on migration coverage (decided connections / migratable connections) at 40%. Capacity-relative on purpose so a smaller estate does not face an unreachable absolute count.",
   }),
   cell('p5', 4, {
     activityIds: ['5.7'],
     adaptedTaskIds: [],
     evidence:
       'Use measured pilot/rollout fixtures and an algorithm-swap exercise; evaluate rollback, interoperability, and coverage rather than document creation.',
-    status: 'proxy',
-    note: 'A band exists but is cleared by the AI-assisted-migration activity; the criterion requires estate-wide deployment and a demonstrated algorithm-swap drill.',
+    status: 'outcome',
+    note: "W2.5: 'Estate-wide deployment substantially complete' graded on migration coverage at 80%, not on producing a refactor document.",
   }),
 
   // ── P6 Infrastructure & Performance ─────────────────────────────────────
   cell('p6', 1, {
-    activityIds: [],
-    adaptedTaskIds: [],
+    activityIds: ['6.1-infra-awareness'],
+    adaptedTaskIds: ['6.1-infra-awareness'],
     evidence:
-      'Identify affected PKI/HSM/network components and explain their infrastructure constraints before entering advanced work.',
-    status: 'unsupported',
-    note: 'The tree opens at L2, so a learner cannot practise initial infrastructure awareness.',
+      'Identify the PKI, HSM/KMS and network components the migration touches and state the constraint each imposes, before any plan exists.',
+    status: 'proxy',
+    note: 'Adaptation of activity 6.1. The source criterion IS awareness with no concrete plans, so reference-level evidence is the right bar here — it is the one new band that is honestly a proxy.',
   }),
   cell('p6', 2, {
     activityIds: ['6.1', '6.2', '6.3'],
@@ -309,6 +316,7 @@ export const FRAMEWORK_COVERAGE: FrameworkCoverageCell[] = [
     evidence:
       'Inventory HSMs with PQC status, draft PKI modernization, and assess the network path.',
     status: 'proxy',
+    note: "W2.5 NOT MEASURABLE: 'HSMs inventoried with PQC status; initial middlebox testing underway'. The run models no HSM inventory and no middlebox test state.",
   }),
   cell('p6', 3, {
     activityIds: ['6.4', '6.5'],
@@ -316,14 +324,15 @@ export const FRAMEWORK_COVERAGE: FrameworkCoverageCell[] = [
     evidence:
       'Establish a performance-testing methodology and capacity plan with Tier-1 baselines.',
     status: 'proxy',
+    note: "W2.5 NOT MEASURABLE: 'HSM upgrades in progress; PKI dual-stack operational; ALL production middleboxes tested; performance baselines established'. Same missing state as L2, plus no performance-baseline record.",
   }),
   cell('p6', 4, {
-    activityIds: [],
-    adaptedTaskIds: [],
+    activityIds: ['6.5-capacity-cycle'],
+    adaptedTaskIds: ['6.5-capacity-cycle'],
     evidence:
-      'Compare load/capacity evidence against thresholds; inject monitoring drift and require a corrective action and remeasurement.',
-    status: 'unsupported',
-    note: 'Production-scale capacity validation and continuous monitoring have no runtime band.',
+      'Re-validate the capacity plan against measured load in a later period and treat monitoring drift as a corrective action to be re-measured.',
+    status: 'outcome',
+    note: 'Adaptation of activity 6.5, pairing a later-period re-validation with the HSM capacity workshop.',
   }),
 
   // ── P7 Vendor & Supply Chain ────────────────────────────────────────────
@@ -338,21 +347,23 @@ export const FRAMEWORK_COVERAGE: FrameworkCoverageCell[] = [
     adaptedTaskIds: [],
     evidence: 'Execute vendor engagement and track responses against a criticality classification.',
     status: 'proxy',
+    note: "W2.5 NOT MEASURABLE: 'TOP 10 vendors formally engaged; questionnaires sent; responses tracked'. The run has no vendor-engagement register, so there is no count to grade.",
   }),
   cell('p7', 3, {
     activityIds: ['7.3', '7.4', '7.5', '7.6'],
     adaptedTaskIds: [],
     evidence:
       'Insert PQC procurement requirements, deploy bridging patterns for blocked systems, and report a vendor scorecard.',
-    status: 'proxy',
+    status: 'outcome',
+    note: "W2.5: 'vendor scorecard REPORTED to SteerCo' is recurring reporting, evidenced by re-issuing the KPI dashboard in a later period. The contract-language clause is evidenced by the existing contract-clause artifact.",
   }),
   cell('p7', 4, {
-    activityIds: ['7.7'],
-    adaptedTaskIds: [],
+    activityIds: ['7.7', '7.5-vendor-governance-cycle'],
+    adaptedTaskIds: ['7.5-vendor-governance-cycle'],
     evidence:
-      'Evaluate supplier delivery evidence, unresolved bridges, open-source dependencies, and the next recurring governance review.',
-    status: 'proxy',
-    note: 'A band exists but is cleared by the cloud shared-responsibility activity; the criterion requires VERIFIED delivery and bridges eliminated.',
+      'Re-score the vendor portfolio in a later period: commitments met, bridging patterns retired, open-source dependencies tracked, next review scheduled.',
+    status: 'outcome',
+    note: 'The cloud shared-responsibility activity (7.7) is now joined by a recurring re-score adapting activity 7.5, so the band requires verified delivery over time rather than one artifact.',
   }),
 ]
 

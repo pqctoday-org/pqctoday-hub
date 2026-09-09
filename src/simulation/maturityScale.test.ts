@@ -36,9 +36,12 @@ describe('topBandLevel', () => {
     expect(topBandLevel(undefined, 4)).toBe(4)
     expect(topBandLevel(tree([]), 4)).toBe(4)
   })
-  it('reports what the SIMULATOR ships (p3 stops at 2, p6 at 3)', () => {
-    expect(topBandLevel(SIM_TREES.p3, 4)).toBe(2)
-    expect(topBandLevel(SIM_TREES.p6, 4)).toBe(3)
+  it('reports what the SIMULATOR ships — every phase now reaches the framework top band', () => {
+    // Before W2.4 these read 2 and 3: P3 shipped only L1-L2 and P6 only L2-L3,
+    // which is what made a cleared P3 report as fully mature once the achieved
+    // level was rescaled against that short ladder.
+    expect(topBandLevel(SIM_TREES.p3, 4)).toBe(4)
+    expect(topBandLevel(SIM_TREES.p6, 4)).toBe(4)
     expect(topBandLevel(SIM_TREES.p4, 4)).toBe(4)
   })
 })
@@ -75,20 +78,22 @@ describe('scenarioCompletionFraction — completion, explicitly not maturity', (
 })
 
 describe('shortened ladders are detectable, and match the coverage manifest', () => {
-  it('flags the phases whose ladder cannot reach the framework top band', () => {
-    expect(hasShortenedLadder(SIM_TREES.p3, 4)).toBe(true)
-    expect(hasShortenedLadder(SIM_TREES.p6, 4)).toBe(true)
-    expect(hasShortenedLadder(SIM_TREES.p4, 4)).toBe(false)
+  it('reports no shortened ladder now that every phase ships L1-L4', () => {
+    for (const phase of ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'] as const) {
+      expect(hasShortenedLadder(SIM_TREES[phase], 4), phase).toBe(false)
+    }
   })
 
-  it('every band above a phase’s top is recorded as unsupported coverage', () => {
-    // The manifest and the runtime trees must tell the same story: if the tree
-    // cannot reach L3, the manifest must say L3 is unsupported.
-    for (const phase of ['p3', 'p6'] as const) {
+  it('the manifest and the runtime trees tell the same story', () => {
+    // Whatever the trees ship, the manifest must agree: a band that exists is
+    // never recorded as unsupported, and a band that does not exist is never
+    // recorded as practisable.
+    for (const phase of ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'] as const) {
       const top = topBandLevel(SIM_TREES[phase], 4)
       for (const level of [1, 2, 3, 4] as const) {
-        if (level <= top) continue
-        expect(coverageFor(phase, level)?.status, `${phase}/L${level}`).toBe('unsupported')
+        const status = coverageFor(phase, level)?.status
+        if (level <= top) expect(status, `${phase}/L${level}`).not.toBe('unsupported')
+        else expect(status, `${phase}/L${level}`).toBe('unsupported')
       }
     }
   })

@@ -202,6 +202,8 @@ export interface SimulationData {
   insuranceAssumed: boolean
   /** W5.5 — the selected phase tab, so a reload returns where the player was. */
   activeTab: string
+  /** W5.5 — the resource open in the embed pane (a tree step), or null. */
+  openStepRef: unknown
   /** W5 — year each objective was first achieved. Omitted before v18, which
    *  silently zeroed the on-time badges and the run grade on any import. */
   objectiveAchievedYears: Record<string, number>

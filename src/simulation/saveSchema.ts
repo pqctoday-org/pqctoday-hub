@@ -16,6 +16,7 @@
  *  - state the supported schema version explicitly, both directions.
  */
 import { PHASE_ORDER } from '@/data/frameworkPhases'
+import { isOpenStep } from '@/store/useSimulationStore'
 import type { SimulationData } from '@/services/storage/snapshotTypes'
 import type { DifficultyId } from '@/data/simBalance'
 import { STATUS_RANK, type EvidenceOrigin, type SimEvidenceRecord } from './evidence'
@@ -157,6 +158,8 @@ export function validateSave(input: unknown): ValidationResult {
     if (!isStringArray(s[key])) errors.push(`${key}: expected an array of strings`)
   }
   if (typeof s.runCompleteSeen !== 'boolean') errors.push('runCompleteSeen: expected a boolean')
+  if (s.openStepRef !== undefined && s.openStepRef !== null && !isOpenStep(s.openStepRef))
+    errors.push('openStepRef: expected a step object with kind and to, or null')
   if (s.activeTab !== undefined && !PHASE_TABS.includes(s.activeTab as string))
     errors.push(`activeTab: expected one of ${PHASE_TABS.join(', ')}`)
 
@@ -236,6 +239,7 @@ export function validateSave(input: unknown): ValidationResult {
       attempts: (s.attempts as Record<string, unknown>) ?? {},
       insuranceAssumed: s.insuranceAssumed === true,
       activeTab: typeof s.activeTab === 'string' ? s.activeTab : 'decide',
+      openStepRef: isOpenStep(s.openStepRef) ? s.openStepRef : null,
       objectiveAchievedYears: (s.objectiveAchievedYears as Record<string, number>) ?? {},
     },
   }

@@ -2,6 +2,8 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import debounce from 'lodash/debounce'
+import { useEmbedRunContext } from '@/components/shared/embedRunContext'
+import { complianceRegionForCountry } from '@/data/jurisdictionsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
 import { defaultTabForPersona } from './obligations/roleLens'
@@ -113,7 +115,21 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
           return next.toString() === prev.toString() ? prev : next
         })
     : realSetSearchParams
-  const { selectedIndustries, selectedPersona, selectedRegion } = usePersonaStore()
+  const {
+    selectedIndustries: personaIndustries,
+    selectedPersona,
+    selectedRegion: personaRegion,
+  } = usePersonaStore()
+  // W6.3 — when this view is embedded inside a simulation run, the run's own
+  // scenario is the applicable scope, not whatever the visitor last picked for
+  // themselves. Falls back to the persona store on the standalone route, so
+  // /compliance is completely unaffected. Read-only: the run context is never
+  // written back into the persona store (see embedRunContext.tsx for why).
+  const runCtx = useEmbedRunContext()
+  const selectedIndustries = runCtx?.sector ? [runCtx.sector] : personaIndustries
+  const selectedRegion = runCtx?.country
+    ? (complianceRegionForCountry(runCtx.country) ?? personaRegion)
+    : personaRegion
 
   const certParam = searchParams.get('cert') ?? undefined
   const evref = searchParams.get('evref') ?? undefined

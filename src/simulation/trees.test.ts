@@ -8,6 +8,7 @@ import { SIM_TREES, flattenTree, achievedTreeLevel, isGatingStep, type TreeStep 
 import { SANDBOX_SCENARIOS } from '@/data/sandboxScenarios'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { ARTIFACT_TYPE_TO_TOOL_ID } from '@/components/BusinessCenter/businessToolsRegistry'
+import { isKnownMetric } from './runMetrics'
 import { WORKSHOP_TOOL_COMPONENTS } from '@/components/Simulation/resourceContract'
 import { PHASE_MATURITY } from '@/data/phaseMaturity'
 import { FRAMEWORK_VERSION, PHASE_ORDER } from '@/data/frameworkPhases'
@@ -99,6 +100,35 @@ describe('SIM_TREES — coverage & shape', () => {
                 s.to === '/simulation',
                 `${phase}/${act.id}: architecture link ${s.to} should be '/simulation'`
               ).toBe(true)
+            } else if (s.kind === 'measure') {
+              // W2.5: a measure step names a KNOWN metric and a threshold. An
+              // unknown metric would fail closed at runtime, but it should fail
+              // loudly here instead of shipping an uncompletable band.
+              expect(
+                s.metricId && isKnownMetric(s.metricId),
+                `${phase}/${act.id}: measure step needs a known metricId (got ${s.metricId})`
+              ).toBeTruthy()
+              expect(
+                typeof s.minValue === 'number' && s.minValue > 0,
+                `${phase}/${act.id}: measure step needs a positive minValue`
+              ).toBe(true)
+            } else if (s.kind === 'recurrence') {
+              // W2.4: a recurrence step names the artifact it re-operates and
+              // how many later reporting periods must pass. It is NOT an
+              // activity step and must not carry artifactType, or it would
+              // satisfy an activity gate it never earned.
+              expect(
+                s.recurrenceOf && ARTIFACT_TYPE_TO_TOOL_ID[s.recurrenceOf],
+                `${phase}/${act.id}: recurrence step needs a real recurrenceOf artifact`
+              ).toBeTruthy()
+              expect(
+                (s.recurrenceQuarters ?? 0) > 0,
+                `${phase}/${act.id}: recurrence step needs a positive recurrenceQuarters`
+              ).toBe(true)
+              expect(
+                s.artifactType,
+                `${phase}/${act.id}: recurrence step must not carry artifactType`
+              ).toBeUndefined()
             } else {
               expect(s.refId, `${phase}/${act.id}: reference missing refId`).toBeTruthy()
             }
@@ -190,7 +220,14 @@ describe('SIM_TREES — coverage & shape', () => {
   it('P6-DD: the shipped P6 tree carries deep-dive content that never gates', () => {
     const p6 = SIM_TREES.p6!
     const withDeepDive = p6.levels.flatMap((b) => b.activities).filter((a) => a.deepDive?.length)
-    expect(withDeepDive.length, 'expected every P6 activity to carry deep-dive content').toBe(5)
+    // The 5 ORIGINAL P6 activities (6.1-6.5) each carry deep-dive content. The
+    // two W2.4 adaptations deliberately do not: deep-dive is optional extra
+    // reading, and these bands are about operating an activity again, not
+    // about more material to read.
+    expect(
+      withDeepDive.length,
+      'expected every original P6 activity to carry deep-dive content'
+    ).toBe(5)
     // No deepDive step duplicates a required step already in `steps` for that
     // activity — keyed by (kind, id), NOT bare id. A learn moduleId and a
     // workshop workshopId can legitimately share the same string (e.g.
@@ -213,7 +250,10 @@ describe('SIM_TREES — coverage & shape', () => {
     // only the required steps satisfied still reaches the top band P6 ships.
     const requiredOnlyDone = (s: TreeStep) =>
       p6.levels.some((b) => b.activities.some((a) => a.steps.includes(s)))
-    expect(achievedTreeLevel(p6, requiredOnlyDone)).toBe(3)
+    // W2.4: P6 gained an L1 awareness band and an L4 capacity/monitoring band,
+    // so completing every REQUIRED step now reaches the framework's top band.
+    // Before W2.4 this read 3 because the tree simply had no L4 to earn.
+    expect(achievedTreeLevel(p6, requiredOnlyDone)).toBe(4)
   })
 
   it('P6-DD: flattenTree stamps deepDive steps `optional` so isGatingStep excludes them', () => {

@@ -21,6 +21,8 @@ import {
   FRAMEWORK_SOURCE_VERSION,
   coverageFor,
   coverageSummary,
+  type NumberedPhaseId,
+  type AssessedLevel,
   unsupportedCells,
   hasCompleteCoverage,
 } from './frameworkCoverage'
@@ -122,20 +124,40 @@ describe('frameworkCoverage — the manifest', () => {
     }
   })
 
-  it('reports the seven audited gaps as unsupported', () => {
-    const gaps = unsupportedCells()
-      .map((c) => `${c.phase}/L${c.level}`)
-      .sort()
-    expect(gaps).toEqual(['p0/L4', 'p1/L4', 'p2/L4', 'p3/L3', 'p3/L4', 'p6/L1', 'p6/L4'])
+  it('has closed the seven audited gaps, each via a declared adaptation', () => {
+    // These were the cells the 2026-09-07 audit found missing. Each is now a
+    // real band whose activity ADAPTS an existing framework activity rather
+    // than inventing a new numbered one.
+    const closed = ['p0/L4', 'p1/L4', 'p2/L4', 'p3/L3', 'p3/L4', 'p6/L1', 'p6/L4']
+    for (const key of closed) {
+      const [phase, lv] = key.split('/L')
+      const c = coverageFor(phase as NumberedPhaseId, Number(lv) as AssessedLevel)
+      expect(c, key).toBeDefined()
+      expect(c!.status, key).not.toBe('unsupported')
+      expect(c!.adaptedTaskIds.length, `${key} should be backed by an adaptation`).toBeGreaterThan(
+        0
+      )
+    }
+    expect(unsupportedCells()).toEqual([])
+  })
+
+  it('models recurrence as an adaptation, never as a new framework activity', () => {
+    // The framework defines 3.1-3.4 and 6.1-6.5 only. A "3.5"/"3.6"/"6.6"
+    // would misrepresent the source, so adaptations carry a derived id.
+    for (const c of FRAMEWORK_COVERAGE) {
+      for (const id of c.adaptedTaskIds) {
+        expect(id, `${c.phase}/L${c.level}`).toMatch(/^\d+\.\d+-[a-z-]+$/)
+      }
+    }
   })
 
   it('counts coverage against the source denominator, not its own ladder', () => {
     const s = coverageSummary()
     expect(s.requiredWithP0).toBe(32)
     expect(s.requiredP1P7).toBe(28)
-    expect(s.presentWithP0).toBe(25)
-    expect(s.presentP1P7).toBe(22)
-    expect(s.unsupported).toBe(7)
+    expect(s.presentWithP0).toBe(32)
+    expect(s.presentP1P7).toBe(28)
+    expect(s.unsupported).toBe(0)
     expect(s.proxyBacked + s.outcomeBacked + s.unsupported).toBe(32)
   })
 

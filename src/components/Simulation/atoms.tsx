@@ -213,6 +213,7 @@ export function Dial({
   hint,
   onClick,
   title = 'click to change',
+  valueLabel,
 }: {
   label: string
   value: string
@@ -220,6 +221,11 @@ export function Dial({
   onClick: () => void
   /** Tooltip — defaults to "click to change"; override to explain what the dial does. */
   title?: string
+  /** W6.6 — the FULL spoken form when the visible `value` is abbreviated to fit
+   *  the pill. The Seat dial shows "Security" for "Security Architect", so a
+   *  screen reader heard the truncation rather than the role. Visible text is
+   *  unchanged; only the accessible name is expanded. */
+  valueLabel?: string
 }) {
   // Single-line pill (2026-08-02, header compaction) — was a 3-line stack
   // (LABEL ⟳ / value / hint). `hint` no longer has room to stay always-visible,
@@ -230,7 +236,7 @@ export function Dial({
       type="button"
       onClick={onClick}
       title={`${title} — ${hint}`}
-      aria-label={`${label}: ${value}. ${hint}. Activate to change.`}
+      aria-label={`${label}: ${valueLabel ?? value}. ${hint}. Activate to change.`}
       className="h-auto flex-row items-center gap-1.5 whitespace-nowrap rounded-full border border-background/20 bg-background/10 px-3 py-1.5 hover:bg-background/20"
     >
       <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.1em] text-background/70">

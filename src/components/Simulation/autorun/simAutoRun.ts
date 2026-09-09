@@ -32,7 +32,9 @@ import { demoDocFor, ORG, type DemoSector } from './demoDocs'
 import { REAL_DOC_GENERATORS } from './realToolDocs'
 import { ARCHITECTURES, edgeState, edgeKey } from '@/data/simArchitecture'
 import { jurisdictionFor } from '@/data/jurisdiction'
+import { readRunMetric } from '@/simulation/runMetrics'
 import {
+  distinctRunQuarters,
   documentApplicability,
   evidenceId,
   hasEvidence,
@@ -110,6 +112,31 @@ export function liveCompletionContext(): StepCompletionContext {
     isScenarioComplete: (id) => useSimulationStore.getState().visitedScenarios.includes(id),
     edgeDecisionCount: () => Object.keys(useSimulationStore.getState().edgeDecisions).length,
     edgeDecisionCapacity: () => architectureEdgeCapacity(),
+    recurrenceCount: (type) =>
+      distinctRunQuarters(useSimulationStore.getState().evidence, type).length,
+    metricValue: (metricId) => {
+      const st = useSimulationStore.getState()
+      // Budget is a pure function of P0 work completed (target cancels out of
+      // the ratio), so the headless run measures the same condition the board
+      // does. Measure steps are excluded from their own denominator.
+      const p0Work = (SIM_TREES.p0 ? flattenTree(SIM_TREES.p0) : []).filter(
+        (x) => x.kind !== 'measure' && isGatingStep(x)
+      )
+      // Non-measure steps only, so this cannot recurse back into itself.
+      const inner = liveCompletionContext()
+      const p0Done = p0Work.filter((x) => isStepComplete(x, inner)).length
+      return readRunMetric(metricId, {
+        budgetSecuredM: p0Work.length ? p0Done / p0Work.length : 0,
+        budgetTargetM: 1,
+        assetsAccounted: p0Done,
+        assetsTotal: p0Work.length || 1,
+        edgeDecisions: Object.keys(st.edgeDecisions ?? {}).length,
+        edgeCapacity: architectureEdgeCapacity(),
+        evidenceTotal: st.evidence.length,
+        evidenceByLearner: st.evidence.filter((e) => e.origin === 'learner').length,
+        quartersElapsed: (st.year - 2026) * 4 + (st.q - 1),
+      })
+    },
   }
 }
 
@@ -182,8 +209,9 @@ function recordStepEvidence(
 ): void {
   const sim = useSimulationStore.getState()
   const runId = `run-${sim.seed}`
+  const runQuarter = `Q${sim.q} ${sim.year}`
   sim.recordEvidence({
-    id: evidenceId(runId, phase, kind, resourceId),
+    id: evidenceId(runId, phase, kind, resourceId, kind === 'artifact' ? runQuarter : undefined),
     runId,
     phase,
     resourceId,
@@ -192,6 +220,7 @@ function recordStepEvidence(
     status,
     fingerprint: runFingerprint(sim.size, sim.country, sim.sector),
     createdAt: Date.now(),
+    runQuarter,
     artifactType: step.artifactType,
   })
 }
@@ -247,6 +276,32 @@ export function completeStepGenuine(
         createdAt: Date.now(),
       })
       recordStepEvidence(step, 'artifact', step.artifactType, phase, origin, 'practiced')
+      return true
+    }
+    case 'recurrence': {
+      // W2.4: this criterion is an existing activity OPERATED AGAIN over time,
+      // so it cannot be faked by filing one document. The narrated run does the
+      // honest thing — it records the artifact, genuinely advances the run's
+      // reporting period, and records it again. The clock really moves; the
+      // evidence really lands in two distinct periods.
+      if (!step.recurrenceOf) return false
+      const needed = 1 + (step.recurrenceQuarters ?? 1)
+      for (let i = 0; i < needed; i++) {
+        const now = useSimulationStore.getState()
+        recordStepEvidence(
+          { ...step, artifactType: step.recurrenceOf },
+          'artifact',
+          step.recurrenceOf,
+          phase,
+          origin,
+          'criterion-met'
+        )
+        if (i === needed - 1) break
+        // Advance one reporting period, exactly as the exercise asks.
+        const q = now.q === 4 ? 1 : now.q + 1
+        const year = now.q === 4 ? now.year + 1 : now.year
+        now.applyQuarter({ crqcShift: now.crqcShift, year, q, newEvents: [] })
+      }
       return true
     }
     case 'scenario':
@@ -560,6 +615,48 @@ export function estimatedMinutes(steps: TreeStep[]): number {
  *  required + deep-dive. Used by the Play This Phase card (no auto-run queue
  *  needed for v1, which just deep-links to the board at that phase; this is
  *  purely for the card's live duration estimate as the phase dropdown changes). */
+/**
+ * W7.1 — the short introductory journey.
+ *
+ * The shortest existing way in was the ~45-minute overview, which the audit
+ * found is too much to ask before a learner knows whether any of this concerns
+ * them. This is the five-beat version the plan asks for: explain the threat,
+ * inspect one asset, choose a next step, see the consequence, and hear what it
+ * meant.
+ *
+ * It is CURATED from real tree steps (never invented content) and, per W7.3,
+ * BOUNDED BY MEASURED effort rather than by a promised duration: steps are
+ * admitted only while `estimatedMinutes` of the queue stays within the budget,
+ * so the figure shown to a learner is derived from the same estimator the other
+ * modes use rather than being an advertised number nobody checked.
+ */
+export const INTRO_BUDGET_MINUTES = 10
+
+export function autoRunIntroQueue(budgetMinutes = INTRO_BUDGET_MINUTES): AutoRunQueueItem[] {
+  const items: AutoRunQueueItem[] = []
+  const seen = new Set<string>()
+  // Beat order: the threat first (p0 frames why), then the estate (p1 shows
+  // what is exposed). Only light, readable kinds — an artifact builder is not
+  // a first ten minutes.
+  const LIGHT: StepKind[] = ['learn', 'reference']
+  for (const phase of ['p0', 'p1'] as PhaseId[]) {
+    for (let level = 1; level <= 2; level++) {
+      for (const step of gatingStepsForPhaseLevel(phase, level)) {
+        if (!LIGHT.includes(step.kind)) continue
+        const key = stepDedupeKey(step)
+        if (key !== null) {
+          if (seen.has(key)) continue
+          seen.add(key)
+        }
+        const next = [...items, { phase, step, level }]
+        if (estimatedMinutes(next.map((i) => i.step)) > budgetMinutes) return items
+        items.push({ phase, step, level })
+      }
+    }
+  }
+  return items
+}
+
 export function stepsForPhase(phase: PhaseId, includeDeepDive: boolean): TreeStep[] {
   const tree = treeFor(phase)
   if (!tree) return []

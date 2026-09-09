@@ -12,6 +12,7 @@
  */
 import { QC_FIRST_YEAR } from './quantumTimeline'
 import { TIMELINE_COUNTRY_DEADLINE_YEAR } from './timelineFacts.generated'
+import { JURISDICTION_BY_CODE } from './jurisdictionsData'
 
 export type SimSize = 'small' | 'mid' | 'large' | 'global'
 
@@ -124,6 +125,47 @@ export const SIZE_MIGRATION_YEARS: Record<SimSize, number> = {
  * `horizonYearFor` falls back to the Q-Day anchor for them.
  */
 export const COUNTRY_DEADLINE_YEAR: Record<string, number> = TIMELINE_COUNTRY_DEADLINE_YEAR
+
+/**
+ * W4.2/W4.3 — the SCOPE a jurisdiction's headline deadline actually has.
+ *
+ * A country-level date is not a universal requirement for every organisation in
+ * that country, and the simulation used to imply it was. EO 14412 §4(b)
+ * addresses specified federal-agency systems and excludes national security
+ * systems; the NCSC dates are staged guidance rather than a single binding
+ * cut-off. A private financial organisation does not inherit either by being in
+ * the country.
+ *
+ * MOVED TO DATA (2026-09-08). This was a hand-written table here; it now reads
+ * from jurisdictions_*.csv so there is ONE source of truth. Two copies of a
+ * regulatory fact drift, and the CSV is where every other jurisdiction fact in
+ * this repo already lives.
+ */
+export interface DeadlineScope {
+  /** Who set it. */
+  authority: string
+  /** Which systems it actually binds. */
+  appliesTo: string
+  /** Requirement, or guidance/recommendation. */
+  force: 'requirement' | 'guidance'
+  /** Primary source. */
+  sourceUrl: string
+}
+
+/**
+ * The scope of a country's deadline, or null when none is recorded. Callers
+ * must render null as "scope not recorded", never as "applies to you".
+ */
+export const deadlineScopeFor = (country: string): DeadlineScope | null => {
+  const j = JURISDICTION_BY_CODE[country]
+  if (!j || !j.appliesTo || (j.force !== 'requirement' && j.force !== 'guidance')) return null
+  return {
+    authority: j.authority || j.name,
+    appliesTo: j.appliesTo,
+    force: j.force,
+    sourceUrl: j.instrumentUrl,
+  }
+}
 
 /**
  * Provenance flag the badge layer reads — every government deadline is surfaced

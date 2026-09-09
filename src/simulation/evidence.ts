@@ -91,6 +91,10 @@ export interface SimEvidenceRecord {
    *  a different scenario is not silently reused as if it described this one. */
   fingerprint: string
   createdAt: number
+  /** W2.4 — the RUN's reporting period this was recorded in (e.g. 'Q1 2026').
+   *  Wall-clock `createdAt` cannot express "updated quarterly" in a simulated
+   *  timeline; this can. */
+  runQuarter?: string
   reviewedAt?: number
   /** For artifact evidence: the document it points at. */
   artifactId?: string
@@ -107,8 +111,15 @@ export const evidenceId = (
   runId: string,
   phase: string,
   kind: EvidenceKind,
-  resourceId: string
-): string => `${runId}:${phase}:${kind}:${resourceId}`
+  resourceId: string,
+  /** W2.4 — recurrence needs one record PER reporting period, so the period is
+   *  part of the identity. Without it the upsert would collapse a quarterly
+   *  cadence into a single record and "operated again" could never be shown. */
+  runQuarter?: string
+): string =>
+  runQuarter
+    ? `${runId}:${phase}:${kind}:${resourceId}:${runQuarter}`
+    : `${runId}:${phase}:${kind}:${resourceId}`
 
 /** Origins that represent the learner's own work. A demonstration is not one. */
 export const isLearnerWork = (o: EvidenceOrigin): boolean => o === 'learner'
@@ -163,6 +174,22 @@ export function selectEvidence(
     if (q.origins && !q.origins.includes(r.origin)) return false
     return true
   })
+}
+
+/**
+ * W2.4 — has this resource been recorded in MORE THAN ONE of the run's
+ * reporting periods? That is what "operated again over time" means here, and
+ * it is the thing a single visit or a single document cannot fake.
+ */
+export function distinctRunQuarters(
+  records: readonly SimEvidenceRecord[],
+  resourceId: string
+): string[] {
+  return [
+    ...new Set(
+      records.filter((r) => r.resourceId === resourceId && r.runQuarter).map((r) => r.runQuarter!)
+    ),
+  ]
 }
 
 /** Does any record satisfy this query? */

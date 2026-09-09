@@ -113,6 +113,7 @@ import { SIM_MISSIONS } from '@/data/simMissions'
 import { SECTORS } from '@/data/moscaClock'
 import { deriveSimClock } from './hooks/useSimClock'
 import { JURISDICTION_RULES, checkChoice } from '@/data/jurisdiction'
+import { deadlineScopeFor } from '@/data/moscaClock'
 import { JURISDICTION_AUTHORITY_NOTE } from '@/data/jurisdictionsData'
 import { useArchetypeChangeNotice } from '@/hooks/useArchetypeChangeNotice'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
@@ -191,8 +192,11 @@ import { ARCHITECTURES, edgeState } from '@/data/simArchitecture'
 import { TrapInsightsPanel } from './TrapInsightsPanel'
 import { useSimulationStore, RUN_START } from '@/store/useSimulationStore'
 import { FRAMEWORK_COVERAGE, hasCompleteCoverage } from '@/simulation/frameworkCoverage'
+import { readRunMetric, type RunMetricInputs } from '@/simulation/runMetrics'
+import { EmbedRunContextProvider } from '@/components/shared/embedRunContext'
 import { validateSave, previewSave } from '@/simulation/saveSchema'
 import {
+  distinctRunQuarters,
   documentApplicability,
   evidenceId,
   hasEvidence,
@@ -229,9 +233,17 @@ const SIZES = (['small', 'mid', 'large', 'global'] as const).map((id) => ({
   label: id[0].toUpperCase() + id.slice(1),
   hint: SIZE_HINTS[id],
 }))
-const SEATS: { id: PersonaId; label: string }[] = (Object.keys(personaToRoles) as PersonaId[])
+const SEATS: { id: PersonaId; label: string; fullLabel: string }[] = (
+  Object.keys(personaToRoles) as PersonaId[]
+)
   .filter((p) => personaToRoles[p].length > 0)
-  .map((id) => ({ id, label: id === 'ops' ? 'Operations' : PERSONAS[id].label.split(' ')[0] }))
+  .map((id) => ({
+    id,
+    // Visible pill text stays abbreviated to fit the header.
+    label: id === 'ops' ? 'Operations' : PERSONAS[id].label.split(' ')[0],
+    // W6.6: the full role, for the accessible name.
+    fullLabel: PERSONAS[id].label,
+  }))
 
 // difficulty cycle order for the MODE dial (WS-14)
 const DIFF_ORDER: DifficultyId[] = ['easy', 'realistic', 'hard']
@@ -265,6 +277,25 @@ const SIM_TRACKED = (() => {
   }
   return { modules, artifacts }
 })()
+
+/** W6.4 — what each phone headline figure actually measures. Shown under the
+ *  number itself, because a figure a learner cannot interrogate is a figure
+ *  they can only take on trust. */
+const MOBILE_SIGNAL_NOTES: Record<string, string> = {
+  'Migration phases (L2 floor)':
+    'Phases whose activities have reached the framework’s Level 2 "done well enough to proceed" bar.',
+  'Program maturity':
+    'The weakest domain across the framework’s own 0–4 ladder — not a percentage of what this simulation happens to offer.',
+  'Program complete':
+    'Every phase cleared to the top band this simulation ships. That is scenario completion, not certified organisational maturity.',
+  'Quantum-exposed value':
+    'Illustrative: modelled from the assessment catalogue at a default org scale, not measured for your organisation.',
+  'Years to act (Mosca)':
+    'Shelf life (X) + migration time (Y) against time remaining (Z). The horizon is a planning anchor, not a published date.',
+  'Budget secured':
+    'Earned by completing Phase 0 activities — a scenario figure, not real funding.',
+  Turn: 'The run’s current reporting period. Recurring criteria need it to advance.',
+}
 
 /** W5.3 — every resource id the trees in THIS build can resolve. An imported
  *  run may reference a module/workshop/reference that has since been renamed or
@@ -396,6 +427,8 @@ export function SimulationView() {
     setInsuranceAssumed,
     activeTab,
     setActiveTab,
+    openStepRef,
+    setOpenStepRef,
     attempts,
     recordAttempt,
     clearAttempt,
@@ -556,11 +589,21 @@ export function SimulationView() {
     setScenarioEmbed(null)
     setArchitectureEmbed(null)
   }
+  // W6.6 — the element that opened the embed, so focus can go back to it when
+  // the pane closes. Without this, "Back to board" dropped focus to <body> and a
+  // keyboard or screen-reader user lost their place in the step list entirely.
+  const embedOpenerRef = useRef<HTMLElement | null>(null)
   const openStep = (s: TreeStep) => {
+    if (typeof document !== 'undefined' && document.activeElement instanceof HTMLElement) {
+      embedOpenerRef.current = document.activeElement
+    }
     // Embedded steps render inline without a URL/route change, so they're
     // invisible to the pathname-based pageview tracker (AnalyticsTracker in
     // App.tsx) — log them explicitly instead.
     logEvent('Simulation', 'Embed Open', `${s.kind}:${s.label}`)
+    // W5.5: remember WHICH resource is open, so a reload returns to the
+    // resource and not merely to the tab that listed it.
+    setOpenStepRef(s)
     if (s.kind === 'learn' && s.moduleId && isEmbeddableModule(s.moduleId)) {
       clearAllEmbeds()
       const lqIdx = s.to.indexOf('?')
@@ -628,11 +671,48 @@ export function SimulationView() {
     // a step is never silently done just by being viewed. AI delegation (`auto`)
     // still bulk-completes via its own button + the quarter engine.
   }
-  const closeEmbed = clearAllEmbeds
+  const closeEmbed = () => {
+    // A deliberate "Back to board" is not a resume point — forget the resource
+    // so the next reload lands on the board the player chose to return to.
+    setOpenStepRef(null)
+    clearAllEmbeds()
+    // W6.6 — return focus where it came from. Deferred a frame so the board has
+    // re-rendered and the target is back in the document.
+    const opener = embedOpenerRef.current
+    embedOpenerRef.current = null
+    if (opener) {
+      requestAnimationFrame(() => {
+        if (opener.isConnected) opener.focus()
+      })
+    }
+  }
   // Live auto-run playthrough (Play 0→7) — drives the real sim like manual play:
   // opens each tool inline for a peek, then returns to the board so its sections
   // tick off in view; the clock advances Q1 2026 → Q1 2035.
   const autoRunPlayer = useSimAutoRunPlayer({ openStep, closeEmbed })
+
+  // W5.5 — RESUME THE RESOURCE. The tab already survives a reload; this restores
+  // what was open inside it. Runs once on mount, re-opening through `openStep`
+  // itself rather than a second copy of its branching, so a resumed resource is
+  // opened exactly the way clicking it would. Only a step that still exists in
+  // the current phase's tree is restored — a save referencing a resource this
+  // build no longer ships is dropped rather than reopened as a broken pane.
+  const restoredResourceRef = useRef(false)
+  useEffect(() => {
+    if (restoredResourceRef.current) return
+    // Wait for the persisted store to rehydrate. Zustand's persist middleware
+    // restores asynchronously, so on the very first mount this is still null —
+    // latching the ref on mount meant the resume never fired at all (caught in
+    // the browser; the unit tests set the store synchronously and passed).
+    if (!openStepRef) return
+    restoredResourceRef.current = true
+    // Replay the stored step directly. Re-deriving it from the trees cannot
+    // work: the Resources tab builds steps from the phase RESOURCE MAP, which
+    // surfaces resources no tree contains (e.g. /learn/quantum-threats).
+    const step = openStepRef as unknown as TreeStep
+    if (canEmbedStep(step)) openStep(step)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openStepRef])
 
   // Deep link: /simulation?run=<mode> auto-starts a run directly, skipping the
   // PLAY modal entirely — a URL is a pre-committed choice already made by
@@ -1198,6 +1278,7 @@ export function SimulationView() {
       status,
       fingerprint: runFp,
       createdAt: Date.now(),
+      runQuarter: `Q${q} ${year}`,
     })
   }
   const autoKey = (phase: string, to: string) => `${phase}::${to}`
@@ -1205,6 +1286,8 @@ export function SimulationView() {
   // an `architecture` step's minDecisions so a fixed threshold can never exceed
   // what a smaller org size has to decide (see embedContract.ts).
   const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
+  // W2.5 — filled below, once the run's derived values exist.
+  const metricInputsRef = useRef<RunMetricInputs | null>(null)
   const edgeDecisionCapacity = arch.edges.filter(
     (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
   ).length
@@ -1227,6 +1310,15 @@ export function SimulationView() {
     // WS-04: cumulative edge-decision count/capacity for `architecture` steps.
     edgeDecisionCount: () => Object.keys(edgeDecisions).length,
     edgeDecisionCapacity: () => edgeDecisionCapacity,
+    // W2.4: recurrence is measured in the RUN's reporting periods.
+    recurrenceCount: (type) => distinctRunQuarters(evidence, type).length,
+    // W2.5: a criterion stating a measurable condition is evidenced by the
+    // condition, not by a document about it. Read through a ref because the
+    // inputs (budget, assets) are derived further down this component — a
+    // direct closure over them is a temporal-dead-zone error the moment a
+    // completion check runs during the same render pass.
+    metricValue: (metricId) =>
+      metricInputsRef.current ? readRunMetric(metricId, metricInputsRef.current) : null,
   }
   const stepDone = (s: TreeStep, phase: string) =>
     auto.includes(autoKey(phase, s.to)) || isStepComplete(s, stepCompletionCtx)
@@ -1490,9 +1582,13 @@ export function SimulationView() {
   // ---- budget: starts at €0, earned by executing P0 activities + P0 maturity ----
   const p0Tree = SIM_TREES.p0
   const p0Steps = p0Tree ? flattenTree(p0Tree) : []
-  const p0Done = p0Steps.filter((s) => stepDone(s, 'p0')).length
+  // W2.5: budget is earned by doing the WORK, so the measure step that GRADES
+  // the budget is excluded from its own denominator — otherwise the condition
+  // depends on a step whose completion depends on the condition.
+  const p0WorkSteps = p0Steps.filter((s) => s.kind !== 'measure')
+  const p0Done = p0WorkSteps.filter((s) => stepDone(s, 'p0')).length
   const p0Level = levelOf('p0')
-  const p0Frac = p0Steps.length ? balance.budget.doneWeight * (p0Done / p0Steps.length) : 0
+  const p0Frac = p0WorkSteps.length ? balance.budget.doneWeight * (p0Done / p0WorkSteps.length) : 0
   // Difficulty budget lever (WS-14, PR4): Hard secures less per activity.
   const budgetTarget = Math.round(
     programBudgetTarget(sector, sizeKey) * balance.estate.budgetMultiplier
@@ -1507,6 +1603,18 @@ export function SimulationView() {
   // Available budget floors at 0 — incidents can draw the spent side past secured
   // without blocking anything; only the displayed/spendable figure floors.
   const availableBudgetM = Math.max(0, Math.round((budgetSecured - spentBudgetM) * 10) / 10)
+  // W2.5 — the measurable run conditions a `measure` step is graded against.
+  metricInputsRef.current = {
+    budgetSecuredM: budgetSecured,
+    budgetTargetM: budgetTarget,
+    assetsAccounted: assetsDiscovered ? assets.length : 0,
+    assetsTotal: assets.length,
+    edgeDecisions: Object.keys(edgeDecisions).length,
+    edgeCapacity: edgeDecisionCapacity,
+    evidenceTotal: evidence.length,
+    evidenceByLearner: evidence.filter((e) => e.origin === 'learner').length,
+    quartersElapsed: (year - RUN_START.year) * 4 + (q - RUN_START.q),
+  }
 
   // active phase
   const phase = FRAMEWORK_PHASES[sel]
@@ -1799,15 +1907,15 @@ export function SimulationView() {
         <div className="flex min-h-0 flex-1 items-center justify-center p-6">
           <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
             <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-primary">
-              Simulation locked
+              Choose how to start
             </span>
             <h1 className="mt-2 text-xl font-extrabold text-foreground">
-              Run your PQC assessment to start the simulation
+              Practise on a sample organization, or run it on your own
             </h1>
             <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
               See how much of your business is exposed to the quantum threat today — and the cost
-              and sequence of closing it. The simulation runs on your assessed organization: your
-              sector, size and jurisdiction come from your assessment.
+              and sequence of closing it. Start immediately on a sample organization, or run it on
+              your own: with an assessment, the sector, size and jurisdiction come from yours.
             </p>
             <div className="mt-6 flex flex-col items-stretch gap-2.5 sm:flex-row sm:justify-center">
               <Link
@@ -2370,6 +2478,112 @@ export function SimulationView() {
               })}
             </div>
           )}
+          {/* W6.4 — compact phone PROGRESS. The phone shell had no Progress
+              view at all, so a player could not see which maturity bands they
+              had earned, what evidence was behind them, or what the phase gate
+              actually required. This is the compact form the plan asks for,
+              not the whole desktop layout. */}
+          {isMobileShell && (
+            <details className="w-full max-w-[320px] rounded-lg border border-border bg-card text-left">
+              <summary className="cursor-pointer px-3 py-2 text-xs font-bold text-foreground">
+                Progress · {FRAMEWORK_PHASES[sel]?.name ?? sel} — L{levelOf(sel)} of {MAX_LEVEL}
+              </summary>
+              <div className="space-y-1.5 border-t border-border px-3 py-2">
+                {SIM_TREES[sel]?.gate && (
+                  <p className="text-sim-micro leading-snug text-muted-foreground">
+                    <span className="font-bold text-foreground">
+                      Gate {SIM_TREES[sel]!.gate!.id}:
+                    </span>{' '}
+                    {SIM_TREES[sel]!.gate!.criterion}
+                  </p>
+                )}
+                {(SIM_TREES[sel]?.levels ?? []).map((band) => {
+                  const earned = levelOf(sel) >= band.level
+                  const bandSteps = band.activities
+                    .flatMap((a) => a.steps)
+                    .filter((st) => isGatingStep(st))
+                  const done = bandSteps.filter((st) => stepDone(st, sel)).length
+                  return (
+                    <div
+                      key={band.level}
+                      className="flex items-start justify-between gap-2 rounded-md bg-muted/50 px-2 py-1.5"
+                    >
+                      <span className="text-sim-micro leading-snug text-muted-foreground">
+                        <span className="font-bold text-foreground">
+                          L{band.level} {MATURITY_LEVEL_NAMES[band.level]}
+                        </span>{' '}
+                        — {band.indicator}
+                      </span>
+                      <span
+                        className={`shrink-0 font-mono text-sim-micro font-bold ${earned ? 'text-success' : 'text-muted-foreground'}`}
+                      >
+                        {earned ? '✓' : `${done}/${bandSteps.length}`}
+                      </span>
+                    </div>
+                  )
+                })}
+                <p className="text-sim-micro leading-snug text-muted-foreground">
+                  Evidence recorded this run:{' '}
+                  <span className="font-bold text-foreground">
+                    {evidence.filter((e) => e.phase === sel).length}
+                  </span>
+                  {evidence.some((e) => e.phase === sel && e.origin !== 'learner') && (
+                    <> — some from demonstrations, not your own work.</>
+                  )}
+                </p>
+              </div>
+            </details>
+          )}
+          {/* W6.4 — compact phone RESOURCES. Each entry says WHY this phase
+              opens it and what evidence it can produce, which the desktop
+              Resources tab did not state either. Large editors are marked as
+              desktop work rather than opened into a shell that cannot run
+              them (W6.5 handoff). */}
+          {isMobileShell && (
+            <details className="w-full max-w-[320px] rounded-lg border border-border bg-card text-left">
+              <summary className="cursor-pointer px-3 py-2 text-xs font-bold text-foreground">
+                Resources for this phase
+              </summary>
+              <div className="space-y-1.5 border-t border-border px-3 py-2">
+                {(SIM_TREES[sel] ? flattenTree(SIM_TREES[sel]!) : [])
+                  .filter((st) => isGatingStep(st))
+                  .slice(0, 8)
+                  .map((st, i) => {
+                    const done = stepDone(st, sel)
+                    const desktopOnly = st.kind === 'activity' || st.kind === 'architecture'
+                    return (
+                      <div
+                        key={`${st.to}-${i}`}
+                        className="rounded-md bg-muted/50 px-2 py-1.5 text-sim-micro leading-snug"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="font-bold text-foreground">{st.label}</span>
+                          <span
+                            className={`shrink-0 font-mono ${done ? 'text-success' : 'text-muted-foreground'}`}
+                          >
+                            {done ? 'done' : desktopOnly ? 'desktop' : 'open'}
+                          </span>
+                        </div>
+                        <div className="text-muted-foreground">
+                          {desktopOnly
+                            ? 'Produces an artifact — continue this task on desktop; your run travels with you.'
+                            : 'Opens in the hub; returns you here.'}
+                        </div>
+                        {!desktopOnly && (
+                          <Link
+                            to={st.to}
+                            onClick={() => markSimResume()}
+                            className="font-bold text-primary underline decoration-dotted underline-offset-2"
+                          >
+                            Open →
+                          </Link>
+                        )}
+                      </div>
+                    )
+                  })}
+              </div>
+            </details>
+          )}
           <dl className="w-full max-w-[320px] space-y-2 text-left">
             {[
               {
@@ -2397,12 +2611,18 @@ export function SimulationView() {
               // run was on until they tapped into a phase's Decide header.
               { label: 'Turn', value: `Q${q} ${year}` },
             ].map((row) => (
-              <div
-                key={row.label}
-                className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-3 py-2"
-              >
-                <dt className="text-xs text-muted-foreground">{row.label}</dt>
-                <dd className="text-sm font-semibold text-foreground">{row.value}</dd>
+              <div key={row.label} className="rounded-lg border border-border bg-card px-3 py-2">
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="text-xs text-muted-foreground">{row.label}</dt>
+                  <dd className="text-sm font-semibold text-foreground">{row.value}</dd>
+                </div>
+                {/* W6.4: every headline number says what it is derived from.
+                    The phone showed bare figures with no way to find out. */}
+                {MOBILE_SIGNAL_NOTES[row.label] && (
+                  <p className="mt-1 text-sim-micro leading-snug text-muted-foreground">
+                    {MOBILE_SIGNAL_NOTES[row.label]}
+                  </p>
+                )}
               </div>
             ))}
           </dl>
@@ -2664,6 +2884,7 @@ export function SimulationView() {
             <Dial
               label="Seat"
               value={seatOpt.label}
+              valueLabel={seatOpt.fullLabel}
               hint={isOrphanSeatPersona ? 'no role for your persona' : 'rest = AI team'}
               title={
                 isOrphanSeatPersona
@@ -2749,7 +2970,10 @@ export function SimulationView() {
                     `Years to the planning anchor (${horizonYear}) — the EARLIER of two different things, shown apart because they mean different things:` +
                     ` • Threat horizon ${threatHorizonYear} — this scenario's illustrative CRQC planning estimate. Not a published date, and not moved by any regulation.` +
                     (regulatoryDueYear !== null
-                      ? ` • Regulatory due date ${regulatoryDueYear} — a dated obligation for this jurisdiction. A legal deadline, not a forecast.`
+                      ? ` • Regulatory due date ${regulatoryDueYear} — a dated obligation, not a forecast.` +
+                        (deadlineScopeFor(country)
+                          ? ` Scope: ${deadlineScopeFor(country)!.appliesTo} (${deadlineScopeFor(country)!.force}, ${deadlineScopeFor(country)!.authority}).`
+                          : ' Scope not recorded for this jurisdiction — do not assume it binds this organisation.')
                       : ' • Regulatory due date: none on file for this jurisdiction — which is not the same as having no deadline.') +
                     ` Currently binding: the ${bindingHorizon === 'regulatory' ? 'regulatory due date' : 'threat horizon'}.` +
                     ' Mosca: migrate when shelf life (X) + migration time (Y) exceeds the time remaining (Z).'
@@ -3148,115 +3372,152 @@ export function SimulationView() {
                    which scrolls at body level).
                 2) GUTTERS — max-width + px so embeds don't run edge-to-edge on wide
                    screens (they have no page container in the sim). */}
-              <div className="mx-auto w-full max-w-[1800px] px-4 md:px-6 lg:px-8">
-                {assessEmbed ? (
-                  // Re-run / refine the assessment in-sim — the REDESIGNED /assess
-                  // surface (track chooser + two-pane wizard), embedded headless.
-                  // onComplete closes back to the board (NOT /report); the wizard
-                  // writes to the assessment store, so assessSnap + the read-only org
-                  // dials / derived maturity update. Two-pane layout → full width
-                  // (no max-w-3xl, which would squish the rail + question pane).
-                  <div className="p-1 md:p-2">
-                    <AssessViewRedesign simEmbed onComplete={closeEmbed} />
+              <EmbedRunContextProvider
+                value={{ country, sector, size: sizeKey, seat, phase: sel, isSample: !assessSnap }}
+              >
+                <div className="mx-auto w-full max-w-[1800px] px-4 md:px-6 lg:px-8">
+                  {/* W6.1/W6.2 — explicit simulation context. An embedded hub
+                    resource is a general tool: it does not know which run
+                    opened it, which organisation the run is about, or what the
+                    phase wanted from it. State all of that here rather than
+                    mutating the user's real profile stores to fake it. */}
+                  <div className="mb-3 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2">
+                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sim-micro">
+                      <span className="font-mono font-bold uppercase tracking-wide text-primary">
+                        Simulation context
+                      </span>
+                      <span className="text-muted-foreground">
+                        <span className="font-bold text-foreground">
+                          {assessSnap ? 'Your assessed organization' : 'Sample organization'}
+                        </span>{' '}
+                        · {sizeOpt.label} · {sector} · {country} · seat: {seatOpt.label}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-sim-micro leading-snug text-muted-foreground">
+                      <span className="font-bold text-foreground">
+                        {FRAMEWORK_PHASES[sel]?.name ?? sel} opened this
+                      </span>{' '}
+                      {SIM_TREES[sel]?.gate
+                        ? `to work toward gate ${SIM_TREES[sel]!.gate!.id}: ${SIM_TREES[sel]!.gate!.criterion}.`
+                        : 'as part of this phase.'}{' '}
+                      Views that can read a run&rsquo;s scenario are scoped to it automatically;
+                      anything that still asks for an industry or country is asking for its own
+                      filter, not a second assessment. Close with &ldquo;Back to board&rdquo; to
+                      return to this phase.
+                    </p>
                   </div>
-                ) : learnEmbed && LearnComp ? (
-                  <EmbeddedLearnProvider initialTab={learnEmbed.tab} initialStep={learnEmbed.step}>
-                    {/* W2a: the completion ceremony fires INSIDE the sim too — the
+                  {assessEmbed ? (
+                    // Re-run / refine the assessment in-sim — the REDESIGNED /assess
+                    // surface (track chooser + two-pane wizard), embedded headless.
+                    // onComplete closes back to the board (NOT /report); the wizard
+                    // writes to the assessment store, so assessSnap + the read-only org
+                    // dials / derived maturity update. Two-pane layout → full width
+                    // (no max-w-3xl, which would squish the rail + question pane).
+                    <div className="p-1 md:p-2">
+                      <AssessViewRedesign simEmbed onComplete={closeEmbed} />
+                    </div>
+                  ) : learnEmbed && LearnComp ? (
+                    <EmbeddedLearnProvider
+                      initialTab={learnEmbed.tab}
+                      initialStep={learnEmbed.step}
+                    >
+                      {/* W2a: the completion ceremony fires INSIDE the sim too — the
                     standalone ModuleCompletionWatcher is gated !isEmbed, leaving
                     in-sim learners with no belt/score beat. This sim-scoped watcher
                     shows the reward card on the live status→completed transition. */}
-                    <SimModuleCompletionWatcher
-                      key={learnEmbed.moduleId}
-                      moduleId={learnEmbed.moduleId}
-                      title={learnEmbed.title}
-                    />
-                    <Suspense fallback={<EmbedLoading label="Loading module" />}>
-                      <LearnComp />
-                    </Suspense>
-                  </EmbeddedLearnProvider>
-                ) : ActivityComp ? (
-                  <Suspense fallback={<EmbedLoading />}>
-                    <ActivityComp />
-                  </Suspense>
-                ) : WorkshopComp ? (
-                  // Workshop/playground tools need the SAME provider stack the standalone
-                  // /playground page wraps them in (HSM + Settings + KeyStore + Operations)
-                  // — otherwise HSM-backed tools (the VPN/SSH/HSM sims) crash with
-                  // "useHsmContext must be used within HsmProvider". PlaygroundProvider is a
-                  // pure context wrapper (HSM init is lazy), so it's cheap for non-HSM tools.
-                  <PlaygroundProvider>
-                    <Suspense fallback={<EmbedLoading label="Loading workshop" />}>
-                      <WorkshopComp initialStep={workshopEmbed?.step} />
-                    </Suspense>
-                  </PlaygroundProvider>
-                ) : timelineEmbed ? (
-                  // C6: Gantt chart embedded in the sim, scoped to the player's assessed
-                  // country (or the step's ?country= / ?region= param if present).
-                  <TimelineEmbed
-                    scope={{
-                      ...parseTimelineScope(timelineEmbed.to),
-                      // fall back to assessed jurisdiction when the step carries no scope
-                      country:
-                        parseTimelineScope(timelineEmbed.to).country ??
-                        assessJurisdiction?.displayName,
-                    }}
-                  />
-                ) : catalogEmbed ? (
-                  // The redesigned Migrate (MigrationWorkbench) embedded under the sim
-                  // header — same component the /migrate route uses (its `embedded`
-                  // prop hides the PageHeader and keeps filter state off the URL). The
-                  // catalogId opens it on the matching view (discovery domain / pilots).
-                  <MigrateWorkbenchEmbed catalogId={catalogEmbed.catalogId} />
-                ) : algorithmTabEmbed ? (
-                  // C5-full: every Algorithms tab via SIM_ALGORITHM_TABS. Review tabs
-                  // (Protocol Support) mount with no confirm; "choice that counts" tabs
-                  // (Transition / Detailed) get the confirm → artifact handler.
-                  (() => {
-                    const spec = SIM_ALGORITHM_TABS[algorithmTabEmbed.refId]
-                    if (!spec) return null
-                    const Embed = spec.Component
-                    const isChoice = spec.completion !== 'review'
-                    return (
-                      <Embed
-                        onConfirm={isChoice ? handleConfirmAlgorithmTab : undefined}
-                        confirmed={isChoice ? refDone(algorithmTabEmbed.refId) : undefined}
+                      <SimModuleCompletionWatcher
+                        key={learnEmbed.moduleId}
+                        moduleId={learnEmbed.moduleId}
+                        title={learnEmbed.title}
                       />
-                    )
-                  })()
-                ) : ReferenceComp ? (
-                  // Full-page reference (Migrate, …) embedded under the header instead
-                  // of navigating the player out to its own route.
-                  <Suspense fallback={<EmbedLoading />}>
-                    {referenceEmbed?.refId === 'library' ? (
-                      <LibraryEmbed query={referenceEmbed.topic} />
-                    ) : referenceEmbed?.refId === 'compliance' ? (
-                      <ComplianceEmbed initialTab="foryou" />
-                    ) : referenceEmbed?.refId === 'compliance-cert-check' ? (
-                      <ComplianceEmbed initialTab="records" cert={referenceEmbed.cert} />
-                    ) : referenceEmbed?.refId === 'threats' ? (
-                      // The CRQC threat-horizon step opens the Horizon tab directly,
-                      // not the default Threat Catalog list (mirrors ComplianceEmbed).
-                      <ThreatsEmbed initialTab="horizon" />
-                    ) : (
-                      <ReferenceComp />
-                    )}
-                  </Suspense>
-                ) : scenarioEmbed ? (
-                  // C3: live sandbox lab embedded under the header (passes the scenario
-                  // id directly — the component falls back to the route param off-sim).
-                  <SandboxScenarioEmbed scenarioId={scenarioEmbed.scenarioId} />
-                ) : architectureEmbed ? (
-                  // WS-04: the edge-migration decision step, reachable from the ladder
-                  // in every mode — not just the Expert rail's power-user panel.
-                  <div className="p-4">
-                    <ArchitecturePanel
-                      size={size as 'small' | 'mid' | 'large' | 'global'}
-                      country={country}
-                      p5Frac={p5Frac}
+                      <Suspense fallback={<EmbedLoading label="Loading module" />}>
+                        <LearnComp />
+                      </Suspense>
+                    </EmbeddedLearnProvider>
+                  ) : ActivityComp ? (
+                    <Suspense fallback={<EmbedLoading />}>
+                      <ActivityComp />
+                    </Suspense>
+                  ) : WorkshopComp ? (
+                    // Workshop/playground tools need the SAME provider stack the standalone
+                    // /playground page wraps them in (HSM + Settings + KeyStore + Operations)
+                    // — otherwise HSM-backed tools (the VPN/SSH/HSM sims) crash with
+                    // "useHsmContext must be used within HsmProvider". PlaygroundProvider is a
+                    // pure context wrapper (HSM init is lazy), so it's cheap for non-HSM tools.
+                    <PlaygroundProvider>
+                      <Suspense fallback={<EmbedLoading label="Loading workshop" />}>
+                        <WorkshopComp initialStep={workshopEmbed?.step} />
+                      </Suspense>
+                    </PlaygroundProvider>
+                  ) : timelineEmbed ? (
+                    // C6: Gantt chart embedded in the sim, scoped to the player's assessed
+                    // country (or the step's ?country= / ?region= param if present).
+                    <TimelineEmbed
+                      scope={{
+                        ...parseTimelineScope(timelineEmbed.to),
+                        // fall back to assessed jurisdiction when the step carries no scope
+                        country:
+                          parseTimelineScope(timelineEmbed.to).country ??
+                          assessJurisdiction?.displayName,
+                      }}
                     />
-                  </div>
-                ) : null}
-              </div>
+                  ) : catalogEmbed ? (
+                    // The redesigned Migrate (MigrationWorkbench) embedded under the sim
+                    // header — same component the /migrate route uses (its `embedded`
+                    // prop hides the PageHeader and keeps filter state off the URL). The
+                    // catalogId opens it on the matching view (discovery domain / pilots).
+                    <MigrateWorkbenchEmbed catalogId={catalogEmbed.catalogId} />
+                  ) : algorithmTabEmbed ? (
+                    // C5-full: every Algorithms tab via SIM_ALGORITHM_TABS. Review tabs
+                    // (Protocol Support) mount with no confirm; "choice that counts" tabs
+                    // (Transition / Detailed) get the confirm → artifact handler.
+                    (() => {
+                      const spec = SIM_ALGORITHM_TABS[algorithmTabEmbed.refId]
+                      if (!spec) return null
+                      const Embed = spec.Component
+                      const isChoice = spec.completion !== 'review'
+                      return (
+                        <Embed
+                          onConfirm={isChoice ? handleConfirmAlgorithmTab : undefined}
+                          confirmed={isChoice ? refDone(algorithmTabEmbed.refId) : undefined}
+                        />
+                      )
+                    })()
+                  ) : ReferenceComp ? (
+                    // Full-page reference (Migrate, …) embedded under the header instead
+                    // of navigating the player out to its own route.
+                    <Suspense fallback={<EmbedLoading />}>
+                      {referenceEmbed?.refId === 'library' ? (
+                        <LibraryEmbed query={referenceEmbed.topic} />
+                      ) : referenceEmbed?.refId === 'compliance' ? (
+                        <ComplianceEmbed initialTab="foryou" />
+                      ) : referenceEmbed?.refId === 'compliance-cert-check' ? (
+                        <ComplianceEmbed initialTab="records" cert={referenceEmbed.cert} />
+                      ) : referenceEmbed?.refId === 'threats' ? (
+                        // The CRQC threat-horizon step opens the Horizon tab directly,
+                        // not the default Threat Catalog list (mirrors ComplianceEmbed).
+                        <ThreatsEmbed initialTab="horizon" />
+                      ) : (
+                        <ReferenceComp />
+                      )}
+                    </Suspense>
+                  ) : scenarioEmbed ? (
+                    // C3: live sandbox lab embedded under the header (passes the scenario
+                    // id directly — the component falls back to the route param off-sim).
+                    <SandboxScenarioEmbed scenarioId={scenarioEmbed.scenarioId} />
+                  ) : architectureEmbed ? (
+                    // WS-04: the edge-migration decision step, reachable from the ladder
+                    // in every mode — not just the Expert rail's power-user panel.
+                    <div className="p-4">
+                      <ArchitecturePanel
+                        size={size as 'small' | 'mid' | 'large' | 'global'}
+                        country={country}
+                        p5Frac={p5Frac}
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              </EmbedRunContextProvider>
             </div>
           </div>
         ) : (
@@ -3394,7 +3655,12 @@ export function SimulationView() {
                               </div>
                               <div className="flex gap-1.5 font-mono text-sim-micro text-muted-foreground">
                                 <span>
-                                  {isCleared ? 'cleared' : current ? 'active' : 'locked'} ·{' '}
+                                  {/* W6.6: every phase is selectable — the rail
+                                      is navigation, not a maturity gate. This
+                                      said "locked", which described neither the
+                                      navigation (open) nor the gate (earned by
+                                      evidence, not by phase order). */}
+                                  {isCleared ? 'cleared' : current ? 'active' : 'not started'} ·{' '}
                                   {MATURITY_LEVEL_NAMES[dlv]}
                                 </span>
                                 {owner && <span className="font-bold text-primary">· you</span>}
@@ -4986,6 +5252,12 @@ export function SimulationView() {
             achievedYear: objectiveAchievedYears[o.id],
           }))}
           maturity={scoreboard.maturity}
+          seat={seat}
+          learnerShare={
+            evidence.length
+              ? evidence.filter((e) => e.origin === 'learner').length / evidence.length
+              : 1
+          }
           claimsFullFrameworkMaturity={claimsFullFrameworkMaturity}
           programEndYear={getScenario(country).programEndYear}
           score={computeRunScore({

@@ -163,3 +163,41 @@ describe('SimRunComplete (run-end ceremony)', () => {
     expect(screen.getByTestId('run-grade-card')).toHaveTextContent('D')
   })
 })
+
+describe('persona debriefs (W7.4)', () => {
+  it('gives each seat its own next action and evidence obligation', () => {
+    const seen = new Set<string>()
+    for (const seat of [
+      'executive',
+      'grc',
+      'architect',
+      'developer',
+      'ops',
+      'researcher',
+      'curious',
+    ]) {
+      const { unmount } = renderCeremony({ seat })
+      expect(screen.getByText(new RegExp(`Your debrief · ${seat}`, 'i'))).toBeInTheDocument()
+      expect(screen.getByText(/Next action:/i)).toBeInTheDocument()
+      // read the whole paragraph, not just the bold label inside it
+      const obligation = screen.getByText(/Evidence you owe:/i).closest('p')?.textContent ?? ''
+      expect(obligation.length).toBeGreaterThan(40)
+      seen.add(obligation)
+      unmount()
+    }
+    // every seat gets DIFFERENT content — not one debrief relabelled.
+    // GRC is deliberately distinct from executive: sponsorship vs assurance.
+    expect(seen.size).toBe(7)
+  })
+
+  it('says plainly when a run was mostly watched rather than done', () => {
+    renderCeremony({ seat: 'curious', learnerShare: 0 })
+    expect(screen.getByText(/mostly a demonstration you watched/i)).toBeInTheDocument()
+    expect(screen.getByText(/not a record that you carried one out/i)).toBeInTheDocument()
+  })
+
+  it('does not claim competence when the learner did the work themselves', () => {
+    renderCeremony({ seat: 'developer', learnerShare: 1 })
+    expect(screen.getByText(/evidence is work you did yourself/i)).toBeInTheDocument()
+  })
+})

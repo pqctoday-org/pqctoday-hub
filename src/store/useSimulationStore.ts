@@ -20,6 +20,28 @@ import { validateSave, SAVE_SCHEMA_VERSION, SAVE_KIND } from '@/simulation/saveS
 const DIFFICULTIES: DifficultyId[] = ['easy', 'realistic', 'hard']
 
 /** A decision the player has already submitted for one tree step. */
+/** The persisted shape of an open resource — a TreeStep, kept structural so the
+ *  store does not depend on the simulation's own module graph. */
+export interface SimOpenStep {
+  kind: string
+  label: string
+  to: string
+  moduleId?: string
+  artifactType?: string
+  refId?: string
+  workshopId?: string
+  catalogId?: string
+  scenarioId?: string
+  minDecisions?: number
+}
+
+/** Structural guard used by both the rehydrate migration and save import. */
+export const isOpenStep = (v: unknown): v is SimOpenStep =>
+  typeof v === 'object' &&
+  v !== null &&
+  typeof (v as Record<string, unknown>).kind === 'string' &&
+  typeof (v as Record<string, unknown>).to === 'string'
+
 export interface DecisionAttempt {
   /** Index of the option chosen, in the order the player actually saw. */
   index: number
@@ -102,6 +124,16 @@ export interface SimulationState {
    *  Decide even if they were working in Resources. Still resets to 'decide' on
    *  a deliberate phase switch, which is a different thing from a reload. */
   activeTab: string
+  /** W5.5 — the STEP whose resource is open in the embed pane, or null when the
+   *  player is on the board. Persisted so a reload returns to the RESOURCE, not
+   *  just the tab.
+   *
+   *  The whole step is stored rather than a lookup key: the Resources tab
+   *  builds steps from the phase RESOURCE MAP, which surfaces resources that
+   *  are not gating steps of any tree (e.g. `/learn/quantum-threats`), so no
+   *  tree lookup could ever resolve them back. Storing what was opened avoids
+   *  re-deriving it — and avoids a second copy of that derivation drifting. */
+  openStepRef: SimOpenStep | null
   /** W4.6 — whether the OPTIONAL cyber-insurance hypothetical is switched on.
    *  Default false: the scenario used to compute a policy limit automatically
    *  and subtract it from quantum exposure, which read as coverage the player
@@ -219,6 +251,8 @@ export interface SimulationState {
   autoCompleteSteps: (keys: string[]) => void
   /** Cancel auto-completion for a phase (remove its `${phase}::` keys). */
   clearAuto: (phase: string) => void
+  /** W5.5 — remember (or clear) the open resource. */
+  setOpenStepRef: (step: SimOpenStep | null) => void
   /** W5.5 — select the phase tab. */
   setActiveTab: (tab: string) => void
   /** W4.6 — toggle the optional cyber-insurance hypothetical. */
@@ -288,6 +322,7 @@ const SEED = {
   attempts: {} as Record<string, DecisionAttempt>,
   insuranceAssumed: false,
   activeTab: 'decide',
+  openStepRef: null as SimOpenStep | null,
   seed: 0, // replaced with a fresh seed on create / reset / migrate
   difficulty: 'realistic' as DifficultyId,
   securedBudgetM: 0,
@@ -356,6 +391,7 @@ export function migrateSimulationState(persisted: unknown) {
     attempts: isRecord(s.attempts) ? (s.attempts as Record<string, DecisionAttempt>) : {},
     insuranceAssumed: typeof s.insuranceAssumed === 'boolean' ? s.insuranceAssumed : false,
     activeTab: typeof s.activeTab === 'string' ? s.activeTab : 'decide',
+    openStepRef: isOpenStep(s.openStepRef) ? s.openStepRef : null,
     seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
     difficulty: asDifficulty(s.difficulty),
     tourSeen: typeof s.tourSeen === 'boolean' ? s.tourSeen : false,
@@ -411,6 +447,7 @@ const saveSlice = (s: SimulationState): SimulationData => ({
   attempts: s.attempts,
   insuranceAssumed: s.insuranceAssumed,
   activeTab: s.activeTab,
+  openStepRef: s.openStepRef,
   // W5: the run's results depend on this — omitting it made every export
   // silently lose the on-time objective record it is graded against.
   objectiveAchievedYears: s.objectiveAchievedYears,
@@ -447,6 +484,7 @@ function fromSave(s: Record<string, unknown>) {
     attempts: isRecord(s.attempts) ? (s.attempts as Record<string, DecisionAttempt>) : {},
     insuranceAssumed: typeof s.insuranceAssumed === 'boolean' ? s.insuranceAssumed : false,
     activeTab: typeof s.activeTab === 'string' ? s.activeTab : 'decide',
+    openStepRef: isOpenStep(s.openStepRef) ? s.openStepRef : null,
     objectiveAchievedYears: isRecord(s.objectiveAchievedYears)
       ? (s.objectiveAchievedYears as Record<string, number>)
       : {},
@@ -564,6 +602,7 @@ export const useSimulationStore = create<SimulationState>()(
       clearAuto: (phase) =>
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
       setActiveTab: (activeTab) => set({ activeTab }),
+      setOpenStepRef: (openStepRef) => set({ openStepRef }),
       setInsuranceAssumed: (insuranceAssumed) => set({ insuranceAssumed }),
       recordAttempt: (key, index, correct) =>
         set((s) =>

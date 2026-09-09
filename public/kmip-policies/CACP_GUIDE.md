@@ -405,12 +405,15 @@ and each has a hands-on surface:
 - **Conformance baseline.** The native CI gate pins an exact 99 PASS /
   3 deprecated-skip on the 102 OASIS tests (DSA Register no longer among
   the skips — accepted for storage, **G4**). The playground's own Corpus
-  Replay figure needs re-measuring against the rebuilt wasm bundle before
-  this paragraph's wasm-seam breakdown can be corrected with real numbers
-  rather than guessed ones — the MaximumResponseSize-seam gap this
-  historically described predates tonight's Interop-gate fix, and the
-  hub's own test already asserts zero transport-skips, so this text is
-  stale independent of that fix too.
+  Replay now matches it EXACTLY (99 PASS / 3 SKIP_DEPRECATED / 0
+  everything else, re-measured 2026-09-08 against the wasm bundle rebuilt
+  from hsm #229) — full parity, no wasm-seam gap left at all. Two hub-side
+  bugs were hiding behind the Interop-gate failure until then: the hub's
+  own XML parser had a stale copy of the exact type-aliasing bug hsm's G1
+  fixed (Identifier/Reference/NameReference silently downgraded to
+  TextString), and `classify.ts` still hard-skipped the two DSA
+  transcripts as deprecated after G4 made them genuinely pass. Both fixed
+  the same day.
   The RNG-seed-mode gap this used to also list is closed: the three
   per-test-RngSeedMode corpus tests now pass by booting the wasm engine
   pinned to each test's mode via its constructor. Re-verified 2026-07-10

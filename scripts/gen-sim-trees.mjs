@@ -181,6 +181,44 @@ const E = (minDecisions, label) => ({
   minDecisions,
 })
 
+// REC() — a RECURRENCE step (W2.4). The framework's higher maturity indicators
+// mostly describe an EXISTING activity operated again over time ("QRA updated
+// quarterly", "auto-updated on deployment", "reported to board quarterly").
+// Those cannot be satisfied by opening a page or filing one document, so this
+// step clears only when its prerequisite artifact has been recorded in
+// `quarters + 1` DISTINCT reporting periods of the run. `artifactType` is
+// deliberately NOT set: this is not an activity step and must not satisfy one.
+const REC = (recurrenceOf, quarters, label) => {
+  if (!ART_TOOL[recurrenceOf]) throw new Error(`no tool for artifact ${recurrenceOf}`)
+  return {
+    kind: 'recurrence',
+    label,
+    to: `/business/tools/${ART_TOOL[recurrenceOf]}`,
+    recurrenceOf,
+    recurrenceQuarters: quarters,
+  }
+}
+
+// M() — a MEASURE step (W2.5). Most L2-L4 indicators state an operating
+// CONDITION ("Year 1 budget secured", "≥70% Tier-1 coverage", "2+ production
+// pilots"), and producing a document about a condition is not reaching it. A
+// measure step reads a real run value and clears only at the threshold the
+// criterion itself states — so the THRESHOLD lives here, next to the band it
+// came from, and a reader can check it against the quoted indicator.
+const KNOWN_METRICS = new Set([
+  'budget-secured-pct',
+  'inventory-coverage-pct',
+  'migration-decisions',
+  'migration-coverage-pct',
+  'evidence-records',
+  'learner-evidence-records',
+  'reporting-periods-elapsed',
+])
+const M = (metricId, minValue, label) => {
+  if (!KNOWN_METRICS.has(metricId)) throw new Error(`unknown run metric ${metricId}`)
+  return { kind: 'measure', label, to: '/simulation', metricId, minValue }
+}
+
 // ---- per-phase Maturity Indicators (verbatim, Applied Quantum v2.1) ---------
 const INDICATORS = {
   p0: {
@@ -361,6 +399,11 @@ const FRAMEWORK = {
         A('program-charter', 'Produce the Program Charter'),
         A('board-deck', 'Pitch the board for the mandate'),
         A('kpi-dashboard', 'Set the board KPI pack (Coverage/Trust/Inventory/Vendors/Agility)'),
+        M(
+          'budget-secured-pct',
+          60,
+          'Secure Year 1 funding — the criterion is budget SECURED, not a charter written'
+        ),
       ],
     },
     {
@@ -375,6 +418,28 @@ const FRAMEWORK = {
         L('data-asset-sensitivity', 'Learn: Data & Asset Sensitivity'),
         R('assess-engine', 'Run the scoping assessment engine'),
         A('initial-scoping', 'Produce the scoping & asset assessment'),
+        M(
+          'budget-secured-pct',
+          90,
+          'Commit the multi-year budget — L3 requires committed funding, not a scoping document alone'
+        ),
+      ],
+    },
+    {
+      level: 4,
+      id: '0.3-board-cycle',
+      adaptationOf: '0.3',
+      title: 'Operate the governance cadence: recurring board reporting',
+      decision:
+        'Report quantum risk to the board on the same cadence as other strategic risks — a one-off briefing is not governance.',
+      do: 'Advance a reporting period and take the board update again, so quantum risk is carried in the enterprise risk register with an owner, a review date and a follow-up rather than being raised once.',
+      output: 'Recurring board update + enterprise-risk entry',
+      steps: [
+        REC('board-deck', 1, 'Report to the board again in a later quarter (recurring cadence)'),
+        R(
+          'report',
+          'Reference: your program report — the record the board decision is minuted against'
+        ),
       ],
     },
   ],
@@ -519,6 +584,24 @@ const FRAMEWORK = {
         L('platform-eng-pqc', 'Deep dive — Learn: Platform Engineering & PQC'),
       ],
     },
+    {
+      level: 4,
+      id: '1.6-drift-cycle',
+      adaptationOf: '1.6',
+      title: 'Operate continuous discovery: drift detection over time',
+      decision:
+        'Re-run discovery after the estate changes and measure what moved — coverage you measured once is already out of date.',
+      do: 'Advance a reporting period, re-run the vulnerability watch, and account for the drift: what appeared, what changed, and how much of the estate is still unknown.',
+      output: 'Drift report + updated coverage and gap register',
+      steps: [
+        REC(
+          'crypto-vulnerability-watch',
+          1,
+          'Re-run the crypto vulnerability watch in a later quarter (drift detection)'
+        ),
+        R('migrate', 'Reference: the product estate the re-run inventory is measured against'),
+      ],
+    },
   ],
   p2: [
     {
@@ -600,6 +683,25 @@ const FRAMEWORK = {
           'soc-implementation-pqc',
           'Learn: involve the SOC — posture-registry integration and CBOM exfiltration monitoring'
         ),
+        REC(
+          'crypto-vulnerability-watch',
+          1,
+          'Re-run the watch in a later quarter — L3 requires freshness governance ENFORCED'
+        ),
+      ],
+    },
+    {
+      level: 4,
+      id: '2.3-cbom-refresh',
+      adaptationOf: '2.3',
+      title: 'Operate the CBOM: refreshed on deployment',
+      decision:
+        'A CBOM is a live operational asset — if it is not refreshed when something ships, it is documentation, not inventory.',
+      do: 'Advance a reporting period, re-issue the CBOM after a deployment or vendor change, and report its freshness plus any supplier evidence still unresolved.',
+      output: 'Refreshed CBOM + freshness and supplier-gap report',
+      steps: [
+        REC('crypto-cbom', 1, 'Re-issue the CBOM in a later quarter (auto-update on deployment)'),
+        R('migrate', 'Reference: the deployment/vendor changes the refresh must account for'),
       ],
     },
   ],
@@ -693,6 +795,41 @@ const FRAMEWORK = {
         ),
       ],
     },
+    {
+      level: 3,
+      id: '3.4-qra-recurring',
+      adaptationOf: '3.4',
+      title: 'Operate the QRA: quarterly refresh across the inventory',
+      decision:
+        'Re-score on a cadence using the expanded inventory and the legal/retention view — a QRA produced once describes an estate you no longer have.',
+      do: 'Advance a reporting period and refresh the QRA against the wider inventory, adding the legal/data-retention dimension, then explain which priorities changed and why.',
+      output: 'Refreshed QRA with changed priorities explained',
+      steps: [
+        REC('risk-register', 1, 'Refresh the risk register in a later quarter (quarterly QRA)'),
+        L(
+          'data-asset-sensitivity',
+          'Learn: legal and data-retention horizon — the L3 risk dimension'
+        ),
+      ],
+    },
+    {
+      level: 4,
+      id: '3.2-event-rescore',
+      adaptationOf: '3.2',
+      title: 'Operate risk posture: event-driven re-scoring',
+      decision:
+        'Re-score when the world changes — a new deadline or a changed exposure should move the backlog without waiting for the next quarter.',
+      do: 'After an event changes exposure or applicability, re-score the affected assets and carry the change into the enterprise risk and review evidence.',
+      output: 'Event-driven re-score + enterprise-risk propagation',
+      steps: [
+        REC(
+          'risk-treatment-plan',
+          2,
+          'Re-issue the risk treatment plan after a later event (event-driven re-scoring)'
+        ),
+        R('timeline', 'Reference: the regulatory clock whose movement triggers a re-score'),
+      ],
+    },
   ],
   p4: [
     {
@@ -770,6 +907,11 @@ const FRAMEWORK = {
         ),
         R('report', 'Track gates on the Report page'),
         A('kpi-tracker', 'Track the roadmap on a quarterly cadence against gate criteria'),
+        REC(
+          'kpi-tracker',
+          1,
+          'Run the quarterly review again — L3 is reviews OPERATIONAL, not scheduled'
+        ),
       ],
     },
     {
@@ -780,7 +922,14 @@ const FRAMEWORK = {
         'Pre-approve an accelerated execution plan now, before you need it — a CRQC-timeline surprise is the wrong moment to start drafting one.',
       do: 'Pre-approve a contingency package with triggers, compressed sequence and activation authority. By Year 4–5, plan the roadmap\'s own transition from a project (with an end date) to ongoing posture management (with no end date) — disbanding the program at "done" orphans the capability the moment the next algorithm break or deadline shift hits.',
       output: 'Accelerated Execution Profile',
-      steps: [A('accelerated-execution-profile', 'Pre-draft the accelerated execution profile')],
+      steps: [
+        A('accelerated-execution-profile', 'Pre-draft the accelerated execution profile'),
+        REC(
+          'accelerated-execution-profile',
+          1,
+          'Re-issue the execution profile in a later quarter — L4 is a LIVING instrument, not a filed plan'
+        ),
+      ],
     },
   ],
   p5: [
@@ -896,6 +1045,11 @@ const FRAMEWORK = {
         // either).
         R('library', 'Reference: staged-rollout & wave-sequencing patterns in the Library'),
         E(4, 'Extend pattern decisions across the wave — cover more of your unlocked connections'),
+        M(
+          'migration-coverage-pct',
+          40,
+          'Migrate Tier-1 connections for real — the criterion is systems ON hybrid/PQC, not a rollout plan'
+        ),
       ],
     },
     {
@@ -922,7 +1076,14 @@ const FRAMEWORK = {
         'Let AI triage and draft, but keep full human review on any AI-modified cryptographic code — that review gate never closes.',
       do: 'Use AI to triage and enrich, but keep full review rigor on AI-modified cryptographic code.',
       output: null,
-      steps: [A('crypto-api-refactor', 'Audit AI-assisted crypto refactors')],
+      steps: [
+        A('crypto-api-refactor', 'Audit AI-assisted crypto refactors'),
+        M(
+          'migration-coverage-pct',
+          80,
+          'Carry the rollout across the estate — L4 is deployment substantially COMPLETE, not documented'
+        ),
+      ],
       // Added 07062026 (Wave 3) — untouched verticals, no required-module
       // anchor; placed here since 5.7 is P5's thinnest band (1 required step).
       // NOTE: the plan also proposed the digital-id/bitcoin-flow/solana-flow/
@@ -936,6 +1097,11 @@ const FRAMEWORK = {
       deepDive: [
         L('digital-id', 'Deep dive — Learn: Digital ID'),
         L('digital-assets', 'Deep dive — Learn: Digital Assets'),
+        M(
+          'migration-coverage-pct',
+          80,
+          'Carry the rollout across the estate — L4 is deployment substantially COMPLETE, not documented'
+        ),
       ],
     },
   ],
@@ -1079,6 +1245,44 @@ const FRAMEWORK = {
       // an open design question for a properly scoped follow-up, not a
       // Wave-0 string fix.
     },
+    {
+      level: 1,
+      id: '6.1-infra-awareness',
+      adaptationOf: '6.1',
+      title: 'Recognise the infrastructure constraints before planning',
+      decision:
+        'Understand what PQC does to PKI, HSMs and the network path before committing to any modernization plan.',
+      do: 'Identify which PKI, HSM/KMS and network components the migration touches, and explain the constraint each one imposes — larger keys and signatures, hardware support, middlebox behaviour. Awareness only: no plans yet.',
+      output: 'Stated infrastructure constraints',
+      steps: [
+        R(
+          'algorithms-transition',
+          'Reference: classical → PQC transition — what changes in keys, signatures and certificates'
+        ),
+        R(
+          'algorithms-detailed',
+          'Reference: detailed algorithm comparison — the size and performance constraints infrastructure has to absorb'
+        ),
+      ],
+    },
+    {
+      level: 4,
+      id: '6.5-capacity-cycle',
+      adaptationOf: '6.5',
+      title: 'Operate infrastructure at production scale: capacity and monitoring',
+      decision:
+        'Validate capacity against real thresholds and keep measuring — a baseline taken once will not catch drift.',
+      do: 'Advance a reporting period, re-run the capacity plan against the measured load, and treat any monitoring drift as a corrective action to be re-measured rather than noted.',
+      output: 'Re-validated capacity plan + corrective action',
+      steps: [
+        REC(
+          'infra-modernization-plan',
+          1,
+          'Re-validate the infrastructure plan in a later quarter (production-scale capacity)'
+        ),
+        W('hsm-capacity', 'Practice: HSM capacity — measure headroom against the threshold'),
+      ],
+    },
   ],
   p7: [
     {
@@ -1162,6 +1366,11 @@ const FRAMEWORK = {
       steps: [
         A('stakeholder-comms', 'Plan dual-stack windows & deprecation comms for counterparties'),
         A('risk-register', 'Record the counterparty refusal decision in the risk register'),
+        REC(
+          'kpi-dashboard',
+          1,
+          'Report to the SteerCo again in a later quarter — L3 is reported, not produced'
+        ),
       ],
     },
     {
@@ -1173,6 +1382,24 @@ const FRAMEWORK = {
       do: 'Define the provider/customer migration boundary and govern SaaS by sensitivity.',
       output: 'Cloud responsibility & SaaS governance',
       steps: [A('cloud-responsibility-matrix', 'Map the cloud responsibility split')],
+    },
+    {
+      level: 4,
+      id: '7.5-vendor-governance-cycle',
+      adaptationOf: '7.5',
+      title: 'Operate vendor governance as a permanent function',
+      decision:
+        'Verify what suppliers actually delivered and keep the review running — a signed commitment is not delivered PQC.',
+      do: 'Advance a reporting period and re-score the vendor portfolio: which commitments were met, which bridging patterns can now be retired, what open-source dependencies are tracked, and when the next review falls.',
+      output: 'Re-scored vendor portfolio + next governance review',
+      steps: [
+        REC(
+          'vendor-scorecard',
+          1,
+          'Re-score vendors in a later quarter (permanent BAU governance)'
+        ),
+        R('compliance', 'Reference: supplier certification evidence behind a delivery claim'),
+      ],
     },
   ],
   foundations: [
@@ -1598,6 +1825,23 @@ mkdirSync(join(OUT, 'archive'), { recursive: true })
 
 for (const phase of Object.keys(FRAMEWORK)) {
   const acts = FRAMEWORK[phase]
+  // Guard (added after the SAME sparse-array bug bit twice): a stray `,,` in a
+  // steps array creates a HOLE, which JSON.stringify emits as `null` and which
+  // then crashes four unrelated suites with "Cannot read properties of null".
+  // Fail here instead, naming the activity, so the next person reads one clear
+  // error rather than tracing a null step back to a comma.
+  for (const a of acts) {
+    if (!a || typeof a !== 'object')
+      throw new Error(`${phase}: empty slot in the activity array — check for a stray comma`)
+    for (const [i, st] of (a.steps ?? []).entries()) {
+      if (!st) throw new Error(`${phase}/${a.id}: steps[${i}] is empty — stray comma in the array`)
+      if (!st.kind || !st.to)
+        throw new Error(`${phase}/${a.id}: steps[${i}] has no kind/to — ${JSON.stringify(st)}`)
+    }
+    for (const [i, st] of (a.deepDive ?? []).entries()) {
+      if (!st) throw new Error(`${phase}/${a.id}: deepDive[${i}] is empty — stray comma`)
+    }
+  }
   const levelsPresent = [...new Set(acts.map((a) => a.level))].sort((x, y) => x - y)
   const levels = levelsPresent.map((level) => ({
     level,
