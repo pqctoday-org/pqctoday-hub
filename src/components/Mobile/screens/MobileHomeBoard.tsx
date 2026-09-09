@@ -200,7 +200,7 @@ export function MobileHomeBoard({
             className={cn(
               'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11.5px]',
               i === 0
-                ? 'border-accent/30 bg-accent/10 text-accent'
+                ? 'border-accent/30 bg-accent/10 text-accent-legible'
                 : 'border-border bg-muted/30 text-muted-foreground'
             )}
           >

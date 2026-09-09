@@ -108,7 +108,7 @@ export const WORKSHOP_NAME_BY_ID: Record<string, string> = Object.fromEntries(
 )
 
 const PROVENANCE_CLASS: Record<SideCardProvenance, string> = {
-  sourced: 'border-accent/30 bg-accent/10 text-accent',
+  sourced: 'border-accent/30 bg-accent/10 text-accent-legible',
   illustrative: 'border-border bg-muted/40 text-muted-foreground',
   // Distinct from illustrative: this is us talking, not your data pending.
   guidance: 'border-primary/25 bg-primary/5 text-primary/90',
@@ -186,7 +186,7 @@ export function PersonaBoardView({
               className={cn(
                 'h-auto rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors',
                 selected
-                  ? 'border-primary/50 bg-primary/10 text-primary'
+                  ? 'border-primary/50 bg-primary/10 text-primary-legible'
                   : 'border-border bg-muted/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'
               )}
             >
@@ -251,7 +251,7 @@ export function PersonaBoardView({
                 className={cn(
                   'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs',
                   i === 0
-                    ? 'border-accent/30 bg-accent/10 text-accent'
+                    ? 'border-accent/30 bg-accent/10 text-accent-legible'
                     : 'border-border bg-muted/30 text-muted-foreground'
                 )}
               >

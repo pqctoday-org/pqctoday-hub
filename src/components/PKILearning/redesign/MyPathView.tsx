@@ -200,12 +200,12 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
               onClick={() => setTier(t)}
               className={`h-auto px-3 py-1.5 rounded-md text-xs font-semibold ${
                 active
-                  ? 'bg-primary/15 text-primary hover:bg-primary/15'
+                  ? 'bg-primary/15 text-primary-legible hover:bg-primary/15'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {t === 'essentials' ? 'Essentials' : 'Full track'}{' '}
-              <span className="font-normal opacity-70">{formatHours(minutes)}</span>
+              <span className="font-normal">{formatHours(minutes)}</span>
             </Button>
           )
         })}

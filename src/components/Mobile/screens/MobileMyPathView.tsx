@@ -124,11 +124,11 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
               onClick={() => setTier(t)}
               className={cn(
                 'h-9 rounded-md px-3 text-[11.5px] font-bold',
-                active ? 'bg-card text-primary' : 'text-muted-foreground'
+                active ? 'bg-card text-primary-legible' : 'text-muted-foreground'
               )}
             >
               {t === 'essentials' ? 'Essentials' : 'Full track'}{' '}
-              <span className="font-normal opacity-70">{formatHours(minutes)}</span>
+              <span className="font-normal">{formatHours(minutes)}</span>
             </Button>
           )
         })}

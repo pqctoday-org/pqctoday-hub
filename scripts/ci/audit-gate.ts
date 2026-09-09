@@ -42,7 +42,20 @@ interface Exception {
 // exception that no longer matches any advisory is dead weight that would silently
 // pre-authorise a future advisory with the same id. Add a new entry only with a reason
 // that says why it cannot be fixed AND why it is unreachable, plus a recheck date.
-const EXCEPTIONS: Exception[] = []
+const EXCEPTIONS: Exception[] = [
+  {
+    ghsa: 'GHSA-rgj7-g3m4-5g8c',
+    package: 'sharp',
+    reason:
+      'libheif HEIC/HEIF-decode vulnerabilities in sharp <0.35.4; no fix available upstream ' +
+      'as of 2026-09-09. sharp is a transitive dependency of @huggingface/transformers, ' +
+      "pulled in only by this app's TEXT embedding pipeline (bge-small, used by " +
+      'embeddingRetrieval.ts / scripts/build-embedding-index.ts for RAG search) — no code ' +
+      'path here ever runs image preprocessing through transformers.js, so the vulnerable ' +
+      'HEIC/HEIF decode path in sharp is never invoked.',
+    recheckAfter: '2026-12-01',
+  },
+]
 
 /** Severities that fail the build when unlisted. */
 const BLOCKING = new Set(['high', 'critical'])
