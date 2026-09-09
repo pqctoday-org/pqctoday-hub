@@ -29,6 +29,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.83.0] - 2026-09-09
+
+### Added
+
+- **Every migration phase now has a complete maturity ladder, with no "open a page" shortcuts** [view:/simulation] [persona:executive] [persona:grc]: the seven maturity levels the audit found missing across phases are filled in honestly — recurring activities like "QRA updated quarterly" now require you to actually demonstrate that cadence more than once during the run, not just visit a page once.
+- **The phone version of the Simulation now has Progress and Resources views** [view:/simulation] [persona:executive] [persona:curious]: Progress shows every band's status and how much of your evidence came from demonstrations versus your own work; Resources lists what each phase's gating steps are for. Embedded desktop tools now show which profile and phase opened them, and how to get back.
+- **Each closing debrief is now personalized to your seat** [view:/simulation] [persona:executive] [persona:grc]: instead of one generic ceremony, sponsorship (funding, ownership, risk acceptance) and assurance (applicability, evidence gaps, review cadence) are addressed separately, and a debrief built mostly from demonstrations says so plainly rather than implying you carried out a real migration.
+
+### Fixed
+
+- **Phases that hadn't started were mislabeled "locked"** [view:/simulation] [persona:curious]: the phase rail and entry screen now say "not started," since phases aren't actually sequentially gated.
+
 ## [4.82.1] - 2026-09-08
 
 ### Fixed
