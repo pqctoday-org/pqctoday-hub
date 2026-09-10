@@ -278,7 +278,7 @@
   {
     "term": "JSON Web Signature",
     "acronym": "JWS",
-    "definition": "A standard (RFC 7515) for digitally signing JSON payloads. JWS is the mechanism that makes JWTs tamper-proof — the signature covers the JOSE header and payload.",
+    "definition": "A standard (RFC 7515) for digitally signing JSON payloads. JWS is the mechanism that makes JWTs tamper-proof \u2014 the signature covers the JOSE header and payload.",
     "technicalNote": "PQC migration requires new JWS algorithm identifiers (e.g., ML-DSA-44, ML-DSA-65) registered via the IETF JOSE PQC draft. Signature sizes grow from 64 bytes (ES256) to ~2,420 bytes (ML-DSA-44).",
     "relatedModule": "/learn/api-security-jwt",
     "complexity": "intermediate",
@@ -296,7 +296,7 @@
   {
     "term": "JOSE",
     "definition": "JSON Object Signing and Encryption, the IETF framework encompassing JWS, JWE, JWK, and JWA specifications. JOSE defines how to sign, encrypt, and represent cryptographic keys in JSON format.",
-    "technicalNote": "The IETF JOSE working group is standardizing PQC algorithm identifiers (ML-DSA, ML-KEM, SLH-DSA) for use in JOSE headers. The framework was designed for algorithm agility — only the \"alg\" header value changes.",
+    "technicalNote": "The IETF JOSE working group is standardizing PQC algorithm identifiers (ML-DSA, ML-KEM, SLH-DSA) for use in JOSE headers. The framework was designed for algorithm agility \u2014 only the \"alg\" header value changes.",
     "relatedModule": "/learn/api-security-jwt",
     "complexity": "intermediate",
     "category": "protocol"
@@ -428,7 +428,7 @@
   {
     "term": "Connection Coalescing",
     "definition": "An HTTP/2 and HTTP/3 optimization where a single TLS connection is reused for requests to multiple hostnames sharing the same IP address and TLS certificate, amortizing PQC handshake overhead across domains.",
-    "technicalNote": "With PQC hybrid handshakes adding 10-20KB overhead, connection coalescing becomes a critical mitigation — reducing the number of handshakes proportionally reduces total bandwidth impact.",
+    "technicalNote": "With PQC hybrid handshakes adding 10-20KB overhead, connection coalescing becomes a critical mitigation \u2014 reducing the number of handshakes proportionally reduces total bandwidth impact.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -446,7 +446,7 @@
     "term": "DNP3-SA",
     "acronym": "DNP3-SA",
     "definition": "DNP3 Secure Authentication (IEEE 1815.1). Challenge-response authentication for SCADA using HMAC-SHA256 with pre-shared Update Keys.",
-    "technicalNote": "Session authentication uses HMAC (quantum-safe). PQC impacts the RSA-based Update Key distribution. ML-KEM-768 ciphertext (1088 bytes) fits within DNP3 2048-byte fragment limit — a clean single-fragment migration.",
+    "technicalNote": "Session authentication uses HMAC (quantum-safe). PQC impacts the RSA-based Update Key distribution. ML-KEM-768 ciphertext (1088 bytes) fits within DNP3 2048-byte fragment limit \u2014 a clean single-fragment migration.",
     "relatedModule": "/learn/energy-utilities-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -464,7 +464,7 @@
     "term": "ICCP/TASE.2",
     "acronym": "ICCP",
     "definition": "Inter-Control Center Communications Protocol. Used for real-time data exchange between utility control centers, secured via TLS.",
-    "technicalNote": "ICCP links are internet-facing and carry real-time grid state data — the highest-priority PQC migration target under NERC CIP-012.",
+    "technicalNote": "ICCP links are internet-facing and carry real-time grid state data \u2014 the highest-priority PQC migration target under NERC CIP-012.",
     "relatedModule": "/learn/energy-utilities-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -490,7 +490,7 @@
     "term": "DDA",
     "acronym": "DDA",
     "definition": "Dynamic Data Authentication. An EMV card authentication method where the card generates a unique RSA signature per transaction, preventing cloning attacks.",
-    "technicalNote": "DDA requires the card chip to perform RSA signing using its private key. The terminal verifies via the EMVCo CA certificate chain (Root → Network CA → Issuer CA → ICC).",
+    "technicalNote": "DDA requires the card chip to perform RSA signing using its private key. The terminal verifies via the EMVCo CA certificate chain (Root \u2192 Network CA \u2192 Issuer CA \u2192 ICC).",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "intermediate",
     "category": "protocol"
@@ -562,7 +562,7 @@
     "term": "Agent-to-Agent Authentication",
     "acronym": "A2A",
     "definition": "Mutual authentication between autonomous AI agents using cryptographic credentials, enabling secure communication, task delegation, and transaction execution without human intermediation.",
-    "technicalNote": "A2A authentication typically uses mTLS with PQC certificates (ML-DSA for signing, ML-KEM for key exchange). Per-message signing adds bandwidth overhead — at 10K messages/second, ML-DSA-65 signatures add significant bandwidth compared to ECDSA, requiring careful protocol design.",
+    "technicalNote": "A2A authentication typically uses mTLS with PQC certificates (ML-DSA for signing, ML-KEM for key exchange). Per-message signing adds bandwidth overhead \u2014 at 10K messages/second, ML-DSA-65 signatures add significant bandwidth compared to ECDSA, requiring careful protocol design.",
     "relatedModule": "/learn/ai-security-pqc",
     "complexity": "advanced",
     "category": "protocol"
@@ -588,14 +588,14 @@
     "term": "CAN Bus",
     "acronym": "CAN",
     "definition": "Controller Area Network, the dominant in-vehicle serial bus protocol with an 8-byte (CAN 2.0) or 64-byte (CAN FD) payload per frame. CAN buses connect ECUs for powertrain, chassis, and body functions.",
-    "technicalNote": "CAN 2.0 payload (8 bytes) cannot carry any PQC signature in a single frame — even the smallest ML-DSA-44 signature (2,420 bytes) requires 303 CAN frames. CAN FD (64 bytes) is slightly better but still impractical for per-message PQC signing. Automotive Ethernet (1,500-byte MTU) is the PQC-feasible bus for ADAS and infotainment zones.",
+    "technicalNote": "CAN 2.0 payload (8 bytes) cannot carry any PQC signature in a single frame \u2014 even the smallest ML-DSA-44 signature (2,420 bytes) requires 303 CAN frames. CAN FD (64 bytes) is slightly better but still impractical for per-message PQC signing. Automotive Ethernet (1,500-byte MTU) is the PQC-feasible bus for ADAS and infotainment zones.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "intermediate",
     "category": "protocol"
   },
   {
     "term": "RFC 9794",
-    "definition": "IETF standard (2025) defining design rules for hybrid cryptographic schemes combining classical and post-quantum algorithms. Core rule: both the classical and PQC components of a hybrid scheme must complete successfully — no silent fallback is permitted if either component fails.",
+    "definition": "IETF standard (2025) defining design rules for hybrid cryptographic schemes combining classical and post-quantum algorithms. Core rule: both the classical and PQC components of a hybrid scheme must complete successfully \u2014 no silent fallback is permitted if either component fails.",
     "technicalNote": "RFC 9794 supersedes earlier hybrid design patterns and formalizes the \"security-conservative\" hybrid approach. Key rules: (1) shared secret = KDF(classical_secret || pqc_secret), (2) both KEMs must run to completion, (3) at least one algorithm from the set must be shared between peers, (4) ciphertext fragmentation from oversized ClientHellos (>1,400B) must not cause silent failure. Chrome 130+ and Cloudflare implement RFC 9794-compliant X25519+ML-KEM-768.",
     "relatedModule": "/learn/pqc-testing-validation",
     "complexity": "advanced",
@@ -662,8 +662,8 @@
   {
     "term": "PSK",
     "acronym": "Pre-Shared Key",
-    "definition": "In TLS 1.3, a symmetric key issued by the server after a full handshake and presented by the client on reconnection to enable session resumption — feeding into the Early Secret stage of a faster resumed handshake, optionally with 0-RTT early data.",
-    "technicalNote": "PSK-based resumption is itself symmetric-key and therefore not directly threatened by a quantum computer, but the PSK is only as trustworthy as the full handshake that established it — if that handshake's key exchange was classical (not hybrid ML-KEM), a harvested session ticket carries the same exposure forward.",
+    "definition": "In TLS 1.3, a symmetric key issued by the server after a full handshake and presented by the client on reconnection to enable session resumption \u2014 feeding into the Early Secret stage of a faster resumed handshake, optionally with 0-RTT early data.",
+    "technicalNote": "PSK-based resumption is itself symmetric-key and therefore not directly threatened by a quantum computer, but the PSK is only as trustworthy as the full handshake that established it \u2014 if that handshake's key exchange was classical (not hybrid ML-KEM), a harvested session ticket carries the same exposure forward.",
     "relatedModule": "/learn/tls-basics",
     "complexity": "intermediate",
     "category": "protocol"
@@ -672,9 +672,53 @@
     "term": "SNI",
     "acronym": "Server Name Indication",
     "definition": "A TLS extension carried in the ClientHello that tells the server which hostname the client is connecting to, so a single IP address can serve TLS certificates for multiple domains. Sent in plaintext in standard TLS.",
-    "technicalNote": "Because the ClientHello (and SNI within it) is unencrypted, it reveals which site a user is visiting even though the connection content is protected — a metadata leak Encrypted Client Hello (ECH) closes by encrypting the ClientHello using a key published in DNS. SNI/ECH is a transport-metadata concern orthogonal to PQC key exchange, not solved by it.",
+    "technicalNote": "Because the ClientHello (and SNI within it) is unencrypted, it reveals which site a user is visiting even though the connection content is protected \u2014 a metadata leak Encrypted Client Hello (ECH) closes by encrypting the ClientHello using a key published in DNS. SNI/ECH is a transport-metadata concern orthogonal to PQC key exchange, not solved by it.",
     "relatedModule": "/learn/tls-basics",
     "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Registration Authority",
+    "acronym": "RA",
+    "definition": "The entity in a PKI that verifies a certificate applicant's identity and authorizes issuance, then forwards the approved request to the Certificate Authority (already in this glossary) for signing.",
+    "technicalNote": "Separating the RA and CA roles lets an organization outsource identity vetting while keeping signing authority centralized.",
+    "relatedModule": "/learn/pki-workshop",
+    "complexity": "beginner",
+    "category": "protocol"
+  },
+  {
+    "term": "OAuth",
+    "acronym": "OAuth 2.0",
+    "definition": "An authorization framework (RFC 6749) that lets an application obtain limited access to a resource on a user's behalf via short-lived tokens, without handling the user's credentials directly.",
+    "technicalNote": "OpenID Connect, already in this glossary, is an identity layer built on top of OAuth 2.0.",
+    "relatedModule": "/learn/iam-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "COSE",
+    "acronym": "CBOR Object Signing and Encryption",
+    "definition": "The binary, CBOR-based counterpart to JOSE, used where compact encoding matters \u2014 IoT, constrained devices, WebAuthn/FIDO2 attestation.",
+    "technicalNote": "The IETF COSE and JOSE working groups are standardizing the same ML-DSA/ML-KEM/SLH-DSA algorithm identifiers across both formats.",
+    "relatedModule": "/learn/iot-ot-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "LAMPS",
+    "acronym": "Limited Additional Mechanisms for PKIX and SMIME",
+    "definition": "The IETF working group producing PQC and composite-signature specifications for X.509 certificates, CMS, and S/MIME \u2014 including the composite ML-DSA drafts this hub's own email-signing workshop implements.",
+    "relatedModule": "/learn/email-signing",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "VPN",
+    "acronym": "Virtual Private Network",
+    "definition": "A broad term for tunneling protocols \u2014 IPsec, WireGuard, TLS-based VPNs \u2014 that extend a private network across a public one.",
+    "technicalNote": "PQC migration for VPNs generally means adding a hybrid post-quantum key exchange to the underlying IKEv2, WireGuard, or TLS handshake.",
+    "relatedModule": "/learn/vpn-ssh-pqc",
+    "complexity": "beginner",
     "category": "protocol"
   }
 ]
