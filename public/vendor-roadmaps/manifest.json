@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-10T02:44:36.336135+00:00",
+  "generated": "2026-09-10T02:47:23.536566+00:00",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "vendor-roadmaps",
   "csv": "migrate_vendor_roadmap_09022026.csv",
@@ -575,15 +575,15 @@
     {
       "vendorId": "VND-390",
       "refId": "VND-390",
-      "url": "https://www.netapp.com/pdf.html?item=/media/17002-sb-3952.pdf",
+      "url": "https://assets.netapp.com/asset/7156b623-050c-41ff-a3ff-1e9e3adc1d22/Safeguarding-your-data-in-a-quantum-future-with-NetApp.pdf",
       "status": "recaptured",
-      "file": "vendor/VND-390.html",
-      "filename": "VND-390.html",
-      "sizeBytes": 22567,
-      "contentType": "text/html",
-      "sha256": "4cb4dda65d320af7f175410051f43b4e09f9bff2f1261f736cca413d0b2e1ac1",
-      "recaptured_at": "2026-09-10T02:44:36.336096+00:00",
-      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "file": "vendor/VND-390.pdf",
+      "filename": "VND-390.pdf",
+      "sizeBytes": 229545,
+      "contentType": "application/pdf",
+      "sha256": "00d97ba087d357d5b04a7502a5e00f9ecfc9455051bfbd04b0d904b030856cf1",
+      "recaptured_at": "2026-09-10T02:47:23.536166+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
       "superseded_file": null
     },
     {
