@@ -8,7 +8,7 @@
     {
       "threatId": "AERO-002",
       "refId": "AERO-002",
-      "label": "Satellite communication HNDL vulnerability: Military and commercial satellites have 15-25 year operational lifespans. NSA CNSA 2.0 mandates PQC for all national security systems including satellite uplink/downlink — NSS equipment must phase out quantum-vulnerable algorithms by 2033 (CNSA 2.0 FAQ Dec 2024 sets December 31, 2030 for phasing out non-CNSA 2.0 equipment, mandatory CNSA 2.0 use by December 31, 2031, full NSS quantum resistance by 2033). Currently intercepted satellite communications are harvestable for future quantum decryption.",
+      "label": "Satellite communication HNDL vulnerability: Military and commercial satellites have 15-25 year operational lifespans. NSA CNSA 2.0 mandates PQC for all national security systems including satellite uplink/downlink \u2014 NSS equipment must phase out quantum-vulnerable algorithms by 2033 (CNSA 2.0 FAQ Dec 2024 sets December 31, 2030 for phasing out non-CNSA 2.0 equipment, mandatory CNSA 2.0 use by December 31, 2031, full NSS quantum resistance by 2033). Currently intercepted satellite communications are harvestable for future quantum decryption.",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "status": "downloaded",
       "file": "threats/AERO-002.pdf",
@@ -178,7 +178,7 @@
     {
       "threatId": "CROSS-008",
       "refId": "CROSS-008",
-      "label": "NIST SP 800-227 KEM recommendations: Published as final standard on September 18, 2025 — initially released as Initial Public Draft in January 2025. Provides definitions, security properties, and implementation recommendations for key-encapsulation mechanisms as companion guidance to FIPS 203 (ML-KEM). Establishes best practices for KEM usage in protocols, hybrid constructions, and key management — essential reference for correct PQC deployment.",
+      "label": "NIST SP 800-227 KEM recommendations: Published as final standard on September 18, 2025 \u2014 initially released as Initial Public Draft in January 2025. Provides definitions, security properties, and implementation recommendations for key-encapsulation mechanisms as companion guidance to FIPS 203 (ML-KEM). Establishes best practices for KEM usage in protocols, hybrid constructions, and key management \u2014 essential reference for correct PQC deployment.",
       "url": "https://csrc.nist.gov/pubs/sp/800/227/final",
       "status": "downloaded",
       "file": "threats/CROSS-008.pdf",
@@ -191,7 +191,7 @@
     {
       "threatId": "CRYPTO-001",
       "refId": "CRYPTO-001",
-      "label": "Bitcoin’s quantum vulnerability depends on address type: P2PK outputs expose secp256k1 public keys directly, making them immediately susceptible to Shor’s algorithm. In contrast, P2PKH and P2WPKH addresses remain secure until their first spend reveals the underlying public key. This distinction is critical for migration planning, as only early P2PK coins and addresses that have already transacted are currently at risk.",
+      "label": "Bitcoin\u2019s quantum vulnerability depends on address type: P2PK outputs expose secp256k1 public keys directly, making them immediately susceptible to Shor\u2019s algorithm. In contrast, P2PKH and P2WPKH addresses remain secure until their first spend reveals the underlying public key. This distinction is critical for migration planning, as only early P2PK coins and addresses that have already transacted are currently at risk.",
       "url": "https://www.federalreserve.gov/econres/feds/files/2025093pap.pdf",
       "status": "downloaded",
       "file": "threats/CRYPTO-001.pdf",
@@ -217,7 +217,7 @@
     {
       "threatId": "CRYPTO-003",
       "refId": "CRYPTO-003",
-      "label": "Blockchain HNDL permanence risk: Distributed ledger networks face permanent data privacy risks from harvest-now-decrypt-later attacks even with future PQC deployment. On-chain transaction data is immutable — encrypted data harvested today remains accessible to future quantum decryption. Privacy-preserving blockchain protocols (Zcash, Monero) using zero-knowledge proofs and ring signatures over elliptic-curve cryptography face structural HNDL exposure that PQC migration cannot retroactively remediate.",
+      "label": "Blockchain HNDL permanence risk: Distributed ledger networks face permanent data privacy risks from harvest-now-decrypt-later attacks even with future PQC deployment. On-chain transaction data is immutable \u2014 encrypted data harvested today remains accessible to future quantum decryption. Privacy-preserving blockchain protocols (Zcash, Monero) using zero-knowledge proofs and ring signatures over elliptic-curve cryptography face structural HNDL exposure that PQC migration cannot retroactively remediate.",
       "url": "https://www.federalreserve.gov/econres/feds/files/2025093pap.pdf",
       "status": "downloaded",
       "file": "threats/CRYPTO-003.pdf",
@@ -322,7 +322,7 @@
     {
       "threatId": "FIN-004",
       "refId": "FIN-004",
-      "label": "Payment card environments face quantum risks as TLS 1.2 has been the PCI DSS minimum since 2018, while Requirement 12.3.3’s cipher inventory mandate became firm on April 1, 2025. Although PCI SSC published post-quantum guidance, PCI DSS 4.0 does not yet mandate PQC algorithms. Meanwhile, EMVCo chip authentication still relies on RSA, leaving legacy cryptographic foundations vulnerable during the transition.",
+      "label": "Payment card environments face quantum risks as TLS 1.2 has been the PCI DSS minimum since 2018, while Requirement 12.3.3\u2019s cipher inventory mandate became firm on April 1, 2025. Although PCI SSC published post-quantum guidance, PCI DSS 4.0 does not yet mandate PQC algorithms. Meanwhile, EMVCo chip authentication still relies on RSA, leaving legacy cryptographic foundations vulnerable during the transition.",
       "url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
       "status": "downloaded",
       "file": "threats/FIN-004.pdf",
@@ -348,7 +348,7 @@
     {
       "threatId": "AUS-FIN-001",
       "refId": "AUS-FIN-001",
-      "label": "Australia’s Big Four banks and major superannuation funds operate PKI infrastructure under APRA CPS 234, relying on RSA-2048 and ECDSA P-256 certificates. While ASD ISM-1490 mandates AES-256 for SECRET-classified data, no Australian standard currently establishes post-quantum cryptography migration timelines for the financial sector. This regulatory gap leaves critical information assets vulnerable during the transition to quantum-resistant algorithms.",
+      "label": "Australia\u2019s Big Four banks and major superannuation funds operate PKI infrastructure under APRA CPS 234, relying on RSA-2048 and ECDSA P-256 certificates. While ASD ISM-1490 mandates AES-256 for SECRET-classified data, no Australian standard currently establishes post-quantum cryptography migration timelines for the financial sector. This regulatory gap leaves critical information assets vulnerable during the transition to quantum-resistant algorithms.",
       "url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
       "status": "downloaded",
       "file": "threats/AUS-FIN-001.pdf",
@@ -387,7 +387,7 @@
     {
       "threatId": "GOV-002",
       "refId": "GOV-002",
-      "label": "CNSA 2.0 compliance deadline pressure: NSA mandates CNSA 2.0 compliance with phased deadlines — software/firmware signing supported and preferred by 2025 (exclusively by 2030), networking equipment supported and preferred by 2026 (exclusively by 2030), NSS acquisitions by January 2027, web browsers/servers/cloud supported and preferred by 2025 (exclusively by 2033), full transition by 2033.",
+      "label": "CNSA 2.0 compliance deadline pressure: NSA mandates CNSA 2.0 compliance with phased deadlines \u2014 software/firmware signing supported and preferred by 2025 (exclusively by 2030), networking equipment supported and preferred by 2026 (exclusively by 2030), NSS acquisitions by January 2027, web browsers/servers/cloud supported and preferred by 2025 (exclusively by 2033), full transition by 2033.",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "status": "downloaded",
       "file": "threats/GOV-002.pdf",
@@ -439,7 +439,7 @@
     {
       "threatId": "AUS-GOV-001",
       "refId": "AUS-GOV-001",
-      "label": "Harvest-now-decrypt-later attacks targeting Australian classified data: Foreign state actors actively intercepting and storing encrypted Australian government communications. ASD's Annual Cyber Threat Report 2023-2024 identifies nation-state actors targeting Australian government networks. Classified data encrypted with current RSA/ECDSA is at full Shor's-algorithm risk when CRQCs become available; AES-128 retains 64-bit effective security against Grover's algorithm (weakened, not broken) — AES-256 is the symmetric mitigation.",
+      "label": "Harvest-now-decrypt-later attacks targeting Australian classified data: Foreign state actors actively intercepting and storing encrypted Australian government communications. ASD's Annual Cyber Threat Report 2023-2024 identifies nation-state actors targeting Australian government networks. Classified data encrypted with current RSA/ECDSA is at full Shor's-algorithm risk when CRQCs become available; AES-128 retains 64-bit effective security against Grover's algorithm (weakened, not broken) \u2014 AES-256 is the symmetric mitigation.",
       "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
       "status": "downloaded",
       "file": "threats/AUS-GOV-001.html",
@@ -662,7 +662,7 @@
     {
       "threatId": "MEDIA-003",
       "refId": "MEDIA-003",
-      "label": "DVB conditional access systems rely on RSA and ECDSA for Entitlement Control and Management Message key distribution and device authentication, creating a significant quantum-vulnerable surface. While the symmetric DVB-CSA content scrambling layer remains secure against Shor’s algorithm, the asymmetric key management infrastructure is directly threatened by quantum computing advances. This exposure is critical because broadcast protection keys often possess multi-year validity, necessitating a post-quantum migration to prevent long-term decryption risks.",
+      "label": "DVB conditional access systems rely on RSA and ECDSA for Entitlement Control and Management Message key distribution and device authentication, creating a significant quantum-vulnerable surface. While the symmetric DVB-CSA content scrambling layer remains secure against Shor\u2019s algorithm, the asymmetric key management infrastructure is directly threatened by quantum computing advances. This exposure is critical because broadcast protection keys often possess multi-year validity, necessitating a post-quantum migration to prevent long-term decryption risks.",
       "url": "https://www.etsi.org/deliver/etsi_ts/103100_103199/103197/01.05.01_60/ts_103197v010501p.pdf",
       "status": "downloaded",
       "file": "threats/ETSI-TS-103-197-DVB-SimulCrypt.pdf",
@@ -688,7 +688,7 @@
     {
       "threatId": "PCI-003",
       "refId": "PCI-003",
-      "label": "PIN block encryption quantum vulnerability: PIN encryption at scale relies on 3DES DUKPT; the quantum attack surface is the RSA-based key injection ceremony at Key Injection Facilities (KIFs) used to load base derivation keys into terminals — quantum forgery of RSA key transport enables malicious key injection at scale. AES-256 DUKPT provides quantum-resistant symmetric alternative but terminal hardware replacement required at massive scale.",
+      "label": "PIN block encryption quantum vulnerability: PIN encryption at scale relies on 3DES DUKPT; the quantum attack surface is the RSA-based key injection ceremony at Key Injection Facilities (KIFs) used to load base derivation keys into terminals \u2014 quantum forgery of RSA key transport enables malicious key injection at scale. AES-256 DUKPT provides quantum-resistant symmetric alternative but terminal hardware replacement required at massive scale.",
       "url": "https://listings.pcisecuritystandards.org/documents/PCI_PIN_v3.1_ROC_Reporting_Template.pdf",
       "status": "downloaded",
       "file": "threats/PCI-003.pdf",
@@ -727,7 +727,7 @@
     {
       "threatId": "SUPPLY-001",
       "refId": "SUPPLY-001",
-      "label": "Maritime cybersecurity quantum exposure: IMO MSC-FAL.1/Circ.3 guidelines address maritime cybersecurity. Maritime sector carries approximately 80% of world trade by volume. Port management systems, vessel identity PKI (used in ECDIS and GMDSS), and maritime VPN infrastructure use RSA/ECDSA — AIS itself is an unauthenticated broadcast protocol and is not quantum-affected until authenticated replacements are deployed.",
+      "label": "Maritime cybersecurity quantum exposure: IMO MSC-FAL.1/Circ.3 guidelines address maritime cybersecurity. Maritime sector carries approximately 80% of world trade by volume. Port management systems, vessel identity PKI (used in ECDIS and GMDSS), and maritime VPN infrastructure use RSA/ECDSA \u2014 AIS itself is an unauthenticated broadcast protocol and is not quantum-affected until authenticated replacements are deployed.",
       "url": "https://www.imo.org/en/OurWork/Security/Pages/Cyber-security.aspx",
       "status": "downloaded",
       "file": "threats/SUPPLY-001.pdf",
@@ -911,7 +911,7 @@
     {
       "threatId": "CROSS-009",
       "refId": "CROSS-009",
-      "label": "DNSSEC quantum signature forgery: DNSSEC uses RSA (RSASHA256 per RFC 5702) and ECDSA (ECDSAP256SHA256 per RFC 6605) to sign DNS records — RFC 8624 covers current algorithm implementation requirements. Approximately 40% of global DNS domains have DNSSEC enabled including 92% root zone adoption. Quantum forgery of DNSSEC signatures enables DNS hijacking for any signed domain redirecting traffic to attacker-controlled servers. PQC signatures face challenges with DNS UDP packet size limits (~1232 bytes) requiring protocol-level changes. IETF draft-sheth-pqc-dnssec-strategy-00 addresses migration strategy.",
+      "label": "DNSSEC quantum signature forgery: DNSSEC uses RSA (RSASHA256 per RFC 5702) and ECDSA (ECDSAP256SHA256 per RFC 6605) to sign DNS records \u2014 RFC 8624 covers current algorithm implementation requirements. Approximately 40% of global DNS domains have DNSSEC enabled including 92% root zone adoption. Quantum forgery of DNSSEC signatures enables DNS hijacking for any signed domain redirecting traffic to attacker-controlled servers. PQC signatures face challenges with DNS UDP packet size limits (~1232 bytes) requiring protocol-level changes. IETF draft-sheth-pqc-dnssec-strategy-00 addresses migration strategy.",
       "url": "https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/",
       "status": "downloaded",
       "file": "threats/CROSS-009.html",
@@ -989,7 +989,7 @@
     {
       "threatId": "RAIL-004",
       "refId": "RAIL-004",
-      "label": "Positive Train Control systems mandated by the Rail Safety Improvement Act rely on PKI for authentication within their 220 MHz radio communications. This cryptographic dependency creates quantum exposure for vendors like Wabtec and Siemens. Consequently, operators must address these risks through cybersecurity mitigation plans as required by 49 CFR Part 236 Subpart I, specifically §236.1006(a)(9).",
+      "label": "Positive Train Control systems mandated by the Rail Safety Improvement Act rely on PKI for authentication within their 220 MHz radio communications. This cryptographic dependency creates quantum exposure for vendors like Wabtec and Siemens. Consequently, operators must address these risks through cybersecurity mitigation plans as required by 49 CFR Part 236 Subpart I, specifically \u00a7236.1006(a)(9).",
       "url": "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-II/part-236/subpart-I",
       "status": "downloaded",
       "file": "threats/RAIL-004.html",
@@ -1002,7 +1002,7 @@
     {
       "threatId": "WATER-005",
       "refId": "WATER-005",
-      "label": "Hydropower facilities face quantum exposure as many SCADA systems rely on TLS with RSA or ECDSA for remote management, supported by infrastructure lifespans of 20 to 30 years. Unlike the comprehensive NERC CIP standards for bulk electric systems, FERC’s cybersecurity mandate for hydropower is less codified, deriving primarily from Order 848 incident reporting requirements and general ratemaking authority rather than specific engineering guidelines. This regulatory gap leaves legacy cryptographic implementations vulnerable during the post-quantum transition.",
+      "label": "Hydropower facilities face quantum exposure as many SCADA systems rely on TLS with RSA or ECDSA for remote management, supported by infrastructure lifespans of 20 to 30 years. Unlike the comprehensive NERC CIP standards for bulk electric systems, FERC\u2019s cybersecurity mandate for hydropower is less codified, deriving primarily from Order 848 incident reporting requirements and general ratemaking authority rather than specific engineering guidelines. This regulatory gap leaves legacy cryptographic implementations vulnerable during the post-quantum transition.",
       "url": "https://www.ferc.gov/dam-safety-and-inspections/security-program-hydropower-projects",
       "status": "downloaded",
       "file": "threats/WATER-005.html",
@@ -1082,7 +1082,7 @@
     {
       "threatId": "CROSS-015",
       "refId": "CROSS-015",
-      "label": "Hash function collision resistance halved by quantum algorithms: Grover's algorithm reduces the pre-image resistance of SHA-256 from 256-bit to ~128-bit effective security. Quantum collision attacks (Brassard-Høyer-Tapp / BHT) reduce SHA-256 collision resistance from 128-bit to ~85-bit effective security. SHA-1 (already classically broken) is fully negligible post-CRQC. Quantum security of a hash for collision/preimage is determined by output size: SHA-384, SHA-512, SHA3-384, and SHA3-512 (larger outputs) provide substantially improved quantum margins; SHA3-256 has the same 256-bit output as SHA-256 and therefore equivalent quantum resistance. HMAC-SHA-256 is less affected due to keying.",
+      "label": "Hash function collision resistance halved by quantum algorithms: Grover's algorithm reduces the pre-image resistance of SHA-256 from 256-bit to ~128-bit effective security. Quantum collision attacks (Brassard-H\u00f8yer-Tapp / BHT) reduce SHA-256 collision resistance from 128-bit to ~85-bit effective security. SHA-1 (already classically broken) is fully negligible post-CRQC. Quantum security of a hash for collision/preimage is determined by output size: SHA-384, SHA-512, SHA3-384, and SHA3-512 (larger outputs) provide substantially improved quantum margins; SHA3-256 has the same 256-bit output as SHA-256 and therefore equivalent quantum resistance. HMAC-SHA-256 is less affected due to keying.",
       "url": "https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final",
       "status": "downloaded",
       "file": "threats/CROSS-015.pdf",
@@ -1175,7 +1175,7 @@
     {
       "threatId": "IT-006",
       "refId": "IT-006",
-      "label": "AI-assisted cryptanalysis acceleration: Research published 2024–2025 explores whether machine learning heuristics can guide lattice reduction algorithms (BKZ block selection, basis pruning) and automate side-channel analysis against ML-KEM and ML-DSA implementations. No published peer-reviewed result has demonstrated a meaningful reduction in security against standardized ML-KEM/ML-DSA parameter sets, but the active research direction warrants ongoing monitoring of cryptanalytic frontier.",
+      "label": "AI-assisted cryptanalysis acceleration: Research published 2024\u20132025 explores whether machine learning heuristics can guide lattice reduction algorithms (BKZ block selection, basis pruning) and automate side-channel analysis against ML-KEM and ML-DSA implementations. No published peer-reviewed result has demonstrated a meaningful reduction in security against standardized ML-KEM/ML-DSA parameter sets, but the active research direction warrants ongoing monitoring of cryptanalytic frontier.",
       "url": "https://arxiv.org/abs/2510.02162",
       "status": "downloaded",
       "file": "threats/IT-006.html",
@@ -1227,7 +1227,7 @@
     {
       "threatId": "CROS-001",
       "refId": "CROS-001",
-      "label": "IAPH (International Association of Ports & Harbors) cyber resilience guidelines for emerging technologies in the maritime supply chain, addressing quantum computing risk alongside AI/IoT — recommends cybersecurity-by-design and PQC adoption even for technologies not yet locally deployed.",
+      "label": "IAPH (International Association of Ports & Harbors) cyber resilience guidelines for emerging technologies in the maritime supply chain, addressing quantum computing risk alongside AI/IoT \u2014 recommends cybersecurity-by-design and PQC adoption even for technologies not yet locally deployed.",
       "url": "https://wwwcdn.imo.org/localresources/en/OurWork/Security/Documents/IAPH%20Cyber%20resilience%20guidelines%20for%20emerging%20technologies%20in%20the%20maritime%20supply%20chain%20ENG.pdf",
       "status": "downloaded",
       "file": "threats/CROS-001.pdf",
@@ -1253,7 +1253,7 @@
     {
       "threatId": "FINA-002",
       "refId": "FINA-002",
-      "label": "BIS-led roadmap on quantum-readiness for the global financial system: CRQC risk (27% of surveyed experts expect it within 10 years, 50% within 15), harvest-now-decrypt-later, Shor's/Grover's algorithms — recommends cryptographic inventory, hybrid schemes, and phased migration starting immediately.",
+      "label": "BIS-led roadmap on quantum-readiness for the global financial system: CRQC risk (27% of surveyed experts expect it within 10 years, 50% within 15), harvest-now-decrypt-later, Shor's/Grover's algorithms \u2014 recommends cryptographic inventory, hybrid schemes, and phased migration starting immediately.",
       "url": "https://www.bis.org/publ/bppdf/bispap158.pdf",
       "status": "downloaded",
       "file": "threats/FINA-002.pdf",
@@ -1318,7 +1318,7 @@
     {
       "threatId": "ENER-001",
       "refId": "ENER-001",
-      "label": "NERC's January 2026 Critical Infrastructure Protection (CIP) Roadmap for the North American bulk power system — general cyber-hygiene and MFA improvements covering DNP3/ICCP/Modbus protocol protections; no quantum-specific content in this document.",
+      "label": "NERC's January 2026 Critical Infrastructure Protection (CIP) Roadmap for the North American bulk power system \u2014 general cyber-hygiene and MFA improvements covering DNP3/ICCP/Modbus protocol protections; no quantum-specific content in this document.",
       "url": "https://www.nerc.com/globalassets/our-work/reports/special-reports/nerc_cip_roadmap_01122026.pdf",
       "status": "downloaded",
       "file": "threats/ENER-001.pdf",
@@ -1435,7 +1435,7 @@
     {
       "threatId": "TELE-001",
       "refId": "TELE-001",
-      "label": "ANSSI-FT-117 technical guide for IPsec's post-quantum transition — hybridizing IKEv2 key exchange and signature authentication, noting significant message-size increases from PQC key/ciphertext/signature sizes.",
+      "label": "ANSSI-FT-117 technical guide for IPsec's post-quantum transition \u2014 hybridizing IKEv2 key exchange and signature authentication, noting significant message-size increases from PQC key/ciphertext/signature sizes.",
       "url": "https://messervices.cyber.gouv.fr/documents-guides/transition_post_quantique_ipsec.pdf",
       "status": "downloaded",
       "file": "threats/TELE-001.pdf",
@@ -1487,7 +1487,7 @@
     {
       "threatId": "INSU-001",
       "refId": "INSU-001",
-      "label": "Insurance-sector quantum exposure: Munich Re's Cyber Insurance: Risks and Trends 2025 report (quantum computing security section) notes NIST finalized its PQC algorithms in August 2024, that RSA will in future be vulnerable to quantum-based decryption (sufficient protection through at least 2030), and that attackers are already stealing data today to decrypt later — direct harvest-now-decrypt-later exposure for long-retention policyholder data and cyber-underwriting accumulation risk.",
+      "label": "Insurance-sector quantum exposure: Munich Re's Cyber Insurance: Risks and Trends 2025 report (quantum computing security section) notes NIST finalized its PQC algorithms in August 2024, that RSA will in future be vulnerable to quantum-based decryption (sufficient protection through at least 2030), and that attackers are already stealing data today to decrypt later \u2014 direct harvest-now-decrypt-later exposure for long-retention policyholder data and cyber-underwriting accumulation risk.",
       "url": "https://www.munichre.com/en/insights/cyber/cyber-insurance-risks-and-trends-2025.html",
       "status": "downloaded",
       "file": "threats/INSU-001.html",
@@ -1509,6 +1509,19 @@
       "contentType": "text/html",
       "sha256": "b47bb3a4b591aad7ecb1aa2490764589c05d6602b75fc1e56239204af1122629",
       "verifiedAt": "2026-09-07"
+    },
+    {
+      "threatId": "CROS-008",
+      "refId": "CROS-008",
+      "title": "Israel National Cyber Directorate Alert 1855 \u2014 Quantum Computing Risk to Cryptography",
+      "url": "https://www.gov.il/BlobFolder/reports/alert_1855/he/ALERT-CERT-IL-W-1855.pdf",
+      "status": "downloaded",
+      "file": "threats/CROS-008.pdf",
+      "filename": "CROS-008.pdf",
+      "sizeBytes": 289568,
+      "contentType": "application/pdf",
+      "sha256": "6ed12447abf9b0a3c0470f57e20d8314323d9f3c02ebc11a7bc3eb87dae2eb3a",
+      "downloadedAt": "2026-09-10T00:04:31.550026+00:00"
     }
   ],
   "archivedEntries": [
@@ -1545,7 +1558,7 @@
     {
       "threatId": "CROSS-001",
       "refId": "CROSS-001",
-      "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
+      "title": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
       "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
       "rowStatus": "deprecated",
       "status": "downloaded",
@@ -1562,7 +1575,7 @@
     {
       "threatId": "CROSS-003",
       "refId": "CROSS-003",
-      "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
+      "title": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
       "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
       "rowStatus": "deprecated",
       "status": "downloaded",
@@ -1607,7 +1620,7 @@
     {
       "threatId": "AUS-GOV-002",
       "refId": "AUS-GOV-002",
-      "title": "ASD Information Security Manual — ISM-1917",
+      "title": "ASD Information Security Manual \u2014 ISM-1917",
       "url": "https://webarchive.nla.gov.au/awa/20240101000000*/https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
       "rowStatus": "deprecated",
       "status": "downloaded",
@@ -1929,6 +1942,6 @@
       "regeneratedAt": "2026-08-22T12:50:13.000Z"
     }
   ],
-  "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
+  "archivedNote": "Entries no active row cites \u2014 superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
   "rebuiltAt": "2026-09-07T14:57:57.312071+00:00"
 }
