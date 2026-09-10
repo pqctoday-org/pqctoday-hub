@@ -47,6 +47,9 @@ export interface SimRunCompleteProps {
   /** W7.4 — fraction of this run's evidence the player produced themselves
    *  (0-1). Used to say plainly whether this was practice or a demonstration. */
   learnerShare?: number
+  /** W7.5 — required steps left undone in phases the learner started. Shown so
+   *  the run ends by naming its loose ends rather than only its score. */
+  unresolvedCount?: number
   /** W2 — true only when the simulation covers every framework criterion AND
    *  the player cleared them. False here means the run finished every exercise
    *  the simulation OFFERS, which is not the same as full framework maturity
@@ -81,6 +84,7 @@ export function SimRunComplete({
   maturity,
   seat = 'curious',
   learnerShare = 1,
+  unresolvedCount = 0,
   claimsFullFrameworkMaturity = false,
   programEndYear,
   score,
@@ -232,6 +236,13 @@ export function SimRunComplete({
               {completionTypeNote(learnerShare)}
             </p>
             <p className="mb-2 text-xs leading-snug text-foreground">{debrief.headline}</p>
+            {unresolvedCount > 0 && (
+              <p className="mb-2 text-xs leading-snug text-muted-foreground">
+                <span className="font-bold text-foreground">Left unfinished:</span>{' '}
+                {unresolvedCount} required step{unresolvedCount === 1 ? '' : 's'} in phases you
+                started. A cleared scenario is not the same as a complete one.
+              </p>
+            )}
             <p className="mb-1.5 text-xs leading-snug text-muted-foreground">
               <span className="font-bold text-foreground">Next action:</span> {debrief.nextAction}
             </p>

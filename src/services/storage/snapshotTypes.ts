@@ -204,6 +204,8 @@ export interface SimulationData {
   activeTab: string
   /** W5.5 — the resource open in the embed pane (a tree step), or null. */
   openStepRef: unknown
+  /** W7.5 — failed resource return paths this run. */
+  returnPathFailures: number
   /** W5 — year each objective was first achieved. Omitted before v18, which
    *  silently zeroed the on-time badges and the run grade on any import. */
   objectiveAchievedYears: Record<string, number>

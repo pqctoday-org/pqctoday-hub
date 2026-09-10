@@ -124,6 +124,11 @@ export interface SimulationState {
    *  Decide even if they were working in Resources. Still resets to 'decide' on
    *  a deliberate phase switch, which is a different thing from a reload. */
   activeTab: string
+  /** W7.5 — times a resource excursion failed to bring the learner back this
+   *  run (a blocked in-embed link, or a remembered resource this build can no
+   *  longer resolve). A product-quality signal: a learner who cannot get back
+   *  does not file a bug, they leave. */
+  returnPathFailures: number
   /** W5.5 — the STEP whose resource is open in the embed pane, or null when the
    *  player is on the board. Persisted so a reload returns to the RESOURCE, not
    *  just the tab.
@@ -251,6 +256,8 @@ export interface SimulationState {
   autoCompleteSteps: (keys: string[]) => void
   /** Cancel auto-completion for a phase (remove its `${phase}::` keys). */
   clearAuto: (phase: string) => void
+  /** W7.5 — record that a return path failed. */
+  noteReturnPathFailure: () => void
   /** W5.5 — remember (or clear) the open resource. */
   setOpenStepRef: (step: SimOpenStep | null) => void
   /** W5.5 — select the phase tab. */
@@ -323,6 +330,7 @@ const SEED = {
   insuranceAssumed: false,
   activeTab: 'decide',
   openStepRef: null as SimOpenStep | null,
+  returnPathFailures: 0,
   seed: 0, // replaced with a fresh seed on create / reset / migrate
   difficulty: 'realistic' as DifficultyId,
   securedBudgetM: 0,
@@ -392,6 +400,7 @@ export function migrateSimulationState(persisted: unknown) {
     insuranceAssumed: typeof s.insuranceAssumed === 'boolean' ? s.insuranceAssumed : false,
     activeTab: typeof s.activeTab === 'string' ? s.activeTab : 'decide',
     openStepRef: isOpenStep(s.openStepRef) ? s.openStepRef : null,
+    returnPathFailures: typeof s.returnPathFailures === 'number' ? s.returnPathFailures : 0,
     seed: typeof s.seed === 'number' ? (s.seed as number) : newSeed(),
     difficulty: asDifficulty(s.difficulty),
     tourSeen: typeof s.tourSeen === 'boolean' ? s.tourSeen : false,
@@ -448,6 +457,7 @@ const saveSlice = (s: SimulationState): SimulationData => ({
   insuranceAssumed: s.insuranceAssumed,
   activeTab: s.activeTab,
   openStepRef: s.openStepRef,
+  returnPathFailures: s.returnPathFailures,
   // W5: the run's results depend on this — omitting it made every export
   // silently lose the on-time objective record it is graded against.
   objectiveAchievedYears: s.objectiveAchievedYears,
@@ -485,6 +495,7 @@ function fromSave(s: Record<string, unknown>) {
     insuranceAssumed: typeof s.insuranceAssumed === 'boolean' ? s.insuranceAssumed : false,
     activeTab: typeof s.activeTab === 'string' ? s.activeTab : 'decide',
     openStepRef: isOpenStep(s.openStepRef) ? s.openStepRef : null,
+    returnPathFailures: typeof s.returnPathFailures === 'number' ? s.returnPathFailures : 0,
     objectiveAchievedYears: isRecord(s.objectiveAchievedYears)
       ? (s.objectiveAchievedYears as Record<string, number>)
       : {},
@@ -603,6 +614,7 @@ export const useSimulationStore = create<SimulationState>()(
         set((s) => ({ auto: s.auto.filter((k) => !k.startsWith(`${phase}::`)) })),
       setActiveTab: (activeTab) => set({ activeTab }),
       setOpenStepRef: (openStepRef) => set({ openStepRef }),
+      noteReturnPathFailure: () => set((st) => ({ returnPathFailures: st.returnPathFailures + 1 })),
       setInsuranceAssumed: (insuranceAssumed) => set({ insuranceAssumed }),
       recordAttempt: (key, index, correct) =>
         set((s) =>
