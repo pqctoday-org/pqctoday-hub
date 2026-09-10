@@ -20,7 +20,7 @@
     "term": "DSA",
     "acronym": "DSA",
     "definition": "Digital Signature Algorithm, a classical FIPS 186 signature scheme based on discrete logarithms. Deprecated by NIST IR 8547 alongside RSA and ECDSA due to quantum vulnerability.",
-    "technicalNote": "Broken by Shor's algorithm. Common key sizes: 1024–3072 bits. No longer approved for new systems after 2030 per NIST IR 8547.",
+    "technicalNote": "Broken by Shor's algorithm. Common key sizes: 1024\u20133072 bits. No longer approved for new systems after 2030 per NIST IR 8547.",
     "relatedModule": "/algorithms",
     "complexity": "beginner",
     "category": "algorithm"
@@ -374,7 +374,7 @@
   {
     "term": "ECC",
     "acronym": "ECC",
-    "definition": "Elliptic Curve Cryptography — a public-key cryptosystem based on the algebraic structure of elliptic curves over finite fields. Offers smaller key sizes than RSA for equivalent classical security, but like RSA it is fully broken by Shor's algorithm on a CRQC.",
+    "definition": "Elliptic Curve Cryptography \u2014 a public-key cryptosystem based on the algebraic structure of elliptic curves over finite fields. Offers smaller key sizes than RSA for equivalent classical security, but like RSA it is fully broken by Shor's algorithm on a CRQC.",
     "technicalNote": "Common curves: P-256, P-384, P-521 (NIST), Curve25519 (X25519/Ed25519). ECC is used extensively in TLS, SSH, code signing, and PKI. NIST SP 800-186 and CNSA 2.0 mandate migration away from ECC to ML-KEM and ML-DSA before 2030.",
     "relatedModule": "/learn/crypto-agility",
     "complexity": "intermediate",
@@ -383,8 +383,8 @@
   {
     "term": "LMS",
     "acronym": "LMS",
-    "definition": "Leighton-Micali Signature — a stateful hash-based signature scheme standardised in NIST SP 800-208 and RFC 8554. Based on one-time Lamport signatures aggregated via a Merkle tree. Approved by CNSA 2.0 for firmware and software signing.",
-    "technicalNote": "LMS is stateful: each leaf in the Merkle tree can only be used once. An HSM must persist the current leaf index in NVRAM and never reuse it — failure leads to catastrophic key compromise. LMS key sizes: ~1,616 bytes (pub) to 64 bytes (priv). PKCS#11 v3.2 mechanism: CKM_LMS.",
+    "definition": "Leighton-Micali Signature \u2014 a stateful hash-based signature scheme standardised in NIST SP 800-208 and RFC 8554. Based on one-time Lamport signatures aggregated via a Merkle tree. Approved by CNSA 2.0 for firmware and software signing.",
+    "technicalNote": "LMS is stateful: each leaf in the Merkle tree can only be used once. An HSM must persist the current leaf index in NVRAM and never reuse it \u2014 failure leads to catastrophic key compromise. LMS key sizes: ~1,616 bytes (pub) to 64 bytes (priv). PKCS#11 v3.2 mechanism: CKM_LMS.",
     "relatedModule": "/learn/hsm-pqc",
     "complexity": "advanced",
     "category": "algorithm"
@@ -415,8 +415,8 @@
   },
   {
     "term": "SQIsign",
-    "definition": "An isogeny-based PQC signature candidate in the NIST on-ramp. Smallest combined public key + signature of any PQC candidate (~148 bytes at NIST Cat 1) — fits in a single network packet.",
-    "technicalNote": "Cousin scheme SIKE was broken in 2022 by the Castryck–Decru attack. SQIsign avoids the structural exploit but constant-time signing is still an open implementation challenge.",
+    "definition": "An isogeny-based PQC signature candidate in the NIST on-ramp. Smallest combined public key + signature of any PQC candidate (~148 bytes at NIST Cat 1) \u2014 fits in a single network packet.",
+    "technicalNote": "Cousin scheme SIKE was broken in 2022 by the Castryck\u2013Decru attack. SQIsign avoids the structural exploit but constant-time signing is still an open implementation challenge.",
     "relatedModule": "/learn/pqc-candidates",
     "complexity": "advanced",
     "category": "algorithm"
@@ -424,7 +424,7 @@
   {
     "term": "FAEST",
     "definition": "An MPC-in-the-Head signature candidate in the NIST signature on-ramp. Builds a signature out of a simulated multi-party computation over the AES block cipher.",
-    "technicalNote": "Security reduces to the one-wayness of AES, which is among the best-studied symmetric primitives. Signatures are kilobytes — large versus multivariate or isogeny candidates.",
+    "technicalNote": "Security reduces to the one-wayness of AES, which is among the best-studied symmetric primitives. Signatures are kilobytes \u2014 large versus multivariate or isogeny candidates.",
     "relatedModule": "/learn/pqc-candidates",
     "complexity": "advanced",
     "category": "algorithm"
@@ -457,7 +457,7 @@
     "term": "WOTS+",
     "acronym": "Winternitz One-Time Signature Plus",
     "definition": "A hash-based one-time signature primitive that signs a message digest by walking chains of n-byte hash values. Used as the leaf-signing component inside SLH-DSA (FIPS 205) and the hypertree layers of LMS / XMSS.",
-    "technicalNote": "FIPS 205 fixes the Winternitz parameter lg_w=4. Chain lengths trade signature size against hash-round cost. A WOTS+ key signs exactly one message — reuse leaks the private key.",
+    "technicalNote": "FIPS 205 fixes the Winternitz parameter lg_w=4. Chain lengths trade signature size against hash-round cost. A WOTS+ key signs exactly one message \u2014 reuse leaks the private key.",
     "relatedModule": "/learn/slh-dsa",
     "complexity": "advanced",
     "category": "algorithm"
@@ -468,6 +468,87 @@
     "definition": "The few-time signature layer inside SLH-DSA (FIPS 205) that actually signs the message digest. Sits between the WOTS+ leaves and the hypertree, signing a k-subset of values using a-level hash trees.",
     "technicalNote": "FORS parameters (k, a) directly control signature size and resistance to multi-target attacks. FORS is few-time rather than one-time: pseudorandom message-derived indices give a negligible reuse probability across SLH-DSA's lifetime.",
     "relatedModule": "/learn/slh-dsa",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "HMAC",
+    "acronym": "HMAC",
+    "definition": "Hash-based Message Authentication Code, a keyed construction that combines a secret key with a hash function (e.g. SHA-256) to provide message integrity and authenticity.",
+    "technicalNote": "Used as the basis for HMAC_DRBG and HKDF, both already in this glossary. HMAC's security depends on the underlying hash function, not on hardness assumptions broken by Shor's algorithm \u2014 it remains safe at existing key/output sizes against quantum attack, unlike RSA/ECC.",
+    "relatedModule": "/learn/tls-basics",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "AES-GCM",
+    "acronym": "GCM",
+    "definition": "Galois/Counter Mode, an authenticated-encryption (AEAD) mode for AES that combines counter-mode encryption with a GHASH-based authentication tag in one pass.",
+    "technicalNote": "The default AEAD mode in TLS 1.3 and most modern protocols. Nonce reuse under the same key is catastrophic \u2014 it can leak the authentication key. AES-CCM is the alternative AEAD mode used where GCM's parallelism isn't needed.",
+    "relatedModule": "/learn/tls-basics",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "AES-CCM",
+    "acronym": "CCM",
+    "definition": "Counter with CBC-MAC, an authenticated-encryption (AEAD) mode for AES that combines counter-mode encryption with a CBC-MAC authentication tag.",
+    "technicalNote": "Common in constrained environments (Bluetooth LE, Zigbee/802.15.4, some IoT/OT protocols) where GCM's parallel-friendly design matters less than CCM's simpler hardware footprint.",
+    "relatedModule": "/learn/iot-ot-pqc",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "Rainbow",
+    "definition": "A multivariate-quadratic digital signature scheme and NIST PQC Round 3 finalist, eliminated in 2022 after a rank-based cryptanalysis attack recovered a Rainbow private key on a single laptop in about a weekend.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "Saber",
+    "definition": "A module-lattice-based key encapsulation mechanism and NIST PQC Round 3 finalist alongside Kyber and NTRU; not selected because NIST judged Kyber (now ML-KEM) the stronger overall combination of security and performance among the lattice KEMs.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "Picnic",
+    "definition": "A signature scheme built from symmetric primitives and zero-knowledge proofs rather than a hard math problem; a NIST PQC Round 3 alternate candidate not standardized, mainly due to large signature sizes and slow performance relative to SLH-DSA and ML-DSA.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "GeMSS",
+    "acronym": "Great Multivariate Short Signature",
+    "definition": "A multivariate-quadratic signature scheme and NIST PQC Round 3 alternate candidate, notable for very large public keys; not selected for standardization.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "NTRU",
+    "definition": "A lattice-based key encapsulation mechanism built on the NTRU problem, one of the oldest practical lattice cryptosystems (1996) and a NIST PQC Round 3 finalist; not selected as ML-KEM (Kyber) became the primary standardized lattice KEM.",
+    "technicalNote": "NTRU Prime, a variant designed to avoid the extra algebraic structure of cyclotomic-ring NTRU, produced the sntrup761 parameter set already in this glossary \u2014 used in some early hybrid TLS/SSH PQC deployments.",
+    "relatedModule": "/learn/pqc-candidates",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "XMSS-MT",
+    "acronym": "XMSS^MT",
+    "definition": "A multi-tree variant of XMSS that chains multiple XMSS trees hierarchically, extending the total number of signatures a single key pair can produce.",
+    "technicalNote": "Standardized in RFC 8391 alongside single-tree XMSS, and by NIST SP 800-208.",
+    "relatedModule": "/learn/stateful-signatures",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "LM-OTS",
+    "acronym": "Leighton-Micali One-Time Signature",
+    "definition": "The one-time signature primitive underlying LMS: each LM-OTS key pair is valid for exactly one signature, and many are combined via a Merkle tree to build a reusable LMS key.",
+    "relatedModule": "/learn/stateful-signatures",
     "complexity": "advanced",
     "category": "algorithm"
   }
