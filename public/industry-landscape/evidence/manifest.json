@@ -121,7 +121,59 @@
       "recaptured_at": "2026-09-09T01:25:17.598278+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
       "superseded_file": null
+    },
+    {
+      "refId": "iot-industrial",
+      "url": "https://www.isagca.org/hubfs/2023%20ISA%20Website%20Redesigns/ISAGCA/PDFs/SMM-62443-Asset-Owner-Product-Supplier-Service_20230809.pdf",
+      "status": "recaptured",
+      "file": "industry/iot-industrial.pdf",
+      "filename": "iot-industrial.pdf",
+      "sizeBytes": 1895120,
+      "contentType": "application/pdf",
+      "sha256": "3137572e3802525b973b9764493db8f9c1b8b5cc746f12ef9a166a25f7e7ff26",
+      "recaptured_at": "2026-09-10T02:44:36.673928+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
+    },
+    {
+      "refId": "crypto-arbitrum-anytrust",
+      "url": "https://docs.arbitrum.io/nitro-whitepaper.pdf",
+      "status": "recaptured",
+      "file": "industry/crypto-arbitrum-anytrust.pdf",
+      "filename": "crypto-arbitrum-anytrust.pdf",
+      "sizeBytes": 404656,
+      "contentType": "application/pdf",
+      "sha256": "a3f1958c74837d16c1d9e5c97f6f2049a4cfa014c9fd2178b2fa3187877af663",
+      "recaptured_at": "2026-09-10T02:44:36.957720+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
+    },
+    {
+      "refId": "media-drm",
+      "url": "http://aacsla.com/wp-content/uploads/2019/02/AACS_Spec_Prerecorded_Final_0.953.pdf",
+      "status": "recaptured",
+      "file": "industry/media-drm.pdf",
+      "filename": "media-drm.pdf",
+      "sizeBytes": 1605696,
+      "contentType": "application/pdf",
+      "sha256": "7c0dc64c3c7f30d607f2b42f8cb095d3c901855ada1d58cfc8ce362c1c869a7e",
+      "recaptured_at": "2026-09-10T02:44:37.963515+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
+    },
+    {
+      "refId": "supply-customs",
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/facilitation/instruments-and-tools/tools/safe-package/toolkit-for-safe-pillar-1.pdf?la=en",
+      "status": "recaptured",
+      "file": "industry/supply-customs.pdf",
+      "filename": "supply-customs.pdf",
+      "sizeBytes": 160343,
+      "contentType": "application/pdf",
+      "sha256": "89dfdf6a762a0a85491afa0713f582d09da56fea8adc4244b4967574ab754620",
+      "recaptured_at": "2026-09-10T02:44:40.458910+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     }
   ],
-  "generated": "2026-09-09T01:25:17.598298+00:00"
+  "generated": "2026-09-10T02:44:40.458935+00:00"
 }

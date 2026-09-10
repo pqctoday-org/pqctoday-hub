@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-09T01:25:11.983800+00:00",
+  "generated": "2026-09-10T02:44:36.336135+00:00",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "vendor-roadmaps",
   "csv": "migrate_vendor_roadmap_09022026.csv",
@@ -48,15 +48,16 @@
     {
       "vendorId": "VND-019",
       "refId": "VND-019",
-      "label": "IBM Corporation",
-      "url": "https://research.ibm.com/blog/quantum-safe-roadmap",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-019_IBM_Corporation.html",
-      "filename": "VND-019_IBM_Corporation.html",
-      "sizeBytes": 86191,
-      "contentType": "text/html",
-      "sha256": "e99448f523d3b3bb5dbb14978fb0fedc21f0f1a8323c569cfebe3f3e34dcc125",
-      "verifiedAt": "2026-09-06"
+      "url": "https://www.whitehouse.gov/wp-content/uploads/2022/11/M-23-02-M-Memo-on-Migrating-to-Post-Quantum-Cryptography.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-019.pdf",
+      "filename": "VND-019.pdf",
+      "sizeBytes": 255063,
+      "contentType": "application/pdf",
+      "sha256": "02e7a4ee3289e3dfcc81bdb43d2e21645b68e6f364a9889dda222b785ecfe6e6",
+      "recaptured_at": "2026-09-10T02:44:27.856407+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-021",
@@ -192,15 +193,16 @@
     {
       "vendorId": "VND-146",
       "refId": "VND-146",
-      "label": "Robust Intelligence (Cisco AI Defense)",
-      "url": "https://www.cisco.com/site/us/en/about/trust-center/post-quantum-cryptography.html",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-146_Robust_Intelligence_Cisco_AI_Defense_.html",
-      "filename": "VND-146_Robust_Intelligence_Cisco_AI_Defense_.html",
-      "sizeBytes": 89726,
-      "contentType": "text/html",
-      "sha256": "087b8663fb0c6d5fa282857bb3375a9d8d9c6c322be6a69b3e94bfa9ed3cc080",
-      "verifiedAt": "2026-09-06"
+      "url": "https://www.cisco.com/c/dam/en_us/about/doing_business/trust-center/docs/quantum-safe-communications-roadmap.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-146.pdf",
+      "filename": "VND-146.pdf",
+      "sizeBytes": 262134,
+      "contentType": "application/pdf",
+      "sha256": "56a80a92b485eb6949e3b1b05c7e297e89737ea429932e8b53cd86b4107fc7fd",
+      "recaptured_at": "2026-09-10T02:44:29.086816+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-168",
@@ -296,15 +298,16 @@
     {
       "vendorId": "VND-064",
       "refId": "VND-064",
-      "label": "Internet Security Research Group",
-      "url": "https://letsencrypt.org/2026/06/03/pq-certs",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-064_Internet_Security_Research_Group.html",
-      "filename": "VND-064_Internet_Security_Research_Group.html",
-      "sizeBytes": 37419,
-      "contentType": "text/html",
-      "sha256": "89bb8b7966b0cb8355dfc246666352ae83def6b303034cad797193954e48f833",
-      "verifiedAt": "2026-09-06"
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-064.pdf",
+      "filename": "VND-064.pdf",
+      "sizeBytes": 722379,
+      "contentType": "application/pdf",
+      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
+      "recaptured_at": "2026-09-10T02:44:28.897891+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-007",
@@ -452,15 +455,16 @@
     {
       "vendorId": "VND-251",
       "refId": "VND-251",
-      "label": "Department of Science and Technology (DST) India",
-      "url": "https://dst.gov.in/quantum-safe-ecosystem-in-india",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-251_Department_of_Science_and_Technology_DST_India.html",
-      "filename": "VND-251_Department_of_Science_and_Technology_DST_India.html",
-      "sizeBytes": 54370,
-      "contentType": "text/html",
-      "sha256": "d05a9176a5c4410f8ddb0827c87a3bbbf87b95326db69f1b5f8d8566edae0da2",
-      "verifiedAt": "2026-09-06"
+      "url": "https://dst.gov.in/sites/default/files/Quantum-Safe-Ecosystem-in-India.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-251.pdf",
+      "filename": "VND-251.pdf",
+      "sizeBytes": 2899651,
+      "contentType": "application/pdf",
+      "sha256": "b9d2d53b2c03cfc47f9f4ce5ae0ceaebe1f46f50fccca8fc1cdbc70defd4d9ff",
+      "recaptured_at": "2026-09-10T02:44:34.564535+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-259",
@@ -491,15 +495,16 @@
     {
       "vendorId": "VND-291",
       "refId": "VND-291",
-      "label": "Cybernetica AS",
-      "url": "https://cyber.ee/resources/news/estonia-pqc-transition/",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-291_Cybernetica_AS.html",
-      "filename": "VND-291_Cybernetica_AS.html",
-      "sizeBytes": 79879,
-      "contentType": "text/html",
-      "sha256": "b92c9ffaeb63804d522a53363366a1b866e504912516a717b889bf1e670ad47a",
-      "verifiedAt": "2026-09-06"
+      "url": "https://cyber.ee/uploads/Quantum_safety_with_Cybernetica_Whitepaper_on_post_quantum_cryptography_b4448c3128.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-291.pdf",
+      "filename": "VND-291.pdf",
+      "sizeBytes": 199004,
+      "contentType": "application/pdf",
+      "sha256": "dd0614ae1d03664953d53e9ef41ac1dad755f409b0443e7c896ff70107bbdd13",
+      "recaptured_at": "2026-09-10T02:44:35.856785+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-220",
@@ -570,15 +575,16 @@
     {
       "vendorId": "VND-390",
       "refId": "VND-390",
-      "label": "NetApp",
-      "url": "https://www.netapp.com/cyber-resilience/post-quantum-cryptography/",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-390_NetApp.html",
-      "filename": "VND-390_NetApp.html",
-      "sizeBytes": 315141,
+      "url": "https://www.netapp.com/pdf.html?item=/media/17002-sb-3952.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-390.html",
+      "filename": "VND-390.html",
+      "sizeBytes": 22567,
       "contentType": "text/html",
-      "sha256": "599beae991ad602f74bb0704da280b8ef17de3a66b9653512e345a1bda0cde9c",
-      "verifiedAt": "2026-09-06"
+      "sha256": "4cb4dda65d320af7f175410051f43b4e09f9bff2f1261f736cca413d0b2e1ac1",
+      "recaptured_at": "2026-09-10T02:44:36.336096+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-319",
@@ -714,15 +720,16 @@
     {
       "vendorId": "VND-247",
       "refId": "VND-247",
-      "label": "Agence nationale de la sécurité des systèmes d'information (ANSSI)",
-      "url": "https://cyber.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-247_Agence_nationale_de_la_s_curit_des_syst_mes_d_information_ANSSI_.html",
-      "filename": "VND-247_Agence_nationale_de_la_s_curit_des_syst_mes_d_information_ANSSI_.html",
-      "sizeBytes": 50352,
-      "contentType": "text/html",
-      "sha256": "be930fc817fb7906b7003e978a5c6eee5ba532a5c38a7fc7d732452217a0d1fa",
-      "verifiedAt": "2026-09-06"
+      "url": "https://cyber.gouv.fr/documents/345/20241114_np_anssi_EnquetePQC_v1c.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-247.pdf",
+      "filename": "VND-247.pdf",
+      "sizeBytes": 267344,
+      "contentType": "application/pdf",
+      "sha256": "d6a658ed3a6b8eb5bb9fc388ddc153c0e99ea80393a0e7bb5fc17f215125c9dd",
+      "recaptured_at": "2026-09-10T02:44:31.359661+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-253",
@@ -819,15 +826,16 @@
     {
       "vendorId": "VND-153",
       "refId": "VND-153",
-      "label": "Ciena Corporation",
-      "url": "https://www.ciena.com/solutions/quantum-safe-communications",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-153_Ciena_Corporation.html",
-      "filename": "VND-153_Ciena_Corporation.html",
-      "sizeBytes": 101923,
-      "contentType": "text/html",
-      "sha256": "861be71f69dd5d6163eb50a2f50dd89849aa2b5908fe134736cba2f87ceeeeb5",
-      "verifiedAt": "2026-09-06"
+      "url": "https://www.ciena.com/__data/assets/pdf_file/0021/171237/Limit-the-Use-of-My-Sensitive-Personal-Information.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-153.pdf",
+      "filename": "VND-153.pdf",
+      "sizeBytes": 98882,
+      "contentType": "application/pdf",
+      "sha256": "ca027f1ecea4db824da4de158e39ae48cce19e0567b6dca8c2c91a7919f69997",
+      "recaptured_at": "2026-09-10T02:44:29.579311+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-192",
