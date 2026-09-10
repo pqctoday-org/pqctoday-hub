@@ -94,6 +94,37 @@ function getModuleTitle(moduleId: string): string {
   return MODULE_CATALOG[moduleId]?.title ?? moduleId
 }
 
+// --- Simulation quality indicators (W7.5) ---
+//
+// These say what KIND of run happened, not how good the learner is. The old
+// completion flag could not tell a narrated demonstration from a worked-through
+// programme — both ended at "done" — which is the defect the whole evidence
+// model exists to fix. Emitting them lets the same distinction be seen across
+// users instead of only inside one run's debrief.
+//
+// Labels carry counts and coarse categories only, plus the persona dimensions
+// every other event here already appends.
+
+/** A step's evidence was recorded. `origin` distinguishes work from watching. */
+export const logSimEvidenceRecorded = (phase: string, kind: string, origin: string) => {
+  logEvent('Simulation', 'Evidence Recorded', personaLabel(`${phase}|${kind}|origin=${origin}`))
+}
+
+/**
+ * Leaving for a resource failed to bring the learner back — a blocked in-embed
+ * link, or a remembered resource this build can no longer resolve. This is a
+ * product defect signal: the plan calls out "return-path failures" precisely
+ * because a learner who cannot get back does not report it, they leave.
+ */
+export const logSimReturnPathFailure = (phase: string, reason: string) => {
+  logEvent('Simulation', 'Return Path Failure', personaLabel(`${phase}|${reason}`))
+}
+
+/** End of a run: how it went, in the indicators' own compact form. */
+export const logSimRunQuality = (label: string) => {
+  logEvent('Simulation', 'Run Quality', personaLabel(label))
+}
+
 // Engagement event helpers for key user journeys
 
 export const logModuleStart = (moduleId: string) => {
