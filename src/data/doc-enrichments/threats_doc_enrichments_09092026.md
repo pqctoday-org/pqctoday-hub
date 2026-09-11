@@ -2,7 +2,7 @@
 generated: 2026-09-09
 collection: threats
 documents_processed: 1
-enrichment_method: example-echo cleanup (priv 3d3ae9f0) — no model was run. Only values byte-identical to the prompt's own illustrative examples were replaced with "None detected"; every other field is carried through verbatim from threats_doc_enrichments_08292026.md. Where a document id appears more than once in the source, the LAST occurrence is carried forward, matching mergeEnrichmentFiles()'s own last-wins resolution.
+enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit — every field's actual content is unchanged from threats_doc_enrichments_08292026.md, that generation's real model run. Corrected 2026-09-11: the header previously here (priv 3d3ae9f0, "example-echo cleanup") named the transformation applied to the file — replacing values byte-identical to the prompt's own illustrative examples with "None detected" — not the model that produced the content, which is this one. Where a document id appears more than once in the source, the LAST occurrence is carried forward, matching mergeEnrichmentFiles()'s own last-wins resolution.
 ---
 
 ## IT-002
