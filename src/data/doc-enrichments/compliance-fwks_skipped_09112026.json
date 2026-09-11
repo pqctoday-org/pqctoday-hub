@@ -1,0 +1,23 @@
+[
+  {
+    "ref_id": "Japan CRYPTREC Report 2024",
+    "reason": "single-window failed (no JSON returned (model or transport failure)); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "UAE-DESC-PQC-Guideline",
+    "framework_id": "UAE-CSC-PQC",
+    "reason": "Probable landing page, not the document (235,166 bytes of markup, only 6,867 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "HITECH-PL-111-5",
+    "reason": "single-window failed (no JSON returned (model or transport failure)); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "MICA-REG-2023-1114",
+    "reason": "single-window failed (no JSON returned (model or transport failure)); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "CMMC-2.0-MODEL",
+    "reason": "single-window failed (no JSON returned (model or transport failure)); 3-window fallback also found nothing"
+  }
+]

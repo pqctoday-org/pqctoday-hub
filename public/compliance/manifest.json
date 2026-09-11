@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-09T01:24:52.533944+00:00",
+  "generated": "2026-09-11T16:02:27.207590+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -2036,7 +2036,7 @@
       "attempts": 7
     },
     "KCMVP": {
-      "reason": "unusable content: only 13 chars of visible text (floor 200) — a shell, not a document",
+      "reason": "unusable content: only 13 chars of visible text (floor 200) \u2014 a shell, not a document",
       "blocked_at": "2026-07-31T22:02:59.774776+00:00",
       "attempts": 6
     },
@@ -2061,7 +2061,7 @@
       "attempts": 2
     },
     "BRAZIL-BACEN-4893": {
-      "reason": "unusable content: only 23 chars of visible text (floor 200) — a shell, not a document",
+      "reason": "unusable content: only 23 chars of visible text (floor 200) \u2014 a shell, not a document",
       "blocked_at": "2026-09-02T15:59:33.864660+00:00",
       "attempts": 2
     }
