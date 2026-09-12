@@ -4100,7 +4100,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: vendor-risk; supply-chain-security
+- **Relevant PQC Today Features**: vendor-risk; supply-chain
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4262,7 +4262,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: 73-82% reduction in management time; 23,298 annual hours reduced to 500-750 hours for 1,000 certificates; ACME validation in seconds; 21 certificate operations daily for 1,000-certificate portfolio
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Developer, Operations
 - **Implementation Prerequisites**: Automated discovery tools; Integration with cloud platforms (AWS, Azure, Google Cloud); Kubernetes integration; ITSM platforms (ServiceNow, BMC Remedy); DevOps tools (Jenkins, GitLab, Terraform, Ansible)
-- **Relevant PQC Today Features**: crypto-agility; pki-workshop; migration-program; pqc-governance; code-signing; ssh-pqc
+- **Relevant PQC Today Features**: crypto-agility; pki-workshop; migration-program; pqc-governance; code-signing
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Automated discovery; Network scanning for TLS endpoints; Cloud service integration; Container and Kubernetes pod inspection; Load balancer and CDN certificate identification; IoT device certificate cataloging
 - **Testing & Validation Methods**: None detected
@@ -5018,7 +5018,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: 78 bytes serialized extended key; 111 characters Base58 encoded string; 32 bytes chain code
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: secp256k1 elliptic curve support; HMAC-SHA512 implementation; SHA-256 and RIPEMD160 hashing
-- **Relevant PQC Today Features**: digital-assets; entropy-randomness; key-management
+- **Relevant PQC Today Features**: digital-assets; entropy-randomness
 - **Implementation Attack Surface**: Parent private key leakage via non-hardened child keys; Invalid key generation if parse 256(I L) >= n or k i = 0
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Test vectors for hardened derivation; Verification of X coordinate on curve for imported extended public keys
@@ -11336,7 +11336,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Compliance Officer; Developer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: compliance; supply-chain; cbom
+- **Relevant PQC Today Features**: compliance; supply-chain
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: CBOM; cryptographic assets inventory
 - **Testing & Validation Methods**: None detected
@@ -33044,7 +33044,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Compliance Officer; Security Architect
 - **Implementation Prerequisites**: NVLAP-accredited Cryptographic and Security Testing (CST) Laboratories; FIPS 140 module validation requirements
-- **Relevant PQC Today Features**: Compliance; Assess; Algorithms; Testing & Validation Methods
+- **Relevant PQC Today Features**: Compliance; Assess; Algorithms; pqc-testing-validation
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: ACVP/CAVP; conformance testing; test vectors; black-box testing
@@ -37850,7 +37850,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; OpenSSL Studio
+- **Relevant PQC Today Features**: Algorithms; OpenSSL
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -42386,7 +42386,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; pki-workshop; dnssec
+- **Relevant PQC Today Features**: Algorithms; pki-workshop
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -51188,7 +51188,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: 64-octet uncompressed public key; 64-octet signature
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: Support for SM2 signatures and SM3 digests
-- **Relevant PQC Today Features**: Algorithms; dnssec; crypto-agility
+- **Relevant PQC Today Features**: Algorithms; crypto-agility
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -55130,7 +55130,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Researcher
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Math Family; Threats
+- **Relevant PQC Today Features**: Algorithms; Threats
 - **Implementation Attack Surface**: Side-channel attacks; Fault attack; Noisy binary GCD operation sequences
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -56480,7 +56480,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: 5 MiB per microVM memory overhead
 - **Target Audience**: Security Architect; CISO; Developer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: hsm-pqc; kms-pqc; side-channel mitigation (mapped to vendor-risk or general security context, but strictly from list: hsm-pqc; kms-pqc)
+- **Relevant PQC Today Features**: hsm-pqc; kms-pqc
 - **Implementation Attack Surface**: side-channel (timing, L1 Terminal Fault, Spectre, Meltdown); memory sharing risks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: end-to-end validation tests; security-specific tests; automated checks
@@ -59666,7 +59666,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: Kyber provides faster operations than RSA; Kyber has smaller key sizes than RSA
 - **Target Audience**: Researcher; Security Architect
 - **Implementation Prerequisites**: Standard built-in processor acceleration features; AES-NI; ASIMD
-- **Relevant PQC Today Features**: Algorithms; Performance; Threats; Migrate
+- **Relevant PQC Today Features**: Algorithms; Threats; Migrate
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Performance testing; empirical benchmarks
@@ -60530,7 +60530,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Performance & Size Considerations**: 32-octet public key; variable-length signature; reduced memory requirements for zone databases; reduced signature size impact via condensed signatures
 - **Target Audience**: Security Architect; Developer; Operations
 - **Implementation Prerequisites**: Support for EDNS(0); Implementation of MTL mode logic; Support for SLH-DSA-SHA2-128s and SLH-DSA-SHAKE-128s parameter sets
-- **Relevant PQC Today Features**: Algorithms; merkle-tree-certs; dnssec; pki-workshop
+- **Relevant PQC Today Features**: Algorithms; merkle-tree-certs; pki-workshop
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
