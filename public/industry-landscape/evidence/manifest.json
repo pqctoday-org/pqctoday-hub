@@ -167,12 +167,12 @@
       "label": "Smart metering / AMI PKI",
       "url": "https://www.utoronto.ca/news/u-t-researcher-leads-effort-protect-power-utilities-quantum-attacks",
       "status": "downloaded",
-      "file": "threats/ENERGY-003.html",
-      "filename": "ENERGY-003.html",
-      "sizeBytes": 139197,
+      "file": "library/University-of-Toronto-Researcher-Leads-Effort-to-Protect-Pow.html",
+      "filename": "University-of-Toronto-Researcher-Leads-Effort-to-Protect-Pow.html",
+      "sizeBytes": 141572,
       "contentType": "text/html",
-      "sha256": "c1e61638574f411688258fbc62657d2fe86f5f0e334e7972e8bbaa8c16536552",
-      "verifiedAt": "2026-09-11"
+      "sha256": "ae9c23f401e22dc434943af47aad571e53d35e677e7cb7f853f066af433c160c",
+      "verifiedAt": "2026-09-12"
     },
     {
       "refId": "energy-pipeline",
@@ -276,12 +276,12 @@
       "label": "Validator & consensus signatures",
       "url": "https://ethereum.org/roadmap/account-abstraction/",
       "status": "downloaded",
-      "file": "threats/CRYPTO-002.html",
-      "filename": "CRYPTO-002.html",
-      "sizeBytes": 363044,
+      "file": "library/Ethereum-Foundation-Roadmap-Account-Abstraction.html",
+      "filename": "Ethereum-Foundation-Roadmap-Account-Abstraction.html",
+      "sizeBytes": 305178,
       "contentType": "text/html",
-      "sha256": "3862f8cbaf027b9e12afa2198071e71bfa39a7491af684495ce6dc8e465c2e79",
-      "verifiedAt": "2026-09-11"
+      "sha256": "ec8604f8c2d0d19ccd5a1c50dbfcffae94adf67c57eaa1c68423432c2e46b6f1",
+      "verifiedAt": "2026-09-12"
     },
     {
       "refId": "edu-sis",
@@ -569,12 +569,12 @@
       "label": "Web PKI & certificate authorities",
       "url": "https://cabforum.org/working-groups/server/baseline-requirements/documents/",
       "status": "downloaded",
-      "file": "threats/IT-002.html",
-      "filename": "IT-002.html",
-      "sizeBytes": 44365,
+      "file": "library/CA-B-Forum-Ballot-SMC013.html",
+      "filename": "CA-B-Forum-Ballot-SMC013.html",
+      "sizeBytes": 23664,
       "contentType": "text/html",
-      "sha256": "06912fdb80160b95429fc8ae08006a3ba10770c12586352e3c00b35c66665d71",
-      "verifiedAt": "2026-09-11"
+      "sha256": "ca7fa007a82b37b55734e83903bf92736dced7a0c3542422f326446d18f20239",
+      "verifiedAt": "2026-09-12"
     },
     {
       "refId": "it-supplychain",
