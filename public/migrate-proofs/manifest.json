@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-09-12T11:16:42.030224+00:00",
-  "count": 1207,
+  "count": 1291,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -13100,7 +13100,8 @@
       "url": "https://commoncriteriaportal.org/files/epfiles/EUCC-3090-2026-25-cible.pdf",
       "file": "Cryptographic-Library-NesLib-6-11-3-on-S-333232cc.pdf",
       "bytes": 1997633,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "0d30fa603f8a8a361bd47a70b4309de4621bff39bcf6b99b06186307374e955c"
     },
     {
       "product_id": "Cryptographic-library-NesLib-6-11-6-on-S",
@@ -14820,6 +14821,29 @@
       "refId": "entrust-cryptographic-security-platform",
       "hashedAt": "2026-09-12",
       "note": "real re-fetch 2026-09-12 succeeded (SOURCE verdict); prior capture was BOT-CHALLENGE"
+    },
+    {
+      "product_id": "Cryptographic-Library-NesLib-6-11-3-on-S",
+      "url": "https://messervices.cyber.gouv.fr/visas/EUCC-3090-2026-25-certificat.pdf",
+      "file": "Cryptographic-Library-NesLib-6-11-3-on-S-9d92cce0.pdf",
+      "bytes": 403819,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Cryptographic-library-NESLIB-6-11-3-on-S-3",
+      "url": "https://messervices.cyber.gouv.fr/visas/EUCC-3090-2026-56-cible.pdf",
+      "file": "Cryptographic-library-NESLIB-6-11-3-on-S-3-13590167.pdf",
+      "bytes": 2017107,
+      "tier": "curl_cffi:chrome124",
+      "sha256": "751dd72f7d5a2ece202b111265717755bfda711767deb5b476f6d8fd93a7e920"
+    },
+    {
+      "product_id": "Cryptographic-library-NESLIB-6-11-3-on-S-4",
+      "url": "https://messervices.cyber.gouv.fr/visas/EUCC-3090-2026-57-cible.pdf",
+      "file": "Cryptographic-library-NESLIB-6-11-3-on-S-4-24787b94.pdf",
+      "bytes": 2020927,
+      "tier": "curl_cffi:chrome124",
+      "sha256": "ecb3c13ad07da394b47bb2a2aa6f0d2a16a82f99a13ea86ab02f6d3b514a9b98"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
