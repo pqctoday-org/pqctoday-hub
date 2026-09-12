@@ -248,10 +248,10 @@
       "status": "downloaded",
       "file": "threats/ENERGY-002.html",
       "filename": "ENERGY-002.html",
-      "sizeBytes": 81505,
+      "sizeBytes": 81586,
       "contentType": "text/html",
-      "sha256": "072c67670f4e93d7734c5a614c47f6a4e155a249997053a5cc10528dc7f1ed4d",
-      "verifiedAt": "2026-09-11"
+      "sha256": "842bffff3960c379fcb457e3343c7e790dd278621005f0b157913dd15a5c8473",
+      "verifiedAt": "2026-09-12"
     },
     {
       "threatId": "ENERGY-003",
@@ -290,8 +290,8 @@
       "filename": "FIN-001.html",
       "sizeBytes": 121657,
       "contentType": "text/html",
-      "sha256": "ff99d1ee8c16a799652606da20566e12980a8db8b0564d3e2cdcd3e7a9ba1262",
-      "verifiedAt": "2026-09-11"
+      "sha256": "86ae1261da72c5fd656a802e91ded80f50fc0ecd722e0b5616893a6d1adc1d61",
+      "verifiedAt": "2026-09-12"
     },
     {
       "threatId": "FIN-002",
@@ -578,8 +578,8 @@
       "filename": "IT-003.html",
       "sizeBytes": 101434,
       "contentType": "text/html",
-      "sha256": "ee1262cd9e8a2f08ea3478068926d94b1529c087bc3cc3f3fd582acff4ff3e41",
-      "verifiedAt": "2026-09-11"
+      "sha256": "b98b60db14db876eb3108baa089e7987ea9e1df404322e5f82711ffa70d71f39",
+      "verifiedAt": "2026-09-12"
     },
     {
       "threatId": "IT-004",
@@ -592,7 +592,7 @@
       "sizeBytes": 25607,
       "contentType": "text/html",
       "sha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-12"
     },
     {
       "threatId": "LEG-001",
@@ -745,10 +745,10 @@
       "status": "downloaded",
       "file": "threats/SUPPLY-002.html",
       "filename": "SUPPLY-002.html",
-      "sizeBytes": 327717,
+      "sizeBytes": 320052,
       "contentType": "text/html",
-      "sha256": "f3195b67bc88c0d2bbf1fb2055d87810f63b637467b91093845d863dd2ba80e5",
-      "verifiedAt": "2026-09-11"
+      "sha256": "474852fd42f7d427a5c3ced7b9ee4a588b7e3614b24fe680c66a7bf6f00b67aa",
+      "verifiedAt": "2026-09-12"
     },
     {
       "threatId": "SUPPLY-003",
