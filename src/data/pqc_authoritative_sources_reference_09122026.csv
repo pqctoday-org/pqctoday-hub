@@ -726,8 +726,10 @@ kpqc,KpqC,Vendor,,https://www.kpqc.or.kr,Korean Post-Quantum Cryptography (KpqC)
 tencent,Tencent,Vendor,,https://pqc.tencent.com,,No,No,No,No,No,No,No,,2026-09-07,url_needs_review
 zig-software-foundation,Zig Software Foundation,Vendor,,https://ziglang.org,,No,No,No,No,No,No,No,,2026-09-07,url_needs_review
 ottenheimer-gmbh,Ottenheimer GmbH,Vendor,,https://pqprobe.com,,No,No,No,No,No,No,No,,2026-09-07,url_needs_review
-pqconnect-project,PQConnect Project,Vendor,,https://pqconnect.net,,No,No,No,No,No,No,No,,2026-09-07,url_needs_review
 pqprobe,PQProbe,Vendor,Europe,https://pqprobe.com/app,PQC discovery/scanning tool (Ottenheimer GmbH),No,No,No,No,No,No,Yes,No,2026-09-07,url_authoritative
 pq-sort-post-quantum-signature,PQ-SORT (TII),Vendor,Middle East,https://pqsort.tii.ae/,Technology Innovation Institute's PQ signature on-ramp testing framework,No,No,No,No,No,No,Yes,No,2026-09-07,url_authoritative
 pqconnect,PQConnect Project,Vendor,Global,https://www.pqconnect.net/,djb/Lange academic collaboration's post-quantum secure tunnel tool,No,No,No,No,No,No,Yes,No,2026-09-07,url_authoritative
 tencent-pqc-infohub,Tencent PQC InfoHub,Vendor,APAC,https://pqc.tencent.com/en,Tencent's PQC migration/information hub,No,No,No,No,No,No,Yes,No,2026-09-07,url_authoritative
+finma,FINMA (Swiss Financial Market Supervisory Authority),Government,Europe,https://www.finma.ch/,Swiss financial-sector regulator; guidance on quantum-computing cyber risk and PQC migration for financial institutions,No,No,No,Yes,No,No,No,No,2026-09-12,url_authoritative
+japan-fsa,Financial Services Agency (Japan),Government,APAC,https://www.fsa.go.jp/,Japan financial regulator; study group reports on deposit-taking institutions post-quantum cryptography transition,No,No,No,Yes,No,No,No,No,2026-09-12,url_authoritative
+pqc-framework,Applied Quantum / PQC Migration Framework,Vendor,Global,https://pqcframework.com/,"Marin Ivezic / Applied Quantum -- independent PQC-migration consultancy framework, contextual-tier resource",No,No,No,Yes,No,No,No,No,2026-09-12,url_needs_review
