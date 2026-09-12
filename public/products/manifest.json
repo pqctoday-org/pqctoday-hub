@@ -28066,6 +28066,56 @@
       "refId": "entrust-cryptographic-security-platform",
       "hashedAt": "2026-09-12",
       "note": "real re-fetch 2026-09-12 succeeded (SOURCE verdict); prior capture was BOT-CHALLENGE"
+    },
+    {
+      "softwareName": "Cryptographic Library NesLib 6.11.3 on ST31N600 A04 Version 6.11.3 (EUCC-3090-2026-25)",
+      "filename": "Cryptographic-Library-NesLib-6-11-3-on-S-333232cc.pdf",
+      "url": "https://commoncriteriaportal.org/files/epfiles/EUCC-3090-2026-25-cible.pdf",
+      "status": "downloaded",
+      "refId": "Cryptographic-Library-NesLib-6-11-3-on-S",
+      "sha256": "0d30fa603f8a8a361bd47a70b4309de4621bff39bcf6b99b06186307374e955c",
+      "sizeBytes": 1997633,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "softwareName": "Cryptographic library NESLIB 6.11.3 on ST31R480 (A02) (EUCC-3090-2026-56)",
+      "filename": "Cryptographic-library-NESLIB-6-11-3-on-S-3-13590167.pdf",
+      "url": "https://messervices.cyber.gouv.fr/visas/EUCC-3090-2026-56-cible.pdf",
+      "status": "downloaded",
+      "refId": "Cryptographic-library-NESLIB-6-11-3-on-S-3",
+      "sha256": "751dd72f7d5a2ece202b111265717755bfda711767deb5b476f6d8fd93a7e920",
+      "sizeBytes": 2017107,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "softwareName": "Cryptographic library NESLIB 6.11.3 on ST31R480 (B02) (EUCC-3090-2026-57)",
+      "filename": "Cryptographic-library-NESLIB-6-11-3-on-S-4-24787b94.pdf",
+      "url": "https://messervices.cyber.gouv.fr/visas/EUCC-3090-2026-57-cible.pdf",
+      "status": "downloaded",
+      "refId": "Cryptographic-library-NESLIB-6-11-3-on-S-4",
+      "sha256": "ecb3c13ad07da394b47bb2a2aa6f0d2a16a82f99a13ea86ab02f6d3b514a9b98",
+      "sizeBytes": 2020927,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "softwareName": "Post-Quantum Cryptography In The Ledger SDK",
+      "filename": "Post-Quantum-Cryptography-In-The-Ledger-af0bf395.html",
+      "url": "https://www.ledger.com/blog-post-quantum-cryptography-ledger-sdk",
+      "status": "downloaded",
+      "refId": "Post-Quantum-Cryptography-In-The-Ledger",
+      "sha256": "b44c2f4038e15659cb2fe1a071390e7b5156b2407f55a75104b68c6f2e394a37",
+      "sizeBytes": 280784,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "softwareName": "Qinsight Atlas — Cryptographic Discovery & Posture Management Platform",
+      "filename": "Qinsight-Atlas-Cryptographic-Discovery-P-6d77089e.html",
+      "url": "https://www.qinsight.com/product-cryptographic-posture-management",
+      "status": "downloaded",
+      "refId": "Qinsight-Atlas-Cryptographic-Discovery-P",
+      "sha256": "d759942c6efefbc97e6590ce1a858187e6402092c2fd996214884e81540c2b35",
+      "sizeBytes": 72144,
+      "hashedAt": "2026-09-12"
     }
   ],
   "total": 1892,

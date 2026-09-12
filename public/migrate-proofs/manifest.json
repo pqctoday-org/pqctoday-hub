@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-09-12T11:16:42.030224+00:00",
-  "count": 1291,
+  "count": 1293,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -14844,6 +14844,22 @@
       "bytes": 2020927,
       "tier": "curl_cffi:chrome124",
       "sha256": "ecb3c13ad07da394b47bb2a2aa6f0d2a16a82f99a13ea86ab02f6d3b514a9b98"
+    },
+    {
+      "product_id": "Post-Quantum-Cryptography-In-The-Ledger",
+      "url": "https://www.ledger.com/blog-post-quantum-cryptography-ledger-sdk",
+      "file": "Post-Quantum-Cryptography-In-The-Ledger-af0bf395.html",
+      "bytes": 280784,
+      "tier": "curl_cffi:chrome124",
+      "sha256": "b44c2f4038e15659cb2fe1a071390e7b5156b2407f55a75104b68c6f2e394a37"
+    },
+    {
+      "product_id": "Qinsight-Atlas-Cryptographic-Discovery-P",
+      "url": "https://www.qinsight.com/product-cryptographic-posture-management",
+      "file": "Qinsight-Atlas-Cryptographic-Discovery-P-6d77089e.html",
+      "bytes": 72144,
+      "tier": "curl_cffi:chrome124",
+      "sha256": "d759942c6efefbc97e6590ce1a858187e6402092c2fd996214884e81540c2b35"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
