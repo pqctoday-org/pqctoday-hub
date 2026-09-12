@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-11",
+  "generated": "2026-09-12T11:12:41.132864+00:00",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "threats",
   "csv": "quantum_threats_hsm_industries_09092026_r1.csv",
@@ -203,15 +203,16 @@
     {
       "threatId": "CRYPTO-002",
       "refId": "CRYPTO-002",
-      "label": "Ethereum relies on ECDSA secp256k1 for transaction signing, exposing the public key in the signature whenever an account broadcasts its first outbound transaction. This revelation creates direct Shor-attack vulnerability for any address that has ever transacted, as the private key can be derived from the exposed public key. While the Ethereum Foundation explores account abstraction via EIP-4337 and EIP-7560 as a path toward quantum-safe wallets, no finalized EIP currently mandates a specific post-quantum migration timeline.",
-      "url": "https://ethereum.org/roadmap/account-abstraction/",
-      "status": "downloaded",
+      "url": "https://ethereum.org/roadmap/security/quantum-resistance/",
+      "status": "recaptured",
       "file": "threats/CRYPTO-002.html",
       "filename": "CRYPTO-002.html",
-      "sizeBytes": 363044,
+      "sizeBytes": 373697,
       "contentType": "text/html",
-      "sha256": "3862f8cbaf027b9e12afa2198071e71bfa39a7491af684495ce6dc8e465c2e79",
-      "verifiedAt": "2026-09-11"
+      "sha256": "e3438bbcd4a90002247965f4eda30bfa475aad87591cdd8291bfb6686e81435b",
+      "recaptured_at": "2026-09-12T11:12:38.909049+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260912/threats/CRYPTO-002.html"
     },
     {
       "threatId": "CRYPTO-003",
@@ -255,15 +256,16 @@
     {
       "threatId": "ENERGY-003",
       "refId": "ENERGY-003",
-      "label": "Research identifies real-time quantum attack scenarios targeting grid controllers, smart meters, and energy routers. With over one billion smart meters globally requiring post-quantum cryptography migration, the transition faces significant logistical hurdles. Many of these devices lack over-the-air update capabilities, necessitating costly physical replacements to secure the infrastructure against emerging quantum threats.",
-      "url": "https://www.utoronto.ca/news/u-t-researcher-leads-effort-protect-power-utilities-quantum-attacks",
-      "status": "downloaded",
+      "url": "https://www.techradar.com/pro/the-post-quantum-smart-meter-challenge-that-could-cut-off-households",
+      "status": "recaptured",
       "file": "threats/ENERGY-003.html",
       "filename": "ENERGY-003.html",
-      "sizeBytes": 139197,
+      "sizeBytes": 1983753,
       "contentType": "text/html",
-      "sha256": "c1e61638574f411688258fbc62657d2fe86f5f0e334e7972e8bbaa8c16536552",
-      "verifiedAt": "2026-09-11"
+      "sha256": "1bf355bcca74556bbd96ab4703e5cb641dd9739f06b332e890abdd498dc23520",
+      "recaptured_at": "2026-09-12T11:12:39.475646+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260912/threats/ENERGY-003.html"
     },
     {
       "threatId": "ENERGY-004",
@@ -333,15 +335,16 @@
     {
       "threatId": "FIN-005",
       "refId": "FIN-005",
-      "label": "FS-ISAC has warned that the financial sector lacks defined resources for quantum-resistant migration, compressing the transition into unrealistically short timeframes. This creates significant operational risk: without immediate action, organizations face a likely roadmap collapse before meeting 2030 compliance deadlines.",
-      "url": "https://www.fsisac.com/newsroom/fs-isac-urges-global-coordination-for-migration-to-post-quantum-cryptography-in-financial-services",
-      "status": "downloaded",
-      "file": "threats/FIN-005.html",
-      "filename": "FIN-005.html",
-      "sizeBytes": 37763,
-      "contentType": "text/html",
-      "sha256": "065fa8bcb99f647311399265b0b7c3ce45b9fee47594acfcd3ed0869598da0d3",
-      "verifiedAt": "2026-09-11"
+      "url": "https://www.fsisac.com/hubfs/Knowledge/PQC/PQC%20Timelines.pdf",
+      "status": "recaptured",
+      "file": "threats/FIN-005.pdf",
+      "filename": "FIN-005.pdf",
+      "sizeBytes": 757851,
+      "contentType": "application/pdf",
+      "sha256": "ffade61cadf72cdf8bba38bd4d88a2e0a2d9d83b02c68bf437d2073bb1da2fb9",
+      "recaptured_at": "2026-09-12T11:12:39.681156+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "threatId": "AUS-FIN-001",
@@ -554,15 +557,16 @@
     {
       "threatId": "IT-002",
       "refId": "IT-002",
-      "label": "The CA/Browser Forum Server Certificate Working Group is actively discussing PQC timeline requirements but has not yet adopted binding ballot language mandating specific PQC algorithms or timelines. Consequently, browser trust stores controlled by Apple, Google, Microsoft, and Mozilla will drive PQC certificate adoption schedules. Certificate Transparency logs provide visibility into CA PQC migration progress as it begins.",
-      "url": "https://cabforum.org/working-groups/server/baseline-requirements/documents/",
-      "status": "downloaded",
+      "url": "https://cabforum.org/2025/06/10/2025-06-10-minutes-of-the-forum-toronto-f2f/",
+      "status": "recaptured",
       "file": "threats/IT-002.html",
       "filename": "IT-002.html",
-      "sizeBytes": 44365,
+      "sizeBytes": 75890,
       "contentType": "text/html",
-      "sha256": "06912fdb80160b95429fc8ae08006a3ba10770c12586352e3c00b35c66665d71",
-      "verifiedAt": "2026-09-11"
+      "sha256": "80f878e72c4090e74edac9af8890d2e3b26d2b0281d55bb88386cc1024187007",
+      "recaptured_at": "2026-09-12T11:12:39.902285+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260912/threats/IT-002.html"
     },
     {
       "threatId": "IT-003",
@@ -1256,15 +1260,16 @@
     {
       "threatId": "CROS-003",
       "refId": "CROS-003",
-      "label": "Applied Quantum's practitioner-built 8-phase PQC migration framework for enterprise-wide crypto-agility, covering executive mandate through vendor governance, with sector extensions for financial services and OT.",
-      "url": "https://pqcframework.com/",
-      "status": "downloaded",
-      "file": "threats/CROS-003.html",
-      "filename": "CROS-003.html",
-      "sizeBytes": 175318,
-      "contentType": "text/html",
-      "sha256": "c570f43adc4a5ee3e9885781ee699221995916e9c8eda29172a376c0cab8c19d",
-      "verifiedAt": "2026-09-11"
+      "url": "https://pqcframework.org/wp-content/uploads/2026/06/applied-quantum-marin-ivezic-pqc-migration-framework-universal-2-1.pdf",
+      "status": "recaptured",
+      "file": "threats/CROS-003.pdf",
+      "filename": "CROS-003.pdf",
+      "sizeBytes": 1483960,
+      "contentType": "application/pdf",
+      "sha256": "6ae7ef892d8697d1dbcdf02ebea5547d3875f87c0faba2570c6deab1b6b99d3c",
+      "recaptured_at": "2026-09-12T11:12:40.222825+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "threatId": "INTE-001",
@@ -1438,15 +1443,16 @@
     {
       "threatId": "FINA-007",
       "refId": "FINA-007",
-      "label": "ASC X9 report giving financial-industry managers high-level guidance on quantum-enabled cyberattack risk, cryptographic asset inventory, and PQC migration prioritization.",
-      "url": "https://x9.org/new-x9-report-migrating-to-post-quantum-cryptography/",
-      "status": "downloaded",
-      "file": "threats/FINA-007.html",
-      "filename": "FINA-007.html",
-      "sizeBytes": 219678,
-      "contentType": "text/html",
-      "sha256": "9757bf1981b6264c27fcbe1596a2f43329b3fb643f1dafb08ade652313e090fb",
-      "verifiedAt": "2026-09-11"
+      "url": "https://x9.org/wp-content/uploads/2022/11/X9F-Quantum-Computing-Risk-Study-Group-IR-F01-2022_20221129-Published-PDF.pdf",
+      "status": "recaptured",
+      "file": "threats/FINA-007.pdf",
+      "filename": "FINA-007.pdf",
+      "sizeBytes": 1899260,
+      "contentType": "application/pdf",
+      "sha256": "07ec39dcfa220fe7b2ca06e2fff8ac8ccda10aa7675172a7b52c8a813172645b",
+      "recaptured_at": "2026-09-12T11:12:41.132793+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "threatId": "CRIT-002",
