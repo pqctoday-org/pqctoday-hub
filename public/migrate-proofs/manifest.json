@@ -8841,17 +8841,6 @@
       "hashedAt": "2026-09-06"
     },
     {
-      "product_id": "entrust-cryptographic-security-platform",
-      "url": "https://www.entrust.com/products/cryptographic-security-platform",
-      "file": "entrust-cryptographic-security-platform-2cfa9072.html",
-      "bytes": 32124,
-      "tier": "playwright-stealth",
-      "refId": "entrust-cryptographic-security-platform",
-      "sha256": "03409f3ee03e41f61e2baacf03fc93d65c2ca14adf27a0cb4671a05330ef5288",
-      "sizeBytes": 32124,
-      "hashedAt": "2026-09-06"
-    },
-    {
       "product_id": "angela-cryptomodule-cryptographic-algorithm-library",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19805",
       "file": "angela-cryptomodule-cryptographic-algorithm-library-298b79f2.html",
@@ -10954,17 +10943,6 @@
       "refId": "cato-networks-sase",
       "sha256": "e8f14a2e72e91dbf21af9a1ae76027f53d18b5fc2e67f3725f361523b14e4f34",
       "sizeBytes": 643760,
-      "hashedAt": "2026-09-06"
-    },
-    {
-      "product_id": "entrust-cryptographic-security-platform",
-      "url": "https://www.entrust.com/products/cryptographic-security-platform",
-      "file": "entrust-cryptographic-security-platform-2cfa9072.html",
-      "bytes": 27636,
-      "tier": "playwright-stealth",
-      "refId": "entrust-cryptographic-security-platform",
-      "sha256": "03409f3ee03e41f61e2baacf03fc93d65c2ca14adf27a0cb4671a05330ef5288",
-      "sizeBytes": 32124,
       "hashedAt": "2026-09-06"
     },
     {
@@ -13615,84 +13593,120 @@
       "url": "https://github.com/aws/aws-lc-rs",
       "file": "GitHub-aws-aws-lc-rs-5184ac4f.html",
       "bytes": 335809,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "f8a1039b1a264d9a00ca2a55ff271dc3a4c724a1eeeac48482fb82e1de80146c",
+      "sizeBytes": 335871,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "Dashboard-PQProbe",
       "url": "https://pqprobe.com/app",
       "file": "Dashboard-PQProbe-2d7914d5.html",
       "bytes": 30912,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "b91f6cb6877ee290fdd5f93af86a7f94e74f022f0626e1fde9a2fbd6fe2f841a",
+      "sizeBytes": 30912,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "PQ-SORT-Post-Quantum-Signatures-On-Ramp",
       "url": "https://pqsort.tii.ae/",
       "file": "PQ-SORT-Post-Quantum-Signatures-On-Ramp-9d9fbd91.html",
       "bytes": 16889,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "048d560912fdcb03b8ebeab426fdadab6c205bbda16234427f27d61f7f138e12",
+      "sizeBytes": 16902,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "PQConnect-Intro",
       "url": "https://www.pqconnect.net/",
       "file": "PQConnect-Intro-83c011b5.html",
       "bytes": 7840,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "c1a130fc15d0bb2a7b2904aa1bad9df7935f0556834206f772b267f931551453",
+      "sizeBytes": 7846,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "Cryptography-std-crypto-Zig",
       "url": "https://www.mintlify.com/ziglang/zig/api/crypto",
       "file": "Cryptography-std-crypto-Zig-a722bf9b.html",
       "bytes": 1345104,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "d7a1cbed615c816bf083d0f3861125b0cae9fe46421e158d7cbcc35534faa5e2",
+      "sizeBytes": 1345180,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "What-is-Post-Quantum-Encryption-And-How",
       "url": "https://www.alibabacloud.com/blog/what-is-post-quantum-encryption---and-how-to-enable-it-on-esa_603220",
       "file": "What-is-Post-Quantum-Encryption-And-How-889815dd.html",
       "bytes": 43201,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "c2e17f82c7ccbe633f9b727b4bd012fb881d342c97fb0f133b44e0adf8681dfc",
+      "sizeBytes": 43270,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "SMAUG-T-HAETAE-HAETAE",
       "url": "https://kpqc.cryptolab.co.kr/haetae",
       "file": "SMAUG-T-HAETAE-HAETAE-aa56a2a4.html",
       "bytes": 177780,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "90ef10a70c29b36aee50ccea03212ee994409cf6f8819148cd899673837d3faa",
+      "sizeBytes": 177806,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "Dilithium-Software",
       "url": "https://pq-crystals.org/dilithium/software.shtml",
       "file": "Dilithium-Software-47bfc9e9.html",
       "bytes": 5702,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "7b55828561af5138883e5b0c5afc4a2c3dd3639508bf808cd480eea5c34280b0",
+      "sizeBytes": 5702,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "Kyber-Software",
       "url": "https://pq-crystals.org/kyber/software.shtml",
       "file": "Kyber-Software-ce0ffb4a.html",
       "bytes": 6944,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "c5de0dda82011aef7d8fcffee97638b1630c92241958975417c71c6af8b64f0f",
+      "sizeBytes": 6944,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "SPHINCS-Software",
       "url": "https://sphincs.org/software.html",
       "file": "SPHINCS-Software-0f780525.html",
       "bytes": 6523,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "d01769e15c0b44d24fad1eaf6a1e445fa102daa58dd83eb8f5ec457dcf71a937",
+      "sizeBytes": 6529,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "PQC-InfoHub-Tencent-Post-Quantum-Cryptog",
       "url": "https://pqc.tencent.com/en",
       "file": "PQC-InfoHub-Tencent-Post-Quantum-Cryptog-44fde4be.html",
       "bytes": 91708,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "f8ad4ce73d7e3afa69499c3b8403ff472591d3e834ba8e6ee78d8bab20da3327",
+      "sizeBytes": 91712,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "Lean-Consensus-Roadmap",
       "url": "https://leanroadmap.org/",
       "file": "Lean-Consensus-Roadmap-70887fc6.html",
       "bytes": 212814,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "sha256": "f20cb22fb0c165cfdc2653f4f4332229be54c3c0ad3393d4db5ebde2199d576a",
+      "sizeBytes": 212875,
+      "hashedAt": "2026-09-12"
     },
     {
       "product_id": "samsung-networks-5g-core",
@@ -13819,7 +13833,7 @@
       "sizeBytes": 60915,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "oracle-key-vault",
       "note": "additional document for a row that already has one"
     },
@@ -13831,7 +13845,7 @@
       "sizeBytes": 9324,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "boringssl",
       "note": "additional document for a row that already has one"
     },
@@ -13843,7 +13857,7 @@
       "sizeBytes": 366944,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "gnutls",
       "note": "additional document for a row that already has one"
     },
@@ -13855,7 +13869,7 @@
       "sizeBytes": 13170,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "rustls",
       "note": "additional document for a row that already has one"
     },
@@ -13867,7 +13881,7 @@
       "sizeBytes": 200085,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "google-cloud-hsm",
       "note": "additional document for a row that already has one"
     },
@@ -13879,7 +13893,7 @@
       "sizeBytes": 100245,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "entrust-pki",
       "note": "additional document for a row that already has one"
     },
@@ -13891,7 +13905,7 @@
       "sizeBytes": 135303,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "smallstep-certificate-authority",
       "note": "additional document for a row that already has one"
     },
@@ -13903,7 +13917,7 @@
       "sizeBytes": 49838,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "ibm-quantum-safe-toolkit",
       "note": "additional document for a row that already has one"
     },
@@ -13915,7 +13929,7 @@
       "sizeBytes": 71108,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "postgresql-pgcrypto",
       "note": "additional document for a row that already has one"
     },
@@ -13927,7 +13941,7 @@
       "sizeBytes": 30746,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "mysql-enterprise-encryption",
       "note": "additional document for a row that already has one"
     },
@@ -13939,7 +13953,7 @@
       "sizeBytes": 61616,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "globalsign-digital-signing-service",
       "note": "additional document for a row that already has one"
     },
@@ -13951,7 +13965,7 @@
       "sizeBytes": 12129,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "sigstore-cosign",
       "note": "additional document for a row that already has one"
     },
@@ -13963,7 +13977,7 @@
       "sizeBytes": 830994,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "thales-ciphertrust-manager",
       "note": "additional document for a row that already has one"
     },
@@ -13975,7 +13989,7 @@
       "sizeBytes": 110791,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "nginx",
       "note": "additional document for a row that already has one"
     },
@@ -13987,7 +14001,7 @@
       "sizeBytes": 23838,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "apache-http-server",
       "note": "additional document for a row that already has one"
     },
@@ -13999,7 +14013,7 @@
       "sizeBytes": 281116,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "keycloak",
       "note": "additional document for a row that already has one"
     },
@@ -14011,7 +14025,7 @@
       "sizeBytes": 1459722,
       "content_type": "application/pdf",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "virtru-data-protection",
       "note": "additional document for a row that already has one"
     },
@@ -14023,7 +14037,7 @@
       "sizeBytes": 125342,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "google-chrome",
       "note": "additional document for a row that already has one"
     },
@@ -14035,7 +14049,7 @@
       "sizeBytes": 56027,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "azure-dedicated-hsm-marvell-liquidsecurity",
       "note": "additional document for a row that already has one"
     },
@@ -14047,7 +14061,7 @@
       "sizeBytes": 52502,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "alpine-linux",
       "note": "additional document for a row that already has one"
     },
@@ -14059,7 +14073,7 @@
       "sizeBytes": 84047,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "freebsd",
       "note": "additional document for a row that already has one"
     },
@@ -14071,7 +14085,7 @@
       "sizeBytes": 33022,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "opensuse-leap",
       "note": "additional document for a row that already has one"
     },
@@ -14083,7 +14097,7 @@
       "sizeBytes": 151459,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "chromeos",
       "note": "additional document for a row that already has one"
     },
@@ -14095,7 +14109,7 @@
       "sizeBytes": 100300,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "vmware-horizon",
       "note": "additional document for a row that already has one"
     },
@@ -14107,7 +14121,7 @@
       "sizeBytes": 86484,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "cisco-meraki-mx-cloud-managed-firewall",
       "note": "additional document for a row that already has one"
     },
@@ -14119,7 +14133,7 @@
       "sizeBytes": 261929,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "arista-eos-extensible-operating-system",
       "note": "additional document for a row that already has one"
     },
@@ -14131,7 +14145,7 @@
       "sizeBytes": 119537,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "pfsense-community-edition",
       "note": "additional document for a row that already has one"
     },
@@ -14143,7 +14157,7 @@
       "sizeBytes": 394979,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "opnsense",
       "note": "additional document for a row that already has one"
     },
@@ -14155,7 +14169,7 @@
       "sizeBytes": 49556,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "nec-5g-core",
       "note": "additional document for a row that already has one"
     },
@@ -14167,7 +14181,7 @@
       "sizeBytes": 20008,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "apache-traffic-server",
       "note": "additional document for a row that already has one"
     },
@@ -14179,7 +14193,7 @@
       "sizeBytes": 10808,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "eclipse-jetty",
       "note": "additional document for a row that already has one"
     },
@@ -14191,7 +14205,7 @@
       "sizeBytes": 60398,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "postgresql",
       "note": "additional document for a row that already has one"
     },
@@ -14203,7 +14217,7 @@
       "sizeBytes": 66974,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "mysql-community-server",
       "note": "additional document for a row that already has one"
     },
@@ -14215,7 +14229,7 @@
       "sizeBytes": 126110,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "redis",
       "note": "additional document for a row that already has one"
     },
@@ -14227,7 +14241,7 @@
       "sizeBytes": 1934553,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "mariadb-server",
       "note": "additional document for a row that already has one"
     },
@@ -14239,7 +14253,7 @@
       "sizeBytes": 18300,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "bitcoin-core",
       "note": "additional document for a row that already has one"
     },
@@ -14251,7 +14265,7 @@
       "sizeBytes": 911920,
       "content_type": "application/pdf",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "hyperledger-besu",
       "note": "additional document for a row that already has one"
     },
@@ -14263,7 +14277,7 @@
       "sizeBytes": 1097027,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "cosmos-tendermint",
       "note": "additional document for a row that already has one"
     },
@@ -14275,7 +14289,7 @@
       "sizeBytes": 271864,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "avalanche",
       "note": "additional document for a row that already has one"
     },
@@ -14287,7 +14301,7 @@
       "sizeBytes": 388898,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "nozomi-networks-guardian",
       "note": "additional document for a row that already has one"
     },
@@ -14299,7 +14313,7 @@
       "sizeBytes": 1916804,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "fortinet-fortigate-rugged",
       "note": "additional document for a row that already has one"
     },
@@ -14311,7 +14325,7 @@
       "sizeBytes": 670340,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "keysight-inspector",
       "note": "additional document for a row that already has one"
     },
@@ -14323,7 +14337,7 @@
       "sizeBytes": 65273,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "pqcryptolib-core",
       "note": "additional document for a row that already has one"
     },
@@ -14335,7 +14349,7 @@
       "sizeBytes": 83483,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "cisco-ios-xr",
       "note": "additional document for a row that already has one"
     },
@@ -14347,7 +14361,7 @@
       "sizeBytes": 314261,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "zscaler-zte",
       "note": "additional document for a row that already has one"
     },
@@ -14359,7 +14373,7 @@
       "sizeBytes": 211770,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "lattice-machxo5-nx",
       "note": "additional document for a row that already has one"
     },
@@ -14371,7 +14385,7 @@
       "sizeBytes": 207411,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "scality-ring9",
       "note": "additional document for a row that already has one"
     },
@@ -14383,7 +14397,7 @@
       "sizeBytes": 280863,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "microsoft-azure",
       "note": "additional document for a row that already has one"
     },
@@ -14395,7 +14409,7 @@
       "sizeBytes": 668869,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "docker-engine-28-0",
       "note": "additional document for a row that already has one"
     },
@@ -14407,7 +14421,7 @@
       "sizeBytes": 367223,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "zoom-compliance-2026",
       "note": "additional document for a row that already has one"
     },
@@ -14419,7 +14433,7 @@
       "sizeBytes": 373471,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "hyland-onbase",
       "note": "additional document for a row that already has one"
     },
@@ -14431,7 +14445,7 @@
       "sizeBytes": 95645,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "broadcom-symantec-ses",
       "note": "additional document for a row that already has one"
     },
@@ -14443,7 +14457,7 @@
       "sizeBytes": 598060,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "sectigo-certificate-manager",
       "note": "additional document for a row that already has one"
     },
@@ -14455,7 +14469,7 @@
       "sizeBytes": 61933,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "ascertia-adss-pki-server",
       "note": "additional document for a row that already has one"
     },
@@ -14467,7 +14481,7 @@
       "sizeBytes": 34393,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "czertainly",
       "note": "additional document for a row that already has one"
     },
@@ -14479,7 +14493,7 @@
       "sizeBytes": 71105,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "mtg-ag-cara",
       "note": "additional document for a row that already has one"
     },
@@ -14491,7 +14505,7 @@
       "sizeBytes": 157044,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "i4p-trident-hsm",
       "note": "additional document for a row that already has one"
     },
@@ -14503,7 +14517,7 @@
       "sizeBytes": 61688,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "exequantum",
       "note": "additional document for a row that already has one"
     },
@@ -14515,7 +14529,7 @@
       "sizeBytes": 42791,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "caddy-server",
       "note": "additional document for a row that already has one"
     },
@@ -14527,7 +14541,7 @@
       "sizeBytes": 123772,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "mastercard-quantum-resistant-contactless",
       "note": "additional document for a row that already has one"
     },
@@ -14539,7 +14553,7 @@
       "sizeBytes": 401585,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "ovhcloud-qrng-ssl",
       "note": "additional document for a row that already has one"
     },
@@ -14551,7 +14565,7 @@
       "sizeBytes": 213746,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "threema-pqc",
       "note": "additional document for a row that already has one"
     },
@@ -14563,7 +14577,7 @@
       "sizeBytes": 89547,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "simplex-chat-pqc",
       "note": "additional document for a row that already has one"
     },
@@ -14575,7 +14589,7 @@
       "sizeBytes": 72749,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "cisa-pqc-migration-framework",
       "note": "additional document for a row that already has one"
     },
@@ -14587,7 +14601,7 @@
       "sizeBytes": 85519,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "opera-browser-pqc",
       "note": "additional document for a row that already has one"
     },
@@ -14599,7 +14613,7 @@
       "sizeBytes": 165767,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "nxp-i-mx-94-pqc-processor",
       "note": "additional document for a row that already has one"
     },
@@ -14611,7 +14625,7 @@
       "sizeBytes": 171370,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "renesas-veridify-pqc-for-ra-mcus",
       "note": "additional document for a row that already has one"
     },
@@ -14623,7 +14637,7 @@
       "sizeBytes": 571672,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "quantum-emotion-sentry-q",
       "note": "additional document for a row that already has one"
     },
@@ -14635,7 +14649,7 @@
       "sizeBytes": 44197,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "arqit-quantumcloud",
       "note": "additional document for a row that already has one"
     },
@@ -14647,7 +14661,7 @@
       "sizeBytes": 74390,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "enquantum-pqc-accelerator",
       "note": "additional document for a row that already has one"
     },
@@ -14659,7 +14673,7 @@
       "sizeBytes": 24317,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "vox-messenger-pqc",
       "note": "additional document for a row that already has one"
     },
@@ -14671,7 +14685,7 @@
       "sizeBytes": 322350,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "mayo-reference-implementation",
       "note": "additional document for a row that already has one"
     },
@@ -14683,7 +14697,7 @@
       "sizeBytes": 398285,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "blackberry-qnx-hypervisor-8",
       "note": "additional document for a row that already has one"
     },
@@ -14695,7 +14709,7 @@
       "sizeBytes": 33460,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "ivpn",
       "note": "additional document for a row that already has one"
     },
@@ -14707,7 +14721,7 @@
       "sizeBytes": 358256,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "mlspp",
       "note": "additional document for a row that already has one"
     },
@@ -14719,7 +14733,7 @@
       "sizeBytes": 48380,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "openbao",
       "note": "additional document for a row that already has one"
     },
@@ -14731,7 +14745,7 @@
       "sizeBytes": 59660,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "wireguard-go",
       "note": "additional document for a row that already has one"
     },
@@ -14743,7 +14757,7 @@
       "sizeBytes": 1286,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "microsoft-playwright",
       "note": "additional document for a row that already has one"
     },
@@ -14755,7 +14769,7 @@
       "sizeBytes": 11727,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "ns3-network-simulator",
       "note": "additional document for a row that already has one"
     },
@@ -14767,7 +14781,7 @@
       "sizeBytes": 389248,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "openqkdnetwork-qkd-net",
       "note": "additional document for a row that already has one"
     },
@@ -14779,7 +14793,7 @@
       "sizeBytes": 1065697,
       "content_type": "application/pdf",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "hawk-reference-implementation",
       "note": "additional document for a row that already has one"
     },
@@ -14791,9 +14805,21 @@
       "sizeBytes": 57442,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "libpqsecure",
       "note": "additional document for a row that already has one"
+    },
+    {
+      "product_id": "entrust-cryptographic-security-platform",
+      "url": "https://www.entrust.com/products/cryptographic-security-platform",
+      "file": "entrust-cryptographic-security-platform-2cfa9072.html",
+      "bytes": 179942,
+      "sha256": "15ff6be9a59055df8b62434e2aafd67604266497866df8f1810545795e4d9565",
+      "sizeBytes": 179942,
+      "status": "downloaded",
+      "refId": "entrust-cryptographic-security-platform",
+      "hashedAt": "2026-09-12",
+      "note": "real re-fetch 2026-09-12 succeeded (SOURCE verdict); prior capture was BOT-CHALLENGE"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
