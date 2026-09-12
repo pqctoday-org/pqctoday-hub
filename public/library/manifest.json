@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-11",
+  "generated": "2026-09-12T11:12:26.799156+00:00",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "library",
   "csv": "library_09112026_r7.csv",
@@ -11516,15 +11516,16 @@
     },
     {
       "refId": "15-CFR-742-15-Encryption-items",
-      "label": "15 CFR 742.15 -- Encryption items",
-      "url": "https://www.ecfr.gov/current/title-15/subtitle-B/chapter-VII/subchapter-C/part-742/section-742.15",
-      "status": "downloaded",
-      "file": "library/15-CFR-742-15-Encryption-items.html",
-      "filename": "15-CFR-742-15-Encryption-items.html",
-      "sizeBytes": 82621,
-      "contentType": "text/html",
-      "sha256": "7e71b9627cd7bb637aa2ea2961835ab51e7c41df7c91a89b5179e3e60f03d58d",
-      "verifiedAt": "2026-09-11"
+      "url": "https://www.govinfo.gov/content/pkg/CFR-2024-title15-vol2/pdf/CFR-2024-title15-vol2-sec742-15.pdf",
+      "status": "recaptured",
+      "file": "library/15-CFR-742-15-Encryption-items.pdf",
+      "filename": "15-CFR-742-15-Encryption-items.pdf",
+      "sizeBytes": 158435,
+      "contentType": "application/pdf",
+      "sha256": "6b8bfbece9b25dead6b37cbdc1be00405667e6272d00aeb340c992618d38126d",
+      "recaptured_at": "2026-09-12T11:12:22.791852+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Toward-Space-Based-Public-Key-Systems-Enabling-Secure-Space",
@@ -11588,15 +11589,16 @@
     },
     {
       "refId": "cosign-CHANGELOG",
-      "label": "cosign CHANGELOG",
-      "url": "https://github.com/sigstore/cosign/blob/main/CHANGELOG.md",
-      "status": "downloaded",
-      "file": "library/cosign-CHANGELOG.html",
-      "filename": "cosign-CHANGELOG.html",
-      "sizeBytes": 581968,
-      "contentType": "text/html",
-      "sha256": "224e547bb49b64c39dd5de406014046cb2618afd8e29db56a6782419cd1d6629",
-      "verifiedAt": "2026-09-11"
+      "url": "https://raw.githubusercontent.com/sigstore/cosign/refs/heads/main/CHANGELOG.md",
+      "status": "recaptured",
+      "file": "library/cosign-CHANGELOG.md",
+      "filename": "cosign-CHANGELOG.md",
+      "sizeBytes": 133285,
+      "contentType": "text/markdown",
+      "sha256": "0f526b6d58acdd22aec3b1e87501b6f9d8cfd9bf5a895791c74bb3c761179cb4",
+      "recaptured_at": "2026-09-12T11:12:22.966050+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this markdown/plain-text is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Prometheus-Metrics-cert-manager-Documentation",
@@ -11660,15 +11662,16 @@
     },
     {
       "refId": "SMART-App-Launch",
-      "label": "SMART App Launch",
-      "url": "https://www.hl7.org/fhir/smart-app-launch/",
-      "status": "downloaded",
+      "url": "https://www.hl7.org/fhir/smart-app-launch/STU2.2/app-launch.html",
+      "status": "recaptured",
       "file": "library/SMART-App-Launch.html",
       "filename": "SMART-App-Launch.html",
-      "sizeBytes": 40410,
+      "sizeBytes": 81318,
       "contentType": "text/html",
-      "sha256": "74f0778857be28b11dc7ae139bc1b429668b1519b1374913fbd8ed04b15475a2",
-      "verifiedAt": "2026-09-11"
+      "sha256": "899fcf57b0d449e978e484eaaff5ee4dc83dacbe10cd317984cc84e8967c0aed",
+      "recaptured_at": "2026-09-12T11:12:23.244423+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260912/library/SMART-App-Launch.html"
     },
     {
       "refId": "Deep-CNN-Face-Matchers-Inherently-Support-Revocable-Biometri",
@@ -11840,27 +11843,29 @@
     },
     {
       "refId": "21-CFR-312-62-Investigator-recordkeeping-and-record-retentio",
-      "label": "21 CFR 312.62 -- Investigator recordkeeping and record retention",
-      "url": "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-D/part-312/subpart-D/section-312.62",
-      "status": "downloaded",
-      "file": "library/21-CFR-312-62-Investigator-recordkeeping-and-record-retentio.html",
-      "filename": "21-CFR-312-62-Investigator-recordkeeping-and-record-retentio.html",
-      "sizeBytes": 68554,
-      "contentType": "text/html",
-      "sha256": "37c73623258dde98c1d6f2b668e5ca17c0b4b1ed2a5062942e31728635f75de8",
-      "verifiedAt": "2026-09-11"
+      "url": "https://www.govinfo.gov/content/pkg/CFR-2025-title21-vol5/pdf/CFR-2025-title21-vol5-sec312-62.pdf",
+      "status": "recaptured",
+      "file": "library/21-CFR-312-62-Investigator-recordkeeping-and-record-retentio.pdf",
+      "filename": "21-CFR-312-62-Investigator-recordkeeping-and-record-retentio.pdf",
+      "sizeBytes": 196336,
+      "contentType": "application/pdf",
+      "sha256": "134aaf7dd3317cf71181a08955f5858297d989ddaf8adb3ee6875038c18ddc0f",
+      "recaptured_at": "2026-09-12T11:12:23.469083+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Visa-Token-Service",
-      "label": "Visa Token Service",
-      "url": "https://usa.visa.com/products/visa-token-service.html",
-      "status": "downloaded",
-      "file": "library/Visa-Token-Service.html",
-      "filename": "Visa-Token-Service.html",
-      "sizeBytes": 192707,
-      "contentType": "text/html",
-      "sha256": "98cb8a61ff72fe4f03e67bd364854d209d9726f7029ec3be3bbe87d40333a9d4",
-      "verifiedAt": "2026-09-11"
+      "url": "https://corporate.visa.com/content/dam/VCOM/corporate/solutions/documents/visa-token-service-fact-sheet.pdf",
+      "status": "recaptured",
+      "file": "library/Visa-Token-Service.pdf",
+      "filename": "Visa-Token-Service.pdf",
+      "sizeBytes": 2056142,
+      "contentType": "application/pdf",
+      "sha256": "d81c3f42726814b6fd040cf5bb03d15bfe241ef4db67e84e1509e97b224cfa38",
+      "recaptured_at": "2026-09-12T11:12:23.739585+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "EMV-Key-Management-Explained",
@@ -11972,15 +11977,16 @@
     },
     {
       "refId": "Singapore-National-Quantum-Safe-Network-Plus-NQSN",
-      "label": "Singapore National Quantum-Safe Network Plus (NQSN+)",
-      "url": "https://www.imda.gov.sg/about-imda/emerging-technologies-and-research/national-quantum-safe-network-plus",
-      "status": "downloaded",
+      "url": "https://sptel.com/quantum_secure_network_singapore/",
+      "status": "recaptured",
       "file": "library/Singapore-National-Quantum-Safe-Network-Plus-NQSN.html",
       "filename": "Singapore-National-Quantum-Safe-Network-Plus-NQSN.html",
-      "sizeBytes": 86995,
+      "sizeBytes": 189731,
       "contentType": "text/html",
-      "sha256": "937d2f4e5841ee957e8f03f5b5cc5eaecc454b085bb3bcea10c60f04448c9e1f",
-      "verifiedAt": "2026-09-11"
+      "sha256": "7e903a7e131aaea0d319d29fbe6646f82aa8f62f0a75233f49db092450934bfa",
+      "recaptured_at": "2026-09-12T11:12:26.281992+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260912/library/Singapore-National-Quantum-Safe-Network-Plus-NQSN.html"
     },
     {
       "refId": "Cross-Issuer-ZKP-Federation-for-Post-Quantum-Agentic-Payment",
@@ -12092,15 +12098,16 @@
     },
     {
       "refId": "Zemlyanika-Module-LWE-based-KEM-with-the-power-of-two-modulu",
-      "label": "Zemlyanika — Module-LWE based KEM with the power-of-two modulus, explicit rejection and revisited decapsulation failures",
-      "url": "https://eprint.iacr.org/2025/746",
-      "status": "downloaded",
-      "file": "library/Zemlyanika-Module-LWE-based-KEM-with-the-power-of-two-modulu.html",
-      "filename": "Zemlyanika-Module-LWE-based-KEM-with-the-power-of-two-modulu.html",
-      "sizeBytes": 16781,
-      "contentType": "text/html",
-      "sha256": "a3b88b56a0f3fa2e5c09e9ec5e0f6b2b987254b1311096506ed2df833239ae18",
-      "verifiedAt": "2026-09-11"
+      "url": "https://eprint.iacr.org/2025/746.pdf",
+      "status": "recaptured",
+      "file": "library/Zemlyanika-Module-LWE-based-KEM-with-the-power-of-two-modulu.pdf",
+      "filename": "Zemlyanika-Module-LWE-based-KEM-with-the-power-of-two-modulu.pdf",
+      "sizeBytes": 487512,
+      "contentType": "application/pdf",
+      "sha256": "015c98447d5da4eb291f0ebafc419127c4c1ae0fb331b65db42547ecbb55dbb0",
+      "recaptured_at": "2026-09-12T11:12:26.799079+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Lattice-based-Signature-Schemes-for-Bitcoin",

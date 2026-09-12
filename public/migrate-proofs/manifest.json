@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
-  "generated": "2026-07-09",
-  "count": 1198,
+  "generated": "2026-09-12T11:16:42.030224+00:00",
+  "count": 1207,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -13693,6 +13693,123 @@
       "file": "Lean-Consensus-Roadmap-70887fc6.html",
       "bytes": 212814,
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "samsung-networks-5g-core",
+      "url": "https://images.samsung.com/is/content/samsung/p5/global/business/networks/insights/white-paper/5g-core-vision/Samsung-5G-Core-Vol-1-5G-Core-Vision.pdf",
+      "ok": true,
+      "file": "samsung-networks-5g-core-ac8ef84e.pdf",
+      "bytes": 8087940,
+      "content_type": "application/pdf",
+      "tier": "recapture",
+      "refId": "samsung-networks-5g-core",
+      "sha256": "dc130a4917a6fbe242772b4475ea636d3b81e92f754ccc15b601f27d638e74e1",
+      "sizeBytes": 8087940,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "product_id": "CipherLinq",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5062.pdf",
+      "ok": true,
+      "file": "CipherLinq-5fac8ecd.pdf",
+      "bytes": 1144992,
+      "content_type": "application/pdf",
+      "tier": "recapture",
+      "refId": "CipherLinq",
+      "sha256": "15a1a68873bc60a048a327871cf280deef753979a377544c12193764ab041803",
+      "sizeBytes": 1144992,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "product_id": "LS2-HSM-Family",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5220.pdf",
+      "ok": true,
+      "file": "LS2-HSM-Family-811db8ae.pdf",
+      "bytes": 1661582,
+      "content_type": "application/pdf",
+      "tier": "recapture",
+      "refId": "LS2-HSM-Family",
+      "sha256": "758211878c99682e2d71fbf916633ca0dd2cc8fe25d90cc5ea2e5960d42de1f0",
+      "sizeBytes": 1661582,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "product_id": "N-able-FIPS-Cryptographic-Module-Java-14",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5211.pdf",
+      "ok": true,
+      "file": "N-able-FIPS-Cryptographic-Module-Java-14-54f0434f.pdf",
+      "bytes": 1162947,
+      "content_type": "application/pdf",
+      "tier": "recapture",
+      "refId": "N-able-FIPS-Cryptographic-Module-Java-14",
+      "sha256": "745545a6c14c88463ce0aae8c2b9fa9c4f2bc310dfd1615421438e3eb8f39866",
+      "sizeBytes": 1162947,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "product_id": "Kaseya-FIPS-Cryptographic-Module-for-Jav",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5210.pdf",
+      "ok": true,
+      "file": "Kaseya-FIPS-Cryptographic-Module-for-Jav-6087908f.pdf",
+      "bytes": 1192274,
+      "content_type": "application/pdf",
+      "tier": "recapture",
+      "refId": "Kaseya-FIPS-Cryptographic-Module-for-Jav",
+      "sha256": "1116e1ab4a060efc7ff54eb49651bfcee4a58d1ff55db7d993ba6360c09c526c",
+      "sizeBytes": 1192274,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "product_id": "Kloudfuse-Java-Cryptographic-Module",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5209.pdf",
+      "ok": true,
+      "file": "Kloudfuse-Java-Cryptographic-Module-b0c790ff.pdf",
+      "bytes": 1251647,
+      "content_type": "application/pdf",
+      "tier": "recapture",
+      "refId": "Kloudfuse-Java-Cryptographic-Module",
+      "sha256": "1b25dd9ab60515d557b9a0abbdfee2a5c06c3273c02085c309d197d268238cad",
+      "sizeBytes": 1251647,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "product_id": "Minimus-Cryptographic-Module-for-Java",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5142.pdf",
+      "ok": true,
+      "file": "Minimus-Cryptographic-Module-for-Java-87c1816b.pdf",
+      "bytes": 1177158,
+      "content_type": "application/pdf",
+      "tier": "recapture",
+      "refId": "Minimus-Cryptographic-Module-for-Java",
+      "sha256": "7cf5e4fd12e5e982a8c45dc035e6495417de00d561ac3bdf668035f35ef085a7",
+      "sizeBytes": 1177158,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "product_id": "InformaCast-Advanced-and-Fusion-Server-J",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5129.pdf",
+      "ok": true,
+      "file": "InformaCast-Advanced-and-Fusion-Server-J-cefcca7c.pdf",
+      "bytes": 1228040,
+      "content_type": "application/pdf",
+      "tier": "recapture",
+      "refId": "InformaCast-Advanced-and-Fusion-Server-J",
+      "sha256": "43780cf9103fb4cdd9e380ab772235f2bba4d6c992bad6f9ee7deb46e7bb970c",
+      "sizeBytes": 1228040,
+      "hashedAt": "2026-09-12"
+    },
+    {
+      "product_id": "SL-FJA3-SafeLogic-FIPS-Java-API",
+      "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5081.pdf",
+      "ok": true,
+      "file": "SL-FJA3-SafeLogic-FIPS-Java-API-ed41c750.pdf",
+      "bytes": 1190835,
+      "content_type": "application/pdf",
+      "tier": "recapture",
+      "refId": "SL-FJA3-SafeLogic-FIPS-Java-API",
+      "sha256": "386ec758e17affc9789582e3001c8603649fcfbda4a7ac7f86a6c2beafca2c30",
+      "sizeBytes": 1190835,
+      "hashedAt": "2026-09-12"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."

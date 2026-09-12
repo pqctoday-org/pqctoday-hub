@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-11",
+  "generated": "2026-09-12T11:13:34.323324+00:00",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "vendor-roadmaps",
   "csv": "migrate_vendor_roadmap_09092026.csv",
@@ -205,15 +205,16 @@
     {
       "vendorId": "VND-168",
       "refId": "VND-168",
-      "label": "Arqit Quantum Inc.",
-      "url": "https://arqitgroup.com/company/our-approach",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-168_Arqit_Quantum_Inc..html",
-      "filename": "VND-168_Arqit_Quantum_Inc..html",
-      "sizeBytes": 92478,
-      "contentType": "text/html",
-      "sha256": "18691c8c2d087aad21b8b824e188b0f82febd7de4071e2b3fe9a54ac60a8a02b",
-      "verifiedAt": "2026-09-11"
+      "url": "https://ir.arqit.uk/sec-filings/all-sec-filings/content/0001104659-25-051848/0001104659-25-051848.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-168.pdf",
+      "filename": "VND-168.pdf",
+      "sizeBytes": 1291388,
+      "contentType": "application/pdf",
+      "sha256": "fa52126d5026af6bafe7e5805c5edc7a18fbcdd2fe1fb81cb3f59422b2dee5c4",
+      "recaptured_at": "2026-09-12T11:12:57.459653+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-171",
@@ -231,15 +232,16 @@
     {
       "vendorId": "VND-178",
       "refId": "VND-178",
-      "label": "Ping Identity Holdings Corp.",
-      "url": "https://www.pingidentity.com/en/resources/blog/post/quantum-threat-us-fed-gov.html",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-178_Ping_Identity_Holdings_Corp..html",
-      "filename": "VND-178_Ping_Identity_Holdings_Corp..html",
-      "sizeBytes": 62908,
+      "url": "https://press.pingidentity.com/2022-08-03-Ping-Identity-Reports-Second-Quarter-2022-Results",
+      "status": "recaptured",
+      "file": "vendor/VND-178.html",
+      "filename": "VND-178.html",
+      "sizeBytes": 246730,
       "contentType": "text/html",
-      "sha256": "5361564ee377a5facfdee7af320e9a23069d5ae66f6c82c9ab545ecc46ac75c9",
-      "verifiedAt": "2026-09-11"
+      "sha256": "38faf51c5f3d19adeb026694e0fc9340e3aa64503c12af97be0b8761d4a6ec78",
+      "recaptured_at": "2026-09-12T11:12:57.594635+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-225",
@@ -309,15 +311,16 @@
     {
       "vendorId": "VND-007",
       "refId": "VND-007",
-      "label": "Check Point Software Technologies Ltd.",
-      "url": "https://blog.checkpoint.com/innovation/quantum-safe-cyber-security-current-capabilities-and-the-road-ahead/",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-007_Check_Point_Software_Technologies_Ltd..html",
-      "filename": "VND-007_Check_Point_Software_Technologies_Ltd..html",
-      "sizeBytes": 116091,
+      "url": "https://blog.checkpoint.com/security/understanding-and-minimizing-the-security-risks-of-the-quantum-revolution-in-computing/",
+      "status": "recaptured",
+      "file": "vendor/VND-007.html",
+      "filename": "VND-007.html",
+      "sizeBytes": 122028,
       "contentType": "text/html",
-      "sha256": "de04dc4e86c1993ea2ce930a8ffccfabbe6aaab0a752603bd1470779f553564f",
-      "verifiedAt": "2026-09-11"
+      "sha256": "4546adc4827f69f2a084044eb3d4f975b88dff627043f93c74c6a61a91c1e052",
+      "recaptured_at": "2026-09-12T11:12:58.064926+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-015",
@@ -348,15 +351,16 @@
     {
       "vendorId": "VND-152",
       "refId": "VND-152",
-      "label": "Adtran Networks SE (formerly ADVA)",
-      "url": "https://www.adtran.com/en/solutions/quantum-safe-communications",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-152_Adtran_Networks_SE_formerly_ADVA_.html",
-      "filename": "VND-152_Adtran_Networks_SE_formerly_ADVA_.html",
-      "sizeBytes": 142187,
-      "contentType": "text/html",
-      "sha256": "7a5e4a3c560536d9daa550b7bce54699bd0815497a4ee76e8e3fe3a6f12e8d32",
-      "verifiedAt": "2026-09-11"
+      "url": "https://www.adtran-networks.com/-/media/adva-main-site/about-us/investors/shareholders-meetings/2025/esg-report-2024-english.pdf?rev=ba7ca60ac928447d90fa1202a838be05",
+      "status": "recaptured",
+      "file": "vendor/VND-152.pdf",
+      "filename": "VND-152.pdf",
+      "sizeBytes": 4699876,
+      "contentType": "application/pdf",
+      "sha256": "056fe1c09386c8cd7b2d6a2da71e30098aa6893a49128319538c702c4e62c973",
+      "recaptured_at": "2026-09-12T11:12:58.386014+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-155",
@@ -400,15 +404,16 @@
     {
       "vendorId": "VND-039",
       "refId": "VND-039",
-      "label": "STMicroelectronics N.V.",
-      "url": "https://www.st.com/content/st_com/en/about/innovation-and-technology/post-quantum-cryptography.html",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-039_STMicroelectronics_N.V..html",
-      "filename": "VND-039_STMicroelectronics_N.V..html",
-      "sizeBytes": 492836,
+      "url": "https://newsroom.st.com/media-center/press-item.html/n4680.html",
+      "status": "recaptured",
+      "file": "vendor/VND-039.html",
+      "filename": "VND-039.html",
+      "sizeBytes": 589332,
       "contentType": "text/html",
-      "sha256": "157b26b05ba50e24d9971760754ea27e78caafccad9184838e5a70cd36cac983",
-      "verifiedAt": "2026-09-11"
+      "sha256": "e62aaa4a4565a50dcc34ce9d40a7ad7d61966b863ee0497e4d7e6693eecd4bc9",
+      "recaptured_at": "2026-09-12T11:12:59.114247+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-233",
@@ -426,15 +431,16 @@
     {
       "vendorId": "VND-235",
       "refId": "VND-235",
-      "label": "Samsung SDS Co. Ltd.",
-      "url": "https://www.samsungsds.com/en/research-blog/post-quantum-crypto-migration.html",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-235_Samsung_SDS_Co._Ltd..html",
-      "filename": "VND-235_Samsung_SDS_Co._Ltd..html",
-      "sizeBytes": 36182,
-      "contentType": "text/html",
-      "sha256": "936109766fc2954c05c4fddc1dbb39465132f9402ee2d5eefb303bf47a038bb3",
-      "verifiedAt": "2026-09-11"
+      "url": "https://www.samsungsds.com/en/research-blog/samsung-sds-security-team-quantum-resistant-cryptography.html",
+      "status": "recaptured",
+      "file": "vendor/VND-235.md",
+      "filename": "VND-235.md",
+      "sizeBytes": 56407,
+      "contentType": "text/markdown",
+      "sha256": "a84c76110acef1264c0acce5f8ae0a309d4b2053da88061ae308fbd6101e2d5d",
+      "recaptured_at": "2026-09-12T11:13:00.242965+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this markdown/plain-text is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-239",
@@ -504,15 +510,16 @@
     {
       "vendorId": "VND-220",
       "refId": "VND-220",
-      "label": "European Commission",
-      "url": "https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-220_European_Commission.html",
-      "filename": "VND-220_European_Commission.html",
-      "sizeBytes": 50527,
-      "contentType": "text/html",
-      "sha256": "0f1bd0b1ee61e433d3f6bc310bd7f0264b308ec53c28d244ec8ef58d91c5adc3",
-      "verifiedAt": "2026-09-11"
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401101",
+      "status": "recaptured",
+      "file": "vendor/VND-220.pdf",
+      "filename": "VND-220.pdf",
+      "sizeBytes": 483347,
+      "contentType": "application/pdf",
+      "sha256": "2fd14e73d81e5f8971b50258a6d195de98dfbfc7cad9953703ac20f518dd522d",
+      "recaptured_at": "2026-09-12T11:13:01.732978+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-140",
@@ -699,15 +706,16 @@
     {
       "vendorId": "VND-229",
       "refId": "VND-229",
-      "label": "CyberZero",
-      "url": "https://cyberzero.io/services/post-quantum-cryptography-readiness/",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-229_CyberZero.html",
-      "filename": "VND-229_CyberZero.html",
-      "sizeBytes": 98966,
+      "url": "https://cyberzero.io/2026/05/24/canadas-quantum-clock-is-already-running/",
+      "status": "recaptured",
+      "file": "vendor/VND-229.html",
+      "filename": "VND-229.html",
+      "sizeBytes": 533311,
       "contentType": "text/html",
-      "sha256": "df6975bad9c5df188915780304eaae75e2adb8d27ecf5724130cc1c436f42541",
-      "verifiedAt": "2026-09-11"
+      "sha256": "e55a130971479e6cd659831d93025ec07d2093f548826a86517441a8e86f1330",
+      "recaptured_at": "2026-09-12T11:13:02.568347+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-247",
@@ -894,15 +902,16 @@
     {
       "vendorId": "VND-052",
       "refId": "VND-052",
-      "label": "01 Quantum Ltd.",
-      "url": "https://www.newsfilecorp.com/release/300832/01-Quantum-Announces-Strategic-Partnership-to-Deliver-PostQuantum-Cryptography-Solutions",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-052_01_Quantum_Ltd.html",
-      "filename": "VND-052_01_Quantum_Ltd.html",
-      "sizeBytes": 38952,
-      "contentType": "text/html",
-      "sha256": "e855672cad34e9c53433f8830d76b2d4b37afbca5267663789908fec34bdaf40",
-      "verifiedAt": "2026-09-11"
+      "url": "https://01com.com/pdf/2026/Q1-2026-Press-Release-Mar-19-2026.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-052.pdf",
+      "filename": "VND-052.pdf",
+      "sizeBytes": 432767,
+      "contentType": "application/pdf",
+      "sha256": "cd6b597f827d762a792269df30d0cf41bbf44d3275e4aa4a3778b90d18cb9fe5",
+      "recaptured_at": "2026-09-12T11:13:03.050710+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-456",
@@ -920,15 +929,16 @@
     {
       "vendorId": "VND-524",
       "refId": "VND-524",
-      "label": "Korea Telecom Corporation",
-      "url": "https://www.digitaltoday.co.kr/en/view/77387/kt-joins-quantum-korea-2026-to-unveil-post-quantum-cryptography-and-quantum-key-distribution-technologies",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-524_Korea_Telecom_Corporation.html",
-      "filename": "VND-524_Korea_Telecom_Corporation.html",
-      "sizeBytes": 48931,
-      "contentType": "text/html",
-      "sha256": "7d1f8d797486ba737c78782bce13e2d8fcc5f5d66ec46bcc3a908bb70173195e",
-      "verifiedAt": "2026-09-11"
+      "url": "https://corp.kt.com/eng/archive/ipgrpt/attach/now/4.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-524.pdf",
+      "filename": "VND-524.pdf",
+      "sizeBytes": 8266624,
+      "contentType": "application/pdf",
+      "sha256": "c582ce7564512249fbd6c1b0b34e2e1d15bff27149ccaea1cfb09e6ead2af7ce",
+      "recaptured_at": "2026-09-12T11:13:28.538890+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-525",
@@ -1037,15 +1047,16 @@
     {
       "vendorId": "VND-236",
       "refId": "VND-236",
-      "label": "Centre for Development of Telematics (C-DOT)",
-      "url": "https://www.cdot.in/cdotweb/web/product_category.php?lang=en&catId=10",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-236_Centre_for_Development_of_Telematics_C_DOT.html",
-      "filename": "VND-236_Centre_for_Development_of_Telematics_C_DOT.html",
-      "sizeBytes": 60070,
-      "contentType": "text/html",
-      "sha256": "686345fc3ffee271fe6f7083fea1facdd0d5762a149d9ae034eee2b000abfc63",
-      "verifiedAt": "2026-09-11"
+      "url": "https://www.cdot.in/cdotweb/assets/docs/products/pqc/Q-Setu.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-236.pdf",
+      "filename": "VND-236.pdf",
+      "sizeBytes": 724293,
+      "contentType": "application/pdf",
+      "sha256": "e30aaaf5bf7bf05bc722e35b835719a6b3bfea79eae4007f2a9ded184e3c65c6",
+      "recaptured_at": "2026-09-12T11:13:34.323270+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-311",
