@@ -29,6 +29,16 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.85.0] - 2026-09-13
+
+### Added
+
+- **A new Learn module: DNSSEC & Post-Quantum Signatures** [view:/learn/dnssec-pqc] [persona:developer] [persona:architect] [persona:researcher]: how DNS Security Extensions are moving to post-quantum signatures — the ML-DSA-44 mechanism behind IANA algorithm 18, Cloudflare's real 2026-09-10 pilot validating it by default on the 1.1.1.1 resolver, and what's still missing before a production DNS zone can actually be signed with it. Includes a signature-size comparison, a trust-chain walkthrough, a deployment-roadmap tracker, and a 6-question quiz.
+
+### Data
+
+- **The Protocol Support matrix's DNSSEC row now reflects Cloudflare's real pilot** [view:/algorithms] [persona:architect] [persona:researcher]: Cloudflare's 1.1.1.1 resolver has validated ML-DSA-44 (IANA DNSSEC algorithm 18) by default since 2026-09-10, against a live signed test zone — recorded as the row's live deployment, kept distinct from the DNS root's own separate, later algorithm-rollover estimate.
+
 ## [4.84.2] - 2026-09-13
 
 ### Fixed
