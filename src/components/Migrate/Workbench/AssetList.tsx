@@ -11,7 +11,7 @@ import {
 } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { logMigrateAction } from '@/utils/analytics'
-import { domainProductCount } from './workbenchCatalog'
+import { domainProductCount, searchProducts } from './workbenchCatalog'
 import { Input } from '../../ui/input'
 import { Button } from '../../ui/button'
 import { TONE_DOT } from './workbenchUi'
@@ -20,6 +20,9 @@ interface AssetListProps {
   persona: PersonaId | null
   selectedDomain: DomainId | null
   onSelect: (domain: DomainId) => void
+  /** Jump straight to a specific product a catalog-wide search matched — sets
+   *  the domain AND pre-filters the product list to just that one item. */
+  onSelectProduct: (domain: DomainId, productId: string) => void
 }
 
 const FOUNDATION_DOMAINS: DomainId[] = Object.values(DOMAINS)
@@ -32,7 +35,7 @@ function canonicalOrder(list: ReplaceAsset[]): ReplaceAsset[] {
   return [...list].sort((a, b) => a.wave - b.wave || a.cnsaYear - b.cnsaYear)
 }
 
-export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps) {
+export function AssetList({ persona, selectedDomain, onSelect, onSelectProduct }: AssetListProps) {
   const plan = useMigrateSelectionStore((s) => s.plan)
   const togglePlanAsset = useMigrateSelectionStore((s) => s.togglePlanAsset)
   const [query, setQuery] = useState('')
@@ -65,6 +68,15 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
   const filteredFoundationDomains = q
     ? FOUNDATION_DOMAINS.filter((id) => DOMAINS[id].label.toLowerCase().includes(q))
     : FOUNDATION_DOMAINS
+  // Product/vendor-name matches, e.g. typing a specific product like "Qinsight"
+  // that isn't one of the ~18 asset/category labels above. searchProducts()
+  // itself returns [] for an empty/whitespace query, so no separate guard here.
+  const productMatches = useMemo(() => searchProducts(query, 6), [query])
+  const noMatchesAtAll =
+    q &&
+    filteredAssets.length === 0 &&
+    filteredFoundationDomains.length === 0 &&
+    productMatches.length === 0
 
   return (
     <div className="flex w-full flex-col gap-4 md:w-[352px] md:min-w-[300px] md:shrink-0">
@@ -77,8 +89,8 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search what you run…"
-          aria-label="Search assets and categories"
+          placeholder="Search products, categories, or what you run…"
+          aria-label="Search products, assets, and categories"
           className="pl-8"
         />
       </div>
@@ -103,161 +115,190 @@ export function AssetList({ persona, selectedDomain, onSelect }: AssetListProps)
         </div>
       )}
 
-      <div>
-        <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-          What you run — pick to see replacements
+      {noMatchesAtAll && (
+        <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+          No matches for “{query}”.
         </p>
-        <div className="flex flex-col gap-2">
-          {filteredAssets.length === 0 && (
-            <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
-              No matches for “{query}”.
-            </p>
-          )}
-          {filteredAssets.map((asset) => {
-            const inPlan = plan.includes(asset.id)
-            const isSelected = selectedDomain === asset.id
-            const decision = DECISIONS[asset.decision]
-            return (
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- deliberate: a REDUNDANT mouse convenience. The checkbox and the label Button inside are the real, reachable controls; making this row a widget again would re-create the nested-interactive violation.
-              <div
-                key={asset.id}
-                data-workshop-target={`migrate-domain-${asset.id}`}
-                // 2026-08-02 a11y: this row was `role="button" tabIndex={0}`
-                // while containing a `role="checkbox"` — a focusable widget
-                // inside a focusable widget (`nested-interactive`), which left
-                // the add/remove checkbox unreachable to a screen reader. The
-                // row is now an inert container with two sibling controls: the
-                // checkbox, and the label button below that selects the asset.
-                // This click stays as a redundant mouse convenience.
-                onClick={() => onSelect(asset.id)}
-                className={`group flex cursor-pointer items-center gap-2.5 rounded-xl border p-3 text-left transition-colors ${
-                  isSelected
-                    ? 'border-primary bg-primary/10'
-                    : inPlan
-                      ? 'border-primary/30 bg-primary/5'
-                      : 'border-border bg-card hover:bg-muted/20'
-                }`}
+      )}
+
+      {productMatches.length > 0 && (
+        <div>
+          <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+            Products
+          </p>
+          <div className="flex flex-col gap-1.5">
+            {productMatches.map(({ domain, product, vendorName }) => (
+              <Button
+                key={product.productId}
+                variant="outline"
+                onClick={() => {
+                  logMigrateAction('Search Product Selected', product.productId)
+                  onSelectProduct(domain, product.productId)
+                }}
+                className="flex h-auto w-full flex-col items-start gap-0.5 rounded-lg border-border bg-card px-3 py-2 text-left text-sm font-normal transition-colors hover:bg-muted/20"
               >
-                <span
-                  role="checkbox"
-                  aria-checked={inPlan}
-                  aria-label={
-                    inPlan ? `Remove ${asset.label} from plan` : `Add ${asset.label} to plan`
-                  }
+                <span className="w-full truncate font-semibold text-foreground">
+                  {product.softwareName}
+                </span>
+                <span className="w-full truncate font-mono text-[10px] text-muted-foreground">
+                  {DOMAINS[domain].label}
+                  {vendorName ? ` · ${vendorName}` : ''}
+                </span>
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!noMatchesAtAll && (filteredAssets.length > 0 || !q) && (
+        <div>
+          <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+            What you run — pick to see replacements
+          </p>
+          <div className="flex flex-col gap-2">
+            {filteredAssets.map((asset) => {
+              const inPlan = plan.includes(asset.id)
+              const isSelected = selectedDomain === asset.id
+              const decision = DECISIONS[asset.decision]
+              return (
+                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- deliberate: a REDUNDANT mouse convenience. The checkbox and the label Button inside are the real, reachable controls; making this row a widget again would re-create the nested-interactive violation.
+                <div
+                  key={asset.id}
+                  data-workshop-target={`migrate-domain-${asset.id}`}
+                  // 2026-08-02 a11y: this row was `role="button" tabIndex={0}`
+                  // while containing a `role="checkbox"` — a focusable widget
+                  // inside a focusable widget (`nested-interactive`), which left
+                  // the add/remove checkbox unreachable to a screen reader. The
+                  // row is now an inert container with two sibling controls: the
+                  // checkbox, and the label button below that selects the asset.
+                  // This click stays as a redundant mouse convenience.
+                  onClick={() => onSelect(asset.id)}
+                  className={`group flex cursor-pointer items-center gap-2.5 rounded-xl border p-3 text-left transition-colors ${
+                    isSelected
+                      ? 'border-primary bg-primary/10'
+                      : inPlan
+                        ? 'border-primary/30 bg-primary/5'
+                        : 'border-border bg-card hover:bg-muted/20'
+                  }`}
+                >
+                  <span
+                    role="checkbox"
+                    aria-checked={inPlan}
+                    aria-label={
+                      inPlan ? `Remove ${asset.label} from plan` : `Add ${asset.label} to plan`
+                    }
+                    tabIndex={0}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      togglePlanAsset(asset.id)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        togglePlanAsset(asset.id)
+                      }
+                    }}
+                    className="flex shrink-0 cursor-pointer items-center justify-center max-md:min-h-[44px] max-md:min-w-[44px]"
+                  >
+                    {/* Visual chip stays a fixed 20x20px on every viewport — only
+                     *  the interactive wrapper above grows the tappable area on
+                     *  mobile, so the checkbox's on-screen size is unchanged. */}
+                    <span
+                      aria-hidden="true"
+                      className={`flex h-5 w-5 items-center justify-center rounded-md border ${
+                        inPlan
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-border text-muted-foreground'
+                      }`}
+                    >
+                      {inPlan ? <Check size={13} /> : <Plus size={13} />}
+                    </span>
+                  </span>
+
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-1.5">
+                      <Button
+                        variant="ghost"
+                        aria-pressed={isSelected}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onSelect(asset.id)
+                        }}
+                        className="h-auto truncate p-0 text-sm font-semibold text-foreground hover:bg-transparent"
+                      >
+                        {asset.label}
+                      </Button>
+                      {asset.hndl && (
+                        <span className="rounded bg-status-error/15 px-1 text-[9px] font-bold uppercase text-status-error">
+                          HNDL
+                        </span>
+                      )}
+                    </span>
+                    <span className="mt-0.5 block truncate font-mono text-[10px] text-muted-foreground">
+                      {asset.classical} → {asset.target}
+                    </span>
+                  </span>
+
+                  <span
+                    className={`h-2.5 w-2.5 shrink-0 rounded-full ${TONE_DOT[decision.tone]}`}
+                    title={decision.label}
+                    aria-hidden
+                  />
+                  <ChevronRight
+                    size={16}
+                    className={`shrink-0 transition-colors ${
+                      isSelected ? 'text-primary' : 'text-muted-foreground'
+                    }`}
+                    aria-hidden
+                  />
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {!noMatchesAtAll && (filteredFoundationDomains.length > 0 || !q) && (
+        <div>
+          <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+            Foundations &amp; infrastructure
+          </p>
+          <div className="flex flex-col gap-1.5">
+            {filteredFoundationDomains.map((id) => {
+              const meta = DOMAINS[id]
+              const isSelected = selectedDomain === id
+              const count = domainProductCount(id)
+              return (
+                <div
+                  key={id}
+                  role="button"
                   tabIndex={0}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    togglePlanAsset(asset.id)
-                  }}
+                  data-workshop-target={`migrate-domain-${id}`}
+                  onClick={() => onSelect(id)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
-                      e.stopPropagation()
-                      togglePlanAsset(asset.id)
+                      onSelect(id)
                     }
                   }}
-                  className="flex shrink-0 cursor-pointer items-center justify-center max-md:min-h-[44px] max-md:min-w-[44px]"
-                >
-                  {/* Visual chip stays a fixed 20x20px on every viewport — only
-                   *  the interactive wrapper above grows the tappable area on
-                   *  mobile, so the checkbox's on-screen size is unchanged. */}
-                  <span
-                    aria-hidden="true"
-                    className={`flex h-5 w-5 items-center justify-center rounded-md border ${
-                      inPlan
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-border text-muted-foreground'
-                    }`}
-                  >
-                    {inPlan ? <Check size={13} /> : <Plus size={13} />}
-                  </span>
-                </span>
-
-                <span className="min-w-0 flex-1">
-                  <span className="flex items-center gap-1.5">
-                    <Button
-                      variant="ghost"
-                      aria-pressed={isSelected}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onSelect(asset.id)
-                      }}
-                      className="h-auto truncate p-0 text-sm font-semibold text-foreground hover:bg-transparent"
-                    >
-                      {asset.label}
-                    </Button>
-                    {asset.hndl && (
-                      <span className="rounded bg-status-error/15 px-1 text-[9px] font-bold uppercase text-status-error">
-                        HNDL
-                      </span>
-                    )}
-                  </span>
-                  <span className="mt-0.5 block truncate font-mono text-[10px] text-muted-foreground">
-                    {asset.classical} → {asset.target}
-                  </span>
-                </span>
-
-                <span
-                  className={`h-2.5 w-2.5 shrink-0 rounded-full ${TONE_DOT[decision.tone]}`}
-                  title={decision.label}
-                  aria-hidden
-                />
-                <ChevronRight
-                  size={16}
-                  className={`shrink-0 transition-colors ${
-                    isSelected ? 'text-primary' : 'text-muted-foreground'
+                  aria-pressed={isSelected}
+                  className={`flex cursor-pointer items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
+                    isSelected
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border bg-card text-foreground hover:bg-muted/20'
                   }`}
-                  aria-hidden
-                />
-              </div>
-            )
-          })}
+                >
+                  <span className="min-w-0 flex-1 truncate">{meta.label}</span>
+                  <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
+                    {count}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
         </div>
-      </div>
-
-      <div>
-        <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-          Foundations &amp; infrastructure
-        </p>
-        <div className="flex flex-col gap-1.5">
-          {q && filteredFoundationDomains.length === 0 && (
-            <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
-              No matches for “{query}”.
-            </p>
-          )}
-          {filteredFoundationDomains.map((id) => {
-            const meta = DOMAINS[id]
-            const isSelected = selectedDomain === id
-            const count = domainProductCount(id)
-            return (
-              <div
-                key={id}
-                role="button"
-                tabIndex={0}
-                data-workshop-target={`migrate-domain-${id}`}
-                onClick={() => onSelect(id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    onSelect(id)
-                  }
-                }}
-                aria-pressed={isSelected}
-                className={`flex cursor-pointer items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
-                  isSelected
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border bg-card text-foreground hover:bg-muted/20'
-                }`}
-              >
-                <span className="min-w-0 flex-1 truncate">{meta.label}</span>
-                <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
-                  {count}
-                </span>
-              </div>
-            )
-          })}
-        </div>
-      </div>
+      )}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { filterProducts } from './workbenchCatalog'
+import { filterProducts, searchProducts } from './workbenchCatalog'
 import type { SoftwareItem } from '../../../types/MigrateTypes'
 
 function item(overrides: Partial<SoftwareItem>): SoftwareItem {
@@ -74,5 +74,44 @@ describe('filterProducts — existing free-text behavior is unchanged', () => {
   it('returns everything for an empty query', () => {
     const items = [item({ productId: 'a' }), item({ productId: 'b' })]
     expect(filterProducts(items, '')).toHaveLength(2)
+  })
+})
+
+// searchProducts runs against the real, module-level catalog index (same
+// data AssetList's top-level search box actually queries) rather than an
+// injectable list — pinning it against a real, known product is the only way
+// to catch a regression of the bug this closes: that box used to match ONLY
+// the ~18 asset/category labels, so a real product name like "Qinsight"
+// always returned zero results even though the product is in the catalog.
+describe('searchProducts — catalog-wide product/vendor search (AssetList top search box)', () => {
+  it('finds a real product by name, across whatever domain it is classified into', () => {
+    const hits = searchProducts('qinsight')
+    expect(hits.length).toBeGreaterThan(0)
+    expect(
+      hits.some((h) => h.product.productId === 'Qinsight-Atlas-Cryptographic-Discovery-P')
+    ).toBe(true)
+  })
+
+  it('finds a product by its vendor display name, not just its raw vendorId code', () => {
+    // Qinsight Atlas's vendorId is VND-557 — searching the human vendor name
+    // ("Qinsight"), not that code, is the case the old label-only search broke.
+    const hits = searchProducts('qinsight')
+    const hit = hits.find((h) => h.product.productId === 'Qinsight-Atlas-Cryptographic-Discovery-P')
+    expect(hit?.vendorName).toBe('Qinsight')
+  })
+
+  it('returns nothing for an empty query (never dumps the whole catalog)', () => {
+    expect(searchProducts('')).toHaveLength(0)
+    expect(searchProducts('   ')).toHaveLength(0)
+  })
+
+  it('returns nothing for a query matching no product', () => {
+    expect(searchProducts('zzz-nonexistent-product-zzz')).toHaveLength(0)
+  })
+
+  it('caps results at the given limit', () => {
+    // 'a' matches a huge fraction of the ~1000-product catalog by name or
+    // vendor — the cap is what keeps the sidebar a quick jump-to.
+    expect(searchProducts('a', 3)).toHaveLength(3)
   })
 })
