@@ -7,7 +7,7 @@
 import { useMemo, useState } from 'react'
 import { Search, Map as MapIcon, ChevronDown } from 'lucide-react'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
-import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
+import { enrichmentByVendorId, enrichmentForRoadmap } from '@/data/vendorRoadmapEnrichmentData'
 import { vendorMap, softwareData } from '@/data/migrateData'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { Input } from '../../ui/input'
@@ -35,7 +35,7 @@ const ROADMAP_ENTRIES: RoadmapEntry[] = (() => {
   const entries: RoadmapEntry[] = []
   for (const vendorId of ids) {
     const vendorName =
-      roadmapByVendorId.get(vendorId)?.vendorName ||
+      roadmapByVendorId.get(vendorId)?.[0]?.vendorName ||
       vendorMap.get(vendorId)?.vendorDisplayName ||
       vendorId
     entries.push({ vendorId, vendorName })
@@ -238,14 +238,25 @@ export function RoadmapsTab() {
 function RoadmapCard({ vendorId, vendorName }: { vendorId: string; vendorName: string }) {
   const [showProducts, setShowProducts] = useState(false)
   const products = useMemo(() => productsForVendor(vendorId), [vendorId])
+  const roadmaps = roadmapByVendorId.get(vendorId) ?? []
+  const vendorEnrichments = enrichmentByVendorId.get(vendorId) ?? []
 
   return (
     <div className="rounded-xl border border-border bg-card p-3">
       <p className="mb-2 text-sm font-semibold text-foreground">{vendorName}</p>
-      <VendorRoadmapPanel
-        roadmap={roadmapByVendorId.get(vendorId)}
-        enrichment={enrichmentByVendorId.get(vendorId)}
-      />
+      {roadmaps.length > 0 ? (
+        <div className="space-y-4">
+          {roadmaps.map((r) => (
+            <VendorRoadmapPanel
+              key={r.compositeId}
+              roadmap={r}
+              enrichment={enrichmentForRoadmap(r.vendorId, r.roadmapUrl)}
+            />
+          ))}
+        </div>
+      ) : (
+        <VendorRoadmapPanel roadmap={undefined} enrichment={vendorEnrichments[0]} />
+      )}
 
       {products.length > 0 && (
         <div className="mt-2">

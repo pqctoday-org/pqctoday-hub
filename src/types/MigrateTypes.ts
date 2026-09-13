@@ -212,6 +212,13 @@ export interface VendorRoadmap {
   publishDate: string
   lastVerifiedDate: string
   coverageNotes: string
+  /**
+   * `${vendorId}|${roadmapUrl}` — the row's real identity now that a vendor
+   * can carry more than one concurrently-active row. Used only for the
+   * New/Updated diff (`compareDatasets` needs a real object key, not a
+   * derived expression); `vendorId` alone is no longer unique per row.
+   */
+  compositeId: string
   /** Data-lifecycle state from the CSV (active rows are loaded; deprecated carried forward). */
   roadmapStatus?: 'active' | 'deprecated'
   /** New/Updated badge vs the previous dated CSV (parity with the product catalog). */
@@ -220,6 +227,14 @@ export interface VendorRoadmap {
 
 export interface VendorRoadmapEnrichment {
   vendorId: string
+  /**
+   * The specific roadmap row this extraction came from — a vendor with more
+   * than one active roadmap row has one enrichment record per row, each
+   * extracted from that row's own document. Empty when the source section
+   * predates this field (legacy content, still valid for a single-row
+   * vendor).
+   */
+  roadmapUrl: string
   roadmapScope: string
   pqcAlgorithms: string[]
   targetMigrationDates: string

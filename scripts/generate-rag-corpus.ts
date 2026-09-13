@@ -4623,7 +4623,10 @@ function processVendorRoadmap(): RAGChunk[] {
     if (!roadmapUrl) continue // skip vendors with no roadmap
 
     chunks.push({
-      id: `vendor-roadmap-${vendorId}`,
+      // rowIdx, not just vendorId — a vendor can carry more than one
+      // concurrently-active roadmap row (2026-09-13+); vendorId alone would
+      // collide two rows onto the same corpus id.
+      id: `vendor-roadmap-${vendorId}-${rowIdx}`,
       source: 'vendor-roadmap',
       title: `${vendorName} PQC Roadmap`,
       content: [

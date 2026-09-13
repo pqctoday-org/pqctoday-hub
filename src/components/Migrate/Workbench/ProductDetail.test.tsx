@@ -96,14 +96,14 @@ describe('ProductDetail', () => {
 
   it('renders the vendor PQC roadmap when the vendor has one', () => {
     // pick a real vendor id that has roadmap data
-    const [vendorId, roadmap] = roadmapByVendorId.entries().next().value as [
+    const [vendorId, roadmaps] = roadmapByVendorId.entries().next().value as [
       string,
-      { roadmapTitle?: string },
+      { roadmapTitle?: string }[],
     ]
     expect(vendorId).toBeTruthy()
     render(<ProductDetail product={makeItem({ vendorId })} />)
     // VendorRoadmapPanel renders the roadmap title (or its default fallback)
-    const expected = roadmap.roadmapTitle || 'Vendor PQC Roadmap'
+    const expected = roadmaps[0].roadmapTitle || 'Vendor PQC Roadmap'
     expect(screen.getByText(expected)).toBeInTheDocument()
   })
 
