@@ -50,7 +50,7 @@ export const DNSSECExercises: React.FC<DNSSECExercisesProps> = ({
       badge: 'Chain',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Today, algorithm 18 exists only at the leaf (dnstest.dev’s own zone). Every level above it — the .dev TLD and the DNS root — still delegates classically, so the chain of trust as a whole is not yet post-quantum.',
+        'In this simplified illustration, algorithm 18 exists only at the leaf (dnstest.dev’s own zone). Every level above it — the .dev TLD and the DNS root — still delegates classically, so the chain of trust as a whole is not yet post-quantum.',
       config: { step: 1 },
     },
     {
@@ -61,7 +61,7 @@ export const DNSSECExercises: React.FC<DNSSECExercisesProps> = ({
       badge: 'Roadmap',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        "Cloudflare's own full-path target is ~2029; the DNS root's own algorithm rollover is a separate, broader estimate of mid-2030s (Verisign). Don't conflate the two.",
+        "Cloudflare's own company-wide PQ security target is ~2029 (not a DNSSEC-specific date); the DNS root's own algorithm rollover is a separate, broader estimate of mid-2030s (Verisign). Don't conflate the two.",
       config: { step: 2 },
     },
   ]

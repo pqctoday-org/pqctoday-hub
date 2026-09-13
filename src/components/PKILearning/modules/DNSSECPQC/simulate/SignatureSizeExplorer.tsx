@@ -47,7 +47,7 @@ const ROWS: SizeRow[] = [
     label: getAlgorithm('SLH-DSA-SHA2-128s').name,
     bytes: getAlgorithm('SLH-DSA-SHA2-128s').signatureOrCiphertextBytes ?? 0,
     pq: true,
-    note: 'Hash-based alternative under study (draft-fregly-dnsop-slh-dsa-mtl-dnssec). Far larger still.',
+    note: 'Raw signature size shown. A separate SLH-DSA Merkle Tree Ladder proposal (draft-fregly-dnsop-slh-dsa-mtl-dnssec) amortizes this cost across queries using Merkle proofs.',
   },
 ]
 
@@ -65,10 +65,11 @@ export const SignatureSizeExplorer: React.FC<SignatureSizeExplorerProps> = ({
     <div className="space-y-6">
       <div className="glass-panel p-4 border-border">
         <p className="text-xs text-muted-foreground">
-          DNSSEC RRSIG size is the entire constraint on this migration. Click a row to highlight it
-          against the DNS protocol&apos;s practical UDP response ceiling of{' '}
-          <strong>{DNS_UDP_LIMIT_BYTES.toLocaleString()} bytes</strong> (the modern recommended
-          EDNS0 buffer size) &mdash; anything larger forces a TCP fallback.
+          Signature size is a major constraint on this migration. Click a row to highlight it
+          against a common conservative UDP payload limit of{' '}
+          <strong>{DNS_UDP_LIMIT_BYTES.toLocaleString()} bytes</strong> (RFC 9715 recommends up to
+          1,400 bytes) &mdash; a response over the advertised limit needs another transport,
+          normally TCP.
         </p>
       </div>
 
@@ -100,7 +101,7 @@ export const SignatureSizeExplorer: React.FC<SignatureSizeExplorerProps> = ({
                 <span
                   className={`font-bold ${overLimit ? 'text-warning' : 'text-muted-foreground'}`}
                 >
-                  {row.bytes.toLocaleString()} B{overLimit ? ' — forces TCP' : ''}
+                  {row.bytes.toLocaleString()} B{overLimit ? ' — needs TCP' : ''}
                 </span>
               </div>
               <div className="h-3 bg-muted/50 rounded-full overflow-hidden relative">
@@ -123,10 +124,11 @@ export const SignatureSizeExplorer: React.FC<SignatureSizeExplorerProps> = ({
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Dashed line marks the ~1,232-byte practical DNS UDP ceiling. Both post-quantum options shown
-        exceed it &mdash; ML-DSA-44 by roughly 2&times;, SLH-DSA-SHA2-128s by more than 6&times;
-        &mdash; which is why every classical algorithm here fits in one UDP round trip and neither
-        PQ option does.
+        Dashed line marks a common conservative 1,232-byte UDP payload limit. Both post-quantum
+        options shown exceed it &mdash; ML-DSA-44 by roughly 2&times;, SLH-DSA-SHA2-128s by more
+        than 6&times; &mdash; while the classical signatures shown fit below it. A complete DNS
+        response also carries other data, so signature size alone doesn&apos;t guarantee the whole
+        response fits.
       </p>
     </div>
   )

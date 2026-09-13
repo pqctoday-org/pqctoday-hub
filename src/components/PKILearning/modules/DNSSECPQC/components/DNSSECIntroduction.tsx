@@ -108,11 +108,12 @@ export const DNSSECIntroduction: React.FC<DNSSECIntroductionProps> = ({ onNaviga
             </div>
           </div>
           <p>
-            A 2,420-byte RRSIG dwarfs the DNS protocol&apos;s practical UDP response ceiling of
-            roughly <strong>1,232 bytes</strong> (the modern recommended EDNS0 buffer size). Any
-            answer carrying an ML-DSA-44 signature forces a fallback from UDP to TCP &mdash; a real
-            operational cost, not just a theoretical one, and part of why this remains an individual
-            draft rather than a working-group-adopted standard.
+            An RRSIG carrying a 2,420-byte ML-DSA-44 signature dwarfs <strong>1,232 bytes</strong>
+            &mdash; a common conservative UDP payload limit (RFC 9715 recommends up to 1,400 bytes).
+            Responses over that limit need another transport, normally TCP &mdash; a real
+            operational cost, not just a theoretical one. Signature size is one of several open
+            migration challenges alongside compatibility and downgrade protection; the specification
+            remains an individual draft rather than a working-group-adopted standard.
           </p>
           <div className="bg-warning/5 rounded-lg p-4 border border-warning/20">
             <div className="flex items-center gap-2 mb-1">
@@ -141,11 +142,11 @@ export const DNSSECIntroduction: React.FC<DNSSECIntroductionProps> = ({ onNaviga
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            On <strong>2026-09-10</strong>, Cloudflare enabled ML-DSA-44 (algorithm 18) DNSSEC
-            validation <strong>by default</strong> on the <strong>1.1.1.1</strong> public resolver,
-            and published <strong>dnstest.dev</strong> as a live, ML-DSA-44-signed test zone
-            resolvers can validate against. This is the first real-world PQ DNSSEC deployment with
-            production traffic behind it &mdash; not just a draft.
+            On <strong>2026-09-10</strong>, Cloudflare announced that ML-DSA-44 (algorithm 18)
+            DNSSEC validation is enabled <strong>by default</strong> on the <strong>1.1.1.1</strong>{' '}
+            public resolver, alongside <strong>dnstest.dev</strong>, a live ML-DSA-44-signed test
+            zone resolvers can validate against. This is a real production deployment of ML-DSA-44
+            validation on Cloudflare&apos;s resolver &mdash; not just a draft.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-success/5 rounded-lg p-3 border border-success/20">
@@ -203,7 +204,7 @@ export const DNSSECIntroduction: React.FC<DNSSECIntroductionProps> = ({ onNaviga
               </span>
             </div>
             <div className="flex items-center gap-3 bg-muted/50 rounded-lg p-3">
-              <span className="text-xs font-bold text-warning shrink-0 w-32">Then</span>
+              <span className="text-xs font-bold text-warning shrink-0 w-32">And</span>
               <span className="text-xs text-foreground/80 flex-1">
                 Registrar DS-record support &mdash; parent-zone delegation needs algorithm-18 DS
                 records for the chain of trust to reach a signed zone
@@ -211,12 +212,16 @@ export const DNSSECIntroduction: React.FC<DNSSECIntroductionProps> = ({ onNaviga
             </div>
           </div>
           <p>
-            Cloudflare&apos;s own target for that full path is <strong>~2029</strong>. That is a{' '}
-            <strong>different, narrower claim</strong> than the DNS root zone&apos;s own algorithm
-            rollover, which Verisign estimates at the <strong>mid-2030s</strong> &mdash; the root
-            has to wait for PQ support to reach every delegation up to it before the
-            downgrade-safety design above is actually post-quantum-secure. Keep the two numbers
-            separate: one vendor&apos;s roadmap, one global infrastructure migration.
+            Cloudflare&apos;s own company-wide post-quantum security target is{' '}
+            <strong>~2029</strong> &mdash; the blog post doesn&apos;t give a separate,
+            DNSSEC-specific completion date, and delivering Cloudflare&apos;s own two features above
+            is not the same as full end-to-end PQ DNSSEC: that also needs the root to become a
+            trusted PQ anchor and other registries/registrars to adopt algorithm 18. Keep that
+            distinct from the DNS root zone&apos;s own algorithm rollover, which Verisign estimates
+            at the <strong>mid-2030s</strong> &mdash; every level of the chain needs PQ support
+            before the downgrade-safety design above is fully post-quantum-secure, though the order
+            in which levels migrate isn&apos;t prescribed. Keep the two numbers separate: one
+            vendor&apos;s roadmap, one global infrastructure migration.
           </p>
           <p className="text-xs text-muted-foreground">
             Two parallel efforts attack the same signature-size problem differently:{' '}

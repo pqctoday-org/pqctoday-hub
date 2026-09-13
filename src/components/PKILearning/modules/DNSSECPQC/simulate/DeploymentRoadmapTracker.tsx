@@ -36,10 +36,11 @@ const CLOUDFLARE_STEPS: RoadmapStep[] = [
   },
   {
     id: 'full-pq',
-    label: 'Full PQ DNSSEC (Cloudflare target)',
-    detail: 'All three steps above complete, end to end.',
+    label: "Cloudflare's own PQ security target",
+    detail:
+      'Company-wide target, not a DNSSEC-specific date. Full end-to-end PQ DNSSEC also needs the root to become a trusted PQ anchor and other registries/registrars to adopt algorithm 18 — beyond what Cloudflare alone can deliver.',
     done: false,
-    source: "~2029, Cloudflare's own roadmap",
+    source: '~2029, Cloudflare blog',
   },
 ]
 
@@ -75,9 +76,10 @@ export const DeploymentRoadmapTracker: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           The DNS root zone&apos;s own algorithm rollover is a different, larger-scope migration
           than Cloudflare&apos;s roadmap above &mdash; Verisign estimates the{' '}
-          <strong>mid-2030s</strong> as the realistic window for that step, since the root has to
-          wait for PQ support to reach every delegation up to it. Don&apos;t read Cloudflare&apos;s
-          ~2029 target as a prediction for the whole DNS ecosystem.
+          <strong>mid-2030s</strong> as the realistic window for that step, since every delegation
+          up to the root needs PQ support (the order in which levels migrate isn&apos;t fixed).
+          Don&apos;t read Cloudflare&apos;s ~2029 target as a prediction for the whole DNS
+          ecosystem.
         </p>
       </div>
 

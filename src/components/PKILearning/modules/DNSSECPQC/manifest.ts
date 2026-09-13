@@ -9,7 +9,7 @@ const manifest: ModuleManifest = {
   description:
     'DNSSEC moving to post-quantum signatures: the ML-DSA-44 mechanism behind IANA DNSSEC algorithm 18, Cloudflare’s 1.1.1.1 resolver-side pilot against the dnstest.dev signed test zone, and what’s still missing before production zones can be signed.',
   whyThisMatters:
-    'DNSSEC is a signature-only protocol protecting the integrity of nearly every DNS lookup on the Internet — a cryptographically relevant quantum computer could forge its RSA/ECDSA signatures outright. Cloudflare’s 2026-09-10 milestone is the first real-world PQ DNSSEC deployment, making this one of the few PQC migrations with live production evidence rather than only drafts.',
+    'DNSSEC is a signature-only protocol that protects DNS data authenticity and integrity when a validating resolver checks a signed zone — a cryptographically relevant quantum computer could forge its RSA/ECDSA signatures outright. Cloudflare’s 2026-09-10 announcement is a real production deployment of ML-DSA-44 validation, making this one of the few PQC migrations with live evidence rather than only drafts.',
   duration: '35 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',

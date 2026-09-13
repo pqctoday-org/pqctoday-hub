@@ -4,7 +4,7 @@ DNSSEC signs DNS answers so resolvers can prove they weren't forged. IANA has as
 
 ### Why It Matters
 
-DNSSEC's PQC problem isn't cryptographic strength, it's size: an ML-DSA-44 signature is 2,420 bytes, about 38x larger than the ECDSA P-256 signatures DNSSEC mostly uses today, and comfortably exceeds DNS's practical ~1,232-byte UDP response ceiling. That forces a TCP fallback for every PQ-signed answer, which is exactly why this is still an individual IETF draft rather than a working-group standard.
+DNSSEC's PQC problem isn't cryptographic strength, it's size: an ML-DSA-44 signature is 2,420 bytes, about 38x larger than the ECDSA P-256 signatures DNSSEC mostly uses today, and exceeds a common conservative ~1,232-byte UDP payload limit. Responses that large need another transport, normally TCP — a real operational cost that's one of several reasons this remains an individual IETF draft rather than a working-group standard.
 
 ### The Key Takeaway
 
@@ -12,4 +12,4 @@ Cloudflare's milestone proves a production resolver CAN validate ML-DSA-44 at sc
 
 ### What's Happening
 
-Cloudflare's own next steps are authoritative-side signing support, then registrar DS-record support, targeting full PQ DNSSEC around 2029. That's a narrower, vendor-specific target — the DNS root zone's own algorithm rollover is a separate, broader estimate of the mid-2030s.
+Cloudflare's own next steps are authoritative-side signing support and registrar DS-record support. Cloudflare's company-wide post-quantum security target is ~2029, but full end-to-end PQ DNSSEC also needs the root and other registries to adopt it — the DNS root zone's own algorithm rollover is a separate, broader estimate of the mid-2030s.

@@ -54,7 +54,8 @@ export const content: ModuleContent = {
     ianaMnemonic: 'MLDSA44',
     cloudflareBlogDate: '2026-09-10',
     testZone: 'dnstest.dev',
-    cloudflareTarget: '~2029 (Cloudflare’s own roadmap)',
+    cloudflareTarget:
+      '~2029 (Cloudflare’s company-wide post-quantum security target, not a DNSSEC-specific completion date)',
     rootZoneRollover: 'mid-2030s (Verisign estimate, separate from Cloudflare’s roadmap)',
   },
 }
