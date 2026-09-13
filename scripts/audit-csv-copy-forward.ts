@@ -314,7 +314,134 @@ const EXECUTIVE_TRACKCHIP_MOVED_TO_GRC_09072026 =
   '2c36f0cd6) — GRC now owns compliance/governance content on its own board ' +
   '("Compliance strategy" is GRC track_chip slot 4). A re-scope, not a loss.'
 
+/** migrate_vendor_roadmap_: same one-row-per-vendor pattern as VND-054/
+ *  VND-032 above. The 09122026 vendor-roadmaps queue close-out (35 items
+ *  reviewed) genuinely re-verified a batch of vendor roadmap pages and
+ *  found several had moved to a newer, more specific post since the prior
+ *  capture (e.g. VND-027's June 30 timeline post was superseded by a July
+ *  10 progress report with real product-level rollout detail, folded into
+ *  coverage_notes). add_row.py's REFRESH mechanism updates roadmap_url/
+ *  title on the SAME vendor row, so all 18 old keys read as removed even
+ *  though every one of these vendors is present, active, and current
+ *  under its refreshed URL/title — verified directly (not asserted):
+ *  each vendor_id still resolves to an active row in the newest
+ *  generation. */
+const VND_ROADMAP_URL_REFRESH_09122026 =
+  '09122026 vendor-roadmaps queue close-out: roadmap_url/title refreshed to ' +
+  'a newer, more specific source page (same pattern as the VND-054/VND-032 ' +
+  'entries above). The vendor row itself is present, active, and current ' +
+  'under the refreshed URL/title — verified by vendor_id lookup in the ' +
+  'newest generation, not assumed.'
+
 export const RECORDED_REMOVALS: RecordedRemoval[] = [
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: "VND-018 | Google LLC | https://blog.google/innovation-and-ai/technology/safety-security/cryptography-migration-timeline/ | Google's timeline for PQC migration",
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-027 | Microsoft Corporation | https://www.microsoft.com/en-us/security/blog/2026/06/30/microsoft-advances-quantum-safe-security-as-the-risk-timeline-shifts/ | Accelerating the quantum-safe timeline | Microsoft Security Blog',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-168 | Arqit Quantum Inc. | https://arqitgroup.com/company/our-approach | Arqit Quantum-Safe Security Approach',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-178 | Ping Identity Holdings Corp. | https://www.pingidentity.com/en/resources/blog/post/quantum-threat-us-fed-gov.html | Ping Identity: Addressing the Quantum Threat in US Federal Government',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-007 | Check Point Software Technologies Ltd. | https://blog.checkpoint.com/innovation/quantum-safe-cyber-security-current-capabilities-and-the-road-ahead/ | Quantum-Safe Cybersecurity with Check Point: Current Capabilities and the Road Ahead',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-152 | Adtran Networks SE (formerly ADVA) | https://www.adtran.com/en/solutions/quantum-safe-communications | Quantum-Safe Communications | Adtran',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-039 | STMicroelectronics N.V. | https://www.st.com/content/st_com/en/about/innovation-and-technology/post-quantum-cryptography.html | Post-Quantum Cryptography - STMicroelectronics',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-235 | Samsung SDS Co. Ltd. | https://www.samsungsds.com/en/research-blog/post-quantum-crypto-migration.html | In the Era of Quantum Computing, SDS is Taking the Following Steps to Enhance Security - Participating in NIST Post-Quantum Cryptography Migration Project',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-220 | European Commission | https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography | A Coordinated Implementation Roadmap for the Transition to Post-Quantum Cryptography',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-341 | Mastercard Incorporated | https://www.mastercard.com/global/en/news-and-trends/Insights/2025/post-quantum-cryptography-white-paper.html | Migration to post-quantum cryptography (Mastercard R&D white paper)',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-180 | QuintessenceLabs Pty Ltd. | https://www.quintessencelabs.com/products#qconnect | qConnect Quantum Safe Key Distributor',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-229 | CyberZero | https://cyberzero.io/services/post-quantum-cryptography-readiness/ | Post-Quantum Cryptography Readiness',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-286 | Chelpis Quantum Corp. | https://www.chelpis.com/products-service | PQC Communication System — PQTunnel',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-527 | European Space Agency | https://connectivity.esa.int/archives/projects/e2eqss | European Space Agency E2EQSS Post-Quantum Satellite Security',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-052 | 01 Quantum Ltd. | https://www.newsfilecorp.com/release/300832/01-Quantum-Announces-Strategic-Partnership-to-Deliver-PostQuantum-Cryptography-Solutions | 01 Quantum Post-Quantum Cryptography Partnership',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-524 | Korea Telecom Corporation | https://www.digitaltoday.co.kr/en/view/77387/kt-joins-quantum-korea-2026-to-unveil-post-quantum-cryptography-and-quantum-key-distribution-technologies | KT Post-Quantum Cryptography and QKD at Quantum Korea 2026',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-525 | OneSpan Inc. | https://www.onespan.com/blog/quantum-resistant-encryption-authentication-suite-server-SDK | OneSpan Quantum-Resistant Authentication Suite Server SDK',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-236 | Centre for Development of Telematics (C-DOT) | https://www.cdot.in/cdotweb/web/product_category.php?lang=en&catId=10 | Post Quantum Cryptography product category',
+    reason: VND_ROADMAP_URL_REFRESH_09122026,
+    recorded: '2026-09-13',
+  },
   {
     family: 'migrate_vendor_roadmap_',
     key: 'VND-054 | QuSecure Inc. | https://www.hpcwire.com/off-the-wire/qusecure-and-nists-nccoe-partner-to-address-post-quantum-algorithm-migration/ | QuSecure and NIST NCCoE Partner on Post-Quantum Algorithm Migration',
