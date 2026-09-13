@@ -736,7 +736,7 @@
     },
     {
       "refId": "rail-frmcs",
-      "label": "Railway mobile communications (GSM-R → FRMCS)",
+      "label": "Railway mobile communications (GSM-R \u2192 FRMCS)",
       "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/103764/01.01.00_30/ts_103764v010100va.pdf",
       "status": "downloaded",
       "file": "industry/rail-frmcs.pdf",
@@ -931,14 +931,14 @@
     {
       "refId": "cross-openpgp",
       "label": "OpenPGP email & file encryption",
-      "url": "https://datatracker.ietf.org/doc/draft-ietf-openpgp-pqc/",
+      "url": "https://datatracker.ietf.org/doc/rfc9980/",
       "status": "downloaded",
-      "file": "library/draft-ietf-openpgp-pqc-17.html",
-      "filename": "draft-ietf-openpgp-pqc-17.html",
-      "sizeBytes": 825183,
+      "file": "library/RFC-9980.html",
+      "filename": "RFC-9980.html",
+      "sizeBytes": 825164,
       "contentType": "text/html",
-      "sha256": "c99992cc6c17ffbb95d11270a93d8fde36ec1287f9f6abfc97aaf37749632e10",
-      "verifiedAt": "2026-09-11"
+      "sha256": "a532df2c1a599be7fb8a8238544bee2d51d630d8a4a3d0461e845ae0bcef24cf",
+      "verifiedAt": "2026-09-12"
     },
     {
       "refId": "cross-dnssec",
@@ -1248,7 +1248,7 @@
   "archivedEntries": [
     {
       "refId": "ins-munichre-cyber-trends-2025",
-      "title": "Munich Re — Cyber Insurance: Risks and Trends 2025 (quantum section)",
+      "title": "Munich Re \u2014 Cyber Insurance: Risks and Trends 2025 (quantum section)",
       "url": "https://www.munichre.com/en/insights/cyber/cyber-insurance-risks-and-trends-2025.html",
       "status": "downloaded",
       "filename": "ins-munichre-cyber-trends-2025.html",
@@ -1278,6 +1278,6 @@
       "sha256": "1151c3f67d28c797890910f34291d15108b405fec38a9b2c09e4e4143ca2ee6f"
     }
   ],
-  "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
+  "archivedNote": "Entries no active row cites \u2014 superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
   "rebuiltAt": "2026-09-11T20:37:20.308315+00:00"
 }
