@@ -77,6 +77,15 @@ export function ReplaceTab({
     setProductIdFilter(undefined)
   }
 
+  // A catalog-wide product search (AssetList's top-level search box) jumping
+  // straight to one specific product — set its domain AND narrow the list to
+  // just that product, rather than landing on the domain's full, unfiltered list.
+  const onSelectProduct = (d: DomainId, productId: string) => {
+    setSelectedDomain(d)
+    setFilter('')
+    setProductIdFilter([productId])
+  }
+
   const asset = selectedDomain ? (ASSET_BY_ID.get(selectedDomain) ?? null) : null
   const products = useMemo(
     () => (selectedDomain ? productsForDomain(selectedDomain) : []),
@@ -99,7 +108,12 @@ export function ReplaceTab({
   return (
     <div className="flex flex-col items-start gap-4 lg:flex-row">
       <div className="hidden w-full lg:block lg:w-auto">
-        <AssetList persona={persona} selectedDomain={selectedDomain} onSelect={onSelect} />
+        <AssetList
+          persona={persona}
+          selectedDomain={selectedDomain}
+          onSelect={onSelect}
+          onSelectProduct={onSelectProduct}
+        />
       </div>
       <div className="w-full space-y-2 lg:hidden">
         {viewingLabel && (
@@ -109,7 +123,12 @@ export function ReplaceTab({
         )}
         <MobileFilterDrawer
           filterContent={
-            <AssetList persona={persona} selectedDomain={selectedDomain} onSelect={onSelect} />
+            <AssetList
+              persona={persona}
+              selectedDomain={selectedDomain}
+              onSelect={onSelect}
+              onSelectProduct={onSelectProduct}
+            />
           }
           activeFilterCount={activeFilterCount}
           onClearAll={() => onSelect('tls')}

@@ -815,7 +815,9 @@ async function runCmT(): Promise<CheckResult[]> {
 // dangling id fails the build again rather than being filed as backlog.
 
 async function runCmCompliance04(): Promise<CheckResult> {
-  const complianceFiles = await glob('src/data/compliance_*.csv', { cwd: REPO_ROOT })
+  // `compliance_[0-9]*.csv`, not a bare `compliance_*.csv` — see the same
+  // fix's comment on buildKnownConceptIds() above.
+  const complianceFiles = await glob('src/data/compliance_[0-9]*.csv', { cwd: REPO_ROOT })
   complianceFiles.sort(datedCsvCompare)
   const latestCompliance = complianceFiles.at(-1)
   if (!latestCompliance)

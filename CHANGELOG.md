@@ -29,6 +29,31 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.84.1] - 2026-09-13
+
+### Fixed
+
+- **The Migration Catalog's search box now actually finds products, not just categories** [view:/migrate] [persona:architect] [persona:researcher] [persona:developer]: typing a product or vendor name — e.g. "Qinsight" — used to return "No matches" even when the product existed, because the box only searched the page's ~18 fixed category labels. It now searches every product and vendor name too, and takes you straight to the match.
+
+### Data
+
+- **Qinsight Atlas's catalog entry is now verified** [view:/migrate] [persona:architect] [persona:researcher]: the vendor's own product page was reviewed against the catalog's CBOM-generation and quantum-readiness claim, so the entry moves from "Unverified — needs review" to "Verified."
+- **Daniel Speciale (Founder, Qinsight) added to Leaders** [view:/leaders] [persona:researcher]: credits the community submission that brought Qinsight Atlas into the catalog.
+
+## [4.84.0] - 2026-09-13
+
+### Added
+
+- **3 new hardware certifications and 2 new products in the Migration Catalog** [view:/migrate] [persona:architect] [persona:researcher]: STMicroelectronics' NesLib cryptographic library now shows 3 real EUCC hardware security certifications; Ledger's SDK PQC and Qinsight's Atlas cryptographic-discovery platform are newly listed, the latter from a newly-registered vendor.
+- **6 new industry threat entries** [view:/threats] [persona:grc] [persona:executive]: additional cross-industry cloud, financial-sector, and sector-specific quantum-risk guidance.
+- **A new compliance requirement: Executive Order 14306's TLS 1.3 deadline for U.S. federal agencies** [view:/compliance] [persona:grc] [persona:ops]: the January 2030 agency-support requirement is now tracked, sourced directly from the order and NSA/OMB guidance.
+- **The Simulation's closing debrief and usage analytics now show what kind of run you actually completed** [view:/simulation] [persona:executive] [persona:grc]: rather than treating every run identically, the debrief and its analytics event distinguish genuine migration work from demonstrations.
+
+### Fixed
+
+- **A routing-security entry named the wrong classical algorithm** [view:/industry] [persona:researcher]: RPKI resource certificates were shown using ECDSA when the algorithm actually deployed today is RSA-2048/SHA-256 (BGPsec separately uses ECDSA) — corrected to match the real IETF migration draft it cites.
+- **The KMIP Control Plane playground now uses the correct wire format for object identifiers** [view:/playground] [persona:developer] [persona:ops]: KMIP 3.0 gives Identifier, Reference, and Name Reference their own wire types instead of reusing Text String; the playground's own encoder now matches the engine's stricter validation.
+
 ## [4.83.0] - 2026-09-09
 
 ### Added

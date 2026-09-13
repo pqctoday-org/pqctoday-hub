@@ -31,6 +31,9 @@ export type TtlvTypeName =
   | 'DateTime'
   | 'Interval'
   | 'DateTimeExtended'
+  // KMIP 3.0 (§11.25) string types. Identifier (0x0C) is an object's own
+  // Unique Identifier; Reference (0x0D) is an early-binding link to one
+  // object; Name Reference (0x0E) is late-binding, resolved via `Name`.
   | 'Identifier'
   | 'Reference'
   | 'NameReference'

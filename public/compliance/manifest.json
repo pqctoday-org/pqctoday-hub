@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-07T02:48:24.369841+00:00",
+  "generated": "2026-09-11T16:02:27.207590+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -576,12 +576,16 @@
     },
     {
       "refId": "3GPP-PQC",
-      "url": "https://www.3gpp.org/",
-      "status": "downloaded",
+      "url": "https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=4422",
+      "status": "recaptured",
+      "file": "compliance/3GPP-PQC.html",
       "filename": "3GPP-PQC.html",
-      "sizeBytes": 410394,
+      "sizeBytes": 202572,
       "contentType": "text/html",
-      "sha256": "b229691fc9785f7425b11a1c2f89121f694b648bbad23d4dc639b89d3610e1a2"
+      "sha256": "86caab88c9cbf6c369c42445f4f1c0682571d7cfce584686b1cc4229492e17fa",
+      "recaptured_at": "2026-09-09T01:24:45.064051+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/compliance/3GPP-PQC.html"
     },
     {
       "refId": "TCG-TPM-PQC",
@@ -936,9 +940,10 @@
       "url": "https://placng.org/i/wp-content/uploads/2023/06/Nigeria-Data-Protection-Act-2023.pdf",
       "status": "downloaded",
       "filename": "NG-NDPR.pdf",
-      "sizeBytes": 1518494,
+      "sizeBytes": 1282124,
       "contentType": "application/pdf",
-      "sha256": "38e4ac47630589f94ad0a654800dff58a51d87d95456bc01d239e9172e020e92"
+      "sha256": "d61fcee8a5dcb974040ad9298f0e80ad33218085819633a670c7b09793a44db0",
+      "hashedAt": "2026-09-12"
     },
     {
       "refId": "EG-PDPL",
@@ -954,9 +959,10 @@
       "url": "https://au.int/sites/default/files/treaties/29560-treaty-0048_-_african_union_convention_on_cyber_security_and_personal_data_protection_e.pdf",
       "status": "downloaded",
       "filename": "AU-MALABO.pdf",
-      "sizeBytes": 13794400,
+      "sizeBytes": 12969818,
       "contentType": "application/pdf",
-      "sha256": "4564c7ee68658754590953f653b6aa43582d63fdd16f8614ecd0b4cf89c96485"
+      "sha256": "f9556d6ec30103c680a7b1741e37d1d358b7386f07bf702afc710b41f0f7080f",
+      "hashedAt": "2026-09-12"
     },
     {
       "refId": "EUCC-V2",
@@ -1437,12 +1443,16 @@
     },
     {
       "refId": "MSB-SE-CYB",
-      "url": "https://www.ncsc.se/siteassets/publikationer/nationella-rekommendationer-for-overgangen-till-kvantsaker-kryptografi-2026_tga.pdf",
-      "status": "downloaded",
+      "url": "https://metodstod-informationssakerhet.msb.se/globalassets/metodstod-for-systematiskt-informationssakerhetsarbete---en-oversikt.pdf",
+      "status": "recaptured",
+      "file": "compliance/MSB-SE-CYB.pdf",
       "filename": "MSB-SE-CYB.pdf",
-      "sizeBytes": 1064410,
+      "sizeBytes": 5085384,
       "contentType": "application/pdf",
-      "sha256": "ac5c299f4726eb63303c8d3840ceaa4e8bc88121c14d6944acba2da8006b5325"
+      "sha256": "707a164ec0d3cc8a5e62f8cc2358e67978affb6179edb1ca9afc87507876640c",
+      "recaptured_at": "2026-09-09T01:24:52.533871+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": "_superseded-20260908/compliance/MSB-SE-CYB.pdf"
     },
     {
       "refId": "NCSC-FI-PQC",
@@ -2009,6 +2019,16 @@
       "bytes": 506138,
       "downloadedAt": "2026-09-07T20:24:46.694592+00:00",
       "recoveredBy": "codex url research + lineage gates"
+    },
+    {
+      "refId": "EO-14306-TLS-1-3-AGENCY-SUPPOR",
+      "url": "https://www.federalregister.gov/documents/2025/06/11/2025-10804/sustaining-select-efforts-to-strengthen-the-nations-cybersecurity-and-amending-executive-order-13694",
+      "status": "downloaded",
+      "filename": "EO-14306-TLS-1-3-AGENCY-SUPPOR.html",
+      "sizeBytes": 77911,
+      "contentType": "text/html",
+      "sha256": "7c8ab1f310bb0e3989bb7a22532610b451a1736a2cb22a6d81541014872e44c6",
+      "verifiedAt": "2026-09-12"
     }
   ],
   "blocked": {

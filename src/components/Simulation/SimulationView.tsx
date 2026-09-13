@@ -193,6 +193,12 @@ import { TrapInsightsPanel } from './TrapInsightsPanel'
 import { useSimulationStore, RUN_START } from '@/store/useSimulationStore'
 import { FRAMEWORK_COVERAGE, hasCompleteCoverage } from '@/simulation/frameworkCoverage'
 import { readRunMetric, type RunMetricInputs } from '@/simulation/runMetrics'
+import { runQualityIndicators, indicatorsLabel } from '@/simulation/qualityIndicators'
+import {
+  logSimEvidenceRecorded,
+  logSimReturnPathFailure,
+  logSimRunQuality,
+} from '@/utils/analytics'
 import { EmbedRunContextProvider } from '@/components/shared/embedRunContext'
 import { validateSave, previewSave } from '@/simulation/saveSchema'
 import {
@@ -429,6 +435,8 @@ export function SimulationView() {
     setActiveTab,
     openStepRef,
     setOpenStepRef,
+    returnPathFailures,
+    noteReturnPathFailure,
     attempts,
     recordAttempt,
     clearAttempt,
@@ -711,6 +719,12 @@ export function SimulationView() {
     // surfaces resources no tree contains (e.g. /learn/quantum-threats).
     const step = openStepRef as unknown as TreeStep
     if (canEmbedStep(step)) openStep(step)
+    else {
+      // W7.5: the run remembered a resource this build cannot reopen, so the
+      // learner is silently dropped on the board instead of where they were.
+      noteReturnPathFailure()
+      logSimReturnPathFailure(sel, 'unresolvable-resume')
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openStepRef])
 
@@ -1280,6 +1294,7 @@ export function SimulationView() {
       createdAt: Date.now(),
       runQuarter: `Q${q} ${year}`,
     })
+    logSimEvidenceRecorded(phase, kind, origin)
   }
   const autoKey = (phase: string, to: string) => `${phase}::${to}`
   // WS-04: how many migratable edges this run's architecture actually has — caps
@@ -1525,6 +1540,24 @@ export function SimulationView() {
       setRunCompleteOpen(true)
       markRunComplete()
       recordSimRunCompletion({ country, difficulty, trapsThisRun, objectivesOnTime })
+      // W7.5 — what KIND of run this was, emitted once at the end. Counts and
+      // coarse categories only; it says nothing about how good the learner is,
+      // and must never be read that way.
+      logSimRunQuality(
+        indicatorsLabel(
+          runQualityIndicators({
+            evidence,
+            returnPathFailures,
+            startedPhaseSteps: LIFECYCLE.map((p) => {
+              const steps = (SIM_TREES[p] ? flattenTree(SIM_TREES[p]!) : []).filter(isGatingStep)
+              const done = steps.filter((st) => stepDone(st, p)).length
+              // Only phases the learner actually started count toward
+              // "unresolved" — an untouched phase is not a loose end.
+              return done > 0 ? ([steps.length, done] as [number, number]) : null
+            }).filter((x): x is [number, number] => x !== null),
+          })
+        )
+      )
     }, 0)
     return () => clearTimeout(id)
   }, [
@@ -3354,6 +3387,10 @@ export function SimulationView() {
                 const href = a?.getAttribute('href')
                 if (isBlockedEmbedHref(href)) {
                   e.preventDefault()
+                  // W7.5: the learner tried to go somewhere and the sim refused.
+                  // That is a return-path failure whether or not they notice.
+                  noteReturnPathFailure()
+                  logSimReturnPathFailure(sel, 'blocked-embed-link')
                   // WP2.7: a blocked link used to fail silently — the player
                   // clicked and nothing visibly happened. Say why.
                   toast('This link opens after the run — for now it stays inside the simulation.', {
@@ -5253,6 +5290,17 @@ export function SimulationView() {
           }))}
           maturity={scoreboard.maturity}
           seat={seat}
+          unresolvedCount={
+            runQualityIndicators({
+              evidence,
+              returnPathFailures,
+              startedPhaseSteps: LIFECYCLE.map((p) => {
+                const steps = (SIM_TREES[p] ? flattenTree(SIM_TREES[p]!) : []).filter(isGatingStep)
+                const done = steps.filter((st) => stepDone(st, p)).length
+                return done > 0 ? ([steps.length, done] as [number, number]) : null
+              }).filter((x): x is [number, number] => x !== null),
+            }).unresolvedInStartedPhases
+          }
           learnerShare={
             evidence.length
               ? evidence.filter((e) => e.origin === 'learner').length / evidence.length

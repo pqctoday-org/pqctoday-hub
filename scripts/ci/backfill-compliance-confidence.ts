@@ -48,7 +48,11 @@ function computeScore(row: Record<string, string>): number {
 }
 
 async function main() {
-  const files = await glob('compliance_*.csv', { cwd: DATA_DIR })
+  // `compliance_[0-9]*.csv`, not a bare `compliance_*.csv` — the latter also
+  // matches the deliberately separate compliance_xwalk_candidates_*.csv
+  // pipeline output (see merge-xwalk-candidates.ts), which sorts after real
+  // dated compliance files and would get picked as "latest".
+  const files = await glob('compliance_[0-9]*.csv', { cwd: DATA_DIR })
   files.sort(datedCsvCompare)
   const latest = files.at(-1)
   if (!latest) {

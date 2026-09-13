@@ -5,7 +5,7 @@
 // one domain (guaranteed by migrationAssets.coverage.test.ts), so the
 // asset-first IA never hides a product.
 
-import { softwareData } from '@/data/migrateData'
+import { softwareData, vendorMap } from '@/data/migrateData'
 import { classifyProductDomain, type DomainId } from '@/data/migrationAssets'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { PQC_STATUS_RANK, productPqcStatus } from './productStatus'
@@ -89,4 +89,42 @@ export function filterProducts(
       (p.vendorId || '').toLowerCase().includes(q) ||
       p.productId.toLowerCase() === q
   )
+}
+
+export interface ProductSearchHit {
+  domain: DomainId
+  product: SoftwareItem
+  vendorName?: string
+}
+
+/**
+ * Cross-domain product/vendor-name search for the top-level "Search what you
+ * run" box in AssetList — that box previously only matched the ~18 asset and
+ * foundation-category LABELS (e.g. "TLS key exchange"), so a real product
+ * name like "Qinsight" always returned "No matches" even though the product
+ * is in the catalog, just filed under a category the user hadn't picked yet.
+ * This searches every product's name and vendor name (not just its raw
+ * vendorId code) across ALL domains at once. Capped via `limit` so the
+ * sidebar stays a quick jump-to, not a second full product browser — the
+ * in-domain filter box (`filterProducts`) is still the right place to browse
+ * a whole category.
+ */
+export function searchProducts(query: string, limit = 6): ProductSearchHit[] {
+  const q = query.trim().toLowerCase()
+  if (!q) return []
+  const hits: ProductSearchHit[] = []
+  for (const [domain, items] of INDEX) {
+    for (const product of items) {
+      const vendorName = product.vendorId ? vendorMap.get(product.vendorId)?.vendorName : undefined
+      if (
+        product.softwareName.toLowerCase().includes(q) ||
+        (vendorName || '').toLowerCase().includes(q) ||
+        product.productId.toLowerCase() === q
+      ) {
+        hits.push({ domain, product, vendorName })
+      }
+    }
+  }
+  hits.sort((a, b) => a.product.softwareName.localeCompare(b.product.softwareName))
+  return hits.slice(0, limit)
 }

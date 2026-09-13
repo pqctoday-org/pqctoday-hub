@@ -1,0 +1,14 @@
+[
+  {
+    "ref_id": "CC-2022-PART3",
+    "reason": "single-window failed (no JSON returned (model or transport failure)); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "CC-2022-CEM",
+    "reason": "single-window failed (no JSON returned (model or transport failure)); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "ENISA-PQC-Integration-Study-2022",
+    "reason": "single-window failed (no JSON returned (model or transport failure)); 3-window fallback also found nothing"
+  }
+]
