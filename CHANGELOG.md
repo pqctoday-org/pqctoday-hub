@@ -29,6 +29,17 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.84.1] - 2026-09-13
+
+### Fixed
+
+- **The Migration Catalog's search box now actually finds products, not just categories** [view:/migrate] [persona:architect] [persona:researcher] [persona:developer]: typing a product or vendor name — e.g. "Qinsight" — used to return "No matches" even when the product existed, because the box only searched the page's ~18 fixed category labels. It now searches every product and vendor name too, and takes you straight to the match.
+
+### Data
+
+- **Qinsight Atlas's catalog entry is now verified** [view:/migrate] [persona:architect] [persona:researcher]: the vendor's own product page was reviewed against the catalog's CBOM-generation and quantum-readiness claim, so the entry moves from "Unverified — needs review" to "Verified."
+- **Daniel Speciale (Founder, Qinsight) added to Leaders** [view:/leaders] [persona:researcher]: credits the community submission that brought Qinsight Atlas into the catalog.
+
 ## [4.84.0] - 2026-09-13
 
 ### Added
