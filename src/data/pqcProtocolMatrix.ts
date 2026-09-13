@@ -53,7 +53,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-08-17'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-09-13'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -2811,6 +2811,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-04-17',
         localFile: '/library/draft-sheth-pqc-dnssec-strategy-01.html',
       },
+      {
+        id: 'draft-westerbaan-dnssec-mldsa-04',
+        title:
+          'draft-westerbaan-dnssec-mldsa-04 — Module-Lattice Digital Signature Algorithm for DNSSEC (defines DNSSEC algorithm 18 for ML-DSA-44)',
+        url: 'https://datatracker.ietf.org/doc/draft-westerbaan-dnssec-mldsa/',
+        date: '2026-08-11',
+      },
     ],
     dimensions: {
       pureKem: {
@@ -2829,9 +2836,20 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'experimental',
         stage: 'individual-draft',
         stageNote:
-          'Individual drafts active (draft-fregly-dnsop-slh-dsa-mtl-dnssec, draft-sheth-pqc-dnssec-strategy) — still no WG-chartered work',
-        note: 'No IANA DNSKEY code point assigned yet. Constraint: ML-DSA (2.4–4.6 KB) and SLH-DSA (7.8–49.8 KB) signatures exceed the ~1232-byte DNS UDP limit — forces TCP fallback. No IETF WG currently addresses the IP fragmentation issue.',
+          'Individual drafts active (draft-westerbaan-dnssec-mldsa, draft-fregly-dnsop-slh-dsa-mtl-dnssec, draft-sheth-pqc-dnssec-strategy) — still no WG-chartered work',
+        note: 'IANA has assigned DNSSEC algorithm number 18 to ML-DSA-44 (draft-westerbaan-dnssec-mldsa). Constraint unchanged: an ML-DSA-44 signature alone is 2,420 bytes, and SLH-DSA runs 7.8–49.8 KB — both exceed the ~1232-byte DNS UDP limit, forcing TCP fallback. No IETF WG currently addresses the IP fragmentation issue.',
+        deploymentPosture: 'pilot',
+        deploymentNote:
+          'Cloudflare enabled ML-DSA-44 (alg 18) DNSSEC validation by default on the 1.1.1.1 resolver on 2026-09-10, and signs a live public test zone (dnstest.dev) with it. This is resolver-side pilot support only — no registry, registrar, or the DNS root has signed a production zone with a PQ algorithm yet.',
         refs: [
+          {
+            kind: 'draft',
+            id: 'draft-westerbaan-dnssec-mldsa',
+            title:
+              'Module-Lattice Digital Signature Algorithm for DNSSEC (individual) — defines alg 18',
+            url: 'https://datatracker.ietf.org/doc/draft-westerbaan-dnssec-mldsa/',
+            publishedOn: '2026-08-11',
+          },
           {
             kind: 'draft',
             id: 'draft-fregly-dnsop-slh-dsa-mtl-dnssec',
@@ -2847,6 +2865,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             publishedOn: '2026-04-17',
           },
         ],
+        lastReviewed: '2026-09-13',
       },
       hybridSig: {
         value: 'experimental',
@@ -2863,6 +2882,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             publishedOn: '2026-04-17',
           },
         ],
+        lastReviewed: '2026-09-13',
       },
     },
     ossLibraries: [
@@ -2876,10 +2896,23 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     commercialLibraries: [
       { productId: 'adguard-dns', name: 'AdGuard DNS', versionNote: 'Commercial / Free' },
+      {
+        productId: 'cloudflare-1-1-1-1',
+        name: 'Cloudflare 1.1.1.1',
+        versionNote: 'Validates ML-DSA-44 (alg 18) by default since 2026-09-10',
+      },
     ],
     playgrounds: [],
+    liveDeployments: [
+      {
+        provider: 'Cloudflare',
+        what: '1.1.1.1 resolver validates ML-DSA-44 (DNSSEC algorithm 18) DNSSEC signatures by default; dnstest.dev published as a live ML-DSA-44-signed test zone',
+        since: '2026-09-10',
+        referenceUrl: 'https://blog.cloudflare.com/post-quantum-dnssec-1111/',
+      },
+    ],
     noDeploymentReason:
-      "No IANA DNSKEY algorithm code point has been assigned for any PQ scheme — definitionally cannot be in operational production. Signature sizes (ML-DSA 2.4–4.6 KB, SLH-DSA 7.8–49.8 KB) blow past the ~1232-byte DNS UDP limit, forcing TCP fallback. Resolver compatibility studies (SIDN Labs on .nl/.se/.nu zones) find roughly half of Internet resolvers fail when zones carry unknown algorithms. Verisign's Merkle Tree Ladder (MTL) mode draft and IETF 123/124 Hackathon work (BIND, NSD, CoreDNS extensions) are all lab/R&D — no live DNSSEC zone has been signed with PQ today. Verisign estimates the next root-zone algorithm rollover (mid-2030s) is the realistic deployment window.",
+      "IANA has now assigned DNSSEC algorithm 18 to ML-DSA-44 (draft-westerbaan-dnssec-mldsa), and Cloudflare enabled ML-DSA-44 validation by default on 1.1.1.1 on 2026-09-10, alongside a live signed test zone (dnstest.dev) — but this is resolver-side pilot support, not production zone signing. Signature size remains the core barrier: an ML-DSA-44 signature alone is 2,420 bytes, and SLH-DSA runs 7.8–49.8 KB, both blowing past the ~1232-byte DNS UDP limit and forcing TCP fallback. Resolver compatibility studies (SIDN Labs on .nl/.se/.nu zones) find roughly half of Internet resolvers fail when zones carry unknown algorithms. Verisign's Merkle Tree Ladder (MTL) mode draft and IETF 123/124 Hackathon work (BIND, NSD, CoreDNS extensions) remain lab/R&D for the SLH-DSA path. No registry, registrar, or the DNS root has signed a production zone with a PQ algorithm — and the downgrade-safety design Cloudflare relies on (requiring an authenticated PQ path via parent-zone DS records) only becomes post-quantum-secure once that adoption reaches every delegation up to the root. Verisign estimates the next root-zone algorithm rollover (mid-2030s) as the realistic window for that step.",
   },
   {
     id: 'rpki-bgpsec',
