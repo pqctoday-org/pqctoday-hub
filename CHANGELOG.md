@@ -29,6 +29,12 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.84.2] - 2026-09-13
+
+### Fixed
+
+- **All 64 Learn-module posters replaced with corrected, verified artwork** [view:/learn] [persona:curious] [persona:developer]: an accuracy audit found 28 of the 64 sheets scoring 0–1, including 18 fabricated algorithm names (e.g. "ML-Sig", "SLH-USA") and one blank file. Every sheet was regenerated against each module's real source data and checked with OCR to confirm the text on it actually matches — 0 missing strings across all 64.
+
 ## [4.84.1] - 2026-09-13
 
 ### Fixed
