@@ -34,28 +34,19 @@ interface Exception {
   recheckAfter: string
 }
 
-// Empty, and that is the desired state. Both entries that used to live here were
-// image-size DoS advisories (GHSA-w3rx-r6r6-pgpr, GHSA-5p2g-fcmc-qvqq) reaching us
-// only through pptxgenjs. pptxgenjs was replaced on 2026-08-22 by a direct
-// PresentationML writer (services/export/pptxOoxml.ts), the dependency went away, and
-// this gate then failed on the exceptions themselves — exactly as designed: an
-// exception that no longer matches any advisory is dead weight that would silently
-// pre-authorise a future advisory with the same id. Add a new entry only with a reason
-// that says why it cannot be fixed AND why it is unreachable, plus a recheck date.
-const EXCEPTIONS: Exception[] = [
-  {
-    ghsa: 'GHSA-rgj7-g3m4-5g8c',
-    package: 'sharp',
-    reason:
-      'libheif HEIC/HEIF-decode vulnerabilities in sharp <0.35.4; no fix available upstream ' +
-      'as of 2026-09-09. sharp is a transitive dependency of @huggingface/transformers, ' +
-      "pulled in only by this app's TEXT embedding pipeline (bge-small, used by " +
-      'embeddingRetrieval.ts / scripts/build-embedding-index.ts for RAG search) — no code ' +
-      'path here ever runs image preprocessing through transformers.js, so the vulnerable ' +
-      'HEIC/HEIF decode path in sharp is never invoked.',
-    recheckAfter: '2026-12-01',
-  },
-]
+// Empty, and that is the desired state. Three entries have lived here and been
+// removed once their advisory stopped matching: two image-size DoS advisories
+// (GHSA-w3rx-r6r6-pgpr, GHSA-5p2g-fcmc-qvqq) reaching us only through pptxgenjs
+// (replaced 2026-08-22 by a direct PresentationML writer,
+// services/export/pptxOoxml.ts), and a libheif HEIC/HEIF-decode advisory in
+// sharp (GHSA-rgj7-g3m4-5g8c, <0.35.4) — package.json's `overrides` now pins
+// sharp to ^0.35.4, the fixed version, so as of 2026-09-13 `npm audit` no
+// longer reports it. Each removal is exactly the gate working as designed: an
+// exception that no longer matches any advisory is dead weight that would
+// silently pre-authorise a future advisory with the same id. Add a new entry
+// only with a reason that says why it cannot be fixed AND why it is
+// unreachable, plus a recheck date.
+const EXCEPTIONS: Exception[] = []
 
 /** Severities that fail the build when unlisted. */
 const BLOCKING = new Set(['high', 'critical'])
