@@ -45,30 +45,12 @@
       "difficulty": "advanced",
       "frameworkPhase": "p5"
     },
-    "sbom": {
-      "id": "sbom",
-      "lm_id": "LM-063",
-      "title": "Software Bill of Materials (SBOM)",
-      "description": "Inventory every software component a product depends on — supplier, version, dependency graph — the discovery input that feeds a CBOM and closes the vulnerability-triage loop with VEX.",
-      "duration": "30 min",
-      "difficulty": "intermediate",
-      "frameworkPhase": "p1"
-    },
     "cbom": {
       "id": "cbom",
       "lm_id": "LM-060",
       "title": "Cryptography Bill of Materials (CBOM)",
       "description": "Choose a CBOM format, discover all your cryptography — including the crypto nobody tracks — give each key its identity and provenance, and make the inventory machine-verifiable.",
       "duration": "60 min",
-      "difficulty": "intermediate",
-      "frameworkPhase": "p2"
-    },
-    "crypto-registry": {
-      "id": "crypto-registry",
-      "lm_id": "LM-062",
-      "title": "CycloneDX Cryptography Registry",
-      "description": "One canonical name per cryptographic mechanism — resolve the same algorithm or curve across HSM, certificate, protocol and library notations, and see exactly where PQC families fit.",
-      "duration": "30 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p2"
     },
@@ -125,6 +107,24 @@
       "duration": "55 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p1"
+    },
+    "crypto-registry": {
+      "id": "crypto-registry",
+      "lm_id": "LM-062",
+      "title": "CycloneDX Cryptography Registry",
+      "description": "One canonical name per cryptographic mechanism — resolve the same algorithm or curve across HSM, certificate, protocol and library notations, and see exactly where PQC families fit.",
+      "duration": "30 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p2"
+    },
+    "dnssec-pqc": {
+      "id": "dnssec-pqc",
+      "lm_id": "LM-064",
+      "title": "DNSSEC & Post-Quantum Signatures",
+      "description": "DNSSEC moving to post-quantum signatures: the ML-DSA-44 mechanism behind IANA DNSSEC algorithm 18, Cloudflare’s 1.1.1.1 resolver-side pilot against the dnstest.dev signed test zone, and what’s still missing before production zones can be signed.",
+      "duration": "35 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p5"
     },
     "data-asset-sensitivity": {
       "id": "data-asset-sensitivity",
@@ -224,6 +224,15 @@
       "duration": "60 min",
       "difficulty": "advanced",
       "workInProgress": true,
+      "frameworkPhase": "p5"
+    },
+    "government-defense-pqc": {
+      "id": "government-defense-pqc",
+      "lm_id": "LM-062",
+      "title": "Government & Defense PQC",
+      "description": "The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.",
+      "duration": "60 min",
+      "difficulty": "advanced",
       "frameworkPhase": "p5"
     },
     "healthcare-pqc": {
@@ -467,6 +476,15 @@
       "difficulty": "advanced",
       "frameworkPhase": "foundations"
     },
+    "sbom": {
+      "id": "sbom",
+      "lm_id": "LM-063",
+      "title": "Software Bill of Materials (SBOM)",
+      "description": "Inventory every software component a product depends on — supplier, version, dependency graph — the discovery input that feeds a CBOM and closes the vulnerability-triage loop with VEX.",
+      "duration": "30 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p1"
+    },
     "secrets-management-pqc": {
       "id": "secrets-management-pqc",
       "lm_id": "LM-022",
@@ -530,6 +548,15 @@
       "difficulty": "intermediate",
       "frameworkPhase": "p5"
     },
+    "trust-services-pqc": {
+      "id": "trust-services-pqc",
+      "lm_id": "LM-063",
+      "title": "Trust Services & Long-Term Signatures",
+      "description": "Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.",
+      "duration": "60 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p5"
+    },
     "vpn-ssh-pqc": {
       "id": "vpn-ssh-pqc",
       "lm_id": "LM-009",
@@ -565,24 +592,6 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p6"
-    },
-    "government-defense-pqc": {
-      "id": "government-defense-pqc",
-      "lm_id": "LM-062",
-      "title": "Government & Defense PQC",
-      "description": "The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.",
-      "duration": "60 min",
-      "difficulty": "advanced",
-      "frameworkPhase": "p5"
-    },
-    "trust-services-pqc": {
-      "id": "trust-services-pqc",
-      "lm_id": "LM-063",
-      "title": "Trust Services & Long-Term Signatures",
-      "description": "Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.",
-      "duration": "60 min",
-      "difficulty": "intermediate",
-      "frameworkPhase": "p5"
     }
   },
   "MODULE_STEP_COUNTS": {
@@ -591,15 +600,15 @@
     "aerospace-pqc": 6,
     "arch-quantum-impact": 4,
     "automotive-pqc": 6,
-    "sbom": 2,
     "cbom": 4,
-    "crypto-registry": 2,
     "code-signing": 5,
     "compliance-strategy": 4,
     "confidential-computing": 5,
     "crypto-agility": 4,
     "crypto-dev-apis": 8,
     "crypto-mgmt-modernization": 5,
+    "crypto-registry": 2,
+    "dnssec-pqc": 3,
     "data-asset-sensitivity": 5,
     "database-encryption-pqc": 5,
     "dev-quantum-impact": 4,
@@ -611,6 +620,7 @@
     "entropy-randomness": 5,
     "exec-quantum-impact": 4,
     "5g-security": 3,
+    "government-defense-pqc": 3,
     "healthcare-pqc": 5,
     "hsm-pqc": 5,
     "hybrid-crypto": 6,
@@ -638,6 +648,7 @@
     "quiz": 1,
     "research-quantum-impact": 4,
     "slh-dsa": 4,
+    "sbom": 2,
     "secrets-management-pqc": 5,
     "secure-boot-pqc": 5,
     "skills-team-structure": 2,
@@ -645,13 +656,12 @@
     "standards-bodies": 5,
     "stateful-signatures": 4,
     "tls-basics": 4,
+    "trust-services-pqc": 3,
     "vpn-ssh-pqc": 3,
     "vendor-risk": 4,
     "verification-closure": 3,
     "web-gateway-pqc": 5,
-    "assess": 1,
-    "government-defense-pqc": 3,
-    "trust-services-pqc": 3
+    "assess": 1
   },
   "LEARN_SECTIONS": {
     "ai-security-pqc": [
@@ -780,36 +790,6 @@
         "label": "TISAX, VDA & AUTOSAR"
       }
     ],
-    "sbom": [
-      {
-        "id": "sbom-why",
-        "label": "Why an SBOM"
-      },
-      {
-        "id": "sbom-formats",
-        "label": "SPDX vs CycloneDX"
-      },
-      {
-        "id": "sbom-elements",
-        "label": "Minimum Elements"
-      },
-      {
-        "id": "sbom-2026-update",
-        "label": "2026 Update"
-      },
-      {
-        "id": "sbom-vex",
-        "label": "VEX & Vulnerability Triage"
-      },
-      {
-        "id": "sbom-regulation",
-        "label": "EO 14028 & EU CRA"
-      },
-      {
-        "id": "sbom-to-cbom",
-        "label": "Bridge: From SBOM to CBOM"
-      }
-    ],
     "cbom": [
       {
         "id": "cbom-why",
@@ -834,28 +814,6 @@
       {
         "id": "cbom-verify",
         "label": "Machine-Verifiable CBOM"
-      }
-    ],
-    "crypto-registry": [
-      {
-        "id": "registry-why",
-        "label": "Why a Registry"
-      },
-      {
-        "id": "registry-scope",
-        "label": "What's Inside"
-      },
-      {
-        "id": "registry-pqc",
-        "label": "PQC Coverage"
-      },
-      {
-        "id": "registry-independent",
-        "label": "Beyond CBOM"
-      },
-      {
-        "id": "registry-practice",
-        "label": "Using It in Practice"
       }
     ],
     "code-signing": [
@@ -996,6 +954,46 @@
       {
         "id": "no-regret-roi",
         "label": "The No-Regret ROI"
+      }
+    ],
+    "crypto-registry": [
+      {
+        "id": "registry-why",
+        "label": "Why a Registry"
+      },
+      {
+        "id": "registry-scope",
+        "label": "What's Inside"
+      },
+      {
+        "id": "registry-pqc",
+        "label": "PQC Coverage"
+      },
+      {
+        "id": "registry-independent",
+        "label": "Beyond CBOM"
+      },
+      {
+        "id": "registry-practice",
+        "label": "Using It in Practice"
+      }
+    ],
+    "dnssec-pqc": [
+      {
+        "id": "dnssec-basics",
+        "label": "What DNSSEC Protects"
+      },
+      {
+        "id": "mldsa44-mechanism",
+        "label": "ML-DSA-44 & Algorithm 18"
+      },
+      {
+        "id": "cloudflare-pilot",
+        "label": "Cloudflare's Real Pilot"
+      },
+      {
+        "id": "whats-missing",
+        "label": "What's Still Missing"
       }
     ],
     "data-asset-sensitivity": [
@@ -1250,6 +1248,28 @@
       {
         "id": "quantum-threat",
         "label": "Post-Quantum Threat to 5G"
+      }
+    ],
+    "government-defense-pqc": [
+      {
+        "id": "cnsa-suite",
+        "label": "The CNSA 2.0 Suite"
+      },
+      {
+        "id": "cnsa-timeline",
+        "label": "Mandates & Dated Milestones"
+      },
+      {
+        "id": "nss-csfc",
+        "label": "National Security Systems & CSfC"
+      },
+      {
+        "id": "federal-pki",
+        "label": "Federal PKI & the PQC Profile"
+      },
+      {
+        "id": "procurement",
+        "label": "Procurement & Supply Chain"
       }
     ],
     "healthcare-pqc": [
@@ -1752,6 +1772,36 @@
         "label": "Context & Deterministic"
       }
     ],
+    "sbom": [
+      {
+        "id": "sbom-why",
+        "label": "Why an SBOM"
+      },
+      {
+        "id": "sbom-formats",
+        "label": "SPDX vs CycloneDX"
+      },
+      {
+        "id": "sbom-elements",
+        "label": "Minimum Elements"
+      },
+      {
+        "id": "sbom-2026-update",
+        "label": "2026 Update"
+      },
+      {
+        "id": "sbom-vex",
+        "label": "VEX & Vulnerability Triage"
+      },
+      {
+        "id": "sbom-regulation",
+        "label": "EO 14028 & EU CRA"
+      },
+      {
+        "id": "sbom-to-cbom",
+        "label": "Bridge: From SBOM to CBOM"
+      }
+    ],
     "secrets-management-pqc": [
       {
         "id": "secrets-vs-keys",
@@ -1870,6 +1920,28 @@
         "label": "PQC in TLS & Hybrid Modes"
       }
     ],
+    "trust-services-pqc": [
+      {
+        "id": "qualified-signatures",
+        "label": "Qualified vs Advanced Signatures"
+      },
+      {
+        "id": "timestamping",
+        "label": "Timestamping & Proof of Existence"
+      },
+      {
+        "id": "long-term-validation",
+        "label": "Long-Term Validation & Archival"
+      },
+      {
+        "id": "suites-evolving",
+        "label": "Cryptographic Suites, Evolving"
+      },
+      {
+        "id": "trust-providers",
+        "label": "Trust Service Providers & Conformity"
+      }
+    ],
     "vpn-ssh-pqc": [
       {
         "id": "ikev2",
@@ -1944,50 +2016,6 @@
       {
         "id": "vendor-paths",
         "label": "Vendor Migration Paths"
-      }
-    ],
-    "government-defense-pqc": [
-      {
-        "id": "cnsa-suite",
-        "label": "The CNSA 2.0 Suite"
-      },
-      {
-        "id": "cnsa-timeline",
-        "label": "Mandates & Dated Milestones"
-      },
-      {
-        "id": "nss-csfc",
-        "label": "National Security Systems & CSfC"
-      },
-      {
-        "id": "federal-pki",
-        "label": "Federal PKI & the PQC Profile"
-      },
-      {
-        "id": "procurement",
-        "label": "Procurement & Supply Chain"
-      }
-    ],
-    "trust-services-pqc": [
-      {
-        "id": "qualified-signatures",
-        "label": "Qualified vs Advanced Signatures"
-      },
-      {
-        "id": "timestamping",
-        "label": "Timestamping & Proof of Existence"
-      },
-      {
-        "id": "long-term-validation",
-        "label": "Long-Term Validation & Archival"
-      },
-      {
-        "id": "suites-evolving",
-        "label": "Cryptographic Suites, Evolving"
-      },
-      {
-        "id": "trust-providers",
-        "label": "Trust Service Providers & Conformity"
       }
     ]
   },
@@ -2114,16 +2142,6 @@
         "label": "Lifecycle Migration Roadmap"
       }
     ],
-    "sbom": [
-      {
-        "id": "sbom-format-explorer",
-        "label": "SBOM Format Explorer"
-      },
-      {
-        "id": "sbom-generation-picker",
-        "label": "Generation Tool Picker"
-      }
-    ],
     "cbom": [
       {
         "id": "source-coverage-mapper",
@@ -2140,16 +2158,6 @@
       {
         "id": "key-correlator",
         "label": "Key Correlator"
-      }
-    ],
-    "crypto-registry": [
-      {
-        "id": "algorithm-normalizer",
-        "label": "Algorithm Name Normalizer"
-      },
-      {
-        "id": "curve-lookup",
-        "label": "Curve Identifier Lookup"
       }
     ],
     "code-signing": [
@@ -2286,6 +2294,30 @@
       {
         "id": "posture-kpi",
         "label": "Posture KPI Dashboard Designer"
+      }
+    ],
+    "crypto-registry": [
+      {
+        "id": "algorithm-normalizer",
+        "label": "Algorithm Name Normalizer"
+      },
+      {
+        "id": "curve-lookup",
+        "label": "Curve Identifier Lookup"
+      }
+    ],
+    "dnssec-pqc": [
+      {
+        "id": "signature-size-explorer",
+        "label": "Signature Size Explorer"
+      },
+      {
+        "id": "validation-chain-walkthrough",
+        "label": "PQ Validation Chain Walkthrough"
+      },
+      {
+        "id": "deployment-roadmap-tracker",
+        "label": "Deployment Roadmap Tracker"
       }
     ],
     "data-asset-sensitivity": [
@@ -2520,6 +2552,20 @@
       {
         "id": "provisioning",
         "label": "SIM Key Provisioning"
+      }
+    ],
+    "government-defense-pqc": [
+      {
+        "id": "suite-comparator",
+        "label": "CNSA 1.0 → 2.0 Comparator"
+      },
+      {
+        "id": "mandate-explorer",
+        "label": "Federal Mandate Explorer"
+      },
+      {
+        "id": "fpki-profile-pair",
+        "label": "Federal PKI Profile Pair"
       }
     ],
     "healthcare-pqc": [
@@ -3078,6 +3124,16 @@
         "label": "LMS vs XMSS vs SLH-DSA Comparison"
       }
     ],
+    "sbom": [
+      {
+        "id": "sbom-format-explorer",
+        "label": "SBOM Format Explorer"
+      },
+      {
+        "id": "sbom-generation-picker",
+        "label": "Generation Tool Picker"
+      }
+    ],
     "secrets-management-pqc": [
       {
         "id": "secrets-architecture-mapper",
@@ -3212,6 +3268,20 @@
         "label": "HSM-Backed TLS Server"
       }
     ],
+    "trust-services-pqc": [
+      {
+        "id": "longevity-calculator",
+        "label": "Signature Longevity Calculator"
+      },
+      {
+        "id": "supersession-explorer",
+        "label": "Standards Supersession Explorer"
+      },
+      {
+        "id": "hybrid-suite-picker",
+        "label": "Hybrid Suite Picker"
+      }
+    ],
     "vpn-ssh-pqc": [
       {
         "id": "ikev2-handshake",
@@ -3278,34 +3348,6 @@
       {
         "id": "vendor-readiness",
         "label": "Vendor Readiness Matrix"
-      }
-    ],
-    "government-defense-pqc": [
-      {
-        "id": "suite-comparator",
-        "label": "CNSA 1.0 → 2.0 Comparator"
-      },
-      {
-        "id": "mandate-explorer",
-        "label": "Federal Mandate Explorer"
-      },
-      {
-        "id": "fpki-profile-pair",
-        "label": "Federal PKI Profile Pair"
-      }
-    ],
-    "trust-services-pqc": [
-      {
-        "id": "longevity-calculator",
-        "label": "Signature Longevity Calculator"
-      },
-      {
-        "id": "supersession-explorer",
-        "label": "Standards Supersession Explorer"
-      },
-      {
-        "id": "hybrid-suite-picker",
-        "label": "Hybrid Suite Picker"
       }
     ]
   },
@@ -3550,6 +3592,15 @@
           "title": "MLS — Group Messaging",
           "description": "Messaging Layer Security (RFC 9420) with TreeKEM, HPKE, and a PKCS#11-backed openmls provider. Scales group key agreement to thousands while keeping signature keys in the HSM.",
           "duration": "40 min",
+          "difficulty": "intermediate",
+          "frameworkPhase": "p5"
+        },
+        {
+          "id": "dnssec-pqc",
+          "lm_id": "LM-064",
+          "title": "DNSSEC & Post-Quantum Signatures",
+          "description": "DNSSEC moving to post-quantum signatures: the ML-DSA-44 mechanism behind IANA DNSSEC algorithm 18, Cloudflare’s 1.1.1.1 resolver-side pilot against the dnstest.dev signed test zone, and what’s still missing before production zones can be signed.",
+          "duration": "35 min",
           "difficulty": "intermediate",
           "frameworkPhase": "p5"
         }
@@ -3957,24 +4008,19 @@
       "algorithms": ["ML-DSA", "SLH-DSA"],
       "standards": ["JOSE", "RFC 9421"]
     },
-    "sbom": {
-      "standards": [
-        "SPDX / ISO 5962",
-        "CycloneDX / ECMA-424",
-        "NTIA Minimum Elements",
-        "CISA 2026 Minimum Elements v2.1",
-        "OASIS CSAF 2.0 (VEX)"
-      ]
-    },
     "cbom": {
       "standards": ["CycloneDX / ECMA-424", "SPDX / ISO 5962", "NIST SP 1800-38"]
-    },
-    "crypto-registry": {
-      "standards": ["CycloneDX Cryptography Registry"]
     },
     "code-signing": {
       "algorithms": ["ML-DSA", "LMS/XMSS"],
       "standards": ["FIPS 204", "NIST SP 800-208"]
+    },
+    "crypto-registry": {
+      "standards": ["CycloneDX Cryptography Registry"]
+    },
+    "dnssec-pqc": {
+      "algorithms": ["ML-DSA", "ECDSA"],
+      "standards": ["RFC 4034", "RFC 9364", "draft-westerbaan-dnssec-mldsa"]
     },
     "digital-id": {
       "algorithms": ["ML-DSA"],
@@ -4026,6 +4072,15 @@
     "slh-dsa": {
       "algorithms": ["SLH-DSA"],
       "standards": ["FIPS 205"]
+    },
+    "sbom": {
+      "standards": [
+        "SPDX / ISO 5962",
+        "CycloneDX / ECMA-424",
+        "NTIA Minimum Elements",
+        "CISA 2026 Minimum Elements v2.1",
+        "OASIS CSAF 2.0 (VEX)"
+      ]
     },
     "stateful-signatures": {
       "algorithms": ["LMS/XMSS"],

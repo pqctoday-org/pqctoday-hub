@@ -176,6 +176,7 @@ const MODULE_NAMES: Record<string, string> = {
   'crypto-agility': 'Crypto Agility',
   'tls-basics': 'TLS Basics',
   'vpn-ssh-pqc': 'VPN & SSH',
+  'dnssec-pqc': 'DNSSEC & PQ Signatures',
   'email-signing': 'Email Signing',
   'pki-workshop': 'PKI Workshop',
   'kms-pqc': 'KMS & PQC Key Management',
@@ -287,6 +288,11 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'How does PQC integrate with IKEv2 for VPN tunnels?',
     'Compare SSH key exchange: curve25519 vs sntrup761 vs mlkem768',
     'What is the performance overhead of PQC in IPsec?',
+  ],
+  'dnssec-pqc': [
+    'What is IANA DNSSEC algorithm 18 and why was ML-DSA-44 chosen for it?',
+    "Does Cloudflare's 1.1.1.1 milestone mean production DNS zones are PQ-signed?",
+    'Why does ML-DSA-44 force DNS to fall back from UDP to TCP?',
   ],
   'email-signing': [
     'How does PQC affect S/MIME email signing?',

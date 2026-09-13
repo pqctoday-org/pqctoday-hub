@@ -81,6 +81,12 @@ const TREE: PhaseTree = {
             },
             {
               kind: 'learn',
+              label: 'Learn: DNSSEC & post-quantum signatures (ML-DSA-44, algorithm 18)',
+              to: '/learn/dnssec-pqc',
+              moduleId: 'dnssec-pqc',
+            },
+            {
+              kind: 'learn',
               label: 'Learn: code & firmware signing (Track B — integrity)',
               to: '/learn/code-signing',
               moduleId: 'code-signing',

@@ -80,6 +80,7 @@ export const QUIZ_CATEGORIES = [
   'pqc-grc',
   'skills-team-structure',
   'soc-implementation-pqc',
+  'dnssec-pqc',
 ] as const
 
 export type QuizCategory = (typeof QUIZ_CATEGORIES)[number]

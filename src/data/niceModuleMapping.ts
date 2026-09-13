@@ -203,6 +203,14 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: false,
   },
   {
+    moduleId: 'dnssec-pqc',
+    nfExtra: ['NF-COM-009'],
+    competencyAreas: ['CA-NETDEF', 'CA-CRYPTO'],
+    tier: 'practitioner',
+    workRoles: ['network-security-specialist', 'system-administrator', 'security-architect'],
+    isCommonGround: false,
+  },
+  {
     moduleId: 'web-gateway-pqc',
     nfExtra: ['NF-COM-004'],
     competencyAreas: ['CA-NETDEF', 'CA-CRYPTO'],
