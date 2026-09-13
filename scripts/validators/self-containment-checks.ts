@@ -96,12 +96,25 @@ interface Generation {
   rows: Row[]
 }
 
-/** The two most recent dated generations of a family (latest first). */
+/** The two most recent dated generations of a family (latest first).
+ *
+ * `startsWith(prefix)` alone is too loose: a SIBLING family whose own name
+ * happens to extend this one as a string — e.g. `compliance_xwalk_candidates_
+ * *.csv` (a deliberately separate, non-`id`-keyed pipeline output; see
+ * merge-xwalk-candidates.ts's own comments for why it intentionally chose
+ * that prefix) starting with the `compliance_` family's own prefix — gets
+ * scooped into the wrong family's self-containment comparison. Real dated
+ * generations always have a digit immediately after the prefix (the start
+ * of the MMDDYYYY date); requiring that excludes any sibling family whose
+ * name continues with more words instead. Found 2026-09-13 when restoring
+ * genuinely-lost rows in compliance_xwalk_candidates_09132026.csv made DS03
+ * report 220 false findings — comparing that file, empty of `id` values,
+ * against the real compliance-landscape family it was never part of. */
 function latestGenerations(prefix: string, count: number): Generation[] {
   const dir = getDataDir()
   const parsed = fs
     .readdirSync(dir)
-    .filter((f) => f.startsWith(prefix))
+    .filter((f) => f.startsWith(prefix) && /^\d/.test(f.slice(prefix.length)))
     .map((f) => {
       const m = f.match(/_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
       if (!m) return null

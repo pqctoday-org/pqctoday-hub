@@ -241,7 +241,14 @@ function buildResult(row: RawComplianceRow, reviewerMap: Map<string, string>, da
 
 async function main() {
   // 1. Locate latest compliance CSV
-  const files = await glob('compliance_*.csv', { cwd: DATA_DIR })
+  // `[0-9]` right after the prefix (not a bare `*`) excludes sibling families
+  // whose name happens to extend this one as a string -- e.g.
+  // compliance_xwalk_candidates_*.csv, a deliberately separate pipeline
+  // output (see merge-xwalk-candidates.ts) that crashed this script when it
+  // sorted latest by date: buildResult() reads compliance-landscape columns
+  // (deadline, requires_pqc, ...) this file has none of. Same root cause as
+  // the findLatestCSV / self-containment-checks.ts fixes, found 2026-09-13.
+  const files = await glob('compliance_[0-9]*.csv', { cwd: DATA_DIR })
   files.sort((a, b) => csvDateKey(a).localeCompare(csvDateKey(b)))
   const latest = files.at(-1)
   if (!latest) {

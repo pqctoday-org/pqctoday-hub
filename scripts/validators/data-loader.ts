@@ -61,12 +61,23 @@ function parseFilename(f: string): ParsedFile | null {
 /**
  * Find the latest CSV file matching a prefix in src/data/.
  * Returns null if no file found.
+ *
+ * Requires a digit immediately after the prefix (the start of the MMDDYYYY
+ * date) so a sibling family whose name happens to extend this prefix as a
+ * string — e.g. `compliance_xwalk_candidates_*.csv`, a deliberately separate
+ * pipeline output that starts with the `compliance_` family's own prefix —
+ * is never picked up as if it were that family's own latest generation.
+ * Found 2026-09-13: `loadCSV('compliance_')` (via this function) was
+ * building QA-D1's `complianceIds` set from that unrelated file instead of
+ * the real compliance-landscape CSV, failing every `compliance_ref` assertion.
  */
 export function findLatestCSV(
   prefix: string,
   dir = _dataDir
 ): { path: string; date: string } | null {
-  const files = fs.readdirSync(dir).filter((f) => f.startsWith(prefix) && f.endsWith('.csv'))
+  const files = fs
+    .readdirSync(dir)
+    .filter((f) => f.startsWith(prefix) && /^\d/.test(f.slice(prefix.length)) && f.endsWith('.csv'))
   if (files.length === 0) return null
 
   const parsed = files.map(parseFilename).filter((p): p is ParsedFile => p !== null)

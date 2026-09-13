@@ -2,7 +2,7 @@
   {
     "term": "CCRA",
     "acronym": "CCRA",
-    "definition": "Common Criteria Recognition Arrangement — a 31-nation mutual recognition agreement under which national Certification Bodies issue and accept IT product security certificates based on ISO/IEC 15408 (Common Criteria).",
+    "definition": "Common Criteria Recognition Arrangement \u2014 a 31-nation mutual recognition agreement under which national Certification Bodies issue and accept IT product security certificates based on ISO/IEC 15408 (Common Criteria).",
     "technicalNote": "CCRA member nations include the US (NIAP), UK (NCSC), Germany (BSI), France (ANSSI), Japan, South Korea, Australia, and Canada. A CC certificate issued by any national CA is valid across all member states. The EU operates the EUCC as a stricter harmonized adaptation managed by ENISA.",
     "relatedModule": "/learn/standards-bodies",
     "complexity": "intermediate",
@@ -153,7 +153,7 @@
   {
     "term": "ASD",
     "acronym": "ASD",
-    "definition": "Australian Signals Directorate, Australia's national cybersecurity agency. Published aggressive PQC migration timelines with a 2030 deadline for full transition — five years ahead of the US.",
+    "definition": "Australian Signals Directorate, Australia's national cybersecurity agency. Published aggressive PQC migration timelines with a 2030 deadline for full transition \u2014 five years ahead of the US.",
     "relatedModule": "/timeline",
     "complexity": "intermediate",
     "category": "organization"
@@ -185,7 +185,7 @@
   {
     "term": "ITU-T",
     "acronym": "ITU-T",
-    "definition": "International Telecommunication Union — Telecommunication Standardization Sector. Study Group 17 (SG17) is developing PQC standards for telecommunications infrastructure.",
+    "definition": "International Telecommunication Union \u2014 Telecommunication Standardization Sector. Study Group 17 (SG17) is developing PQC standards for telecommunications infrastructure.",
     "relatedModule": "/library",
     "complexity": "intermediate",
     "category": "organization"
@@ -225,8 +225,8 @@
   {
     "term": "CMVP",
     "acronym": "CMVP",
-    "definition": "Cryptographic Module Validation Program — a joint NIST and CCCS program that tests cryptographic modules against FIPS 140-3 requirements. Validated modules appear on the NIST CMVP Active Validations list with a certificate number, providing formal assurance of implementation correctness.",
-    "technicalNote": "PQC FIPS 140-3 validation for ML-KEM (FIPS 203) and ML-DSA (FIPS 204) modules began in 2024. Validation cycles take 12–18 months; procurement requiring FIPS 140-3 validated PQC must account for this lag. Check: csrc.nist.gov/projects/cmvp.",
+    "definition": "Cryptographic Module Validation Program \u2014 a joint NIST and CCCS program that tests cryptographic modules against FIPS 140-3 requirements. Validated modules appear on the NIST CMVP Active Validations list with a certificate number, providing formal assurance of implementation correctness.",
+    "technicalNote": "PQC FIPS 140-3 validation for ML-KEM (FIPS 203) and ML-DSA (FIPS 204) modules began in 2024. Validation cycles take 12\u201318 months; procurement requiring FIPS 140-3 validated PQC must account for this lag. Check: csrc.nist.gov/projects/cmvp.",
     "relatedModule": "/learn/vendor-risk",
     "complexity": "intermediate",
     "category": "organization"
@@ -255,7 +255,7 @@
   {
     "term": "ITSM (CCCS)",
     "acronym": "Information Technology Security Management series",
-    "definition": "CCCS Canada's technical-guidance document series (ITSM.40.xxx, ITSAP.xx.xxx). The PQC-relevant entry today is ITSAP.00.017 — Preparing your organization for the quantum threat to cryptography.",
+    "definition": "CCCS Canada's technical-guidance document series (ITSM.40.xxx, ITSAP.xx.xxx). The PQC-relevant entry today is ITSAP.00.017 \u2014 Preparing your organization for the quantum threat to cryptography.",
     "complexity": "intermediate",
     "category": "organization"
   },
@@ -291,6 +291,112 @@
     "term": "TCG",
     "acronym": "Trusted Computing Group",
     "definition": "Industry consortium that publishes the TPM (Trusted Platform Module) and DICE (Device Identifier Composition Engine) specifications. PQC-relevant work covers TPM 2.0 PQC algorithm additions and attestation-quote signing.",
+    "complexity": "intermediate",
+    "category": "organization"
+  },
+  {
+    "term": "ISO",
+    "acronym": "ISO",
+    "definition": "International Organization for Standardization, a Geneva-based body that develops and publishes international standards.",
+    "technicalNote": "Develops cryptographic standards jointly with IEC through ISO/IEC JTC 1 (already in this glossary).",
+    "relatedModule": "/learn/standards-bodies",
+    "complexity": "beginner",
+    "category": "organization"
+  },
+  {
+    "term": "IEC",
+    "acronym": "IEC",
+    "definition": "International Electrotechnical Commission, the international standards body for electrical and electronic technologies.",
+    "technicalNote": "Jointly operates ISO/IEC JTC 1 with ISO, the committee responsible for IT security standards including cryptographic techniques.",
+    "relatedModule": "/learn/standards-bodies",
+    "complexity": "beginner",
+    "category": "organization"
+  },
+  {
+    "term": "IEEE",
+    "acronym": "IEEE",
+    "definition": "Institute of Electrical and Electronics Engineers, a professional association that publishes technical standards \u2014 including IEEE 1609.2 (vehicular communications) and IEEE 2030.5 (smart grid), both already in this glossary \u2014 now being updated for PQC.",
+    "relatedModule": "/learn/standards-bodies",
+    "complexity": "beginner",
+    "category": "organization"
+  },
+  {
+    "term": "OMB",
+    "acronym": "OMB",
+    "definition": "Office of Management and Budget, the U.S. executive-branch office that issues implementation guidance directing federal agencies on PQC migration planning and budgeting.",
+    "technicalNote": "Issued M-23-02 (2022, cryptographic inventories) and M-26-15 (2026, the operative PQC migration schedule under EO 14412), both already in this glossary.",
+    "relatedModule": "/timeline",
+    "complexity": "intermediate",
+    "category": "organization"
+  },
+  {
+    "term": "DoD",
+    "acronym": "DoD",
+    "definition": "Department of Defense, the U.S. military department that mandates CNSA 2.0 compliance for National Security Systems and drives PQC migration timelines across defense contractors and suppliers.",
+    "relatedModule": "/timeline",
+    "complexity": "beginner",
+    "category": "organization"
+  },
+  {
+    "term": "OASIS",
+    "acronym": "OASIS",
+    "definition": "Organization for the Advancement of Structured Information Standards, a nonprofit consortium that develops open standards \u2014 including KMIP, already in this glossary, which now extends to PQC key types.",
+    "relatedModule": "/migrate",
+    "complexity": "intermediate",
+    "category": "organization"
+  },
+  {
+    "term": "NIAP",
+    "acronym": "NIAP",
+    "definition": "National Information Assurance Partnership, the U.S. Common Criteria certification body operated jointly by NSA and NIST; issues CC certificates recognized under the CCRA (both already in this glossary).",
+    "relatedModule": "/compliance",
+    "complexity": "intermediate",
+    "category": "organization"
+  },
+  {
+    "term": "W3C",
+    "acronym": "W3C",
+    "definition": "World Wide Web Consortium, the standards body for web technologies including WebAuthn and Verifiable Credentials, which are incorporating PQC algorithm support for web authentication and digital credentials.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "intermediate",
+    "category": "organization"
+  },
+  {
+    "term": "OWASP",
+    "acronym": "OWASP",
+    "definition": "Open Worldwide Application Security Project, a nonprofit foundation producing widely used application-security guidance (e.g. the OWASP Top 10) that is beginning to address crypto-agility and PQC migration risk for software developers.",
+    "relatedModule": "/learn/crypto-dev-apis",
+    "complexity": "beginner",
+    "category": "organization"
+  },
+  {
+    "term": "PCI SSC",
+    "acronym": "PCI SSC",
+    "definition": "PCI Security Standards Council, the payment-card-industry body (founded by the major card brands) that maintains PCI DSS and is issuing PQC migration guidance for payments.",
+    "relatedModule": "/learn/emv-payment-pqc",
+    "complexity": "intermediate",
+    "category": "organization"
+  },
+  {
+    "term": "MITRE",
+    "acronym": "MITRE",
+    "definition": "A U.S. nonprofit operating federally funded R&D centers, best known in security circles for maintaining the CVE program and the ATT&CK adversary-tactics framework.",
+    "relatedModule": "/learn/vendor-risk",
+    "complexity": "intermediate",
+    "category": "organization"
+  },
+  {
+    "term": "GlobalPlatform",
+    "definition": "An industry association that standardizes secure-element and trusted-execution-environment specifications used in SIM cards, secure elements, and IoT hardware roots of trust, now extending its specifications to PQC-capable secure elements.",
+    "relatedModule": "/learn/iot-ot-pqc",
+    "complexity": "advanced",
+    "category": "organization"
+  },
+  {
+    "term": "Cloud Security Alliance",
+    "acronym": "CSA",
+    "definition": "A nonprofit industry association publishing cloud-security best practices, distinct from Singapore's Cyber Security Agency (also abbreviated CSA \u2014 see that entry). Runs an active Quantum-Safe Security working group producing PQC migration guidance for cloud providers and customers.",
+    "relatedModule": "/learn/pqc-governance",
     "complexity": "intermediate",
     "category": "organization"
   }

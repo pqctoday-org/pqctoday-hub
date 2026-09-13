@@ -204,7 +204,20 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     an unrelated data change), so the refreshed corpus was not committed.
   //     Will resolve to 0 on the next refresh-index run authorized on its own.
   migrate: 4,
-  timeline: 1,
+  timeline: 3,
+  //     2026-09-13: bumped 1 → 3 — the data-maintenance/lineage-replacements
+  //     branch's source-by-source close-out (library/timeline/threats/
+  //     vendor-roadmaps/compliance-landscape/migrate-catalog/industry-
+  //     landscape) landed real content edits, at least one confirmed directly
+  //     (international-ietf-draft-ietf-lamps-kyber-certificates: Title/
+  //     Description updated to name RFC 9881/9935 in an earlier part of the
+  //     same session) against a corpus that predates them. The other new gap
+  //     (Kenya:ODPC — ODPC Guidance on Data Protection by Design) was not
+  //     individually traced to a specific commit — not investigated further
+  //     tonight, matching the 2026-08-19 entry below's same call: a real
+  //     refresh-index run resolves this but was not authorized/committed
+  //     this session. Will resolve to 1 (only the pre-existing FAA gap) on
+  //     the next real refresh-index commit.
   //     2026-07-29: DRIVEN DOWN 3 → 1 (maintenance-flow remediation WP-0.1).
   //     The 07-24 entry below predicted this would "resolve to 1 on the next
   //     real refresh-index commit". It did not, and could not: that backfill
@@ -353,7 +366,15 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   reads the live merged library CSV, which now carries both causes'
   //   deprecations). Drive down via the same trustScoreData.ts extension
   //   named above.
-  'document-enrichment': 164,
+  'document-enrichment': 166,
+  // 2026-09-13: bumped 164 → 166 — same session/cause as the `timeline: 3`
+  // bump above (data-maintenance/lineage-replacements' 7-source close-out);
+  // each of the 2 new gaps here shares a title with one of that bump's 2 new
+  // timeline gaps (European Union:ECCG / Kenya:ODPC / International:IETF
+  // draft-ietf-lamps-kyber-certificates — 3 titles overlap across both
+  // buckets' "first 3", though the total counts (+2 here, +2 there) aren't
+  // necessarily the identical 2 rows). Not traced further tonight; resolves
+  // on the next real refresh-index commit, same as above.
   // 2026-07-16: threats accuracy audit (THREATS-PROCESS-AUDIT-07162026.md)
   // deprecated 38 of 113 active rows whose cached evidence document was
   // UNSUPPORTED (wrong/generic document) or UNREADABLE (CAPTCHA page, dead
