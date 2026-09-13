@@ -240,6 +240,7 @@ export function validateSave(input: unknown): ValidationResult {
       insuranceAssumed: s.insuranceAssumed === true,
       activeTab: typeof s.activeTab === 'string' ? s.activeTab : 'decide',
       openStepRef: isOpenStep(s.openStepRef) ? s.openStepRef : null,
+      returnPathFailures: typeof s.returnPathFailures === 'number' ? s.returnPathFailures : 0,
       objectiveAchievedYears: (s.objectiveAchievedYears as Record<string, number>) ?? {},
     },
   }
