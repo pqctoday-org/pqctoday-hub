@@ -217,6 +217,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'IKEv2 with ML-KEM, SSH hybrid key exchange, WireGuard Rosenpass, and protocol size comparisons.',
       icon: 'Shield',
     },
+    'dnssec-pqc': {
+      label: 'DNSSEC & PQ Signatures',
+      description:
+        'ML-DSA-44 for DNSSEC (IANA algorithm 18), Cloudflare’s 1.1.1.1 pilot, and the signature-size problem.',
+      icon: 'Globe',
+    },
     'stateful-signatures': {
       label: 'Stateful Signatures',
       description:

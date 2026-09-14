@@ -56,6 +56,7 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'web-gateway-pqc',
     'network-security-pqc',
     'pqc-testing-validation',
+    'dnssec-pqc',
   ],
   'Hardware Infrastructure': [
     'hsm-pqc',

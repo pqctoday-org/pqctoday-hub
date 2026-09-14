@@ -46,6 +46,7 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   },
   'tls-basics': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'vpn-ssh-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
+  'dnssec-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'email-signing': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'mls-group-messaging': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'pki-workshop': { phasesServed: ['p6'], legs: ['learn', 'reference'] },

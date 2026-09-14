@@ -38,6 +38,7 @@ const GOLDEN_ROUTE_PATHS = [
   'dev-quantum-impact',
   'digital-assets',
   'digital-id',
+  'dnssec-pqc',
   'email-signing',
   'emv-payment-pqc',
   'energy-utilities-pqc',

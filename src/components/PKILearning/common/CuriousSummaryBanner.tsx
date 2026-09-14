@@ -49,6 +49,8 @@ const CURIOUS_INFOGRAPHIC_ALT_TEXT: Record<string, string> = {
     'A three-column diagram separating Standards Bodies, Certification Bodies, and Compliance Frameworks, with arrows showing how algorithms flow from specification through validation to mandated use.',
   'migration-program':
     'A seven-phase roadmap from Discovery through Validation, with stakeholder coordination lines connecting executive sponsors, technical teams, and vendor dependencies.',
+  'dnssec-pqc':
+    'A bar comparison showing a classical ECDSA signature as a small block next to a much larger ML-DSA-44 signature block, both measured against a dashed line marking the DNS UDP size limit; alongside it, a resolver icon labeled Cloudflare 1.1.1.1 checking a green checkmark against a signed test-zone icon labeled dnstest.dev, with a roadmap timeline below leading toward a 2029 target.',
 }
 
 const DIR_TO_MODULE_ID: Record<string, string> = {
@@ -58,6 +60,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   CryptoAgility: 'crypto-agility',
   TLSBasics: 'tls-basics',
   VPNSSHModule: 'vpn-ssh-pqc',
+  DNSSECPQC: 'dnssec-pqc',
   EmailSigning: 'email-signing',
   PKIWorkshop: 'pki-workshop',
   KmsPqc: 'kms-pqc',

@@ -488,6 +488,13 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/vpn-ssh-pqc`,
     structuredData: buildModuleSchema('VPN/IPsec & SSH PQC', 'PT90M', 'Advanced'),
   },
+  '/learn/dnssec-pqc': {
+    title: 'DNSSEC & Post-Quantum Signatures — ML-DSA-44, Algorithm 18 | PQC Today',
+    description:
+      "DNSSEC's move to post-quantum signatures: ML-DSA-44 (IANA DNSSEC algorithm 18), Cloudflare's 1.1.1.1 pilot against dnstest.dev, and what's still missing before production zones can be signed.",
+    canonical: `${BASE_URL}/learn/dnssec-pqc`,
+    structuredData: buildModuleSchema('DNSSEC & Post-Quantum Signatures', 'PT35M', 'Intermediate'),
+  },
 
   '/learn/email-signing': {
     title: 'Email & Document Signing — S/MIME PQC Migration | PQC Today',

@@ -12454,6 +12454,16 @@
       "sizeBytes": 473855,
       "contentType": "text/html",
       "sha256": "4251814a4242351a0a5c57f3b5a8922c252ec94732156eb06e55dc55320bfa29"
+    },
+    {
+      "refId": "Module-Lattice-Digital-Signature-Algorithm-for-DNSSEC",
+      "title": "Module-Lattice Digital Signature Algorithm for DNSSEC",
+      "url": "https://datatracker.ietf.org/doc/draft-westerbaan-dnssec-mldsa/",
+      "status": "downloaded",
+      "filename": "Module-Lattice-Digital-Signature-Algorithm-for-DNSSEC.html",
+      "sizeBytes": 59606,
+      "contentType": "text/html",
+      "sha256": "5807c70579f33a32f08dc9952330bacacc4847401c3656d3f85fe8e97401db91"
     }
   ],
   "archivedEntries": [
