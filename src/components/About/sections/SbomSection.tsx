@@ -560,7 +560,7 @@ export function SbomSection() {
                     <span className="text-muted-foreground">Vitest</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground">v4.1.2</span>
+                      <span className="text-xs text-muted-foreground">v4.1.11</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
