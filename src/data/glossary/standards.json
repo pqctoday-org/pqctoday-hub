@@ -1,8 +1,8 @@
 [
   {
     "term": "RFC 8446",
-    "definition": "The IETF standard defining TLS version 1.3, published August 2018. TLS 1.3 removed legacy cipher suites, mandated forward secrecy, and reduced the handshake to 1 round-trip.",
-    "technicalNote": "TLS 1.3 is the foundation for PQC key exchange integration. RFC 8446 defines the \"key_share\" extension that hybrid PQC groups (e.g., X25519MLKEM768) plug into without protocol changes.",
+    "definition": "The original IETF standard defining TLS version 1.3, published August 2018. TLS 1.3 removed legacy cipher suites, mandated forward secrecy, and reduced the handshake to 1 round-trip. Obsoleted by RFC 9846 (July 2026), which re-specifies TLS 1.3 under the same version number.",
+    "technicalNote": "TLS 1.3 is the foundation for PQC key exchange integration. RFC 8446 (now RFC 9846) defines the \"key_share\" extension that hybrid PQC groups (e.g., X25519MLKEM768) plug into without protocol changes.",
     "relatedModule": "/learn/tls-basics",
     "complexity": "intermediate",
     "category": "standard"
@@ -98,7 +98,7 @@
   },
   {
     "term": "NIST IR 8547",
-    "definition": "NIST Internal Report establishing the PQC transition timeline: deprecation of classical asymmetric crypto by 2030, disallowment by 2035. Still an Initial Public Draft (first issued 2024-11-12, refined by a second draft in 2026-04) \u2014 not yet a final publication.",
+    "definition": "NIST Internal Report establishing the PQC transition timeline: deprecation of classical asymmetric crypto by 2030, disallowment by 2035. Still an Initial Public Draft (issued 2024-11-12) \u2014 not yet a final publication. NIST's own CSRC page shows only this one draft; no second draft has been published.",
     "technicalNote": "Covers RSA, ECDSA, ECDH, EdDSA, DH, and DSA. The most authoritative U.S. government PQC migration deadline document.",
     "relatedModule": "/library?ref=NIST IR 8547",
     "complexity": "intermediate",
