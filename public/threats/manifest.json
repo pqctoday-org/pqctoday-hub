@@ -409,7 +409,10 @@
       "sizeBytes": 471296,
       "contentType": "application/pdf",
       "sha256": "862b0770a481b5d27e9350508c9cfa0cdb71f8b7d6faceb13569e692014f85b8",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "ok": false,
+      "superseded_file": "_superseded-09162026/threats/GOV-003.pdf",
+      "superseded_reason": "2026-09-16 (user-approved): a 'Capability Description' PDF with no CISA attribution, not the CISA product-categories page; replaced by GOV-003.html"
     },
     {
       "threatId": "GOV-004",
@@ -1605,14 +1608,15 @@
       "sizeBytes": 83969,
       "contentType": "text/html",
       "backfilledAt": "2026-09-16T03:47:57.821315+00:00",
-      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "GOV-003",
       "file": "GOV-003.html",
       "status": "downloaded",
       "title": "Federal PQC procurement guidance: CISA January 2026 federal buying guidance pursuant to Executive Order 14306 (June 2025) recommends agencies procure quantum-resistant technology across designated product categories including cloud services, collaboration tools, web browsers/servers, and endpoint security. Note: EO 14306 removed the original procurement mandate but CISA's product categories list strongly encourages PQC-capable acquisitions.",
       "label": "Federal PQC procurement guidance: CISA January 2026 federal buying guidance pursuant to Executive Order 14306 (June 2025) recommends agencies procure quantum-resistant technology across designated product categories including cloud services, collaboration tools, web browsers/servers, and endpoint security. Note: EO 14306 removed the original procurement mandate but CISA's product categories list strongly encourages PQC-capable acquisitions.",
       "note": "2026-09-16: re-captured through the browser tier from the row's own CISA URL (the page is live; an earlier research batch mistyped the URL and a GovDelivery bulletin briefly stood in — superseded); hash from the bytes on disk",
-      "verifiedAt": "2026-09-16T03:54:02.989509+00:00"
+      "verifiedAt": "2026-09-16T03:54:02.989509+00:00",
+      "superseded_file": "_superseded-09162026/threats/GOV-003.pdf"
     }
   ],
   "archivedEntries": [],
