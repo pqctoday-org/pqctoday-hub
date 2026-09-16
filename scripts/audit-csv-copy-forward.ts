@@ -455,6 +455,17 @@ export const RECORDED_REMOVALS: RecordedRemoval[] = [
     recorded: '2026-09-07',
   },
   {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-178 | Ping Identity Holdings Corp. | https://press.pingidentity.com/2022-08-03-Ping-Identity-Reports-Second-Quarter-2022-Results | Ping Identity: Addressing the Quantum Threat in US Federal Government',
+    reason:
+      '09162026: roadmap_url corrected — the recorded URL was a Q2 2022 earnings ' +
+      'release with zero occurrences of "quantum"; the row now points at the ' +
+      'article its title names (pingidentity.com/en/resources/blog/post/quantum-' +
+      'threat-us-fed-gov.html, 2025-02-27), re-captured and verified. The vendor ' +
+      'row is present and active under the corrected URL (user-approved).',
+    recorded: '2026-09-16',
+  },
+  {
     family: 'library_',
     key: 'untitled',
     reason: LIBRARY_UNTITLED_SLUG_BUG_FIXED_09072026,
