@@ -3169,6 +3169,61 @@
       "contentType": "text/html",
       "sha256": "8f08665da214512be422c7f44eb4774bb276bbec4564dcc1603547c897b44ba6",
       "refId": "nsa-post-quantum-cybersecurity-resources"
+    },
+    {
+      "refId": "united-states-white-house-executive-order-14144",
+      "filename": "United_States_White_House_Executive_Order_14144.html",
+      "url": "https://www.federalregister.gov/documents/2025/01/17/2025-01470/strengthening-and-promoting-innovation-in-the-nations-cybersecurity",
+      "sha256": "b2af07746b4c6e423d329e3a979d2b7a6d765caba8eff3bc7c497fe17ac2c0c2",
+      "sizeBytes": 146090,
+      "contentType": "text/html",
+      "backfilledAt": "2026-09-16T02:54:48.231741+00:00",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "file": "United_States_White_House_Executive_Order_14144.html",
+      "status": "downloaded",
+      "label": "Executive Order 14144"
+    },
+    {
+      "refId": "dhs-post-quantum-cryptography",
+      "filename": "DHS-Post-Quantum-Cryptography.html",
+      "url": "https://www.dhs.gov/quantum",
+      "sha256": "809206f2400550b457e9ee8a31704ef494db22db6e031bf9c4723d4323252167",
+      "sizeBytes": 129355,
+      "contentType": "text/html",
+      "backfilledAt": "2026-09-16T02:54:48.231741+00:00",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "file": "DHS-Post-Quantum-Cryptography.html",
+      "status": "downloaded",
+      "label": "DHS Post-Quantum Cryptography",
+      "note": "additional document for a row that already has one"
+    },
+    {
+      "refId": "nccoe-migration-to-post-quantum-cryptography",
+      "filename": "NCCoE-Migration-to-Post-Quantum-Cryptography.html",
+      "url": "https://www.nccoe.nist.gov/crypto-agility-considerations-migrating-post-quantum-cryptographic-algorithms",
+      "sha256": "6b8a80dd788f5daabcd4d61fc481c48533a6b5e7df7e53be25f32f797a716df1",
+      "sizeBytes": 114544,
+      "contentType": "text/html",
+      "backfilledAt": "2026-09-16T02:54:48.231741+00:00",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "file": "NCCoE-Migration-to-Post-Quantum-Cryptography.html",
+      "status": "downloaded",
+      "label": "NCCoE Migration to Post-Quantum Cryptography",
+      "note": "additional document for a row that already has one"
+    },
+    {
+      "refId": "nsa-post-quantum-cybersecurity-resources",
+      "filename": "NSA-Post-Quantum-Cybersecurity-Resources.html",
+      "url": "https://www.nsa.gov/Cybersecurity/Post-Quantum-Cybersecurity-Resources/",
+      "sha256": "8f08665da214512be422c7f44eb4774bb276bbec4564dcc1603547c897b44ba6",
+      "sizeBytes": 99212,
+      "contentType": "text/html",
+      "backfilledAt": "2026-09-16T02:54:48.231741+00:00",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "file": "NSA-Post-Quantum-Cybersecurity-Resources.html",
+      "status": "downloaded",
+      "label": "NSA Post-Quantum Cybersecurity Resources",
+      "note": "additional document for a row that already has one"
     }
   ],
   "archivedEntries": [
