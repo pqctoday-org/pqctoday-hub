@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-09-12T11:16:42.030224+00:00",
-  "count": 1301,
+  "count": 1305,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -14954,6 +14954,38 @@
       "bytes": 1606249,
       "tier": "playwright-stealth",
       "sha256": "32aaf725b8c843d0f712806e5ca158a133be51e5acdf003c7963c69f3569aea2"
+    },
+    {
+      "product_id": "general-dynamics-mission",
+      "url": "https://gdmissionsystems.com/-/media/general-dynamics/cyber-and-electronic-warfare-systems/pdf/data-sheets/kiv-80-miniature-adaptable-crypto-datasheet.ashx",
+      "file": "general-dynamics-mission-2f5544f2.html",
+      "bytes": 4548486,
+      "tier": "curl_cffi:chrome124",
+      "sha256": "017821dd0c4a8c0a021b6f857fad37d9596c7d709d8ed7e063a7b4b043b4d848"
+    },
+    {
+      "product_id": "trezor-safe-7-pqc",
+      "url": "https://trezor.io/guides/trezor-devices/trezor-safe-7/the-first-quantum-ready-hardware-wallet",
+      "file": "trezor-safe-7-pqc-25df20ca.html",
+      "bytes": 582337,
+      "tier": "curl_cffi:chrome124",
+      "sha256": "c2bfc56d1c8ad58dc9994e973e9418c9e9bcdd0814b06690961580afbca29ee2"
+    },
+    {
+      "product_id": "pqcee-cng-provider",
+      "url": "https://www.pqcee.com/blog/pqcee-launches-crypto-agile-cng-provider-for-microsoft-windows-enabling-post-quantum-security",
+      "file": "pqcee-cng-provider-92c2fc75.html",
+      "bytes": 168800,
+      "tier": "curl_cffi:chrome124",
+      "sha256": "78ff961d9e7e1fb85d3ef6b164ebdb4661aaf2e9349418369f5e1ed269034fc7"
+    },
+    {
+      "product_id": "infineon-aurix-tc49-pqc",
+      "url": "https://www.infineon.com/technology-news/2026/infatv202603-059",
+      "file": "infineon-aurix-tc49-pqc-587e838d.html",
+      "bytes": 1606249,
+      "tier": "playwright-stealth",
+      "sha256": "0dde46919c7b47632aa8281f6a03625d8685cebdfd3a55a4888aa88d242849e2"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
