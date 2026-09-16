@@ -425,10 +425,11 @@
       "status": "downloaded",
       "file": "threats/GOV-003.html",
       "filename": "GOV-003.html",
-      "sizeBytes": 72750,
+      "sizeBytes": 83969,
       "contentType": "text/html",
-      "sha256": "2a021f7f9735efc95582093072fbe0b1eaab98251279a386b812d54f7ddc3ca2",
-      "verifiedAt": "2026-09-11"
+      "sha256": "bc7ae4a852339c5bfadf6925ff5cc172f35b29d2a970e9e5eedb688371ca13f4",
+      "verifiedAt": "2026-09-16T03:54:02.989509+00:00",
+      "note": "2026-09-16: re-captured through the browser tier from the row's own CISA URL (the page is live; an earlier research batch mistyped the URL and a GovDelivery bulletin briefly stood in — superseded); hash from the bytes on disk"
     },
     {
       "refId": "hlth-ehr",
@@ -736,7 +737,7 @@
     },
     {
       "refId": "rail-frmcs",
-      "label": "Railway mobile communications (GSM-R \u2192 FRMCS)",
+      "label": "Railway mobile communications (GSM-R → FRMCS)",
       "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/103764/01.01.00_30/ts_103764v010100va.pdf",
       "status": "downloaded",
       "file": "industry/rail-frmcs.pdf",
@@ -1252,7 +1253,7 @@
       "sizeBytes": 33407,
       "contentType": "text/html",
       "backfilledAt": "2026-09-16T03:32:45.401616+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "file": "crypto-arbitrum-anytrust.html",
       "status": "downloaded",
       "label": "Arbitrum AnyTrust data-availability attestation",
@@ -1262,7 +1263,7 @@
   "archivedEntries": [
     {
       "refId": "ins-munichre-cyber-trends-2025",
-      "title": "Munich Re \u2014 Cyber Insurance: Risks and Trends 2025 (quantum section)",
+      "title": "Munich Re — Cyber Insurance: Risks and Trends 2025 (quantum section)",
       "url": "https://www.munichre.com/en/insights/cyber/cyber-insurance-risks-and-trends-2025.html",
       "status": "downloaded",
       "filename": "ins-munichre-cyber-trends-2025.html",
@@ -1292,6 +1293,6 @@
       "sha256": "1151c3f67d28c797890910f34291d15108b405fec38a9b2c09e4e4143ca2ee6f"
     }
   ],
-  "archivedNote": "Entries no active row cites \u2014 superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
+  "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
   "rebuiltAt": "2026-09-11T20:37:20.308315+00:00"
 }

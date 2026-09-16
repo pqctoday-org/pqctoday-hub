@@ -6097,18 +6097,18 @@
     {
       "product_id": "pqcee-cng-provider",
       "url": "https://www.pqcee.com/blog/pqcee-launches-crypto-agile-cng-provider-for-microsoft-windows-enabling-post-quantum-security",
-      "ok": false,
+      "ok": true,
       "file": "pqcee-cng-provider-92c2fc75.html",
-      "bytes": 166184,
+      "bytes": 168842,
       "content_type": "text/html; charset=utf-8",
       "tier": "update",
       "refId": "pqcee-cng-provider",
-      "sha256": "2162d07e33df4bd091acf453b210906017886991304c3a6d5ecff5667cd8cb37",
+      "sha256": "6bef9089c0da76ea2b9030161d162603dbadf497acb3bab016743dc3b3e40201",
       "sizeBytes": 166184,
       "hashedAt": "2026-09-06",
-      "superseded_at": "2026-09-16T03:35:01.602276+00:00",
       "superseded_file": "_superseded-09162026/migrate-proofs/pqcee-cng-provider-92c2fc75.html",
-      "superseded_reason": "2026-09-16 wrong-capture quarantine (user-approved): capture was a site search page, not the announcement"
+      "recaptured_at": "2026-09-16T03:51:49.653953+00:00",
+      "recaptured_reason": "2026-09-16: previous capture was a site search page (superseded); re-fetched through the browser tier — the announcement itself (artefact: SOURCE)"
     },
     {
       "product_id": "quantum-bridge-dske",
@@ -14889,6 +14889,30 @@
       "backfilledAt": "2026-09-16T03:31:58.918388+00:00",
       "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "refId": "trezor-safe-7-pqc",
+      "note": "additional document for a row that already has one"
+    },
+    {
+      "product_id": "infineon-aurix-tc49-pqc",
+      "file": "infineon-aurix-tc49-pqc-587e838d.html",
+      "url": "https://www.infineon.com/technology-news/2026/infatv202603-059",
+      "sha256": "8b42af5bba04aed2a716f35143108a6a51b5334ee7f6182e4d46bbef32c6db82",
+      "sizeBytes": 1535317,
+      "content_type": "text/html",
+      "backfilledAt": "2026-09-16T03:42:23.173244+00:00",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "refId": "infineon-aurix-tc49-pqc",
+      "note": "additional document for a row that already has one"
+    },
+    {
+      "product_id": "general-dynamics-mission",
+      "file": "general-dynamics-mission-2f5544f2.pdf",
+      "url": "https://gdmissionsystems.com/-/media/general-dynamics/cyber-and-electronic-warfare-systems/pdf/data-sheets/kiv-80-miniature-adaptable-crypto-datasheet.ashx",
+      "sha256": "27d688247707a167fa4473ed0c75582fcfa624e3ac75f4a0763d10e8a4aba408",
+      "sizeBytes": 4665509,
+      "content_type": "application/pdf",
+      "backfilledAt": "2026-09-16T03:48:30.477430+00:00",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "refId": "general-dynamics-mission",
       "note": "additional document for a row that already has one"
     }
   ],
