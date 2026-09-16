@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useVersionStore, getCurrentVersion } from '../../store/useVersionStore'
+import { useDisclaimerStore, getAppMajorVersion } from '../../store/useDisclaimerStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
@@ -148,6 +149,12 @@ export function getUnseenChangelogSections(
 export const WhatsNewModal = () => {
   const { getChangedSources, getModuleChanges, lastSeenVersion, markAllSeen } = useVersionStore()
   const { selectedPersona, selectedIndustries } = usePersonaStore()
+  // Same check GuidedTour.tsx already uses to wait for the disclaimer before
+  // starting itself — reused here so the auto-open path below doesn't render
+  // on top of the still-open disclaimer banner.
+  const isDisclaimerDone = useDisclaimerStore(
+    (s) => s.acknowledgedMajorVersion !== null && s.acknowledgedMajorVersion >= getAppMajorVersion()
+  )
   const navigate = useNavigate()
   const version = getCurrentVersion()
 
@@ -215,7 +222,8 @@ export const WhatsNewModal = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.has('whatsnew')) {
+    const forcedOpen = params.has('whatsnew')
+    if (forcedOpen) {
       useVersionStore.getState().resetForTesting()
     } else if (window.navigator?.webdriver) {
       // Automated browsers (E2E, the prerenderer) never get the auto-open:
@@ -226,6 +234,15 @@ export const WhatsNewModal = () => {
       // test hook above still opts in.
       return
     }
+
+    // Don't contend with the disclaimer banner for attention — mirrors
+    // GuidedTour.tsx's own `if (!isDisclaimerDone) return`. Re-runs (via the
+    // dependency below) once the disclaimer is dismissed, so the 1s delay
+    // below starts counting from there rather than from mount. ?whatsnew
+    // exercises this same auto-open path (via resetForTesting() above), not
+    // the separate imperative one, so it stays gated too — otherwise the QA
+    // hook would keep reproducing the exact overlay collision this fixes.
+    if (!isDisclaimerDone) return
 
     const timer = setTimeout(() => {
       // Read fresh state at callback time — persist middleware rehydrates asynchronously,
@@ -256,18 +273,28 @@ export const WhatsNewModal = () => {
     }, 1000)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [isDisclaimerDone])
 
   // ── Imperative open via store (e.g. "What's New" button in About page) ─
-  // Note: Zustand v5 removed prevState from subscribe — check state directly
+  // Note: Zustand v5 removed prevState from subscribe — check state directly.
+  // This component is React.lazy-loaded (see MainLayout.tsx), so the button
+  // click can beat this effect's subscription into existence: requestShowWhatsNew()
+  // sets showWhatsNew=true on the (non-lazy) store before anyone is listening,
+  // and a subscribe-only effect would never see that already-true value once it
+  // finally mounts — the click is silently lost. Check the current value first.
   useEffect(() => {
-    const unsub = useVersionStore.subscribe((state) => {
+    const applyIfShown = (state: ReturnType<(typeof useVersionStore)['getState']>) => {
       if (state.showWhatsNew) {
         setOpenedImperatively(true)
         setIsVisible(true)
         state.clearShowWhatsNew()
       }
-    })
+    }
+    // Deferred to a microtask rather than called synchronously here (React's
+    // set-state-in-effect lint rule) — still resolves before paint, well
+    // before the user could notice.
+    queueMicrotask(() => applyIfShown(useVersionStore.getState()))
+    const unsub = useVersionStore.subscribe(applyIfShown)
     return unsub
   }, [])
 
