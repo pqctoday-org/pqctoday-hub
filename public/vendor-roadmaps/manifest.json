@@ -232,16 +232,16 @@
     {
       "vendorId": "VND-178",
       "refId": "VND-178",
-      "url": "https://press.pingidentity.com/2022-08-03-Ping-Identity-Reports-Second-Quarter-2022-Results",
+      "url": "https://www.pingidentity.com/en/resources/blog/post/quantum-threat-us-fed-gov.html",
       "status": "recaptured",
       "file": "vendor/VND-178.html",
       "filename": "VND-178.html",
-      "sizeBytes": 246730,
+      "sizeBytes": 63210,
       "contentType": "text/html",
-      "sha256": "38faf51c5f3d19adeb026694e0fc9340e3aa64503c12af97be0b8761d4a6ec78",
-      "recaptured_at": "2026-09-12T11:12:57.594635+00:00",
-      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": null
+      "sha256": "673f85b36b7c29f513e85d92f902fcddc2b97e371b7617b4a7be291597ef3726",
+      "recaptured_at": "2026-09-16T03:33:13.179645+00:00",
+      "recaptured_reason": "2026-09-16: the row's roadmap_url pointed at Ping's Q2 2022 earnings release (no mention of quantum); URL corrected to the article the row's title names, found by codex gpt-5.6-terra, fetched and identity-checked",
+      "superseded_file": "_superseded-09162026/vendor/VND-178.refetched-from-old-url.html"
     },
     {
       "vendorId": "VND-225",

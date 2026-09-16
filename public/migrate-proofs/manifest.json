@@ -5338,7 +5338,7 @@
     {
       "product_id": "trezor-safe-7-pqc",
       "url": "https://trezor.io/guides/trezor-devices/trezor-safe-7/going-quantum",
-      "ok": true,
+      "ok": false,
       "file": "trezor-safe-7-pqc-9122fb08.html",
       "bytes": 553647,
       "content_type": "text/html; charset=utf-8",
@@ -5346,7 +5346,10 @@
       "refId": "trezor-safe-7-pqc",
       "sha256": "8c0df06a2cf1b5c9310bf667831f5313d530c87f63c45d7131b1f7e5ad90540a",
       "sizeBytes": 553647,
-      "hashedAt": "2026-09-06"
+      "hashedAt": "2026-09-06",
+      "superseded_at": "2026-09-16T03:35:01.602081+00:00",
+      "superseded_file": "_superseded-09162026/migrate-proofs/trezor-safe-7-pqc-9122fb08.html",
+      "superseded_reason": "2026-09-16 wrong-capture quarantine (user-approved): capture was a 'Hardware wallets' listing page; replaced by trezor-safe-7-pqc-25df20ca.html from the corrected proof_url"
     },
     {
       "product_id": "qan-xlink-pqc",
@@ -6094,7 +6097,7 @@
     {
       "product_id": "pqcee-cng-provider",
       "url": "https://www.pqcee.com/blog/pqcee-launches-crypto-agile-cng-provider-for-microsoft-windows-enabling-post-quantum-security",
-      "ok": true,
+      "ok": false,
       "file": "pqcee-cng-provider-92c2fc75.html",
       "bytes": 166184,
       "content_type": "text/html; charset=utf-8",
@@ -6102,7 +6105,10 @@
       "refId": "pqcee-cng-provider",
       "sha256": "2162d07e33df4bd091acf453b210906017886991304c3a6d5ecff5667cd8cb37",
       "sizeBytes": 166184,
-      "hashedAt": "2026-09-06"
+      "hashedAt": "2026-09-06",
+      "superseded_at": "2026-09-16T03:35:01.602276+00:00",
+      "superseded_file": "_superseded-09162026/migrate-proofs/pqcee-cng-provider-92c2fc75.html",
+      "superseded_reason": "2026-09-16 wrong-capture quarantine (user-approved): capture was a site search page, not the announcement"
     },
     {
       "product_id": "quantum-bridge-dske",
@@ -8458,7 +8464,11 @@
       "refId": "general-dynamics-mission",
       "sha256": "ac382a11185b6159e28092a12285a3197ff07de7cd545bada8691212b8d0c414",
       "sizeBytes": 164886,
-      "hashedAt": "2026-09-06"
+      "hashedAt": "2026-09-06",
+      "ok": false,
+      "superseded_at": "2026-09-16T03:35:01.602294+00:00",
+      "superseded_file": "_superseded-09162026/migrate-proofs/general-dynamics-mission-4c133983.html",
+      "superseded_reason": "2026-09-16 wrong-capture quarantine (user-approved): capture was the company homepage / consent wall; hash had drifted from this entry"
     },
     {
       "product_id": "futurex-vectera-plus",
@@ -10892,7 +10902,11 @@
       "refId": "general-dynamics-mission",
       "sha256": "ac382a11185b6159e28092a12285a3197ff07de7cd545bada8691212b8d0c414",
       "sizeBytes": 164886,
-      "hashedAt": "2026-09-06"
+      "hashedAt": "2026-09-06",
+      "ok": false,
+      "superseded_at": "2026-09-16T03:35:01.602311+00:00",
+      "superseded_file": "_superseded-09162026/migrate-proofs/general-dynamics-mission-4c133983.html",
+      "superseded_reason": "2026-09-16 wrong-capture quarantine (user-approved): capture was the company homepage / consent wall; hash had drifted from this entry"
     },
     {
       "product_id": "futurex-vectera-plus",
@@ -11831,7 +11845,11 @@
       "refId": "zerto-11-0",
       "sha256": "b372c26843999d6e80455babf856d78f5eed53548cbac0e2a56df2b55904d73f",
       "sizeBytes": 203784,
-      "hashedAt": "2026-09-06"
+      "hashedAt": "2026-09-06",
+      "ok": false,
+      "superseded_at": "2026-09-16T03:35:01.602318+00:00",
+      "superseded_file": "_superseded-09162026/migrate-proofs/zerto-11-0-c2d907e1.html",
+      "superseded_reason": "2026-09-16 wrong-capture quarantine (user-approved): capture was the Zerto Knowledge Portal page behind the login; hash had drifted from this entry"
     },
     {
       "product_id": "scality-ring9",
@@ -14860,6 +14878,18 @@
       "bytes": 72144,
       "tier": "curl_cffi:chrome124",
       "sha256": "d759942c6efefbc97e6590ce1a858187e6402092c2fd996214884e81540c2b35"
+    },
+    {
+      "product_id": "trezor-safe-7-pqc",
+      "file": "trezor-safe-7-pqc-25df20ca.html",
+      "url": "https://trezor.io/guides/trezor-devices/trezor-safe-7/the-first-quantum-ready-hardware-wallet",
+      "sha256": "207ad64dcf8cb3b1b170f9c1a33d2dc6aca327c1b3a7b8af79c4853e2fc6282e",
+      "sizeBytes": 583731,
+      "content_type": "text/html",
+      "backfilledAt": "2026-09-16T03:31:58.918388+00:00",
+      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "refId": "trezor-safe-7-pqc",
+      "note": "additional document for a row that already has one"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."

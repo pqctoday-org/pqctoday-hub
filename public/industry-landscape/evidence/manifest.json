@@ -1243,6 +1243,20 @@
       "contentType": "application/pdf",
       "sha256": "1151c3f67d28c797890910f34291d15108b405fec38a9b2c09e4e4143ca2ee6f",
       "verifiedAt": "2026-09-11"
+    },
+    {
+      "refId": "crypto-arbitrum-anytrust",
+      "filename": "crypto-arbitrum-anytrust.html",
+      "url": "https://docs.arbitrum.io/inside-anytrust",
+      "sha256": "4281b203e970e0dab672d7bfd7dadcc5c1bb886e73701af3d7dc4c1e6702633a",
+      "sizeBytes": 33407,
+      "contentType": "text/html",
+      "backfilledAt": "2026-09-16T03:32:45.401616+00:00",
+      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "file": "crypto-arbitrum-anytrust.html",
+      "status": "downloaded",
+      "label": "Arbitrum AnyTrust data-availability attestation",
+      "note": "additional document for a row that already has one"
     }
   ],
   "archivedEntries": [
