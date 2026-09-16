@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "pQCee CNG Provider",
+    "category": "Post-Quantum Cryptography Libraries",
+    "product_name": "pQCee CNG Provider",
+    "product_brief": "Crypto-agile Cryptographic Next Generation (CNG) provider for Microsoft Windows enabling post-quantum security and compliance.",
+    "pqc_support": "Yes — Supports NIST FIPS204 MLDSA, FIPS205 SLHDSA, XMSS, LMS, hybrid combinations, and country-specific standards.",
+    "pqc_capability_description": "The provider enables seamless integration of customized algorithms into Windows, including NIST post-quantum algorithms (ML-DSA, SLH-DSA, XMSS, LMS), hybrid classical/PQC combinations, and country-specific standards (MySEAL, KpqC, NGCC). It supports certified implementations (Common Criteria EAL, FIPS140 CMVP) and hardware integrations (smartcards, USB tokens, HSMs, TEEs).",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-DSA, SLH-DSA, XMSS, LMS, Hybrid combinations of classical and post-quantum algorithms",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "CNG Provider for Microsoft Windows; integrates with HSMs, TEEs, smartcards, and USB tokens",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Commercial",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "2026-03-23",
+    "fips_validated": "Supports certified implementations under FIPS140 CMVP; partners with PQShield for FIPS 140-3-certified modules",
+    "primary_platforms": "Microsoft Windows",
+    "target_industries": "Enterprises, Governments, Regulated Industries",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Launched March 2026; supports NIST FIPS204/205, XMSS, LMS, and country-specific standards (Malaysia, South Korea, China)",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "ML-DSA, SLH-DSA, XMSS, LMS",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Supports Quantum Key Distribution (QKD) integration",
+    "qrng_&_entropy_sources": "Supports Quantum Random Number Generators (QRNG) integration",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Collaborates with PQShield and Feitian Technologies to integrate cryptographic modules",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.8-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-09-15"
+    }
+  }
+]
