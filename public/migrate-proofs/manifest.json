@@ -14887,9 +14887,10 @@
       "sizeBytes": 583731,
       "content_type": "text/html",
       "backfilledAt": "2026-09-16T03:31:58.918388+00:00",
-      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "trezor-safe-7-pqc",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "superseded_file": "_superseded-09162026/migrate-proofs/trezor-safe-7-pqc-9122fb08.html"
     },
     {
       "product_id": "infineon-aurix-tc49-pqc",
@@ -14899,9 +14900,10 @@
       "sizeBytes": 1535317,
       "content_type": "text/html",
       "backfilledAt": "2026-09-16T03:42:23.173244+00:00",
-      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "infineon-aurix-tc49-pqc",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "superseded_file": "_superseded-09162026/migrate-proofs/infineon-aurix-tc49-pqc-dbeb35a9.html"
     },
     {
       "product_id": "general-dynamics-mission",
@@ -14911,9 +14913,10 @@
       "sizeBytes": 4665509,
       "content_type": "application/pdf",
       "backfilledAt": "2026-09-16T03:48:30.477430+00:00",
-      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "general-dynamics-mission",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "superseded_file": "_superseded-09162026/migrate-proofs/general-dynamics-mission-4c133983.html"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."

@@ -160,7 +160,11 @@
       "sha256": "dac550319f3dd4b6abd5f28bdc7d410a2526f194f316f934ea58b88174007634",
       "recaptured_at": "2026-09-12T11:14:15.070388+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": "_superseded-09162026/industry/energy-nuclear.pdf",
+      "ok": false,
+      "supersededAt": "2026-09-16T05:14:29.021901+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes — replaced by energy-nuclear.html"
     },
     {
       "refId": "energy-ami",
@@ -233,7 +237,11 @@
       "sha256": "414f0d969307c79e6e452b960f1a97ec132c49fc8b7908cc55c513ffe9cfa3f8",
       "recaptured_at": "2026-09-12T11:14:16.021053+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": "_superseded-09162026/industry/cross-code-signing.pdf",
+      "ok": false,
+      "supersededAt": "2026-09-16T05:14:29.386904+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes — replaced by cross-code-signing.html"
     },
     {
       "refId": "cross-vpn",
@@ -356,7 +364,11 @@
       "sha256": "63dfa581177f96575eb60c954ca6f5bc256780852859f54ac626838c36663a58",
       "recaptured_at": "2026-09-12T11:14:17.545872+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": "_superseded-09162026/industry/fin-customer.pdf",
+      "ok": false,
+      "supersededAt": "2026-09-16T05:14:29.632194+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes — replaced by fin-customer.html"
     },
     {
       "refId": "fin-hsm",
@@ -612,7 +624,11 @@
       "sha256": "7cc492379bb9d6054ab67e0654a7e7dbde996a4632d39b166a4b3c16d3f8aa7b",
       "recaptured_at": "2026-09-12T11:14:18.920906+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": "_superseded-09162026/industry/it-ssh.pdf",
+      "ok": false,
+      "supersededAt": "2026-09-16T05:14:29.900913+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes — replaced by it-ssh.html"
     },
     {
       "refId": "leg-qes",
@@ -1169,20 +1185,27 @@
       "sha256": "627e72441c34af5f1eebcc1834677f06726e682b72893edc07131f24497c941a",
       "recaptured_at": "2026-09-12T11:14:36.451684+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": "_superseded-09162026/industry/retail-pin-keys.pdf",
+      "ok": false,
+      "supersededAt": "2026-09-16T05:14:30.219657+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes — replaced by retail-pin-keys.html"
     },
     {
       "refId": "retail-digital-wallet",
-      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex:52023PC0367",
+      "url": "https://developer.apple.com/library/archive/ApplePay_Guide/ProcessPayment.html",
       "status": "recaptured",
       "file": "industry/retail-digital-wallet.html",
       "filename": "retail-digital-wallet.html",
-      "sizeBytes": 1152221,
+      "sizeBytes": 14212,
       "contentType": "text/html",
-      "sha256": "a8b6cc4e7242f0cfc4df3e61f90488af6c8248ccde334bde2d2ac7a0851cd7c7",
+      "sha256": "2949ac81226040d447d061c390ad1b1fe73f88d21e74d81eedc2e31b6c1935ea",
       "recaptured_at": "2026-09-12T11:14:37.520134+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": null
+      "superseded_file": "_superseded-09162026/industry/retail-digital-wallet.html",
+      "replacedAt": "2026-09-16T05:14:30.495720+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes"
     },
     {
       "refId": "hsm-certified-product",
@@ -1253,11 +1276,82 @@
       "sizeBytes": 33407,
       "contentType": "text/html",
       "backfilledAt": "2026-09-16T03:32:45.401616+00:00",
-      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "file": "crypto-arbitrum-anytrust.html",
       "status": "downloaded",
       "label": "Arbitrum AnyTrust data-availability attestation",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "superseded_file": "_superseded-09162026/industry/crypto-arbitrum-anytrust.pdf"
+    },
+    {
+      "refId": "energy-nuclear",
+      "filename": "energy-nuclear.html",
+      "url": "https://www.ecfr.gov/current/title-10/chapter-I/part-73/section-73.54",
+      "sha256": "3a42e4ffe149f054346cfa5582dd20c3364b700f70fcafe80c0ed2970cc43a5d",
+      "sizeBytes": 81586,
+      "contentType": "text/html",
+      "replacedAt": "2026-09-16T05:14:29.021901+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes",
+      "file": "industry/energy-nuclear.html",
+      "status": "downloaded",
+      "superseded_file": "_superseded-09162026/industry/energy-nuclear.pdf"
+    },
+    {
+      "refId": "cross-code-signing",
+      "filename": "cross-code-signing.html",
+      "url": "https://slsa.dev/spec/v1.0/levels",
+      "sha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a",
+      "sizeBytes": 25607,
+      "contentType": "text/html",
+      "replacedAt": "2026-09-16T05:14:29.386904+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes",
+      "file": "industry/cross-code-signing.html",
+      "status": "downloaded",
+      "superseded_file": "_superseded-09162026/industry/cross-code-signing.pdf"
+    },
+    {
+      "refId": "fin-customer",
+      "filename": "fin-customer.html",
+      "url": "https://www.fsisac.com/newsroom/fs-isac-urges-global-coordination-for-migration-to-post-quantum-cryptography-in-financial-services",
+      "sha256": "f51856bed680d40b2bdf696687284143209c900ed8ee9738a972335fbf131115",
+      "sizeBytes": 37763,
+      "contentType": "text/html",
+      "replacedAt": "2026-09-16T05:14:29.632194+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes",
+      "file": "industry/fin-customer.html",
+      "status": "downloaded",
+      "superseded_file": "_superseded-09162026/industry/fin-customer.pdf"
+    },
+    {
+      "refId": "it-ssh",
+      "filename": "it-ssh.html",
+      "url": "https://datatracker.ietf.org/doc/html/rfc9941",
+      "sha256": "3b5e0d389b503c23e42257a7b52085fb89e645c5357b3e9ff2129cf3d3295fb9",
+      "sizeBytes": 88540,
+      "contentType": "text/html",
+      "replacedAt": "2026-09-16T05:14:29.900913+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes",
+      "file": "industry/it-ssh.html",
+      "status": "downloaded",
+      "superseded_file": "_superseded-09162026/industry/it-ssh.pdf"
+    },
+    {
+      "refId": "retail-pin-keys",
+      "filename": "retail-pin-keys.html",
+      "url": "https://blog.pcisecuritystandards.org/key-blocks-101",
+      "sha256": "306b1d095d940be97e7c4f3c30b28f24df252c8f483828cc5e1f5eb166e56d1a",
+      "sizeBytes": 84882,
+      "contentType": "text/html",
+      "replacedAt": "2026-09-16T05:14:30.219657+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes",
+      "file": "industry/retail-pin-keys.html",
+      "status": "downloaded",
+      "superseded_file": "_superseded-09162026/industry/retail-pin-keys.pdf"
     }
   ],
   "archivedEntries": [
