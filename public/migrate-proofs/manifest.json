@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-09-12T11:16:42.030224+00:00",
-  "count": 1305,
+  "count": 1293,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -6103,12 +6103,13 @@
       "content_type": "text/html; charset=utf-8",
       "tier": "update",
       "refId": "pqcee-cng-provider",
-      "sha256": "6bef9089c0da76ea2b9030161d162603dbadf497acb3bab016743dc3b3e40201",
+      "sha256": "78ff961d9e7e1fb85d3ef6b164ebdb4661aaf2e9349418369f5e1ed269034fc7",
       "sizeBytes": 166184,
       "hashedAt": "2026-09-06",
       "superseded_file": "_superseded-09162026/migrate-proofs/pqcee-cng-provider-92c2fc75.html",
       "recaptured_at": "2026-09-16T03:51:49.653953+00:00",
-      "recaptured_reason": "2026-09-16: previous capture was a site search page (superseded); re-fetched through the browser tier \u2014 the announcement itself (artefact: SOURCE)"
+      "recaptured_reason": "2026-09-16: previous capture was a site search page (superseded); re-fetched through the browser tier \u2014 the announcement itself (artefact: SOURCE)",
+      "note": "re-downloaded by the update lane 2026-09-16 (same URL, artefact SOURCE)"
     },
     {
       "product_id": "quantum-bridge-dske",
@@ -14883,25 +14884,29 @@
       "product_id": "trezor-safe-7-pqc",
       "file": "trezor-safe-7-pqc-25df20ca.html",
       "url": "https://trezor.io/guides/trezor-devices/trezor-safe-7/the-first-quantum-ready-hardware-wallet",
-      "sha256": "207ad64dcf8cb3b1b170f9c1a33d2dc6aca327c1b3a7b8af79c4853e2fc6282e",
+      "sha256": "c2bfc56d1c8ad58dc9994e973e9418c9e9bcdd0814b06690961580afbca29ee2",
       "sizeBytes": 583731,
       "content_type": "text/html",
       "backfilledAt": "2026-09-16T03:31:58.918388+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "trezor-safe-7-pqc",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one | re-downloaded by the update lane 2026-09-16 (same URL, artefact SOURCE) | re-downloaded by the update lane 2026-09-16 (same URL, artefact SOURCE)",
+      "superseded_file": "_superseded-09162026/migrate-proofs/trezor-safe-7-pqc-9122fb08.html",
+      "bytes": 583788
     },
     {
       "product_id": "infineon-aurix-tc49-pqc",
       "file": "infineon-aurix-tc49-pqc-587e838d.html",
       "url": "https://www.infineon.com/technology-news/2026/infatv202603-059",
-      "sha256": "8b42af5bba04aed2a716f35143108a6a51b5334ee7f6182e4d46bbef32c6db82",
+      "sha256": "0dde46919c7b47632aa8281f6a03625d8685cebdfd3a55a4888aa88d242849e2",
       "sizeBytes": 1535317,
       "content_type": "text/html",
       "backfilledAt": "2026-09-16T03:42:23.173244+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "infineon-aurix-tc49-pqc",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one | re-downloaded by the update lane 2026-09-16 (same URL, artefact SOURCE)",
+      "superseded_file": "_superseded-09162026/migrate-proofs/infineon-aurix-tc49-pqc-dbeb35a9.html",
+      "bytes": 1607464
     },
     {
       "product_id": "general-dynamics-mission",
@@ -14911,9 +14916,10 @@
       "sizeBytes": 4665509,
       "content_type": "application/pdf",
       "backfilledAt": "2026-09-16T03:48:30.477430+00:00",
-      "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "general-dynamics-mission",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "superseded_file": "_superseded-09162026/migrate-proofs/general-dynamics-mission-4c133983.html"
     },
     {
       "product_id": "zerto-11-0",
@@ -14921,7 +14927,10 @@
       "file": "zerto-11-0-c2d907e1.html",
       "bytes": 161411,
       "tier": "curl_cffi:chrome124",
-      "sha256": "5a1d27582165dfff863ebb0e45417bc0f066b67df651c65fa40557f0709a103f"
+      "sha256": "5a1d27582165dfff863ebb0e45417bc0f066b67df651c65fa40557f0709a103f",
+      "ok": false,
+      "superseded_file": "_superseded-09162026/migrate-proofs/zerto-11-0-c2d907e1-2.html",
+      "superseded_reason": "2026-09-16: download-product-evidence.py saved Zerto's consent wall (artefact CONSENT-WALL); no public document"
     },
     {
       "product_id": "general-dynamics-mission",
@@ -14929,63 +14938,10 @@
       "file": "general-dynamics-mission-2f5544f2.html",
       "bytes": 4548486,
       "tier": "curl_cffi:chrome124",
-      "sha256": "017821dd0c4a8c0a021b6f857fad37d9596c7d709d8ed7e063a7b4b043b4d848"
-    },
-    {
-      "product_id": "trezor-safe-7-pqc",
-      "url": "https://trezor.io/guides/trezor-devices/trezor-safe-7/the-first-quantum-ready-hardware-wallet",
-      "file": "trezor-safe-7-pqc-25df20ca.html",
-      "bytes": 582337,
-      "tier": "curl_cffi:chrome124",
-      "sha256": "c2bfc56d1c8ad58dc9994e973e9418c9e9bcdd0814b06690961580afbca29ee2"
-    },
-    {
-      "product_id": "pqcee-cng-provider",
-      "url": "https://www.pqcee.com/blog/pqcee-launches-crypto-agile-cng-provider-for-microsoft-windows-enabling-post-quantum-security",
-      "file": "pqcee-cng-provider-92c2fc75.html",
-      "bytes": 168800,
-      "tier": "curl_cffi:chrome124",
-      "sha256": "2f585fc5254f814a7ff40763f656f127b241c24a0a329dee31e04319c9ace269"
-    },
-    {
-      "product_id": "infineon-aurix-tc49-pqc",
-      "url": "https://www.infineon.com/technology-news/2026/infatv202603-059",
-      "file": "infineon-aurix-tc49-pqc-587e838d.html",
-      "bytes": 1606249,
-      "tier": "playwright-stealth",
-      "sha256": "32aaf725b8c843d0f712806e5ca158a133be51e5acdf003c7963c69f3569aea2"
-    },
-    {
-      "product_id": "general-dynamics-mission",
-      "url": "https://gdmissionsystems.com/-/media/general-dynamics/cyber-and-electronic-warfare-systems/pdf/data-sheets/kiv-80-miniature-adaptable-crypto-datasheet.ashx",
-      "file": "general-dynamics-mission-2f5544f2.html",
-      "bytes": 4548486,
-      "tier": "curl_cffi:chrome124",
-      "sha256": "017821dd0c4a8c0a021b6f857fad37d9596c7d709d8ed7e063a7b4b043b4d848"
-    },
-    {
-      "product_id": "trezor-safe-7-pqc",
-      "url": "https://trezor.io/guides/trezor-devices/trezor-safe-7/the-first-quantum-ready-hardware-wallet",
-      "file": "trezor-safe-7-pqc-25df20ca.html",
-      "bytes": 582337,
-      "tier": "curl_cffi:chrome124",
-      "sha256": "c2bfc56d1c8ad58dc9994e973e9418c9e9bcdd0814b06690961580afbca29ee2"
-    },
-    {
-      "product_id": "pqcee-cng-provider",
-      "url": "https://www.pqcee.com/blog/pqcee-launches-crypto-agile-cng-provider-for-microsoft-windows-enabling-post-quantum-security",
-      "file": "pqcee-cng-provider-92c2fc75.html",
-      "bytes": 168800,
-      "tier": "curl_cffi:chrome124",
-      "sha256": "78ff961d9e7e1fb85d3ef6b164ebdb4661aaf2e9349418369f5e1ed269034fc7"
-    },
-    {
-      "product_id": "infineon-aurix-tc49-pqc",
-      "url": "https://www.infineon.com/technology-news/2026/infatv202603-059",
-      "file": "infineon-aurix-tc49-pqc-587e838d.html",
-      "bytes": 1606249,
-      "tier": "playwright-stealth",
-      "sha256": "0dde46919c7b47632aa8281f6a03625d8685cebdfd3a55a4888aa88d242849e2"
+      "sha256": "017821dd0c4a8c0a021b6f857fad37d9596c7d709d8ed7e063a7b4b043b4d848",
+      "ok": false,
+      "superseded_file": "_superseded-09162026/migrate-proofs/general-dynamics-mission-2f5544f2.html",
+      "superseded_reason": "2026-09-16: download-product-evidence.py saved the KIV-80 datasheet's PDF bytes under a .html name (artefact FORMAT-MISMATCH); the row's proof is general-dynamics-mission-2f5544f2.pdf"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."

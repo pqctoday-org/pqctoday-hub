@@ -28125,9 +28125,10 @@
       "sizeBytes": 1534513,
       "content_type": "text/html",
       "backfilledAt": "2026-09-16T03:44:10.739569+00:00",
-      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "Infineon TEGRION SLC27 PQC",
-      "status": "downloaded"
+      "status": "downloaded",
+      "superseded_file": "_superseded-09162026/products/infineon-tegrion-slc27-pqc-brief-a1a458ba.html"
     },
     {
       "softwareName": "Trezor Safe 7 PQC",
@@ -28137,10 +28138,11 @@
       "sizeBytes": 583731,
       "content_type": "text/html",
       "backfilledAt": "2026-09-16T03:44:10.739569+00:00",
-      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "Trezor Safe 7 PQC",
       "status": "downloaded",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "superseded_file": "_superseded-09162026/migrate-proofs/trezor-safe-7-pqc-9122fb08.html"
     },
     {
       "softwareName": "Infineon AURIX TC49 PQC",
@@ -28150,10 +28152,11 @@
       "sizeBytes": 1535317,
       "content_type": "text/html",
       "backfilledAt": "2026-09-16T03:44:10.739569+00:00",
-      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "Infineon AURIX TC49 PQC",
       "status": "downloaded",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "superseded_file": "_superseded-09162026/migrate-proofs/infineon-aurix-tc49-pqc-dbeb35a9.html"
     },
     {
       "softwareName": "Sectigo Cert Manager 2026",
@@ -28163,10 +28166,11 @@
       "sizeBytes": 75872,
       "content_type": "text/html",
       "backfilledAt": "2026-09-16T03:50:09.111450+00:00",
-      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "Sectigo Cert Manager 2026",
       "status": "downloaded",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "superseded_file": "_superseded-09162026/products/sectigo-cert-manager-2026-manual-32618dea.html"
     },
     {
       "softwareName": "General Dynamics Mission",
@@ -28176,9 +28180,10 @@
       "sizeBytes": 4665509,
       "content_type": "application/pdf",
       "backfilledAt": "2026-09-16T03:50:09.111450+00:00",
-      "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
+      "backfilledBy": "re-sourced 2026-09-16 (user-approved): the previous capture was not this row's document (see superseded_file and local-evidence-cache/_superseded-09162026/README.md); the new document was fetched from the row's corrected URL, passed artefact.py, and was registered by backfill_manifest.py before replace_evidence.py existed",
       "refId": "General Dynamics Mission",
-      "status": "downloaded"
+      "status": "downloaded",
+      "superseded_file": "_superseded-09162026/migrate-proofs/general-dynamics-mission-4c133983.html"
     }
   ],
   "total": 1892,
