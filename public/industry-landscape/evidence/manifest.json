@@ -1554,7 +1554,12 @@
       "sizeBytes": 404656,
       "contentType": "application/pdf",
       "sha256": "a3f1958c74837d16c1d9e5c97f6f2049a4cfa014c9fd2178b2fa3187877af663",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "ok": false,
+      "superseded_file": "_superseded-09162026/industry/crypto-arbitrum-anytrust.pdf",
+      "supersededAt": "2026-09-17T14:29:28.514656+00:00",
+      "supersededBy": "manifest review 2026-09-17",
+      "superseded_reason": "the file was moved aside on 09162026 and this record was not updated then"
     },
     {
       "refId": "edu-network-backbone",
