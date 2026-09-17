@@ -20608,7 +20608,12 @@
       "refId": "hpe-alletra-mp",
       "sha256": "3892b00f739adb1e7c0145ac98b600081f88bf578165d3dd9057ad250c688c30",
       "sizeBytes": 36165,
-      "hashedAt": "2026-09-06"
+      "hashedAt": "2026-09-06",
+      "ok": false,
+      "superseded_file": "_superseded-09172026/migrate-proofs/hpe-alletra-mp-35748917.html",
+      "supersededAt": "2026-09-17T14:18:22.508101+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture failed the door's check on 2026-09-17 and was replaced by a fresh fetch of the row's URL"
     },
     {
       "product_id": "nginx",
@@ -20620,7 +20625,12 @@
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
       "backfilledBy": "backfill_manifest.py \u2014 WS1.2, file was in use with no record",
       "refId": "nginx",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "ok": false,
+      "superseded_file": "_superseded-09172026/migrate-proofs/nginx-9cb0ba7f.html",
+      "supersededAt": "2026-09-17T14:18:22.508101+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture failed the door's check on 2026-09-17 and was replaced by a fresh fetch of the row's URL"
     },
     {
       "product_id": "trezor-safe-7-pqc",
