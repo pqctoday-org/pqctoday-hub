@@ -1349,9 +1349,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:08:37.059028+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T21:42:15.890937+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "google-cloud-hsm",
@@ -13338,9 +13338,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:08:44.421204+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T21:43:06.725657+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "ibm-hyper-protect-crypto",
@@ -17330,9 +17330,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:29.408839+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T21:38:37.758097+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "Quantum-Corporation-Cryptographic-Module",

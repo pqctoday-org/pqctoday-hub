@@ -587,6 +587,19 @@
       "unified": "converted",
       "admittedAt": "2026-09-17T19:13:36.491426+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "refId": "cose|pureKem|draft-ietf-cose-hpke-pq-pqt",
+      "file": "draft-ietf-cose-hpke-pq-pqt-f7ab51ef.html",
+      "bytes": 1326,
+      "content_type": "text/html",
+      "url": "https://datatracker.ietf.org/api/v1/doc/document/?name=draft-ietf-cose-hpke-pq-pqt&format=json",
+      "sha256": "755c658833fa65e7526ccc9edcd148f41acd30282547e2c1422a316d045ef3d0",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T21:07:59.518570+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED"
     }
   ]
 }

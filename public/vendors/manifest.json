@@ -2212,6 +2212,45 @@
       "unified": "converted",
       "admittedAt": "2026-09-17T19:14:57.076817+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "refId": "VND-505",
+      "file": "VND-505-9454d2b3.json",
+      "bytes": 3140,
+      "content_type": "application/json",
+      "url": "https://api.gleif.org/api/v1/lei-records/529900RKFEZCE5NHHO24",
+      "sha256": "2b08f738f164fb3858745c4b42b98880440780f8fa1d5b03e139eccfad366918",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T21:45:47.442579+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "VND-519",
+      "file": "VND-519-79f0c0c4.json",
+      "bytes": 2492,
+      "content_type": "application/json",
+      "url": "https://api.gleif.org/api/v1/lei-records/2549001NG79MDN6S1091",
+      "sha256": "c0fc53cc12e458652b78717391ab32b0d0510de5b3d0fd9c1969ab00bfae1403",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T21:45:50.071810+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "VND-521",
+      "file": "VND-521-d70d5c65.json",
+      "bytes": 2936,
+      "content_type": "application/json",
+      "url": "https://api.gleif.org/api/v1/lei-records/254900BILA95IZ0KPX63",
+      "sha256": "345b980f4cba372ae74169bc8dcbaecafbe389be0ef475b0b4005c4284c57cd7",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T21:45:52.710061+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH"
     }
   ]
 }
