@@ -21640,7 +21640,10 @@
       "refId": "ibm-quantum-safe-toolkit",
       "sha256": "3765f26c666bd2a6d4d52f4713d8b21e1f7e1f266d7daf3c1239681171578b3f",
       "sizeBytes": 133658,
-      "hashedAt": "2026-09-06"
+      "hashedAt": "2026-09-06",
+      "restoredAt": "2026-09-17T17:42:33.765753+00:00",
+      "restoredBy": "replace_evidence.py fix 2026-09-17",
+      "restore_reason": "retired in error by the ibm-hyper-protect-crypto re-source (same URL, another row's file); linked back from _superseded-09172026/products/"
     },
     {
       "softwareName": "marvell-liquidsecurity-2",
