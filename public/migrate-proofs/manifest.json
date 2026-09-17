@@ -21049,6 +21049,23 @@
       "replacedAt": "2026-09-17T17:37:48.144614+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "door batch 09-17: previous proof URL was a landing/empty page; codex-proposed publisher document, verified through the gates"
+    },
+    {
+      "product_id": "Xiphera-XIP6220B",
+      "refId": "Xiphera-XIP6220B",
+      "file": "Xiphera-XIP6220B-36c55b75.html",
+      "sizeBytes": 41337,
+      "content_type": "text/html",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=40088",
+      "sha256": "aaaade802827acd31f62f2a3573490fb6d7de51dbf9433bf2ef210abc4be7fc4",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T17:55:45.841640+00:00",
+      "admittedBy": "admit.py",
+      "replacedAt": "2026-09-17T17:55:45.744426+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "the validation sentence needs the CAVP validation's own page (validation 40088); the vendor brief stays as the product brief"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
