@@ -13043,7 +13043,7 @@
     {
       "product_id": "debian-13-trixie",
       "url": "https://manpages.debian.org/trixie/openssl/OSSL_PROVIDER-default.7ssl.en.html",
-      "ok": true,
+      "ok": false,
       "file": "debian-13-trixie-c15d8715.html",
       "bytes": 50289,
       "content_type": "text/html; charset=utf-8",
@@ -13051,7 +13051,10 @@
       "refId": "debian-13-trixie",
       "sha256": "c1e46f8954e64faf2f90ada9ea1affcda8cabb8bf69c589457186d283a3eec7e",
       "sizeBytes": 14896,
-      "hashedAt": "2026-09-06"
+      "hashedAt": "2026-09-06",
+      "supersededAt": "2026-09-17T14:17:04.872460+00:00",
+      "supersededBy": "manifest review 2026-09-17",
+      "superseded_reason": "download record for a proof URL the row no longer uses (current proof_url digest 0b351c13); the file is not on this machine"
     },
     {
       "product_id": "strongswan",
@@ -16193,7 +16196,11 @@
       "replacedAt": "2026-09-17T14:04:40.529913+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document",
-      "superseded_file": "_superseded-09172026/migrate-proofs/hpe-alletra-mp-35748917.html"
+      "superseded_file": "_superseded-09172026/migrate-proofs/hpe-alletra-mp-35748917.html",
+      "ok": false,
+      "supersededAt": "2026-09-17T14:17:04.872460+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture failed the door's check (artefact EMPTY) on 2026-09-17 and was replaced by a fresh fetch of the row's URL; the first lane run moved it aside and crashed before recording it here"
     },
     {
       "product_id": "rubrik-security-cloud",
@@ -16503,7 +16510,12 @@
       "identity": "UNCONFIRMED",
       "unified": "current",
       "admittedAt": "2026-09-17T13:55:43.579938+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedBy": "admit.py --stamp-existing",
+      "ok": false,
+      "superseded_file": "_superseded-09172026/migrate-proofs/galileo-ai-platform-427cb2ba.html",
+      "supersededAt": "2026-09-17T14:17:04.872460+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture failed the door's check (artefact EMPTY) on 2026-09-17 and was replaced by a fresh fetch of the row's URL; the first lane run moved it aside and crashed before recording it here"
     },
     {
       "product_id": "beyondtrust-pathfinder-platform",
@@ -16615,7 +16627,12 @@
       "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-17T13:55:45.971667+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedBy": "admit.py --stamp-existing",
+      "ok": false,
+      "superseded_file": "_superseded-09172026/migrate-proofs/tcpdump-305c7f64.html",
+      "supersededAt": "2026-09-17T14:17:04.872460+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture failed the door's check (artefact EMPTY) on 2026-09-17 and was replaced by a fresh fetch of the row's URL; the first lane run moved it aside and crashed before recording it here"
     },
     {
       "product_id": "wireshark-tshark",
@@ -18181,7 +18198,7 @@
     {
       "product_id": "ASI-HSM-AHX5-KNET-Cryptographic-Module",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18785",
-      "ok": true,
+      "ok": false,
       "file": "ASI-HSM-AHX5-KNET-Cryptographic-Module-892e812c.html",
       "bytes": 88317,
       "content_type": "text/html; charset=utf-8",
@@ -18189,7 +18206,10 @@
       "refId": "ASI-HSM-AHX5-KNET-Cryptographic-Module",
       "sha256": "24f5a7c636335f8468ca6560386725396cc8d9a1f883af9e09ca14fbc08346ad",
       "sizeBytes": 88670,
-      "hashedAt": "2026-09-06"
+      "hashedAt": "2026-09-06",
+      "supersededAt": "2026-09-17T14:17:04.872460+00:00",
+      "supersededBy": "manifest review 2026-09-17",
+      "superseded_reason": "download record for a proof URL the row no longer uses (current proof_url digest c35800a1); the file is not on this machine"
     },
     {
       "product_id": "proofpoint-aegis",
@@ -19188,7 +19208,12 @@
       "admittedBy": "admit.py",
       "replacedAt": "2026-09-17T14:07:52.326665+00:00",
       "replacedBy": "replace_evidence.py",
-      "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document"
+      "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document",
+      "ok": false,
+      "superseded_file": "_superseded-09172026/migrate-proofs/nginx-9cb0ba7f.html",
+      "supersededAt": "2026-09-17T14:17:04.872460+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture failed the door's check (artefact EMPTY) on 2026-09-17 and was replaced by a fresh fetch of the row's URL; the first lane run moved it aside and crashed before recording it here"
     },
     {
       "product_id": "apache-http-server",
