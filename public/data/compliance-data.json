@@ -7977,7 +7977,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5314.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5313",
@@ -7986,7 +7988,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5313",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "ML-KEM, ML-DSA, LMS, XMSS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA (186, 1024), ECDSA (P-256, P-384, P-521), ECDH",
     "productName": "Microsoft SymCrypt Cryptographic Library",
     "productCategory": "Cryptographic Module",
@@ -7994,7 +7996,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5313.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5312",
@@ -8207,7 +8211,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5300",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "LMS",
+    "pqcCoverage": "Falcon, LMS, ML-DSA, ML-KEM",
     "classicalAlgorithms": "RSA (112, 509, 2048, 4096), ECDSA (P-256, P-384, P-521)",
     "productName": "Luna M7 Cryptographic Module",
     "productCategory": "Cryptographic Module",
@@ -8215,7 +8219,9 @@
     "certificationLevel": "FIPS 140-3 L3",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5300.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5299",
@@ -8249,7 +8255,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5298.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5297",
@@ -8521,7 +8529,9 @@
     "certificationLevel": "FIPS 140-3 L3",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5282.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5281",
@@ -8878,7 +8888,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5261.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5260",
@@ -9048,7 +9060,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5251.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5250",
@@ -9116,7 +9130,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5247.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5246",
@@ -9567,7 +9583,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5220",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "ML-KEM, ML-DSA",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "LS2 HSM Family",
     "productCategory": "Cryptographic Module",
@@ -9575,7 +9591,9 @@
     "certificationLevel": "FIPS 140-3 L3",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5220.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5219",
@@ -9720,7 +9738,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5211",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "LMS, HSS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "N-able FIPS Cryptographic Module Java 140-3",
     "productCategory": "Cryptographic Module",
@@ -9728,7 +9746,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5211.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5210",
@@ -9737,7 +9757,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5210",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "LMS, HSS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Kaseya FIPS Cryptographic Module for Java",
     "productCategory": "Cryptographic Module",
@@ -9745,7 +9765,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5210.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5209",
@@ -9754,7 +9776,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5209",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Kloudfuse Java Cryptographic Module",
     "productCategory": "Cryptographic Module",
@@ -9762,7 +9784,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5209.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5208",
@@ -9941,7 +9965,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5198",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "LMS",
+    "pqcCoverage": "HSS, LMS",
     "classicalAlgorithms": "ECDSA (P-256, P-384, P-521), RSA, ECDH",
     "productName": "HP Endpoint Security Controller Cryptographic Library",
     "productCategory": "Cryptographic Module",
@@ -9949,7 +9973,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5198.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5197",
@@ -10170,7 +10196,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5184.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5183",
@@ -10782,7 +10810,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5148.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5147",
@@ -10876,7 +10906,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5142",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Minimus Cryptographic Module for Java",
     "productCategory": "Cryptographic Module",
@@ -10884,7 +10914,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5142.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5141",
@@ -11063,7 +11095,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5131",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Trend Micro Java Crypto Module",
     "productCategory": "Cryptographic Module",
@@ -11071,7 +11103,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5131.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5130",
@@ -11080,7 +11114,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5130",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Tellabs Panorama PON Manager Cryptographic Module",
     "productCategory": "Cryptographic Module",
@@ -11088,7 +11122,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5130.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5129",
@@ -11097,7 +11133,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5129",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "InformaCast Advanced and Fusion Server Java Crypto Library",
     "productCategory": "Cryptographic Module",
@@ -11105,7 +11141,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5129.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5128",
@@ -11122,7 +11160,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5128.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5127",
@@ -11131,7 +11171,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5127",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Radiant Logic Cryptographic Module for Java",
     "productCategory": "Cryptographic Module",
@@ -11139,7 +11179,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5127.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5126",
@@ -11156,7 +11198,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5126.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5125",
@@ -11165,7 +11209,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5125",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Proofpoint Cryptographic Module for Java",
     "productCategory": "Cryptographic Module",
@@ -11173,7 +11217,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5125.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5124",
@@ -11182,7 +11228,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5124",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "HPI Crypto Module for Java",
     "productCategory": "Cryptographic Module",
@@ -11190,7 +11236,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5124.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5123",
@@ -11199,7 +11247,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5123",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "HID Global Cryptographic Module",
     "productCategory": "Cryptographic Module",
@@ -11207,7 +11255,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5123.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5122",
@@ -11216,7 +11266,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5122",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "CyberArk Cryptographic Module for Java",
     "productCategory": "Cryptographic Module",
@@ -11224,7 +11274,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5122.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5121",
@@ -11233,7 +11285,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5121",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "CTERA Crypto Module™ (Java)",
     "productCategory": "Cryptographic Module",
@@ -11241,7 +11293,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5121.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5120",
@@ -11250,7 +11304,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5120",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Cohesity Cryptographic Module for Java",
     "productCategory": "Cryptographic Module",
@@ -11258,7 +11312,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5120.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5119",
@@ -11445,7 +11501,9 @@
     "certificationLevel": "FIPS 140-3 L2",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5109.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5108",
@@ -11547,7 +11605,9 @@
     "certificationLevel": "FIPS 140-3 L2",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5103.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5102",
@@ -11632,7 +11692,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5098.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5097",
@@ -11862,7 +11924,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5084",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Cloudera Cryptographic Module for Java",
     "productCategory": "Cryptographic Module",
@@ -11870,7 +11932,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5084.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5083",
@@ -11879,7 +11943,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5083",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "CGI Momentum™ Java Cryptographic Module",
     "productCategory": "Cryptographic Module",
@@ -11887,7 +11951,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5083.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5082",
@@ -11896,7 +11962,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5082",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Arctera Cryptographic Module for Java",
     "productCategory": "Cryptographic Module",
@@ -11904,7 +11970,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5082.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5081",
@@ -11913,7 +11981,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5081",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "SL-FJA3 (SafeLogic FIPS Java API)",
     "productCategory": "Cryptographic Module",
@@ -11921,7 +11989,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5081.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5080",
@@ -11930,7 +12000,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5080",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Zscaler Java Crypto Module",
     "productCategory": "Cryptographic Module",
@@ -11938,7 +12008,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5080.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5079",
@@ -12134,7 +12206,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5068",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "LMS, HSS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Cloudian-FJA (FIPS Java API)",
     "productCategory": "Cryptographic Module",
@@ -12142,7 +12214,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5068.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5067",
@@ -12236,7 +12310,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5062",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "CipherLinq",
     "productCategory": "Cryptographic Module",
@@ -12244,7 +12318,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5062.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5061",
@@ -12372,7 +12448,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5053",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "HSS, LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "HYCU Cryptographic Library Module",
     "productCategory": "Cryptographic Module",
@@ -12380,7 +12456,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5053.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5052",
@@ -12635,7 +12713,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5038.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5037",
@@ -12972,7 +13052,10 @@
     "productName": "Samsung NVMe TCG Opal SSC SEDs PM1743 Series",
     "productCategory": "Cryptographic Module",
     "vendor": "Samsung Electronics Co., Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5018.pdf"
+    ]
   },
   {
     "id": "5017",
@@ -13003,7 +13086,10 @@
     "productName": "CTERA Crypto Module™ (Java)",
     "productCategory": "Cryptographic Module",
     "vendor": "CTERA Networks Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5016.pdf"
+    ]
   },
   {
     "id": "5015",
@@ -13068,7 +13154,10 @@
     "productName": "Samsung BoringCrypto Android",
     "productCategory": "Cryptographic Module",
     "vendor": "Samsung Electronics Co., Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5012.pdf"
+    ]
   },
   {
     "id": "5011",
@@ -13082,7 +13171,10 @@
     "productName": "HP Poly Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Hewlett Packard, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5011.pdf"
+    ]
   },
   {
     "id": "5010",
@@ -13096,7 +13188,10 @@
     "productName": "Tetrate BoringCrypto",
     "productCategory": "Cryptographic Module",
     "vendor": "Tetrate.io, Inc",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5010.pdf"
+    ]
   },
   {
     "id": "5009",
@@ -13110,7 +13205,10 @@
     "productName": "MFP Cryptographic Module (B)",
     "productCategory": "Cryptographic Module",
     "vendor": "KYOCERA Document Solutions Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5009.pdf"
+    ]
   },
   {
     "id": "5008",
@@ -13158,7 +13256,10 @@
     "productName": "Skydio Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Skydio, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5006.pdf"
+    ]
   },
   {
     "id": "5005",
@@ -13172,7 +13273,10 @@
     "productName": "G&D Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Guntermann & Drunck GmbH",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5005.pdf"
+    ]
   },
   {
     "id": "5004",
@@ -13186,7 +13290,10 @@
     "productName": "Signify Trulifi Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Signify North America Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5004.pdf"
+    ]
   },
   {
     "id": "5003",
@@ -13200,7 +13307,10 @@
     "productName": "Sunhillo Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Sunhillo Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5003.pdf"
+    ]
   },
   {
     "id": "5002",
@@ -13214,7 +13324,10 @@
     "productName": "CorSSL",
     "productCategory": "Cryptographic Module",
     "vendor": "Corsec Security, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5002.pdf"
+    ]
   },
   {
     "id": "5001",
@@ -13231,7 +13344,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5001.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5000",
@@ -13262,7 +13377,10 @@
     "productName": "Cambium Networks PTP 820G, PTP 820C, PTP 820S, PTP 820C-HP, PTP 820N, PTP 820A, PTP 850C, PTP 850E",
     "productCategory": "Cryptographic Module",
     "vendor": "Cambium Networks Ltd.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4999.pdf"
+    ]
   },
   {
     "id": "4998",
@@ -13276,7 +13394,10 @@
     "productName": "ISC Cryptographic Development Kit (CDK)",
     "productCategory": "Cryptographic Module",
     "vendor": "Information Security Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4998.pdf"
+    ]
   },
   {
     "id": "4997",
@@ -13290,7 +13411,10 @@
     "productName": "Fujitsu Enterprise Postgres Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Fujitsu Limited",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4997.pdf"
+    ]
   },
   {
     "id": "4996",
@@ -13304,7 +13428,10 @@
     "productName": "QNu Labs Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "QuNu Labs Private Limited",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4996.pdf"
+    ]
   },
   {
     "id": "4995",
@@ -13318,7 +13445,10 @@
     "productName": "SonicWall NSa 4700, NSa 5700, NSa 6700, NSsp 10700, NSsp 11700, NSsp 13700",
     "productCategory": "Cryptographic Module",
     "vendor": "SonicWall, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4995.pdf"
+    ]
   },
   {
     "id": "4994",
@@ -13332,7 +13462,10 @@
     "productName": "Micron® MTC21-P4 Controller Sub Chip Security Subsystem",
     "productCategory": "Cryptographic Module",
     "vendor": "Micron Technology, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4994.pdf"
+    ]
   },
   {
     "id": "4993",
@@ -13363,7 +13496,10 @@
     "productName": "Atalla Cryptographic Subsystem (ACS)",
     "productCategory": "Cryptographic Module",
     "vendor": "Utimaco Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4992.pdf"
+    ]
   },
   {
     "id": "4991",
@@ -13394,7 +13530,10 @@
     "productName": "Splunk Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Splunk LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4990.pdf"
+    ]
   },
   {
     "id": "4989",
@@ -13408,7 +13547,10 @@
     "productName": "Commvault Crypto Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Commvault Systems, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4989.pdf"
+    ]
   },
   {
     "id": "4988",
@@ -13422,7 +13564,10 @@
     "productName": "Dynatrace Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Dynatrace LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4988.pdf"
+    ]
   },
   {
     "id": "4987",
@@ -13453,7 +13598,10 @@
     "productName": "VMware's BC-FJA (Bouncy Castle FIPS Java API)",
     "productCategory": "Cryptographic Module",
     "vendor": "Broadcom Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4986.pdf"
+    ]
   },
   {
     "id": "4985",
@@ -13484,7 +13632,10 @@
     "productName": "KIOXIA FIPS TC58NC1132GTC Crypto Sub-Chip",
     "productCategory": "Cryptographic Module",
     "vendor": "KIOXIA Corporation",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4984.pdf"
+    ]
   },
   {
     "id": "4983",
@@ -13498,7 +13649,10 @@
     "productName": "Samsung SATA TCG Opal SSC SEDs PM893 Series",
     "productCategory": "Cryptographic Module",
     "vendor": "Samsung Electronics Co., Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4983.pdf"
+    ]
   },
   {
     "id": "4982",
@@ -13580,7 +13734,10 @@
     "productName": "Motorola Solutions Advanced Crypto Engine (MACE) HSM – Security Level 3",
     "productCategory": "Cryptographic Module",
     "vendor": "Motorola Solutions, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4978.pdf"
+    ]
   },
   {
     "id": "4977",
@@ -13594,7 +13751,10 @@
     "productName": "Copeland TempTrak Java Crypto Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Copeland, LP",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4977.pdf"
+    ]
   },
   {
     "id": "4976",
@@ -13608,7 +13768,10 @@
     "productName": "Keeper Security Cryptographic Module v2",
     "productCategory": "Cryptographic Module",
     "vendor": "Keeper Security, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4976.pdf"
+    ]
   },
   {
     "id": "4975",
@@ -13622,7 +13785,10 @@
     "productName": "Certes Java Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Certes Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4975.pdf"
+    ]
   },
   {
     "id": "4974",
@@ -13636,7 +13802,10 @@
     "productName": "SE Cryptographic Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Schneider Electric IT Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4974.pdf"
+    ]
   },
   {
     "id": "4973",
@@ -13650,7 +13819,10 @@
     "productName": "VMware's BoringCrypto Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Broadcom Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4973.pdf"
+    ]
   },
   {
     "id": "4972",
@@ -13664,7 +13836,10 @@
     "productName": "AN/KRC-6 (ATCS-BBU)",
     "productCategory": "Cryptographic Module",
     "vendor": "Ultra Intelligence & Communications",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4972.pdf"
+    ]
   },
   {
     "id": "4971",
@@ -13695,7 +13870,10 @@
     "productName": "Honeywell Mobility Edge™ Boring Crypto",
     "productCategory": "Cryptographic Module",
     "vendor": "Honeywell International Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4970.pdf"
+    ]
   },
   {
     "id": "4969",
@@ -13709,7 +13887,10 @@
     "productName": "Gloo Boring Crypto",
     "productCategory": "Cryptographic Module",
     "vendor": "Solo.io",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4969.pdf"
+    ]
   },
   {
     "id": "4968",
@@ -13723,7 +13904,10 @@
     "productName": "SUSE Rancher Kubernetes Cryptographic Library",
     "productCategory": "Cryptographic Module",
     "vendor": "SUSE LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4968.pdf"
+    ]
   },
   {
     "id": "4967",
@@ -13737,7 +13921,10 @@
     "productName": "Dell BSAFE™ Crypto Module for C",
     "productCategory": "Cryptographic Module",
     "vendor": "Dell Australia Pty Limited, BSAFE Product Team",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4967.pdf"
+    ]
   },
   {
     "id": "4966",
@@ -13768,7 +13955,10 @@
     "productName": "Samsung TCG Opal SSC Cryptographic Sub-Chip",
     "productCategory": "Cryptographic Module",
     "vendor": "Samsung Electronics Co., Ltd.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4965.pdf"
+    ]
   },
   {
     "id": "4964",
@@ -13782,7 +13972,10 @@
     "productName": "Byos OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Byos Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4964.pdf"
+    ]
   },
   {
     "id": "4963",
@@ -13813,7 +14006,10 @@
     "productName": "Thales Luna G7 Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Thales",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4962.pdf"
+    ]
   },
   {
     "id": "4961",
@@ -13878,7 +14074,10 @@
     "productName": "Tellabs Optical LAN OLT Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Tellabs Enterprise, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4957.pdf"
+    ]
   },
   {
     "id": "4956",
@@ -13892,7 +14091,10 @@
     "productName": "Apple corecrypto Module v12 [Intel, Kernel, Software]",
     "productCategory": "Cryptographic Module",
     "vendor": "Apple, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4956.pdf"
+    ]
   },
   {
     "id": "4955",
@@ -13923,7 +14125,10 @@
     "productName": "Nuvoton Cryptographic Library 2.3",
     "productCategory": "Cryptographic Module",
     "vendor": "Nuvoton Technology Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4954.pdf"
+    ]
   },
   {
     "id": "4952",
@@ -13937,7 +14142,10 @@
     "productName": "PrismPlus Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Broadcom, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4952.pdf"
+    ]
   },
   {
     "id": "4951",
@@ -13951,7 +14159,10 @@
     "productName": "Apple corecrypto Module v12 [Intel, User, Software]",
     "productCategory": "Cryptographic Module",
     "vendor": "Apple, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4951.pdf"
+    ]
   },
   {
     "id": "4950",
@@ -13965,7 +14176,10 @@
     "productName": "Radiant Logic Cryptographic Module for Go",
     "productCategory": "Cryptographic Module",
     "vendor": "Radiant Logic",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4950.pdf"
+    ]
   },
   {
     "id": "4949",
@@ -13979,7 +14193,10 @@
     "productName": "CyberArk Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "CyberArk Software Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4949.pdf"
+    ]
   },
   {
     "id": "4948",
@@ -14007,7 +14224,10 @@
     "productName": "HP Inc OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "HP Inc",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4947.pdf"
+    ]
   },
   {
     "id": "4946",
@@ -14021,7 +14241,10 @@
     "productName": "KIOXIA FIPS TC58NC1030GTB Crypto Sub-Chip",
     "productCategory": "Cryptographic Module",
     "vendor": "KIOXIA Corporation",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4946.pdf"
+    ]
   },
   {
     "id": "4943",
@@ -14035,7 +14258,10 @@
     "productName": "BC-FJA (Bouncy Castle FIPS Java API)",
     "productCategory": "Cryptographic Module",
     "vendor": "Legion of the Bouncy Castle Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4943.pdf"
+    ]
   },
   {
     "id": "4942",
@@ -14080,7 +14306,10 @@
     "productName": "Aruba Crypto Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Hewlett Packard Enterprise",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4940.pdf"
+    ]
   },
   {
     "id": "4939",
@@ -14094,7 +14323,10 @@
     "productName": "Barracuda OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Barracuda Networks Inc",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4939.pdf"
+    ]
   },
   {
     "id": "4938",
@@ -14142,7 +14374,10 @@
     "productName": "SC4000 Series Mesh Radio",
     "productCategory": "Cryptographic Module",
     "vendor": "Silvus Technologies, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4936.pdf"
+    ]
   },
   {
     "id": "4935",
@@ -14156,7 +14391,10 @@
     "productName": "Panorama Virtual Appliance 11.0",
     "productCategory": "Cryptographic Module",
     "vendor": "Palo Alto Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4935.pdf"
+    ]
   },
   {
     "id": "4934",
@@ -14170,7 +14408,10 @@
     "productName": "Samsung SAS TCG Enterprise SSC SEDs PM1653/PM1655 Series",
     "productCategory": "Cryptographic Module",
     "vendor": "Samsung Electronics Co., Ltd.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4934.pdf"
+    ]
   },
   {
     "id": "4933",
@@ -14184,7 +14425,10 @@
     "productName": "X5 Postal Security Device (PSD)",
     "productCategory": "Cryptographic Module",
     "vendor": "Pitney Bowes, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4933.pdf"
+    ]
   },
   {
     "id": "4931",
@@ -14198,7 +14442,10 @@
     "productName": "FortiClient Crypto Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Fortinet Technologies Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4931.pdf"
+    ]
   },
   {
     "id": "4930",
@@ -14212,7 +14459,10 @@
     "productName": "Seagate Secure® Self-Encrypting Drive",
     "productCategory": "Cryptographic Module",
     "vendor": "Seagate Technology, LLC",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4930.pdf"
+    ]
   },
   {
     "id": "4929",
@@ -14226,7 +14476,10 @@
     "productName": "Aruba OpenSSL Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Hewlett Packard Enterprise",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4929.pdf"
+    ]
   },
   {
     "id": "4928",
@@ -14240,7 +14493,10 @@
     "productName": "HPE OpenSSL Cryptographic Module on Ubuntu Linux",
     "productCategory": "Cryptographic Module",
     "vendor": "HPE Aruba Networking",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4928.pdf"
+    ]
   },
   {
     "id": "4927",
@@ -14254,7 +14510,10 @@
     "productName": "Panorama 11.0 M-200, M-300, M-600 and M-700",
     "productCategory": "Cryptographic Module",
     "vendor": "Palo Alto Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4927.pdf"
+    ]
   },
   {
     "id": "4926",
@@ -14353,7 +14612,10 @@
     "productName": "Bootloader Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Hewlett Packard Enterprise",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4921.pdf"
+    ]
   },
   {
     "id": "4920",
@@ -14367,7 +14629,10 @@
     "productName": "Waveserver 5 Control Processor Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Ciena Corporation",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4920.pdf"
+    ]
   },
   {
     "id": "4919",
@@ -14412,7 +14677,10 @@
     "productName": "WildFire 11.0 WF-500 and WF-500-B",
     "productCategory": "Cryptographic Module",
     "vendor": "Palo Alto Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4917.pdf"
+    ]
   },
   {
     "id": "4916",
@@ -14426,7 +14694,10 @@
     "productName": "AP-514, AP-515, AP-534, AP-535, AP-584, AP-585, AP-587, AP-635 and AP-655 Access Points",
     "productCategory": "Cryptographic Module",
     "vendor": "Aruba, a Hewlett Packard Enterprise company",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4916.pdf"
+    ]
   },
   {
     "id": "4915",
@@ -14474,7 +14745,10 @@
     "productName": "WaveLogic 5 Extreme Encryption Modem",
     "productCategory": "Cryptographic Module",
     "vendor": "Ciena Corporation",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4913.pdf"
+    ]
   },
   {
     "id": "4912",
@@ -14488,7 +14762,10 @@
     "productName": "CryptoComply for Java 140-3",
     "productCategory": "Cryptographic Module",
     "vendor": "SafeLogic Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4912.pdf"
+    ]
   },
   {
     "id": "4911",
@@ -14516,7 +14793,10 @@
     "productName": "Digital.ai Key & Data Protection Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Digital.ai Software, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4910.pdf"
+    ]
   },
   {
     "id": "4909",
@@ -14530,7 +14810,10 @@
     "productName": "Quadient Postal Security Device",
     "productCategory": "Cryptographic Module",
     "vendor": "Quadient Technologies",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4909.pdf"
+    ]
   },
   {
     "id": "4908",
@@ -14544,7 +14827,10 @@
     "productName": "Mediant Virtual Edition SBC and Cloud Edition SBC",
     "productCategory": "Cryptographic Module",
     "vendor": "AudioCodes Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4908.pdf"
+    ]
   },
   {
     "id": "4907",
@@ -14558,7 +14844,10 @@
     "productName": "Mediant 800 Session Border Controller/Media Gateway, Mediant 2600/4000B/9080B Session Border Controllers, and MediaPack 1288 Media Gateway",
     "productCategory": "Cryptographic Module",
     "vendor": "AudioCodes Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4907.pdf"
+    ]
   },
   {
     "id": "4906",
@@ -14589,7 +14878,10 @@
     "productName": "Certes Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Certes Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4905.pdf"
+    ]
   },
   {
     "id": "4904",
@@ -14603,7 +14895,10 @@
     "productName": "Alteryx OpenSSL FIPS Provider (fips.dll)",
     "productCategory": "Cryptographic Module",
     "vendor": "Alteryx, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4904.pdf"
+    ]
   },
   {
     "id": "4903",
@@ -14617,7 +14912,10 @@
     "productName": "Key Variable Loader (KVL) 5000 PIKE",
     "productCategory": "Cryptographic Module",
     "vendor": "Motorola Solutions, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4903.pdf"
+    ]
   },
   {
     "id": "4902",
@@ -14679,7 +14977,10 @@
     "productName": "PE9110 E1.S and PE9010 M.2 22110D NVMe TCG Opal SSC SEDs",
     "productCategory": "Cryptographic Module",
     "vendor": "SK hynix Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4899.pdf"
+    ]
   },
   {
     "id": "4898",
@@ -14707,7 +15008,10 @@
     "productName": "CorSSL",
     "productCategory": "Cryptographic Module",
     "vendor": "Corsec Security, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4897.pdf"
+    ]
   },
   {
     "id": "4896",
@@ -14721,7 +15025,10 @@
     "productName": "Qualcomm® Trusted Execution Environment (TEE) Software Cryptographic Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Qualcomm Technologies, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4896.pdf"
+    ]
   },
   {
     "id": "4895",
@@ -14763,7 +15070,10 @@
     "productName": "Kiteworks FIPS Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Kiteworks (Accellion Inc.)",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4893.pdf"
+    ]
   },
   {
     "id": "4892",
@@ -14907,7 +15217,10 @@
     "productName": "AWS Key Management Service HSM",
     "productCategory": "Cryptographic Module",
     "vendor": "Amazon Web Services, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4884.pdf"
+    ]
   },
   {
     "id": "4883",
@@ -14921,7 +15234,10 @@
     "productName": "F5OS-A Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "F5, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4883.pdf"
+    ]
   },
   {
     "id": "4882",
@@ -14969,7 +15285,10 @@
     "productName": "Pluton Security Processor ROM",
     "productCategory": "Cryptographic Module",
     "vendor": "Advanced Micro Devices (AMD), Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4880.pdf"
+    ]
   },
   {
     "id": "4879",
@@ -14983,7 +15302,10 @@
     "productName": "Samsung NVMe TCG Opal SSC SEDs PM1743/PM1745 Series",
     "productCategory": "Cryptographic Module",
     "vendor": "Samsung Electronics Co., Ltd.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4879.pdf"
+    ]
   },
   {
     "id": "4878",
@@ -15011,7 +15333,10 @@
     "productName": "HPE OpenSSL Cryptographic Module on Red Hat Enterprise Linux",
     "productCategory": "Cryptographic Module",
     "vendor": "HPE Aruba Networking",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4877.pdf"
+    ]
   },
   {
     "id": "4876",
@@ -15025,7 +15350,10 @@
     "productName": "Hewlett Packard Enterprise OpenSSL 3 Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Hewlett Packard Enterprise",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4876.pdf"
+    ]
   },
   {
     "id": "4875",
@@ -15039,7 +15367,10 @@
     "productName": "Geotab Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Geotab Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4875.pdf"
+    ]
   },
   {
     "id": "4874",
@@ -15081,7 +15412,10 @@
     "productName": "Veeam Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Veeam Software Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4872.pdf"
+    ]
   },
   {
     "id": "4871",
@@ -15095,7 +15429,10 @@
     "productName": "Motorola Solutions Cryptographic Software Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Motorola Solutions, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4871.pdf"
+    ]
   },
   {
     "id": "4870",
@@ -15109,7 +15446,10 @@
     "productName": "Astro PDEG Motorola Advanced Crypto Engine (MACE)",
     "productCategory": "Cryptographic Module",
     "vendor": "Motorola Solutions, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4870.pdf"
+    ]
   },
   {
     "id": "4869",
@@ -15137,7 +15477,10 @@
     "productName": "Tanium OpenSSL 3 FIPS Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Tanium",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4868.pdf"
+    ]
   },
   {
     "id": "4867",
@@ -15151,7 +15494,10 @@
     "productName": "Forcepoint Next Generation Firewall",
     "productCategory": "Cryptographic Module",
     "vendor": "Forcepoint",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4867.pdf"
+    ]
   },
   {
     "id": "4866",
@@ -15165,7 +15511,10 @@
     "productName": "Solidigm® P5520 SSD (ADP-RR)",
     "productCategory": "Cryptographic Module",
     "vendor": "SK hynix NAND Product Solutions Corp (d/b/a Solidigm)",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4866.pdf"
+    ]
   },
   {
     "id": "4864",
@@ -15179,7 +15528,10 @@
     "productName": "Samsung NVMe TCG Opal SSC SEDs PM9A3 Series",
     "productCategory": "Cryptographic Module",
     "vendor": "Samsung Electronics Co., Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4864.pdf"
+    ]
   },
   {
     "id": "4863",
@@ -15207,7 +15559,10 @@
     "productName": "Progress LoadMaster FIPS Object Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Progress Software Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4862.pdf"
+    ]
   },
   {
     "id": "4861",
@@ -15221,7 +15576,10 @@
     "productName": "VMware’s OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Broadcom, Inc",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4861.pdf"
+    ]
   },
   {
     "id": "4860",
@@ -15235,7 +15593,10 @@
     "productName": "Nokia 1830 Photonic Service Switch (PSS) & Nokia 1830 Photonic Service Interconnect- Line (PSI-L)",
     "productCategory": "Cryptographic Module",
     "vendor": "Nokia of America Corporation (Nokia)",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4860.pdf"
+    ]
   },
   {
     "id": "4859",
@@ -15249,7 +15610,10 @@
     "productName": "Hewlett Packard Enterprise FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Hewlett Packard Enterprise",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4859.pdf"
+    ]
   },
   {
     "id": "4858",
@@ -15263,7 +15627,10 @@
     "productName": "Wind River FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Wind River Systems, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4858.pdf"
+    ]
   },
   {
     "id": "4857",
@@ -15277,7 +15644,10 @@
     "productName": "Red Hat Enterprise Linux 9 - OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Red Hat(R), Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4857.pdf"
+    ]
   },
   {
     "id": "4856",
@@ -15291,7 +15661,10 @@
     "productName": "Chainguard OpenSSL 3.0 FIPS Provider Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Chainguard, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4856.pdf"
+    ]
   },
   {
     "id": "4855",
@@ -15305,7 +15678,10 @@
     "productName": "Canonical Ltd. Ubuntu 22.04 GnuTLS Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Canonical Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4855.pdf"
+    ]
   },
   {
     "id": "4854",
@@ -15319,7 +15695,10 @@
     "productName": "Apple corecrypto Module v12.0 [Apple silicon, Kernel, Software, SL1]",
     "productCategory": "Cryptographic Module",
     "vendor": "Apple Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4854.pdf"
+    ]
   },
   {
     "id": "4853",
@@ -15333,7 +15712,10 @@
     "productName": "RIGFORT Pro Blockchain HSM",
     "productCategory": "Cryptographic Module",
     "vendor": "RigSec Technology Limited",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4853.pdf"
+    ]
   },
   {
     "id": "4852",
@@ -15364,7 +15746,10 @@
     "productName": "Solidigm® P5316 SSD (ADP-R)",
     "productCategory": "Cryptographic Module",
     "vendor": "SK hynix NAND Product Solutions Corp (d/b/a Solidigm)",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4851.pdf"
+    ]
   },
   {
     "id": "4850",
@@ -15378,7 +15763,10 @@
     "productName": "Quantum Xchange Phio TX",
     "productCategory": "Cryptographic Module",
     "vendor": "Quantum Xchange",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4850.pdf"
+    ]
   },
   {
     "id": "4849",
@@ -15392,7 +15780,10 @@
     "productName": "Brocade Fabric OS FIPS Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Brocade Communications Systems LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4849.pdf"
+    ]
   },
   {
     "id": "4848",
@@ -15406,7 +15797,10 @@
     "productName": "Dell FIPS Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Dell Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4848.pdf"
+    ]
   },
   {
     "id": "4847",
@@ -15420,7 +15814,10 @@
     "productName": "Keysight BC-FJA (Bouncy Castle FIPS Java API) for Network Visibility",
     "productCategory": "Cryptographic Module",
     "vendor": "Keysight Technologies",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4847.pdf"
+    ]
   },
   {
     "id": "4846",
@@ -15434,7 +15831,10 @@
     "productName": "Red Hat Enterprise Linux 9 gnutls",
     "productCategory": "Cryptographic Module",
     "vendor": "Red Hat, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4846.pdf"
+    ]
   },
   {
     "id": "4845",
@@ -15482,7 +15882,10 @@
     "productName": "Ruckus FastIron ICX™ 7150/7250 Series Switch/Router",
     "productCategory": "Cryptographic Module",
     "vendor": "Ruckus Wireless LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4843.pdf"
+    ]
   },
   {
     "id": "4842",
@@ -15496,7 +15899,10 @@
     "productName": "Octopus Authentication Server Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Secret Double Octopus",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4842.pdf"
+    ]
   },
   {
     "id": "4841",
@@ -15510,7 +15916,10 @@
     "productName": "PAN-OS 10.1 Next-Generation Hardware Firewalls",
     "productCategory": "Cryptographic Module",
     "vendor": "Palo Alto Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4841.pdf"
+    ]
   },
   {
     "id": "4840",
@@ -15524,7 +15933,10 @@
     "productName": "Extron Secure Shield",
     "productCategory": "Cryptographic Module",
     "vendor": "Extron Electronics",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4840.pdf"
+    ]
   },
   {
     "id": "4839",
@@ -15538,7 +15950,10 @@
     "productName": "i.MX8 DXL V2X",
     "productCategory": "Cryptographic Module",
     "vendor": "NXP Semiconductors, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4839.pdf"
+    ]
   },
   {
     "id": "4838",
@@ -15552,7 +15967,10 @@
     "productName": "NetApp Cryptographic Security Module",
     "productCategory": "Cryptographic Module",
     "vendor": "NetApp, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4838.pdf"
+    ]
   },
   {
     "id": "4837",
@@ -15566,7 +15984,10 @@
     "productName": "i.MX8 DXL SECO HSM",
     "productCategory": "Cryptographic Module",
     "vendor": "NXP Semiconductors, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4837.pdf"
+    ]
   },
   {
     "id": "4836",
@@ -15580,7 +16001,10 @@
     "productName": "Ruckus FastIron ICX ™ 7550/7650/7850 Series Switch/Router",
     "productCategory": "Cryptographic Module",
     "vendor": "Ruckus Wireless LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4836.pdf"
+    ]
   },
   {
     "id": "4835",
@@ -15611,7 +16035,10 @@
     "productName": "Astro Subscriber Motorola Advanced Crypto Engine (MACE) - Security Level 2",
     "productCategory": "Cryptographic Module",
     "vendor": "Motorola Solutions, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4834.pdf"
+    ]
   },
   {
     "id": "4833",
@@ -15625,7 +16052,10 @@
     "productName": "Astro Subscriber Motorola Advanced Crypto Engine (MACE) - Security Level 3",
     "productCategory": "Cryptographic Module",
     "vendor": "Motorola Solutions, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4833.pdf"
+    ]
   },
   {
     "id": "4832",
@@ -15639,7 +16069,10 @@
     "productName": "Ruckus FastIron ICX ™ 7450 Series Switch/Router",
     "productCategory": "Cryptographic Module",
     "vendor": "Ruckus Wireless LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4832.pdf"
+    ]
   },
   {
     "id": "4831",
@@ -15653,7 +16086,10 @@
     "productName": "iLO 5 Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Hewlett Packard Enterprise Development LP",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4831.pdf"
+    ]
   },
   {
     "id": "4830",
@@ -15681,7 +16117,10 @@
     "productName": "PAN-OS 11.0 running on PA-400 Series, PA-800 Series, PA-1400 Series, PA-3200 Series, PA-3400 Series, PA-5200 Series, PA-5400 Series, PA-5450, and PA-7000 Series NGFWs",
     "productCategory": "Cryptographic Module",
     "vendor": "Palo Alto Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4829.pdf"
+    ]
   },
   {
     "id": "4828",
@@ -15709,7 +16148,10 @@
     "productName": "FIPS Applet on RookySE",
     "productCategory": "Cryptographic Module",
     "vendor": "IDEMIA",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4827.pdf"
+    ]
   },
   {
     "id": "4826",
@@ -15723,7 +16165,10 @@
     "productName": "KIOXIA FIPS TC58NC1137GTC/TC58NC1138GTC Crypto Sub-Chip",
     "productCategory": "Cryptographic Module",
     "vendor": "KIOXIA Corporation",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4826.pdf"
+    ]
   },
   {
     "id": "4825",
@@ -15737,7 +16182,10 @@
     "productName": "Cryptographic Primitives Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4825.pdf"
+    ]
   },
   {
     "id": "4824",
@@ -15751,7 +16199,10 @@
     "productName": "AKEYLESS FIPS Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "AKEYLESS Security Ltd",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4824.pdf"
+    ]
   },
   {
     "id": "4823",
@@ -15779,7 +16230,10 @@
     "productName": "SUSE Linux Enterprise Libica Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "SUSE, LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4822.pdf"
+    ]
   },
   {
     "id": "4821",
@@ -15793,7 +16247,10 @@
     "productName": "SiPass OpenSSL 3 FIPS Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Siemens Government Technologies",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4821.pdf"
+    ]
   },
   {
     "id": "4820",
@@ -15852,7 +16309,10 @@
     "productName": "Apple corecrypto Module v12.0 [Apple silicon, User, Software, SL1]",
     "productCategory": "Cryptographic Module",
     "vendor": "Apple Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4817.pdf"
+    ]
   },
   {
     "id": "4816",
@@ -15900,7 +16360,10 @@
     "productName": "HP Endpoint Security Controller Cryptographic Library",
     "productCategory": "Cryptographic Module",
     "vendor": "HP Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4814.pdf"
+    ]
   },
   {
     "id": "4813",
@@ -15914,7 +16377,10 @@
     "productName": "Toshiba Secure TCG Opal SSC Self-Encrypting Drive Series MG09SCP18TA and MG09SCP16TA",
     "productCategory": "Cryptographic Module",
     "vendor": "Toshiba Electronic Devices & Storage Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4813.pdf"
+    ]
   },
   {
     "id": "4812",
@@ -15928,7 +16394,10 @@
     "productName": "Tablo Medical Informatics System",
     "productCategory": "Cryptographic Module",
     "vendor": "Outset Medical, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4812.pdf"
+    ]
   },
   {
     "id": "4811",
@@ -15942,7 +16411,10 @@
     "productName": "OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "The OpenSSL Project",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4811.pdf"
+    ]
   },
   {
     "id": "4810",
@@ -15973,7 +16445,10 @@
     "productName": "Qualcomm® Trusted Execution Environment (TEE) Software Cryptographic Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Qualcomm Technologies, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4809.pdf"
+    ]
   },
   {
     "id": "4808",
@@ -16001,7 +16476,10 @@
     "productName": "WildFire 10.1 WF-500",
     "productCategory": "Cryptographic Module",
     "vendor": "Palo Alto Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4807.pdf"
+    ]
   },
   {
     "id": "4806",
@@ -16015,7 +16493,10 @@
     "productName": "Panorama 10.1 on Hardware Appliances",
     "productCategory": "Cryptographic Module",
     "vendor": "Palo Alto Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4806.pdf"
+    ]
   },
   {
     "id": "4805",
@@ -16029,7 +16510,10 @@
     "productName": "Panorama Virtual Appliance 10.1",
     "productCategory": "Cryptographic Module",
     "vendor": "Palo Alto Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4805.pdf"
+    ]
   },
   {
     "id": "4804",
@@ -16043,7 +16527,10 @@
     "productName": "Red Hat Enterprise Linux 8 Kernel Cryptographic API",
     "productCategory": "Cryptographic Module",
     "vendor": "Red Hat(R), Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4804.pdf"
+    ]
   },
   {
     "id": "4802",
@@ -16085,7 +16572,10 @@
     "productName": "PQCryptoLib",
     "productCategory": "Cryptographic Module",
     "vendor": "PQShield LTD",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4800.pdf"
+    ]
   },
   {
     "id": "4799",
@@ -16150,7 +16640,10 @@
     "productName": "Red Hat Enterprise Linux 9 Kernel Cryptographic API",
     "productCategory": "Cryptographic Module",
     "vendor": "Red Hat(R), Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4796.pdf"
+    ]
   },
   {
     "id": "4795",
@@ -16178,7 +16671,10 @@
     "productName": "Canonical Ltd. Ubuntu 22.04 OpenSSL Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Canonical Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4794.pdf"
+    ]
   },
   {
     "id": "4793",
@@ -16192,7 +16688,10 @@
     "productName": "Canonical Ltd. Ubuntu 22.04 Libgcrypt Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Canonical Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4793.pdf"
+    ]
   },
   {
     "id": "4792",
@@ -16248,7 +16747,10 @@
     "productName": "IBM DataPower FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "IBM",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4789.pdf"
+    ]
   },
   {
     "id": "4788",
@@ -16262,7 +16764,10 @@
     "productName": "Masimo Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Masimo Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4788.pdf"
+    ]
   },
   {
     "id": "4787",
@@ -16293,7 +16798,10 @@
     "productName": "KIOXIA TCG OPAL SSC Crypto Sub-Chip TC58NC1132GTC",
     "productCategory": "Cryptographic Module",
     "vendor": "KIOXIA Corporation",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4786.pdf"
+    ]
   },
   {
     "id": "4785",
@@ -16307,7 +16815,10 @@
     "productName": "Canon MFP Security Chip",
     "productCategory": "Cryptographic Module",
     "vendor": "Canon Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4785.pdf"
+    ]
   },
   {
     "id": "4784",
@@ -16349,7 +16860,10 @@
     "productName": "DocuSign QSCD Appliance",
     "productCategory": "Cryptographic Module",
     "vendor": "DocuSign, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4782.pdf"
+    ]
   },
   {
     "id": "4780",
@@ -16464,7 +16978,10 @@
     "productName": "IDCore 3230 / 230 Platform",
     "productCategory": "Cryptographic Module",
     "vendor": "Thales",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4772.pdf"
+    ]
   },
   {
     "id": "4771",
@@ -16478,7 +16995,10 @@
     "productName": "Toshiba Secure TCG Opal SSC Self-Encrypting Drive Series MG09ACP18TA and MG09ACP16TA",
     "productCategory": "Cryptographic Module",
     "vendor": "Toshiba Electronic Devices & Storage Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4771.pdf"
+    ]
   },
   {
     "id": "4770",
@@ -16520,7 +17040,10 @@
     "productName": "Kernel Mode Cryptographic Primitives Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4766.pdf"
+    ]
   },
   {
     "id": "4765",
@@ -16548,7 +17071,10 @@
     "productName": "Peplink FIPS Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Peplink Pepwave Limited",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4763.pdf"
+    ]
   },
   {
     "id": "4762",
@@ -16618,7 +17144,10 @@
     "productName": "CryptoManager Root of Trust RT-660",
     "productCategory": "Cryptographic Module",
     "vendor": "Rambus Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4758.pdf"
+    ]
   },
   {
     "id": "4757",
@@ -16758,7 +17287,10 @@
     "productName": "Cisco FIPS Object Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Cisco Systems, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4747.pdf"
+    ]
   },
   {
     "id": "4746",
@@ -16786,7 +17318,10 @@
     "productName": "nShield 5s Hardware Security Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Entrust",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4745.pdf"
+    ]
   },
   {
     "id": "4744",
@@ -16817,7 +17352,10 @@
     "productName": "BC-FJA (Bouncy Castle FIPS Java API)",
     "productCategory": "Cryptographic Module",
     "vendor": "Legion of the Bouncy Castle Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4743.pdf"
+    ]
   },
   {
     "id": "4742",
@@ -16876,7 +17414,10 @@
     "productName": "Oracle Linux 8 Unbreakable Enterprise Kernel (UEK7) Cryptographic Module and Oracle Linux 9 Unbreakable Enterprise Kernel (UEK7) Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Oracle Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4739.pdf"
+    ]
   },
   {
     "id": "4738",
@@ -16904,7 +17445,10 @@
     "productName": "Trusted Platform Module ST33KTPM2XSPI / ST33KTPM2X / ST33KTPM2A / ST33KTPM2I",
     "productCategory": "Cryptographic Module",
     "vendor": "STMicroelectronics",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4737.pdf"
+    ]
   },
   {
     "id": "4736",
@@ -16918,7 +17462,10 @@
     "productName": "cPacket Crypto Module",
     "productCategory": "Cryptographic Module",
     "vendor": "cPacket Networks Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4736.pdf"
+    ]
   },
   {
     "id": "4735",
@@ -16932,7 +17479,10 @@
     "productName": "BoringCrypto",
     "productCategory": "Cryptographic Module",
     "vendor": "Google, LLC.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4735.pdf"
+    ]
   },
   {
     "id": "4734",
@@ -16991,7 +17541,10 @@
     "productName": "Motorola Solutions Cryptographic Firmware Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Motorola Solutions, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4730.pdf"
+    ]
   },
   {
     "id": "4728",
@@ -17019,7 +17572,10 @@
     "productName": "SUSE Linux Enterprise Kernel Crypto API Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "SUSE, LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4727.pdf"
+    ]
   },
   {
     "id": "4726",
@@ -17112,7 +17668,10 @@
     "productName": "SecureSyncGuard",
     "productCategory": "Cryptographic Module",
     "vendor": "Safran Trusted 4D Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4721.pdf"
+    ]
   },
   {
     "id": "4719",
@@ -17185,7 +17744,10 @@
     "productName": "Utility Associates Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Utility Associates, Inc",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4713.pdf"
+    ]
   },
   {
     "id": "4710",
@@ -17213,7 +17775,10 @@
     "productName": "Samsung NVMe TCG Opal SSC SEDs PM1733a/PM1735a Series",
     "productCategory": "Cryptographic Module",
     "vendor": "Samsung Electronics Co., Ltd.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4709.pdf"
+    ]
   },
   {
     "id": "4708",
@@ -17227,7 +17792,10 @@
     "productName": "SQLCipher Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Zetetic, LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4708.pdf"
+    ]
   },
   {
     "id": "4707",
@@ -17241,7 +17809,10 @@
     "productName": "SQLCipher Cryptographic Module (Mobile)",
     "productCategory": "Cryptographic Module",
     "vendor": "Zetetic, LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4707.pdf"
+    ]
   },
   {
     "id": "4706",
@@ -17255,7 +17826,10 @@
     "productName": "OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Think Freely Consulting Incorporated",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4706.pdf"
+    ]
   },
   {
     "id": "4705",
@@ -17269,7 +17843,10 @@
     "productName": "PAN-OS 10.1 VM-Series",
     "productCategory": "Cryptographic Module",
     "vendor": "Palo Alto Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4705.pdf"
+    ]
   },
   {
     "id": "4704",
@@ -17283,7 +17860,10 @@
     "productName": "Palo Alto Networks SD-WAN Instant-On Network (ION) Devices ION 1200 and ION 9000",
     "productCategory": "Cryptographic Module",
     "vendor": "Palo Alto Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4704.pdf"
+    ]
   },
   {
     "id": "4703",
@@ -17297,7 +17877,10 @@
     "productName": "Marvell LS2 HSM Family",
     "productCategory": "Cryptographic Module",
     "vendor": "Marvell Semiconductor, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4703.pdf"
+    ]
   },
   {
     "id": "4702",
@@ -17311,7 +17894,10 @@
     "productName": "Trusted Platform Module ST33KTPM2XSPI / ST33KTPM2XI2C",
     "productCategory": "Cryptographic Module",
     "vendor": "STMicroelectronics",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4702.pdf"
+    ]
   },
   {
     "id": "4701",
@@ -17325,7 +17911,10 @@
     "productName": "Micron 7400 SSD Controller Sub Chip Security Subsystem",
     "productCategory": "Cryptographic Module",
     "vendor": "Micron Technology, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4701.pdf"
+    ]
   },
   {
     "id": "4700",
@@ -17339,7 +17928,10 @@
     "productName": "NITROXIII CNN35XX-NFBE HSM Family",
     "productCategory": "Cryptographic Module",
     "vendor": "Marvell Semiconductor, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4700.pdf"
+    ]
   },
   {
     "id": "4699",
@@ -17370,7 +17962,10 @@
     "productName": "Samsung NVMe TCG Opal SSC SEDs BM1733a Series",
     "productCategory": "Cryptographic Module",
     "vendor": "Samsung Electronics Co., Ltd.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4698.pdf"
+    ]
   },
   {
     "id": "4695",
@@ -17384,7 +17979,10 @@
     "productName": "Thunder",
     "productCategory": "Cryptographic Module",
     "vendor": "A10 Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4695.pdf"
+    ]
   },
   {
     "id": "4694",
@@ -17398,7 +17996,10 @@
     "productName": "VMware's BoringCrypto Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Broadcom Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4694.pdf"
+    ]
   },
   {
     "id": "4691",
@@ -17412,7 +18013,10 @@
     "productName": "SUSE Rancher Kubernetes Cryptographic Library",
     "productCategory": "Cryptographic Module",
     "vendor": "SUSE LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4691.pdf"
+    ]
   },
   {
     "id": "4690",
@@ -17443,7 +18047,10 @@
     "productName": "Pensando TLS Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Pensando Systems, Inc",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4689.pdf"
+    ]
   },
   {
     "id": "4688",
@@ -17457,7 +18064,10 @@
     "productName": "BitLocker Dump Filter",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4688.pdf"
+    ]
   },
   {
     "id": "4687",
@@ -17471,7 +18081,10 @@
     "productName": "Cryptographic Primitives Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4687.pdf"
+    ]
   },
   {
     "id": "4686",
@@ -17485,7 +18098,10 @@
     "productName": "Virtual TPM",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4686.pdf"
+    ]
   },
   {
     "id": "4685",
@@ -17499,7 +18115,10 @@
     "productName": "Honeywell Mobility EdgeTM BoringCrypto",
     "productCategory": "Cryptographic Module",
     "vendor": "Honeywell International, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4685.pdf"
+    ]
   },
   {
     "id": "4684",
@@ -17513,7 +18132,10 @@
     "productName": "Thales Luna K7 Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Thales",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4684.pdf"
+    ]
   },
   {
     "id": "4683",
@@ -17544,7 +18166,10 @@
     "productName": "Samsung NVMe TCG Opal SSC SEDs BM1733a Series",
     "productCategory": "Cryptographic Module",
     "vendor": "Samsung Electronics Co., Ltd.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4681.pdf"
+    ]
   },
   {
     "id": "4680",
@@ -17558,7 +18183,10 @@
     "productName": "Hypersecu HYP2003 MFA Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Hypersecu Information Systems Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4680.pdf"
+    ]
   },
   {
     "id": "4679",
@@ -17572,7 +18200,10 @@
     "productName": "JCOP 4.5 on P71D600",
     "productCategory": "Cryptographic Module",
     "vendor": "NXP Semiconductors, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4679.pdf"
+    ]
   },
   {
     "id": "4678",
@@ -17586,7 +18217,10 @@
     "productName": "CryptoComply for .NET",
     "productCategory": "Cryptographic Module",
     "vendor": "SafeLogic Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4678.pdf"
+    ]
   },
   {
     "id": "4677",
@@ -17600,7 +18234,10 @@
     "productName": "DataKrypto Fully Homomorphic Encryption Module",
     "productCategory": "Cryptographic Module",
     "vendor": "DataKrypto US, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4677.pdf"
+    ]
   },
   {
     "id": "4676",
@@ -17631,7 +18268,10 @@
     "productName": "ExtraHop Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "ExtraHop Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4675.pdf"
+    ]
   },
   {
     "id": "4674",
@@ -17645,7 +18285,10 @@
     "productName": "Lightware Crypto Core",
     "productCategory": "Cryptographic Module",
     "vendor": "Lightware Visual Engineering Plc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4674.pdf"
+    ]
   },
   {
     "id": "4673",
@@ -17659,7 +18302,10 @@
     "productName": "SR-OS Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Nokia Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4673.pdf"
+    ]
   },
   {
     "id": "4672",
@@ -17673,7 +18319,10 @@
     "productName": "7705 SAR-OS SAR-18/8/X/Ax/Wx/W/H/Hc Control Plane Cryptographic Module (SARCM)",
     "productCategory": "Cryptographic Module",
     "vendor": "Nokia Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4672.pdf"
+    ]
   },
   {
     "id": "4671",
@@ -17687,7 +18336,10 @@
     "productName": "7705 SAR-OS SAR-A/M Cryptographic Module (SARCM)",
     "productCategory": "Cryptographic Module",
     "vendor": "Nokia Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4671.pdf"
+    ]
   },
   {
     "id": "4670",
@@ -17701,7 +18353,10 @@
     "productName": "Kernel Mode Cryptographic Primitives Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4670.pdf"
+    ]
   },
   {
     "id": "4669",
@@ -17715,7 +18370,10 @@
     "productName": "RapidIdentity FIPS Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Identity Automation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4669.pdf"
+    ]
   },
   {
     "id": "4668",
@@ -17729,7 +18387,10 @@
     "productName": "Prisma SD-WAN Controller's Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Palo Alto Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4668.pdf"
+    ]
   },
   {
     "id": "4667",
@@ -17743,7 +18404,10 @@
     "productName": "Datastax BoringCrypto Module",
     "productCategory": "Cryptographic Module",
     "vendor": "DataStax, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4667.pdf"
+    ]
   },
   {
     "id": "4666",
@@ -17774,7 +18438,10 @@
     "productName": "Infinera Groove G30 DCI Platform",
     "productCategory": "Cryptographic Module",
     "vendor": "Infinera Corporation",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4665.pdf"
+    ]
   },
   {
     "id": "4661",
@@ -17788,7 +18455,10 @@
     "productName": "Juniper Networks EX4650, QFX5120 and QFX5210 Ethernet Switches",
     "productCategory": "Cryptographic Module",
     "vendor": "Juniper Networks, Inc",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4661.pdf"
+    ]
   },
   {
     "id": "4659",
@@ -17802,7 +18472,10 @@
     "productName": "ClioConnect Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Altus, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4659.pdf"
+    ]
   },
   {
     "id": "4657",
@@ -17816,7 +18489,10 @@
     "productName": "Quantum Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Quantum Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4657.pdf"
+    ]
   },
   {
     "id": "4656",
@@ -17830,7 +18506,10 @@
     "productName": "Cohesity FIPS Object Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Cohesity, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4656.pdf"
+    ]
   },
   {
     "id": "4654",
@@ -17844,7 +18523,10 @@
     "productName": "Ciena 3926 Platform",
     "productCategory": "Cryptographic Module",
     "vendor": "Ciena Corporation",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4654.pdf"
+    ]
   },
   {
     "id": "4653",
@@ -17858,7 +18540,10 @@
     "productName": "Juniper FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Juniper Networks Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4653.pdf"
+    ]
   },
   {
     "id": "4652",
@@ -17872,7 +18557,10 @@
     "productName": "Cr50 U2F Cryptographic Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Google, LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4652.pdf"
+    ]
   },
   {
     "id": "4650",
@@ -17886,7 +18574,10 @@
     "productName": "KIOXIA FIPS TC58NC1132GTC Crypto Sub-Chip",
     "productCategory": "Cryptographic Module",
     "vendor": "KIOXIA Corporation",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4650.pdf"
+    ]
   },
   {
     "id": "4649",
@@ -17900,7 +18591,10 @@
     "productName": "Maxar AEDS",
     "productCategory": "Cryptographic Module",
     "vendor": "Maxar Technologies",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4649.pdf"
+    ]
   },
   {
     "id": "4648",
@@ -17914,7 +18608,10 @@
     "productName": "Cryptographic Module for Intel® Platforms' Security Engine Chipset",
     "productCategory": "Cryptographic Module",
     "vendor": "Intel Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4648.pdf"
+    ]
   },
   {
     "id": "4647",
@@ -17959,7 +18656,10 @@
     "productName": "Red Hat Enterprise Linux 8 OpenSSL Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Red Hat®, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4642.pdf"
+    ]
   },
   {
     "id": "4641",
@@ -17973,7 +18673,10 @@
     "productName": "SonicWall Network Security Manager Appliance",
     "productCategory": "Cryptographic Module",
     "vendor": "SonicWall, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4641.pdf"
+    ]
   },
   {
     "id": "4640",
@@ -17987,7 +18690,10 @@
     "productName": "Secure Kernel Code Integrity",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4640.pdf"
+    ]
   },
   {
     "id": "4638",
@@ -18001,7 +18707,10 @@
     "productName": "Cisco ISR 1000 Series Routers without MACSEC",
     "productCategory": "Cryptographic Module",
     "vendor": "Cisco Systems, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4638.pdf"
+    ]
   },
   {
     "id": "4636",
@@ -18015,7 +18724,10 @@
     "productName": "SBC 5400 Session Border Controller",
     "productCategory": "Cryptographic Module",
     "vendor": "Ribbon Communications, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4636.pdf"
+    ]
   },
   {
     "id": "4635",
@@ -18029,7 +18741,10 @@
     "productName": "Avaya G450/G430 FIPS 140-2 Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Avaya, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4635.pdf"
+    ]
   },
   {
     "id": "4631",
@@ -18043,7 +18758,10 @@
     "productName": "AWS-LC Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Amazon Web Services Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4631.pdf"
+    ]
   },
   {
     "id": "4626",
@@ -18057,7 +18775,10 @@
     "productName": "AMD Ryzen PRO 6000 Series PSP Cryptographic CoProcessor",
     "productCategory": "Cryptographic Module",
     "vendor": "Advanced Micro Devices (AMD)",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4626.pdf"
+    ]
   },
   {
     "id": "4625",
@@ -18071,7 +18792,10 @@
     "productName": "Juniper Networks SRX345, SRX345-DUAL-AC, SRX380 and SRX1500 Services Gateway",
     "productCategory": "Cryptographic Module",
     "vendor": "Juniper Networks, Inc",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4625.pdf"
+    ]
   },
   {
     "id": "4621",
@@ -18085,7 +18809,10 @@
     "productName": "Axis Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Axis Communications AB",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4621.pdf"
+    ]
   },
   {
     "id": "4620",
@@ -18099,7 +18826,10 @@
     "productName": "Xage Cryptographic Module for OpenSSL",
     "productCategory": "Cryptographic Module",
     "vendor": "Xage Security, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4620.pdf"
+    ]
   },
   {
     "id": "4619",
@@ -18113,7 +18843,10 @@
     "productName": "OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "BAE Systems Information and Electronics Systems Integration, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4619.pdf"
+    ]
   },
   {
     "id": "4617",
@@ -18141,7 +18874,10 @@
     "productName": "FortiGate-5001E1 Blade with FortiGate-5144C Chassis",
     "productCategory": "Cryptographic Module",
     "vendor": "Fortinet, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4613.pdf"
+    ]
   },
   {
     "id": "4612",
@@ -18155,7 +18891,10 @@
     "productName": "FortiGate-600D/1200D/1500D/3000D/3700D and FortiGate-5001D with FortiGate-5144C Chassis",
     "productCategory": "Cryptographic Module",
     "vendor": "Fortinet, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4612.pdf"
+    ]
   },
   {
     "id": "4607",
@@ -18169,7 +18908,10 @@
     "productName": "FortiGate-VM",
     "productCategory": "Cryptographic Module",
     "vendor": "Fortinet, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4607.pdf"
+    ]
   },
   {
     "id": "4605",
@@ -18183,7 +18925,10 @@
     "productName": "LiveAction Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "LiveAction, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4605.pdf"
+    ]
   },
   {
     "id": "4603",
@@ -18197,7 +18942,10 @@
     "productName": "Nuvoton Cryptographic Library 2.0",
     "productCategory": "Cryptographic Module",
     "vendor": "Nuvoton Technology Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4603.pdf"
+    ]
   },
   {
     "id": "4602",
@@ -18211,7 +18959,10 @@
     "productName": "Code Integrity",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4602.pdf"
+    ]
   },
   {
     "id": "4592",
@@ -18239,7 +18990,10 @@
     "productName": "Barracuda OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Barracuda Networks",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4587.pdf"
+    ]
   },
   {
     "id": "4581",
@@ -18253,7 +19007,10 @@
     "productName": "HT Satellite Terminals",
     "productCategory": "Cryptographic Module",
     "vendor": "Hughes Network Systems, LLC",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4581.pdf"
+    ]
   },
   {
     "id": "4580",
@@ -18267,7 +19024,10 @@
     "productName": "HT Satellite Terminal",
     "productCategory": "Cryptographic Module",
     "vendor": "Hughes Network Systems, LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4580.pdf"
+    ]
   },
   {
     "id": "4569",
@@ -18295,7 +19055,10 @@
     "productName": "Ruckus Networks Virtual SmartZone (vSZ)",
     "productCategory": "Cryptographic Module",
     "vendor": "CommScope Technologies LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4568.pdf"
+    ]
   },
   {
     "id": "4567",
@@ -18309,7 +19072,10 @@
     "productName": "Ruckus Networks Virtual SmartZone - Data Plane (vSZ-D)",
     "productCategory": "Cryptographic Module",
     "vendor": "CommScope Technologies LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4567.pdf"
+    ]
   },
   {
     "id": "4560",
@@ -18323,7 +19089,10 @@
     "productName": "KoolSpan Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "KoolSpan, Inc",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4560.pdf"
+    ]
   },
   {
     "id": "4558",
@@ -18337,7 +19106,10 @@
     "productName": "IBM 4770-001 Enterprise PKCS#11 HSM Cryptographic Coprocessor Security Module",
     "productCategory": "Cryptographic Module",
     "vendor": "IBM",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4558.pdf"
+    ]
   },
   {
     "id": "4557",
@@ -18351,7 +19123,10 @@
     "productName": "BigFix Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "HCL America, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4557.pdf"
+    ]
   },
   {
     "id": "4555",
@@ -18365,7 +19140,10 @@
     "productName": "AMD Ryzen PRO 5000 Series PSP Cryptographic CoProcessor (models 5475U, 5675U, 5875U)",
     "productCategory": "Cryptographic Module",
     "vendor": "Advanced Micro Devices (AMD)",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4555.pdf"
+    ]
   },
   {
     "id": "4554",
@@ -18379,7 +19157,10 @@
     "productName": "Cisco Catalyst 9800-CL Wireless Controller",
     "productCategory": "Cryptographic Module",
     "vendor": "Cisco Systems, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4554.pdf"
+    ]
   },
   {
     "id": "4553",
@@ -18393,7 +19174,10 @@
     "productName": "IBM 4769-001 Enterprise PKCS#11 HSM Cryptographic Coprocessor Security Module",
     "productCategory": "Cryptographic Module",
     "vendor": "IBM",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4553.pdf"
+    ]
   },
   {
     "id": "4552",
@@ -18424,7 +19208,10 @@
     "productName": "SecureData Engine",
     "productCategory": "Cryptographic Module",
     "vendor": "SecureAge Technology",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4551.pdf"
+    ]
   },
   {
     "id": "4549",
@@ -18438,7 +19225,10 @@
     "productName": "Cisco Catalyst Embedded Wireless Controller on C9100 Series Access Points",
     "productCategory": "Cryptographic Module",
     "vendor": "Cisco Systems, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4549.pdf"
+    ]
   },
   {
     "id": "4547",
@@ -18452,7 +19242,10 @@
     "productName": "Silver Peak EdgeConnect",
     "productCategory": "Cryptographic Module",
     "vendor": "Silver Peak Systems, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4547.pdf"
+    ]
   },
   {
     "id": "4546",
@@ -18466,7 +19259,10 @@
     "productName": "Boot Manager",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4546.pdf"
+    ]
   },
   {
     "id": "4545",
@@ -18480,7 +19276,10 @@
     "productName": "Windows OS Loader",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4545.pdf"
+    ]
   },
   {
     "id": "4543",
@@ -18494,7 +19293,10 @@
     "productName": "Aruba IAP-315, IAP-345, IAP-377, IAP-503H, IAP-505H, IAP-504, IAP-505, IAP-514, IAP-515, IAP-534, IAP-535, IAP-555, IAP-635, and IAP-655 Wireless Access Points",
     "productCategory": "Cryptographic Module",
     "vendor": "Aruba, a Hewlett Packard Enterprise company",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4543.pdf"
+    ]
   },
   {
     "id": "4541",
@@ -18508,7 +19310,10 @@
     "productName": "HPE Aruba Networking EdgeConnect SD-WAN Cryptographic Library",
     "productCategory": "Cryptographic Module",
     "vendor": "HPE Aruba Networking",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4541.pdf"
+    ]
   },
   {
     "id": "4538",
@@ -18522,7 +19327,10 @@
     "productName": "BitLocker Dump Filter",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4538.pdf"
+    ]
   },
   {
     "id": "4537",
@@ -18536,7 +19344,10 @@
     "productName": "Virtual TPM",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4537.pdf"
+    ]
   },
   {
     "id": "4536",
@@ -18550,7 +19361,10 @@
     "productName": "Cryptographic Primitives Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4536.pdf"
+    ]
   },
   {
     "id": "4535",
@@ -18564,7 +19378,10 @@
     "productName": "Infoblox Trinzic Virtual Appliances",
     "productCategory": "Cryptographic Module",
     "vendor": "Infoblox",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4535.pdf"
+    ]
   },
   {
     "id": "4534",
@@ -18578,7 +19395,10 @@
     "productName": "Kasten BoringCrypto",
     "productCategory": "Cryptographic Module",
     "vendor": "Kasten, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4534.pdf"
+    ]
   },
   {
     "id": "4532",
@@ -18592,7 +19412,10 @@
     "productName": "Acme Packet 1100, Acme Packet 3900, Acme Packet 3950 and Acme Packet 4900",
     "productCategory": "Cryptographic Module",
     "vendor": "Oracle Communications",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4532.pdf"
+    ]
   },
   {
     "id": "4531",
@@ -18606,7 +19429,10 @@
     "productName": "Infoblox Trinzic HW Appliances",
     "productCategory": "Cryptographic Module",
     "vendor": "Infoblox",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4531.pdf"
+    ]
   },
   {
     "id": "4530",
@@ -18648,7 +19474,10 @@
     "productName": "Uplogix LM80, LM83X, 500, and 5000",
     "productCategory": "Cryptographic Module",
     "vendor": "Lantronix, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4524.pdf"
+    ]
   },
   {
     "id": "4523",
@@ -18662,7 +19491,10 @@
     "productName": "AWS Key Management Service HSM",
     "productCategory": "Cryptographic Module",
     "vendor": "Amazon Web Services, Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4523.pdf"
+    ]
   },
   {
     "id": "4522",
@@ -18676,7 +19508,10 @@
     "productName": "Inseego 5G Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Inseego Corp.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4522.pdf"
+    ]
   },
   {
     "id": "4521",
@@ -18707,7 +19542,10 @@
     "productName": "Secure Boot Processor (SBP) Crypto Engine",
     "productCategory": "Cryptographic Module",
     "vendor": "Fungible, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4518.pdf"
+    ]
   },
   {
     "id": "4517",
@@ -18721,7 +19559,10 @@
     "productName": "IDPrime 3930 FIDO",
     "productCategory": "Cryptographic Module",
     "vendor": "Thales",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4517.pdf"
+    ]
   },
   {
     "id": "4516",
@@ -18735,7 +19576,10 @@
     "productName": "Cisco ASR 9000 Aggregated Services Routers",
     "productCategory": "Cryptographic Module",
     "vendor": "Cisco Systems, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4516.pdf"
+    ]
   },
   {
     "id": "4515",
@@ -18749,7 +19593,10 @@
     "productName": "Kernel Mode Cryptographic Primitives Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4515.pdf"
+    ]
   },
   {
     "id": "4513",
@@ -18763,7 +19610,10 @@
     "productName": "SonicWall Capture Security Appliance (CSa) 1000",
     "productCategory": "Cryptographic Module",
     "vendor": "SonicWall",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4513.pdf"
+    ]
   },
   {
     "id": "4512",
@@ -18777,7 +19627,10 @@
     "productName": "Secure Kernel Code Integrity",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4512.pdf"
+    ]
   },
   {
     "id": "4511",
@@ -18791,7 +19644,10 @@
     "productName": "Code Integrity",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4511.pdf"
+    ]
   },
   {
     "id": "4509",
@@ -18805,7 +19661,10 @@
     "productName": "Juniper OpenSSL Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Juniper Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4509.pdf"
+    ]
   },
   {
     "id": "4507",
@@ -18819,7 +19678,10 @@
     "productName": "Acme Packet VME",
     "productCategory": "Cryptographic Module",
     "vendor": "Oracle Communications",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4507.pdf"
+    ]
   },
   {
     "id": "4506",
@@ -18833,7 +19695,10 @@
     "productName": "Oracle OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Oracle Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4506.pdf"
+    ]
   },
   {
     "id": "4504",
@@ -18847,7 +19712,10 @@
     "productName": "Juniper Networks PTX1000 Packet Transport Router",
     "productCategory": "Cryptographic Module",
     "vendor": "Juniper Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4504.pdf"
+    ]
   },
   {
     "id": "4503",
@@ -18861,7 +19729,10 @@
     "productName": "Juniper Networks MX240, MX480, MX960 3D Universal Edge Routers with RE-S-X6-128G/RE-1800 Routing Engine and MPC7E-10G MACSec Card",
     "productCategory": "Cryptographic Module",
     "vendor": "Juniper Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4503.pdf"
+    ]
   },
   {
     "id": "4502",
@@ -18875,7 +19746,10 @@
     "productName": "PTX10008 and PTX10016 Packet Transport Routers with Routing Engine JNP10K-RE0 and MACsec Line Card LC1105-M",
     "productCategory": "Cryptographic Module",
     "vendor": "Juniper Networks, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4502.pdf"
+    ]
   },
   {
     "id": "4500",
@@ -18889,7 +19763,10 @@
     "productName": "Encryption Module 10TCE-PCN-16GU+AES100G-F",
     "productCategory": "Cryptographic Module",
     "vendor": "Adva Network Security GmbH",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4500.pdf"
+    ]
   },
   {
     "id": "4499",
@@ -18903,7 +19780,10 @@
     "productName": "Encryption Card 9TCE-PCN-10GU+AES10G-F",
     "productCategory": "Cryptographic Module",
     "vendor": "ADVA Optical Networking SE",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4499.pdf"
+    ]
   },
   {
     "id": "4497",
@@ -18917,7 +19797,10 @@
     "productName": "FortiGate Next-Generation Firewalls with FortiOS 6.4/7.0",
     "productCategory": "Cryptographic Module",
     "vendor": "Fortinet, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4497.pdf"
+    ]
   },
   {
     "id": "4496",
@@ -18931,7 +19814,10 @@
     "productName": "Microsoft Azure Linux OpenSSL Cryptographic Library",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4496.pdf"
+    ]
   },
   {
     "id": "4495",
@@ -18945,7 +19831,10 @@
     "productName": "FIPS AP43",
     "productCategory": "Cryptographic Module",
     "vendor": "Mist Systems",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4495.pdf"
+    ]
   },
   {
     "id": "4493",
@@ -18959,7 +19848,10 @@
     "productName": "Oracle Cloud Infrastructure for BoringCrypto",
     "productCategory": "Cryptographic Module",
     "vendor": "Oracle Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4493.pdf"
+    ]
   },
   {
     "id": "4492",
@@ -18973,7 +19865,10 @@
     "productName": "Trellix FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Trellix",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4492.pdf"
+    ]
   },
   {
     "id": "4490",
@@ -18987,7 +19882,10 @@
     "productName": "AWS OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Amazon Web Services, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4490.pdf"
+    ]
   },
   {
     "id": "4489",
@@ -19001,7 +19899,10 @@
     "productName": "Digi DAL OS OpenSSL 3.0",
     "productCategory": "Cryptographic Module",
     "vendor": "Digi International",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4489.pdf"
+    ]
   },
   {
     "id": "4488",
@@ -19015,7 +19916,10 @@
     "productName": "ControlUp Cryptographic Library",
     "productCategory": "Cryptographic Module",
     "vendor": "ControlUp Technologies, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4488.pdf"
+    ]
   },
   {
     "id": "4484",
@@ -19029,7 +19933,10 @@
     "productName": "Boot Manager",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4484.pdf"
+    ]
   },
   {
     "id": "4483",
@@ -19043,7 +19950,10 @@
     "productName": "Forescout OpenSSL FIPS Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Forescout Technologies, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4483.pdf"
+    ]
   },
   {
     "id": "4480",
@@ -19057,7 +19967,10 @@
     "productName": "eToken 5110+ FIPS",
     "productCategory": "Cryptographic Module",
     "vendor": "Thales",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4480.pdf"
+    ]
   },
   {
     "id": "4479",
@@ -19071,7 +19984,10 @@
     "productName": "eToken 5110+ FIPS",
     "productCategory": "Cryptographic Module",
     "vendor": "Thales",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4479.pdf"
+    ]
   },
   {
     "id": "4475",
@@ -19102,7 +20018,10 @@
     "productName": "Hewlett Packard Enterprise OpenSSL Cryptographic Module on Red Hat Enterprise Linux",
     "productCategory": "Cryptographic Module",
     "vendor": "Aruba, a Hewlett Packard Enterprise Company",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4473.pdf"
+    ]
   },
   {
     "id": "4468",
@@ -19116,7 +20035,10 @@
     "productName": "Trusted Platform Module 2.0 SLB 9672 FW 17.25 and SLB 9673 FW 27.25",
     "productCategory": "Cryptographic Module",
     "vendor": "Infineon Technologies AG",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4468.pdf"
+    ]
   },
   {
     "id": "4467",
@@ -19130,7 +20052,10 @@
     "productName": "Trusted Platform Module 2.0 SLB 9672 FW 16.25 and SLB 9673 FW 26.25",
     "productCategory": "Cryptographic Module",
     "vendor": "Infineon Technologies AG",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4467.pdf"
+    ]
   },
   {
     "id": "4466",
@@ -19144,7 +20069,10 @@
     "productName": "AxioCrypto-M235x",
     "productCategory": "Cryptographic Module",
     "vendor": "Security Platform Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4466.pdf"
+    ]
   },
   {
     "id": "4463",
@@ -19158,7 +20086,10 @@
     "productName": "Ascom Smartphone BoringCrypto v2",
     "productCategory": "Cryptographic Module",
     "vendor": "Ascom Sweden AB",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4463.pdf"
+    ]
   },
   {
     "id": "4462",
@@ -19172,7 +20103,10 @@
     "productName": "Acme Packet 4600 and Acme Packet 6350",
     "productCategory": "Cryptographic Module",
     "vendor": "Oracle Communications",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4462.pdf"
+    ]
   },
   {
     "id": "4461",
@@ -19186,7 +20120,10 @@
     "productName": "Cisco Catalyst 8300 Series Edge Platforms",
     "productCategory": "Cryptographic Module",
     "vendor": "Cisco Systems, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4461.pdf"
+    ]
   },
   {
     "id": "4458",
@@ -19200,7 +20137,10 @@
     "productName": "Red Hat Enterprise Linux 8 NSS Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Red Hat®, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4458.pdf"
+    ]
   },
   {
     "id": "4457",
@@ -19214,7 +20154,10 @@
     "productName": "TCB Launcher",
     "productCategory": "Cryptographic Module",
     "vendor": "Microsoft Corporation",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4457.pdf"
+    ]
   },
   {
     "id": "4456",
@@ -19228,7 +20171,10 @@
     "productName": "Symantec Content Analysis Virtual Appliance",
     "productCategory": "Cryptographic Module",
     "vendor": "Symantec, A Division of Broadcom",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4456.pdf"
+    ]
   },
   {
     "id": "4455",
@@ -19256,7 +20202,10 @@
     "productName": "TRANSEC Module",
     "productCategory": "Cryptographic Module",
     "vendor": "iDirect Government, LLC",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4454.pdf"
+    ]
   },
   {
     "id": "4453",
@@ -19270,7 +20219,10 @@
     "productName": "SonicWALL SMA Series v12.4 SMA 6210, SMA 7210, SMA 7200",
     "productCategory": "Cryptographic Module",
     "vendor": "SonicWall, Inc.",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4453.pdf"
+    ]
   },
   {
     "id": "4452",
@@ -19284,7 +20236,10 @@
     "productName": "Symantec Management Center Virtual Appliance",
     "productCategory": "Cryptographic Module",
     "vendor": "Symantec, A Division of Broadcom",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4452.pdf"
+    ]
   },
   {
     "id": "4451",
@@ -19298,7 +20253,10 @@
     "productName": "Symantec Integrated Secure Gateway",
     "productCategory": "Cryptographic Module",
     "vendor": "Symantec, A Division of Broadcom",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4451.pdf"
+    ]
   },
   {
     "id": "4449",
@@ -19312,7 +20270,10 @@
     "productName": "Wavence Microwave radio cryptoModule",
     "productCategory": "Cryptographic Module",
     "vendor": "Nokia XHAUL",
-    "certificationLevel": "FIPS 140-3 L2"
+    "certificationLevel": "FIPS 140-3 L2",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4449.pdf"
+    ]
   },
   {
     "id": "4448",
@@ -19326,7 +20287,10 @@
     "productName": "IPsec IP Gateway Server",
     "productCategory": "Cryptographic Module",
     "vendor": "Hughes Network Systems, LLC",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4448.pdf"
+    ]
   },
   {
     "id": "4447",
@@ -19340,7 +20304,10 @@
     "productName": "SonicWALL SMA Series v12.4 SMA 8200v",
     "productCategory": "Cryptographic Module",
     "vendor": "SonicWall, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4447.pdf"
+    ]
   },
   {
     "id": "4446",
@@ -19354,7 +20321,10 @@
     "productName": "SLS37CSAUS V2X",
     "productCategory": "Cryptographic Module",
     "vendor": "Infineon Technologies AG",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4446.pdf"
+    ]
   },
   {
     "id": "4445",
@@ -19385,7 +20355,10 @@
     "productName": "BoringCrypto SoC",
     "productCategory": "Cryptographic Module",
     "vendor": "Google, LLC.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4444.pdf"
+    ]
   },
   {
     "id": "4443",
@@ -19399,7 +20372,10 @@
     "productName": "FortiOS 6.4/7.0",
     "productCategory": "Cryptographic Module",
     "vendor": "Fortinet, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4443.pdf"
+    ]
   },
   {
     "id": "4442",
@@ -19413,7 +20389,10 @@
     "productName": "VMware's ESXboot Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "VMware, Inc.",
-    "certificationLevel": "FIPS 140-3 L1"
+    "certificationLevel": "FIPS 140-3 L1",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4442.pdf"
+    ]
   },
   {
     "id": "4441",
@@ -19427,7 +20406,10 @@
     "productName": "DocuSign QSCD Appliance",
     "productCategory": "Cryptographic Module",
     "vendor": "DocuSign Ltd.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4441.pdf"
+    ]
   },
   {
     "id": "4440",
@@ -25636,7 +26618,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5361",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "ML-DSA, LMS, HSS",
+    "pqcCoverage": "LMS, ML-DSA",
     "classicalAlgorithms": "RSA (2048), ECDSA (P-256, P-384, P-521), ECDH (P-256)",
     "productName": "Dell BSAFE Crypto Module for Java",
     "productCategory": "Cryptographic Module",
@@ -25644,7 +26626,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5361.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5360",
@@ -25848,7 +26832,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5349.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5348",
@@ -25993,7 +26979,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5340",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "LMS, HSS",
+    "pqcCoverage": "HSS, LMS",
     "classicalAlgorithms": "ECDSA (P-256, P-384, P-521), RSA, ECDH",
     "productName": "Nuvoton Cryptographic Library 3.3",
     "productCategory": "Cryptographic Module",
@@ -26001,7 +26987,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5340.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5339",
@@ -26256,7 +27244,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5325.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5324",
@@ -26273,7 +27263,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5324.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5323",
@@ -26290,7 +27282,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5323.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5322",
@@ -26333,7 +27327,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5320",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "LMS, HSS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "InfoScale and Arctera Cryptographic Module for Java",
     "productCategory": "Cryptographic Module",
@@ -26341,7 +27335,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5320.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5319",
@@ -27581,7 +28577,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5416",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "LMS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA (3072), ECDSA (P-384)",
     "productName": "KIOXIA FIPS TC58NC1137GTC Crypto Sub-Chip Class A1",
     "productCategory": "Cryptographic Module",
@@ -27589,7 +28585,9 @@
     "certificationLevel": "FIPS 140-3 L2",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5416.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5415",
@@ -28374,7 +29372,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5450",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "ML-KEM, ML-DSA, LMS",
+    "pqcCoverage": "LMS, ML-DSA, ML-KEM",
     "classicalAlgorithms": "RSA (4096), ECDSA (P-256, P-384, P-521)",
     "productName": "Luna T7",
     "productCategory": "Cryptographic Module",
@@ -28382,7 +29380,9 @@
     "certificationLevel": "FIPS 140-3 L3",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5450.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5449",
@@ -47348,7 +48348,10 @@
     "productName": "Sansec HSM Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Sansec Technology Co., Ltd.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5503.pdf"
+    ]
   },
   {
     "id": "5502",
@@ -47357,7 +48360,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5502",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "ML-KEM, ML-DSA",
+    "pqcCoverage": "ML-DSA, ML-KEM",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Marvell LS2 HSM Family",
     "productCategory": "Cryptographic Module",
@@ -47365,7 +48368,9 @@
     "certificationLevel": "FIPS 140-3 L3",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5502.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5501",
@@ -47444,7 +48449,10 @@
     "productName": "QASM Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Crypto4A Technologies Inc.",
-    "certificationLevel": "FIPS 140-3 L3"
+    "certificationLevel": "FIPS 140-3 L3",
+    "securityTargetUrls": [
+      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5497.pdf"
+    ]
   },
   {
     "id": "5496",
@@ -48073,7 +49081,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5460.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5459",
@@ -48082,7 +49092,7 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5459",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "LMS, HSS",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Forescout FIPS module for Java",
     "productCategory": "Cryptographic Module",
@@ -48090,7 +49100,9 @@
     "certificationLevel": "FIPS 140-3 L1",
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5459.pdf"
-    ]
+    ],
+    "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
+    "pqcCoverageVerifiedFrom": "unified"
   },
   {
     "id": "5458",
