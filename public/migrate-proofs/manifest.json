@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-09-12T11:16:42.030224+00:00",
-  "count": 1313,
+  "count": 1315,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -20728,6 +20728,36 @@
       "admittedAt": "2026-09-17T14:19:56.026687+00:00",
       "admittedBy": "admit.py",
       "superseded_file": "_superseded-09172026/migrate-proofs/pqcee-cng-provider-92c2fc75.html"
+    },
+    {
+      "product_id": "singtel-quantum-safe-network",
+      "file": "singtel-quantum-safe-network-2f1d99b7.html",
+      "url": "https://www.singtel.com/business/products-services/quantumsafenetwork",
+      "sha256": "abc4b04721fbcbd54cbfc381fab1c1f85bbc160fc2d4554d4645aba906675128",
+      "sizeBytes": 225465,
+      "content_type": "text/html",
+      "replacedAt": "2026-09-17T15:01:17.538151+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "the previous proof URL was a landing page; the row now cites the vendor's own document (codex-proposed, door-verified 2026-09-17)",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T15:01:17.524817+00:00",
+      "admittedBy": "admit.py",
+      "refId": "singtel-quantum-safe-network"
+    },
+    {
+      "product_id": "nxp-orangebox-2-0-pqc",
+      "url": "https://www.nxp.com/docs/en/fact-sheet/ORANGEBOXFS.pdf",
+      "file": "nxp-orangebox-2-0-pqc-b672eb57.pdf",
+      "bytes": 310748,
+      "tier": "same bytes as products/ (the fact-sheet was already cached as the product brief)",
+      "sha256": "d6d2aac02fddb5d8e54ea530f48ef711e43ad9af09351de76be663e54bad072b",
+      "artefact": "SOURCE",
+      "identity": "RELEVANT",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T15:02:33.145533+00:00",
+      "admittedBy": "admit.py"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
