@@ -421,7 +421,11 @@
       "superseded_file": "_superseded-09142026/vendor/VND-064.pdf",
       "supersededAt": "2026-09-17T14:29:28.514656+00:00",
       "supersededBy": "manifest review 2026-09-17",
-      "superseded_reason": "the file was moved aside on 09142026 and this record was not updated then"
+      "superseded_reason": "the file was moved aside on 09142026 and this record was not updated then",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:49.204006+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "vendorId": "VND-007",

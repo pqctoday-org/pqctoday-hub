@@ -239,9 +239,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:59:21.998527+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:49.204006+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "NIST IR 8545",
@@ -591,9 +591,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:59:25.082274+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "NSA CNSA 2.0 FAQ",
@@ -914,9 +914,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:59:39.523207+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:00:17.003290+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "draft-turner-lamps-cms-fn-dsa-00",
@@ -1441,9 +1441,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:59:56.252291+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T18:59:33.599075+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "RFC-8032",
@@ -4978,9 +4978,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:02:35.126203+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:42.843790+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "NIST-CSWP-36A",
@@ -17853,9 +17853,9 @@
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:59:21.998527+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:49.204006+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "HQC Specification",
@@ -18234,10 +18234,10 @@
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
       "artefact": "SOURCE",
-      "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:59:25.082274+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "NSA CNSA 2.0 FAQ",
@@ -18496,9 +18496,9 @@
       "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:59:39.523207+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:00:17.003290+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "draft-wang-ipsecme-hybrid-kem-ikev2-frodo-03",
@@ -19026,10 +19026,10 @@
       "contentType": "application/pdf",
       "sha256": "87b8f3703364ed5b21ba8582e411cc0cbf477bcaa3f4f45e0d6580d1c00d9952",
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:59:56.252291+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "identity": "MATCH",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T18:59:33.599075+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "RFC-8032",
@@ -20414,7 +20414,12 @@
       "filename": "US-NSA-CNSA-2.0-2022.pdf",
       "sizeBytes": 586858,
       "contentType": "application/pdf",
-      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "IN-TEC-PQC-Migration-Report-2025",
@@ -22291,10 +22296,10 @@
       "contentType": "application/pdf",
       "sha256": "c2219f0ca0879a59824539057f95633b5bac882cc93734cbf2dcbf1559b123b6",
       "artefact": "SOURCE",
-      "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:02:35.126203+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:42.843790+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "NIST-CSWP-36A",
@@ -28487,7 +28492,12 @@
       "filename": "NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum.pdf",
       "sizeBytes": 722379,
       "contentType": "application/pdf",
-      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6"
+      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:49.204006+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",

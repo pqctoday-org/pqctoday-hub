@@ -107,9 +107,9 @@
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:55:53.361195+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "EIDAS",
@@ -418,9 +418,9 @@
       "superseded_file": null,
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:56:05.802174+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:49.204006+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "ASD-ISM",
@@ -631,9 +631,9 @@
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:56:13.435952+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "CMMC",
@@ -1689,9 +1689,9 @@
       "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:57:23.476947+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:00:17.003290+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "fca-operational-resilience-uk",
