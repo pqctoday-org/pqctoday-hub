@@ -11,7 +11,12 @@
       "sha256": "c8717b8606dbafb58b213d44332f42638074f1d3383f88d58ac414e18941955a",
       "recaptured_at": "2026-09-07T02:10:24.316524+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:47.921125+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ISO-IEC",
@@ -20,7 +25,12 @@
       "filename": "ISO-IEC.html",
       "sizeBytes": 138193,
       "contentType": "text/html",
-      "sha256": "6d9e07d0bb79aa9e81d43516f0381fedfc8a362450232e11b98f51ac2f3b6de0"
+      "sha256": "6d9e07d0bb79aa9e81d43516f0381fedfc8a362450232e11b98f51ac2f3b6de0",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:49.486917+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "IETF",
@@ -29,7 +39,12 @@
       "filename": "IETF.html",
       "sizeBytes": 38979,
       "contentType": "text/html",
-      "sha256": "6a616f09c3dd5f231dfe8039a7a5df34545eb7e2ae5445c534b16601ad1d807b"
+      "sha256": "6a616f09c3dd5f231dfe8039a7a5df34545eb7e2ae5445c534b16601ad1d807b",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:49.502057+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "FIPS-140-3",
@@ -41,7 +56,12 @@
       "sha256": "942a4f929dfbd2b4af2e4e03df7f6e6377054346afd9bee346ed0ebac5db384b",
       "recaptured_at": "2026-09-07T02:06:48.693079+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:49.657020+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "COMMON-CRITERIA",
@@ -53,7 +73,12 @@
       "sha256": "62cccce618919ea3458fa4bf701cbff5ecf908a6f89f43f9c87cfbf2563452f2",
       "recaptured_at": "2026-09-07T02:23:43.604330+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:52.972739+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ANSSI",
@@ -65,7 +90,12 @@
       "sha256": "717ed793617b1d87b6dbf28245b3cf9e13c909b34ec3918170bf103daf16eb02",
       "recaptured_at": "2026-09-07T02:10:21.631440+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:53.148739+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CNSA-2",
@@ -74,7 +104,12 @@
       "filename": "CNSA-2.pdf",
       "sizeBytes": 586858,
       "contentType": "application/pdf",
-      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:53.361195+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "EIDAS",
@@ -83,7 +118,12 @@
       "filename": "EIDAS.html",
       "sizeBytes": 57368,
       "contentType": "text/html",
-      "sha256": "e2eecdf9d56a38d9239b4954069edb3208986a3449764906df582d4f7f69d9a5"
+      "sha256": "e2eecdf9d56a38d9239b4954069edb3208986a3449764906df582d4f7f69d9a5",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:53.381331+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "PCI-DSS",
@@ -92,7 +132,12 @@
       "filename": "PCI-DSS.html",
       "sizeBytes": 795809,
       "contentType": "text/html",
-      "sha256": "1cfe795fafc4a6723201334f630dec0bac375c941f8c595f7d11534431523a7c"
+      "sha256": "1cfe795fafc4a6723201334f630dec0bac375c941f8c595f7d11534431523a7c",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:53.432226+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "HIPAA",
@@ -104,7 +149,12 @@
       "sha256": "a322e3195123a0e228eb0ae6c9bec6650d8c68f29610e7bf0934da3727cc673d",
       "recaptured_at": "2026-09-07T01:57:14.210397+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:55.931113+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "GSMA-NG116",
@@ -113,7 +163,12 @@
       "filename": "GSMA-NG116.pdf",
       "sizeBytes": 3260451,
       "contentType": "application/pdf",
-      "sha256": "952f1e5a782102211d97e986bd33011dd96bf50a4eb6b00e11bd1d2343cde4ea"
+      "sha256": "952f1e5a782102211d97e986bd33011dd96bf50a4eb6b00e11bd1d2343cde4ea",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:58.692648+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ETSI-TS103744",
@@ -125,7 +180,12 @@
       "sha256": "28dc07e6ef236b7de19945c006abcf28192e6a5d2e5a78d97a921098fbe6e591",
       "recaptured_at": "2026-09-07T01:58:40.620265+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:59.406610+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "DORA",
@@ -137,7 +197,12 @@
       "sha256": "d2f53d510ef13131535257107c0c6cca371a286cceac57a1f3e2c824dbc67870",
       "recaptured_at": "2026-09-07T02:04:56.962726+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:59.468588+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "SWIFT-CSP",
@@ -146,7 +211,12 @@
       "filename": "SWIFT-CSP.html",
       "sizeBytes": 191147,
       "contentType": "text/html",
-      "sha256": "277302ccbec261d478129e99013935fe360c671d9a23cedf9683318557ace524"
+      "sha256": "277302ccbec261d478129e99013935fe360c671d9a23cedf9683318557ace524",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:59.503565+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ISO-27001",
@@ -155,7 +225,12 @@
       "filename": "ISO-27001.html",
       "sizeBytes": 129733,
       "contentType": "text/html",
-      "sha256": "437b4b20dbe09292d198b3c2b3987a0d96ee0510a69b6005a859c5e4492f3904"
+      "sha256": "437b4b20dbe09292d198b3c2b3987a0d96ee0510a69b6005a859c5e4492f3904",
+      "artefact": "PAYWALL",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:59.530566+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "SOC-2",
@@ -167,7 +242,12 @@
       "sha256": "23a099dd1dc273b7a45fda2351f376344c33fcb2911d586036c0e0d631b8ad69",
       "recaptured_at": "2026-09-07T02:23:45.518712+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:00.538915+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "GDPR",
@@ -176,7 +256,12 @@
       "filename": "GDPR.html",
       "sizeBytes": 1069868,
       "contentType": "text/html",
-      "sha256": "de39fdb58fce093351178c22529c285b2f2a0c0ac3cec17f2d65afa243e6f33f"
+      "sha256": "de39fdb58fce093351178c22529c285b2f2a0c0ac3cec17f2d65afa243e6f33f",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:00.759679+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "HITECH",
@@ -188,7 +273,12 @@
       "sha256": "707c23124a67fba6ce8186ea07620fe9e91edd8b5b39372febb02b984c499227",
       "recaptured_at": "2026-09-07T02:12:07.112605+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:01.169828+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "FDA-21CFR11",
@@ -197,7 +287,12 @@
       "filename": "FDA-21CFR11.html",
       "sizeBytes": 74732,
       "contentType": "text/html",
-      "sha256": "ea0398969b47eb281b07ff8fa353c8a2227937138fe24f45a4be4779fe25f7b9"
+      "sha256": "ea0398969b47eb281b07ff8fa353c8a2227937138fe24f45a4be4779fe25f7b9",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:01.211795+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "FEDRAMP",
@@ -209,7 +304,12 @@
       "sha256": "07aabe7fd0baa34e3c77b7c9537204c6ac1caff473e04af8dc7e40743c30250a",
       "recaptured_at": "2026-09-07T02:23:45.734226+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:01.649173+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NATO-4774",
@@ -227,7 +327,12 @@
       "filename": "ISO-SAE-21434.html",
       "sizeBytes": 90868,
       "contentType": "text/html",
-      "sha256": "56401ea6a9f8fd5b012096e9ab8e90765ba9f66d6cb9d0ff91c9feaa1d24a503"
+      "sha256": "56401ea6a9f8fd5b012096e9ab8e90765ba9f66d6cb9d0ff91c9feaa1d24a503",
+      "artefact": "PAYWALL",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:01.710400+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "FERPA",
@@ -236,7 +341,12 @@
       "filename": "FERPA.html",
       "sizeBytes": 133108,
       "contentType": "text/html",
-      "sha256": "8218616e2e7bd4e92f1f7ad9ddd9f0f2b26e6cae1691f20239e5e9ff33792df5"
+      "sha256": "8218616e2e7bd4e92f1f7ad9ddd9f0f2b26e6cae1691f20239e5e9ff33792df5",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:02.042313+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "COPPA",
@@ -245,7 +355,12 @@
       "filename": "COPPA.html",
       "sizeBytes": 1011796,
       "contentType": "text/html",
-      "sha256": "7e63a881e2914f4fbd67d0b590b33eb1c19132013ee22c6ca43676232af9bf7e"
+      "sha256": "7e63a881e2914f4fbd67d0b590b33eb1c19132013ee22c6ca43676232af9bf7e",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:02.315682+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "TISAX",
@@ -257,7 +372,12 @@
       "sha256": "d187ed07b42570d2d4cac34d3390395ae90f74c000e59081fe9a000d19785981",
       "recaptured_at": "2026-09-07T02:23:48.435341+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:05.158563+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "MICA",
@@ -278,7 +398,12 @@
       "sha256": "ae2575d4e96e7bca071cc7ea4aa642f564ee1c2c6fbbb96009e890f56815e66e",
       "recaptured_at": "2026-09-07T01:50:37.433711+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:05.310655+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NIST-IR-8547",
@@ -290,7 +415,12 @@
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
       "recaptured_at": "2026-09-07T01:50:42.828648+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:05.802174+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ASD-ISM",
@@ -299,7 +429,12 @@
       "filename": "ASD-ISM.html",
       "sizeBytes": 362237,
       "contentType": "text/html",
-      "sha256": "7a8963c83d5c58dc75ae955ca2e5a81d28c63c10cdcbbed140b821dfa73e64fa"
+      "sha256": "7a8963c83d5c58dc75ae955ca2e5a81d28c63c10cdcbbed140b821dfa73e64fa",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:05.876892+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CCCS-ITSM",
@@ -308,7 +443,12 @@
       "filename": "CCCS-ITSM.html",
       "sizeBytes": 145788,
       "contentType": "text/html",
-      "sha256": "82eef746d6bfad1e28914baa90631f0656b774ffd8a36661015f524be73b13c8"
+      "sha256": "82eef746d6bfad1e28914baa90631f0656b774ffd8a36661015f524be73b13c8",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:05.915238+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "EU-REC-2024-1101",
@@ -317,7 +457,12 @@
       "filename": "EU-REC-2024-1101.html",
       "sizeBytes": 280322,
       "contentType": "text/html",
-      "sha256": "2f729e3e354002c44b2e0c85aded90bd5701b86313670e9856dc1b6fb8683c9d"
+      "sha256": "2f729e3e354002c44b2e0c85aded90bd5701b86313670e9856dc1b6fb8683c9d",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:05.968160+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "BSI-TR-02102",
@@ -329,7 +474,12 @@
       "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
       "recaptured_at": "2026-09-07T01:50:43.863312+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:07.475864+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "UK-NCSC",
@@ -338,7 +488,12 @@
       "filename": "UK-NCSC.html",
       "sizeBytes": 173339,
       "contentType": "text/html",
-      "sha256": "018ae9f0044d2d10d6dbd8b999136d9695a114b5a28896012a38bcefd7720754"
+      "sha256": "018ae9f0044d2d10d6dbd8b999136d9695a114b5a28896012a38bcefd7720754",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:07.525891+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CRYPTREC",
@@ -347,7 +502,12 @@
       "filename": "CRYPTREC.pdf",
       "sizeBytes": 1312893,
       "contentType": "application/pdf",
-      "sha256": "8e1d578e4547cb4ceac704b7226fe42e04b3e3d819813024100b677df4d4c23d"
+      "sha256": "8e1d578e4547cb4ceac704b7226fe42e04b3e3d819813024100b677df4d4c23d",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:09.978977+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "KPQC-STD",
@@ -356,7 +516,12 @@
       "filename": "KPQC-STD.html",
       "sizeBytes": 11354,
       "contentType": "text/html",
-      "sha256": "ea21507578bbf431256e0b36ab9a058aae622c932fbb4198c2ad1dd096b86aa6"
+      "sha256": "ea21507578bbf431256e0b36ab9a058aae622c932fbb4198c2ad1dd096b86aa6",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:10.078103+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "OSCCA-NGCC",
@@ -365,7 +530,12 @@
       "filename": "OSCCA-NGCC.html",
       "sizeBytes": 14790,
       "contentType": "text/html",
-      "sha256": "09d6f3cba5c7554d26620881dce329e269d1e9ff6f40b2aef1976a9c814aa476"
+      "sha256": "09d6f3cba5c7554d26620881dce329e269d1e9ff6f40b2aef1976a9c814aa476",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:10.930887+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NCSC-CH",
@@ -374,7 +544,12 @@
       "filename": "NCSC-CH.pdf",
       "sizeBytes": 79841,
       "contentType": "application/pdf",
-      "sha256": "1240e120b0e9b5e2205caf9a739d9c249f05372bddd747a9f7f480ec3711303c"
+      "sha256": "1240e120b0e9b5e2205caf9a739d9c249f05372bddd747a9f7f480ec3711303c",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:10.994548+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NCSC-NL",
@@ -383,7 +558,12 @@
       "filename": "NCSC-NL.pdf",
       "sizeBytes": 249724,
       "contentType": "application/pdf",
-      "sha256": "c7717942eba52ede8fca8ccda727ba73cadaeb48dc480d2808da653d586bb380"
+      "sha256": "c7717942eba52ede8fca8ccda727ba73cadaeb48dc480d2808da653d586bb380",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:11.202419+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CRYPTREC-BODY",
@@ -392,7 +572,12 @@
       "filename": "CRYPTREC-BODY.html",
       "sizeBytes": 11428,
       "contentType": "text/html",
-      "sha256": "a06a4e0744dd132de975cb862c2152e9540c8244871e07e453a831a4c24f93ad"
+      "sha256": "a06a4e0744dd132de975cb862c2152e9540c8244871e07e453a831a4c24f93ad",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:11.633794+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "KISA-BODY",
@@ -401,7 +586,12 @@
       "filename": "KISA-BODY.html",
       "sizeBytes": 30602,
       "contentType": "text/html",
-      "sha256": "d2dcea6c93d8993a99d263be5d1b235471963541795368c62be700ad9146f737"
+      "sha256": "d2dcea6c93d8993a99d263be5d1b235471963541795368c62be700ad9146f737",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:11.651507+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "OSCCA-BODY",
@@ -410,7 +600,12 @@
       "filename": "OSCCA-BODY.html",
       "sizeBytes": 31771,
       "contentType": "text/html",
-      "sha256": "77636d8bb49241707363c4b86bfc9053189f90497e50060d61d255bcca5e24b1"
+      "sha256": "77636d8bb49241707363c4b86bfc9053189f90497e50060d61d255bcca5e24b1",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:11.667260+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ETSI",
@@ -419,7 +614,12 @@
       "filename": "ETSI.html",
       "sizeBytes": 170253,
       "contentType": "text/html",
-      "sha256": "fc8a5d360f9c642917a0c1d0aa4973647a57a5d671b05c2c0a791b7599d37b2c"
+      "sha256": "fc8a5d360f9c642917a0c1d0aa4973647a57a5d671b05c2c0a791b7599d37b2c",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:11.696749+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NSA",
@@ -428,7 +628,12 @@
       "filename": "NSA.pdf",
       "sizeBytes": 586858,
       "contentType": "application/pdf",
-      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:13.435952+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CMMC",
@@ -440,7 +645,12 @@
       "sha256": "0dcaba1626a0d23893981d74dd3f0f2338fff54cece67d81bc811ce76392d867",
       "recaptured_at": "2026-09-07T02:00:11.913175+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:16.772764+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "FISMA",
@@ -452,7 +662,12 @@
       "sha256": "c949a445f93df12899d96b3b980ab0643123e9bc73f1d6f269fa702337f93eb7",
       "recaptured_at": "2026-09-07T02:00:12.735994+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:17.079996+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "EU-CRA",
@@ -461,7 +676,12 @@
       "filename": "EU-CRA.html",
       "sizeBytes": 59376,
       "contentType": "text/html",
-      "sha256": "e7701ead8ee69dc6de0ab0cfbcac64334138210992d02d2cc4198cfc9f2910e6"
+      "sha256": "e7701ead8ee69dc6de0ab0cfbcac64334138210992d02d2cc4198cfc9f2910e6",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:17.098691+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "INDIA-DST-PQC",
@@ -470,7 +690,12 @@
       "filename": "INDIA-DST-PQC.pdf",
       "sizeBytes": 1982388,
       "contentType": "application/pdf",
-      "sha256": "461d8b42aea3847a3f9083e369065eff7985b03f8e4b1e9974f236ce93d99f31"
+      "sha256": "461d8b42aea3847a3f9083e369065eff7985b03f8e4b1e9974f236ce93d99f31",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:18.873093+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "HKMA-PQC",
@@ -482,7 +707,12 @@
       "sha256": "24125dcc8ac120ced00535f1299596fd4195973539d4b0523aa841ac93652e66",
       "recaptured_at": "2026-09-07T01:50:44.868593+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:20.726205+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CISA-PQC-PROCUREMENT",
@@ -494,7 +724,12 @@
       "sha256": "6ec4fdf0f388df2305ecfedd6c8948af6e96aeb81d1d4534e9a107ea269c6df1",
       "recaptured_at": "2026-09-07T02:10:18.953819+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:21.599363+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "G7-CEG-PQC",
@@ -503,7 +738,12 @@
       "filename": "G7-CEG-PQC.pdf",
       "sizeBytes": 283430,
       "contentType": "application/pdf",
-      "sha256": "f58565d3ec8bd55ea23aa067b2373f783eb3421808d1f8827993857de1b91575"
+      "sha256": "f58565d3ec8bd55ea23aa067b2373f783eb3421808d1f8827993857de1b91575",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:21.712495+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CAB-FORUM-SMC013",
@@ -515,7 +755,12 @@
       "sha256": "7a1e34b94444e7cd69b35e414fc5bbaca6cda4d88501fadcaca75869d4fe7043",
       "recaptured_at": "2026-09-07T02:48:19.888501+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": "_superseded-20260906/compliance/CAB-FORUM-SMC013.html"
+      "superseded_file": "_superseded-20260906/compliance/CAB-FORUM-SMC013.html",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:22.735549+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ACVP",
@@ -527,7 +772,12 @@
       "sha256": "adbb0444c4606cb5f6bad095eb7aa30143222f93a0b3a5d722549764159756ee",
       "recaptured_at": "2026-09-07T02:38:27.804106+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": "_superseded-20260906/compliance/ACVP.html"
+      "superseded_file": "_superseded-20260906/compliance/ACVP.html",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:22.846937+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "TAIWAN-MODA-PQC",
@@ -539,7 +789,12 @@
       "sha256": "6972a150377eae999caa5981d2a9ded81488c1e6a9e071fe47fdbc3b52225ebe",
       "recaptured_at": "2026-09-07T02:23:50.291228+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:23.377133+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "MALAYSIA-NACSA-PQC",
@@ -551,7 +806,12 @@
       "sha256": "46133b742fa43b19e24ca700b629b20222b92199153850ed7ea2de62ccd7e79b",
       "recaptured_at": "2026-09-07T01:57:19.615909+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:23.515577+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "SAUDI-NCA-PQC",
@@ -563,7 +823,12 @@
       "sha256": "146505199e5374d99302fc3d7e1fdc73b6e2f3292fefd535d5dd891294a81db1",
       "recaptured_at": "2026-09-07T02:12:12.613056+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:24.188926+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "BIS-158-PQC",
@@ -572,7 +837,12 @@
       "filename": "BIS-158-PQC.pdf",
       "sizeBytes": 2159075,
       "contentType": "application/pdf",
-      "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c"
+      "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:24.818761+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "3GPP-PQC",
@@ -585,7 +855,12 @@
       "sha256": "86caab88c9cbf6c369c42445f4f1c0682571d7cfce584686b1cc4229492e17fa",
       "recaptured_at": "2026-09-09T01:24:45.064051+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": "_superseded-20260908/compliance/3GPP-PQC.html"
+      "superseded_file": "_superseded-20260908/compliance/3GPP-PQC.html",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:24.855339+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "TCG-TPM-PQC",
@@ -606,7 +881,12 @@
       "sha256": "9a36fa64a68f8dc8c157e58dd8d60d0d775cf1c93c161ef3e34bd4afb838fd25",
       "recaptured_at": "2026-09-07T01:50:45.554129+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:25.450314+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NIST-SP800-131A",
@@ -618,7 +898,12 @@
       "sha256": "5ffdb907e0e2375901151579422a370b655e131223a2588ea418c5df1dea6e7f",
       "recaptured_at": "2026-09-07T01:50:46.547115+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:26.190004+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ITALY-ACN-PQC",
@@ -636,7 +921,12 @@
       "filename": "BAHRAIN-NCSC-PQC.html",
       "sizeBytes": 31873,
       "contentType": "text/html",
-      "sha256": "41f5a63970d37bfb2bad70e0387f6c4951f9818c70ad11928c3ffad6af2048a3"
+      "sha256": "41f5a63970d37bfb2bad70e0387f6c4951f9818c70ad11928c3ffad6af2048a3",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:27.473909+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "UK-CMORG-PQC",
@@ -672,7 +962,12 @@
       "filename": "OASIS-PKCS11.html",
       "sizeBytes": 44418,
       "contentType": "text/html",
-      "sha256": "e51a4097a92f0b44958c6726d2513c02aeca46789481cb9ac96d9ee6bcb99d27"
+      "sha256": "e51a4097a92f0b44958c6726d2513c02aeca46789481cb9ac96d9ee6bcb99d27",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:27.789892+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "3GPP-SA3",
@@ -681,7 +976,12 @@
       "filename": "3GPP-SA3.html",
       "sizeBytes": 136856,
       "contentType": "text/html",
-      "sha256": "e79c23c24d6109a4212fe6bc506ae1800d0e79aecbb534c3001f523a6f4010e0"
+      "sha256": "e79c23c24d6109a4212fe6bc506ae1800d0e79aecbb534c3001f523a6f4010e0",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:27.814903+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "FSISAC-PQC",
@@ -702,7 +1002,12 @@
       "sha256": "f13f24b77b935fc2894a953a2cda1a57c7cbeb9162997c884a95319b3c4feed0",
       "recaptured_at": "2026-09-07T02:23:51.274742+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:29.139409+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "PKI-CONSORTIUM",
@@ -711,7 +1016,12 @@
       "filename": "PKI-CONSORTIUM.html",
       "sizeBytes": 97139,
       "contentType": "text/html",
-      "sha256": "b38db2251f99e1ec7a1acf1fb96dc822a8f50519f3ea52192e5f115607c09f66"
+      "sha256": "b38db2251f99e1ec7a1acf1fb96dc822a8f50519f3ea52192e5f115607c09f66",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:29.161335+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CSA-QSC",
@@ -723,7 +1033,12 @@
       "sha256": "414167a29bd21a6b0e698bf16426e9c645a34507f1b9ffc0906805c9a9a7cf3b",
       "recaptured_at": "2026-09-07T02:00:12.423133+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:29.466973+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ITU-T-SG17",
@@ -732,7 +1047,12 @@
       "filename": "ITU-T-SG17.html",
       "sizeBytes": 97936,
       "contentType": "text/html",
-      "sha256": "700e446145d65c5ed67cf4c4082bb02cc100678428926dead08a4a2ab2133490"
+      "sha256": "700e446145d65c5ed67cf4c4082bb02cc100678428926dead08a4a2ab2133490",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:29.487763+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NIST-SP800-208",
@@ -741,7 +1061,12 @@
       "filename": "NIST-SP800-208.pdf",
       "sizeBytes": 872986,
       "contentType": "application/pdf",
-      "sha256": "9ac6bee3da878e883874847b40f80d2265d6268385d8201f866581437533465f"
+      "sha256": "9ac6bee3da878e883874847b40f80d2265d6268385d8201f866581437533465f",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:30.270596+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ISO-19790",
@@ -750,7 +1075,12 @@
       "filename": "ISO-19790.html",
       "sizeBytes": 83963,
       "contentType": "text/html",
-      "sha256": "3c7470af9642cc11b9b4d7d460e3a8010df4897cdbb86ac6b1b9b9155041a517"
+      "sha256": "3c7470af9642cc11b9b4d7d460e3a8010df4897cdbb86ac6b1b9b9155041a517",
+      "artefact": "PAYWALL",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:30.293219+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ETSI-QKD-SERIES",
@@ -762,7 +1092,12 @@
       "sha256": "97ac65b7e0f895e1acb935987b9ffbab165b6de6b80f3c4634eda6d708a4393d",
       "recaptured_at": "2026-09-07T01:50:47.243799+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:31.150543+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ANSSI-CERT",
@@ -771,7 +1106,12 @@
       "filename": "ANSSI-CERT.html",
       "sizeBytes": 25497,
       "contentType": "text/html",
-      "sha256": "c9f981ac4fc1d1c3877eab72842c08c6368f27df9c8b3976bb5f11dd2a311b3d"
+      "sha256": "c9f981ac4fc1d1c3877eab72842c08c6368f27df9c8b3976bb5f11dd2a311b3d",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:31.163430+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "JCMVP",
@@ -783,7 +1123,12 @@
       "sha256": "cd4e68ab7ae7d095b5c7bdd349787cdba0bda51916fbb61da2faa84cc674a069",
       "recaptured_at": "2026-09-07T02:23:52.939164+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:31.340358+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "SG-CSA-QUANTUM",
@@ -801,7 +1146,12 @@
       "filename": "BRAZIL-ANPD-PQC.pdf",
       "sizeBytes": 366201,
       "contentType": "application/pdf",
-      "sha256": "b720ea49fc3c99400b8156515dab17a82a63806b6c21da34f9fb868ac70e4f04"
+      "sha256": "b720ea49fc3c99400b8156515dab17a82a63806b6c21da34f9fb868ac70e4f04",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:31.676704+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "DENMARK-CFCS-PQC",
@@ -819,7 +1169,12 @@
       "filename": "DFS-NYCRR-500.html",
       "sizeBytes": 205519,
       "contentType": "text/html",
-      "sha256": "0e58d866f970849edb153dfc389bc8f2645341e52d9910541435ad099638ae50"
+      "sha256": "0e58d866f970849edb153dfc389bc8f2645341e52d9910541435ad099638ae50",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:31.772430+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "PQCA",
@@ -828,7 +1183,12 @@
       "filename": "PQCA.html",
       "sizeBytes": 96915,
       "contentType": "text/html",
-      "sha256": "c55aee4b0c000da8ea861538032e3690f9c814fc7c5b1e0dc9229712b0852e5c"
+      "sha256": "c55aee4b0c000da8ea861538032e3690f9c814fc7c5b1e0dc9229712b0852e5c",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:32.682912+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "PQC-COALITION",
@@ -846,7 +1206,12 @@
       "filename": "ACSC-ESSENTIAL-EIGHT.html",
       "sizeBytes": 435584,
       "contentType": "text/html",
-      "sha256": "aa03f4809c88029be96dae66c6f63363cdb290069404374e9294c4df9a15b9e5"
+      "sha256": "aa03f4809c88029be96dae66c6f63363cdb290069404374e9294c4df9a15b9e5",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:33.336095+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "AU-PRIVACY-ACT",
@@ -855,7 +1220,12 @@
       "filename": "AU-PRIVACY-ACT.html",
       "sizeBytes": 98778,
       "contentType": "text/html",
-      "sha256": "9e81ed292bf46b1e300de0e5f2c4b4a4812180634554ab94a05936d82574a0c6"
+      "sha256": "9e81ed292bf46b1e300de0e5f2c4b4a4812180634554ab94a05936d82574a0c6",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:33.385207+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "AUSTRAC-AML-CTF",
@@ -867,7 +1237,12 @@
       "sha256": "f05226ec07932b5165f863d63175bd1677ff7d5a8da41a204be83a8c0848f2c4",
       "recaptured_at": "2026-09-07T02:05:46.070807+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:37.991274+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "OSFI-B13-PQC",
@@ -879,7 +1254,12 @@
       "sha256": "7ffb25532b6114d97ad7b864652192663b5ea96724a259224657906a2265c3f9",
       "recaptured_at": "2026-09-07T02:23:56.319678+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:38.437885+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CFDIR-QR-2023",
@@ -897,7 +1277,12 @@
       "filename": "UK-DSIT-CNI-PQC.pdf",
       "sizeBytes": 2292209,
       "contentType": "application/pdf",
-      "sha256": "7b0f7f4eb4f48efaac7311c8c6841787a2bf8aed3e3f11a4b76e49f0c913ad25"
+      "sha256": "7b0f7f4eb4f48efaac7311c8c6841787a2bf8aed3e3f11a4b76e49f0c913ad25",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:41.451400+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ACPR",
@@ -906,7 +1291,12 @@
       "filename": "ACPR.html",
       "sizeBytes": 222657,
       "contentType": "text/html",
-      "sha256": "cb7cfaa9c970195948e1f90219873b421b867767182c4d189b2fc3b5514d1f92"
+      "sha256": "cb7cfaa9c970195948e1f90219873b421b867767182c4d189b2fc3b5514d1f92",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:41.486701+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "AMF-FR",
@@ -915,7 +1305,12 @@
       "filename": "AMF-FR.html",
       "sizeBytes": 72104,
       "contentType": "text/html",
-      "sha256": "2a9dee436aababbc79c26a83ce7eb8c01ca8a058aa62b7ed8d0039ecc89ef7a6"
+      "sha256": "2a9dee436aababbc79c26a83ce7eb8c01ca8a058aa62b7ed8d0039ecc89ef7a6",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:41.507453+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "DSPF-PQC",
@@ -933,7 +1328,12 @@
       "filename": "ZA-POPIA.pdf",
       "sizeBytes": 237928,
       "contentType": "application/pdf",
-      "sha256": "e29efca4eb14eb7f3fbfe779e972b90d8803016d8073648fd98084a2990e46fb"
+      "sha256": "e29efca4eb14eb7f3fbfe779e972b90d8803016d8073648fd98084a2990e46fb",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:42.662902+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NG-NDPR",
@@ -943,7 +1343,12 @@
       "sizeBytes": 1282124,
       "contentType": "application/pdf",
       "sha256": "d61fcee8a5dcb974040ad9298f0e80ad33218085819633a670c7b09793a44db0",
-      "hashedAt": "2026-09-12"
+      "hashedAt": "2026-09-12",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:46.775642+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "EG-PDPL",
@@ -962,7 +1367,12 @@
       "sizeBytes": 12969818,
       "contentType": "application/pdf",
       "sha256": "f9556d6ec30103c680a7b1741e37d1d358b7386f07bf702afc710b41f0f7080f",
-      "hashedAt": "2026-09-12"
+      "hashedAt": "2026-09-12",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:47.523652+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "EUCC-V2",
@@ -974,7 +1384,12 @@
       "sha256": "f16a9cd26b572e843bc11c6035cdbc9cce3162293f33e65efc7afcc142d38118",
       "recaptured_at": "2026-09-07T01:57:15.688810+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:47.587233+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "BSI-PQC-ADVISORY",
@@ -986,7 +1401,12 @@
       "sha256": "8d98cc341a0261de81ec0fbbeb29317724602e7907defad797e48fa3cb9b0430",
       "recaptured_at": "2026-09-07T01:50:38.946549+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:47.693201+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "PRA-SS2-21",
@@ -995,7 +1415,12 @@
       "filename": "PRA-SS2-21.pdf",
       "sizeBytes": 1032802,
       "contentType": "application/pdf",
-      "sha256": "a56b506c3a04b58afd4a984beb46e916a23288a7efda90054254f6ef29352577"
+      "sha256": "a56b506c3a04b58afd4a984beb46e916a23288a7efda90054254f6ef29352577",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:48.236567+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ICO-UK-ENC",
@@ -1007,7 +1432,12 @@
       "sha256": "cff856a8e4b09fe29c19b84ad8e968718681842db5a1964bbd651119b3d61c96",
       "recaptured_at": "2026-09-07T02:12:09.519370+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:48.777947+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NSM-NO-GP",
@@ -1016,7 +1446,12 @@
       "filename": "NSM-NO-GP.pdf",
       "sizeBytes": 2276347,
       "contentType": "application/pdf",
-      "sha256": "1ad86834616bb467076fe0ae1ac9c959e40b244dde90658cd46ecac11f0d01d3"
+      "sha256": "1ad86834616bb467076fe0ae1ac9c959e40b244dde90658cd46ecac11f0d01d3",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:49.882908+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ARGENTINA-ONTI",
@@ -1034,7 +1469,12 @@
       "filename": "PH-DPA.html",
       "sizeBytes": 271566,
       "contentType": "text/html",
-      "sha256": "b083682fd2d75425f998483fd2942df0bbd598c1eb65180357318439399b1521"
+      "sha256": "b083682fd2d75425f998483fd2942df0bbd598c1eb65180357318439399b1521",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:14.660517+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "EE-CSA",
@@ -1043,7 +1483,12 @@
       "filename": "EE-CSA.html",
       "sizeBytes": 531785,
       "contentType": "text/html",
-      "sha256": "a2e9a1d6b7b09d44801d183fa3cccdeac4db6c299c2542667aed60962b38ad41"
+      "sha256": "a2e9a1d6b7b09d44801d183fa3cccdeac4db6c299c2542667aed60962b38ad41",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:14.773485+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "IE-NCSC",
@@ -1055,7 +1500,12 @@
       "sha256": "fe928fe696f15d28d277aceb341fe0c49cd8ade7bd2a6c005a1fbdca1e110fcb",
       "recaptured_at": "2026-09-07T02:23:57.723974+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:16.912765+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "BE-NIS2",
@@ -1067,7 +1517,12 @@
       "sha256": "70a4267b6a5cd7bf791d29b45545abe494d45285615dabea3a4d9a422b0474dd",
       "recaptured_at": "2026-09-07T02:12:13.743737+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:18.147018+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "AT-NIS2",
@@ -1076,7 +1531,12 @@
       "filename": "AT-NIS2.html",
       "sizeBytes": 203570,
       "contentType": "text/html",
-      "sha256": "78ab4d74b4caa79c75d4659ba5d0146f7fa9021092ab0a4139f418f363f85002"
+      "sha256": "78ab4d74b4caa79c75d4659ba5d0146f7fa9021092ab0a4139f418f363f85002",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:18.249751+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "PL-NCSC",
@@ -1085,7 +1545,12 @@
       "filename": "PL-NCSC.pdf",
       "sizeBytes": 386485,
       "contentType": "application/pdf",
-      "sha256": "1993ad70607dcdb2f9690c1bcac12308718d8372efb039b1f53d30e070332a14"
+      "sha256": "1993ad70607dcdb2f9690c1bcac12308718d8372efb039b1f53d30e070332a14",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:19.212392+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CO-LEY1581",
@@ -1094,7 +1559,12 @@
       "filename": "CO-LEY1581.html",
       "sizeBytes": 72931,
       "contentType": "text/html",
-      "sha256": "926ae19c2b949ae37850331a7e6055863b7032e2881496992d19d38950fafbb9"
+      "sha256": "926ae19c2b949ae37850331a7e6055863b7032e2881496992d19d38950fafbb9",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:19.262032+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "PE-LDP",
@@ -1103,7 +1573,12 @@
       "filename": "PE-LDP.pdf",
       "sizeBytes": 258188,
       "contentType": "application/pdf",
-      "sha256": "f45d432b337aa7965fdf38497b3f5c12dcd62a1107b3b13ff86687f0be15125d"
+      "sha256": "f45d432b337aa7965fdf38497b3f5c12dcd62a1107b3b13ff86687f0be15125d",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:19.816570+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "UY-LPDP",
@@ -1112,7 +1587,12 @@
       "filename": "UY-LPDP.html",
       "sizeBytes": 82896,
       "contentType": "text/html",
-      "sha256": "edd9f8f6dafc5d8da6e9f99e44dc7e9f69a9c076c54193a8596cc0a1e96b4671"
+      "sha256": "edd9f8f6dafc5d8da6e9f99e44dc7e9f69a9c076c54193a8596cc0a1e96b4671",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:19.881823+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "TR-KVKK",
@@ -1121,7 +1601,12 @@
       "filename": "TR-KVKK.html",
       "sizeBytes": 351217,
       "contentType": "text/html",
-      "sha256": "9d7e58a14819da510bfb596fff69cf1e13aff30b202accf86cad37a020d7b0cf"
+      "sha256": "9d7e58a14819da510bfb596fff69cf1e13aff30b202accf86cad37a020d7b0cf",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:19.993209+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "faa-ac-119-1-ansp",
@@ -1130,7 +1615,12 @@
       "filename": "faa-ac-119-1-ansp.pdf",
       "sizeBytes": 293414,
       "contentType": "application/pdf",
-      "sha256": "c6ce3251354759af954b9074f07e42d88c8bcdcda348c5f718142c21fd14fa14"
+      "sha256": "c6ce3251354759af954b9074f07e42d88c8bcdcda348c5f718142c21fd14fa14",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:20.178109+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "common-criteria-v3.1r5-part1",
@@ -1139,7 +1629,12 @@
       "filename": "common-criteria-v3.1r5-part1.pdf",
       "sizeBytes": 1327388,
       "contentType": "application/pdf",
-      "sha256": "82312911be320fa10df4a487a1a94882c660606448761a5c0c104ea2abb6e326"
+      "sha256": "82312911be320fa10df4a487a1a94882c660606448761a5c0c104ea2abb6e326",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:21.794186+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cisa-pqc-initiative",
@@ -1151,7 +1646,12 @@
       "sha256": "78155bdba2b2d210dc377f6b0af50513fe5f23dc5e63a9485e48cdecfafc9e3f",
       "recaptured_at": "2026-09-07T01:50:39.260124+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:22.044696+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "oscca-cryptographic-regulations-cn",
@@ -1172,7 +1672,12 @@
       "sha256": "ce5177c910820a97a2ca5877fdc93add946b375d35cb41c09e3d1bc94364e8c1",
       "recaptured_at": "2026-09-07T02:11:17.274264+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:23.061857+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "etsi-ts-104-015-qsc-hybrid-key-exchange",
@@ -1181,7 +1686,12 @@
       "filename": "etsi-ts-104-015-qsc-hybrid-key-exchange.pdf",
       "sizeBytes": 257923,
       "contentType": "application/pdf",
-      "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288"
+      "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:23.476947+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "fca-operational-resilience-uk",
@@ -1199,7 +1709,12 @@
       "filename": "cert-in-directions-70b-2022.pdf",
       "sizeBytes": 434961,
       "contentType": "application/pdf",
-      "sha256": "202c2f3953d792dcfb3ecb3634fc82ab75437ee596de89b8d59a211e8e42431f"
+      "sha256": "202c2f3953d792dcfb3ecb3634fc82ab75437ee596de89b8d59a211e8e42431f",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:23.610949+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "mas-technology-risk-management-guidelines",
@@ -1217,7 +1732,12 @@
       "filename": "rbi-cyber-security-framework-2016.html",
       "sizeBytes": 117956,
       "contentType": "text/html",
-      "sha256": "54fd39586938a4672c3e1b0243954086b06a040dee7fc3cb46e510de3100feb6"
+      "sha256": "54fd39586938a4672c3e1b0243954086b06a040dee7fc3cb46e510de3100feb6",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:23.649643+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "gsma-pq-01",
@@ -1229,7 +1749,12 @@
       "sha256": "f9465918d7877e26e8d4934a895430cb33a4c784e8931c570901eb76b46f142a",
       "recaptured_at": "2026-09-07T01:50:36.532506+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:24.667786+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "gsma-pq-02",
@@ -1241,7 +1766,12 @@
       "sha256": "7751a7462e35a40d3741265fd6bb8b77a92c87029e8a41a7956b65ab3d778eea",
       "recaptured_at": "2026-09-07T01:50:37.234983+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:25.464545+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "gsma-pq-03",
@@ -1250,7 +1780,12 @@
       "filename": "gsma-pq-03.pdf",
       "sizeBytes": 3260451,
       "contentType": "application/pdf",
-      "sha256": "952f1e5a782102211d97e986bd33011dd96bf50a4eb6b00e11bd1d2343cde4ea"
+      "sha256": "952f1e5a782102211d97e986bd33011dd96bf50a4eb6b00e11bd1d2343cde4ea",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:28.185562+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "3gpp-rel19-pqc-study",
@@ -1259,7 +1794,12 @@
       "filename": "3gpp-rel19-pqc-study.docx",
       "sizeBytes": 134945,
       "contentType": "application/octet-stream",
-      "sha256": "b53ed0f327bc072cbbb83d74703f1c962b823e148c54498f0cf18bd4d4741525"
+      "sha256": "b53ed0f327bc072cbbb83d74703f1c962b823e148c54498f0cf18bd4d4741525",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:28.450301+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "3gpp-rel20-pqc",
@@ -1271,7 +1811,12 @@
       "sha256": "28a5c9976820e4242d2fc968fd23283feeaaf71c23a4bacbb3cf4685913e289f",
       "recaptured_at": "2026-09-07T02:38:28.824636+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this docx is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:28.527735+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "FIPS-203",
@@ -1283,7 +1828,12 @@
       "sha256": "fe1f12f32a7e44ec9fdebbf400cda843a40b506dee676725234dc6f7923b6cac",
       "recaptured_at": "2026-09-07T01:50:48.132181+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:29.494496+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "FIPS-204",
@@ -1295,7 +1845,12 @@
       "sha256": "57239b9f84c03227eda3ca0991204dc7764c79af9ce2e6824eda774918d46b6b",
       "recaptured_at": "2026-09-07T01:50:49.224462+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:30.704607+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "FIPS-205",
@@ -1307,7 +1862,12 @@
       "sha256": "8ef34228276f3386d23cb0da8c14592b8cfb0db3358016bba64df7a004f8d13d",
       "recaptured_at": "2026-09-07T01:50:50.132343+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:31.741965+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "OMB-M-23-02",
@@ -1316,7 +1876,12 @@
       "filename": "OMB-M-23-02.pdf",
       "sizeBytes": 255063,
       "contentType": "application/pdf",
-      "sha256": "02e7a4ee3289e3dfcc81bdb43d2e21645b68e6f364a9889dda222b785ecfe6e6"
+      "sha256": "02e7a4ee3289e3dfcc81bdb43d2e21645b68e6f364a9889dda222b785ecfe6e6",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:31.908063+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NSM-10",
@@ -1325,7 +1890,12 @@
       "filename": "NSM-10.html",
       "sizeBytes": 164080,
       "contentType": "text/html",
-      "sha256": "cefb2ade2fc154dc1f20a05ca9a8b1b208de3194680a81decac991c2d81a72d9"
+      "sha256": "cefb2ade2fc154dc1f20a05ca9a8b1b208de3194680a81decac991c2d81a72d9",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:31.944410+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "EO-14412",
@@ -1337,7 +1907,12 @@
       "sha256": "b444eef342ad85f31f0e3bd5ca2485e7d58fed6f92c7abc47b9c1259df8496aa",
       "recaptured_at": "2026-09-07T01:57:14.399207+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:32.061439+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "US-QCCPA",
@@ -1346,7 +1921,12 @@
       "filename": "US-QCCPA.html",
       "sizeBytes": 361335,
       "contentType": "text/html",
-      "sha256": "074e4c3370e8127528c4ae6a9240203145133e5d8ac2ad9ca0cbf4e0778422fb"
+      "sha256": "074e4c3370e8127528c4ae6a9240203145133e5d8ac2ad9ca0cbf4e0778422fb",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:32.142065+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "IETF-TLS-MLKEM",
@@ -1355,7 +1935,12 @@
       "filename": "IETF-TLS-MLKEM.html",
       "sizeBytes": 73957,
       "contentType": "text/html",
-      "sha256": "ce647e83d41a100acee8ab2014ba5a5411fb6370ac6eeccaefcfb4b12c6349b6"
+      "sha256": "ce647e83d41a100acee8ab2014ba5a5411fb6370ac6eeccaefcfb4b12c6349b6",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:32.178846+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "OMB-M-26-15",
@@ -1364,7 +1949,12 @@
       "filename": "OMB-M-26-15.pdf",
       "sizeBytes": 283167,
       "contentType": "application/pdf",
-      "sha256": "515af70472d3a4a2107c61a1bc5f8014523d99feab9b2cf92a95e4bcc790da2c"
+      "sha256": "515af70472d3a4a2107c61a1bc5f8014523d99feab9b2cf92a95e4bcc790da2c",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:32.388933+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "PKCS11-V32",
@@ -1373,7 +1963,12 @@
       "filename": "PKCS11-V32.html",
       "sizeBytes": 5478477,
       "contentType": "text/html",
-      "sha256": "924c2d8d397387cf91639d9a6c71c20a4c5e24e20a7b04cc1feedfbc2e48c0cb"
+      "sha256": "924c2d8d397387cf91639d9a6c71c20a4c5e24e20a7b04cc1feedfbc2e48c0cb",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:22.715927+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NERC-CIP",
@@ -1382,7 +1977,12 @@
       "filename": "NERC-CIP.pdf",
       "sizeBytes": 325620,
       "contentType": "application/pdf",
-      "sha256": "7c2ff0092259d76717bf720b64f0cd38f123e55967ffa0e0560bf033f1452425"
+      "sha256": "7c2ff0092259d76717bf720b64f0cd38f123e55967ffa0e0560bf033f1452425",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:01.931064+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "DO-326A",
@@ -1391,7 +1991,12 @@
       "filename": "DO-326A.html",
       "sizeBytes": 116253,
       "contentType": "text/html",
-      "sha256": "dd22f2e34f05d4bedba48d78e17a3c16fcf34092e993f19dc317d0c09a36c88b"
+      "sha256": "dd22f2e34f05d4bedba48d78e17a3c16fcf34092e993f19dc317d0c09a36c88b",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:01.946987+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "RTCA-DO-355A",
@@ -1400,7 +2005,12 @@
       "filename": "RTCA-DO-355A.html",
       "sizeBytes": 116254,
       "contentType": "text/html",
-      "sha256": "93078509a41b989e2d7eb4226a4c7f23d9f913e0ece96090c8eea4c300f0660a"
+      "sha256": "93078509a41b989e2d7eb4226a4c7f23d9f913e0ece96090c8eea4c300f0660a",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:01.961679+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "MAS-CIRCULAR",
@@ -1409,7 +2019,12 @@
       "filename": "MAS-CIRCULAR.pdf",
       "sizeBytes": 138500,
       "contentType": "application/pdf",
-      "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f"
+      "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:10.067481+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "INCD-PQC",
@@ -1418,7 +2033,12 @@
       "filename": "INCD-PQC.pdf",
       "sizeBytes": 985301,
       "contentType": "application/pdf",
-      "sha256": "ff42111be495c7c8bab64b80ceaeb78db4881033bc42abd375554a4828f7a853"
+      "sha256": "ff42111be495c7c8bab64b80ceaeb78db4881033bc42abd375554a4828f7a853",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:10.804900+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "BOI-PQC",
@@ -1427,7 +2047,12 @@
       "filename": "BOI-PQC.pdf",
       "sizeBytes": 325353,
       "contentType": "application/pdf",
-      "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5"
+      "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:10.920857+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "QED-C",
@@ -1439,7 +2064,12 @@
       "sha256": "13c803d03f636fed41e1d15d68b7989d1276b62c8c3df727c3612054f4572542",
       "recaptured_at": "2026-09-07T02:10:24.042252+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:33.059947+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "MSB-SE-CYB",
@@ -1452,7 +2082,12 @@
       "sha256": "707a164ec0d3cc8a5e62f8cc2358e67978affb6179edb1ca9afc87507876640c",
       "recaptured_at": "2026-09-09T01:24:52.533871+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": "_superseded-20260908/compliance/MSB-SE-CYB.pdf"
+      "superseded_file": "_superseded-20260908/compliance/MSB-SE-CYB.pdf",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:50.673678+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NCSC-FI-PQC",
@@ -1461,7 +2096,12 @@
       "filename": "NCSC-FI-PQC.html",
       "sizeBytes": 176987,
       "contentType": "text/html",
-      "sha256": "7812c4ecb879b2ab3f8a2fa180a95adf726958b72ba257b19abed0eaf4591a61"
+      "sha256": "7812c4ecb879b2ab3f8a2fa180a95adf726958b72ba257b19abed0eaf4591a61",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:50.702081+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "RU-TC26",
@@ -1470,7 +2110,12 @@
       "filename": "RU-TC26.html",
       "sizeBytes": 50136,
       "contentType": "text/html",
-      "sha256": "ed427c44b55521fa8463b16fd6fc916e0b2a639ef7fa11176de5af6ed23a0931"
+      "sha256": "ed427c44b55521fa8463b16fd6fc916e0b2a639ef7fa11176de5af6ed23a0931",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:19.897397+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "MICA-EU-MARKETS-IN-CRYPTO-ASSE",
@@ -1491,7 +2136,12 @@
       "sha256": "36edef6da18083dc24145255be5ae7dc724fe2fc71c39f092b4d8c5234af4d8a",
       "recaptured_at": "2026-09-07T02:23:59.256481+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:32.657504+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CRI-PROFILE-CYBER-RISK-INSTITU",
@@ -1500,7 +2150,12 @@
       "filename": "CRI-PROFILE-CYBER-RISK-INSTITU.pdf",
       "sizeBytes": 3118318,
       "contentType": "application/pdf",
-      "sha256": "9103a435aefb37c97bd363123e1cd2419a41bacca54a385d8d0338e0c65c4c72"
+      "sha256": "9103a435aefb37c97bd363123e1cd2419a41bacca54a385d8d0338e0c65c4c72",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:38.056472+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CYBERSAKERHETSLAG-SWEDEN-CYBER",
@@ -1509,7 +2164,12 @@
       "filename": "CYBERSAKERHETSLAG-SWEDEN-CYBER.html",
       "sizeBytes": 342641,
       "contentType": "text/html",
-      "sha256": "35e7e2dc7b4337bf02b6f88bf9482b2e45d69828572ea95c15741aee727cdb24"
+      "sha256": "35e7e2dc7b4337bf02b6f88bf9482b2e45d69828572ea95c15741aee727cdb24",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:38.110003+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "OMB-MEMORANDUM-M-19-03",
@@ -1518,7 +2178,12 @@
       "filename": "OMB-MEMORANDUM-M-19-03.pdf",
       "sizeBytes": 355599,
       "contentType": "application/pdf",
-      "sha256": "0a9a5232558f41c4f772db4b6894bc9d47aea627faccd0bfa428637d6280ca32"
+      "sha256": "0a9a5232558f41c4f772db4b6894bc9d47aea627faccd0bfa428637d6280ca32",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:38.746721+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NATIONAL-SECURITY-MEMORANDUM-2",
@@ -1527,7 +2192,12 @@
       "filename": "NATIONAL-SECURITY-MEMORANDUM-2.html",
       "sizeBytes": 216777,
       "contentType": "text/html",
-      "sha256": "c6cf5096704d3963157180a1b93e007a0e52a9c1d63e49d87aaa0ece0f1eeb68"
+      "sha256": "c6cf5096704d3963157180a1b93e007a0e52a9c1d63e49d87aaa0ece0f1eeb68",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:38.825818+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "DISA-STIG",
@@ -1536,7 +2206,12 @@
       "filename": "DISA-STIG.html",
       "sizeBytes": 765723,
       "contentType": "text/html",
-      "sha256": "82099822cbeae14e18ec7d37f5c872e6c2c238de37f7e97c9ff60f564b53ab66"
+      "sha256": "82099822cbeae14e18ec7d37f5c872e6c2c238de37f7e97c9ff60f564b53ab66",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:01.688571+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CZ-NUKIB-MIN-CRYPTO-REQS",
@@ -1545,7 +2220,12 @@
       "filename": "CZ-NUKIB-MIN-CRYPTO-REQS.pdf",
       "sizeBytes": 382269,
       "contentType": "application/pdf",
-      "sha256": "f0de9ce55b2761a7213e1b18fab026b3d57025f657a6c5435780def313ea0944"
+      "sha256": "f0de9ce55b2761a7213e1b18fab026b3d57025f657a6c5435780def313ea0944",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:39.059086+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "IL-BOI-DIRECTIVE-364-QUANTUM",
@@ -1566,7 +2246,12 @@
       "sha256": "6ec4fdf0f388df2305ecfedd6c8948af6e96aeb81d1d4534e9a107ea269c6df1",
       "recaptured_at": "2026-09-07T01:50:40.745290+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:39.944406+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "EUROPOL-QSFF",
@@ -1575,7 +2260,12 @@
       "filename": "EUROPOL-QSFF.pdf",
       "sizeBytes": 425443,
       "contentType": "application/pdf",
-      "sha256": "4f043ff0cb0cec81506304dca0cbf44a44caf6af2db9749fe1e39b90b91bff20"
+      "sha256": "4f043ff0cb0cec81506304dca0cbf44a44caf6af2db9749fe1e39b90b91bff20",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:27.762644+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "EUCC",
@@ -1586,7 +2276,12 @@
       "contentType": "application/pdf",
       "sha256": "074a5e09b5686e75f1186b0a9ff25a1649a63ee5f605b1b766bc0b95156757a0",
       "acquisition": "manual",
-      "acquiredAt": "2026-07-30"
+      "acquiredAt": "2026-07-30",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:11.464364+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "SPAIN-CCN-PQC",
@@ -1598,7 +2293,12 @@
       "sha256": "49dd74e588ded9b4635386a4aa7faf883028f78e5ff6073c91c65eac165e1354",
       "recaptured_at": "2026-09-07T02:12:29.241526+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:27.460938+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "KE-DPA",
@@ -1607,7 +2307,12 @@
       "filename": "KE-DPA.html",
       "sizeBytes": 308213,
       "contentType": "text/html",
-      "sha256": "d75dbbecbbbc0fde22f8efc72178d2dca702c59192cb02651873b1aa52b4e52a"
+      "sha256": "d75dbbecbbbc0fde22f8efc72178d2dca702c59192cb02651873b1aa52b4e52a",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:46.870001+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "MEXICO-CNBV-CUB",
@@ -1616,7 +2321,12 @@
       "filename": "MEXICO-CNBV-CUB.pdf",
       "sizeBytes": 6144432,
       "contentType": "application/pdf",
-      "sha256": "c41084b31061b6601af9f41cd6f08db5a8a98a8f44ecbdbd2bd601746f7def48"
+      "sha256": "c41084b31061b6601af9f41cd6f08db5a8a98a8f44ecbdbd2bd601746f7def48",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:06.256822+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ID-PDP",
@@ -1625,7 +2335,12 @@
       "filename": "ID-PDP.pdf",
       "sizeBytes": 2977828,
       "contentType": "application/pdf",
-      "sha256": "ed952dea04b87d14ecf037f9f324a65d50b396ddd34fc28ddf9ff014391971f6"
+      "sha256": "ed952dea04b87d14ecf037f9f324a65d50b396ddd34fc28ddf9ff014391971f6",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:13.728280+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "AISEP-AUSTRALIAN-INFORMATION-S",
@@ -1634,7 +2349,12 @@
       "filename": "AISEP-AUSTRALIAN-INFORMATION-S.html",
       "sizeBytes": 329252,
       "contentType": "text/html",
-      "sha256": "21d32d23011fecbc8c572cfb8b10907b7d8fe284001bb062be3c007e0e561475"
+      "sha256": "21d32d23011fecbc8c572cfb8b10907b7d8fe284001bb062be3c007e0e561475",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:39.989151+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CANADIAN-COMMON-CRITERIA-SCHEM",
@@ -1643,7 +2363,12 @@
       "filename": "CANADIAN-COMMON-CRITERIA-SCHEM.html",
       "sizeBytes": 119293,
       "contentType": "text/html",
-      "sha256": "5e653b5dd4f3cab7247664c7a61cb3775381fc425215c6d8a90690e7da1d6101"
+      "sha256": "5e653b5dd4f3cab7247664c7a61cb3775381fc425215c6d8a90690e7da1d6101",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:40.023748+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "BSI-COMMON-CRITERIA-CERTIFICAT",
@@ -1655,7 +2380,12 @@
       "sha256": "ce5177c910820a97a2ca5877fdc93add946b375d35cb41c09e3d1bc94364e8c1",
       "recaptured_at": "2026-09-07T02:11:15.734724+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:41.028354+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ORGANISMO-DE-CERTIFICACION-OC-",
@@ -1676,7 +2406,12 @@
       "sha256": "51972b21a66c6d95de31b985d8df5b6411223735e588158928aeca139920c74b",
       "recaptured_at": "2026-09-07T02:11:09.091847+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:42.176595+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "OCSI-ORGANISMO-DI-CERTIFICAZIO",
@@ -1685,7 +2420,12 @@
       "filename": "OCSI-ORGANISMO-DI-CERTIFICAZIO.html",
       "sizeBytes": 141398,
       "contentType": "text/html",
-      "sha256": "2a2465624cd50659b6fd259a1f419ec920eba5798e2482bf1e50f9804a6c38f1"
+      "sha256": "2a2465624cd50659b6fd259a1f419ec920eba5798e2482bf1e50f9804a6c38f1",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:42.203447+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "JISEC-JAPAN-IT-SECURITY-EVALUA",
@@ -1697,7 +2437,12 @@
       "sha256": "c50da4ba54d07d7ae2b002e7a1411680dc231bccc5027483b3efbaa29cc15921",
       "recaptured_at": "2026-09-07T02:24:08.813193+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:42.559286+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ITSCC-IT-SECURITY-CERTIFICATIO",
@@ -1706,7 +2451,12 @@
       "filename": "ITSCC-IT-SECURITY-CERTIFICATIO.html",
       "sizeBytes": 28896,
       "contentType": "text/html",
-      "sha256": "217733a55a2e4207440fffb2d87693b7a876a8d590c92a470834c18c667f3075"
+      "sha256": "217733a55a2e4207440fffb2d87693b7a876a8d590c92a470834c18c667f3075",
+      "artefact": "LANDING",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:42.572722+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "MYCC-MALAYSIAN-COMMON-CRITERIA",
@@ -1715,7 +2465,12 @@
       "filename": "MYCC-MALAYSIAN-COMMON-CRITERIA.html",
       "sizeBytes": 176542,
       "contentType": "text/html",
-      "sha256": "2c10573a6b45c337d1589279f23b37e40930e4b7a1d486a89bb30d32cd3dc999"
+      "sha256": "2c10573a6b45c337d1589279f23b37e40930e4b7a1d486a89bb30d32cd3dc999",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:42.614266+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NSCIB-NETHERLANDS-SCHEME-FOR-C",
@@ -1727,7 +2482,12 @@
       "sha256": "bf4234802443803fd872cdbaabe1c4dc0e917a03fef8f2072343dcff43d8812d",
       "recaptured_at": "2026-09-07T02:11:10.366638+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:43.327535+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "SERTIT-NORWEGIAN-CERTIFICATION",
@@ -1739,7 +2499,12 @@
       "sha256": "f13559759f8ffdbcd86d820147494ac2503cc725a592331bca4ecc4f161782de",
       "recaptured_at": "2026-09-07T01:50:55.866905+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:43.787310+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NASK-COMMON-CRITERIA-CERTIFICA",
@@ -1751,7 +2516,12 @@
       "sha256": "0e69d46ea140042d9f604e4c844eed270c38bcd998b2b194c2709459df0c3362",
       "recaptured_at": "2026-09-07T01:57:17.215303+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:44.534698+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CSEC-SWEDISH-CERTIFICATION-BOD",
@@ -1763,7 +2533,12 @@
       "sha256": "6aaa8ef02ac61d97daac6b18c63bda4e8a02932a97b3f7faa85cd121fa5ea738",
       "recaptured_at": "2026-09-07T02:11:12.438597+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:45.459934+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "SCCS-SINGAPORE-COMMON-CRITERIA",
@@ -1775,7 +2550,12 @@
       "sha256": "b2758a9185c043bf9ddc12f2a2cd39c51179fe8237d3f4b4e63aa8e2e050980f",
       "recaptured_at": "2026-09-07T02:11:23.534372+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:45.717535+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "TSE-COMMON-CRITERIA-CERTIFICAT",
@@ -1796,7 +2576,12 @@
       "sha256": "2360f958da4f5e3c8d3ebe67f7f396b494485932a5cda395d29935bbef53d5fb",
       "recaptured_at": "2026-09-07T02:11:13.231354+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:46.242937+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ANSSI-COMMON-CRITERIA-CERTIFIC",
@@ -1808,7 +2593,12 @@
       "sha256": "b3a66f05f46d009fa2b1c6b38e0271e631416065966de4c15df9e57dd310c765",
       "recaptured_at": "2026-09-07T01:50:54.292486+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:42.074363+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "FFIEC-IT-EXAMINATION-HANDBOOK-",
@@ -1820,7 +2610,12 @@
       "sha256": "64c4726ae64c3ef7a34f5d60d31097f030417eae8dd36dcf19aff095eec7c050",
       "recaptured_at": "2026-09-07T02:10:17.713009+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:47.770932+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CJIS-SECURITY-POLICY-FBI",
@@ -1829,7 +2624,12 @@
       "filename": "CJIS-SECURITY-POLICY-FBI.pdf",
       "sizeBytes": 4443912,
       "contentType": "application/pdf",
-      "sha256": "0e0f0f53db17f2b6408b2ce486fafb84acb0f628f68a794372ef4eb0c87ff4f8"
+      "sha256": "0e0f0f53db17f2b6408b2ce486fafb84acb0f628f68a794372ef4eb0c87ff4f8",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:53.904135+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "PSD2-REVISED-PAYMENT-SERVICES-",
@@ -1838,7 +2638,12 @@
       "filename": "PSD2-REVISED-PAYMENT-SERVICES-.html",
       "sizeBytes": 1122118,
       "contentType": "text/html",
-      "sha256": "1109cd435d9aa729aff87d6476913c45ad999ac14bedf5152633b98a8cbf5e30"
+      "sha256": "1109cd435d9aa729aff87d6476913c45ad999ac14bedf5152633b98a8cbf5e30",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:54.142593+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CCCS-ITSP-40-111-CRYPTOGRAPHIC",
@@ -1847,7 +2652,12 @@
       "filename": "CCCS-ITSP-40-111-CRYPTOGRAPHIC.html",
       "sizeBytes": 264573,
       "contentType": "text/html",
-      "sha256": "0481832765cba7bbff393bcac176c1322ac0ccbf42264803eba6c878a8283a83"
+      "sha256": "0481832765cba7bbff393bcac176c1322ac0ccbf42264803eba6c878a8283a83",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:54.209539+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "INDIA-DPDP-ACT-2023",
@@ -1856,7 +2666,12 @@
       "filename": "INDIA-DPDP-ACT-2023.pdf",
       "sizeBytes": 182082,
       "contentType": "application/pdf",
-      "sha256": "4deb23981d3010c8225a2ff6149e7243dc2268455b299e283afebdd7b72a7d15"
+      "sha256": "4deb23981d3010c8225a2ff6149e7243dc2268455b299e283afebdd7b72a7d15",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:54.620347+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "SFC-CIRCULAR-EXTERNA-007-2018-",
@@ -1865,7 +2680,12 @@
       "filename": "SFC-CIRCULAR-EXTERNA-007-2018-.html",
       "sizeBytes": 37457,
       "contentType": "text/html",
-      "sha256": "3788941484c720647342decc8de0a9cf0a2598c3ef3d28e5fa5e7232006f10c6"
+      "sha256": "3788941484c720647342decc8de0a9cf0a2598c3ef3d28e5fa5e7232006f10c6",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:56.675909+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "OJK-POJK-11-2022-IT-IMPLEMENTA",
@@ -1874,7 +2694,12 @@
       "filename": "OJK-POJK-11-2022-IT-IMPLEMENTA.pdf",
       "sizeBytes": 241982,
       "contentType": "application/pdf",
-      "sha256": "d4e8d59915bdecdbdc1ae61388b858b8c898bc349d23cbb64326f43a48b5b733"
+      "sha256": "d4e8d59915bdecdbdc1ae61388b858b8c898bc349d23cbb64326f43a48b5b733",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:56.498074+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "SBS-RESOLUCION-504-2021-INFORM",
@@ -1883,7 +2708,12 @@
       "filename": "SBS-RESOLUCION-504-2021-INFORM.html",
       "sizeBytes": 282275,
       "contentType": "text/html",
-      "sha256": "1d57db6677ed4ddb4898985885ab179bee12584977088b318daab4fd4bbe8139"
+      "sha256": "1d57db6677ed4ddb4898985885ab179bee12584977088b318daab4fd4bbe8139",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:56.767198+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "SAMA-CYBER-SECURITY-FRAMEWORK-",
@@ -1892,7 +2722,12 @@
       "filename": "SAMA-CYBER-SECURITY-FRAMEWORK-.html",
       "sizeBytes": 327048,
       "contentType": "text/html",
-      "sha256": "649b2a00224eecacbe3683540dec0638e298f48d89dd4b02319981226780b7fb"
+      "sha256": "649b2a00224eecacbe3683540dec0638e298f48d89dd4b02319981226780b7fb",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:56.642134+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "BNM-RMIT-RISK-MANAGEMENT-IN-TE",
@@ -1902,7 +2737,12 @@
       "sizeBytes": 762759,
       "contentType": "application/pdf",
       "sha256": "064ffdd45fa2c3fae16847ed87b9fcae3efaecb465d47046c33a5740f155076c",
-      "note": "Fetched manually by the user 2026-07-31 -- all automated fetch tiers (curl_cffi, playwright-stealth, crawl4ai) were blocked by bnm.gov.my."
+      "note": "Fetched manually by the user 2026-07-31 -- all automated fetch tiers (curl_cffi, playwright-stealth, crawl4ai) were blocked by bnm.gov.my.",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:55.857599+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NCSA-QATAR-COMMON-CRITERIA-SCH",
@@ -1912,7 +2752,12 @@
       "sizeBytes": 1490886,
       "contentType": "text/html",
       "sha256": "52a419bc48e1f354f4464d4227c4a4b1796d20dae23de45c611b922a4c40c57c",
-      "note": "Fetched manually by the user 2026-07-31 (saved webpage) -- every automated fetch tier returned an 8-character JS shell for this URL on both its own domains."
+      "note": "Fetched manually by the user 2026-07-31 (saved webpage) -- every automated fetch tier returned an 8-character JS shell for this URL on both its own domains.",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:44.680393+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ANSSI-BODY",
@@ -1924,7 +2769,12 @@
       "sha256": "717ed793617b1d87b6dbf28245b3cf9e13c909b34ec3918170bf103daf16eb02",
       "recaptured_at": "2026-09-07T02:10:23.226971+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:11.623528+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ENISA",
@@ -1936,7 +2786,12 @@
       "sha256": "f92b9e0fbcb25c861c9c7f493a1060cb4e116cab33254113f8350a76ccde2cea",
       "recaptured_at": "2026-09-07T02:12:08.594555+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this PDF is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:55:49.447356+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "BSI",
@@ -1946,7 +2801,12 @@
       "sizeBytes": 568388,
       "contentType": "application/pdf",
       "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
-      "note": "Same document already cached for library row BSI-TR-02102-1 -- copied rather than re-fetched, per user pointer."
+      "note": "Same document already cached for library row BSI-TR-02102-1 -- copied rather than re-fetched, per user pointer.",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:13.217650+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "INDIA-CERTIN-CBOM",
@@ -1955,7 +2815,12 @@
       "filename": "INDIA-CERTIN-CBOM.pdf",
       "sizeBytes": 1654189,
       "contentType": "application/pdf",
-      "sha256": "28aa48f329114d665f8e4f8c4d2f33baf4981e29168a318e6e719c11a5ff5151"
+      "sha256": "28aa48f329114d665f8e4f8c4d2f33baf4981e29168a318e6e719c11a5ff5151",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:27.012895+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "JORDAN-CBJ-PQC",
@@ -1964,7 +2829,12 @@
       "filename": "JORDAN-CBJ-PQC.html",
       "sizeBytes": 93800,
       "contentType": "text/html",
-      "sha256": "2596fa573e2b58416860bed0e4df9308f3cd265ceab75d54b1dda27d75ce28b2"
+      "sha256": "2596fa573e2b58416860bed0e4df9308f3cd265ceab75d54b1dda27d75ce28b2",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:27.490712+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ETSI-EN-303645",
@@ -1973,7 +2843,12 @@
       "filename": "ETSI-EN-303645.pdf",
       "sizeBytes": 975604,
       "contentType": "application/pdf",
-      "sha256": "ce3efec89e392064ad0f8c16082d49e219a5f0641e417fec8cb1da4f1765855c"
+      "sha256": "ce3efec89e392064ad0f8c16082d49e219a5f0641e417fec8cb1da4f1765855c",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:32.657019+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "APRA-CPS-234",
@@ -1982,7 +2857,12 @@
       "filename": "APRA-CPS-234.pdf",
       "sizeBytes": 274706,
       "contentType": "application/pdf",
-      "sha256": "ddcef7b1f5780c26a7e79ecfb35ce41bee8b65f78a8cdb605c7508c2f604bee5"
+      "sha256": "ddcef7b1f5780c26a7e79ecfb35ce41bee8b65f78a8cdb605c7508c2f604bee5",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:33.227230+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "CHILE-ANCI",
@@ -1991,7 +2871,12 @@
       "filename": "CHILE-ANCI.html",
       "sizeBytes": 156776,
       "contentType": "text/html",
-      "sha256": "23ddba8d304a3b91bb679d1c07f13bf19d14437f44069217c144777a29162b29"
+      "sha256": "23ddba8d304a3b91bb679d1c07f13bf19d14437f44069217c144777a29162b29",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:50.744511+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "VN-CYBER",
@@ -2000,7 +2885,12 @@
       "filename": "VN-CYBER.html",
       "sizeBytes": 285290,
       "contentType": "text/html",
-      "sha256": "7726d610973f588801c15f298b29eb22062f3310b7abee43e1eed0e00b52242a"
+      "sha256": "7726d610973f588801c15f298b29eb22062f3310b7abee43e1eed0e00b52242a",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:14.615164+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "NIS2",
@@ -2009,7 +2899,12 @@
       "sha256": "f91bcb4f92d6692532c67b36e0ac3e1d6e52e5c435501f0b69eb575f6f9a225d",
       "bytes": 970285,
       "downloadedAt": "2026-09-07T20:24:46.694439+00:00",
-      "recoveredBy": "codex url research + lineage gates"
+      "recoveredBy": "codex url research + lineage gates",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:56:02.259188+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "TH-PDPA",
@@ -2018,7 +2913,12 @@
       "sha256": "98c91c9992007b2586062a1e28b1ab10a7330acab1476a33a152ccc926bea53d",
       "bytes": 506138,
       "downloadedAt": "2026-09-07T20:24:46.694592+00:00",
-      "recoveredBy": "codex url research + lineage gates"
+      "recoveredBy": "codex url research + lineage gates",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:14.506444+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "EO-14306-TLS-1-3-AGENCY-SUPPOR",
@@ -2028,7 +2928,12 @@
       "sizeBytes": 77911,
       "contentType": "text/html",
       "sha256": "7c8ab1f310bb0e3989bb7a22532610b451a1736a2cb22a6d81541014872e44c6",
-      "verifiedAt": "2026-09-12"
+      "verifiedAt": "2026-09-12",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:56.800669+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     }
   ],
   "blocked": {
