@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-09-12T11:16:42.030224+00:00",
-  "count": 1310,
+  "count": 1313,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -20681,6 +20681,46 @@
       "ok": false,
       "superseded_file": "_superseded-09162026/migrate-proofs/general-dynamics-mission-2f5544f2.html",
       "superseded_reason": "2026-09-16: download-product-evidence.py saved the KIV-80 datasheet's PDF bytes under a .html name (artefact FORMAT-MISMATCH); the row's proof is general-dynamics-mission-2f5544f2.pdf"
+    },
+    {
+      "product_id": "hpe-alletra-mp",
+      "url": "https://www.hpe.com/psnow/doc/a00138815enw",
+      "file": "hpe-alletra-mp-35748917.html",
+      "bytes": 269107,
+      "tier": "playwright-stealth",
+      "sha256": "8a86be970d0f5704dff087665a07457fcc14ae5a9699c983dfaa9f26c0889dc3",
+      "artefact": "SOURCE",
+      "identity": "RELEVANT",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T14:20:01.890757+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "product_id": "general-dynamics-mission",
+      "url": "https://gdmissionsystems.com/-/media/general-dynamics/cyber-and-electronic-warfare-systems/pdf/data-sheets/kiv-80-miniature-adaptable-crypto-datasheet.ashx",
+      "file": "general-dynamics-mission-2f5544f2.pdf",
+      "bytes": 4665509,
+      "tier": "curl_cffi:chrome124",
+      "sha256": "27d688247707a167fa4473ed0c75582fcfa624e3ac75f4a0763d10e8a4aba408",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T14:19:57.999156+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "product_id": "pqcee-cng-provider",
+      "url": "https://www.pqcee.com/blog/pqcee-launches-crypto-agile-cng-provider-for-microsoft-windows-enabling-post-quantum-security",
+      "file": "pqcee-cng-provider-92c2fc75.html",
+      "bytes": 168842,
+      "tier": "curl_cffi:chrome124",
+      "sha256": "6f1607465b0765babf9b6d349b3d618df09b058aa585121398dba96e91972e8e",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T14:19:56.026687+00:00",
+      "admittedBy": "admit.py",
+      "superseded_file": "_superseded-09172026/migrate-proofs/pqcee-cng-provider-92c2fc75.html"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."

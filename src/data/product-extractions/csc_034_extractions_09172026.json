@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "General Dynamics Mission",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "Miniature Adaptable Crypto (KIV-80)",
+    "product_brief": "A low SWaP, ruggedized IFF crypto appliqué for UAVs supporting Mode 5 and NSA CM2 quantum-resistant requirements.",
+    "pqc_support": "Yes — KIV-80 enables quantum resistant security per NSA requirements for software protection and algorithms.",
+    "pqc_capability_description": "The device is designed to meet Crypto Modernization 2.0 (CM2) and is described as \"NSA CM2 Quantum Resistant Compliant.\" It supports re-programmable algorithms and is upgradeable with the Advanced INFOSEC Adapter for Legacy Crypto Replacement Machine (AIM) III crypto processor. Specific PQC algorithm names (e.g., ML-KEM, ML-DSA) are not listed.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Hardware key storage with black keys (3 months duration) and key recovery; key fill via DS-101 or SKL; supports Cold Fill capability.",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Hardware appliqué (embedded crypto module)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "Unmanned aerial vehicles (UAV), avionics systems",
+    "target_industries": "Government, Defense",
+    "regulatory_status": "Under NSA certification evaluation as KIV-80; submitted to NSA for certification 1Q 2026",
+    "pqc_roadmap_details": "Designed to meet Crypto Modernization 2.0 (CM2); NSA certification evaluation submitted for 1Q 2026.",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "gdmissionsystems.com/encryption/embedded-encryption",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Designed for SWaP-constrained platforms; dimensions 2.5” W x 2.55” D x 0.8” H; weight 4.25 ounces; power 1100 mW nominal; battery life 8 years nominal.",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.8-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-09-17"
+    }
+  }
+]

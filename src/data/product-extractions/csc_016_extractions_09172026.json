@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "pQCee CNG Provider",
+    "category": "Post-Quantum Cryptography Libraries",
+    "product_name": "pQCee Crypto-Agile CNG Provider",
+    "product_brief": "Crypto-agile Cryptographic Next Generation (CNG) provider for Microsoft Windows enabling post-quantum security and compliance.",
+    "pqc_support": "Yes — Supports NIST FIPS204 MLDSA, FIPS205 SLHDSA, XMSS, LMS, hybrid combinations, and country-specific standards.",
+    "pqc_capability_description": "The provider enables seamless integration of customized post-quantum algorithms into the Windows platform. It supports NIST FIPS204 MLDSA and FIPS205 SLHDSA certificates, other NIST PQC algorithms like XMSS and LMS, hybrid classical/PQC combinations, and country-specific standards (MySEAL, KpqC, NGCC). It integrates with hardware (smartcards, USB tokens, HSMs, TEEs) and quantum technologies (QRNG, QKD). Partners include PQShield (FIPS 140-3 certified PQCryptoLib-Core) and Feitian Technologies.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-DSA (FIPS 204), SLH-DSA (FIPS 205), XMSS, LMS, Hybrid classical and post-quantum algorithms, MySEAL, KpqC, NGCC",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "CNG Provider for Microsoft Windows; integrates with smartcards, USB tokens, HSMs, and TEEs",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "2026-03-23",
+    "fips_validated": "FIPS 140-3 certified implementations available via partner PQShield (PQCryptoLib-Core); pQCee supports certified implementations under FIPS140 CMVP",
+    "primary_platforms": "Microsoft Windows",
+    "target_industries": "Enterprises, Governments, Regulated Industries",
+    "regulatory_status": "Common Criteria EAL, FIPS140 CMVP",
+    "pqc_roadmap_details": "Collaboration with PQShield and Feitian Technologies to integrate cryptographic modules; live demonstration at RSAC Conference 2026",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "ML-DSA (FIPS 204), SLH-DSA (FIPS 205), XMSS, LMS",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Integration with Quantum Key Distribution (QKD) mentioned, but specific protocols not stated",
+    "qrng_&_entropy_sources": "Integration with Quantum Random Number Generators (QRNG) mentioned, but specific types or compliance not stated",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Partnerships with PQShield and Feitian Technologies for cryptographic module integration",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.8-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-09-17"
+    }
+  }
+]
