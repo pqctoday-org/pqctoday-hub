@@ -15,7 +15,12 @@
       "sizeBytes": 124245,
       "contentType": "application/pdf",
       "sha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:56.922879+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "aero-satcom",
@@ -27,7 +32,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:57.146484+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "aero-atc-datalink",
@@ -39,7 +49,12 @@
       "sizeBytes": 124245,
       "contentType": "application/pdf",
       "sha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:56.922879+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "auto-v2x",
@@ -51,7 +66,12 @@
       "sizeBytes": 96747,
       "contentType": "text/html",
       "sha256": "fcf28063bbfad129941c44d45f14ff59fe4fdb03c0341777f16b2e07b3433b2d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "PAYWALL",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:41.480588+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "auto-secure-boot",
@@ -63,7 +83,12 @@
       "sizeBytes": 96747,
       "contentType": "text/html",
       "sha256": "fcf28063bbfad129941c44d45f14ff59fe4fdb03c0341777f16b2e07b3433b2d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "PAYWALL",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:41.480588+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "auto-telematics",
@@ -75,7 +100,12 @@
       "sizeBytes": 565909,
       "contentType": "text/html",
       "sha256": "7706e00dabda13027ccc6912afd11eede2d6049a4ac23bb93106133a5bf6bd4b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:57.298132+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "auto-invehicle",
@@ -87,7 +117,12 @@
       "sizeBytes": 96747,
       "contentType": "text/html",
       "sha256": "fcf28063bbfad129941c44d45f14ff59fe4fdb03c0341777f16b2e07b3433b2d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "PAYWALL",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:41.509196+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cloud-kms",
@@ -99,7 +134,12 @@
       "sizeBytes": 163997,
       "contentType": "text/html",
       "sha256": "81749d20a553423163414f4bd0c6787d85d52a67a8aedf87c60caf91bde4ac0d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:57.384898+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cloud-tenant-tls",
@@ -111,7 +151,12 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:57.874103+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cloud-hsm-roots",
@@ -123,7 +168,12 @@
       "sizeBytes": 1289805,
       "contentType": "application/pdf",
       "sha256": "147271600180dfd048c21da0892a1228f574bdf7b69f5982710a3aa6ebf79a95",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:58.624283+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cloud-backup",
@@ -135,7 +185,12 @@
       "sizeBytes": 163997,
       "contentType": "text/html",
       "sha256": "e9ac6aa530c8c5edef0f871c85204d516958c7695001ea0aa4e12f1db15275f7",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:58.690976+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "energy-scada",
@@ -147,7 +202,12 @@
       "sizeBytes": 429896,
       "contentType": "text/html",
       "sha256": "6ae150250e02f574fb8c60b826dfec3496f4d7447711620d1c05e9c71c37cbaa",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "PAYWALL",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:43.494889+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "energy-nuclear",
@@ -176,7 +236,12 @@
       "sizeBytes": 141572,
       "contentType": "text/html",
       "sha256": "ae9c23f401e22dc434943af47aad571e53d35e677e7cb7f853f066af433c160c",
-      "verifiedAt": "2026-09-12"
+      "verifiedAt": "2026-09-12",
+      "artefact": "LANDING",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:06:49.433989+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "energy-pipeline",
@@ -188,7 +253,12 @@
       "sizeBytes": 93027,
       "contentType": "text/html",
       "sha256": "2381ccdabc26d01ff1c9864e0e1e3c8c6430669e0714606ed6cf97a697880b3f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:58.777456+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cross-web-tls",
@@ -200,7 +270,12 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:59.264803+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cross-pki",
@@ -212,7 +287,12 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:59.264803+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cross-email",
@@ -224,7 +304,12 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:59.264803+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cross-code-signing",
@@ -253,7 +338,12 @@
       "sizeBytes": 902987,
       "contentType": "application/pdf",
       "sha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:00.384868+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-tx-signing",
@@ -265,7 +355,12 @@
       "sizeBytes": 88860,
       "contentType": "text/html",
       "sha256": "36d31a0f79a6947040ed74f1b55199ccedb4b6033259624708854f035e22504a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:00.407452+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-custody",
@@ -277,7 +372,12 @@
       "sizeBytes": 88860,
       "contentType": "text/html",
       "sha256": "69b63ab35746edf4184f4d0ef5deec14093254f1e5b7b4ac967679f46fa950a0",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:00.429556+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-consensus",
@@ -289,7 +389,12 @@
       "sizeBytes": 305178,
       "contentType": "text/html",
       "sha256": "ec8604f8c2d0d19ccd5a1c50dbfcffae94adf67c57eaa1c68423432c2e46b6f1",
-      "verifiedAt": "2026-09-12"
+      "verifiedAt": "2026-09-12",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:00.453460+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "edu-sis",
@@ -301,7 +406,12 @@
       "sizeBytes": 133312,
       "contentType": "text/html",
       "sha256": "fc8a093ed69e8464a441b3532df4446aff06b5830fb8d41fa63642335507417b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:00.498861+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "edu-federation",
@@ -314,7 +424,12 @@
       "sha256": "42745cd9119f3b1d24ee722e59d0a331834d57746ba6bdbf9a1d71e88ffab6f1",
       "recaptured_at": "2026-09-12T11:14:16.502884+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:01.457012+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "edu-credentials",
@@ -326,7 +441,12 @@
       "sizeBytes": 1023165,
       "contentType": "text/html",
       "sha256": "a9196a3d0b6601356c4e127bad24f8c7f2c17f6ed22e41b35755a910104156f8",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:01.650040+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "edu-research-data",
@@ -338,7 +458,12 @@
       "sizeBytes": 1593213,
       "contentType": "application/pdf",
       "sha256": "3e4631df8b5d61f40a6e542b52779ef30ddbbfff31e09214fa94ad6e6f5e6d08",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:03.370781+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "fin-interbank",
@@ -351,7 +476,12 @@
       "sha256": "992101f445a10917a7d672342028d1ba170f810c1ca4652a21cf32b6d5af9277",
       "recaptured_at": "2026-09-12T11:14:16.786641+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:03.633961+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "fin-customer",
@@ -380,7 +510,12 @@
       "sizeBytes": 2000479,
       "contentType": "application/pdf",
       "sha256": "8ca9ee948b53c395a638bb1205b11470687fc0427d04389b6ea999b5f91a57bf",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:07.554833+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "fin-archives",
@@ -392,7 +527,12 @@
       "sizeBytes": 88860,
       "contentType": "text/html",
       "sha256": "ef6199149cc5f27a292f400e8097f35db17d9a50938d9afd72e78357884320cc",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:07.577891+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "gov-nss",
@@ -404,7 +544,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:07.797174+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "gov-fpki",
@@ -416,7 +561,12 @@
       "sizeBytes": 157041,
       "contentType": "text/html",
       "sha256": "e83cdaf49a573c5b4df9dd2d6aae28763087054258dbba464362c900cfc9184d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:07.824635+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "gov-classified",
@@ -428,7 +578,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:08.042484+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "gov-procurement",
@@ -441,7 +596,12 @@
       "contentType": "text/html",
       "sha256": "bc7ae4a852339c5bfadf6925ff5cc172f35b29d2a970e9e5eedb688371ca13f4",
       "verifiedAt": "2026-09-16T03:54:02.989509+00:00",
-      "note": "2026-09-16: re-captured through the browser tier from the row's own CISA URL (the page is live; an earlier research batch mistyped the URL and a GovDelivery bulletin briefly stood in — superseded); hash from the bytes on disk"
+      "note": "2026-09-16: re-captured through the browser tier from the row's own CISA URL (the page is live; an earlier research batch mistyped the URL and a GovDelivery bulletin briefly stood in — superseded); hash from the bytes on disk",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:08.068596+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hlth-ehr",
@@ -453,7 +613,12 @@
       "sizeBytes": 145863,
       "contentType": "text/html",
       "sha256": "b997385afc728e37059371a0d560b0ba4f6b0760db180756c45edf5ee335ba9a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:08.103459+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hlth-devices",
@@ -466,7 +631,12 @@
       "sha256": "d046fa836048933e1a8795bcf2f8224bcfa08789c2f3ef6f46ae53c2eb096c54",
       "recaptured_at": "2026-09-12T11:14:17.783301+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:09.293756+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hlth-implants",
@@ -478,7 +648,12 @@
       "sizeBytes": 242831,
       "contentType": "application/pdf",
       "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:09.470797+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hlth-supply",
@@ -491,7 +666,12 @@
       "sha256": "49d9c1825bceaabea1a8bfea93d852f5d5be732b17aaabfe4fe0e78a3b2aac53",
       "recaptured_at": "2026-09-12T11:14:18.412407+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:12.614272+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hsm-keygen",
@@ -503,7 +683,12 @@
       "sizeBytes": 2588488,
       "contentType": "application/pdf",
       "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:16.489539+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hsm-api",
@@ -515,7 +700,12 @@
       "sizeBytes": 18963192,
       "contentType": "text/html",
       "sha256": "0ef7e14bc9b8c915ae63623b83de724b654dcc82fc7f89cfd4e72743457f3681",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:18.833016+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hsm-roots",
@@ -527,7 +717,12 @@
       "sizeBytes": 2588488,
       "contentType": "application/pdf",
       "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:16.489539+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "iot-provisioning",
@@ -539,7 +734,12 @@
       "sizeBytes": 977531,
       "contentType": "application/pdf",
       "sha256": "b3b54b00b5ac3f3582a3e3fd17d3f25b18f848a51f113000b6489adbcce374b4",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:19.157444+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "iot-industrial",
@@ -551,7 +751,12 @@
       "sizeBytes": 1895120,
       "contentType": "application/pdf",
       "sha256": "3137572e3802525b973b9764493db8f9c1b8b5cc746f12ef9a166a25f7e7ff26",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:21.000679+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "iot-firmware",
@@ -563,7 +768,12 @@
       "sizeBytes": 127548,
       "contentType": "text/html",
       "sha256": "c841af39dd2164e0b73fd91ab3df0e817872276521352b741189060b396bac5c",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:21.035700+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "it-libraries",
@@ -575,7 +785,12 @@
       "sizeBytes": 34496,
       "contentType": "text/html",
       "sha256": "09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:21.047747+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "it-webpki",
@@ -587,7 +802,12 @@
       "sizeBytes": 23664,
       "contentType": "text/html",
       "sha256": "ca7fa007a82b37b55734e83903bf92736dced7a0c3542422f326446d18f20239",
-      "verifiedAt": "2026-09-12"
+      "verifiedAt": "2026-09-12",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:21.059777+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "it-supplychain",
@@ -599,7 +819,12 @@
       "sizeBytes": 25607,
       "contentType": "text/html",
       "sha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:21.073010+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "it-identity",
@@ -611,7 +836,12 @@
       "sizeBytes": 2738728,
       "contentType": "text/html",
       "sha256": "cd9be6587c6560ffe6f2b7175324d0bc4cd33963cf752ad414160affd7f8e163",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:21.536488+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "it-ssh",
@@ -640,7 +870,12 @@
       "sizeBytes": 170568,
       "contentType": "application/pdf",
       "sha256": "df74e5d5f79f21fb0c86ae8e8df6c170cd7b987d207e550f0fa107c89e73e13f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:22.012562+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "leg-wallet",
@@ -652,7 +887,12 @@
       "sizeBytes": 835956,
       "contentType": "text/html",
       "sha256": "15f26715a4e48c580090016cceed0c9f57d27719dff2e13674e996942fcc5b18",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:22.152665+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "leg-timestamp",
@@ -664,7 +904,12 @@
       "sizeBytes": 70119,
       "contentType": "application/pdf",
       "sha256": "b8dce6e415c906877ce36fd3d91b41e0543eda332f400cb444116ec760b5a4bf",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:22.337932+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "media-drm",
@@ -676,7 +921,12 @@
       "sizeBytes": 1605696,
       "contentType": "application/pdf",
       "sha256": "7c0dc64c3c7f30d607f2b42f8cb095d3c901855ada1d58cfc8ce362c1c869a7e",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:23.650748+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "media-broadcast",
@@ -689,7 +939,12 @@
       "sha256": "0a537d01f54f97e4c878a52de7101281bac9c70441fc7b7a4209e203abeb7bb2",
       "recaptured_at": "2026-09-12T11:14:34.316301+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:23.707475+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "media-streaming",
@@ -701,7 +956,12 @@
       "sizeBytes": 41479,
       "contentType": "text/html",
       "sha256": "b8f4455f8ce1300549dce9107b6b5812c07c6633ca6d11e6a1a78b43d360b800",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:23.721688+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "pci-emv",
@@ -713,7 +973,12 @@
       "sizeBytes": 478488,
       "contentType": "application/pdf",
       "sha256": "1144cffc4ee871f503917b2ffad01bfc12c23a4cb35fb2306750fb37759c759b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:24.315952+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "pci-terminals",
@@ -725,7 +990,12 @@
       "sizeBytes": 2986027,
       "contentType": "application/pdf",
       "sha256": "efb109b980b10ca728cce8462f18eaedb587537e71a155c6b1db614966b2c0a6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:29.493439+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "pci-ecommerce",
@@ -737,7 +1007,12 @@
       "sizeBytes": 666809,
       "contentType": "text/html",
       "sha256": "8df68c86f85355eb2ba462f1cf4720d989ece927b4161560dc001269e4bc9715",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:29.539732+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "rail-etcs",
@@ -749,7 +1024,12 @@
       "sizeBytes": 447147,
       "contentType": "application/pdf",
       "sha256": "aa8871417f3b8ee4620abeff2dc27e3e54e340209928e8c0fafe1e53001f0ed6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:30.168461+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "rail-frmcs",
@@ -761,7 +1041,12 @@
       "sizeBytes": 765637,
       "contentType": "application/pdf",
       "sha256": "51c9182eb7c729b2fcd9c87a4c47f744f9a84e7ef6499b8b6b0a70de17a688d5",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:30.607799+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "rail-ptc",
@@ -773,7 +1058,12 @@
       "sizeBytes": 353605,
       "contentType": "text/html",
       "sha256": "6303878d24e41bd8a0536fc16ff6ef39af19f894f732bbc05a4d39a2f5ebae6f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:30.716096+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "retail-checkout",
@@ -785,7 +1075,12 @@
       "sizeBytes": 666809,
       "contentType": "text/html",
       "sha256": "8df68c86f85355eb2ba462f1cf4720d989ece927b4161560dc001269e4bc9715",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:30.765570+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "supply-maritime",
@@ -797,7 +1092,12 @@
       "sizeBytes": 197536,
       "contentType": "application/pdf",
       "sha256": "28e350371138921eaf41da6820fc44bb7d05cc5ecf4c9bb08c99d39fee80d1c6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:30.944755+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "supply-ebl",
@@ -810,7 +1110,12 @@
       "sha256": "88d078610c3de95f05f74698908173125d9250a8ae7ed112419c67ec276b94d0",
       "recaptured_at": "2026-09-12T11:14:35.263621+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:30.969410+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "supply-customs",
@@ -822,7 +1127,12 @@
       "sizeBytes": 160343,
       "contentType": "application/pdf",
       "sha256": "89dfdf6a762a0a85491afa0713f582d09da56fea8adc4244b4967574ab754620",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:31.040006+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "telco-suci",
@@ -834,7 +1144,12 @@
       "sizeBytes": 3874483,
       "contentType": "application/pdf",
       "sha256": "35a1c4b948f5d8df1c38de24cf780b4cb065159f5922ad91351a49f8108fb5a2",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:37.447294+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "telco-transport",
@@ -846,7 +1161,12 @@
       "sizeBytes": 1756788,
       "contentType": "application/pdf",
       "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.162911+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "telco-certs",
@@ -858,7 +1178,12 @@
       "sizeBytes": 3874483,
       "contentType": "application/pdf",
       "sha256": "35a1c4b948f5d8df1c38de24cf780b4cb065159f5922ad91351a49f8108fb5a2",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:37.447294+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "telco-subscriber",
@@ -871,7 +1196,12 @@
       "sha256": "133acb4071f39276f627ee8e45f5ae1bdc2b807eb9a841dd2212e4f402d4d320",
       "recaptured_at": "2026-09-12T11:14:35.493988+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.373996+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "water-scada",
@@ -883,7 +1213,12 @@
       "sizeBytes": 75363,
       "contentType": "text/html",
       "sha256": "7f14acd9b18e1f733420f96dc3d04106871621e9a030a730cc02c6d15a963499",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.399490+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "water-ami",
@@ -895,7 +1230,12 @@
       "sizeBytes": 458249,
       "contentType": "application/pdf",
       "sha256": "a2e9460d901436eb94a7bb8675520e621aabab35c5eb8712f2faaf82f2de5eff",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.846525+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "water-dams",
@@ -907,7 +1247,12 @@
       "sizeBytes": 273250,
       "contentType": "text/html",
       "sha256": "ae5a3a8f85dc297668492df6dfb997b4e0de75cb190d2e7db8417dfadc8fe49c",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.889039+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ins-policyholder-data",
@@ -919,7 +1264,12 @@
       "sizeBytes": 134588,
       "contentType": "text/html",
       "sha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.915921+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ins-cyber-underwriting",
@@ -931,7 +1281,12 @@
       "sizeBytes": 134588,
       "contentType": "text/html",
       "sha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.915921+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "Mastercard-PQC-industry-awareness-payment-ecosystem-quantum",
@@ -943,7 +1298,12 @@
       "sizeBytes": 2384992,
       "contentType": "application/pdf",
       "sha256": "3ac0c7642a00d5ef51dba8d4d7cde3c42643017b26e40aaa339301c622f8e5d2",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:40.947830+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cross-openpgp",
@@ -955,7 +1315,12 @@
       "sizeBytes": 825164,
       "contentType": "text/html",
       "sha256": "a532df2c1a599be7fb8a8238544bee2d51d630d8a4a3d0461e845ae0bcef24cf",
-      "verifiedAt": "2026-09-12"
+      "verifiedAt": "2026-09-12",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:41.124121+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cross-dnssec",
@@ -967,7 +1332,12 @@
       "sizeBytes": 67699,
       "contentType": "text/html",
       "sha256": "0d6d3b0c948affba4680a2e7c8aaa15f9aa8941cf40d27dabd9410bc7225cad1",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:41.150865+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "it-kerberos",
@@ -979,7 +1349,12 @@
       "sizeBytes": 92866,
       "contentType": "text/html",
       "sha256": "4429c0d15cca1594a7b6ed6c32275d9160f152e05ab4f99db3cd27ef5900ac50",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:41.190430+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "telco-routing",
@@ -991,7 +1366,12 @@
       "sizeBytes": 108774,
       "contentType": "text/html",
       "sha256": "158210adf50ae35f466620911b67ff4492ead6958e8576ee994358a943bb95a8",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:41.235649+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-solana-signing",
@@ -1003,7 +1383,12 @@
       "sizeBytes": 795837,
       "contentType": "text/html",
       "sha256": "def4bdb0b619b1aafbd6b68be412cc144eb34c700e98d696a08a143a150f9b6c",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:41.280834+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-cardano-signing",
@@ -1015,7 +1400,12 @@
       "sizeBytes": 277763,
       "contentType": "text/html",
       "sha256": "d344e19c508d7ed8b8d34738de4b53a807abe0c0f362201a6e118bc90354f74b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:41.306305+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-cardano-consensus",
@@ -1027,7 +1417,12 @@
       "sizeBytes": 777331,
       "contentType": "application/pdf",
       "sha256": "3bba0f5ad713da319604c6c4db5609981d5e0dbfd73f327e63b7ed8981418f1f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:42.565062+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-defi-multisig",
@@ -1039,7 +1434,12 @@
       "sizeBytes": 128962,
       "contentType": "text/html",
       "sha256": "f6f19c0f52b986a9f69448e6056ffa65535970f58145fcf5ceb96c979f9a2814",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:42.581750+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-defi-bridge",
@@ -1051,7 +1451,12 @@
       "sizeBytes": 172423,
       "contentType": "text/html",
       "sha256": "ed3604a3365612d702560520d6c2a07b0efe373c5a8735c3069265341050a79b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:42.610799+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-defi-oracle",
@@ -1063,7 +1468,12 @@
       "sizeBytes": 1115308,
       "contentType": "application/pdf",
       "sha256": "26ae3e5ebd1f4df5f5603f287304b684e5db6bc934c23f2f760feada56a1b414",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:44.074913+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-polkadot-signing",
@@ -1075,7 +1485,12 @@
       "sizeBytes": 128708,
       "contentType": "text/html",
       "sha256": "fd489c0ac978e5674c2462b73a69a34353fdb5cafc4ba8019ce28c701021ad59",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:44.099926+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-cosmos-signing",
@@ -1088,7 +1503,12 @@
       "sha256": "8c6a0c68ff1a8468d7c7765fe22f031a20df5eb44764042173b7e124cdaf24d1",
       "recaptured_at": "2026-09-12T11:14:35.873120+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:44.270937+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-avalanche-signing",
@@ -1100,7 +1520,12 @@
       "sizeBytes": 675125,
       "contentType": "text/html",
       "sha256": "59a1724ae1119204416518e86dadd914fa67004ed8f147fa5c8ec9ea10fe427b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:44.306165+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-avalanche-icm",
@@ -1112,7 +1537,12 @@
       "sizeBytes": 603186,
       "contentType": "text/html",
       "sha256": "00bf3ff7c218099b56d6e53f65b7b66a5f9aa391aba226937857d80bb62f9d9a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:44.336381+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-arbitrum-anytrust",
@@ -1136,7 +1566,12 @@
       "sizeBytes": 144731,
       "contentType": "text/html",
       "sha256": "3ef8058bbf245d864596151a918b623e5a51e71c40aafc1522f9da0c6b9388dc",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:44.370527+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "it-composite-certs",
@@ -1148,7 +1583,12 @@
       "sizeBytes": 798522,
       "contentType": "text/html",
       "sha256": "4323fe2a33923688948a00a6641d6eb7403e5058e4cfdc9e6475d2ac4f0bdd07",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:44.560536+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "iot-esim-provisioning",
@@ -1160,7 +1600,12 @@
       "sizeBytes": 646713,
       "contentType": "application/pdf",
       "sha256": "1f1de2d4ab20572682e9045a559dc5c8e14fc0cd19f8e52e2d1e911f97a9782c",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:45.175147+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "leg-pdf-signing",
@@ -1172,7 +1617,12 @@
       "sizeBytes": 29312,
       "contentType": "text/html",
       "sha256": "95d7f776e403c22f5b35a2a87e4a2d8ff229bedffee9e254352c76c62ea50e4d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:45.187797+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "retail-pin-keys",
@@ -1205,7 +1655,12 @@
       "superseded_file": "_superseded-09162026/industry/retail-digital-wallet.html",
       "replacedAt": "2026-09-16T05:14:30.495720+00:00",
       "replacedBy": "replace_evidence.py",
-      "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes"
+      "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:45.217435+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hsm-certified-product",
@@ -1218,7 +1673,12 @@
       "sha256": "c2af4229937e3722d84f2310c8686392e4fe4dd9f62be137e07cab8885622566",
       "recaptured_at": "2026-09-12T11:14:39.763582+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:45.245684+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "telco-air-interface",
@@ -1230,7 +1690,12 @@
       "sizeBytes": 4303964,
       "contentType": "application/pdf",
       "sha256": "91d949e68792d5cae0c9b8f096f903c67cda2a636f0e8c30bbeba92a59e5b9fc",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:52.096309+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "pci-pboc-cards",
@@ -1242,7 +1707,12 @@
       "sizeBytes": 93440,
       "contentType": "text/html",
       "sha256": "1b06e8300af12b1ac45deaa7b22a8729996dd3a07251788fc245f432f75640e3",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:52.123373+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "auto-tachograph",
@@ -1254,7 +1724,12 @@
       "sizeBytes": 18890956,
       "contentType": "application/pdf",
       "sha256": "7bc8a9f42bbac789e8aa5bcebec028d017d477a7d212db82e0b83170bc732f05",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:59:01.131888+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "Controller-Pilot-Data-Link-Communications-CPDLC",
@@ -1266,7 +1741,12 @@
       "sizeBytes": 96176,
       "contentType": "application/pdf",
       "sha256": "1151c3f67d28c797890910f34291d15108b405fec38a9b2c09e4e4143ca2ee6f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:59:01.226185+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "crypto-arbitrum-anytrust",
@@ -1281,7 +1761,12 @@
       "status": "downloaded",
       "label": "Arbitrum AnyTrust data-availability attestation",
       "note": "additional document for a row that already has one",
-      "superseded_file": "_superseded-09162026/industry/crypto-arbitrum-anytrust.pdf"
+      "superseded_file": "_superseded-09162026/industry/crypto-arbitrum-anytrust.pdf",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:44.349298+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "energy-nuclear",
@@ -1295,7 +1780,12 @@
       "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes",
       "file": "industry/energy-nuclear.html",
       "status": "downloaded",
-      "superseded_file": "_superseded-09162026/industry/energy-nuclear.pdf"
+      "superseded_file": "_superseded-09162026/industry/energy-nuclear.pdf",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:58.739787+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "cross-code-signing",
@@ -1309,7 +1799,12 @@
       "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes",
       "file": "industry/cross-code-signing.html",
       "status": "downloaded",
-      "superseded_file": "_superseded-09162026/industry/cross-code-signing.pdf"
+      "superseded_file": "_superseded-09162026/industry/cross-code-signing.pdf",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:59.292230+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "fin-customer",
@@ -1323,7 +1818,12 @@
       "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes",
       "file": "industry/fin-customer.html",
       "status": "downloaded",
-      "superseded_file": "_superseded-09162026/industry/fin-customer.pdf"
+      "superseded_file": "_superseded-09162026/industry/fin-customer.pdf",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:03.647313+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "it-ssh",
@@ -1337,7 +1837,12 @@
       "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes",
       "file": "industry/it-ssh.html",
       "status": "downloaded",
-      "superseded_file": "_superseded-09162026/industry/it-ssh.pdf"
+      "superseded_file": "_superseded-09162026/industry/it-ssh.pdf",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:21.571416+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "retail-pin-keys",
@@ -1351,7 +1856,12 @@
       "replaceReason": "2026-09-16 (user-approved): the 09-12 capture-suspect recovery swapped in an unrelated document; restored the source the row's summary quotes",
       "file": "industry/retail-pin-keys.html",
       "status": "downloaded",
-      "superseded_file": "_superseded-09162026/industry/retail-pin-keys.pdf"
+      "superseded_file": "_superseded-09162026/industry/retail-pin-keys.pdf",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:45.207551+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     }
   ],
   "archivedEntries": [
@@ -1363,7 +1873,12 @@
       "filename": "ins-munichre-cyber-trends-2025.html",
       "sizeBytes": 134588,
       "contentType": "text/html",
-      "sha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df"
+      "sha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.915921+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "Mastercard-PQC-industry-awareness-payment-ecosystem-quantum",
@@ -1374,7 +1889,12 @@
       "sizeBytes": 2384992,
       "contentType": "application/pdf",
       "sha256": "3ac0c7642a00d5ef51dba8d4d7cde3c42643017b26e40aaa339301c622f8e5d2",
-      "acquisition": "manual"
+      "acquisition": "manual",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:40.947830+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "Controller-Pilot-Data-Link-Communications-CPDLC",
@@ -1384,7 +1904,12 @@
       "filename": "Controller-Pilot-Data-Link-Communications-CPDLC.pdf",
       "sizeBytes": 96176,
       "contentType": "application/pdf",
-      "sha256": "1151c3f67d28c797890910f34291d15108b405fec38a9b2c09e4e4143ca2ee6f"
+      "sha256": "1151c3f67d28c797890910f34291d15108b405fec38a9b2c09e4e4143ca2ee6f",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:59:01.226185+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     }
   ],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",

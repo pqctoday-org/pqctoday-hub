@@ -15,7 +15,12 @@
       "sizeBytes": 290938,
       "contentType": "text/html",
       "sha256": "1e693d20fe7a0e548a70f4f7b5ee87608d4bb60b2e30ddf8dfa5a3b92fe0a8ba",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.572387+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-ibm-quantum-safe-explorer-launched",
@@ -27,7 +32,12 @@
       "sizeBytes": 130497,
       "contentType": "text/html",
       "sha256": "42dfd2de68b04abc8875ca11869b3a6a6d0267fb25e74d1ac3c8f7a4b9894498",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.595054+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-ibm-ibm-heron-r2-processor-available",
@@ -39,7 +49,12 @@
       "sizeBytes": 145822,
       "contentType": "text/html",
       "sha256": "074af95fddf9fe94abe15e8aeeae8c0ea8c2becf2e89162061736434b5f0ff28",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.618628+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-ibm-ibm-next-gen-processor-development",
@@ -51,7 +66,12 @@
       "sizeBytes": 145822,
       "contentType": "text/html",
       "sha256": "074af95fddf9fe94abe15e8aeeae8c0ea8c2becf2e89162061736434b5f0ff28",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.618628+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-ibm-ibm-kookaburra-processor-released",
@@ -63,7 +83,12 @@
       "sizeBytes": 145822,
       "contentType": "text/html",
       "sha256": "074af95fddf9fe94abe15e8aeeae8c0ea8c2becf2e89162061736434b5f0ff28",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.618628+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-ibm-ibm-quantum-advantage-target",
@@ -75,7 +100,12 @@
       "sizeBytes": 56841,
       "contentType": "text/html",
       "sha256": "dfd14f5156e0d12beb2e1ebed1cecf7e94ec9f62819659bb166db6e117d12b9d",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.650016+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-microsoft-quantum-safe-program-launch",
@@ -87,7 +117,12 @@
       "sizeBytes": 291824,
       "contentType": "text/html",
       "sha256": "856c351729a602799a8472085fad598faf75e642c631d7a288ad89caccd911c8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.682005+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-microsoft-majorana-1-quantum-chip",
@@ -99,7 +134,12 @@
       "sizeBytes": 333214,
       "contentType": "text/html",
       "sha256": "e4b9cb4ad5b8d9c36fc462ccd25c940cb560981bc575801b837d02f82f450114",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.719182+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-microsoft-microsoft-qsp-roadmap-published",
@@ -111,7 +151,12 @@
       "sizeBytes": 291824,
       "contentType": "text/html",
       "sha256": "856c351729a602799a8472085fad598faf75e642c631d7a288ad89caccd911c8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.682005+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-microsoft-core-infrastructure-transition",
@@ -123,7 +168,12 @@
       "sizeBytes": 291824,
       "contentType": "text/html",
       "sha256": "856c351729a602799a8472085fad598faf75e642c631d7a288ad89caccd911c8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.682005+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-microsoft-early-quantum-safe-adoption",
@@ -135,7 +185,12 @@
       "sizeBytes": 291824,
       "contentType": "text/html",
       "sha256": "856c351729a602799a8472085fad598faf75e642c631d7a288ad89caccd911c8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.682005+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-microsoft-microsoft-full-pqc-transition",
@@ -147,7 +202,12 @@
       "sizeBytes": 291824,
       "contentType": "text/html",
       "sha256": "856c351729a602799a8472085fad598faf75e642c631d7a288ad89caccd911c8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.682005+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-pqshield-ultrapq-suite-launched",
@@ -159,7 +219,12 @@
       "sizeBytes": 66136,
       "contentType": "text/html",
       "sha256": "3330e59e9f619d9f1fa152358a65034108a0158e73c2d09ed5cd312e5a3faef0",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.764930+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-pqshield-100th-research-paper-milestone",
@@ -171,7 +236,12 @@
       "sizeBytes": 62001,
       "contentType": "text/html",
       "sha256": "89686ad31abc6eb689e7a7acb5188e20bf913306569f6fd0edce617250f3d80c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.782545+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-pqshield-carahsoft-government-partnership",
@@ -183,7 +253,12 @@
       "sizeBytes": 57735,
       "contentType": "text/html",
       "sha256": "0e59d9989c646f84690257941667db2f7f4ab23e0b91a94cf3d47a6e3e52e392",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.799440+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-pqshield-post-quantum-vpn-research-initiated",
@@ -195,7 +270,12 @@
       "sizeBytes": 61495,
       "contentType": "text/html",
       "sha256": "901b9349e354237189ba464f815fff87a7f289238db233a4b1e496d2c2100573",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.816961+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-sandboxaq-aqtive-guard-fedramp-ready",
@@ -207,7 +287,12 @@
       "sizeBytes": 25237,
       "contentType": "text/html",
       "sha256": "2cf4a6eccba1b2f54915f8e4a06fda717561478e642ec994de000a6bcd3eb263",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.829299+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-sandboxaq-mitre-lf-rwpqc-2025-conference",
@@ -219,7 +304,12 @@
       "sizeBytes": 27932,
       "contentType": "text/html",
       "sha256": "6dbeb0d4811bb3bc8e77d868d85269c677b6c016283df5f1890ac3d693f489ed",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.843622+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "australia-asd-ism-december-2024-update",
@@ -231,7 +321,12 @@
       "sizeBytes": 1204322,
       "contentType": "application/pdf",
       "sha256": "d696e70f1ce37fb94f8d4d5302f9485bf85b61160e0c9baa5bcb8ccfe3a032b5",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:57.300393+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "australia-asd-ism-june-2025-cryptography-guidelines-update",
@@ -243,7 +338,12 @@
       "sizeBytes": 1203207,
       "contentType": "application/pdf",
       "sha256": "af723f1310793381270cd029d9e39618b6a29bf7f03c3b2cd93613194fde2f86",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:57.774387+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "australia-asd-acsc-annual-cyber-threat-report-2024-25-pqc-as-a-national-priority",
@@ -255,7 +355,12 @@
       "sizeBytes": 482289,
       "contentType": "text/html",
       "sha256": "e22a299ee2e390bfea03d083cc32f4d8b2dfbdc8164d0112e3ba052cce510e45",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:57.868743+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "australia-asd-commonwealth-cyber-security-posture-in-2025",
@@ -267,7 +372,12 @@
       "sizeBytes": 373505,
       "contentType": "text/html",
       "sha256": "f21f28355833850fb0f3bea162af3d27424f08d2a0c929fb777322720a69ebe4",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:57.930408+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-bis-paper-158-quantum-roadmap",
@@ -279,7 +389,12 @@
       "sizeBytes": 2159075,
       "contentType": "application/pdf",
       "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:58.606181+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "australia-disr-national-quantum-strategy",
@@ -291,7 +406,12 @@
       "sizeBytes": 17632533,
       "contentType": "application/pdf",
       "sha256": "e46aa04c815f2e98d721d4f790b6edbdb96f9132e8f52d5fa125f26da35c2db5",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:59.409208+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-ised-pqc-best-practices-published",
@@ -303,7 +423,12 @@
       "sizeBytes": 2918388,
       "contentType": "application/pdf",
       "sha256": "d2ac73ecbf65d87b7316c386c4e17a8700f4276b65b08cd7765e0c249431340b",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:01.643551+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-cccs-cccs-pqc-migration-roadmap-published",
@@ -315,7 +440,12 @@
       "sizeBytes": 145788,
       "contentType": "text/html",
       "sha256": "900a6dc1a3af6df3c7504ecdfd5357a9ebf11a62f858866e04c70c4ecb1cafb9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-tbs-spin-notice-published",
@@ -327,7 +457,12 @@
       "sizeBytes": 36522,
       "contentType": "text/html",
       "sha256": "028a71c8dafb7a1ec0d431ebd10256810e1c0f27a72873c53df1c0115d47582a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:01.698355+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-cccs-departmental-planning-phase",
@@ -339,7 +474,12 @@
       "sizeBytes": 145788,
       "contentType": "text/html",
       "sha256": "900a6dc1a3af6df3c7504ecdfd5357a9ebf11a62f858866e04c70c4ecb1cafb9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-cccs-departmental-pqc-migration-plans-due",
@@ -351,7 +491,12 @@
       "sizeBytes": 145788,
       "contentType": "text/html",
       "sha256": "900a6dc1a3af6df3c7504ecdfd5357a9ebf11a62f858866e04c70c4ecb1cafb9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-cccs-high-priority-migration-phase",
@@ -363,7 +508,12 @@
       "sizeBytes": 145788,
       "contentType": "text/html",
       "sha256": "900a6dc1a3af6df3c7504ecdfd5357a9ebf11a62f858866e04c70c4ecb1cafb9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-cccs-high-priority-systems-complete",
@@ -375,7 +525,12 @@
       "sizeBytes": 145788,
       "contentType": "text/html",
       "sha256": "900a6dc1a3af6df3c7504ecdfd5357a9ebf11a62f858866e04c70c4ecb1cafb9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-cccs-remaining-systems-migration",
@@ -387,7 +542,12 @@
       "sizeBytes": 145788,
       "contentType": "text/html",
       "sha256": "900a6dc1a3af6df3c7504ecdfd5357a9ebf11a62f858866e04c70c4ecb1cafb9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-cccs-full-gc-migration-complete",
@@ -399,7 +559,12 @@
       "sizeBytes": 145788,
       "contentType": "text/html",
       "sha256": "900a6dc1a3af6df3c7504ecdfd5357a9ebf11a62f858866e04c70c4ecb1cafb9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "china-iccs-ngcc-program-launched",
@@ -411,7 +576,12 @@
       "sizeBytes": 14730,
       "contentType": "text/html",
       "sha256": "3be8d6f3ab7c186af115d0fe916e39e6a757a435c2063dfb68f8188a0b53f794",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:01.745363+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "china-china-telecom-hybrid-quantum-safe-system-launched",
@@ -424,7 +594,12 @@
       "sha256": "5d22f07bca32bc8a3f12b1c9f44dfe1e0cae203b5e1f46a485c994d1afe52d85",
       "recaptured_at": "2026-09-09T01:24:59.603163+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:04.545798+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "china-iccs-ngcc-algorithm-evaluation",
@@ -436,7 +611,12 @@
       "sizeBytes": 20495,
       "contentType": "text/html",
       "sha256": "0cd2e727e770d215330910db047fc0abf79f13f380d8174044fa26ddc50f995d",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:04.557735+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "czech-republic-nukib-cryptographic-recommendations",
@@ -448,7 +628,12 @@
       "sizeBytes": 382269,
       "contentType": "application/pdf",
       "sha256": "f0de9ce55b2761a7213e1b18fab026b3d57025f657a6c5435780def313ea0944",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:04.810858+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-enisa-pqc-integration-study",
@@ -460,7 +645,12 @@
       "sizeBytes": 52518,
       "contentType": "text/html",
       "sha256": "94bcd20fba0d29b11c43503806f56137f123f05106993c531de1040e8a85c2b2",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:04.828866+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-ec-eu-pqc-recommendation-published",
@@ -472,7 +662,12 @@
       "sizeBytes": 109620,
       "contentType": "application/pdf",
       "sha256": "ab09144a6b59602d11ba1dc54eed7f2cfa3689f6991e21c207c188a4688f4d4d",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:04.971676+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-ec-critical-infrastructure-migration",
@@ -484,7 +679,12 @@
       "sizeBytes": 553179,
       "contentType": "application/pdf",
       "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:05.466418+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-nis-cg-coordinated-roadmap-v1-1",
@@ -496,7 +696,12 @@
       "sizeBytes": 553179,
       "contentType": "application/pdf",
       "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:05.466418+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-europol-qsff-call-to-action",
@@ -508,7 +713,12 @@
       "sizeBytes": 930892,
       "contentType": "application/pdf",
       "sha256": "72c93e2fc66508b1ce254db0795e3f3d4901e7f1d1d5723c18885fe9ae0eedf6",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:05.648769+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-nis-cg-eu-pqc-survey-launched",
@@ -520,7 +730,12 @@
       "sizeBytes": 47768,
       "contentType": "text/html",
       "sha256": "8bf9c1db4d3eed6fa4ffe2e9f060449722dac79f269d5f7eb282f397694b2444",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:05.663903+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-eccg-agreed-cryptographic-algorithms-v2",
@@ -532,7 +747,12 @@
       "sizeBytes": 346171,
       "contentType": "application/pdf",
       "sha256": "622d513335857267ec09a684c1132fe00d923ccb41c2ffc23a23cb8d035e0a86",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:05.808120+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-ec-member-state-strategy-initiation",
@@ -544,7 +764,12 @@
       "sizeBytes": 553179,
       "contentType": "application/pdf",
       "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:05.466418+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-ec-high-risk-systems-secured",
@@ -556,7 +781,12 @@
       "sizeBytes": 553179,
       "contentType": "application/pdf",
       "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:05.466418+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-ec-full-eu-pqc-transition",
@@ -568,7 +798,12 @@
       "sizeBytes": 553179,
       "contentType": "application/pdf",
       "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:06.316846+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-initial-pqc-position-paper",
@@ -580,7 +815,12 @@
       "sizeBytes": 187943,
       "contentType": "application/pdf",
       "sha256": "d636d816f488696c5c9d3e6f6f7f6218e42d41669552656faff022a821bda7b9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:06.556319+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-pqc-position-paper-follow-up",
@@ -592,7 +832,12 @@
       "sizeBytes": 172278,
       "contentType": "application/pdf",
       "sha256": "fcf88eeff93e1d699dc3d05db3a4bb78d76ecaea7a222b58278339f37d2af1bb",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:06.771719+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-bsi-nlncsa-se-joint-qkd-position-paper",
@@ -604,7 +849,12 @@
       "sizeBytes": 475650,
       "contentType": "application/pdf",
       "sha256": "628a2b0552cdb7175ef8e40e2239044643e4a247677f17f48842c50b94d927c3",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:07.117893+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-pqc-market-studies-published",
@@ -616,7 +866,12 @@
       "sizeBytes": 28920,
       "contentType": "text/html",
       "sha256": "f0b56f26064a305530ee5963e01057f40004a26d93e742e3e8baadbcffd45973",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:07.132506+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-phase-1-pre-quantum-security",
@@ -628,7 +883,12 @@
       "sizeBytes": 187943,
       "contentType": "application/pdf",
       "sha256": "d636d816f488696c5c9d3e6f6f7f6218e42d41669552656faff022a821bda7b9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:06.556319+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-cryptographic-accreditation-doctrine-updated",
@@ -640,7 +900,12 @@
       "sizeBytes": 31003,
       "contentType": "text/html",
       "sha256": "a1d77dedb175202ce31eac55fb33d9d37e2a52030d77e1cc9c454f869a521ae8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:07.152963+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-cea-leti-cesti-pqc-accreditation",
@@ -652,7 +917,12 @@
       "sizeBytes": 31003,
       "contentType": "text/html",
       "sha256": "a1d77dedb175202ce31eac55fb33d9d37e2a52030d77e1cc9c454f869a521ae8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:07.152963+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-first-pqc-security-visas-issued",
@@ -664,7 +934,12 @@
       "sizeBytes": 31003,
       "contentType": "text/html",
       "sha256": "a1d77dedb175202ce31eac55fb33d9d37e2a52030d77e1cc9c454f869a521ae8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:07.152963+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-pqc-faq-published",
@@ -676,7 +951,12 @@
       "sizeBytes": 63048,
       "contentType": "text/html",
       "sha256": "35bd1698606c5c87f8e630325de17abb703133dd841d9bb5cce7fab4721296f2",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:07.193438+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-pg-083-cryptographic-guide-update-planned",
@@ -688,7 +968,12 @@
       "sizeBytes": 63048,
       "contentType": "text/html",
       "sha256": "35bd1698606c5c87f8e630325de17abb703133dd841d9bb5cce7fab4721296f2",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:07.193438+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-phase-2-hybridization-required",
@@ -700,7 +985,12 @@
       "sizeBytes": 187943,
       "contentType": "application/pdf",
       "sha256": "d636d816f488696c5c9d3e6f6f7f6218e42d41669552656faff022a821bda7b9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:06.556319+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-ipsec-dr-referential-update-planned",
@@ -712,7 +1002,12 @@
       "sizeBytes": 63048,
       "contentType": "text/html",
       "sha256": "35bd1698606c5c87f8e630325de17abb703133dd841d9bb5cce7fab4721296f2",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:07.193438+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-pqc-qualification-requirement",
@@ -724,7 +1019,12 @@
       "sizeBytes": 31003,
       "contentType": "text/html",
       "sha256": "a1d77dedb175202ce31eac55fb33d9d37e2a52030d77e1cc9c454f869a521ae8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:07.152963+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-anssi-phase-3-standalone-pqc-optional",
@@ -736,7 +1036,12 @@
       "sizeBytes": 187943,
       "contentType": "application/pdf",
       "sha256": "d636d816f488696c5c9d3e6f6f7f6218e42d41669552656faff022a821bda7b9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:06.556319+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "g7-g7-ceg-g7-statement-on-quantum-computing",
@@ -748,7 +1053,12 @@
       "sizeBytes": 283430,
       "contentType": "application/pdf",
       "sha256": "f58565d3ec8bd55ea23aa067b2373f783eb3421808d1f8827993857de1b91575",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:07.353460+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-gsma-pq-03-v2-0-guidelines",
@@ -760,7 +1070,12 @@
       "sizeBytes": 3260451,
       "contentType": "application/pdf",
       "sha256": "952f1e5a782102211d97e986bd33011dd96bf50a4eb6b00e11bd1d2343cde4ea",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:10.210745+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "germany-bsi-eu-joint-statement-on-pqc",
@@ -772,7 +1087,12 @@
       "sizeBytes": 822099,
       "contentType": "application/pdf",
       "sha256": "927db67a876ed51fab8e216db1acbc113195e1fc2caf006121665930cecfee9f",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:10.434255+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "germany-bsi-tr-02102-1-pqc-update",
@@ -784,7 +1104,12 @@
       "sizeBytes": 568388,
       "contentType": "application/pdf",
       "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:12.044137+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "germany-bsi-dlr-quantity-initiative-launched",
@@ -796,7 +1121,12 @@
       "sizeBytes": 225274,
       "contentType": "text/html",
       "sha256": "d9a1f19bcac7c5b75ef3fd0790a7766b05840553d20032345ade2ccc37c17794",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:12.065688+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "germany-bsi-critical-applications-pqc-hybrid-no-longer-required",
@@ -808,7 +1138,12 @@
       "sizeBytes": 568388,
       "contentType": "application/pdf",
       "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:13.722755+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "india-cert-in-bom-guidelines-expanded",
@@ -820,7 +1155,12 @@
       "sizeBytes": 1654189,
       "contentType": "application/pdf",
       "sha256": "28aa48f329114d665f8e4f8c4d2f33baf4981e29168a318e6e719c11a5ff5151",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:14.616372+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-pqcc-pqcc-pqc-migration-roadmap-published",
@@ -832,7 +1172,12 @@
       "sizeBytes": 749542,
       "contentType": "application/pdf",
       "sha256": "134d8ddce22bf1b5d079aa4ada382ab93a638d64c458dd7b6b26dc99278ec9a4",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:15.069739+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "israel-incd-pqc-readiness-guide-published",
@@ -844,7 +1189,12 @@
       "sizeBytes": 985301,
       "contentType": "application/pdf",
       "sha256": "ff42111be495c7c8bab64b80ceaeb78db4881033bc42abd375554a4828f7a853",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:15.843623+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "israel-boi-banking-pqc-directive",
@@ -856,7 +1206,12 @@
       "sizeBytes": 325353,
       "contentType": "text/html",
       "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:15.974176+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "italy-acn-pqc-guidance-published",
@@ -868,7 +1223,12 @@
       "sizeBytes": 3538559,
       "contentType": "application/pdf",
       "sha256": "fa5682e05dd0c186f41c91c73e8c46cfeea65b75cc80919702defcf5b48eac6b",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:18.624354+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "japan-nedo-k-program-pqc-research",
@@ -880,7 +1240,12 @@
       "sizeBytes": 144090,
       "contentType": "text/html",
       "sha256": "86ad6b5a54f3f81d341860c635fdacd7ebe940cc0d9755c40412405ebacff52d",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:18.645180+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "japan-nisc-pqc-migration-planning",
@@ -892,7 +1257,12 @@
       "sizeBytes": 1312893,
       "contentType": "application/pdf",
       "sha256": "8e1d578e4547cb4ceac704b7226fe42e04b3e3d819813024100b677df4d4c23d",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:21.293750+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "japan-nec-nict-qkd-high-speed-data-integration-demo",
@@ -904,7 +1274,12 @@
       "sizeBytes": 45875,
       "contentType": "text/html",
       "sha256": "a2d736e4dff36c928a9ebaeaad908dddbf2384bcc27e15b7108f807fdd634f88",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:21.317700+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "nato-nato-quantum-technologies-strategy",
@@ -916,7 +1291,12 @@
       "sizeBytes": 313491,
       "contentType": "text/html",
       "sha256": "76f579f3fc5a02252c67c2382950af40043f17c1bed2c86f8cd6c15a00a82f4c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:21.368182+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "new-zealand-gcsb-ncsc-nzism-v3-8-updated",
@@ -928,7 +1308,12 @@
       "sizeBytes": 34031,
       "contentType": "text/html",
       "sha256": "4edfa66b9191794dd88916a91cc2068cb83631af4c8338bcaaacc7743440eb00",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:21.381442+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "new-zealand-gcsb-ncsc-planning-phase",
@@ -940,7 +1325,12 @@
       "sizeBytes": 35282,
       "contentType": "text/html",
       "sha256": "c0b8276fbbd86e2ad47ccfa3b7d7386658c01edb1108d94210015f90712d90a4",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:21.394620+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "new-zealand-gcsb-ncsc-nzism-v3-9-published",
@@ -952,7 +1342,12 @@
       "sizeBytes": 35282,
       "contentType": "text/html",
       "sha256": "c0b8276fbbd86e2ad47ccfa3b7d7386658c01edb1108d94210015f90712d90a4",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:21.394620+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "new-zealand-gcsb-ncsc-transition-phase",
@@ -964,7 +1359,12 @@
       "sizeBytes": 35282,
       "contentType": "text/html",
       "sha256": "c0b8276fbbd86e2ad47ccfa3b7d7386658c01edb1108d94210015f90712d90a4",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:21.394620+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "singapore-csa-mas-financial-sector-planning",
@@ -976,7 +1376,12 @@
       "sizeBytes": 138500,
       "contentType": "application/pdf",
       "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:21.515082+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "singapore-csa-govtech-imda-quantum-safe-handbook-and-quantum-readiness-index-rel",
@@ -988,7 +1393,12 @@
       "sizeBytes": 1544999,
       "contentType": "application/pdf",
       "sha256": "0efa1ea60aaee52af878295a442c2f8eba4d9233decc57826ea8b2096b5a7370",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:22.484833+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "singapore-mas-financial-sector-qkd-sandbox-completed",
@@ -1000,7 +1410,12 @@
       "sizeBytes": 4713851,
       "contentType": "application/pdf",
       "sha256": "4b22bbbd9787841abcd8eb22ce0be7fed760baef2009565f8c6ded5a9c7f9e89",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:28.717990+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "south-korea-nis-kisa-kpqc-competition-results",
@@ -1012,7 +1427,12 @@
       "sizeBytes": 19496,
       "contentType": "text/html",
       "sha256": "97f43c717a5b426d098a962760110366673ce1a11b4151e0ac1def99b7c6a6bf",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:28.732781+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "south-korea-msit-pilot-transition-phase",
@@ -1024,7 +1444,12 @@
       "sizeBytes": 86225,
       "contentType": "text/html",
       "sha256": "f174a280e4ca93110b46c6e83b53dd10d6ff7bc3537814ee87335c1a4a19e09a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:28.752861+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "south-korea-msit-full-pqc-roadmap-complete",
@@ -1036,7 +1461,12 @@
       "sizeBytes": 86225,
       "contentType": "text/html",
       "sha256": "f174a280e4ca93110b46c6e83b53dd10d6ff7bc3537814ee87335c1a4a19e09a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:28.773323+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "spain-ccn-four-phase-pqc-approach",
@@ -1048,7 +1478,12 @@
       "sizeBytes": 3076740,
       "contentType": "application/pdf",
       "sha256": "16ef2f0730a7d4a9d9e77fe71eac3e0e842e372d5ef7deb44b23f616eccd9f92",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:29.316224+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "spain-ccn-pqc-transition-period",
@@ -1060,7 +1495,12 @@
       "sizeBytes": 3076740,
       "contentType": "application/pdf",
       "sha256": "16ef2f0730a7d4a9d9e77fe71eac3e0e842e372d5ef7deb44b23f616eccd9f92",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:29.316224+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "taiwan-moda-interim-quantum-safe-milestone",
@@ -1072,7 +1512,12 @@
       "sizeBytes": 1659097,
       "contentType": "application/pdf",
       "sha256": "6972a150377eae999caa5981d2a9ded81488c1e6a9e071fe47fdbc3b52225ebe",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:29.905702+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-kingdom-ncsc-pqc-white-paper-updated",
@@ -1084,7 +1529,12 @@
       "sizeBytes": 156120,
       "contentType": "text/html",
       "sha256": "bef8b3f4eae4162f2dffe4863797deca7d019b358603706508b183ada4e6ca4c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:29.940005+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-kingdom-ncsc-ncsc-pqc-migration-roadmap-published",
@@ -1096,7 +1546,12 @@
       "sizeBytes": 173339,
       "contentType": "text/html",
       "sha256": "5bd94cc0936fd673d5d021777adf1cc60b287e2ca5d957ee881280257e122fa2",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:29.983566+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-kingdom-cmorg-financial-sector-pqc-guidance",
@@ -1108,7 +1563,12 @@
       "sizeBytes": 276756,
       "contentType": "application/pdf",
       "sha256": "26496a1249f83dd468dce4f6429454c42007256bf7da7172e7fadfc5f61a3a08",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.207138+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-kingdom-dsit-cni-perspectives-report",
@@ -1120,7 +1580,12 @@
       "sizeBytes": 73294,
       "contentType": "text/html",
       "sha256": "9b9db04f6e1afd1bcf36e063df9b6674025f6c30a1a6510c1f486241159e19e3",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.225522+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-kingdom-ncsc-discovery-planning-phase",
@@ -1132,7 +1597,12 @@
       "sizeBytes": 173339,
       "contentType": "text/html",
       "sha256": "5bd94cc0936fd673d5d021777adf1cc60b287e2ca5d957ee881280257e122fa2",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:29.983566+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-kingdom-ncsc-priority-migration-phase",
@@ -1144,7 +1614,12 @@
       "sizeBytes": 173339,
       "contentType": "text/html",
       "sha256": "5bd94cc0936fd673d5d021777adf1cc60b287e2ca5d957ee881280257e122fa2",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:29.983566+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-kingdom-ncsc-ncsc-full-migration-phase",
@@ -1156,7 +1631,12 @@
       "sizeBytes": 173339,
       "contentType": "text/html",
       "sha256": "5bd94cc0936fd673d5d021777adf1cc60b287e2ca5d957ee881280257e122fa2",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:29.983566+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-kingdom-ncsc-full-pqc-compliance",
@@ -1168,7 +1648,12 @@
       "sizeBytes": 173339,
       "contentType": "text/html",
       "sha256": "5bd94cc0936fd673d5d021777adf1cc60b287e2ca5d957ee881280257e122fa2",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:29.983566+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-white-house-nsm-10-published",
@@ -1180,7 +1665,12 @@
       "sizeBytes": 164080,
       "contentType": "text/html",
       "sha256": "cefb2ade2fc154dc1f20a05ca9a8b1b208de3194680a81decac991c2d81a72d9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.288367+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-omb-m-23-02-cryptographic-inventory",
@@ -1192,7 +1682,12 @@
       "sizeBytes": 255063,
       "contentType": "application/pdf",
       "sha256": "02e7a4ee3289e3dfcc81bdb43d2e21645b68e6f364a9889dda222b785ecfe6e6",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.467253+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-congress-quantum-computing-cybersecurity-preparedness-act",
@@ -1204,7 +1699,12 @@
       "sizeBytes": 207853,
       "contentType": "application/pdf",
       "sha256": "e02c4a7f703e17156fe92f8219ffea09715b3fcc4cff21065eaab093b6320d17",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.595971+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-cnsa-2-0-published",
@@ -1216,7 +1716,12 @@
       "sizeBytes": 101106,
       "contentType": "text/html",
       "sha256": "98f96753b08f63cee1f87cb64a74a63e5ac219a0e311a3c9d5601f97ed819928",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.618960+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-software-firmware-signing-transition",
@@ -1228,7 +1733,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-nsa-cryptographic-inventory",
@@ -1240,7 +1750,12 @@
       "sizeBytes": 164080,
       "contentType": "text/html",
       "sha256": "cefb2ade2fc154dc1f20a05ca9a8b1b208de3194680a81decac991c2d81a72d9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.288367+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-fips-203-204-205-published",
@@ -1252,7 +1767,12 @@
       "sizeBytes": 46211,
       "contentType": "text/html",
       "sha256": "c623e242b5de65bbb5e0221d0c99f3d482908642755e5b006881c0c9d1e7b7fa",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.891649+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-nist-ir-8547-transition-guidance-draft",
@@ -1264,7 +1784,12 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:31.427362+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-white-house-pqc-report-to-congress",
@@ -1276,7 +1801,12 @@
       "sizeBytes": 1175607,
       "contentType": "application/pdf",
       "sha256": "c5f11ea438ac1e753da39eb0a94c2292c19a1bbbc3358e9928dfdd9fc1be9cfd",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:31.893859+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-cnsa-2-0-algorithms-revised",
@@ -1289,7 +1819,12 @@
       "sha256": "ee89f3e37a39d75fc8c55e8d7f5ed0cc4304e0f3d4dfb837aa9112c81d0f3556",
       "recaptured_at": "2026-09-09T01:24:59.812103+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:31.916111+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-cisa-automated-pqc-discovery-strategy",
@@ -1301,7 +1836,12 @@
       "sizeBytes": 538388,
       "contentType": "application/pdf",
       "sha256": "b43d5fbf8378149c43e20a563f096894bb280d301f0dd7ef84f024ec01feb1cc",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:32.128040+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-cisa-pqc-considerations-for-ot",
@@ -1313,7 +1853,12 @@
       "sizeBytes": 1354180,
       "contentType": "application/pdf",
       "sha256": "dba4051cf19460d862419f1ca895602d88619ceb07644ce140bc11b312fcf492",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:32.477907+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-web-cloud-services-transition",
@@ -1325,7 +1870,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-traditional-networking-transition",
@@ -1337,7 +1887,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-hqc-selected-as-fifth-algorithm",
@@ -1349,7 +1904,12 @@
       "sizeBytes": 93047,
       "contentType": "text/html",
       "sha256": "03d6fbc62ba566a59e71108b4534244b231aeb9a49338f422e5e9dbfddb7d603",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:32.513261+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-white-house-executive-order-14306-issued",
@@ -1361,7 +1921,12 @@
       "sizeBytes": 290968,
       "contentType": "text/html",
       "sha256": "4b8280c039b5a2bf45e64290bacec57a54f6358296e5b13905dae4d296fb2c02",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:32.611402+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-ir-8547-public-comments-published",
@@ -1373,7 +1938,12 @@
       "sizeBytes": 6830745,
       "contentType": "application/pdf",
       "sha256": "8a2bd1a4c2be65b326a4acbaf87189fc90d4b25a10b32a53cb6151e3566de38d",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:34.162307+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-nccoe-cswp-48-pqc-migration-mappings-draft",
@@ -1385,7 +1955,12 @@
       "sizeBytes": 85306,
       "contentType": "text/html",
       "sha256": "eca084df8ec2a673aeea837ee2ba4d71526d3502e3525341af4bcf4ce6f76b64",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:34.183614+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-operating-systems-transition",
@@ -1397,7 +1972,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-cisa-acdi-deployment-phase",
@@ -1409,7 +1989,12 @@
       "sizeBytes": 538388,
       "contentType": "application/pdf",
       "sha256": "b43d5fbf8378149c43e20a563f096894bb280d301f0dd7ef84f024ec01feb1cc",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:32.128040+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-large-pki-systems-migration",
@@ -1421,7 +2006,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-hqc-standard-finalized-expected",
@@ -1433,7 +2023,12 @@
       "sizeBytes": 93047,
       "contentType": "text/html",
       "sha256": "03d6fbc62ba566a59e71108b4534244b231aeb9a49338f422e5e9dbfddb7d603",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:32.513261+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-nss-acquisitions-cnsa-2-0-required",
@@ -1445,7 +2040,12 @@
       "sizeBytes": 441742,
       "contentType": "application/pdf",
       "sha256": "ca447adb27af022f6bcca70873ef3404a7db0758fa0626fe9cd994451d86f5e0",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:34.590763+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-cnsa-2-0-exclusive-network-signing",
@@ -1457,7 +2057,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-nss-quantum-resistant-majority",
@@ -1469,7 +2074,12 @@
       "sizeBytes": 441742,
       "contentType": "application/pdf",
       "sha256": "ca447adb27af022f6bcca70873ef3404a7db0758fa0626fe9cd994451d86f5e0",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:34.980884+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-cnsa-2-0-exclusive-os-web-cloud",
@@ -1481,7 +2091,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-cisa-cisa-pqc-product-category-list-publication",
@@ -1493,7 +2108,12 @@
       "sizeBytes": 72793,
       "contentType": "text/html",
       "sha256": "83b6b792bd6b40a05e56aff61e4ef26617fda35d3651c8547ccc8bb92f2a6ab8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:35.018579+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nsa-cnsa-1-0-compliance-deadline-for-nss",
@@ -1505,7 +2125,12 @@
       "sizeBytes": 441742,
       "contentType": "application/pdf",
       "sha256": "ca447adb27af022f6bcca70873ef3404a7db0758fa0626fe9cd994451d86f5e0",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:35.401173+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-pki-consortium-pki-consortium-pqc-conference-2025-conclusions",
@@ -1517,7 +2142,12 @@
       "sizeBytes": 79072,
       "contentType": "text/html",
       "sha256": "2848d1261621f9ce1a32e517197c67e1f44d8ba565673f8117f88038076ce385",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:35.422982+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-microsoft-nist-pqc-algorithms-in-windows-platform",
@@ -1529,7 +2159,12 @@
       "sizeBytes": 437170,
       "contentType": "text/html",
       "sha256": "33299b408d10cd05f0056b47436583dfeaaea5c7f00c1f2820eedbe426bcc5c1",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:35.456781+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-sealsq-us-post-quantum-root-of-trust-service-launch",
@@ -1541,7 +2176,12 @@
       "sizeBytes": 82190,
       "contentType": "text/html",
       "sha256": "9c28921a3d3a3f74dadac8db49f25c4d504986fde74a347cce400eb6a63df54e",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:35.477775+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-samsung-thales-ml-kem-embedded-secure-element-breakthrough",
@@ -1553,7 +2193,12 @@
       "sizeBytes": 400066,
       "contentType": "text/html",
       "sha256": "2753f94d35a24b037f587b96fb36df6aee8a687149314a0d44eb026b3181ef9a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:35.508275+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-ietf-rfc-9794-pqc-hybrid-terminology",
@@ -1565,7 +2210,12 @@
       "sizeBytes": 98078,
       "contentType": "text/html",
       "sha256": "6e976ce967d01fdcaf7ce4e4153adfa12904413d30c3c088c41ed24d8ef36395",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:35.550326+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-gri-quantum-threat-timeline-report-2025",
@@ -1577,7 +2227,12 @@
       "sizeBytes": 9075183,
       "contentType": "application/pdf",
       "sha256": "b4df230e5a0049ed916a895f2c4553bf3d125f4122588e421fb585c40994915e",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:38.138651+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-quantinuum-helios-quantum-computer-commercial-launch",
@@ -1589,7 +2244,12 @@
       "sizeBytes": 172362,
       "contentType": "text/html",
       "sha256": "68d12681924ab43ec1df06cd5446010e64b1f30ab6b135e832917ad80073aacb",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:38.173316+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-congress-national-quantum-initiative-reauthorization-act",
@@ -1601,7 +2261,12 @@
       "sizeBytes": 150508,
       "contentType": "text/html",
       "sha256": "520b79b21f8acfae7e27befe18818d7ea84177de02bb2f893a77eaf9ae20a0aa",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:38.203483+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "g7-g7-ceg-g7-financial-sector-pqc-roadmap",
@@ -1613,7 +2278,12 @@
       "sizeBytes": 113939,
       "contentType": "text/html",
       "sha256": "c90875cf78ac29e0f4c72c70c9bb84205ab0d3154191fc1116c16d096af36013",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:38.234183+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-cisa-federal-pqc-procurement-guidance",
@@ -1625,7 +2295,12 @@
       "sizeBytes": 72793,
       "contentType": "text/html",
       "sha256": "83b6b792bd6b40a05e56aff61e4ef26617fda35d3651c8547ccc8bb92f2a6ab8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:35.018579+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "singapore-quantinuum-nqo-helios-quantum-computer-singapore-deployment",
@@ -1637,7 +2312,12 @@
       "sizeBytes": 175889,
       "contentType": "text/html",
       "sha256": "11f18b56fa32963e1358d17d7184f094f12df59b1b79ca9ddde4b669d30d231d",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:38.275873+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-etsi-iqc-etsi-iqc-qsc-conference-2026",
@@ -1649,7 +2329,12 @@
       "sizeBytes": 246629,
       "contentType": "text/html",
       "sha256": "b210937246ecc905be3a6336b4d58422492d74ec91865bbfd9e92050a0463172",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:38.328878+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hong-kong-legco-critical-infrastructure-cybersecurity-ordinance",
@@ -1661,7 +2346,12 @@
       "sizeBytes": 13079,
       "contentType": "text/html",
       "sha256": "07ee3b8aa43246dbe2b7855b8217004cc461239019ae27849f4372adaf41339b",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:38.339665+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hong-kong-hkma-fintech-2030-strategy-pqc-resilience-pillar",
@@ -1673,7 +2363,12 @@
       "sizeBytes": 82321,
       "contentType": "text/html",
       "sha256": "af73f29f78b820434156d2580f648ac513ee606b78a9800f0dd42c984fc17f80",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:38.364900+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hong-kong-hkma-fintech-promotion-blueprint-quantum-preparedness-index",
@@ -1685,7 +2380,12 @@
       "sizeBytes": 81716,
       "contentType": "text/html",
       "sha256": "dbf928e25da7ae1438f154b3dbd654f455ac3cdff28afc8b57d8e9a594434d0c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:38.391825+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hong-kong-hkma-financial-sector-pqc-planning",
@@ -1697,7 +2397,12 @@
       "sizeBytes": 3379876,
       "contentType": "application/pdf",
       "sha256": "24125dcc8ac120ced00535f1299596fd4195973539d4b0523aa841ac93652e66",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:40.391621+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hong-kong-hkma-fintech-promotion-blueprint-published",
@@ -1709,7 +2414,12 @@
       "sizeBytes": 4451297,
       "contentType": "application/pdf",
       "sha256": "3a4c18893d54c21557ec4ef3e5c9bb6079cf505e5b0475b7046c858ea61ff807",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:41.877282+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "singapore-imda-nqsn-launched",
@@ -1721,7 +2431,12 @@
       "sizeBytes": 340263,
       "contentType": "text/html",
       "sha256": "431fee87919fafff2318ee1d8b8dcd8b76349fe0c27105802b8f483862acbc40",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:41.919978+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "singapore-mas-bdf-cross-border-pqc-experiment",
@@ -1733,7 +2448,12 @@
       "sizeBytes": 252254,
       "contentType": "text/html",
       "sha256": "c2420a450344bd2db46f26978775943d9fc847a339e4a38732778a0760d81684",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:41.951917+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "india-dst-nqm-national-quantum-safe-roadmap-published",
@@ -1745,7 +2465,12 @@
       "sizeBytes": 2899651,
       "contentType": "application/pdf",
       "sha256": "b9d2d53b2c03cfc47f9f4ce5ae0ceaebe1f46f50fccca8fc1cdbc70defd4d9ff",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:44.272955+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "india-dst-nqm-cii-pqc-foundations-deadline",
@@ -1757,7 +2482,12 @@
       "sizeBytes": 2899651,
       "contentType": "application/pdf",
       "sha256": "b9d2d53b2c03cfc47f9f4ce5ae0ceaebe1f46f50fccca8fc1cdbc70defd4d9ff",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:44.272955+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "india-dst-nqm-india-national-pqc-migration",
@@ -1769,7 +2499,12 @@
       "sizeBytes": 2899651,
       "contentType": "application/pdf",
       "sha256": "b9d2d53b2c03cfc47f9f4ce5ae0ceaebe1f46f50fccca8fc1cdbc70defd4d9ff",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:44.272955+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "india-dst-nqm-full-nationwide-pqc-adoption",
@@ -1781,7 +2516,12 @@
       "sizeBytes": 1982388,
       "contentType": "application/pdf",
       "sha256": "461d8b42aea3847a3f9083e369065eff7985b03f8e4b1e9974f236ce93d99f31",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:46.304988+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "japan-nco-government-pqc-transition-deadline",
@@ -1793,7 +2533,12 @@
       "sizeBytes": 230950,
       "contentType": "application/pdf",
       "sha256": "6c550bacbb715a71880e926e36b7bc5d67d7a3c00f6f2b6f836d54feb483c611",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:46.436076+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "malaysia-nacsa-national-pqc-migration-plan-published",
@@ -1805,7 +2550,12 @@
       "sizeBytes": 31865,
       "contentType": "text/html",
       "sha256": "a747bb4157f232996fa31490ebb6cb637290bcb470dd8c411fdee979f85a2581",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:46.454803+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-arab-emirates-tii-nist-additional-signatures-round-2-contributions",
@@ -1817,7 +2567,12 @@
       "sizeBytes": 66981,
       "contentType": "text/html; charset=utf-8",
       "sha256": "7ad965ba1b0bbbbda1c0d00ed9611f28447cf0592ba4c308c36534bf82697873",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:46.480647+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-arab-emirates-desc-dubai-pqc-guideline-launched",
@@ -1829,7 +2584,12 @@
       "sizeBytes": 235147,
       "contentType": "text/html",
       "sha256": "d5d6d4738796344666494d0891fe976a347779cfacca296e099ceac83b8d7db7",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:46.508845+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-arab-emirates-adgm-tii-quantum-secure-communications-testbed",
@@ -1841,7 +2601,12 @@
       "sizeBytes": 98563,
       "contentType": "text/html",
       "sha256": "01dd9fe968fd50793433a4ac2fb83392f24c37ab38bb149d20ca1ba33121d682",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:46.528443+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-arab-emirates-uae-csc-national-encryption-policy-approved",
@@ -1853,7 +2618,12 @@
       "sizeBytes": 73517,
       "contentType": "text/html",
       "sha256": "812913dff04b539e1708a66d68f6482ad4f230ad384bf2beb44f9f85fec1e8c9",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:46.545282+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-arab-emirates-uae-csc-national-pqc-migration-program",
@@ -1865,7 +2635,12 @@
       "sizeBytes": 36668,
       "contentType": "text/html",
       "sha256": "69232764059c2ef507086c131b4e092be151c62289109ffde1529ec7c0888bbc",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:46.560247+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "saudi-arabia-nca-ecc-2-2024-cybersecurity-controls",
@@ -1877,7 +2652,12 @@
       "sizeBytes": 1231347,
       "contentType": "application/pdf",
       "sha256": "146505199e5374d99302fc3d7e1fdc73b6e2f3292fefd535d5dd891294a81db1",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:47.300569+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "saudi-arabia-c4ir-quantum-economy-landscape-report",
@@ -1889,7 +2669,12 @@
       "sizeBytes": 5156707,
       "contentType": "application/pdf",
       "sha256": "daff79872f49fb28925186dd6c8fbbc2caaf78a342403f490b5e9313c6a71290",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:48.002219+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "saudi-arabia-aramco-pasqal-first-quantum-computer-in-ksa",
@@ -1901,7 +2686,12 @@
       "sizeBytes": 506494,
       "contentType": "text/html",
       "sha256": "f242918b031aaaee50653f82a5e3f95fc7048768998f9b72c2058c8da555b2fb",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:48.032604+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-ethereum-foundation-vitalik-buterin-publishes-pq-defense-roadmap",
@@ -1913,7 +2703,12 @@
       "sizeBytes": 432517,
       "contentType": "text/html",
       "sha256": "6b7aeb4def677cdef14472488a3a46ec40d20052ca6af3437305626bb70fe935",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:48.072294+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-google-google-cloud-ml-kem-default-and-chrome-mtc-program",
@@ -1925,7 +2720,12 @@
       "sizeBytes": 258525,
       "contentType": "text/html",
       "sha256": "186fa0769db2c5660ea54ac583e8699d967aefabeb21317bf257bcb263c84211",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:48.098693+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "germany-bsi-hybrid-tls-required-for-classified-communications",
@@ -1937,7 +2737,12 @@
       "sizeBytes": 758922,
       "contentType": "application/pdf",
       "sha256": "a7f55c3403d45719287415d2698bf51e629aafe841e2e9867e8afe8749d238e5",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:48.598910+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "germany-bsi-hybrid-ipsec-and-ssh-required",
@@ -1949,7 +2754,12 @@
       "sizeBytes": 724281,
       "contentType": "application/pdf",
       "sha256": "ee6cf28a1b7fbc79b60dd2a913a905e99e3a246b0796cff894a41e22207d6bdc",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:49.110887+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "germany-bsi-full-pqc-transition-standalone-algorithms-required",
@@ -1961,7 +2771,12 @@
       "sizeBytes": 568388,
       "contentType": "application/pdf",
       "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:50.771091+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "singapore-mas-financial-sector-pqc-migration-plans-due",
@@ -1973,7 +2788,12 @@
       "sizeBytes": 138500,
       "contentType": "application/pdf",
       "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:50.881860+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hong-kong-hkma-pqc-readiness-assessment-required",
@@ -1985,7 +2805,12 @@
       "sizeBytes": 81675,
       "contentType": "text/html",
       "sha256": "2472fa9c42d3c020f26fd5610cb7d6fece9ac852471ff2716e09aa53ed844b32",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:50.908142+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "hong-kong-hkma-financial-sector-pqc-migration-complete",
@@ -1997,7 +2822,12 @@
       "sizeBytes": 3379876,
       "contentType": "application/pdf",
       "sha256": "24125dcc8ac120ced00535f1299596fd4195973539d4b0523aa841ac93652e66",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:40.391621+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-112-bit-security-algorithms-fully-disallowed",
@@ -2009,7 +2839,12 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:51.454241+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-kingdom-ncsc-pqc-whitepaper-published",
@@ -2021,7 +2856,12 @@
       "sizeBytes": 156120,
       "contentType": "text/html",
       "sha256": "bef8b3f4eae4162f2dffe4863797deca7d019b358603706508b183ada4e6ca4c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:29.940005+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-nist-sp-800-208-published-lms-xmss",
@@ -2033,7 +2873,12 @@
       "sizeBytes": 872986,
       "contentType": "application/pdf",
       "sha256": "9ac6bee3da878e883874847b40f80d2265d6268385d8201f866581437533465f",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:52.306843+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-oasis-pkcs-11-v3-2-pqc-mechanisms-draft-published",
@@ -2045,7 +2890,12 @@
       "sizeBytes": 4923923,
       "contentType": "text/html",
       "sha256": "f49dca1b320227d3515c4a0ae743e5e99ef1b5b6ca66cdf85ef4575ec451192e",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.232055+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-ca-browser-forum-ballot-smc013-ml-dsa-for-s-mime-adopted",
@@ -2057,7 +2907,12 @@
       "sizeBytes": 23664,
       "contentType": "text/html",
       "sha256": "ca7fa007a82b37b55734e83903bf92736dced7a0c3542422f326446d18f20239",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.251042+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-google-google-pqc-migration-2029-timeline",
@@ -2069,7 +2924,12 @@
       "sizeBytes": 382322,
       "contentType": "text/html",
       "sha256": "a59e915687f40f9d476770ce9aa626e8dab3eb0e187d289e851fa3a0975c94d1",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.290930+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-btq-technologies-bitcoin-quantum-testnet-launch",
@@ -2081,7 +2941,12 @@
       "sizeBytes": 232440,
       "contentType": "text/html",
       "sha256": "07b4ae860c86085f0b9e572aca141c4711322e4706d5d449f674a9c142ae3d58",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.335164+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-algorand-foundation-first-post-quantum-mainnet-transaction",
@@ -2093,7 +2958,12 @@
       "sizeBytes": 176934,
       "contentType": "text/html",
       "sha256": "95828b423646ff4b7b22c32aefdcd63aa412f5ef6c1c9558881a6dd898466562",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.391993+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-bitcoin-core-bip-360-pay-to-merkle-root-proposal",
@@ -2105,7 +2975,12 @@
       "sizeBytes": 461363,
       "contentType": "text/html",
       "sha256": "dd4a7a3c8b41b5aef4ce114eb2716b294697ab824f5307622694bda4f0b22f7b",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.455083+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-ethereum-foundation-strawmap-pqc-roadmap-published",
@@ -2117,7 +2992,12 @@
       "sizeBytes": 86536,
       "contentType": "text/html",
       "sha256": "1e4243f2f2bb2fb124b92bf3ec4c7021b4ad13d99492e75f61fc744d5224ec58",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.480320+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-idemia-first-pqc-hardware-accelerator-announced",
@@ -2129,7 +3009,12 @@
       "sizeBytes": 96567,
       "contentType": "text/html",
       "sha256": "ca3c5553fd0db22ffd101a32b99945822783b1880dd32c0538d2c76c51bb20cf",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.503360+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "germany-infineon-first-cc-eal6-pqc-security-controller",
@@ -2141,7 +3026,12 @@
       "sizeBytes": 1419480,
       "contentType": "text/html",
       "sha256": "9fbd4302ccc952aba1692a9064444b6f205ecb2c53b6cc2e6bd35d65c50a05d7",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.692424+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-ciena-1-6t-quantum-safe-optical-encryption",
@@ -2153,7 +3043,12 @@
       "sizeBytes": 132668,
       "contentType": "text/html",
       "sha256": "94cea999e4ceeec2563042d62d7c26c713f4818c39522755451c1a394827ed72",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.722483+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "germany-adva-bsi-approved-400g-pqc-encryptor",
@@ -2165,7 +3060,12 @@
       "sizeBytes": 49451,
       "contentType": "text/html",
       "sha256": "d911798e637cf4ef5c781ffb918d1fd09f2cc8e5b6894065e2baccd5ed7050fa",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.737913+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-openssl-openssl-3-6-1-pqc-release",
@@ -2177,7 +3077,12 @@
       "sizeBytes": 45404,
       "contentType": "text/html",
       "sha256": "e5de5d9e3cb480377ff5380f880a39c5f61542596513da0c3e1de38ecad7a079",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.754544+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-fs-isac-fs-isac-pqc-migration-timeline-position-paper-published",
@@ -2189,7 +3094,12 @@
       "sizeBytes": 37763,
       "contentType": "text/html",
       "sha256": "b4754bd62384549b7b9dd2a7610f7beb00ac72a5ea8be4d23c9e8333105d836f",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.769344+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "brazil-iti-icp-brasil-mandates-ml-dsa-and-ml-kem-certificate-standards",
@@ -2201,7 +3111,12 @@
       "sizeBytes": 419893,
       "contentType": "text/html",
       "sha256": "2d25791c4224eda63316291d770045fceccc3ddd6ec6c0630ba875fed240ed94",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.797580+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-itu-t-itu-t-x-1811-quantum-safe-security-guidelines-for-5g-publish",
@@ -2213,7 +3128,12 @@
       "sizeBytes": 12365,
       "contentType": "text/html",
       "sha256": "1fc652f8f224f67ae1b657d65b349f5fe45031b2271fbbef0b0f00017dbd1265",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.807958+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "african-union-auc-malabo-convention-enters-into-force",
@@ -2225,7 +3145,12 @@
       "sizeBytes": 13794400,
       "contentType": "application/pdf",
       "sha256": "4564c7ee68658754590953f653b6aa43582d63fdd16f8614ecd0b4cf89c96485",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "EMPTY",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:53.905656+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "g7-g7-ceg-g7-financial-sector-critical-systems-pqc-transition",
@@ -2237,7 +3162,12 @@
       "sizeBytes": 283430,
       "contentType": "application/pdf",
       "sha256": "f58565d3ec8bd55ea23aa067b2373f783eb3421808d1f8827993857de1b91575",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:54.040984+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-3gpp-sa3-3gpp-tr-33-938-pqc-transition-study",
@@ -2249,7 +3179,12 @@
       "sizeBytes": 28837,
       "contentType": "text/plain",
       "sha256": "d17e83a8d1a471ea642cca0fcc955b3b94f4eb0b95ef46fcddab5888de6d0aca",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:54.062118+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-tcg-tpm-2-0-v1-85-pqc-library-specification-draft",
@@ -2261,7 +3196,12 @@
       "sizeBytes": 148519,
       "contentType": "text/html",
       "sha256": "f10fc59f45a0a8689daa67ae935ca0da30b9b01f5aa26381ed050feaf74c8b86",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:54.091575+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "south-africa-ir-popia-enforcement-begins",
@@ -2273,7 +3213,12 @@
       "sizeBytes": 394447,
       "contentType": "application/pdf",
       "sha256": "148e8d014a41926f2c4c596074a1dd5f7b75735fcd3e8b7ae5edfadbb7f5d212",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:55.455273+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "kenya-odpc-odpc-guidance-on-data-protection-by-design",
@@ -2285,7 +3230,12 @@
       "sizeBytes": 1022153,
       "contentType": "application/pdf",
       "sha256": "d76bdef62ae1fb1d4deac45a9ae4fa7d78adee680760877b1c3d0c1cd803120b",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:56.062351+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "egypt-mcit-law-151-2020-executive-regulations-issued",
@@ -2297,7 +3247,12 @@
       "sizeBytes": 309566,
       "contentType": "text/html",
       "sha256": "265d73b1c39c0390d0c6e25639f7fc4ca4419aaf7b27c53a6e80ab08188bdc0b",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:56.143166+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "global-openssl-openssl-3-5-0-native-pqc-release",
@@ -2309,7 +3264,12 @@
       "sizeBytes": 49206,
       "contentType": "text/html",
       "sha256": "fdbcf91ae7b875e84ad08be6983a603248ec9a9abe2577dc6bebbd5c4a798de7",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:56.162641+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-cisa-cisa-pqc-product-category-list-eo-14306-deadline",
@@ -2321,7 +3281,12 @@
       "sizeBytes": 71066,
       "contentType": "text/html",
       "sha256": "175ba84d675ed2045721ba7ef72b638ea625241fe5eb5cefb90eb865982bd697",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:56.185755+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-nist-sp-800-227-kem-recommendations",
@@ -2333,7 +3298,12 @@
       "sizeBytes": 902987,
       "contentType": "application/pdf",
       "sha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:57.365736+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-dod-dod-pqc-migration-memorandum-2",
@@ -2345,7 +3315,12 @@
       "sizeBytes": 822662,
       "contentType": "application/pdf",
       "sha256": "d66aac6da81b539375ef60a4005b1ff52a7eff76843bfbb122c59a77dc150e59",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:57.640124+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-nist-ir-8545-round-4-status-report",
@@ -2357,7 +3332,12 @@
       "sizeBytes": 588999,
       "contentType": "application/pdf",
       "sha256": "d802f4849a52d18001533cef86e0950f31350643cc06881ee62b2382e1ea0e9d",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:58.297577+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-gsa-gsa-pqc-buyer-guide-v1-0",
@@ -2369,7 +3349,12 @@
       "sizeBytes": 5424465,
       "contentType": "application/pdf",
       "sha256": "6ec4fdf0f388df2305ecfedd6c8948af6e96aeb81d1d4534e9a107ea269c6df1",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:59.225738+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-additional-signatures-round-3-advances",
@@ -2381,7 +3366,12 @@
       "sizeBytes": 82886,
       "contentType": "text/html",
       "sha256": "442bf79b39463bc10ca6a9751c8b1b8abb5044a7cd4b47dea8eca6f982afb5d3",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:59.245529+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-ec-eu-cyber-resilience-act-in-force",
@@ -2393,7 +3383,12 @@
       "sizeBytes": 973765,
       "contentType": "text/html",
       "sha256": "c454ef08556b7123cd76ee3e5b6eb1383855d2782c332eee80c98f21e05c0541",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:59.452280+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-enisa-enisa-pqc-anticipating-threats",
@@ -2405,7 +3400,12 @@
       "sizeBytes": 57285,
       "contentType": "text/html",
       "sha256": "958a7812d3c6e0bd40b5f50fafee9f227ee0f4a6cb7e0420720318d1c65f817a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:59.472836+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "japan-cryptrec-cryptrec-adds-ml-kem-to-ciphers-list",
@@ -2417,7 +3417,12 @@
       "sizeBytes": 239893,
       "contentType": "application/pdf",
       "sha256": "a492a5dce043b51cc0afd064a0bf7202518b31c65fb808bcc492f9cd4f0b32e3",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:59.657336+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "saudi-arabia-nca-saudi-national-cryptographic-standards",
@@ -2430,7 +3435,12 @@
       "sha256": "c023f99a862359a65cc47cd54a7906e6fe9150768a966539ff3ead4632982f77",
       "recaptured_at": "2026-09-08T23:54:45.637807+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": "_superseded-20260908/timeline/saudi-arabia-nca-saudi-national-cryptographic-standards.pdf"
+      "superseded_file": "_superseded-20260908/timeline/saudi-arabia-nca-saudi-national-cryptographic-standards.pdf",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:01.341258+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-arab-emirates-uae-csc-uae-crypto-discovery-tool-and-pqc-index",
@@ -2442,7 +3452,12 @@
       "sizeBytes": 382616,
       "contentType": "text/html",
       "sha256": "fa72444c37ce64d38294ca08e868fc2c0af4b698614f67d3550c454e26571e64",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:01.377932+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-ietf-rfc-9881-ml-dsa-in-x-509",
@@ -2454,7 +3469,12 @@
       "sizeBytes": 266025,
       "contentType": "text/html",
       "sha256": "c2b2e3b79df016ffce2ed320f02ee4802f6a5fa4f6bace7a513f12dac0fef87d",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:01.460020+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-ietf-rfc-9941-ssh-pq-hybrid-key-exchange",
@@ -2466,7 +3486,12 @@
       "sizeBytes": 56964,
       "contentType": "text/html",
       "sha256": "4c7717fdfbcd20f08c6c4e98cb8d7c5650554cf0b0d861f06f52c76ca7942844",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:01.486928+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-ietf-rfc-9370-multiple-key-exchanges-in-ikev2",
@@ -2478,7 +3503,12 @@
       "sizeBytes": 119753,
       "contentType": "text/html",
       "sha256": "091a9741ee9129f4471f95a14d41b1250aed32f68e393c80989dd5e9ae9f9f85",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:01.539348+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-ietf-draft-ietf-tls-ecdhe-mlkem-hybrid-kex",
@@ -2490,7 +3520,12 @@
       "sizeBytes": 73957,
       "contentType": "text/html",
       "sha256": "ee4a5a778ade4d5c27d29a802a00f098278448ea8fe86023b23260f3308c6c83",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:01.568622+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-iso-iec-iso-iec-sc27-pqc-standardization",
@@ -2502,7 +3537,12 @@
       "sizeBytes": 138287,
       "contentType": "text/html",
       "sha256": "30a74569a7c1fd3d5a779977a119d05493d5a871c661a93112169ec223764bea",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:01.620161+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-ietf-draft-ietf-lamps-kyber-certificates",
@@ -2514,7 +3554,12 @@
       "sizeBytes": 205290,
       "contentType": "text/html",
       "sha256": "8859e1c5ae7551d3b7d91d60a61b7f10d4d717bee1b767f15575bd1cbadcc4cc",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:01.691268+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "germany-bsi-bsi-tr-02102-1-2026-edition",
@@ -2526,7 +3571,12 @@
       "sizeBytes": 568388,
       "contentType": "application/pdf",
       "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:03.392448+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-cccs-itsp-40-111-v4-pqc-algorithms-approved",
@@ -2538,7 +3588,12 @@
       "sizeBytes": 264573,
       "contentType": "text/html",
       "sha256": "8a48be8b94fba6c89da95a52a8a14bb150d25e4f1bc0fb90e112d21f0f09e206",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:03.447274+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "nigeria-ndpc-ndpa-general-application-directive-2025",
@@ -2550,7 +3605,12 @@
       "sizeBytes": 1830615,
       "contentType": "application/pdf",
       "sha256": "e4359e90c9a11cd772f9605c797d6f36af000c58a27bfba251fa37a89824cc5a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:04.990134+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "spain-ccn-ccn-tec-009-post-quantum-transition",
@@ -2562,7 +3622,12 @@
       "sizeBytes": 844313,
       "contentType": "application/pdf",
       "sha256": "49dd74e588ded9b4635386a4aa7faf883028f78e5ff6073c91c65eac165e1354",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:05.490276+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "south-korea-msit-k-pqc-master-plan-to-2035",
@@ -2574,7 +3639,12 @@
       "sizeBytes": 57554,
       "contentType": "text/html",
       "sha256": "00c93a526259b28baf39ca9e4dbb8ba25fa05c513b58e1017927c398e998192c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:05.508863+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "czech-republic-czqci-czqci-euroqci-backbone-launched",
@@ -2586,7 +3656,12 @@
       "sizeBytes": 42261,
       "contentType": "text/html",
       "sha256": "50e5279cc39a3b06f1dede7d7068e31ad7a25c18df6efe6f71c0ef0ef66f512a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:05.523427+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "chile-chile-govt-national-quantum-strategy-launched",
@@ -2598,7 +3673,12 @@
       "sizeBytes": 137474,
       "contentType": "text/html",
       "sha256": "abb3da6cb2125ecbcd79f282918290fe925acd8e68b058358cf2d56c4f2b541a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:05.542382+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "estonia-cybernetica-estonia-pqc-transition-led-by-cybernetica",
@@ -2610,7 +3690,12 @@
       "sizeBytes": 116588,
       "contentType": "text/html",
       "sha256": "9e7cb7023f541b81211fc076541d72b391ebbe18b853c88a5570b7e220d5b48d",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:05.566539+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "international-etsi-etsi-ts-104-105-hybrid-pqc-standard-published",
@@ -2622,7 +3707,12 @@
       "sizeBytes": 257923,
       "contentType": "application/pdf",
       "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:06.015362+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "poland-psnc-pionier-q-quantum-network-launched",
@@ -2634,7 +3724,12 @@
       "sizeBytes": 244990,
       "contentType": "text/html",
       "sha256": "4ab0e11b9f00fde65c864049d76bc18b22146dd7ee160260b2a9c48c33968741",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:06.059703+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "south-africa-sa-quti-sa-quti-quantum-communications-program",
@@ -2646,7 +3741,12 @@
       "sizeBytes": 36066,
       "contentType": "text/html",
       "sha256": "29745e1e9f663fc2fb8ae41f56cc2ad267a0eb599c62a4dc9ed60efcf9345131",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:06.072063+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "saudi-arabia-stc-stc-quantum-safe-framework-launched",
@@ -2658,7 +3758,12 @@
       "sizeBytes": 279334,
       "contentType": "text/html",
       "sha256": "dfc1c9ccfbfbc041f0c6debecc4180428e940664e85ed16794c7419b6ebe5c1c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:06.110219+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "spain-spain-govt-spain-quantum-technologies-strategy-eur-808m",
@@ -2670,7 +3775,12 @@
       "sizeBytes": 80071,
       "contentType": "text/html",
       "sha256": "4605159af3838bd64e4229c0ea376962715b92938930157a94d010d9a80bcbdf",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:06.132316+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "spain-telefonica-telefonica-quantum-centre-of-excellence-opened",
@@ -2682,7 +3792,12 @@
       "sizeBytes": 278588,
       "contentType": "text/html",
       "sha256": "8bac810316abfcba0dbeb9c8e88b5c96dd530cf5f250eeaed8cf1069bab02e6c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:06.163129+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "japan-cryptrec-pqc-guideline-gl-2004-2022-2",
@@ -2694,7 +3809,12 @@
       "sizeBytes": 1112124,
       "contentType": "application/pdf",
       "sha256": "ad577eb7c5efc99f8d757bb97d39791f460d3c375d4f63d2f8ba2c27bfefd829",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:08.357399+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-white-house-securing-the-nation-against-advanced-cryptographic-att",
@@ -2706,7 +3826,12 @@
       "sizeBytes": 288725,
       "contentType": "text/html",
       "sha256": "4ba9fa300b59e7ee177a5e3b091af0d6a48cb82c47914ba312aef2f20e38bcb2",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:05:01.612672+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-nist-nist-pqc-migration-pilot-complete-eo-june-22-2026",
@@ -2718,7 +3843,12 @@
       "sizeBytes": 287507,
       "contentType": "text/html",
       "sha256": "c578ae2bebb9c203d32a46c5feddcaef6aa85ab4bde6f573c9c7318753d6c8c6",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:08.401451+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-federal-agencies-key-establishment-migration-deadline-eo-june-22-2",
@@ -2730,7 +3860,12 @@
       "sizeBytes": 5447,
       "contentType": "text/html",
       "sha256": "6d20b0e1483470694b941c1d14f59458138bd1bb661d2a85326fd969e62584cc",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:08.413532+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-federal-agencies-digital-signature-migration-deadline-eo-june-22-2",
@@ -2742,7 +3877,12 @@
       "sizeBytes": 287507,
       "contentType": "text/html",
       "sha256": "c578ae2bebb9c203d32a46c5feddcaef6aa85ab4bde6f573c9c7318753d6c8c6",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:08.446159+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "netherlands-aivd-pqc-migration-handbook-2nd-edition",
@@ -2754,7 +3894,12 @@
       "sizeBytes": 1890163,
       "contentType": "application/pdf",
       "sha256": "a91d41f1dca6a0e333f2054b0f46b5b4a6851fd619cfe841241e832f5f380b98",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:10.827670+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "australia-asd-legacy-asymmetric-crypto-disallowed-full-pqc-transition",
@@ -2766,7 +3911,12 @@
       "sizeBytes": 1203207,
       "contentType": "application/pdf",
       "sha256": "af723f1310793381270cd029d9e39618b6a29bf7f03c3b2cd93613194fde2f86",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:57.774387+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-omb-omb-memorandum-m-26-15-published",
@@ -2778,7 +3928,12 @@
       "sizeBytes": 283167,
       "contentType": "application/pdf",
       "sha256": "515af70472d3a4a2107c61a1bc5f8014523d99feab9b2cf92a95e4bcc790da2c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:11.072752+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-federal-agencies-agency-pqc-migration-plans-due-to-omb-oncd-m-26-1",
@@ -2790,7 +3945,12 @@
       "sizeBytes": 283167,
       "contentType": "application/pdf",
       "sha256": "515af70472d3a4a2107c61a1bc5f8014523d99feab9b2cf92a95e4bcc790da2c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:11.309298+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-far-council-far-council-proposed-rule-contractor-pqc-fips-complian",
@@ -2802,7 +3962,12 @@
       "sizeBytes": 314820,
       "contentType": "text/html",
       "sha256": "8ad589933ba2fd93694774268a49d0c964704a91b8abd88394cd5348e72c4895",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:11.344142+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-cisa-cisa-cbom-guidance-far-contractor-vdp-rule-due-eo-14412",
@@ -2814,7 +3979,12 @@
       "sizeBytes": 314820,
       "contentType": "text/html",
       "sha256": "8ad589933ba2fd93694774268a49d0c964704a91b8abd88394cd5348e72c4895",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:11.378111+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-white-house-executive-order-14413-issued-quantum-innovation-qc-add",
@@ -2826,7 +3996,12 @@
       "sizeBytes": 294489,
       "contentType": "text/html",
       "sha256": "4047dae0e146fca443763b02fe2e12fe61c4a57d5f3694d17b21c754405afb27",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:11.416343+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-white-house-nspm-12-published",
@@ -2838,7 +4013,12 @@
       "sizeBytes": 302376,
       "contentType": "text/html",
       "sha256": "cb257c1a366a6393b3d88c39197e6a1ee94ace087239158e14e2faf567df114e",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:11.459644+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "going-beyond-encryption-malaysia-rolls-out-quantum-cryptogra",
@@ -2850,7 +4030,12 @@
       "sizeBytes": 146122,
       "contentType": "text/html",
       "sha256": "4153832b999286addd611cc9defe261a1de9a40de579fae3ae8dedf777f5436c",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:11.482476+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "czech-republic-nukib-national-cyber-and-information-security",
@@ -2862,7 +4047,12 @@
       "sizeBytes": 19900,
       "contentType": "text/html",
       "sha256": "50647fa583b39059585ee20ebe5318c7eada97faa99e384839caa76152e39902",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:11.496187+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "czech-republic-nukib-national-cyber-and-information-security-2",
@@ -2874,7 +4064,12 @@
       "sizeBytes": 216061,
       "contentType": "application/pdf",
       "sha256": "9b9d286aff3e2f40d272c2d7b49343431f00a2d503533fddb10dfbc90475dc19",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:11.592459+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "bank-of-israel-banking-system-preparedness-for-quantum-compu",
@@ -2886,7 +4081,12 @@
       "sizeBytes": 325353,
       "contentType": "text/html",
       "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:15.974176+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "denmark-transition-to-quantum-safe-cryptography-guidance",
@@ -2898,7 +4098,12 @@
       "sizeBytes": 70539,
       "contentType": "text/html",
       "sha256": "b141e8a92591533b7714d88391290c4818cc04351ec85b8235ba099354e5f209",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:11.626544+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "finland-traficom-quantum-safe-encryption-transition-guidance",
@@ -2910,7 +4115,12 @@
       "sizeBytes": 569567,
       "contentType": "text/html",
       "sha256": "1d17b9590997a814181a6c3196d587509738ce10cdd77eb01ed29a05d99b271d",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:11.661793+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "sweden-ncsc-national-recommendations-for-quantum-safe-crypto",
@@ -2922,7 +4132,12 @@
       "sizeBytes": 1064410,
       "contentType": "text/html",
       "sha256": "ac5c299f4726eb63303c8d3840ceaa4e8bc88121c14d6944acba2da8006b5325",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.012916+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "switzerland-ncsc-quantum-computers-and-post-quantum-cryptogr",
@@ -2934,7 +4149,12 @@
       "sizeBytes": 236045,
       "contentType": "text/html",
       "sha256": "696f29544743b81598fe3d7caf09b1d1f97c6e96479ba77a408ed47538190f37",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.240156+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "central-bank-of-jordan-quantum-resistant-encryption-roadmap",
@@ -2946,7 +4166,12 @@
       "sizeBytes": 103114,
       "contentType": "text/html",
       "sha256": "acaa85d15dc9b19df5a89773c95e29d01949bbda8cf1a021ca334b738a1be4eb",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.264595+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "canada-osfi-guideline-b-13-technology-and-cyber-risk-managem",
@@ -2958,7 +4183,12 @@
       "sizeBytes": 165936,
       "contentType": "text/html",
       "sha256": "c34d7744728a27424e7c3703ecaed3cef35fc45cbe4965d7db7222fe29a416db",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.283723+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "acpr-banque-de-france-post-quantum-cryptography-transition-r",
@@ -2970,7 +4200,12 @@
       "sizeBytes": 309138,
       "contentType": "text/html",
       "sha256": "32a9a33bb96247b6087fa00b25c391f0128160e74498d0485acb7101760645e3",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.330824+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "uk-ico-quantum-computing-tech-horizons-report",
@@ -2982,7 +4217,12 @@
       "sizeBytes": 69989,
       "contentType": "text/html",
       "sha256": "826ddcc254ed2bd26f0d90ecae4fd3f473e780095b820db157dfabb25ac968b6",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.356358+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "norway-nsm-quantum-migration-guidance",
@@ -2994,7 +4234,12 @@
       "sizeBytes": 371035,
       "contentType": "application/pdf",
       "sha256": "d0b5abda5e14d9b5848607734edd7dfbbdc9e151d37044bd4cf7df6fc419e787",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.493510+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "rbi-india-q-safe-expert-committee-on-quantum-technology-risk",
@@ -3006,7 +4251,12 @@
       "sizeBytes": 87646,
       "contentType": "text/html",
       "sha256": "72f3f876cf7579c57ac07bae7ad2d44058e990e3c0301f9993c7399fe6354e54",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.515012+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "thailand-ncsa-quantum-ready-2030-roadmap",
@@ -3018,7 +4268,12 @@
       "sizeBytes": 111272,
       "contentType": "text/html",
       "sha256": "9dd39856a009457090e13c0c724bd80a659de24aa3c306429b4f7ce739f04eb8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.533961+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "indonesia-bssn-national-pqc-migration-roadmap-task-force",
@@ -3030,7 +4285,12 @@
       "sizeBytes": 102907,
       "contentType": "text/html",
       "sha256": "5ed9b54799d821ca5c0ddbbd7634d1a9867e4043a13e1ae3a44bdb563270402b",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.559375+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "russia-tc26-post-quantum-cryptographic-mechanisms-working-gr",
@@ -3042,7 +4302,12 @@
       "sizeBytes": 80022,
       "contentType": "text/html",
       "sha256": "a48dc0bbef13b92ab7c891880e39104f079ead9efc03d0c0c71ab2d9bffc8308",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.579005+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "bsi-vs-it-umstellungsfristen-fuer-post-quanten-kryptografie",
@@ -3054,7 +4319,12 @@
       "sizeBytes": 59062,
       "contentType": "text/html",
       "sha256": "2e8c6324e8fc84e8525f290cead74762b9099879b3c99ea973f2e7cb7a5fdf54",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.595550+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "ncsc-post-quantum-cryptography-pqc-migration-workshop-report",
@@ -3066,7 +4336,12 @@
       "sizeBytes": 140339,
       "contentType": "text/html",
       "sha256": "d49d4fcdcaea44b88dc925470a2df616a55630a77e6da3fc9c012d54b4b26bc8",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:12.623091+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "faa-request-for-information-post-quantum-cryptography-suppor",
@@ -3078,7 +4353,12 @@
       "sizeBytes": 491496,
       "contentType": "text/html",
       "sha256": "1b8a9008158d86ae0e1bfc8da7f0dabbc0de530033bc24d50969d83334c56eb5",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:13.090723+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "european-union-ec-eudi-wallet-available-all-member-states",
@@ -3090,7 +4370,12 @@
       "sizeBytes": 836564,
       "contentType": "text/html; charset=UTF-8",
       "sha256": "14b1c4cfe3ed85f3825e75272cc151ca5647761212b8ce9927809f2a4556d038",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:13.254045+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "australia-apra-system-risk-outlook-flags-quantum-computing-risk",
@@ -3102,7 +4387,12 @@
       "sizeBytes": 1047081,
       "contentType": "text/html",
       "sha256": "589fba20503c9f2b2356a3f338e120a65d80cbb1423b3c37195f267c73a14ada",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:13.343992+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "france-amf-sets-2026-priorities-names-quantum-computing-in-cyber-inspections",
@@ -3114,7 +4404,12 @@
       "sizeBytes": 73026,
       "contentType": "text/html",
       "sha256": "6cad2269b686279efba7f92545315fe05625a6cf80e8fa2a1a3ef8e32e638729",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:13.366637+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "brazil-bacen-lift-papers-post-quantum-cryptography-feasibility-study-for-pix",
@@ -3126,7 +4421,12 @@
       "sizeBytes": 910778,
       "contentType": "application/pdf",
       "sha256": "5a6f6baaf10c0abb5cbd48e70904ccd2de9f91be2ab9bced21e3b0fb2a1f287a",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:13.683824+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "uruguay-agesic-national-cybersecurity-strategy-2024-2030-commits-to-quantum-resistant-pki",
@@ -3138,7 +4438,12 @@
       "sizeBytes": 5388246,
       "contentType": "application/pdf",
       "sha256": "6ef23d27ac57eae323703351c66ed1bc0061e69d6a0395f03b210fbebb32a68f",
-      "verifiedAt": "2026-09-07"
+      "verifiedAt": "2026-09-07",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:15.802067+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "label": "DHS-Post-Quantum-Cryptography",
@@ -3148,7 +4453,12 @@
       "sizeBytes": 129355,
       "contentType": "text/html",
       "sha256": "809206f2400550b457e9ee8a31704ef494db22db6e031bf9c4723d4323252167",
-      "refId": "dhs-post-quantum-cryptography"
+      "refId": "dhs-post-quantum-cryptography",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:15.831963+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "label": "NCCoE-Migration-to-Post-Quantum-Cryptography",
@@ -3158,7 +4468,12 @@
       "sizeBytes": 114544,
       "contentType": "text/html",
       "sha256": "6b8a80dd788f5daabcd4d61fc481c48533a6b5e7df7e53be25f32f797a716df1",
-      "refId": "nccoe-migration-to-post-quantum-cryptography"
+      "refId": "nccoe-migration-to-post-quantum-cryptography",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:15.856659+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "label": "NSA-Post-Quantum-Cybersecurity-Resources",
@@ -3168,7 +4483,12 @@
       "sizeBytes": 99212,
       "contentType": "text/html",
       "sha256": "8f08665da214512be422c7f44eb4774bb276bbec4564dcc1603547c897b44ba6",
-      "refId": "nsa-post-quantum-cybersecurity-resources"
+      "refId": "nsa-post-quantum-cybersecurity-resources",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:15.879207+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "united-states-white-house-executive-order-14144",
@@ -3181,7 +4501,12 @@
       "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
       "file": "United_States_White_House_Executive_Order_14144.html",
       "status": "downloaded",
-      "label": "Executive Order 14144"
+      "label": "Executive Order 14144",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:14:32.578325+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "dhs-post-quantum-cryptography",
@@ -3195,7 +4520,12 @@
       "file": "DHS-Post-Quantum-Cryptography.html",
       "status": "downloaded",
       "label": "DHS Post-Quantum Cryptography",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:15.831963+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "nccoe-migration-to-post-quantum-cryptography",
@@ -3209,7 +4539,12 @@
       "file": "NCCoE-Migration-to-Post-Quantum-Cryptography.html",
       "status": "downloaded",
       "label": "NCCoE Migration to Post-Quantum Cryptography",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:15.856659+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "refId": "nsa-post-quantum-cybersecurity-resources",
@@ -3223,7 +4558,12 @@
       "file": "NSA-Post-Quantum-Cybersecurity-Resources.html",
       "status": "downloaded",
       "label": "NSA Post-Quantum Cybersecurity Resources",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:15.879207+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     }
   ],
   "archivedEntries": [

@@ -154,21 +154,36 @@
       "sourceUrl": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.1-Post-Quantum-Telco-Network-Impact-Assessment-Whitepaper-Version1.0.pdf",
       "filename": "gsma-pq-01.pdf",
       "sha256": "f9465918d7877e26e8d4934a895430cb33a4c784e8931c570901eb76b46f142a",
-      "fetchedAt": "2026-05-19T02:50:07.475429+00:00"
+      "fetchedAt": "2026-05-19T02:50:07.475429+00:00",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:24.667786+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "gapId": "gsma-pq-02",
       "sourceUrl": "https://www.gsma.com/get-involved/working-groups/wp-content/uploads/2023/09/Guidelines-for-Quantum-Risk-Management-for-Telco-v1.0.pdf",
       "filename": "gsma-pq-02.pdf",
       "sha256": "7751a7462e35a40d3741265fd6bb8b77a92c87029e8a41a7956b65ab3d778eea",
-      "fetchedAt": "2026-05-19T02:51:52.182344+00:00"
+      "fetchedAt": "2026-05-19T02:51:52.182344+00:00",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:25.464545+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "gapId": "gsma-pq-03",
       "sourceUrl": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
       "filename": "gsma-pq-03.pdf",
       "sha256": "952f1e5a782102211d97e986bd33011dd96bf50a4eb6b00e11bd1d2343cde4ea",
-      "fetchedAt": "2026-05-19T02:51:52.904528+00:00"
+      "fetchedAt": "2026-05-19T02:51:52.904528+00:00",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:28.185562+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "gapId": "3gpp-rel19-pqc-study",

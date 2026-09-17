@@ -17,7 +17,12 @@
       "contentType": "text/html",
       "sha256": "197362e2a97c7c41c16e6e6ce46aa4988f16af7dfa809b8363c6164226b70315",
       "verifiedAt": "2026-09-11",
-      "previousSha256": "d9b10c9e2324249fe85c7d2f240f61bf10c91eef62458371ddb10ad9207ddd84"
+      "previousSha256": "d9b10c9e2324249fe85c7d2f240f61bf10c91eef62458371ddb10ad9207ddd84",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:15.993241+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-017",
@@ -30,7 +35,12 @@
       "sizeBytes": 610821,
       "contentType": "text/html",
       "sha256": "3fd55c1590c3e316cb1669288ab4f8ef729a39f494d1f5edea0ef2b6e8c53148",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.063184+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-018",
@@ -43,7 +53,12 @@
       "sizeBytes": 346904,
       "contentType": "text/html",
       "sha256": "466503ff4806e15f1447bedc63d54679a46b7c44200c2b89942e5d6085404c96",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.101391+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-019",
@@ -69,7 +84,12 @@
       "sizeBytes": 1722776,
       "contentType": "text/html",
       "sha256": "f824f759c5fcd2d4f99924e733a401d9aa30b0c2e9fa5b257c004ed079dd681e",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.341422+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-024",
@@ -82,7 +102,12 @@
       "sizeBytes": 181686,
       "contentType": "text/html",
       "sha256": "ca5941a0b1b53fc2761ffb7ea432039f4bd4bc68d9efc2f2d259a8c8295ca6b1",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.370574+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-027",
@@ -95,7 +120,12 @@
       "sizeBytes": 281592,
       "contentType": "text/html",
       "sha256": "9f9d8d03b001550430ffa875fcb7c30690a63fccd768bff14b379fc8129b926f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.402785+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-028",
@@ -108,7 +138,12 @@
       "sizeBytes": 70599,
       "contentType": "text/html",
       "sha256": "3345b63131cd7f279644c5f7fd173df4287a0c3862bde417b56ce5e8afbd8133",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.424534+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-029",
@@ -121,7 +156,12 @@
       "sizeBytes": 74223,
       "contentType": "text/html",
       "sha256": "38d9587347d614a1bc83f788b8ab782cb6a949c9194bf4dbd73a4040b4be40cb",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.451976+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-032",
@@ -134,7 +174,12 @@
       "sizeBytes": 366944,
       "contentType": "text/html",
       "sha256": "fef9552281f6340f596aadab0bfabcf2ff6c8f2db58fe99062433aeea04c9ed8",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.491459+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-041",
@@ -147,7 +192,12 @@
       "sizeBytes": 371816,
       "contentType": "text/html",
       "sha256": "ad151d1d41ffe01cff1618d661fc368003cb2355fe2aa82377bb7bce8cc7c065",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.540413+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-045",
@@ -160,7 +210,12 @@
       "sizeBytes": 68301,
       "contentType": "text/html",
       "sha256": "b2b976aeaba934f052690665b07ad2213db9ff3c528ae52ea2ae5a124438d141",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.555113+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-057",
@@ -174,7 +229,12 @@
       "contentType": "text/html",
       "sha256": "5417adac56b08bd96adf34056fdbd75ffef1c9cc32a205c23e2c857953abe2de",
       "verifiedAt": "2026-09-11",
-      "previousSha256": "020a6754621a67638e93a525cec0bf225e718b937e33deb4d5274cf3c1cdb890"
+      "previousSha256": "020a6754621a67638e93a525cec0bf225e718b937e33deb4d5274cf3c1cdb890",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.627403+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-058",
@@ -187,7 +247,12 @@
       "sizeBytes": 281394,
       "contentType": "text/html",
       "sha256": "1e756a80a9b2fe4ca1cbf8de9fd590adfa85e8f2cd2d74db269a58761bc58a88",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.662748+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-146",
@@ -200,7 +265,12 @@
       "sizeBytes": 262134,
       "contentType": "application/pdf",
       "sha256": "56a80a92b485eb6949e3b1b05c7e297e89737ea429932e8b53cd86b4107fc7fd",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.756710+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-168",
@@ -214,7 +284,12 @@
       "sha256": "fa52126d5026af6bafe7e5805c5edc7a18fbcdd2fe1fb81cb3f59422b2dee5c4",
       "recaptured_at": "2026-09-12T11:12:57.459653+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:17.221694+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-171",
@@ -227,7 +302,12 @@
       "sizeBytes": 495084,
       "contentType": "text/html",
       "sha256": "07da74ed8becfe1332abb130484021e126254504175f3a11342ef0a462ffd085",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:17.264032+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-178",
@@ -241,7 +321,12 @@
       "sha256": "673f85b36b7c29f513e85d92f902fcddc2b97e371b7617b4a7be291597ef3726",
       "recaptured_at": "2026-09-16T03:33:13.179645+00:00",
       "recaptured_reason": "2026-09-16: the row's roadmap_url pointed at Ping's Q2 2022 earnings release (no mention of quantum); URL corrected to the article the row's title names, found by codex gpt-5.6-terra, fetched and identity-checked",
-      "superseded_file": "_superseded-09162026/vendor/VND-178.refetched-from-old-url.html"
+      "superseded_file": "_superseded-09162026/vendor/VND-178.refetched-from-old-url.html",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:17.282651+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-225",
@@ -254,7 +339,12 @@
       "sizeBytes": 317645,
       "contentType": "text/html",
       "sha256": "ee5575c9dfdbd4e57423b9e66de3eaf0e990a8973bd1752e8e787885be17800b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:17.319123+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-304",
@@ -267,7 +357,12 @@
       "sizeBytes": 184819,
       "contentType": "text/html",
       "sha256": "3ebc573f62bb19aecb7ecb1400d632bd3303f8c9ae3f8eb1f64ed5f036bc7860",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:17.351512+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-089",
@@ -280,7 +375,12 @@
       "sizeBytes": 176836,
       "contentType": "text/html",
       "sha256": "1aa9704cfd7e11673376cc7969c8c176f6aeb3597ad1363011124756c9517b7d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:17.377128+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-054",
@@ -293,7 +393,12 @@
       "sizeBytes": 153777,
       "contentType": "text/html",
       "sha256": "95dcd66508cb17a5e4541255374f36b9ce59e6f0355a7e106f8c4358ae2be7db",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:17.399689+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-064",
@@ -320,7 +425,12 @@
       "sha256": "4546adc4827f69f2a084044eb3d4f975b88dff627043f93c74c6a61a91c1e052",
       "recaptured_at": "2026-09-12T11:12:58.064926+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:17.440284+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-015",
@@ -333,7 +443,12 @@
       "sizeBytes": 244545,
       "contentType": "text/html",
       "sha256": "5333845d6b60536d7ca55a97dfdf315ff0b6611b611ee576bec7c34e42883bf8",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:17.468750+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-157",
@@ -346,7 +461,12 @@
       "sizeBytes": 383987,
       "contentType": "text/html",
       "sha256": "2fdae0f9e315880278058111f97712ebc398f6eb51703496deb8e217fac1b694",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:17.503320+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-152",
@@ -360,7 +480,12 @@
       "sha256": "056fe1c09386c8cd7b2d6a2da71e30098aa6893a49128319538c702c4e62c973",
       "recaptured_at": "2026-09-12T11:12:58.386014+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:18.764096+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-155",
@@ -373,7 +498,12 @@
       "sizeBytes": 315941,
       "contentType": "text/html",
       "sha256": "470289e8e4ae4ed8bdeaa570e950c1207483bab2d58893c880024614237e4d5a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:18.821167+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-190",
@@ -386,7 +516,12 @@
       "sizeBytes": 262351,
       "contentType": "text/html",
       "sha256": "1971cfbf4f754f064e606f1e4bfe999844f6776a610cb4d7f0a98f6ea2648914",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:18.859979+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-011",
@@ -399,7 +534,12 @@
       "sizeBytes": 150623,
       "contentType": "text/html",
       "sha256": "e7a008e1aee86fcef63c4aad466871f99f5581c4f6248069550273e875ff9f73",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:18.883688+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-039",
@@ -413,7 +553,12 @@
       "sha256": "e62aaa4a4565a50dcc34ce9d40a7ad7d61966b863ee0497e4d7e6693eecd4bc9",
       "recaptured_at": "2026-09-12T11:12:59.114247+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:19.007544+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-233",
@@ -426,7 +571,12 @@
       "sizeBytes": 114545,
       "contentType": "text/html",
       "sha256": "80af0574282f4da1ad01e75bb429b1931f02d39b4e690141eed6d34bdbef5996",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:19.034321+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-235",
@@ -440,7 +590,12 @@
       "sha256": "a84c76110acef1264c0acce5f8ae0a309d4b2053da88061ae308fbd6101e2d5d",
       "recaptured_at": "2026-09-12T11:13:00.242965+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this markdown/plain-text is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "FORMAT-MISMATCH",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:19.054196+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-239",
@@ -453,7 +608,12 @@
       "sizeBytes": 140600,
       "contentType": "text/html",
       "sha256": "d67a7bdffbee51e9c84ec4dc9d680c64c8ef0e04c8fd9549d036f4be8665980c",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:19.079573+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-251",
@@ -466,7 +626,12 @@
       "sizeBytes": 2899651,
       "contentType": "application/pdf",
       "sha256": "b9d2d53b2c03cfc47f9f4ce5ae0ceaebe1f46f50fccca8fc1cdbc70defd4d9ff",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:21.429818+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-259",
@@ -479,7 +644,12 @@
       "sizeBytes": 44118,
       "contentType": "text/html",
       "sha256": "403c35cd626f849740d675fc13473ec1cdf4d062e8f51f8b80587537f016ac75",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:21.450618+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-169",
@@ -492,7 +662,12 @@
       "sizeBytes": 257307,
       "contentType": "text/html",
       "sha256": "ce336270b0e354bb120dd5bf2e8401f162b943b4853dfb261aad29671f71f2ac",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:21.490222+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-291",
@@ -519,7 +694,12 @@
       "sha256": "2fd14e73d81e5f8971b50258a6d195de98dfbfc7cad9953703ac20f518dd522d",
       "recaptured_at": "2026-09-12T11:13:01.732978+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:21.680310+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-140",
@@ -532,7 +712,12 @@
       "sizeBytes": 328909,
       "contentType": "text/html",
       "sha256": "fe85f69511e51a02b3244de0ec1ea7c80a65106fd21ca4ecf25a5dd5e54ffe17",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:21.713676+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-269",
@@ -545,7 +730,12 @@
       "sizeBytes": 81680,
       "contentType": "text/html",
       "sha256": "ab2053909f398e60eba59d77c44009cc83f24942e47289e640e05f985d6059ff",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:21.751165+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-341",
@@ -558,7 +748,12 @@
       "sizeBytes": 2384992,
       "contentType": "application/pdf",
       "sha256": "3ac0c7642a00d5ef51dba8d4d7cde3c42643017b26e40aaa339301c622f8e5d2",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:22.958776+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-118",
@@ -571,7 +766,12 @@
       "sizeBytes": 124787,
       "contentType": "text/html",
       "sha256": "c132a46708694b7ad8805b34d402b782148dc5a60e08bda6375e1ee4b5c3f84e",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:22.993611+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-390",
@@ -584,7 +784,12 @@
       "sizeBytes": 229545,
       "contentType": "application/pdf",
       "sha256": "00d97ba087d357d5b04a7502a5e00f9ecfc9455051bfbd04b0d904b030856cf1",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.092858+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-319",
@@ -597,7 +802,12 @@
       "sizeBytes": 90683,
       "contentType": "text/html",
       "sha256": "0b8b6ba91a2b6c4bfb8e32b4874d0427ae4fe2552931ede6364e7fa9cfab0a0f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.119359+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-034",
@@ -610,7 +820,12 @@
       "sizeBytes": 164891,
       "contentType": "text/html",
       "sha256": "ca96f55c5b7b7054e379bb90b20decfe38ecc3112a7710d65bdd32fc9b0f8bea",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.154759+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-038",
@@ -623,7 +838,12 @@
       "sizeBytes": 192989,
       "contentType": "text/html",
       "sha256": "0fe9d9ac24017a9b7f9a685affe87818f0d39a98adbf6c801a9b15a19713a9ef",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.187983+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-040",
@@ -636,7 +856,12 @@
       "sizeBytes": 193173,
       "contentType": "text/html",
       "sha256": "c4167f9162aa651ffe23fd96a75b8174d7fff9a966b67c70bfca4e950cb1ec7e",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.218824+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-273",
@@ -649,7 +874,12 @@
       "sizeBytes": 164703,
       "contentType": "text/html",
       "sha256": "4b9c26d4ba6df8d9c42df86e96bdbb915c3c1f93f47d5ac3621d7f64424181d7",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.239896+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-409",
@@ -662,7 +892,12 @@
       "sizeBytes": 255092,
       "contentType": "text/html",
       "sha256": "449c07002f879b1016fa89cc334782df913f800994d4429920a3f7c17c430029",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.275930+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-048",
@@ -675,7 +910,12 @@
       "sizeBytes": 18943,
       "contentType": "text/html",
       "sha256": "cc281f45ee1df2843da967f593a4d234a9e4af048d615ca436392c22ba9d2bc4",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.289749+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-159",
@@ -688,7 +928,12 @@
       "sizeBytes": 121903,
       "contentType": "text/html",
       "sha256": "9e28e1bf9345803302e983704b0af5a68776cc40341463f77aeefae02fb8a7fd",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.315085+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-180",
@@ -701,7 +946,12 @@
       "sizeBytes": 757435,
       "contentType": "application/pdf",
       "sha256": "2378a0cce1d8a7795fb92e5c7495393e43a0185720ec867509cf7ed09a2cec87",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.624555+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-229",
@@ -715,7 +965,12 @@
       "sha256": "e55a130971479e6cd659831d93025ec07d2093f548826a86517441a8e86f1330",
       "recaptured_at": "2026-09-12T11:13:02.568347+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.662167+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-247",
@@ -741,7 +996,12 @@
       "sizeBytes": 175573,
       "contentType": "text/html",
       "sha256": "26f318364339a6ef0473d7bc8a3831f7b7fe2ac09395fe392113f38b07689818",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.710259+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-254",
@@ -754,7 +1014,12 @@
       "sizeBytes": 308173,
       "contentType": "text/html",
       "sha256": "d57bf161841ea8c01570d67f277e3464848f3519760f08556f7dcbd9cbf6f756",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.730566+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-256",
@@ -767,7 +1032,12 @@
       "sizeBytes": 117873,
       "contentType": "text/html",
       "sha256": "305961c41cb218621336f826188029ae661e55d34b1b605041e3e441b7b8cd15",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.751647+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-262",
@@ -780,7 +1050,12 @@
       "sizeBytes": 68686,
       "contentType": "text/html",
       "sha256": "6361241792e1172515143b2d0e962bb6f851465dcbedac7079e1945665755505",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.770203+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-286",
@@ -793,7 +1068,12 @@
       "sizeBytes": 1028682,
       "contentType": "text/html",
       "sha256": "e935e923a716fc4fd515cb23efc76b18a9d1ad7dc4dd357005a04149b71a7175",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.821040+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-288",
@@ -806,7 +1086,12 @@
       "sizeBytes": 788313,
       "contentType": "text/html",
       "sha256": "888d9de8072b079b6d4bbc79030cb3d07170ef3e00582ce53ff64450d86531be",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.867969+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-306",
@@ -819,7 +1104,12 @@
       "sizeBytes": 65846,
       "contentType": "text/html",
       "sha256": "f1e7ddf04ddea8c764eac01bcd0b00258391cd2cfcb1ddab59cdfa2d54627d4a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.888283+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-153",
@@ -845,7 +1135,12 @@
       "sizeBytes": 373767,
       "contentType": "text/html",
       "sha256": "e6ea2f84657bdab9022927ec9f0fa0abab286e09b0919ba9576edc1f92ef16b9",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.945771+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-092",
@@ -858,7 +1153,12 @@
       "sizeBytes": 195763,
       "contentType": "text/html",
       "sha256": "2b7efc6f2604fe0ce49b8ad36e430c51776d0cf0f6c0e57bad3ec216f4561739",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.975854+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-527",
@@ -871,7 +1171,12 @@
       "sizeBytes": 1743751,
       "contentType": "application/pdf",
       "sha256": "bdb87f7af81d2799c1d13b43b87ad742829632cace85d42cac37d166f4bbfbad",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:24.365906+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-523",
@@ -884,7 +1189,12 @@
       "sizeBytes": 138736,
       "contentType": "text/html",
       "sha256": "094d6f8dcec3a8987b02d7d0ea8fb82676c787756776a80de4d92293ea39b6e2",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:24.389763+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-522",
@@ -897,7 +1207,12 @@
       "sizeBytes": 66297,
       "contentType": "text/html",
       "sha256": "a4327ff9791a6bf9baf4db75e733adc1f300a2dc1291591644e2519582fcf126",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:24.409094+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-052",
@@ -911,7 +1226,12 @@
       "sha256": "cd6b597f827d762a792269df30d0cf41bbf44d3275e4aa4a3778b90d18cb9fe5",
       "recaptured_at": "2026-09-12T11:13:03.050710+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:24.622159+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-456",
@@ -924,7 +1244,12 @@
       "sizeBytes": 143812,
       "contentType": "text/html",
       "sha256": "40fd6265bcfa01b1d623505b6317bab32ed60cc2399cba1048bd6c4e5a299f25",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:24.649437+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-524",
@@ -938,7 +1263,12 @@
       "sha256": "c582ce7564512249fbd6c1b0b34e2e1d15bff27149ccaea1cfb09e6ead2af7ce",
       "recaptured_at": "2026-09-12T11:13:28.538890+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.207857+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-525",
@@ -951,7 +1281,12 @@
       "sizeBytes": 3581445,
       "contentType": "text/markdown",
       "sha256": "144d0d2ed9ffb26b4ced6369da9f61dde1671e4ea38710e4103ee6d0c1d7ba57",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "FORMAT-MISMATCH",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.226917+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-526",
@@ -964,7 +1299,12 @@
       "sizeBytes": 12129,
       "contentType": "text/html",
       "sha256": "ec64c97f9f88b116cc28e235348557d1e9a3bd6c5bb50a3e8e467b550ee88fdc",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.240090+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-528",
@@ -977,7 +1317,12 @@
       "sizeBytes": 217068,
       "contentType": "text/html",
       "sha256": "8cf98a3a32c60b9fd90863683bd03800a053a8126150c9c25210d6650f3fcf4f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.266934+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-255",
@@ -990,7 +1335,12 @@
       "sizeBytes": 355511,
       "contentType": "text/html",
       "sha256": "cb44f8646411adecdbc6d02c39266531654adcea2f130d7e8db2a2077b04f9d4",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.319356+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-049",
@@ -1003,7 +1353,12 @@
       "sizeBytes": 48268,
       "contentType": "text/html",
       "sha256": "0bb5e503b75982c75a0bf066cfd0ae4ff6db239849b09013d796722696da1adf",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.336729+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-056",
@@ -1016,7 +1371,12 @@
       "sizeBytes": 81426,
       "contentType": "text/html",
       "sha256": "87ebce56ccba119b34c42a763b2e7a5f8f0eace09b7b57c6385a1342590eab71",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.356470+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-154",
@@ -1029,7 +1389,12 @@
       "sizeBytes": 276516,
       "contentType": "text/html",
       "sha256": "6aac28e4c518a11f324bf46b4867c6e88d25dcfc8c7b5412c66164682f6aa921",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.406235+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-249",
@@ -1042,7 +1407,12 @@
       "sizeBytes": 140336,
       "contentType": "text/html",
       "sha256": "d8378c40bb296f439bc53aa5e6d7f9d4cb1c2e076ba1bc6d5fcac5cc73a91a86",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.433485+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-236",
@@ -1056,7 +1426,12 @@
       "sha256": "e30aaaf5bf7bf05bc722e35b835719a6b3bfea79eae4007f2a9ded184e3c65c6",
       "recaptured_at": "2026-09-12T11:13:34.323270+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.590249+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-311",
@@ -1069,7 +1444,12 @@
       "sizeBytes": 88191,
       "contentType": "text/html",
       "sha256": "124c8c787c4d4795eb4c4c8b82b6684db9445c711216dde9ec0b2260016bd4a0",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.610228+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-315",
@@ -1082,7 +1462,12 @@
       "sizeBytes": 76176,
       "contentType": "text/html",
       "sha256": "fc4eeaf12f2992a5d900c5b659b1cdb411188a1cee5f0d7c7d37a96467223fba",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.629442+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-277",
@@ -1095,7 +1480,12 @@
       "sizeBytes": 56251,
       "contentType": "text/html",
       "sha256": "afc1621b8d2cd4e81c14f465bf3e85e20ff4b35c5724336da04f2ed10dbf4c05",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T13:15:29.657496+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-283",
@@ -1108,7 +1498,12 @@
       "sizeBytes": 73194,
       "contentType": "text/html",
       "sha256": "9fe527738ce76326630cc51d756774258b09f714ca5b1401aab2a7304f156265",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T13:15:29.688905+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-284",
@@ -1121,7 +1516,12 @@
       "sizeBytes": 429304,
       "contentType": "text/html",
       "sha256": "488803c2c1f53b61329645b52ab133c8c2eebe699895fc132819fead8cf55fe6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T13:15:29.742296+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-553",
@@ -1134,7 +1534,12 @@
       "sizeBytes": 91712,
       "contentType": "text/html",
       "sha256": "f8ad4ce73d7e3afa69499c3b8403ff472591d3e834ba8e6ee78d8bab20da3327",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:29.754846+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-019",
@@ -1149,7 +1554,12 @@
       "file": "VND-019.html",
       "status": "downloaded",
       "label": "IBM Corporation",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:16.123690+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-064",
@@ -1164,7 +1574,12 @@
       "file": "VND-064.html",
       "status": "downloaded",
       "label": "Internet Security Research Group",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:17.415735+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-291",
@@ -1179,7 +1594,12 @@
       "file": "VND-291.html",
       "status": "downloaded",
       "label": "Cybernetica AS",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:21.512324+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-247",
@@ -1194,7 +1614,12 @@
       "file": "VND-247.html",
       "status": "downloaded",
       "label": "Agence nationale de la sécurité des systèmes d'information (ANSSI)",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.683767+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-153",
@@ -1209,7 +1634,12 @@
       "file": "VND-153.html",
       "status": "downloaded",
       "label": "Ciena Corporation",
-      "note": "additional document for a row that already has one"
+      "note": "additional document for a row that already has one",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:15:23.912552+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     }
   ],
   "archivedEntries": [
@@ -1234,7 +1664,12 @@
       "sha256": "afc1621b8d2cd4e81c14f465bf3e85e20ff4b35c5724336da04f2ed10dbf4c05",
       "bytes": 56251,
       "downloadedAt": "2026-09-07T20:24:46.701291+00:00",
-      "recoveredBy": "codex url research + lineage gates"
+      "recoveredBy": "codex url research + lineage gates",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T13:15:29.657496+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-283",
@@ -1244,7 +1679,12 @@
       "sha256": "9fe527738ce76326630cc51d756774258b09f714ca5b1401aab2a7304f156265",
       "bytes": 73194,
       "downloadedAt": "2026-09-07T20:24:46.701301+00:00",
-      "recoveredBy": "codex url research + lineage gates"
+      "recoveredBy": "codex url research + lineage gates",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T13:15:29.688905+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "vendorId": "VND-284",
@@ -1254,7 +1694,12 @@
       "sha256": "488803c2c1f53b61329645b52ab133c8c2eebe699895fc132819fead8cf55fe6",
       "bytes": 429304,
       "downloadedAt": "2026-09-07T20:24:46.701305+00:00",
-      "recoveredBy": "codex url research + lineage gates"
+      "recoveredBy": "codex url research + lineage gates",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T13:15:29.742296+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     }
   ],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",

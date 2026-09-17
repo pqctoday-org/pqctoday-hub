@@ -16,7 +16,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:57.146484+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "AERO-003",
@@ -29,7 +34,12 @@
       "sizeBytes": 124245,
       "contentType": "application/pdf",
       "sha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:56.922879+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "AUTO-001",
@@ -42,7 +52,12 @@
       "sizeBytes": 96747,
       "contentType": "text/html",
       "sha256": "fcf28063bbfad129941c44d45f14ff59fe4fdb03c0341777f16b2e07b3433b2d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "PAYWALL",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:41.480588+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "AUTO-003",
@@ -55,7 +70,12 @@
       "sizeBytes": 565909,
       "contentType": "text/html",
       "sha256": "7706e00dabda13027ccc6912afd11eede2d6049a4ac23bb93106133a5bf6bd4b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:57.298132+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "AUTO-004",
@@ -68,7 +88,12 @@
       "sizeBytes": 96747,
       "contentType": "text/html",
       "sha256": "fcf28063bbfad129941c44d45f14ff59fe4fdb03c0341777f16b2e07b3433b2d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "PAYWALL",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:41.509196+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CLOUD-001",
@@ -81,7 +106,12 @@
       "sizeBytes": 163997,
       "contentType": "text/html",
       "sha256": "e9ac6aa530c8c5edef0f871c85204d516958c7695001ea0aa4e12f1db15275f7",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:58.690976+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CLOUD-002",
@@ -94,7 +124,12 @@
       "sizeBytes": 163997,
       "contentType": "text/html",
       "sha256": "81749d20a553423163414f4bd0c6787d85d52a67a8aedf87c60caf91bde4ac0d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:57.384898+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CLOUD-003",
@@ -107,7 +142,12 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:57.874103+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CLOUD-004",
@@ -120,7 +160,12 @@
       "sizeBytes": 1289805,
       "contentType": "application/pdf",
       "sha256": "147271600180dfd048c21da0892a1228f574bdf7b69f5982710a3aa6ebf79a95",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:58.624283+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-002",
@@ -133,7 +178,12 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:57:59.264803+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-004",
@@ -146,7 +196,12 @@
       "sizeBytes": 254361,
       "contentType": "text/html",
       "sha256": "d995ec99296bc13d91358c59e15ebdbe7c97554e8149eb30905f0cd228598eb1",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:41.563161+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-006",
@@ -159,7 +214,12 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:42.098718+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-007",
@@ -172,7 +232,12 @@
       "sizeBytes": 553179,
       "contentType": "application/pdf",
       "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:42.582337+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-008",
@@ -185,7 +250,12 @@
       "sizeBytes": 902987,
       "contentType": "application/pdf",
       "sha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:00.384868+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CRYPTO-001",
@@ -198,7 +268,12 @@
       "sizeBytes": 397965,
       "contentType": "application/pdf",
       "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:43.011158+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CRYPTO-002",
@@ -212,7 +287,12 @@
       "sha256": "e3438bbcd4a90002247965f4eda30bfa475aad87591cdd8291bfb6686e81435b",
       "recaptured_at": "2026-09-12T11:12:38.909049+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": "_superseded-20260912/threats/CRYPTO-002.html"
+      "superseded_file": "_superseded-20260912/threats/CRYPTO-002.html",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:43.046100+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CRYPTO-003",
@@ -225,7 +305,12 @@
       "sizeBytes": 397965,
       "contentType": "application/pdf",
       "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:43.462963+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "ENERGY-001",
@@ -238,7 +323,12 @@
       "sizeBytes": 429896,
       "contentType": "text/html",
       "sha256": "6ae150250e02f574fb8c60b826dfec3496f4d7447711620d1c05e9c71c37cbaa",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "PAYWALL",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:43.494889+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "ENERGY-002",
@@ -251,7 +341,12 @@
       "sizeBytes": 81586,
       "contentType": "text/html",
       "sha256": "842bffff3960c379fcb457e3343c7e790dd278621005f0b157913dd15a5c8473",
-      "verifiedAt": "2026-09-12"
+      "verifiedAt": "2026-09-12",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:43.516707+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "ENERGY-003",
@@ -265,7 +360,12 @@
       "sha256": "1bf355bcca74556bbd96ab4703e5cb641dd9739f06b332e890abdd498dc23520",
       "recaptured_at": "2026-09-12T11:12:39.475646+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": "_superseded-20260912/threats/ENERGY-003.html"
+      "superseded_file": "_superseded-20260912/threats/ENERGY-003.html",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:43.610249+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "ENERGY-004",
@@ -278,7 +378,12 @@
       "sizeBytes": 798435,
       "contentType": "application/pdf",
       "sha256": "06c9d5e440eaf2fe03d3e22dc348c9e0842ad3ed445ea2ba4e97df179c2d81c4",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:43.969456+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FIN-001",
@@ -291,7 +396,12 @@
       "sizeBytes": 121657,
       "contentType": "text/html",
       "sha256": "86ae1261da72c5fd656a802e91ded80f50fc0ecd722e0b5616893a6d1adc1d61",
-      "verifiedAt": "2026-09-12"
+      "verifiedAt": "2026-09-12",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:43.994599+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FIN-002",
@@ -304,7 +414,12 @@
       "sizeBytes": 397965,
       "contentType": "application/pdf",
       "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:44.414177+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FIN-003",
@@ -317,7 +432,12 @@
       "sizeBytes": 1097369,
       "contentType": "application/pdf",
       "sha256": "7662ed9e1a1173031085cac9323a35507e32d0a85b64ca80795377fa71a7d3f6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:44.966589+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FIN-004",
@@ -330,7 +450,12 @@
       "sizeBytes": 902987,
       "contentType": "application/pdf",
       "sha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:46.088672+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FIN-005",
@@ -344,7 +469,12 @@
       "sha256": "ffade61cadf72cdf8bba38bd4d88a2e0a2d9d83b02c68bf437d2073bb1da2fb9",
       "recaptured_at": "2026-09-12T11:12:39.681156+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:46.824834+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "AUS-FIN-001",
@@ -357,7 +487,12 @@
       "sizeBytes": 274706,
       "contentType": "application/pdf",
       "sha256": "ddcef7b1f5780c26a7e79ecfb35ce41bee8b65f78a8cdb605c7508c2f604bee5",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:47.001738+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "AUS-FIN-002",
@@ -370,7 +505,12 @@
       "sizeBytes": 26352,
       "contentType": "text/html",
       "sha256": "ceb92bcc2bf4e758165aa099f85e14882e233a0e5bd06ca40acea9ff7969ff42",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:47.014609+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "GOV-001",
@@ -383,7 +523,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:07.797174+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "GOV-002",
@@ -396,7 +541,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:47.264711+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "GOV-003",
@@ -425,7 +575,12 @@
       "sizeBytes": 157041,
       "contentType": "text/html",
       "sha256": "e83cdaf49a573c5b4df9dd2d6aae28763087054258dbba464362c900cfc9184d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:07.824635+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "GOV-005",
@@ -438,7 +593,12 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:08.042484+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "AUS-GOV-001",
@@ -451,7 +611,12 @@
       "sizeBytes": 482469,
       "contentType": "text/html",
       "sha256": "a496b941bce32f5adc3335a9f56fb7a01a87d6b323d8e7d172fb3b79c3f64333",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:47.378208+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "HLTH-001",
@@ -464,7 +629,12 @@
       "sizeBytes": 145863,
       "contentType": "text/html",
       "sha256": "b997385afc728e37059371a0d560b0ba4f6b0760db180756c45edf5ee335ba9a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:08.103459+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "HLTH-002",
@@ -477,7 +647,12 @@
       "sizeBytes": 1067591,
       "contentType": "text/html",
       "sha256": "6129643c6a6a6f5f07e1829c1e99e3318b64fd3820874daa8f26e18a7f6e916f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:47.469183+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "HLTH-003",
@@ -490,7 +665,12 @@
       "sizeBytes": 1195625,
       "contentType": "application/pdf",
       "sha256": "d046fa836048933e1a8795bcf2f8224bcfa08789c2f3ef6f46ae53c2eb096c54",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:48.694946+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "HLTH-004",
@@ -503,7 +683,12 @@
       "sizeBytes": 242831,
       "contentType": "application/pdf",
       "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:09.470797+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "HLTH-005",
@@ -516,7 +701,12 @@
       "sizeBytes": 242831,
       "contentType": "application/pdf",
       "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:48.884285+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "IOT-002",
@@ -529,7 +719,12 @@
       "sizeBytes": 919601,
       "contentType": "application/pdf",
       "sha256": "9d0d1947752781220fc4498885aea100f39cd18841ff375fdff80b2d0b650866",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:49.290455+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "IOT-003",
@@ -542,7 +737,12 @@
       "sizeBytes": 127548,
       "contentType": "text/html",
       "sha256": "c841af39dd2164e0b73fd91ab3df0e817872276521352b741189060b396bac5c",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:49.326187+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "IT-001",
@@ -555,7 +755,12 @@
       "sizeBytes": 34496,
       "contentType": "text/html",
       "sha256": "09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:21.047747+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "IT-002",
@@ -569,7 +774,12 @@
       "sha256": "80f878e72c4090e74edac9af8890d2e3b26d2b0281d55bb88386cc1024187007",
       "recaptured_at": "2026-09-12T11:12:39.902285+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
-      "superseded_file": "_superseded-20260912/threats/IT-002.html"
+      "superseded_file": "_superseded-20260912/threats/IT-002.html",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:49.360351+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "IT-003",
@@ -582,7 +792,12 @@
       "sizeBytes": 101434,
       "contentType": "text/html",
       "sha256": "b98b60db14db876eb3108baa089e7987ea9e1df404322e5f82711ffa70d71f39",
-      "verifiedAt": "2026-09-12"
+      "verifiedAt": "2026-09-12",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:49.383171+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "IT-004",
@@ -595,7 +810,12 @@
       "sizeBytes": 25607,
       "contentType": "text/html",
       "sha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a",
-      "verifiedAt": "2026-09-12"
+      "verifiedAt": "2026-09-12",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:21.073010+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "LEG-001",
@@ -608,7 +828,12 @@
       "sizeBytes": 170568,
       "contentType": "application/pdf",
       "sha256": "df74e5d5f79f21fb0c86ae8e8df6c170cd7b987d207e550f0fa107c89e73e13f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:22.012562+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "LEG-002",
@@ -621,7 +846,12 @@
       "sizeBytes": 835956,
       "contentType": "text/html",
       "sha256": "15f26715a4e48c580090016cceed0c9f57d27719dff2e13674e996942fcc5b18",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:22.152665+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "LEG-003",
@@ -634,7 +864,12 @@
       "sizeBytes": 70119,
       "contentType": "application/pdf",
       "sha256": "b8dce6e415c906877ce36fd3d91b41e0543eda332f400cb444116ec760b5a4bf",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:22.337932+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "MEDIA-001",
@@ -647,7 +882,12 @@
       "sizeBytes": 549667,
       "contentType": "application/pdf",
       "sha256": "70b509fc00ba82aee71ecc9434f5759411c6c2b4258e2d9ecdcd7be12fccbfd4",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:50.576732+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "MEDIA-002",
@@ -660,7 +900,12 @@
       "sizeBytes": 41479,
       "contentType": "text/html",
       "sha256": "b8f4455f8ce1300549dce9107b6b5812c07c6633ca6d11e6a1a78b43d360b800",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:23.721688+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "MEDIA-003",
@@ -673,7 +918,12 @@
       "sizeBytes": 1632263,
       "contentType": "application/pdf",
       "sha256": "d8a4c6590d72f55a94bba961944dc341d211fb633c9451ddb08ac929fc890dcb",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:12:54.833537+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "PCI-002",
@@ -686,7 +936,12 @@
       "sizeBytes": 4458346,
       "contentType": "application/pdf",
       "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:00.783225+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "PCI-003",
@@ -699,7 +954,12 @@
       "sizeBytes": 2986027,
       "contentType": "application/pdf",
       "sha256": "efb109b980b10ca728cce8462f18eaedb587537e71a155c6b1db614966b2c0a6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:06.138447+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "RAIL-001",
@@ -712,7 +972,12 @@
       "sizeBytes": 447147,
       "contentType": "application/pdf",
       "sha256": "aa8871417f3b8ee4620abeff2dc27e3e54e340209928e8c0fafe1e53001f0ed6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:30.168461+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "RETAIL-001",
@@ -725,7 +990,12 @@
       "sizeBytes": 4458346,
       "contentType": "application/pdf",
       "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:12.372326+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "SUPPLY-001",
@@ -738,7 +1008,12 @@
       "sizeBytes": 197536,
       "contentType": "application/pdf",
       "sha256": "28e350371138921eaf41da6820fc44bb7d05cc5ecf4c9bb08c99d39fee80d1c6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:30.944755+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "SUPPLY-002",
@@ -751,7 +1026,12 @@
       "sizeBytes": 320052,
       "contentType": "text/html",
       "sha256": "474852fd42f7d427a5c3ced7b9ee4a588b7e3614b24fe680c66a7bf6f00b67aa",
-      "verifiedAt": "2026-09-12"
+      "verifiedAt": "2026-09-12",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:12.405570+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "SUPPLY-003",
@@ -764,7 +1044,12 @@
       "sizeBytes": 3453262,
       "contentType": "application/pdf",
       "sha256": "100d60c0c3bafdae296bac2eab878acf72361e7da14a61b808791998a4289366",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:13.781592+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "TELCO-001",
@@ -777,7 +1062,12 @@
       "sizeBytes": 1756788,
       "contentType": "application/pdf",
       "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:15.614356+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "TELCO-002",
@@ -790,7 +1080,12 @@
       "sizeBytes": 1756788,
       "contentType": "application/pdf",
       "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.162911+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "TELCO-003",
@@ -803,7 +1098,12 @@
       "sizeBytes": 3874483,
       "contentType": "application/pdf",
       "sha256": "35a1c4b948f5d8df1c38de24cf780b4cb065159f5922ad91351a49f8108fb5a2",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:37.447294+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "TELCO-004",
@@ -816,7 +1116,12 @@
       "sizeBytes": 5887929,
       "contentType": "application/pdf",
       "sha256": "c325410ed8f2f9b5ec44d1ace49619d227a4a4093e14021f817054561fa57a75",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:22.249042+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "TELCO-005",
@@ -829,7 +1134,12 @@
       "sizeBytes": 546730,
       "contentType": "application/pdf",
       "sha256": "87543ef079c822f132caff42c4b7ad8b717ff4c56d86f705fa9238d02dfadfbe",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:22.656410+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "WATER-001",
@@ -842,7 +1152,12 @@
       "sizeBytes": 75363,
       "contentType": "text/html",
       "sha256": "7f14acd9b18e1f733420f96dc3d04106871621e9a030a730cc02c6d15a963499",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.399490+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "EDU-001",
@@ -855,7 +1170,12 @@
       "sizeBytes": 133312,
       "contentType": "text/html",
       "sha256": "fc8a093ed69e8464a441b3532df4446aff06b5830fb8d41fa63642335507417b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:00.498861+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "EDU-002",
@@ -868,7 +1188,12 @@
       "sizeBytes": 59911,
       "contentType": "text/html",
       "sha256": "1a771d36117f80a4bef451919e3f9360dd291ede6e0b8de649f71f83960cd050",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:22.683987+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "EDU-003",
@@ -881,7 +1206,12 @@
       "sizeBytes": 1023165,
       "contentType": "text/html",
       "sha256": "a9196a3d0b6601356c4e127bad24f8c7f2c17f6ed22e41b35755a910104156f8",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:01.650040+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "EDU-004",
@@ -894,7 +1224,12 @@
       "sizeBytes": 1593213,
       "contentType": "application/pdf",
       "sha256": "3e4631df8b5d61f40a6e542b52779ef30ddbbfff31e09214fa94ad6e6f5e6d08",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:03.370781+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "EDU-005",
@@ -907,7 +1242,12 @@
       "sizeBytes": 123998,
       "contentType": "text/html",
       "sha256": "eb456fe022a040b22c410a9e7e3496e927cd1eee637dfffad31ecfc22c4f726b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:22.719823+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-009",
@@ -920,7 +1260,12 @@
       "sizeBytes": 56718,
       "contentType": "text/html",
       "sha256": "8e45c4909b2eb481bc627aff3eccd57d0d5597a8b4bf84d8d68db37969203d6c",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:22.737494+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-010",
@@ -933,7 +1278,12 @@
       "sizeBytes": 347373,
       "contentType": "text/html",
       "sha256": "b4ec7dcdbcacca53c211d083cb47c024d654c5607a5aa94a15d1658838a60e80",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:22.799842+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-011",
@@ -946,7 +1296,12 @@
       "sizeBytes": 11334,
       "contentType": "text/html",
       "sha256": "483c8097e5f0760d6d41bcf7e0f2dbf1942ab8eb136ea715623658d07ffde872",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:22.815308+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-012",
@@ -959,7 +1314,12 @@
       "sizeBytes": 66677,
       "contentType": "text/html",
       "sha256": "3a060b675e7294bef0d103a5580e9849987f0121ac4bf5146cabde62ceb0fee5",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:22.834003+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-013",
@@ -972,7 +1332,12 @@
       "sizeBytes": 172257,
       "contentType": "text/html",
       "sha256": "0f1c3943541a3a7a4cecb2906c84ccbfbac3abe8a6176d5602691c20c5991a73",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:22.866877+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "RAIL-003",
@@ -985,7 +1350,12 @@
       "sizeBytes": 765307,
       "contentType": "application/pdf",
       "sha256": "a976832b02827c536d5ef226520abca563a8934f9123417316df38a91e517b85",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:23.332055+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "RAIL-004",
@@ -998,7 +1368,12 @@
       "sizeBytes": 353605,
       "contentType": "text/html",
       "sha256": "6303878d24e41bd8a0536fc16ff6ef39af19f894f732bbc05a4d39a2f5ebae6f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:30.716096+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "WATER-005",
@@ -1011,7 +1386,12 @@
       "sizeBytes": 273250,
       "contentType": "text/html",
       "sha256": "ae5a3a8f85dc297668492df6dfb997b4e0de75cb190d2e7db8417dfadc8fe49c",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.889039+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "WATER-003",
@@ -1024,7 +1404,12 @@
       "sizeBytes": 458249,
       "contentType": "application/pdf",
       "sha256": "a2e9460d901436eb94a7bb8675520e621aabab35c5eb8712f2faaf82f2de5eff",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:39.846525+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "WATER-004",
@@ -1037,7 +1422,12 @@
       "sizeBytes": 1178202,
       "contentType": "application/pdf",
       "sha256": "87538d72ba40a0283c094c4a8fd09c39bfcc440df524f8d32f5eade0a0b081dc",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:23.763694+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CI-001",
@@ -1050,7 +1440,12 @@
       "sizeBytes": 69692,
       "contentType": "text/html",
       "sha256": "f7d6f6583f882b73c9471a87f3cc242ffd27234e0b20b5606d46e005d6c71b0d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:23.788015+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CI-003",
@@ -1063,7 +1458,12 @@
       "sizeBytes": 1004392,
       "contentType": "application/pdf",
       "sha256": "611a70018a677d95dbe668dfa9f23177db624dfba8a5c1d0e159908a865de99e",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:24.394291+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-014",
@@ -1076,7 +1476,12 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:24.932757+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-015",
@@ -1089,7 +1494,12 @@
       "sizeBytes": 1688080,
       "contentType": "application/pdf",
       "sha256": "cc32391022c1382ac7c91490f6bcc8838e0f889925270da23ef4e800e2ecb7ad",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:28.090473+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-016",
@@ -1102,7 +1512,12 @@
       "sizeBytes": 2417007,
       "contentType": "application/pdf",
       "sha256": "d58e3dac4aaa5971c9a6a20a9bd5c13e2f1930cd1a199c0c00f768e7327355e2",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:30.543058+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-017",
@@ -1115,7 +1530,12 @@
       "sizeBytes": 3138012,
       "contentType": "application/pdf",
       "sha256": "15ebdd396a31129f9d75137ace99be56b1085feb25a95c990f8b6558440aeb02",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:35.129886+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROSS-018",
@@ -1128,7 +1548,12 @@
       "sizeBytes": 884808,
       "contentType": "application/pdf",
       "sha256": "ba91afac81e3bccb0fabdb5cf94d49a6deba5fbcdbcaff75fdbf0dea282205ac",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:36.813272+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "HSM-001",
@@ -1141,7 +1566,12 @@
       "sizeBytes": 2588488,
       "contentType": "application/pdf",
       "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:16.489539+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "IOT-005",
@@ -1154,7 +1584,12 @@
       "sizeBytes": 2386815,
       "contentType": "application/pdf",
       "sha256": "8f90d1fc02a3436444dca859b2f66e97942f443c07109798aeaee1315a6c60ae",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:40.298213+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "AUS-TEL-001",
@@ -1167,7 +1602,12 @@
       "sizeBytes": 396130,
       "contentType": "application/pdf",
       "sha256": "e0b7ea6b0c7b9ba5b57117c4e3390d3e83dabedcace3d923c73119a9c8f25dca",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:40.745825+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "IT-006",
@@ -1180,7 +1620,12 @@
       "sizeBytes": 40713,
       "contentType": "text/html",
       "sha256": "11871a3fbce3d9a58c4d659e07d69183a8e5690938f0769eb781f82231b97a8b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:40.761368+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "HSM-002",
@@ -1193,7 +1638,12 @@
       "sizeBytes": 18963192,
       "contentType": "text/html",
       "sha256": "0ef7e14bc9b8c915ae63623b83de724b654dcc82fc7f89cfd4e72743457f3681",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:18.833016+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "WATE-001",
@@ -1206,7 +1656,12 @@
       "sizeBytes": 235296,
       "contentType": "application/pdf",
       "sha256": "f01c037047d7baaf5cfc7275803d9b82256c561d9c8d0fb411806095cb48004d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:41.043522+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FINA-001",
@@ -1219,7 +1674,12 @@
       "sizeBytes": 4451297,
       "contentType": "application/pdf",
       "sha256": "3a4c18893d54c21557ec4ef3e5c9bb6079cf505e5b0475b7046c858ea61ff807",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:42.471849+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROS-001",
@@ -1232,7 +1692,12 @@
       "sizeBytes": 12089813,
       "contentType": "application/pdf",
       "sha256": "af5079f06124542ccdfacdfe742479daf37dea8e06f63e9af2f21c8c8157de01",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:43.561228+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROS-002",
@@ -1245,7 +1710,12 @@
       "sizeBytes": 1354180,
       "contentType": "application/pdf",
       "sha256": "dba4051cf19460d862419f1ca895602d88619ceb07644ce140bc11b312fcf492",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:43.888565+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FINA-002",
@@ -1258,7 +1728,12 @@
       "sizeBytes": 2159075,
       "contentType": "application/pdf",
       "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:44.547321+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROS-003",
@@ -1272,7 +1747,12 @@
       "sha256": "6ae7ef892d8697d1dbcdf02ebea5547d3875f87c0faba2570c6deab1b6b99d3c",
       "recaptured_at": "2026-09-12T11:12:40.222825+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:47.190107+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "INTE-001",
@@ -1285,7 +1765,12 @@
       "sizeBytes": 81922,
       "contentType": "application/pdf",
       "sha256": "a1df6f8dc4918705b76e504f58709ea7c8a6e2c24aa971ead049b0e40121e4aa",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:47.419840+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROS-004",
@@ -1298,7 +1783,12 @@
       "sizeBytes": 568388,
       "contentType": "application/pdf",
       "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:59:26.957013+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROS-005",
@@ -1311,7 +1801,12 @@
       "sizeBytes": 1365473,
       "contentType": "application/pdf",
       "sha256": "1baf13e8ae81bd476f09aed12885587850429a6925a182b6b8d5c76b31b288ec",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:49.487705+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "ENER-001",
@@ -1324,7 +1819,12 @@
       "sizeBytes": 871081,
       "contentType": "application/pdf",
       "sha256": "7366767bd44a0c3fdb07bb4b986e51e8fe57746803e9b7bbe1cbc86c068b2037",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:50.364515+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "HEAL-001",
@@ -1337,7 +1837,12 @@
       "sizeBytes": 919857,
       "contentType": "application/pdf",
       "sha256": "d2ca3890adefea10cafa18e0da42684252b2db12ae0c26b8c39f298b58f6f92a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:50.687449+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "PAYM-001",
@@ -1350,7 +1855,12 @@
       "sizeBytes": 478488,
       "contentType": "application/pdf",
       "sha256": "1144cffc4ee871f503917b2ffad01bfc12c23a4cb35fb2306750fb37759c759b",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:24.315952+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FINA-003",
@@ -1363,7 +1873,12 @@
       "sizeBytes": 280746,
       "contentType": "application/pdf",
       "sha256": "9e65246094de6dd21b4d190fdb21311e4a4cf64a1c59f1638b852b965c282f20",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:50.848099+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CRIT-001",
@@ -1376,7 +1891,12 @@
       "sizeBytes": 429362,
       "contentType": "text/html",
       "sha256": "99c010440384444e11296708152e6f81f63cc680bdb255c2fe496d277e6b7f64",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:50.877194+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FINA-004",
@@ -1389,7 +1909,12 @@
       "sizeBytes": 170658,
       "contentType": "text/html",
       "sha256": "c011bee9d10ac62524cae030e401ff0311e6cbbd048894f1aa962f52b9cff51d",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:50.901151+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FINA-005",
@@ -1402,7 +1927,12 @@
       "sizeBytes": 2660860,
       "contentType": "application/pdf",
       "sha256": "42fcd4328fbdabf466a8545ff73fb4e3115332d845e998ed6900368d4980c762",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:51.678140+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROS-006",
@@ -1415,7 +1945,12 @@
       "sizeBytes": 844313,
       "contentType": "application/pdf",
       "sha256": "49dd74e588ded9b4635386a4aa7faf883028f78e5ff6073c91c65eac165e1354",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:52.152505+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FINA-006",
@@ -1428,7 +1963,12 @@
       "sizeBytes": 138500,
       "contentType": "application/pdf",
       "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:52.259009+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "TELE-001",
@@ -1441,7 +1981,12 @@
       "sizeBytes": 1480897,
       "contentType": "application/pdf",
       "sha256": "a2985867e8e10162327be34a6f3dc98c940e2735313547bd5e0699d765019ebf",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:53.278611+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FINA-007",
@@ -1455,7 +2000,12 @@
       "sha256": "07ec39dcfa220fe7b2ca06e2fff8ac8ccda10aa7675172a7b52c8a813172645b",
       "recaptured_at": "2026-09-12T11:12:41.132793+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": null,
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:55.939739+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CRIT-002",
@@ -1468,7 +2018,12 @@
       "sizeBytes": 209080,
       "contentType": "text/html",
       "sha256": "9bad2cd46e74ca537b5ba66491d44d06cbd91d259f0484a6984686e76e631ab5",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:55.964018+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CRIT-003",
@@ -1481,7 +2036,12 @@
       "sizeBytes": 212301,
       "contentType": "text/html",
       "sha256": "41f76a58bb802346b33fc309ac1446ac72b1d74c0a79764de886a14fc375cd78",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.025925+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "INSU-001",
@@ -1494,7 +2054,12 @@
       "sizeBytes": 134588,
       "contentType": "text/html",
       "sha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.053808+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROS-007",
@@ -1507,7 +2072,12 @@
       "sizeBytes": 165031,
       "contentType": "text/html",
       "sha256": "b47bb3a4b591aad7ecb1aa2490764589c05d6602b75fc1e56239204af1122629",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.121409+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROS-008",
@@ -1520,7 +2090,12 @@
       "sizeBytes": 289568,
       "contentType": "application/pdf",
       "sha256": "6ed12447abf9b0a3c0470f57e20d8314323d9f3c02ebc11a7bc3eb87dae2eb3a",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.347365+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROS-009",
@@ -1533,7 +2108,12 @@
       "sizeBytes": 49598,
       "contentType": "text/html",
       "sha256": "b650ceef5a3d56bda9c3d0a77f483c714c9392b63fc149968e3770388ab63206",
-      "downloadedAt": "2026-09-12T21:16:59.373797+00:00"
+      "downloadedAt": "2026-09-12T21:16:59.373797+00:00",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.364400+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FINA-008",
@@ -1546,7 +2126,12 @@
       "sizeBytes": 215695,
       "contentType": "text/html",
       "sha256": "d4a71a4aec61915cc0f561296c5d982530d11698225095c9ce72f95a9aab9395",
-      "downloadedAt": "2026-09-12T21:17:25.574156+00:00"
+      "downloadedAt": "2026-09-12T21:17:25.574156+00:00",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.389338+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FINA-009",
@@ -1559,7 +2144,12 @@
       "sizeBytes": 82037,
       "contentType": "text/html",
       "sha256": "8ed6f27d2f3335336eec60f79d9005f9723311286bbadb83e466b59ed039bdf8",
-      "downloadedAt": "2026-09-12T21:17:40.240546+00:00"
+      "downloadedAt": "2026-09-12T21:17:40.240546+00:00",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.413767+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FINA-010",
@@ -1572,7 +2162,12 @@
       "sizeBytes": 67809,
       "contentType": "text/html",
       "sha256": "44cb39d17d6972b6e0047a201150afff3e9596c6248c668f011299f9708a145a",
-      "downloadedAt": "2026-09-12T21:17:52.912334+00:00"
+      "downloadedAt": "2026-09-12T21:17:52.912334+00:00",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.435583+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "FINA-011",
@@ -1585,7 +2180,12 @@
       "sizeBytes": 35551,
       "contentType": "text/html",
       "sha256": "50e449ba20b6a3437dfe85fa55b12e2f588155205cbe7f7fdea8034412130427",
-      "downloadedAt": "2026-09-12T21:18:12.905808+00:00"
+      "downloadedAt": "2026-09-12T21:18:12.905808+00:00",
+      "artefact": "LANDING",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.452843+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "CROS-010",
@@ -1598,7 +2198,12 @@
       "sizeBytes": 175318,
       "contentType": "text/html",
       "sha256": "64e2ef47275b7512c98ece4f09f6b9a580035a0943d032e046a098c4f6988c46",
-      "downloadedAt": "2026-09-12T21:18:29.429359+00:00"
+      "downloadedAt": "2026-09-12T21:18:29.429359+00:00",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:13:56.476366+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "threatId": "GOV-003",
@@ -1616,7 +2221,12 @@
       "label": "Federal PQC procurement guidance: CISA January 2026 federal buying guidance pursuant to Executive Order 14306 (June 2025) recommends agencies procure quantum-resistant technology across designated product categories including cloud services, collaboration tools, web browsers/servers, and endpoint security. Note: EO 14306 removed the original procurement mandate but CISA's product categories list strongly encourages PQC-capable acquisitions.",
       "note": "2026-09-16: re-captured through the browser tier from the row's own CISA URL (the page is live; an earlier research batch mistyped the URL and a GovDelivery bulletin briefly stood in — superseded); hash from the bytes on disk",
       "verifiedAt": "2026-09-16T03:54:02.989509+00:00",
-      "superseded_file": "_superseded-09162026/threats/GOV-003.pdf"
+      "superseded_file": "_superseded-09162026/threats/GOV-003.pdf",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:08.068596+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     }
   ],
   "archivedEntries": [],
