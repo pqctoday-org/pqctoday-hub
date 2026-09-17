@@ -2470,7 +2470,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:10:51.920088+00:00",
+      "admittedAt": "2026-09-17T13:55:32.093748+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -2656,7 +2656,7 @@
     {
       "product_id": "nss-mozilla",
       "url": "https://firefox-source-docs.mozilla.org/security/nss/releases/nss_3_121.html",
-      "ok": true,
+      "ok": false,
       "file": "nss-mozilla-93811fbe.html",
       "bytes": 34632,
       "content_type": "text/html; charset=\"utf-8\"",
@@ -2668,8 +2668,12 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:10:52.482060+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-17T13:55:32.418155+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "superseded_file": "_superseded-09172026/migrate-proofs/nss-mozilla-93811fbe.html",
+      "supersededAt": "2026-09-17T14:07:53.529379+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document — replaced by nss-mozilla-42f72349.html"
     },
     {
       "product_id": "net-system-security-cryptography",
@@ -3145,7 +3149,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:10:56.152065+00:00",
+      "admittedAt": "2026-09-17T13:55:34.007053+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -3613,7 +3617,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:11:01.927858+00:00",
+      "admittedAt": "2026-09-17T13:55:34.885665+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -4293,7 +4297,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:11:09.717847+00:00",
+      "admittedAt": "2026-09-17T13:55:36.226252+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -4337,8 +4341,8 @@
       "hashedAt": "2026-09-06",
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T13:11:10.091658+00:00",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:55:36.332954+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -4963,7 +4967,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:11:20.876571+00:00",
+      "admittedAt": "2026-09-17T13:55:37.258979+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -5661,7 +5665,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:11:45.010958+00:00",
+      "admittedAt": "2026-09-17T13:55:38.709256+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -5703,20 +5707,23 @@
     {
       "product_id": "proton-vpn",
       "url": "https://protonvpn.com/blog/product-roadmap-winter-2025-2026",
-      "ok": true,
       "file": "proton-vpn-fdc10f78.html",
       "bytes": 173568,
       "content_type": "text/html; charset=UTF-8",
       "tier": "current",
       "refId": "proton-vpn",
-      "sha256": "886f6da67ec1c889d58814d026cd9c1611f74a93eaf97d79ee27a5e8dac2acbd",
-      "sizeBytes": 173568,
+      "sha256": "312cd985790f3230804aad8cdaca3801a929626d608a4b992a3a5017d02f2afa",
+      "sizeBytes": 190988,
       "hashedAt": "2026-09-06",
-      "artefact": "LANDING",
+      "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:11:47.563786+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T14:06:18.804296+00:00",
+      "admittedBy": "admit.py",
+      "replacedAt": "2026-09-17T14:06:18.819564+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document",
+      "superseded_file": "_superseded-09172026/products/proton-vpn-fdc10f78.html"
     },
     {
       "product_id": "minio-enterprise",
@@ -6945,20 +6952,27 @@
     {
       "product_id": "cilium-service-mesh-pqc",
       "url": "https://gluo.be/quantum-resistant-mtls-on-kubernetes/",
-      "ok": true,
       "file": "cilium-service-mesh-pqc-ebed70fa.html",
       "bytes": 139426,
       "content_type": "text/html; charset=UTF-8",
       "tier": "current",
       "refId": "cilium-service-mesh-pqc",
-      "sha256": "884ffe7473c3bc1b866ae9faa4b380b7cfec0f69ba5c95c24483cf189cf387a8",
-      "sizeBytes": 139426,
+      "sha256": "e486aa5e6a369de2362466748ed3e18913a5ed0ce7f235db23e8a2ae38e19b6e",
+      "sizeBytes": 149893,
       "hashedAt": "2026-09-06",
-      "artefact": "LANDING",
+      "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:11:58.288396+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T14:04:58.900366+00:00",
+      "admittedBy": "admit.py",
+      "replacedAt": "2026-09-17T14:04:58.915647+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document",
+      "superseded_file": "_superseded-09172026/products/cilium-service-mesh-pqc-ebed70fa.html",
+      "ok": false,
+      "supersededAt": "2026-09-17T14:06:15.197598+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document — replaced by cilium-service-mesh-pqc-a7ef59a5.html"
     },
     {
       "product_id": "red-hat-openshift-service-mesh-pqc",
@@ -7397,7 +7411,7 @@
     {
       "product_id": "nxp-orangebox-2-0-pqc",
       "url": "https://www.cnx-software.com/2025/05/26/nxp-orangebox-2-0-v2x-automotive-domain-controller-features-nxp-i-mx-94-soc/",
-      "ok": true,
+      "ok": false,
       "file": "nxp-orangebox-2-0-pqc-19468946.html",
       "bytes": 245661,
       "content_type": "text/html; charset=UTF-8",
@@ -7409,8 +7423,12 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:05.012651+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-17T13:55:41.142169+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "superseded_file": "_superseded-09172026/products/nxp-orangebox-2-0-pqc-19468946.html",
+      "supersededAt": "2026-09-17T14:06:17.650513+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document — replaced by nxp-orangebox-2-0-pqc-b672eb57.pdf"
     },
     {
       "product_id": "escrypt-automotive-pqc-solutions",
@@ -7883,7 +7901,7 @@
     {
       "product_id": "singtel-quantum-safe-network",
       "url": "https://www.singtel.com/about-us/media-centre/news-releases/singtel-launches-southeast-asias-first-hybrid-quantum-safe-network-to-deliver-flexible-scalable-security-for-enterprises",
-      "ok": true,
+      "ok": false,
       "file": "singtel-quantum-safe-network-3d6ba634.html",
       "bytes": 33828,
       "content_type": "text/html; charset=UTF-8",
@@ -7895,8 +7913,12 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:06.671005+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-17T13:55:41.802789+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "superseded_file": "_superseded-09172026/products/singtel-quantum-safe-network-3d6ba634.html",
+      "supersededAt": "2026-09-17T14:05:51.582707+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document — replaced by singtel-quantum-safe-network-d509c254.pdf"
     },
     {
       "product_id": "toshiba-integrated-pqc-qkd-platform",
@@ -8878,7 +8900,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:10.249397+00:00",
+      "admittedAt": "2026-09-17T13:55:42.870530+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -8896,7 +8918,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:10.309888+00:00",
+      "admittedAt": "2026-09-17T13:55:42.925916+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -9004,7 +9026,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:11.636748+00:00",
+      "admittedAt": "2026-09-17T13:55:43.086477+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -10546,14 +10568,18 @@
       "bytes": 146639,
       "tier": "curl_cffi:chrome124",
       "refId": "paradym-animo-solutions",
-      "sha256": "186a21cbc95f04694ce3ff8e0909ffcb93290fb4d9019010394300cb27290272",
-      "sizeBytes": 146655,
+      "sha256": "ef1520b9da2f48664a04fbb0b6daa38741274b805cbd20a3cff190a4638fc0af",
+      "sizeBytes": 183866,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:10:55.505374+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T14:05:25.657692+00:00",
+      "admittedBy": "admit.py",
+      "replacedAt": "2026-09-17T14:05:25.673248+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document",
+      "superseded_file": "_superseded-09172026/migrate-proofs/paradym-animo-solutions-1a04bd00.html"
     },
     {
       "product_id": "arm-trustzone",
@@ -13030,7 +13056,7 @@
     {
       "product_id": "strongswan",
       "url": "https://www.strongswan.org/blog/2024/12/03/strongswan-6.0.0-released.html",
-      "ok": true,
+      "ok": false,
       "file": "strongswan-4daba946.html",
       "bytes": 19233,
       "content_type": "text/html; charset=UTF-8",
@@ -13043,7 +13069,11 @@
       "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-17T13:08:33.663925+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedBy": "admit.py --stamp-existing",
+      "superseded_file": "_superseded-09172026/migrate-proofs/strongswan-4daba946.html",
+      "supersededAt": "2026-09-17T14:06:19.736472+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document — replaced by strongswan-988c0aa7.html"
     },
     {
       "product_id": "sql-server-tde-always-encrypted",
@@ -13196,14 +13226,18 @@
       "bytes": 253252,
       "tier": "curl_cffi:chrome124",
       "refId": "sailpoint-identity-security-cloud",
-      "sha256": "ffe018d72157dd961afa4148fec393ef4724d51f7d1fea0d693e0c78c711b9e4",
-      "sizeBytes": 253363,
+      "sha256": "e9df5311d773c65b3974778f7a0201e6d6241b178cb0d279a78f5ddad48ed99f",
+      "sizeBytes": 439815,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:10:48.630099+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T14:04:55.747867+00:00",
+      "admittedBy": "admit.py",
+      "replacedAt": "2026-09-17T14:04:55.763181+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document",
+      "superseded_file": "_superseded-09172026/migrate-proofs/sailpoint-identity-security-cloud-8ac0fcdb.html"
     },
     {
       "product_id": "ibm-security-guardium-data-protection",
@@ -13297,9 +13331,14 @@
       "hashedAt": "2026-09-06",
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T13:10:55.999759+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:55:33.869529+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "ok": false,
+      "superseded_file": "_superseded-09172026/migrate-proofs/ibm-hyper-protect-crypto-e5316057.html",
+      "supersededAt": "2026-09-17T14:05:50.427082+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document — replaced by ibm-hyper-protect-crypto-services-0dab3775.html"
     },
     {
       "product_id": "intel-platform-trust-technology-ptt",
@@ -13543,14 +13582,18 @@
       "bytes": 8760,
       "tier": "curl_cffi:chrome124",
       "refId": "qualcomm-snapdragon-spu",
-      "sha256": "a0272a3231841c30ceb2ec16713e69168c3ab97e61437a953d979049d7e87c4b",
-      "sizeBytes": 8760,
+      "sha256": "b7d2ce285486565d9b69b689d424a3b025ae5548bf79337754c532754827dac0",
+      "sizeBytes": 418414,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:11:24.483298+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T14:04:54.967473+00:00",
+      "admittedBy": "admit.py",
+      "replacedAt": "2026-09-17T14:04:54.983232+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document",
+      "superseded_file": "_superseded-09172026/migrate-proofs/qualcomm-snapdragon-spu-2a8542fa.html"
     },
     {
       "product_id": "ibm-z-vse",
@@ -13938,14 +13981,18 @@
       "bytes": 141637,
       "tier": "curl_cffi:chrome124",
       "refId": "paradym-animo-solutions",
-      "sha256": "186a21cbc95f04694ce3ff8e0909ffcb93290fb4d9019010394300cb27290272",
-      "sizeBytes": 146655,
+      "sha256": "ef1520b9da2f48664a04fbb0b6daa38741274b805cbd20a3cff190a4638fc0af",
+      "sizeBytes": 183866,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:10:55.505374+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T14:05:25.657692+00:00",
+      "admittedBy": "admit.py",
+      "replacedAt": "2026-09-17T14:05:25.673248+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document",
+      "superseded_file": "_superseded-09172026/migrate-proofs/paradym-animo-solutions-1a04bd00.html"
     },
     {
       "product_id": "azure-dedicated-hsm-marvell-liquidsecurity",
@@ -16083,14 +16130,18 @@
       "bytes": 77457,
       "tier": "curl_cffi:chrome124",
       "refId": "ibm-storage-scale-5-2",
-      "sha256": "4ab5cdb0ac26b99f0681821c9be0aabaeee40aac2990181abf4c7ef8a9a278ed",
-      "sizeBytes": 77458,
+      "sha256": "c2df6bb1107d04028107a61dd355d3647d679a010019eb10ffbc715b10c8af20",
+      "sizeBytes": 74895,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
-      "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:11:38.497043+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T14:04:49.015541+00:00",
+      "admittedBy": "admit.py",
+      "replacedAt": "2026-09-17T14:04:49.031028+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document",
+      "superseded_file": "_superseded-09172026/migrate-proofs/ibm-storage-scale-5-2-38616738.html"
     },
     {
       "product_id": "pure-storage-purity-fa-6-6",
@@ -16131,14 +16182,18 @@
       "bytes": 36160,
       "tier": "curl_cffi:chrome124",
       "refId": "hpe-alletra-mp",
-      "sha256": "3892b00f739adb1e7c0145ac98b600081f88bf578165d3dd9057ad250c688c30",
-      "sizeBytes": 36165,
+      "sha256": "03db64f11ed99fd4e03f1bbe9e41deae32c1cc6fb0013e5a90dab23f47b68d70",
+      "sizeBytes": 299138,
       "hashedAt": "2026-09-06",
-      "artefact": "EMPTY",
-      "identity": "UNCONFIRMED",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:11:39.390395+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-17T14:04:40.514312+00:00",
+      "admittedBy": "admit.py",
+      "replacedAt": "2026-09-17T14:04:40.529913+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document",
+      "superseded_file": "_superseded-09172026/migrate-proofs/hpe-alletra-mp-35748917.html"
     },
     {
       "product_id": "rubrik-security-cloud",
@@ -16446,8 +16501,8 @@
       "hashedAt": "2026-09-06",
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T13:12:14.912101+00:00",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:55:43.579938+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -16558,8 +16613,8 @@
       "hashedAt": "2026-09-06",
       "artefact": "LANDING",
       "identity": "MATCH",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T13:12:28.504284+00:00",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:55:45.971667+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -17787,8 +17842,8 @@
       "tier": "curl_cffi:chrome124",
       "artefact": "REDIRECT",
       "identity": "MATCH",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T13:12:32.505851+00:00",
+      "unified": "current",
+      "admittedAt": "2026-09-17T13:55:46.683051+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -19119,8 +19174,8 @@
       "product_id": "nginx",
       "file": "nginx-9cb0ba7f.html",
       "url": "https://blog.nginx.org/blog/pqc-nginx",
-      "sha256": "c38195e213ae2c7b7956df23aec58a300e1b819e2bdfc546f6e687dd2d50dc99",
-      "sizeBytes": 110791,
+      "sha256": "102b18d7d74f8dc88523d67b97b495171979564139a1fc0c1559a2888f4032ff",
+      "sizeBytes": 112591,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
       "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
@@ -19128,9 +19183,12 @@
       "note": "additional document for a row that already has one",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:08:38.953763+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T14:07:52.311485+00:00",
+      "admittedBy": "admit.py",
+      "replacedAt": "2026-09-17T14:07:52.326665+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document"
     },
     {
       "product_id": "apache-http-server",
