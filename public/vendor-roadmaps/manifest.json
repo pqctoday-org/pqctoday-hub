@@ -71,7 +71,12 @@
       "sizeBytes": 255063,
       "contentType": "application/pdf",
       "sha256": "02e7a4ee3289e3dfcc81bdb43d2e21645b68e6f364a9889dda222b785ecfe6e6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "ok": false,
+      "superseded_file": "_superseded-09142026/vendor/VND-019.pdf",
+      "supersededAt": "2026-09-17T14:29:28.514656+00:00",
+      "supersededBy": "manifest review 2026-09-17",
+      "superseded_reason": "the file was moved aside on 09142026 and this record was not updated then"
     },
     {
       "vendorId": "VND-021",
@@ -411,7 +416,12 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "ok": false,
+      "superseded_file": "_superseded-09142026/vendor/VND-064.pdf",
+      "supersededAt": "2026-09-17T14:29:28.514656+00:00",
+      "supersededBy": "manifest review 2026-09-17",
+      "superseded_reason": "the file was moved aside on 09142026 and this record was not updated then"
     },
     {
       "vendorId": "VND-007",
@@ -680,7 +690,12 @@
       "sizeBytes": 199004,
       "contentType": "application/pdf",
       "sha256": "dd0614ae1d03664953d53e9ef41ac1dad755f409b0443e7c896ff70107bbdd13",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "ok": false,
+      "superseded_file": "_superseded-09142026/vendor/VND-291.pdf",
+      "supersededAt": "2026-09-17T14:29:28.514656+00:00",
+      "supersededBy": "manifest review 2026-09-17",
+      "superseded_reason": "the file was moved aside on 09142026 and this record was not updated then"
     },
     {
       "vendorId": "VND-220",
@@ -983,7 +998,12 @@
       "sizeBytes": 267344,
       "contentType": "application/pdf",
       "sha256": "d6a658ed3a6b8eb5bb9fc388ddc153c0e99ea80393a0e7bb5fc17f215125c9dd",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "ok": false,
+      "superseded_file": "_superseded-09142026/vendor/VND-247.pdf",
+      "supersededAt": "2026-09-17T14:29:28.514656+00:00",
+      "supersededBy": "manifest review 2026-09-17",
+      "superseded_reason": "the file was moved aside on 09142026 and this record was not updated then"
     },
     {
       "vendorId": "VND-253",
@@ -1122,7 +1142,12 @@
       "sizeBytes": 98882,
       "contentType": "application/pdf",
       "sha256": "ca027f1ecea4db824da4de158e39ae48cce19e0567b6dca8c2c91a7919f69997",
-      "verifiedAt": "2026-09-11"
+      "verifiedAt": "2026-09-11",
+      "ok": false,
+      "superseded_file": "_superseded-09142026/vendor/VND-153.pdf",
+      "supersededAt": "2026-09-17T14:29:28.514656+00:00",
+      "supersededBy": "manifest review 2026-09-17",
+      "superseded_reason": "the file was moved aside on 09142026 and this record was not updated then"
     },
     {
       "vendorId": "VND-192",
