@@ -53,10 +53,11 @@ import path from 'path'
 import { execSync } from 'child_process'
 import Papa from 'papaparse'
 import { getDataDir } from './data-loader.js'
+import { runClaimedCopyChecks } from './lineage-claimed-copy.js'
+import { LINEAGE_CUTOFF } from './lineage-admission.js'
 import type { CheckResult, Finding } from './types.js'
 
-/** Rows/records stamped on or after this date are held to the ERROR tier. */
-export const LINEAGE_CUTOFF = '2026-09-18'
+export { LINEAGE_CUTOFF } from './lineage-admission.js'
 
 type Row = Record<string, string>
 
@@ -623,6 +624,7 @@ export function runTypedEvidenceCheck(): CheckResult[] {
 
 export function runLineageChecks(): CheckResult[] {
   return [
+    ...runClaimedCopyChecks(),
     ...runVerdictLockCheck(),
     ...runTypedEvidenceCheck(),
     ...runArchiveOnlyCheck(),
