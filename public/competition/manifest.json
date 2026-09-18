@@ -402,7 +402,7 @@
       "sha256": "2c1c43e2e0ee08fa1ab9eb55c4022f33921af9c3775c4b4a21841eb1333f4401",
       "artefact": "SOURCE",
       "unified": "current",
-      "admittedAt": "2026-09-18T03:53:00.004650+00:00",
+      "admittedAt": "2026-09-18T04:36:25.215352+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH"
     },
