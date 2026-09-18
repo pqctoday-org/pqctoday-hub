@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'iot-ot-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-032',
   title: 'IoT & OT Security',
   description:

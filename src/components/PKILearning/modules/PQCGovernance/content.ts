@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-governance',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-31',
+  lastEdited: '2026-09-18',
 
   standards: [
     // Governance documents first, algorithm specifications after. This module's
@@ -25,7 +25,7 @@ export const content: ModuleContent = {
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
-    getStandard('FIPS 206'),
+    getStandard('Falcon-Spec-v12'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
@@ -75,7 +75,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'The workshop has 3 interactive steps: RACI Matrix Builder — interactive 10×6 matrix with color-coded click-to-cycle cells (click cycles: empty → R → A → C → I → empty); includes validation warning for missing Accountable assignments, legend, export to Markdown, and save to learning portfolio as an executive document.',
     relatedStandards:
-      "OMB M-23-02 (Migrating to Post-Quantum Cryptography). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NIST SP 800-53 (Security and Privacy Controls). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, in development — this hub's citation is deprecated pending NIST's final publication). ISO 27001 (Information Security Management Systems). COBIT (Control Objectives for Information and Related Technologies)",
+      "OMB M-23-02 (Migrating to Post-Quantum Cryptography). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NIST SP 800-53 (Security and Privacy Controls). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, in development — this hub cites the Falcon v1.2 specification it standardises pending NIST's final publication). ISO 27001 (Information Security Management Systems). COBIT (Control Objectives for Information and Related Technologies)",
   },
 }
 

@@ -31,7 +31,7 @@ export const content: ModuleContent = {
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('FIPS 186-5'),
     getStandard('FIPS 205'),
-    getStandard('FIPS 206'),
+    getStandard('Falcon-Spec-v12'),
     getStandard('NIST SP 800-56A'),
     getStandard('RFC 5869'),
     getStandard('RFC 8017'),
@@ -111,7 +111,7 @@ export const content: ModuleContent = {
     compositeSigSize: '~3,379 bytes',
     altSigSize: '2,017 bytes',
     relatedStandards:
-      "FIPS 206 (FN-DSA), cited above as a future pure-PQC signature format, is still a NIST draft as of 2026 — this hub's citation is deprecated until NIST publishes the final text.",
+      'FIPS 206 (FN-DSA), cited above as a future pure-PQC signature format, is still a NIST draft as of 2026 — this hub cites the Falcon v1.2 specification it standardises until NIST publishes the final text.',
     hpkeDefinition:
       "HPKE (RFC 9180) is a public-key encryption scheme built from three swappable components — a KEM, a KDF, and an AEAD — combined through a standard KeySchedule so any KEM/KDF/AEAD triple, plus one of four modes (Base, PSK, Auth, AuthPSK), yields an interoperable construction. It is not itself a hybrid-vs-classical choice: RFC 9180's own KEM registry is all-classical (DHKEM over P-256/P-384/P-521/X25519/X448). The PQC angle comes from draft-ietf-hpke-pq, which registers PQ and PQ/T hybrid KEM IDs (pure ML-KEM, and MLKEM768-X25519 / MLKEM768-P256 / MLKEM1024-P384 hybrids) that plug into the exact same KeySchedule and Seal/Open — still an Internet-Draft, not yet an RFC.",
     hpkeUseCases:

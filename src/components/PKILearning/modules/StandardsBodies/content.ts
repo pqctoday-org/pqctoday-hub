@@ -11,13 +11,13 @@ export const content: ModuleContent = {
   moduleId: 'standards-bodies',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-31',
+  lastEdited: '2026-09-18',
 
   standards: [
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
-    getStandard('FIPS 206'),
+    getStandard('Falcon-Spec-v12'),
     getStandard('NIST SP 800-227'),
     getStandard('RFC 9629'),
     getStandard('RFC 9814'),
@@ -80,6 +80,6 @@ export const content: ModuleContent = {
     keyConcepts:
       'NIST vs CMVP: NIST wrote the standard; CMVP certifies implementations against it. ETSI TS vs ETSI TR: TS = normative ("shall"), TR = informational guidance. ANSSI\'s unique position: Requires hybrid PQC (classical + PQC) for sensitive systems; permits standalone SLH-DSA. CCRA vs EUCC: CCRA is the global 31-nation scheme; EUCC is the EU-specific harmonized adaptation managed by ENISA. IETF vs NIST: NIST defines algorithms; IETF integrates them into Internet protocols (TLS, CMS, SSH).',
     relatedStandards:
-      "FIPS 206 (FN-DSA), cited above alongside NIST's other PQC signature standards, is still a draft as of 2026 — this hub's citation is deprecated until NIST publishes the final text.",
+      "FIPS 206 (FN-DSA), cited above alongside NIST's other PQC signature standards, is still a draft as of 2026 — this hub cites the Falcon v1.2 specification it standardises until NIST publishes the final text.",
   },
 }
