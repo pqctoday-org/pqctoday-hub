@@ -258,10 +258,10 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
       label: 'Deploy to a FIPS-required system before a validated module exists',
       desc: 'Push PQC into the regulated estate now.',
       evaluate: trap(
-        'Fails (as of June 2026 — re-check the live CMVP list, since validated ML-KEM/ML-DSA modules are expected imminently). Until a FIPS 140-3-validated PQC module exists, a FIPS-required environment is non-compliant — gate PQC there behind CAVP/validation, and deploy first where validation is not mandated.'
+        "Fails. A FIPS-required environment is only compliant with the specific FIPS 140-3-validated module and version named on its CMVP certificate — a PQC build that is not that module is non-compliant however good its algorithms are. Validated PQC modules do exist now (e.g. AWS-LC 3 Cryptographic Module, CMVP #5314, June 2026, lists ML-KEM under Approved Algorithms), but many certificates still carry ML-KEM/ML-DSA only in their non-approved table — read your module's Security Policy, not just its coverage summary, and deploy first where validation is not mandated."
       ),
       freshness: {
-        asOf: '2026-06-18',
+        asOf: '2026-09-17',
         recheck: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program',
       },
     },

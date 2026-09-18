@@ -30,6 +30,9 @@ export const QC_BROAD_YEAR = 2035
  * aggressive 2029 anchor gets a periodic re-check rather than silently aging.
  */
 export const Q_DAY_FRESHNESS: Freshness = {
-  asOf: '2026-06-18',
+  // 2026-09-17: GRI's page still presents the Quantum Threat Timeline Report
+  // 2025 (posted 9 March 2026) as current and NIST IR 8547 is still the ipd —
+  // the 2030–2040 public range stands, so does the 2029 anchor below it.
+  asOf: '2026-09-17',
   recheck: 'https://csrc.nist.gov/projects/post-quantum-cryptography',
 }

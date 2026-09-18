@@ -7988,7 +7988,6 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5313",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "ML-KEM, ML-DSA, LMS, XMSS",
     "classicalAlgorithms": "RSA (186, 1024), ECDSA (P-256, P-384, P-521), ECDH",
     "productName": "Microsoft SymCrypt Cryptographic Library",
     "productCategory": "Cryptographic Module",
@@ -7997,6 +7996,7 @@
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5313.pdf"
     ],
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
     "pqcCoverageVerifiedFrom": "unified"
   },
@@ -9583,7 +9583,6 @@
     "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5220",
     "type": "FIPS 140-3",
     "status": "Active",
-    "pqcCoverage": "ML-KEM, ML-DSA",
     "classicalAlgorithms": "RSA, ECDSA",
     "productName": "LS2 HSM Family",
     "productCategory": "Cryptographic Module",
@@ -9592,6 +9591,7 @@
     "securityTargetUrls": [
       "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5220.pdf"
     ],
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "pqcCoverageVerifiedAt": "2026-09-17T21:49:07.569914+00:00",
     "pqcCoverageVerifiedFrom": "unified"
   },
