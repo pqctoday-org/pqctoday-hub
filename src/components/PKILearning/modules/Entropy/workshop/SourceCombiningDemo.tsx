@@ -283,7 +283,7 @@ export const SourceCombiningDemo: React.FC = () => {
 
       {/* Pipeline Configuration */}
       <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">Pipeline Configuration</h4>
+        <h3 className="text-sm font-semibold text-foreground">Pipeline Configuration</h3>
         <p className="text-xs text-muted-foreground">
           Defaults follow NIST SP 800-90 series. Options marked &quot;educational&quot; are
           non-standard alternatives for comparison.
@@ -419,9 +419,9 @@ export const SourceCombiningDemo: React.FC = () => {
 
       {/* Step 1: Generate Sources */}
       <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">
+        <h3 className="text-sm font-semibold text-foreground">
           Step 1: Entropy Sources (SP 800-90B)
-        </h4>
+        </h3>
         <div className="flex flex-wrap items-center gap-3">
           <Button variant="gradient" onClick={handleGenerateSourceA}>
             <Play size={16} className="mr-2" />
@@ -455,9 +455,9 @@ export const SourceCombiningDemo: React.FC = () => {
 
       {/* Step 2: Assembly (SP 800-90C §3.1) */}
       <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">
+        <h3 className="text-sm font-semibold text-foreground">
           Step 2: {combineLabel} Assembly (SP 800-90C §3.1)
-        </h4>
+        </h3>
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={handleCombine} disabled={combineDisabled}>
             <Combine size={16} className="mr-2" />
@@ -488,9 +488,9 @@ export const SourceCombiningDemo: React.FC = () => {
 
       {/* Step 3: Conditioning (SP 800-90C §3.2) */}
       <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">
+        <h3 className="text-sm font-semibold text-foreground">
           Step 3: {conditionLabel} Conditioning (SP 800-90C §3.2)
-        </h4>
+        </h3>
         <Button
           variant="outline"
           onClick={handleCondition}
@@ -514,7 +514,7 @@ export const SourceCombiningDemo: React.FC = () => {
 
       {/* Step 4: Expand */}
       <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">Step 4: Expand (HKDF)</h4>
+        <h3 className="text-sm font-semibold text-foreground">Step 4: Expand (HKDF)</h3>
         <Button variant="outline" onClick={handleExpand} disabled={!conditionedResult || isRunning}>
           <ArrowRight size={16} className="mr-2" />
           Expand to 64 bytes
@@ -551,7 +551,7 @@ export const SourceCombiningDemo: React.FC = () => {
       {/* Test Results */}
       {testResults && (
         <div className="space-y-3">
-          <h4 className="text-sm font-semibold text-foreground">Test Results</h4>
+          <h3 className="text-sm font-semibold text-foreground">Test Results</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {testResults.map((result) => (
               <TestCard key={result.name} result={result} />
@@ -564,7 +564,7 @@ export const SourceCombiningDemo: React.FC = () => {
       <div className="glass-panel p-4 space-y-3">
         <div className="flex items-center gap-2">
           <BookOpen size={16} className="text-muted-foreground" />
-          <h4 className="text-sm font-semibold text-foreground">Standards Referenced</h4>
+          <h3 className="text-sm font-semibold text-foreground">Standards Referenced</h3>
         </div>
         <ul className="space-y-1.5 text-xs text-muted-foreground">
           <li>
@@ -603,9 +603,9 @@ export const SourceCombiningDemo: React.FC = () => {
         <div className="glass-panel p-4 space-y-4 border border-border">
           <div className="flex items-center gap-2">
             <Shield size={18} className="text-primary" />
-            <h4 className="text-sm font-semibold text-foreground">
+            <h3 className="text-sm font-semibold text-foreground">
               Defense-in-Depth Demonstration
-            </h4>
+            </h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
             What happens if one entropy source is completely compromised? Click below to replace
@@ -660,9 +660,9 @@ export const SourceCombiningDemo: React.FC = () => {
                 <FrequencyHistogram data={compromiseExpanded} />
               </div>
 
-              <h4 className="text-sm font-semibold text-foreground">
+              <h3 className="text-sm font-semibold text-foreground">
                 Compromised Pipeline Test Results
-              </h4>
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {compromiseResults.map((result) => (
                   <TestCard key={result.name} result={result} />

@@ -248,9 +248,9 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       </div>
       {/* Broader KDF context */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-2">
+        <h2 className="text-sm font-bold text-foreground mb-2">
           SP 800-108 Key Derivation — Beyond QKD
-        </h4>
+        </h2>
         <p className="text-xs text-muted-foreground mb-3">
           NIST SP 800-108 counter-mode KDF is a universal primitive used wherever a master secret
           must produce multiple purpose-specific keys. This demo uses QKD as the input source, but
@@ -277,9 +277,9 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
 
       {/* KBKDF vs HKDF comparison */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3">
+        <h2 className="text-sm font-bold text-foreground mb-3">
           KBKDF vs HKDF — Choosing the Right KDF
-        </h4>
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
             <div className="font-bold text-foreground mb-1.5">KBKDF (SP 800-108 Counter Mode)</div>
@@ -391,9 +391,9 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       {/* Step 1: QKD 014 Key Retrieval */}
       {currentStep === 0 && (
         <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
-          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
             <Key size={15} className="text-primary" /> Step 1: ETSI QKD 014 REST Key Retrieval
-          </h3>
+          </h2>
           <div className="bg-background rounded p-3 border border-border">
             <div className="text-xs text-muted-foreground mb-2">
               Simulated REST request (ETSI GS QKD 014 §6.3.1)
@@ -424,9 +424,9 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       {/* Step 2: HSM Import */}
       {currentStep === 1 && (
         <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
-          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
             <Lock size={15} className="text-primary" /> Step 2: Import into HSM (PKCS#11)
-          </h3>
+          </h2>
           <div className="bg-background rounded p-3 border border-border">
             <div className="text-xs text-muted-foreground mb-2">
               QKD Manager Response (ETSI GS QKD 014 JSON)
@@ -488,9 +488,9 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       {/* Step 3: SP 800-108 KDF */}
       {currentStep === 2 && (
         <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
-          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
             <Cpu size={15} className="text-primary" /> Step 3: NIST SP 800-108 Counter-Mode KDF
-          </h3>
+          </h2>
           <div className="border-2 border-dashed border-primary/40 rounded-lg p-4 relative">
             <div className="absolute -top-3 left-4 bg-background px-2 text-xs font-bold text-primary">
               HSM — PKCS#11 C_DeriveKey()
@@ -566,9 +566,9 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       {/* Step 4: Session Key Output */}
       {currentStep === 3 && (
         <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
-          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
             <CheckCircle2 size={15} className="text-primary" /> Step 4: Session Key Output
-          </h3>
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Alice side */}
             <div className="border-2 border-dashed border-primary/40 rounded-lg p-4 relative">
@@ -631,9 +631,9 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       {/* Step 5: Session Key Use */}
       {currentStep === 4 && (
         <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
-          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
             <Zap size={15} className="text-primary" /> Step 5: Session Key Use
-          </h3>
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
             <div className="glass-panel p-3">
               <div className="font-bold text-foreground mb-2">Option A — Bulk Encryption</div>
@@ -699,9 +699,9 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       {/* Completed summary */}
       {currentStep === 5 && (
         <div className="bg-status-success/5 rounded-lg p-4 border border-status-success/20 space-y-3">
-          <h3 className="text-sm font-bold text-status-success flex items-center gap-2">
+          <h2 className="text-sm font-bold text-status-success flex items-center gap-2">
             <CheckCircle2 size={16} /> HSM Key Derivation Complete
-          </h3>
+          </h2>
           <div className="grid grid-cols-1 gap-2">
             <div className="bg-background rounded p-3 border border-border text-xs">
               <div className="text-muted-foreground mb-1">key_ID (shared reference)</div>

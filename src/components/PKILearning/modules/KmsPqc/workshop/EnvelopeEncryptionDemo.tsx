@@ -984,7 +984,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           {envelopeBlob && (
             <div className="space-y-3 pt-3 border-t border-border/40">
               <div className="flex items-center gap-2 flex-wrap">
-                <h4 className="text-sm font-bold text-foreground">Stored Envelope Blobs</h4>
+                <h3 className="text-sm font-bold text-foreground">Stored Envelope Blobs</h3>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-mono">
                   {envelopeBlob.kemCt
                     ? `KEM\u202f+\u202fAES\u202f·\u202f${envelopeBlob.kemCt.length + envelopeBlob.wrappedDek.length + (envelopeBlob.gcmIv?.length ?? 0)}\u00a0B`
@@ -1068,7 +1068,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                   Step {displayStep.step} of {ENVELOPE_ENCRYPTION_STEPS.length}
                 </span>
               </div>
-              <h4 className="text-xl font-bold text-gradient">{displayStep.title}</h4>
+              <h3 className="text-xl font-bold text-gradient">{displayStep.title}</h3>
               {displayStep.step === 1 && (
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
                   <Info size={12} className="shrink-0" />
@@ -1268,7 +1268,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
       {/* Total comparison — shown when all steps complete */}
       {completedSteps.size === ENVELOPE_ENCRYPTION_STEPS.length && (
         <div className="glass-panel p-6 border-status-success/20 animate-fade-in">
-          <h4 className="text-sm font-bold text-foreground mb-3">Size Comparison Summary</h4>
+          <h3 className="text-sm font-bold text-foreground mb-3">Size Comparison Summary</h3>
           {(() => {
             const classRef = classicalPkBytes
             const pqcTotal = mlKemSizes ? mlKemSizes.ct + wrapOverheadBytes : classRef

@@ -135,7 +135,7 @@ const TestComparisonTable: React.FC<{
   const testNames = results[enabledSources[0]]?.map((t) => t.name) ?? []
   return (
     <div className="glass-panel p-4 space-y-3">
-      <h4 className="text-sm font-semibold text-foreground">Statistical Test Comparison</h4>
+      <h3 className="text-sm font-semibold text-foreground">Statistical Test Comparison</h3>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
@@ -199,7 +199,7 @@ const SourceCard: React.FC<{
         ) : (
           <ShieldAlert size={14} className="text-warning shrink-0" />
         )}
-        <h4 className="text-sm font-semibold text-foreground truncate">{source.label}</h4>
+        <h3 className="text-sm font-semibold text-foreground truncate">{source.label}</h3>
       </div>
       {result && (
         <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted/40 rounded-full px-2 py-0.5 shrink-0">
@@ -510,9 +510,9 @@ export const RandomGenerationDemo: React.FC = () => {
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2">
               <Eye size={16} className="text-warning" />
-              <h4 className="text-sm font-semibold text-foreground">
+              <h3 className="text-sm font-semibold text-foreground">
                 LCG Determinism — Can We Predict the Next Bytes?
-              </h4>
+              </h3>
             </div>
             <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20">
               Not NIST SP 800-90A Approved
@@ -610,7 +610,7 @@ export const RandomGenerationDemo: React.FC = () => {
       {/* Byte Frequency Histograms */}
       {hasResults && (
         <div className="glass-panel p-4 space-y-4">
-          <h4 className="text-sm font-semibold text-foreground">Byte Frequency Distribution</h4>
+          <h3 className="text-sm font-semibold text-foreground">Byte Frequency Distribution</h3>
           <p className="text-xs text-muted-foreground">
             Each bar represents the count of bytes falling within a 16-value range. Uniform
             randomness produces roughly equal bar heights.
@@ -629,7 +629,7 @@ export const RandomGenerationDemo: React.FC = () => {
       {/* Lag Plots */}
       {hasResults && (
         <div className="glass-panel p-4 space-y-4">
-          <h4 className="text-sm font-semibold text-foreground">Autocorrelation (Lag Plot)</h4>
+          <h3 className="text-sm font-semibold text-foreground">Autocorrelation (Lag Plot)</h3>
           <p className="text-xs text-muted-foreground">
             Plots (byte[i], byte[i+k]) pairs. Random data fills the square uniformly; patterns
             create lines, clusters, or voids that reveal sequential correlations.
@@ -667,7 +667,7 @@ export const RandomGenerationDemo: React.FC = () => {
 
       {/* Production entropy products */}
       <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">Production Entropy Sources</h4>
+        <h3 className="text-sm font-semibold text-foreground">Production Entropy Sources</h3>
         <p className="text-xs text-muted-foreground">
           Hardware and cloud entropy services that feed NIST SP 800-90B qualified entropy into
           production DRBGs and HSMs.

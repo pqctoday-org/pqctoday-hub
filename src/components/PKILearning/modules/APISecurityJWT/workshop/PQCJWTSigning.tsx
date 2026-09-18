@@ -268,7 +268,7 @@ export const PQCJWTSigning: React.FC = () => {
       <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-2">
           <ShieldCheck size={16} className="text-primary" />
-          <h4 className="text-sm font-bold text-foreground">Signing backend</h4>
+          <h3 className="text-sm font-bold text-foreground">Signing backend</h3>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button
@@ -316,7 +316,7 @@ export const PQCJWTSigning: React.FC = () => {
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <Key size={16} className="text-primary" />
-            <h4 className="text-sm font-bold text-foreground">Keypair Generation</h4>
+            <h3 className="text-sm font-bold text-foreground">Keypair Generation</h3>
           </div>
           <Button
             variant="gradient"
@@ -397,7 +397,7 @@ export const PQCJWTSigning: React.FC = () => {
 
       {/* Payload Editor */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3">JWT Payload (Editable)</h4>
+        <h3 className="text-sm font-bold text-foreground mb-3">JWT Payload (Editable)</h3>
         <Textarea
           aria-label="JWT payload JSON (editable)"
           value={payloadJson}
@@ -442,7 +442,7 @@ export const PQCJWTSigning: React.FC = () => {
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <CheckCircle size={16} className="text-success" />
-              <h4 className="text-sm font-bold text-foreground">Signed JWT</h4>
+              <h3 className="text-sm font-bold text-foreground">Signed JWT</h3>
               <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-primary/10 text-primary border-primary/30">
                 signed via {backend === 'noble' ? 'noble' : 'SoftHSM3'}
               </span>
@@ -546,9 +546,9 @@ export const PQCJWTSigning: React.FC = () => {
       {/* Size Comparison */}
       {signedJwt && (
         <div className="glass-panel p-4">
-          <h4 className="text-sm font-bold text-foreground mb-3">
+          <h3 className="text-sm font-bold text-foreground mb-3">
             Size Comparison: ES256 vs {selectedAlg}
-          </h4>
+          </h3>
           <div className="space-y-3">
             <div>
               <div className="flex justify-between text-xs mb-1">

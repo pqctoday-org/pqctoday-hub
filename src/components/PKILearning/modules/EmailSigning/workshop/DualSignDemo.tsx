@@ -235,7 +235,7 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
   return (
     <div className="space-y-4">
       <header className="space-y-1">
-        <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
           <Combine size={18} className="text-primary" />
           PQ + classical dual signature (multi-SignerInfo)
           <span
@@ -244,7 +244,7 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
           >
             WIP · not LAMPS composite
           </span>
-        </h3>
+        </h2>
         <p className="text-sm text-muted-foreground">
           Produces ONE CMS SignedData carrying TWO <code>SignerInfo</code> entries — one signed by
           an ML-DSA key, one by ECDSA / RSA-PSS. Verifier runs twice with each cert as the trust

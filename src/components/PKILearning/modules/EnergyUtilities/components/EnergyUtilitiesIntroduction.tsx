@@ -84,7 +84,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
           {/* Key differentiators grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">Safety-Critical</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Safety-Critical</h3>
               <p className="text-xs text-muted-foreground">
                 Crypto failures can cascade into physical consequences: grid destabilization,
                 pipeline overpressure, dam flooding, and water contamination. No tolerance for
@@ -92,14 +92,14 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">Extreme Lifecycles</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Extreme Lifecycles</h3>
               <p className="text-xs text-muted-foreground">
                 IEDs last 20&ndash;25 years, transformers 30&ndash;40 years. Equipment deployed in
                 2026 must withstand threats through 2050+, well beyond CRQC arrival estimates.
               </p>
             </div>
             <div className="bg-status-info/10 rounded-lg p-4 border border-status-info/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">Regulatory Density</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Regulatory Density</h3>
               <p className="text-xs text-muted-foreground">
                 NERC CIP (North America), IEC 62351 (international), IEEE 2030.5 (DERs), plus
                 cross-sector mandates like NIS2 and NIST frameworks. Multiple overlapping compliance
@@ -107,7 +107,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">Environmental Risk</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Environmental Risk</h3>
               <p className="text-xs text-muted-foreground">
                 Loss of grid control causes cascading failures affecting millions. Pipeline
                 incidents contaminate soil and waterways. Dam failures flood downstream communities.
@@ -117,10 +117,10 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
 
           {/* HNDL window calculation */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
               <Clock size={16} className="text-primary" />
               HNDL Window Example
-            </h4>
+            </h3>
             <p className="text-xs text-muted-foreground">
               A substation IED deployed in 2026 with a 25-year lifecycle will be operational until{' '}
               <strong>2051</strong>. If a CRQC becomes available around 2030&ndash;2035, that
@@ -136,9 +136,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <Network size={16} className="text-primary shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   Prerequisites: IoT &amp; OT Security
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   This module builds on the IoT &amp; OT Security module, which covers the Purdue
                   model, constrained device PQC patterns, and gateway-mediated security. Start there
@@ -156,7 +156,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
           </div>
 
           {/* Equipment lifecycle table */}
-          <h4 className="text-sm font-bold text-foreground">Equipment Lifecycle Overview</h4>
+          <h3 className="text-sm font-bold text-foreground">Equipment Lifecycle Overview</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -206,9 +206,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           {/* NERC CIP standards */}
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             NERC CIP Standards &mdash; PQC Impact
-          </h4>
+          </h3>
           <div className="space-y-3">
             {NERC_CIP_STANDARDS.map((std) => (
               <div key={std.id} className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -239,7 +239,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
           </div>
 
           {/* IEC 62351 parts */}
-          <h4 className="text-sm font-bold text-foreground">IEC 62351 Parts &mdash; PQC Impact</h4>
+          <h3 className="text-sm font-bold text-foreground">IEC 62351 Parts &mdash; PQC Impact</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -275,9 +275,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
 
           {/* IEEE 2030.5 callout */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-2">
+            <h3 className="text-sm font-bold text-foreground mb-2">
               IEEE 2030.5 (Smart Energy Profile 2.0)
-            </h4>
+            </h3>
             <p className="text-xs text-muted-foreground">
               The communication standard for Distributed Energy Resources (solar inverters, battery
               storage, EV chargers) mandates TLS 1.2 with ECDSA P-256 device certificates. Every DER
@@ -314,7 +314,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
               <div key={protocol.id} className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-bold text-foreground">{protocol.name}</h4>
+                    <h3 className="text-sm font-bold text-foreground">{protocol.name}</h3>
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/30 font-mono">
                       {protocol.transport}
                     </span>
@@ -380,9 +380,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <Shield size={16} className="text-status-success shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   Key Insight: HMAC Is Already Quantum-Safe
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   GOOSE, Sampled Values, and DNP3-SA all use <strong>HMAC-SHA256</strong> for
                   per-message authentication. As a symmetric primitive, HMAC is not vulnerable to
@@ -397,10 +397,10 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
 
           {/* DNP3-SA fit callout */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
               <Network size={16} className="text-primary" />
               DNP3-SA: Clean Single-Fragment Migration
-            </h4>
+            </h3>
             <p className="text-xs text-muted-foreground">
               DNP3 Secure Authentication uses a 2,048-byte maximum fragment size. An{' '}
               <InlineTooltip term="ML-KEM">
@@ -438,9 +438,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   The 33x Bandwidth Problem
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   An ECDH P-256 compressed public key is <strong>33 bytes</strong>. An ML-KEM-768
                   ciphertext is <strong>1,088 bytes</strong> &mdash; a{' '}
@@ -454,10 +454,10 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
 
           {/* Scale calculation */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <Key size={16} className="text-primary" />
               Scale Calculation: 10 Million Meters
-            </h4>
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
               <div className="bg-background/50 rounded-lg p-3 border border-border text-center">
                 <div className="text-lg font-bold text-primary">~10 GB</div>
@@ -491,7 +491,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
           </div>
 
           {/* Mitigation strategies */}
-          <h4 className="text-sm font-bold text-foreground">Mitigation Strategies</h4>
+          <h3 className="text-sm font-bold text-foreground">Mitigation Strategies</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-sm font-bold text-primary mb-1">Staggered Rotation</div>
@@ -529,9 +529,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <Key size={16} className="text-primary shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   Explore Key Management Systems
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   The KMS &amp; PQC module covers KMIP protocol integration, cross-provider key
                   synchronization, and HSM capacity planning in depth &mdash; directly applicable to
@@ -565,7 +565,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           {/* Physical consequence categories */}
-          <h4 className="text-sm font-bold text-foreground">Physical Consequence Categories</h4>
+          <h3 className="text-sm font-bold text-foreground">Physical Consequence Categories</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -619,9 +619,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
           </div>
 
           {/* Environmental categories */}
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             Environmental Consequence Categories
-          </h4>
+          </h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -670,10 +670,10 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
 
           {/* Crypto-to-physical consequence chain */}
           <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
-            <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <AlertTriangle size={16} className="text-status-error" />
               Crypto Failure to Physical Consequence Chain
-            </h4>
+            </h3>
             <ol className="text-xs text-muted-foreground space-y-2 list-decimal list-inside">
               <li>
                 <strong>Quantum attacker breaks RSA/ECDSA key distribution</strong> &mdash;
@@ -707,7 +707,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <Shield size={16} className="text-primary shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">Explore Risk Frameworks</h4>
+                <h3 className="text-sm font-bold text-foreground mb-1">Explore Risk Frameworks</h3>
                 <p className="text-xs text-muted-foreground">
                   The Data Asset Sensitivity module covers NIST RMF, ISO 27005, and FAIR risk
                   frameworks that underpin the consequence scoring used in energy sector PQC risk
@@ -743,10 +743,10 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
           {/* Connectivity challenges grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Network size={14} className="text-primary" />
                 Air-Gapped Substations
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Firmware updates and key rotations require physical site visits
                 (&ldquo;truck-rolls&rdquo;). A utility with 200 substations and 4-hour truck-roll
@@ -756,10 +756,10 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Network size={14} className="text-primary" />
                 Serial DNP3 Links
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Many RTUs communicate via serial DNP3 at <strong>9.6 kbps</strong>. An ML-KEM-768
                 key exchange (1,088 bytes) takes approximately <strong>0.9 seconds</strong> at this
@@ -768,10 +768,10 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Zap size={14} className="text-primary" />
                 Remote Generation Sites
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Wind farms on ridgelines and offshore platforms, solar plants in deserts, and small
                 hydro in mountainous terrain. Connectivity varies from cellular to satellite. Some
@@ -780,10 +780,10 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Shield size={14} className="text-primary" />
                 PLC Networks (Smart Meters)
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Powerline communication operates at <strong>10&ndash;200 kbps</strong> and is
                 sensitive to electrical noise from transformers, motors, and switching events.
@@ -795,10 +795,10 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
 
           {/* Gateway-mediated PQC */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <Shield size={16} className="text-primary" />
               Gateway-Mediated PQC
-            </h4>
+            </h3>
             <p className="text-xs text-muted-foreground mb-3">
               For devices that cannot be upgraded to PQC (serial RTUs, legacy PLCs, air-gapped
               IEDs), a <strong>crypto gateway</strong> can terminate classical crypto on the field
@@ -830,7 +830,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <Network size={16} className="text-primary shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">Gateway Architecture</h4>
+                <h3 className="text-sm font-bold text-foreground mb-1">Gateway Architecture</h3>
                 <p className="text-xs text-muted-foreground">
                   The IoT &amp; OT Security module covers gateway-mediated PQC in detail, including
                   the Purdue model zones where crypto gateways are deployed and protocol translation
@@ -962,14 +962,14 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="p-4 rounded-lg bg-muted/50 border border-border">
-            <h4 className="font-semibold text-foreground">Electricity</h4>
+            <h3 className="font-semibold text-foreground">Electricity</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               NERC CIP is mandatory and enforceable with financial penalties, and IEC 62351 gives
               substation protocols a security profile that names mechanisms.
             </p>
           </div>
           <div className="p-4 rounded-lg bg-muted/50 border border-border">
-            <h4 className="font-semibold text-foreground">Water &amp; wastewater</h4>
+            <h3 className="font-semibold text-foreground">Water &amp; wastewater</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               EPA guidance is advisory and its cybersecurity checklist is explicitly voluntary.
               FERC&rsquo;s hydropower security programme covers dams and generation, not treatment.

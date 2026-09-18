@@ -124,7 +124,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
 
           {/* Architecture Diagram */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-3">HSM Integration Architecture</h4>
+            <h3 className="text-sm font-bold text-foreground mb-3">HSM Integration Architecture</h3>
             <div className="flex flex-col items-center gap-2 text-xs font-mono text-foreground">
               <div className="bg-primary/10 border border-primary/30 rounded px-4 py-2 text-center">
                 Application (TLS Server, CA, Key Manager)
@@ -149,7 +149,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
           </div>
 
           {/* On-prem vs Cloud side by side */}
-          <h4 className="text-sm font-bold text-foreground">On-Prem vs Cloud HSM</h4>
+          <h3 className="text-sm font-bold text-foreground">On-Prem vs Cloud HSM</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="flex items-center gap-2 mb-2">
@@ -197,7 +197,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             </p>
 
             <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">New PQC Key Types</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">New PQC Key Types</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="font-mono text-primary">CKK_ML_KEM</span>
@@ -218,7 +218,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             </div>
 
             {/* Classical Mechanisms Table */}
-            <h4 className="text-sm font-bold text-foreground">Classical Mechanisms (v2.40+)</h4>
+            <h3 className="text-sm font-bold text-foreground">Classical Mechanisms (v2.40+)</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -245,7 +245,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             </div>
 
             {/* PQC Mechanisms Table */}
-            <h4 className="text-sm font-bold text-foreground">PQC Mechanisms (v3.2 Draft)</h4>
+            <h3 className="text-sm font-bold text-foreground">PQC Mechanisms (v3.2 Draft)</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -272,7 +272,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             </div>
 
             {/* Key Size Comparison */}
-            <h4 className="text-sm font-bold text-foreground">Buffer Size Impact</h4>
+            <h3 className="text-sm font-bold text-foreground">Buffer Size Impact</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -338,7 +338,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               {/* Thales Luna */}
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-bold text-foreground">Thales Luna Network HSM 7</h4>
+                  <h3 className="text-sm font-bold text-foreground">Thales Luna Network HSM 7</h3>
                   <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
                     PRODUCTION
                   </span>
@@ -379,7 +379,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               {/* Entrust nShield */}
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-bold text-foreground">Entrust nShield 5</h4>
+                  <h3 className="text-sm font-bold text-foreground">Entrust nShield 5</h3>
                   <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
                     PRODUCTION
                   </span>
@@ -421,9 +421,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               {/* Utimaco */}
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-bold text-foreground">
+                  <h3 className="text-sm font-bold text-foreground">
                     Utimaco SecurityServer Se Gen2 (Quantum Protect)
-                  </h4>
+                  </h3>
                   <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
                     PRODUCTION
                   </span>
@@ -497,7 +497,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             {/* AWS CloudHSM */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-bold text-foreground">AWS CloudHSM</h4>
+                <h3 className="text-sm font-bold text-foreground">AWS CloudHSM</h3>
                 <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-primary/10 text-primary border-primary/20">
                   LIMITED
                 </span>
@@ -528,7 +528,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             {/* Azure Dedicated HSM */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-bold text-foreground">Azure Dedicated HSM</h4>
+                <h3 className="text-sm font-bold text-foreground">Azure Dedicated HSM</h3>
                 <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
                   PRODUCTION
                 </span>
@@ -563,7 +563,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             {/* Google Cloud HSM */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-bold text-foreground">Google Cloud HSM</h4>
+                <h3 className="text-sm font-bold text-foreground">Google Cloud HSM</h3>
                 <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-muted/50 text-muted-foreground border-border">
                   ROADMAP
                 </span>
@@ -620,7 +620,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                             : 'text-muted-foreground'
                       }
                     />
-                    <h4 className="text-sm font-bold text-foreground">{vector.name}</h4>
+                    <h3 className="text-sm font-bold text-foreground">{vector.name}</h3>
                   </div>
                   <span
                     className={`text-[10px] px-2 py-0.5 rounded border font-bold shrink-0 ${
@@ -662,9 +662,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <div className="flex items-start gap-2">
               <Shield size={16} className="text-primary shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   ML-DSA Hedged Signing (FIPS 204 &sect;3.4)
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   ML-DSA supports a &quot;hedged&quot; signing mode where the{' '}
                   <span className="font-mono text-primary">rnd</span> parameter is set to a random
@@ -776,9 +776,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-destructive shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   Critical: State Persistence Requirement
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   After every signing operation, the HSM must atomically write the updated state
                   counter to NVRAM. A power failure during this write can result in state loss,
@@ -793,10 +793,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-2">
+              <h3 className="text-sm font-bold text-foreground mb-2">
                 <Layers size={14} className="inline-block mr-1" />
                 NVRAM State Management
-              </h4>
+              </h3>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; Atomic state counter update after each signature</li>
                 <li>&bull; Write-ahead logging prevents partial state corruption</li>
@@ -806,10 +806,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </ul>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-2">
+              <h3 className="text-sm font-bold text-foreground mb-2">
                 <Shield size={14} className="inline-block mr-1" />
                 CNSA 2.0 Requirements
-              </h4>
+              </h3>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; LMS/HSS or XMSS required for firmware signing</li>
                 <li>&bull; National Security Systems must comply by 2030</li>

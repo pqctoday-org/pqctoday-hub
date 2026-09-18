@@ -248,7 +248,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           These exact secrets are visible in the Simulate tab after running a handshake.
         </p>
         <div className="mt-4 bg-muted/50 rounded-lg p-3 border border-border">
-          <h4 className="text-xs font-bold text-foreground mb-1">Session Resumption &amp; PSK</h4>
+          <h3 className="text-xs font-bold text-foreground mb-1">Session Resumption &amp; PSK</h3>
           <p className="text-xs text-muted-foreground">
             After a successful handshake, the server issues a{' '}
             <InlineTooltip term="PSK">Pre-Shared Key (PSK)</InlineTooltip> ticket. On reconnection,
@@ -319,9 +319,9 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           classical security as a fallback.
         </p>
         <div className="bg-muted/50 rounded-lg p-3 border border-border mb-4">
-          <h4 className="text-xs font-bold text-foreground mb-1 flex items-center gap-1.5">
+          <h3 className="text-xs font-bold text-foreground mb-1 flex items-center gap-1.5">
             <Hash size={12} /> SLH-DSA: Hash-Based Alternative (FIPS 205)
-          </h4>
+          </h3>
           <p className="text-xs text-muted-foreground">
             <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip> (formerly SPHINCS+) is a
             hash-based signature scheme standardized alongside ML-DSA. It relies on hash function
@@ -355,9 +355,9 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
 
         {/* Certificate Compression */}
         <div className="bg-muted/50 rounded-lg p-3 border border-border mb-4">
-          <h4 className="text-xs font-bold text-foreground mb-1 flex items-center gap-1.5">
+          <h3 className="text-xs font-bold text-foreground mb-1 flex items-center gap-1.5">
             <Minimize2 size={12} /> TLS Certificate Compression (RFC 8879)
-          </h4>
+          </h3>
           <p className="text-xs text-muted-foreground">
             Already supported by major browsers, TLS certificate compression can reduce PQC
             certificate overhead by 30-60%. Certificates are compressed with Zlib or Brotli before
@@ -368,9 +368,9 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
 
         {/* Certificate Transparency context */}
         <div className="bg-muted/50 rounded-lg p-3 border border-border mb-4">
-          <h4 className="text-xs font-bold text-foreground mb-1 flex items-center gap-1.5">
+          <h3 className="text-xs font-bold text-foreground mb-1 flex items-center gap-1.5">
             <FileSearch size={12} /> Certificate Transparency (RFC 9162)
-          </h4>
+          </h3>
           <p className="text-xs text-muted-foreground">
             Certificate Transparency (CT) requires CAs to log all issued certificates in publicly
             auditable append-only logs. Browsers verify that certificates appear in CT logs,
@@ -409,7 +409,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           </div>
         </div>
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
-          <h4 className="text-sm font-bold text-foreground mb-2">Deployment Roadmap</h4>
+          <h3 className="text-sm font-bold text-foreground mb-2">Deployment Roadmap</h3>
           <div className="space-y-2 text-xs text-muted-foreground">
             <div className="flex items-start gap-2">
               <span className="text-status-success font-bold shrink-0">Phase 1 (Now)</span>

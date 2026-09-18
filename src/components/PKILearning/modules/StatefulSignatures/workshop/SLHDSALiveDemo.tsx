@@ -674,9 +674,9 @@ export const SLHDSALiveDemo: React.FC = () => {
       <div className="glass-panel p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-4">
           <Info size={16} className="text-primary" aria-hidden="true" />
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             Stateful vs Stateless Signature Comparison
-          </h4>
+          </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">

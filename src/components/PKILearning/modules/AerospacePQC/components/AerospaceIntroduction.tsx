@@ -56,9 +56,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Plane size={16} className="text-status-success" /> Ground Segment
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 ATC centers, ground stations, airline ops. Standard{' '}
                 <InlineTooltip term="TLS">TLS</InlineTooltip>/IPsec stack. Patched in{' '}
@@ -66,9 +66,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
               </p>
             </div>
             <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Plane size={16} className="text-status-warning" /> Airborne Segment
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Avionics with RSA-2048 / ECDSA P-256 for nav database auth and SATCOM. Crypto
                 libraries certified under <InlineTooltip term="DO-178C">DO-178C</InlineTooltip>.
@@ -77,9 +77,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
               </p>
             </div>
             <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Satellite size={16} className="text-status-error" /> Space Segment
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Command/telemetry encrypted with AES + RSA/ECDH key exchange. Satellites{' '}
                 <strong>cannot be physically accessed</strong> post-launch. Crypto must be
@@ -92,9 +92,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-status-error shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   HNDL: Satellite Command &amp; Telemetry
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   Adversaries can intercept encrypted satellite command uplinks and telemetry
                   downlinks today. With a future <InlineTooltip term="CRQC">CRQC</InlineTooltip>,
@@ -243,9 +243,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-status-error shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   Lattice-Based PQC Is Especially Vulnerable
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   A bit flip in an <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> private key
                   corrupts <strong>all subsequent signatures</strong>. A corrupted{' '}
@@ -258,12 +258,12 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             </div>
           </div>
 
-          <h4 className="text-sm font-bold text-foreground">Algorithm Resilience Comparison</h4>
+          <h3 className="text-sm font-bold text-foreground">Algorithm Resilience Comparison</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">
+              <h3 className="text-sm font-bold text-foreground mb-2">
                 Hash-Based (LMS/XMSS) &mdash; More Resilient
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Verification relies on SHA-256 hashes computed from <strong>public data</strong>,
                 not stored private key material. If a signing key buffer is corrupted, the satellite
@@ -271,9 +271,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
               </p>
             </div>
             <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">
+              <h3 className="text-sm font-bold text-foreground mb-2">
                 Lattice-Based (ML-DSA/ML-KEM) &mdash; Vulnerable
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Keys are large structured matrices (public keys 1,312&ndash;2,592 bytes; private
                 keys 2,560&ndash;4,896 bytes). A single bit flip changes the algebraic structure,
@@ -283,10 +283,10 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             </div>
           </div>
 
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             <InlineTooltip term="Rad-Hardened Processor">Rad-Hard Processor</InlineTooltip> PQC
             Capability
-          </h4>
+          </h3>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -444,7 +444,7 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="glass-panel p-4">
-              <h4 className="text-sm font-bold text-foreground mb-2">Military Crypto (ITAR)</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Military Crypto (ITAR)</h3>
               <p className="text-xs text-muted-foreground mb-2">
                 USML Category XI: PQC-enhanced COMSEC modules, crypto key loaders, and military
                 avionics firmware. Requires State Department license for every foreign transfer
@@ -455,7 +455,7 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
               </span>
             </div>
             <div className="glass-panel p-4">
-              <h4 className="text-sm font-bold text-foreground mb-2">Civil Crypto (EAR)</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Civil Crypto (EAR)</h3>
               <p className="text-xs text-muted-foreground mb-2">
                 ECCN 5A002/5D002: PQC libraries in commercial avionics. License Exception ENC (15
                 CFR 740.17) covers most civil deployments, but requires BIS classification ruling
@@ -568,7 +568,7 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">Pre-Launch Key Loading</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Pre-Launch Key Loading</h3>
               <p className="text-xs text-muted-foreground">
                 PQC key pairs generated in ground HSMs and loaded into satellite crypto modules
                 during integration. Multiple backup key sets provisioned for failover. Hash-based
@@ -577,7 +577,7 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
               </p>
             </div>
             <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">Over-the-Air Key Update</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Over-the-Air Key Update</h3>
               <p className="text-xs text-muted-foreground">
                 Software-defined radios allow limited crypto firmware updates. But updating the key
                 exchange algorithm (RSA &rarr; ML-KEM) on orbit risks bricking the satellite if the

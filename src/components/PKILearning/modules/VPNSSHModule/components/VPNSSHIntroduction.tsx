@@ -359,7 +359,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             </div>
           </div>
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
-            <h4 className="font-bold text-primary mb-1">Control Plane vs. Data Plane</h4>
+            <h3 className="font-bold text-primary mb-1">Control Plane vs. Data Plane</h3>
             <p className="text-xs text-muted-foreground">
               The migration to PQC only applies to the <strong>Control Plane</strong> (key exchange
               &amp; auth). The actual <strong>Data Plane</strong> (the VPN tunnel) already uses

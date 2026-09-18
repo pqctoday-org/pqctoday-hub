@@ -117,7 +117,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">Domain Architecture</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Domain Architecture</h3>
               <p className="text-xs text-muted-foreground">
                 ECUs grouped by function: powertrain domain, chassis domain, body domain,
                 infotainment domain. Each domain has a gateway ECU. Crypto is per-domain &mdash;
@@ -129,7 +129,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </div>
             </div>
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">Zonal Architecture</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Zonal Architecture</h3>
               <p className="text-xs text-muted-foreground">
                 ECUs grouped by physical location (front-left, front-right, rear). 3&ndash;5 high-
                 performance zone controllers run Automotive Ethernet (100BASE-T1 / 1000BASE-T1).
@@ -141,7 +141,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </div>
             </div>
             <div className="glass-panel p-4">
-              <h4 className="text-sm font-bold text-foreground mb-2">Comparison</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Comparison</h3>
               <div className="space-y-2 text-xs text-muted-foreground">
                 <div className="flex justify-between">
                   <span>ECU count</span>
@@ -181,10 +181,10 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
 
       {/* -- SAE J3016 Reference ------------------------------------------------ */}
       <div className="glass-panel p-4 border-l-4 border-primary/50">
-        <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+        <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
           <AlertTriangle size={14} className="text-primary" />
           SAE J3016 Autonomy Levels (2021)
-        </h4>
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
           <div className="bg-muted/30 rounded p-2">
             <span className="font-mono font-bold text-primary">L0&ndash;L2</span>
@@ -337,9 +337,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-status-error shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   HNDL Risk: Autonomous Driving Training Data
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   Autonomous vehicles continuously upload driving telemetry to cloud training
                   pipelines. This data includes centimeter-accurate 3D scans of cities, military
@@ -500,14 +500,14 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             prevent harvest-after-disposal attacks.
           </p>
 
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             Five HSM Tiers in the Automotive Stack
-          </h4>
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
-              <h4 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
                 <ShieldCheck size={14} className="text-status-success" /> Factory HSM
-              </h4>
+              </h3>
               <p className="text-[10px] font-medium text-status-success mb-2">FIPS 140-3 Level 3</p>
               <p className="text-xs text-muted-foreground mb-2">
                 Rack-mounted HSMs in production plants. Generate and inject root keys into every
@@ -521,9 +521,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
-              <h4 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
                 <ShieldCheck size={14} className="text-status-success" /> V2X SCMS HSM
-              </h4>
+              </h3>
               <p className="text-[10px] font-medium text-status-success mb-2">
                 FIPS 140-3 Level 3 / CC EAL4+
               </p>
@@ -540,9 +540,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
-              <h4 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
                 <ShieldCheck size={14} className="text-status-warning" /> Vehicle Gateway ECU HSM
-              </h4>
+              </h3>
               <p className="text-[10px] font-medium text-status-warning mb-2">
                 EVITA Full / SHE 2.0
               </p>
@@ -560,9 +560,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
-              <h4 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
                 <ShieldCheck size={14} className="text-status-warning" /> ECU Secure Element
-              </h4>
+              </h3>
               <p className="text-[10px] font-medium text-status-warning mb-2">EVITA Medium / SHE</p>
               <p className="text-xs text-muted-foreground mb-2">
                 Lightweight hardware security in individual ECUs (engine, transmission, ADAS).
@@ -579,10 +579,10 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
-              <h4 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
                 <ShieldCheck size={14} className="text-status-warning" />{' '}
                 <InlineTooltip term="TPM">TPM</InlineTooltip> 2.0
-              </h4>
+              </h3>
               <p className="text-[10px] font-medium text-status-warning mb-2">TCG TPM 2.0</p>
               <p className="text-xs text-muted-foreground mb-2">
                 Discrete or firmware TPM in the infotainment head unit and telematics control unit
@@ -599,12 +599,12 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
 
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             Three Lifecycle Phases &amp; HSM Roles
-          </h4>
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="glass-panel p-4">
-              <h4 className="text-sm font-bold text-foreground mb-2">1. Production</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">1. Production</h3>
               <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
                 <li>Root key generation in Factory HSM (FIPS 140-3 L3)</li>
                 <li>Per-vehicle key pair injection into Gateway ECU HSM</li>
@@ -617,7 +617,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </ul>
             </div>
             <div className="glass-panel p-4">
-              <h4 className="text-sm font-bold text-foreground mb-2">2. Road Life</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">2. Road Life</h3>
               <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
                 <li>Real-time V2X BSM signing (10 signatures/sec, PQC latency-critical)</li>
                 <li>
@@ -630,7 +630,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </ul>
             </div>
             <div className="glass-panel p-4">
-              <h4 className="text-sm font-bold text-foreground mb-2">3. End-of-Life</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">3. End-of-Life</h3>
               <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
                 <li>Cryptographic key zeroization in all HSM tiers</li>
                 <li>V2X certificate revocation via SCMS CRL</li>
@@ -678,9 +678,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
-            <h4 className="text-sm font-bold text-foreground mb-3">
+            <h3 className="text-sm font-bold text-foreground mb-3">
               Crypto Deprecation vs. Vehicle Lifecycle
-            </h4>
+            </h3>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <div className="w-24 shrink-0 text-xs text-muted-foreground text-right">
@@ -772,9 +772,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             supposedly erased data.
           </p>
 
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             Privacy Risk Matrix: Data Type vs. Quantum Exposure
-          </h4>
+          </h3>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -880,12 +880,12 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             public-key signatures that authenticate payment authorization.
           </p>
 
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             ISO 15118 Plug &amp; Charge Authentication Flow
-          </h4>
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">1. Vehicle</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">1. Vehicle</h3>
               <p className="text-xs text-muted-foreground">
                 Presents contract certificate + ECDSA signature proving authorization from eMobility
                 Service Provider. Certificate chain: OEM root CA &rarr; provisioning CA &rarr;
@@ -894,7 +894,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">2. Charging Station</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">2. Charging Station</h3>
               <p className="text-xs text-muted-foreground">
                 Verifies vehicle certificate against CPO trust store. Establishes TLS session for
                 metering data. Sends signed charging schedule. <strong>PQC upgrade:</strong>{' '}
@@ -902,7 +902,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">3. CPO Backend</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">3. CPO Backend</h3>
               <p className="text-xs text-muted-foreground">
                 Validates contract certificate via OCSP/CRL. Authorizes energy delivery. Processes
                 CDR (Charge Detail Record) for billing settlement. <strong>PQC upgrade:</strong>{' '}
@@ -926,9 +926,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   Cross-Industry Coordination Required
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   ISO 15118 Plug &amp; Charge PQC migration requires synchronized upgrades across
                   the entire ecosystem: vehicle OEMs, charging station manufacturers, CPO backend
@@ -958,7 +958,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             2030, the PQC migration of this standard affects a massive installed base.
           </p>
 
-          <h4 className="text-sm font-bold text-foreground">Transport Comparison</h4>
+          <h3 className="text-sm font-bold text-foreground">Transport Comparison</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -1032,7 +1032,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             a BLE connection for the PQC handshake.
           </p>
 
-          <h4 className="text-sm font-bold text-foreground">Owner-to-Friend Key Sharing Flow</h4>
+          <h3 className="text-sm font-bold text-foreground">Owner-to-Friend Key Sharing Flow</h3>
           <div className="glass-panel p-4">
             <div className="space-y-3 text-xs text-muted-foreground">
               <div className="flex items-start gap-3">
@@ -1119,10 +1119,10 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             timelines, and evidence of crypto-agility in delivered components.
           </p>
 
-          <h4 className="text-sm font-bold text-foreground">Supplier PQC Readiness Cascade</h4>
+          <h3 className="text-sm font-bold text-foreground">Supplier PQC Readiness Cascade</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">OEM</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">OEM</h3>
               <p className="text-xs text-muted-foreground mb-2">
                 Defines PQC policy and algorithm requirements. Mandates hybrid mode for all new
                 platforms from 2027+. Requires TISAX AL2+ with PQC addendum from all Tier-1
@@ -1133,7 +1133,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">Tier-1 Supplier</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Tier-1 Supplier</h3>
               <p className="text-xs text-muted-foreground mb-2">
                 Implements PQC in ECU firmware and gateway modules. Provides crypto-agile hardware
                 (HSM with PQC firmware update path). Cascades requirements to Tier-2 component
@@ -1144,7 +1144,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">Tier-2 Supplier</h4>
+              <h3 className="text-sm font-bold text-foreground mb-2">Tier-2 Supplier</h3>
               <p className="text-xs text-muted-foreground mb-2">
                 Delivers chips, secure elements, and firmware libraries. Must ensure hardware
                 supports PQC key sizes and computation. Longest lead time (18&ndash;36 months for
@@ -1156,15 +1156,15 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             </div>
           </div>
 
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             <InlineTooltip term="AUTOSAR">AUTOSAR</InlineTooltip> Classic vs. Adaptive: PQC
             Extensibility
-          </h4>
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">
+              <h3 className="text-sm font-bold text-foreground mb-2">
                 AUTOSAR Classic (SHE-based)
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Used in 80% of automotive ECUs. Crypto Stack (CryIf + Csm) is tightly coupled to SHE
                 hardware: fixed AES-128 + CMAC. No extensibility for asymmetric crypto, let alone
@@ -1176,9 +1176,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
-              <h4 className="text-sm font-bold text-foreground mb-2">
+              <h3 className="text-sm font-bold text-foreground mb-2">
                 AUTOSAR Adaptive (Crypto Service Manager)
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Used in zone controllers, ADAS, and infotainment. ara::crypto Crypto Service Manager
                 supports pluggable algorithm providers. PQC algorithms can be added as new CSM
@@ -1206,7 +1206,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">The Weakest-Link Problem</h4>
+                <h3 className="text-sm font-bold text-foreground mb-1">The Weakest-Link Problem</h3>
                 <p className="text-xs text-muted-foreground">
                   A single Tier-3 supplier shipping a sensor ECU with non-upgradeable classical
                   crypto creates a permanent vulnerability in every vehicle that ECU is installed
@@ -1283,7 +1283,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
         <div className="space-y-3 text-xs text-muted-foreground">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <h5 className="text-sm font-semibold text-foreground">Safety &amp; Cybersecurity</h5>
+              <h4 className="text-sm font-semibold text-foreground">Safety &amp; Cybersecurity</h4>
               <ul className="space-y-1 list-disc list-inside">
                 <li>ISO 26262:2018 &mdash; Functional Safety for Road Vehicles (ASIL A&ndash;D)</li>
                 <li>ISO/SAE 21434:2021 &mdash; Road Vehicles Cybersecurity Engineering</li>
@@ -1295,7 +1295,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </ul>
             </div>
             <div className="space-y-1.5">
-              <h5 className="text-sm font-semibold text-foreground">Regulations</h5>
+              <h4 className="text-sm font-semibold text-foreground">Regulations</h4>
               <ul className="space-y-1 list-disc list-inside">
                 <li>UNECE WP.29 R155 &mdash; Cybersecurity Management System (CSMS)</li>
                 <li>UNECE WP.29 R156 &mdash; Software Update Management System (SUMS)</li>
@@ -1303,7 +1303,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </ul>
             </div>
             <div className="space-y-1.5">
-              <h5 className="text-sm font-semibold text-foreground">In-Vehicle Networks</h5>
+              <h4 className="text-sm font-semibold text-foreground">In-Vehicle Networks</h4>
               <ul className="space-y-1 list-disc list-inside">
                 <li>ISO 11898-1:2015 / -2:2016 &mdash; CAN &amp; CAN FD</li>
                 <li>ISO 11898-1:2024 &mdash; CAN XL (up to 2,048 bytes)</li>
@@ -1313,9 +1313,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               </ul>
             </div>
             <div className="space-y-1.5">
-              <h5 className="text-sm font-semibold text-foreground">
+              <h4 className="text-sm font-semibold text-foreground">
                 PQC Standards &amp; Protocols
-              </h5>
+              </h4>
               <ul className="space-y-1 list-disc list-inside">
                 <li>FIPS 203 (ML-KEM) &mdash; Key encapsulation</li>
                 <li>FIPS 204 (ML-DSA) &mdash; Digital signatures</li>

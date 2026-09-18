@@ -412,9 +412,9 @@ function LessonPanel({
         <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
           {lesson.sideHeaders?.[0] ?? 'Classical'}
         </p>
-        <h4 className="mt-0.5 font-mono text-[14px] font-semibold text-foreground">
+        <h3 className="mt-0.5 font-mono text-[14px] font-semibold text-foreground">
           {lesson.classical.algoLabel}
-        </h4>
+        </h3>
         <AlgoFactsLine algorithm={lesson.classical.algorithm} />
         {lesson.classical.steps.length > 0 && (
           <>
@@ -476,9 +476,9 @@ function LessonPanel({
           <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
             {lesson.sideHeaders?.[1] ?? 'Post-quantum'}
           </p>
-          <h4 className="mt-0.5 font-mono text-[14px] font-semibold text-foreground">
+          <h3 className="mt-0.5 font-mono text-[14px] font-semibold text-foreground">
             {lesson.modernize.algoLabel}
-          </h4>
+          </h3>
           <AlgoFactsLine algorithm={lesson.modernize.algorithm} />
           {lesson.modernize.steps.length > 0 ? (
             <div className="mt-3">

@@ -258,10 +258,10 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
   return (
     <div className="space-y-4">
       <header className="space-y-1">
-        <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
           <Lock size={18} className="text-primary" />
           ML-KEM CMS encrypt + decrypt (end-to-end)
-        </h3>
+        </h2>
         <p className="text-sm text-muted-foreground">
           Runs the full <code className="rounded bg-muted px-1 py-0.5 text-xs">genpkey</code> →{' '}
           <code className="rounded bg-muted px-1 py-0.5 text-xs">req -x509</code> →{' '}

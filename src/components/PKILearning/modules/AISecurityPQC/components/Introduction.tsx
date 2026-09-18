@@ -83,10 +83,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </p>
 
         <div className="glass-panel p-4 border-l-4 border-status-warning">
-          <h4 className="font-bold text-foreground flex items-center gap-2">
+          <h3 className="font-bold text-foreground flex items-center gap-2">
             <AlertTriangle size={16} className="text-status-warning" />
             Harvest Now, Decrypt Later (HNDL)
-          </h4>
+          </h3>
           <p className="text-sm text-foreground/70 mt-1">
             Adversaries can intercept and store encrypted training data today, then decrypt it when
             a CRQC becomes available. For proprietary datasets worth millions in curation costs,

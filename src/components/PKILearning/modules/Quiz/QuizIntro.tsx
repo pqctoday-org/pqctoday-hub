@@ -142,7 +142,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               <Clock size={20} />
             </div>
             <div>
-              <h4 className="font-bold text-foreground">How much time do you have?</h4>
+              <h3 className="font-bold text-foreground">How much time do you have?</h3>
               <p className="text-xs text-muted-foreground">
                 We&apos;ll pick the right number of questions
               </p>

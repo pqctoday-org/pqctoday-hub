@@ -69,9 +69,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-status-error shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   Case Study: OPM Breach (2015)
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   The U.S. Office of Personnel Management breach exposed{' '}
                   <strong>5.6 million fingerprint records</strong> alongside 21.5 million background
@@ -84,13 +84,13 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
           </div>
 
           {/* Revocable vs permanent comparison */}
-          <h4 className="text-sm font-bold text-foreground">Revocable vs. Permanent Credentials</h4>
+          <h3 className="text-sm font-bold text-foreground">Revocable vs. Permanent Credentials</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <ShieldCheck size={16} className="text-status-success" />
                 Revocable Credentials
-              </h4>
+              </h3>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; Passwords &mdash; reset immediately after breach</li>
                 <li>&bull; X.509 certificates &mdash; revoke via CRL or OCSP</li>
@@ -100,10 +100,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               </ul>
             </div>
             <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <AlertTriangle size={16} className="text-status-error" />
                 Permanent Biometrics (Irrevocable)
-              </h4>
+              </h3>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; Fingerprints &mdash; cannot be changed</li>
                 <li>&bull; Iris patterns &mdash; stable for life</li>
@@ -116,10 +116,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
 
           {/* Key insight */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
               <Shield size={16} className="text-primary" />
               Key Insight
-            </h4>
+            </h3>
             <p className="text-xs text-muted-foreground">
               A quantum computer decrypting a biometric database doesn&apos;t just breach data
               &mdash; it <strong>permanently compromises every identity in that database</strong>.
@@ -155,7 +155,7 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           {/* Drug pipeline data assets */}
-          <h4 className="text-sm font-bold text-foreground">Data Assets by Pipeline Phase</h4>
+          <h3 className="text-sm font-bold text-foreground">Data Assets by Pipeline Phase</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
               {
@@ -200,12 +200,12 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
 
           {/* 21 CFR Part 11 */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
               <Shield size={16} className="text-primary" />
               <InlineTooltip term="21 CFR Part 11">
                 <strong>FDA 21 CFR Part 11</strong>
               </InlineTooltip>
-            </h4>
+            </h3>
             <p className="text-xs text-muted-foreground">
               FDA 21 CFR Part 11 establishes requirements for electronic records and electronic
               signatures in pharmaceutical manufacturing and clinical trials. It mandates that
@@ -222,9 +222,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <Clock size={16} className="text-status-warning shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   Mosca Inequality for Pharma
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   A drug in Phase I trials today will have data requiring protection for 20+ years
                   (patent life + data exclusivity). If PQC migration takes 7 years and CRQC arrives
@@ -268,7 +268,7 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           {/* Privacy categories */}
-          <h4 className="text-sm font-bold text-foreground">Privacy-Sensitive Data Categories</h4>
+          <h3 className="text-sm font-bold text-foreground">Privacy-Sensitive Data Categories</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -344,9 +344,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-status-error shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   The Stigma Amplifier Effect
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   Certain health data categories &mdash; substance abuse treatment, mental health
                   diagnoses, HIV status, reproductive decisions &mdash; carry significant social
@@ -362,10 +362,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
 
           {/* Generational risk */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
               <HeartPulse size={16} className="text-primary" />
               Genomic Data: A Generational Risk
-            </h4>
+            </h3>
             <p className="text-xs text-muted-foreground">
               Genomic data is unique because it is both <strong>lifetime-persistent</strong> (your
               genome never changes) and <strong>generational</strong> (it reveals information about
@@ -397,9 +397,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           {/* FDA device classes */}
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             FDA Device Classification &amp; PQC Impact
-          </h4>
+          </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[
               {
@@ -431,10 +431,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
 
           {/* Constrained devices */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
               <Activity size={16} className="text-primary" />
               Constrained Device Challenge
-            </h4>
+            </h3>
             <p className="text-xs text-muted-foreground mb-2">
               Many implantable and wearable medical devices operate on severely resource-constrained
               processors. A typical cardiac pacemaker uses an <strong>ARM Cortex-M0+</strong> with
@@ -455,9 +455,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-status-error shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   Real-World Medical Device Security Incidents
-                </h4>
+                </h3>
                 <ul className="text-xs text-muted-foreground space-y-1">
                   <li>
                     &bull; <strong>465,000+ pacemaker recall (2017)</strong> &mdash; St. Jude
@@ -486,9 +486,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <div className="flex items-start gap-2">
               <Shield size={16} className="text-primary shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-foreground mb-1">
+                <h3 className="text-sm font-bold text-foreground mb-1">
                   IoT &amp; OT Security Module
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   For general IoT/OT PQC challenges including constrained device cryptography, OTA
                   update signing, and industrial control system migration, see the{' '}
@@ -520,7 +520,7 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           {/* 7-layer architecture */}
-          <h4 className="text-sm font-bold text-foreground">7-Layer Hospital Architecture</h4>
+          <h3 className="text-sm font-bold text-foreground">7-Layer Hospital Architecture</h3>
           <div className="space-y-2">
             {[
               {
@@ -588,9 +588,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
 
           {/* Interoperability */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-2">
+            <h3 className="text-sm font-bold text-foreground mb-2">
               Interoperability: HL7, FHIR &amp; DICOM
-            </h4>
+            </h3>
             <p className="text-xs text-muted-foreground mb-2">
               Healthcare data exchange relies on standards that were designed decades before PQC was
               a consideration. <strong>HL7 v2</strong> messages often travel over MLLP (Minimal
@@ -609,10 +609,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
           {/* Regulatory delays */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Clock size={14} className="text-primary" />
                 FDA 510(k) Approval Delays
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Any change to a medical device&apos;s cryptographic subsystem may require a new{' '}
                 <strong>510(k) premarket notification</strong> or even a full PMA (Premarket
@@ -622,10 +622,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Building2 size={14} className="text-primary" />
                 Device Lifetimes
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 Medical devices have operational lifetimes of <strong>15&ndash;20 years</strong>,
                 with some MRI machines and radiation therapy systems lasting 25+ years. Many of
@@ -638,9 +638,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
 
           {/* HSCC and H-ISAC */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h4 className="text-sm font-bold text-foreground mb-2">
+            <h3 className="text-sm font-bold text-foreground mb-2">
               Sector Coordination: HSCC &amp; H-ISAC
-            </h4>
+            </h3>
             <p className="text-xs text-muted-foreground">
               The <strong>Health Sector Coordinating Council (HSCC)</strong> and the{' '}
               <strong>Health Information Sharing and Analysis Center (H-ISAC)</strong> are the
