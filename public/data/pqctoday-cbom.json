@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:eb742f61-e205-4118-b52f-3dcbde4df388",
+  "serialNumber": "urn:uuid:93e84278-1ee5-4a09-b5a3-968eec7a4f21",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-08T00:00:00.000Z",
+    "timestamp": "2026-09-17T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -7062,11 +7062,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA, SLH-DSA, Falcon, FrodoKEM",
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
           "primitive": "kem"
         }
       },
-      "description": "Experimental simulation environment evaluating PQC integration in 5G Core registration/deregistration. Uses hybrid schemes combining conventional and PQC algorithms. Tested KEMs: BIKE, FrodoKEM. Tested Signatures: ML-DSA (Dilithium), SLH-DSA (SPHINCS+), Falcon (FN-DSA). Also evaluated secp256r1 and RSA for comparison.",
+      "description": "Ericsson notes 3GPP's expectation to standardize NIST's post-quantum algorithms (ML-KEM, ML-DSA, SLH-DSA) as a future replacement for RSA/ECC in 5G Core, as PQC migration moves from research into implementation and deployment.",
       "externalReferences": [
         {
           "type": "website",
@@ -21651,9 +21651,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "104dcd42850731ff",
+      "bom-ref": "a056f874ed707338",
       "name": "pQCee CNG Provider",
-      "version": "1.0 (launched 2026-03-23)",
+      "version": "Not stated (launched 2026-03-23)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -33747,7 +33747,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Phio TX supports the FIPS 203 ML-KEM algorithm for quantum-safe MACsec and IPsec VPNs. The Phio TX-EM virtualized container variant hardens SKIP-enabled Cisco networking infrastructure and enables smoother migration to post-quantum cryptography. (Source: vendor's own product datasheet, published 2025-09-19.)",
+      "description": "Phio TX supports the FIPS 203 ML-KEM algorithm for quantum-safe MACsec and IPsec VPNs. The Phio TX-EM virtualized container variant hardens SKIP-enabled Cisco networking infrastructure and enables smoother migration to post-quantum cryptography. (Source: vendor's own product datasheet, Version 1.7, published 2024-10-16.)",
       "externalReferences": [],
       "properties": [
         {
@@ -36040,6 +36040,196 @@
         {
           "name": "pqctoday:fips_validated",
           "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "663d32061f23582e",
+      "name": "Cryptographic Library NesLib 6.11.3 on ST31N600 A04 Version 6.11.3 (EUCC-3090-2026-25)",
+      "manufacturer": {
+        "name": "STMicroelectronics N.V."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Cryptographic-Library-NesLib-6-11-3-on-S"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "dc3ab3ae06c19758",
+      "name": "Cryptographic library NESLIB 6.11.3 on ST31R480 (A02) (EUCC-3090-2026-56)",
+      "manufacturer": {
+        "name": "STMicroelectronics N.V."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Cryptographic-library-NESLIB-6-11-3-on-S-3"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e3ed0d668aae4ca8",
+      "name": "Cryptographic library NESLIB 6.11.3 on ST31R480 (B02) (EUCC-3090-2026-57)",
+      "manufacturer": {
+        "name": "STMicroelectronics N.V."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Cryptographic-library-NESLIB-6-11-3-on-S-4"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "da03d3da15de085e",
+      "name": "Post-Quantum Cryptography In The Ledger SDK",
+      "manufacturer": {
+        "name": "Ledger SAS"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Post-Quantum-Cryptography-In-The-Ledger"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Agility Frameworks"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "59b4b63e5f59d478",
+      "name": "Qinsight Atlas — Cryptographic Discovery & Posture Management Platform",
+      "manufacturer": {
+        "name": "Qinsight"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Qinsight-Atlas-Cryptographic-Discovery-P"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Agility Frameworks"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
         },
         {
           "name": "pqctoday:algorithm_source",
