@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'sbom',
-  contentVersion: 8,
+  contentVersion: 9,
   lm_id: 'LM-063',
   title: 'Software Bill of Materials (SBOM)',
   description:
@@ -29,7 +29,6 @@ const manifest: ModuleManifest = {
     { id: 'sbom-generation-picker', label: 'Generation Tool Picker' },
   ],
   embeddable: false,
-  practiceInSim: true,
   taxonomy: {
     standards: [
       'SPDX / ISO 5962',

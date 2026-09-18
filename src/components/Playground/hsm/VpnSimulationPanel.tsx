@@ -3496,7 +3496,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               )}
 
               <div
-                className={`text-xs font-bold uppercase tracking-wider pt-2 ${selectedMode === 'classical' ? 'text-muted-foreground/50' : 'text-muted-foreground'}`}
+                className={`text-xs font-bold uppercase tracking-wider pt-2 ${selectedMode === 'classical' ? 'text-muted-foreground/80' : 'text-muted-foreground'}`}
               >
                 ML-KEM Size
               </div>
@@ -4461,7 +4461,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           className="p-3 h-[180px] overflow-y-auto font-mono text-[11px] leading-relaxed"
         >
           {ssLogs.length === 0 ? (
-            <div className="text-muted-foreground/50 italic">Awaiting daemon initialization...</div>
+            <div className="text-muted-foreground/80 italic">Awaiting daemon initialization...</div>
           ) : (
             ssLogs.map((log, i) => {
               const phase = getIkePhase(log.text)
@@ -4800,9 +4800,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   />
                   <span className="text-xs text-muted-foreground">
                     PSK distribution via QKD / quantum-safe methods
-                    <span className="ml-1 text-[10px] opacity-60">
-                      (informational — not simulated)
-                    </span>
+                    <span className="ml-1 text-[10px]">(informational — not simulated)</span>
                   </span>
                 </label>
                 {showQkdNote && (

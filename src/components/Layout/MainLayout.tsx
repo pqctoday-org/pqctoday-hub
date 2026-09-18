@@ -110,6 +110,7 @@ import {
 } from '../../data/personaConfig'
 import { REGION_LABELS } from '../../data/regionIndustryOptions'
 import { PERSONAS } from '../../data/learningPersonas'
+import { useFocusableScrollRegions } from '../../hooks/useFocusableScrollRegions'
 import {
   ROUTE_VIEW_TYPE,
   ROUTE_PAGE_ID,
@@ -414,6 +415,10 @@ export const MainLayout = () => {
   // On by default as of 2026-08-23 — see featureFlags.ts. Computed before
   // isCuriousMobileTakeover below, which needs to know about it.
   const isMobileShell = useIsMobileShell()
+  // Wave A (2026-09-18): overflowing tables and code boxes under <main> get a
+  // tab stop only while they overflow — see the hook.
+  const mainRef = React.useRef<HTMLElement>(null)
+  useFocusableScrollRegions(mainRef)
 
   // `!isMobileShell` added 2026-08-23 — real bug, found by a test exercising
   // the REAL useIsMobileShell/useIsBelowLgViewport hooks together for the
@@ -1417,6 +1422,7 @@ export const MainLayout = () => {
             <>
               {/* Main Content Area */}
               <main
+                ref={mainRef}
                 id="main-content"
                 className={cn(
                   // mobile-ux-layer (2026-08-24 audit R2.1): the `.container`

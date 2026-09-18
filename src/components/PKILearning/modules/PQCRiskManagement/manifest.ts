@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-risk-management',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-034',
   title: 'PQC Risk Management',
   description:
@@ -26,8 +26,15 @@ const manifest: ModuleManifest = {
     { id: 'risk-heatmap', label: 'Risk Heatmap' },
     { id: 'compliance-gap-analysis', label: 'Compliance Gap Analysis' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: ['NIST SP 800-131A', 'RFC 9370', 'NIST CSWP 39', 'NSA CNSA 2.0', 'NIST IR 8547'],
+  },
   embeddable: true,
-  practiceInSim: true,
   load: () => import('./index').then((m) => ({ default: m.PQCRiskManagementModule })),
 }
 

@@ -40,30 +40,89 @@ export function moduleIdFromToolLink(moduleLink: string): string | null {
 }
 
 /**
- * module id → the id of the first browser-runnable tool whose `moduleLink`
- * targets it, in registry order. Derived from `WORKSHOP_TOOLS`; kept in sync by
- * the drift guard, never edited by hand from anything but the guard's output.
+ * module id → every browser-runnable tool whose `moduleLink` targets it, in
+ * registry order. Derived from `WORKSHOP_TOOLS`; kept in sync by the drift
+ * guard, never edited by hand from anything but the guard's output.
+ *
+ * B+ round 8, Wave B (2026-09-18 — WS17 signal 13): the single-valued map
+ * below showed one tool per module, so the second to fifth tools that link to
+ * a module (entropy-randomness has five) were never offered back from it.
+ * ModuleShell renders the whole list now.
  */
-export const TOOL_BY_MODULE_ID: ReadonlyMap<string, string> = new Map([
-  ['slh-dsa', 'slh-dsa'],
-  ['stateful-signatures', 'lms-hss'],
-  ['hybrid-crypto', 'hybrid-encrypt'],
-  ['kms-pqc', 'envelope-encrypt'],
-  ['iam-pqc', 'token-migration'],
-  ['confidential-computing', 'tee-channel'],
-  ['secure-boot-pqc', 'firmware-signing'],
-  ['vpn-ssh-pqc', 'vpn-sim'],
-  ['entropy-randomness', 'rng-demo'],
-  ['pki-workshop', 'pki-workshop'],
-  ['merkle-tree-certs', 'merkle-proof'],
-  ['5g-security', 'suci-flow'],
-  ['digital-id', 'digital-id'],
-  ['digital-assets', 'bitcoin-flow'],
-  ['tls-basics', 'tls-simulator'],
-  ['pki-enrollment-protocols', 'pki-enrollment'],
-  ['email-signing', 'email-signing'],
-  ['api-security-jwt', 'api-security-jwt'],
-  ['mls-group-messaging', 'mls-group-messaging'],
+export const TOOLS_BY_MODULE_ID: ReadonlyMap<string, readonly string[]> = new Map([
+  ['pki-workshop', ['hsm-capacity', 'pki-workshop', 'cert-capacity']],
+  ['hybrid-crypto', ['hybrid-encrypt', 'hybrid-sigs', 'hybrid-certs']],
+  ['kms-pqc', ['envelope-encrypt', 'kdf-derivation']],
+  ['iam-pqc', ['token-migration']],
+  ['secure-boot-pqc', ['firmware-signing', 'tpm-playground']],
+  ['slh-dsa', ['slh-dsa']],
+  ['stateful-signatures', ['lms-hss']],
+  ['confidential-computing', ['tee-channel']],
+  ['tls-basics', ['tls-simulator']],
+  ['vpn-ssh-pqc', ['vpn-sim', 'pqc-ssh-sim']],
+  ['5g-security', ['suci-flow']],
+  ['mls-group-messaging', ['mls-group-messaging']],
+  [
+    'entropy-randomness',
+    ['rng-demo', 'qrng-demo', 'entropy-test', 'drbg-demo', 'source-combining'],
+  ],
+  ['merkle-tree-certs', ['merkle-proof']],
+  ['digital-id', ['digital-id']],
+  ['digital-assets', ['bitcoin-flow', 'hd-wallet', 'solana-flow']],
+  ['api-security-jwt', ['api-security-jwt']],
+  ['pki-enrollment-protocols', ['pki-enrollment']],
+  ['email-signing', ['email-signing']],
+])
+
+/**
+ * module id → the first browser-runnable tool whose `moduleLink` targets it,
+ * in registry order. Kept for callers that want one tool (the mobile practice
+ * card); derived from the multi-valued map above.
+ */
+export const TOOL_BY_MODULE_ID: ReadonlyMap<string, string> = new Map(
+  [...TOOLS_BY_MODULE_ID.entries()].map(([moduleId, tools]) => [moduleId, tools[0]!])
+)
+
+/**
+ * tool id → display name, for the "Also in the Playground" row ModuleShell
+ * renders. A literal for the same reason as the maps above (no eager
+ * WORKSHOP_TOOLS import); the drift guard re-derives it from the registry.
+ */
+export const TOOL_TITLE_BY_ID: ReadonlyMap<string, string> = new Map([
+  ['cacp-kmip', 'KMIP Control Plane'],
+  ['hsm-capacity', 'HSM Capacity Calculator'],
+  ['hybrid-encrypt', 'Hybrid KEM + ECDH'],
+  ['envelope-encrypt', 'Envelope Encryption'],
+  ['token-migration', 'Multi-Algorithm Signing'],
+  ['firmware-signing', 'Firmware Signing'],
+  ['slh-dsa', 'SLH-DSA Sign & Verify'],
+  ['lms-hss', 'Stateful Hash Signatures'],
+  ['hybrid-sigs', 'Hybrid Signature Spectrums'],
+  ['kdf-derivation', 'SP 800-108 KDF'],
+  ['tee-channel', 'TEE-HSM Secure Channel'],
+  ['tls-simulator', 'TLS 1.3 Simulator'],
+  ['vpn-sim', 'PQC VPN Simulator'],
+  ['pqc-ssh-sim', 'PQC SSH Simulator'],
+  ['suci-flow', '5G SUCI Construction'],
+  ['mls-group-messaging', 'MLS Group Messaging'],
+  ['tpm-playground', 'TPM 2.0 PQC Playground'],
+  ['rng-demo', 'Random Generation'],
+  ['qrng-demo', 'QRNG Demo'],
+  ['entropy-test', 'Entropy Testing'],
+  ['drbg-demo', 'SP 800-90A DRBG'],
+  ['source-combining', 'Source Combining'],
+  ['pki-workshop', 'PKI Workshop'],
+  ['cert-capacity', 'Cert Capacity Calculator'],
+  ['hybrid-certs', 'Hybrid Certificates'],
+  ['merkle-proof', 'Merkle Tree Workshop'],
+  ['digital-id', 'EUDI Wallet Architecture'],
+  ['bitcoin-flow', 'Bitcoin Transaction'],
+  ['hd-wallet', 'HD Wallet Derivation'],
+  ['solana-flow', 'Solana Transaction'],
+  ['openssl-studio', 'OpenSSL Studio'],
+  ['api-security-jwt', 'API Security & JWT Workshop'],
+  ['pki-enrollment', 'PKI Enrollment (EST + CMP)'],
+  ['email-signing', 'S/MIME & CMS Workshop'],
 ])
 
 /**
@@ -72,6 +131,18 @@ export const TOOL_BY_MODULE_ID: ReadonlyMap<string, string> = new Map([
  */
 export function resolveModuleTool(manifest: ModuleManifest): string | undefined {
   return manifest.playgroundTool ?? TOOL_BY_MODULE_ID.get(manifest.id)
+}
+
+/**
+ * Every playground tool a module should offer: its own declaration first, then
+ * each tool whose `moduleLink` points here, without duplicates.
+ */
+export function resolveModuleTools(manifest: ModuleManifest): string[] {
+  const out: string[] = []
+  const primary = resolveModuleTool(manifest)
+  if (primary) out.push(primary)
+  for (const t of TOOLS_BY_MODULE_ID.get(manifest.id) ?? []) if (!out.includes(t)) out.push(t)
+  return out
 }
 
 /**

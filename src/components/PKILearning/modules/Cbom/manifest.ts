@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'cbom',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-060',
   title: 'Cryptography Bill of Materials (CBOM)',
   description:
@@ -30,7 +30,6 @@ const manifest: ModuleManifest = {
     { id: 'key-correlator', label: 'Key Correlator' },
   ],
   embeddable: true,
-  practiceInSim: true,
   taxonomy: {
     standards: ['CycloneDX / ECMA-424', 'SPDX / ISO 5962', 'NIST SP 1800-38'],
   },

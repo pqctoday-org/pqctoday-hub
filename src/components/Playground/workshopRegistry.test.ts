@@ -71,3 +71,59 @@ describe('workshopRegistry — visitor-facing honesty invariants', () => {
   // tool's import graph from TOOL_COMPONENTS and inspect the code. Tracked as
   // WS6 in playground-tools-remediation-plan-08112026.md.
 })
+
+// B+ round 8, Wave B (2026-09-18) — WS17 tasks 4 and 7c: the "Start here"
+// allocation is curated data, so it gets the same drift guards as the rest of
+// the registry. Executive and grc are the documented exception to distinctness:
+// each has exactly two eligible tools in the registry and they are the same two.
+describe('workshopRegistry — Start-here allocation (WS17)', () => {
+  const PERSONAS = [
+    'executive',
+    'grc',
+    'developer',
+    'architect',
+    'researcher',
+    'ops',
+    'curious',
+  ] as const
+  const poolFor = (role: (typeof PERSONAS)[number]) => {
+    const base = WORKSHOP_TOOLS.filter((t) => !t.sandbox && t.recommendedPersonas.includes(role))
+    const curated = base.filter((t) => t.startHere?.includes(role))
+    return [...curated, ...base.filter((t) => !curated.includes(t))].slice(0, 3).map((t) => t.id)
+  }
+
+  it('startHere only names personas the tool already recommends itself to', () => {
+    for (const t of WORKSHOP_TOOLS) {
+      for (const p of t.startHere ?? []) {
+        expect(
+          t.recommendedPersonas,
+          `${t.id}: startHere '${p}' not in recommendedPersonas`
+        ).toContain(p)
+      }
+    }
+  })
+
+  it('no role has more than three curated picks (the pool shows exactly three)', () => {
+    for (const p of PERSONAS) {
+      const n = WORKSHOP_TOOLS.filter((t) => t.startHere?.includes(p)).length
+      expect(n, `${p} has ${n} startHere picks`).toBeLessThanOrEqual(3)
+    }
+  })
+
+  it('the seven pools cover at least 16 distinct tools, and only executive/grc share a pool', () => {
+    const pools = Object.fromEntries(PERSONAS.map((p) => [p, poolFor(p)]))
+    const distinct = new Set(Object.values(pools).flat())
+    expect(distinct.size, JSON.stringify(pools)).toBeGreaterThanOrEqual(16)
+    for (const a of PERSONAS) {
+      for (const b of PERSONAS) {
+        if (a >= b) continue
+        const same = pools[a].join() === pools[b].join()
+        const allowed = new Set([a, b]).has('executive') && new Set([a, b]).has('grc')
+        expect(
+          same && !allowed,
+          `${a} and ${b} open on the same Start-here pool: ${pools[a]}`
+        ).toBe(false)
+      }
+    }
+  })
+})

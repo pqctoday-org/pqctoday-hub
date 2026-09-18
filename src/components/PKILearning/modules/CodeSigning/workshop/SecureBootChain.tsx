@@ -258,7 +258,7 @@ export const SecureBootChain: React.FC = () => {
               }`}
             >
               <div>{alg.name}</div>
-              <div className="text-[10px] opacity-70">
+              <div className="text-[10px]">
                 {alg.stateful ? 'Stateful' : 'Stateless'} &middot; {alg.standard}
               </div>
             </Button>

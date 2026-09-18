@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'confidential-computing',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-019',
   title: 'Confidential Computing & TEEs',
   description:
@@ -30,6 +30,14 @@ const manifest: ModuleManifest = {
     { id: 'tee-hsm-channel', label: 'TEE-HSM Trusted Channel' },
     { id: 'quantum-threat-migration', label: 'Quantum Threat Migration' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: ['ETSI TS 103 744', 'NIST SP 800-227', 'FIPS 140-3'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.ConfidentialComputingModule })),
 }

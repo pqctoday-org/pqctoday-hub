@@ -164,7 +164,10 @@ function LegCard({
           <dt className="text-muted-foreground">Client auth</dt>
           <dd className="font-mono text-foreground text-right">{result.client_auth_algorithm}</dd>
         </div>
-
+      </dl>
+      {/* Wave A (2026-09-18): the size bars are not name/value pairs, so they
+          live outside the <dl> (axe `definition-list`). */}
+      <div className="space-y-2 text-xs">
         <div className="pt-2 space-y-1.5">
           <p className="text-muted-foreground font-medium">Host pubkey</p>
           <SizeBar bytes={result.host_pubkey_bytes} max={maxPubBytes} className={accent.bar2} />
@@ -211,7 +214,7 @@ function LegCard({
             <span>client sig: {result.client_sig_ms.toFixed(1)} ms</span>
           </div>
         </div>
-      </dl>
+      </div>
     </div>
   )
 }

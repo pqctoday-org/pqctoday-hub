@@ -7,7 +7,7 @@ import {
   essentialsQuizCategories,
   type PathItem,
 } from './learningPersonas'
-import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
+import { MANIFEST_BY_ID, MANIFESTS } from '@/components/PKILearning/manifest/registry'
 
 const moduleIdsFromPathItems = (items: PathItem[]): string[] =>
   items
@@ -175,5 +175,54 @@ describe('inferPersonaFromAssessment — role targeting', () => {
         })
       )
     ).toBe(null)
+  })
+})
+
+// B+ round 8, Wave B (2026-09-18) — WS17 task 7a. The 2026-08 census found a
+// module (government-defense-pqc) that had shipped into no persona path at all;
+// nothing failed, so nobody noticed until a discoverability regrade did. This
+// makes that impossible: every real module is on at least one recommendedPath,
+// or is listed here with the reason it is deliberately not.
+const PATH_EXEMPT: Record<string, string> = {
+  // (none today — add `'module-id': 'reason'` when a module is meant to be
+  // reachable only from its track, never from a persona path)
+}
+
+describe('persona-path reach guard (WS17)', () => {
+  const allPaths = new Set(Object.values(PERSONAS).flatMap((p) => p.recommendedPath))
+
+  it('every module in the manifest registry is on at least one recommendedPath, or exempted with a reason', () => {
+    const missing = MANIFESTS.filter((m) => !m.custom && m.track)
+      .map((m) => m.id)
+      .filter((id) => !allPaths.has(id) && !PATH_EXEMPT[id])
+    expect(
+      missing,
+      `modules on no persona path and not in PATH_EXEMPT: ${missing.join(', ')}`
+    ).toEqual([])
+  })
+
+  it('every PATH_EXEMPT entry names a real module that really is off every path', () => {
+    for (const [id, reason] of Object.entries(PATH_EXEMPT)) {
+      expect(MANIFEST_BY_ID[id], `PATH_EXEMPT names an unknown module: ${id}`).toBeDefined()
+      expect(reason.length, `PATH_EXEMPT[${id}] needs a reason`).toBeGreaterThan(10)
+      expect(allPaths.has(id), `${id} is exempted but sits on a path — drop the exemption`).toBe(
+        false
+      )
+    }
+  })
+
+  // The two narrow-reach modules the round-8 census found (both on exactly one
+  // path) were placed at a topical cluster position on 2026-09-18; keep them
+  // from silently dropping back to one path.
+  it.each([
+    ['soc-implementation-pqc', ['ops', 'architect', 'grc']],
+    ['automotive-pqc', ['architect', 'ops']],
+  ])('%s stays on the paths it was placed on', (id, personas) => {
+    for (const persona of personas) {
+      expect(
+        PERSONAS[persona as keyof typeof PERSONAS].recommendedPath,
+        `${id} on ${persona}`
+      ).toContain(id)
+    }
   })
 })

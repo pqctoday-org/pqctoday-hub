@@ -11,7 +11,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'emv-payment-pqc',
-  contentVersion: 7,
+  contentVersion: 8,
   lm_id: 'LM-044',
   title: 'Financial Services & Payments PQC',
   description:
@@ -99,7 +99,14 @@ const manifest: ModuleManifest = {
   ],
   // simRelevance.ts already maps this module to the financial and retail
   // scenarios; declaring it here is what actually surfaces the sim as practice.
-  practiceInSim: true,
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['Falcon', 'ML-DSA', 'ML-KEM'],
+    standards: ['FIPS 186-5', 'FIPS 140-3'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.EMVPaymentPQCModule })),
 }

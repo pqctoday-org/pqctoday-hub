@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'secrets-management-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-022',
   title: 'Secrets Management & PQC',
   description:
@@ -29,6 +29,14 @@ const manifest: ModuleManifest = {
     { id: 'cloud-secrets-comparator', label: 'Cloud Provider Comparator' },
     { id: 'pipeline-integration-lab', label: 'Pipeline Integration Lab' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: ['RFC 9180', 'NIST SP 800-57', 'NIST SP 800-227', 'FIPS 140-3'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.SecretsManagementPQCModule })),
 }

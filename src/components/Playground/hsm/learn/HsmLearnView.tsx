@@ -256,7 +256,7 @@ function LessonRunner({
                 : 'text-muted-foreground hover:bg-muted/50'
             )}
           >
-            <span className="mt-0.5 shrink-0 font-mono text-[10px] opacity-70">
+            <span className="mt-0.5 shrink-0 font-mono text-[10px]">
               {navPrefix}
               {l.n}
             </span>
@@ -434,7 +434,11 @@ export function HsmLearnView({
     <GlossaryProvider data={PKCS11_GLOSSARY_DATA}>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <div className="min-w-0 flex-1 space-y-4">
-          <div className="flex items-center gap-1 border-b border-border">
+          <div
+            className="flex items-center gap-1 border-b border-border"
+            role="tablist"
+            aria-label="PKCS#11 learning tracks"
+          >
             {(
               [
                 { id: 'foundations', label: 'PKCS#11 Foundations' },

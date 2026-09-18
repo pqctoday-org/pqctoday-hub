@@ -29,6 +29,29 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.88.0] - 2026-09-18
+
+Every page reads better for screen-reader and keyboard users, the learning paths and role boards reach more of the site, and the Crypto Lab opens on a different set of tools for each role.
+
+### Added
+
+- **Every role board now opens a Learn module** [view:/] [view:/learn] [persona:executive] [persona:grc] [persona:architect] [persona:researcher] [persona:curious]: the executive, GRC, architect and researcher home boards had no card pointing at a learning module at all; nine "why this matters" cards now open the module on that role's own learning path that makes the same argument (governance, risk register, migration programme, deadlines, testing evidence, standards bodies, quantum threats, verification and closure).
+- **The Crypto Lab "Start here" picks differ by role** [view:/playground] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: developers, architects and researchers used to see the same three HSM tools; each role now gets three tools chosen for it (17 distinct tools across the seven roles instead of 12), and the flagship tool leads each category rail.
+- **A module lists every Playground tool built for it** [view:/learn] [persona:developer] [persona:ops] [persona:researcher]: modules with several hands-on tools (Entropy & Randomness has five, PKI has three) offered only one; the others now appear in an "Also in the Playground" row at the end of the module. The TPM 2.0 playground gained a home module (Secure Boot).
+- **Researchers can browse 43 more modules by algorithm and standard** [view:/learn] [persona:researcher] [persona:architect]: every module now carries the algorithms and standards its own references declare, so the algorithm/standard filter on the Learn page and the "Related modules" panel cover all 65 modules instead of 22. Twenty standards join the filter (NIST IR 8547, CNSA 2.0, FIPS 140-3, NIST CSWP 39, EO 14306 and others).
+- **Five guided workshops now run on a phone** [view:/learn] [persona:executive] [persona:grc] [persona:architect] [persona:curious]: Compliance Strategy, Verification & Closure, PQC Business Case, Crypto Registry and CBOM open their real workshop inside the mobile module view behind a Learn / Workshop switch, instead of asking you to switch to a laptop. Every step was checked at phone width first; workshops that need a wider screen keep the notice.
+- **SOC detection and automotive modules reach the roles that need them** [view:/learn] [persona:architect] [persona:grc] [persona:ops]: SOC Implementation for PQC joins the architect and GRC paths, Automotive PQC joins the architect and ops paths — both were on one path only.
+
+### Fixed
+
+- **Small labels are readable again on 40 pages** [view:/learn] [view:/playground] [view:/algorithms] [view:/about] [persona:curious] [persona:developer]: level badges, "(NIST L1)" tags, track chips and status labels sat below the WCAG contrast floor (some at 1.2:1) because they were dimmed with opacity or used the brand tint as text; text now uses the legible variant of each colour and the dimming is gone. Achievement toasts slide instead of fading, so they no longer flash unreadable text while dismissing.
+- **Every page has a level-one heading, on desktop and on the phone** [view:/business] [view:/playground] [view:/navigate] [view:/report] [persona:curious]: 45 pages (all 37 business tools among them) had none, and no page had one in the mobile layout; assistive technology can now jump to the page title everywhere.
+- **Wide tables can be scrolled with the keyboard** [view:/learn] [view:/playground] [persona:developer]: tables and code blocks that overflow now receive keyboard focus only while they actually overflow, so keyboard users can scroll them and nobody gets empty tab stops when they fit.
+- **Links inside paragraphs are underlined** [view:/learn] [view:/about] [view:/terms] [persona:curious]: in-text links relied on colour alone (under 3:1 against the surrounding text); they are underlined now, while navigation and cards keep their styling.
+- **Opening /embed directly shows a plain explanation instead of an error** [view:/embed] [persona:developer]: the embed address is only meaningful inside a partner site; opened on its own it used to crash to "Something went wrong".
+- **Six country flags on the community directory were missing** [view:/leaders] [persona:curious]: Sweden, Switzerland, the Netherlands, Belgium, Russia and Portugal showed a broken image.
+- **The VPN and SSH comparison panels use valid list markup and the HSM learn tabs are a proper tab list** [view:/playground/vpn-sim] [view:/playground/pqc-ssh-sim] [view:/playground/hsm] [persona:developer]: screen readers announce them correctly.
+
 ## [4.87.0] - 2026-09-18
 
 The Industry Landscape shows which post-quantum mechanism replaces which classical one, search results stop mixing crosswalk rows into the compliance frameworks, the site stays up for visitors in the minutes after a release, search engines can index every page, and a night of evidence work re-addresses 51 organisation sources and prunes copies that were never the cited document.
@@ -45,7 +68,7 @@ The Industry Landscape shows which post-quantum mechanism replaces which classic
 
 ### Data
 
-- **51 organisation sources re-addressed after a web-search pass** [view:/community] [view:/library] [persona:researcher] [persona:grc]: 25 Sources-directory and 26 trusted-sources rows that pointed at a dead or blocked address now point at a page the evidence door verified as the organisation's own; 145 could not be found and stay marked.
+- **51 organisation sources re-addressed after a web-search pass** [view:/about] [view:/library] [persona:researcher] [persona:grc]: 25 Sources-directory and 26 trusted-sources rows that pointed at a dead or blocked address now point at a page the evidence door verified as the organisation's own; 145 could not be found and stay marked.
 - **250 registry concepts whose source row had been deprecated are resolved** [view:/compliance] [view:/learn] [persona:grc] [persona:researcher]: 68 remapped to the active successor, 18 resolved through their table, 165 deprecated with their source's own reason, with the crosswalks that cite them following; 280 verbatim crosswalk candidates merged at low confidence.
 - **Every glossary term now links to a Learn module that actually uses it** [view:/learn] [persona:curious]: 61 unlinked terms assigned (38 by whole-word use in the module's own text, 23 by their definitions).
 - **20 leader references added and 9 ANSSI certification reports re-addressed** [view:/leaders] [view:/compliance] [persona:researcher] [persona:grc]: 18 new library documents back leaders who cited nothing; 9 ANSSI reports whose cyber.gouv.fr addresses are dead now point at the Common Criteria portal copy, verified; 16 CMVP records lose a "Security Policy Not Available" placeholder that had been counted as a document.
@@ -84,7 +107,7 @@ The Navigate graph becomes readable when you zoom in, vendors can list more than
 - **11 Migrate catalog proofs now point at the publisher's actual document instead of a landing or empty page** [view:/migrate] [persona:architect] [persona:ops]: including Xiphera XIP6220B, whose proof is now NIST's CAVP validation detail page (validation 40088: ML-DSA KeyGen, SigGen, SigVer) rather than a vendor brief that never carried the claim. Product statuses are unchanged.
 - **545 concept-crosswalk links whose quoted evidence is not in the cited document are marked low-confidence** [view:/compliance] [persona:grc] [persona:researcher]: 435 quotes were not found in the document and 110 only partly; the links stay (they may still hold) but no longer present a quote as verbatim. Verbatim replacements come from a re-run of the extractor, human-reviewed before merge.
 - **Vendor identifiers cleaned up** [view:/migrate] [persona:grc] [persona:executive]: 38 Legal Entity Identifiers GLEIF does not recognise (one was a placeholder) are cleared, and 45 pending ones resolved by name search — 9 matched, 24 confirmed as having no LEI.
-- **Library and Community references brought up to date** [view:/library] [view:/community] [persona:researcher]: KMIP 3.0 CSD02 (May 2026, the only text OASIS publishes) added; ISO/IEC 27005:2022 now names its ISO catalogue page; five Community profiles re-pointed from a superseded draft or report to the current one (draft-ietf-lamps-pq-composite-kem-20, GRI Quantum Threat Timeline 2025); Cloudflare's engineering blog registered as a trusted source.
+- **Library and Community references brought up to date** [view:/library] [view:/about] [persona:researcher]: KMIP 3.0 CSD02 (May 2026, the only text OASIS publishes) added; ISO/IEC 27005:2022 now names its ISO catalogue page; five Community profiles re-pointed from a superseded draft or report to the current one (draft-ietf-lamps-pq-composite-kem-20, GRI Quantum Threat Timeline 2025); Cloudflare's engineering blog registered as a trusted source.
 
 ## [4.85.0] - 2026-09-13
 

@@ -138,7 +138,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
               <p>32-byte public keys</p>
               <p>AES-128-CTR encryption</p>
               <p>HMAC-SHA-256 integrity</p>
-              <p className="text-destructive/80 font-medium pt-1">Quantum-vulnerable</p>
+              <p className="text-destructive font-medium pt-1">Quantum-vulnerable</p>
             </div>
           </div>
           <div className="bg-secondary/5 rounded-lg p-4 border border-secondary/20">
@@ -148,7 +148,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
               <p>65-byte uncompressed public keys</p>
               <p>AES-128-CTR encryption</p>
               <p>HMAC-SHA-256 integrity</p>
-              <p className="text-destructive/80 font-medium pt-1">Quantum-vulnerable</p>
+              <p className="text-destructive font-medium pt-1">Quantum-vulnerable</p>
             </div>
           </div>
           <div className="bg-tertiary/5 rounded-lg p-4 border border-tertiary/20">

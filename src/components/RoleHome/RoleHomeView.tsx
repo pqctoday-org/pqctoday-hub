@@ -242,12 +242,14 @@ export const RoleHomeView = ({ onSelectPersona, onSkip }: RoleHomeViewProps) => 
       <p className="mb-3 text-sm font-mono uppercase tracking-widest text-muted-foreground">
         Post-quantum cryptography, explained and provable
       </p>
-      <h2
+      {/* Wave A (2026-09-18): h1 — this screen is the whole front door until a
+          role is picked, and it rendered no level-one heading. */}
+      <h1
         id="role-home-heading"
         className="text-gradient text-4xl font-extrabold leading-tight sm:text-[40px]"
       >
         Who's asking?
-      </h2>
+      </h1>
       <p className="mt-4 max-w-[520px] text-muted-foreground">
         Pick the closest fit and we'll lead with what you need. You'll still see everything —
         nothing gets hidden, and you can change this on any page.

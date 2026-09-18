@@ -47,7 +47,10 @@ export const EmailSigningPlayground: React.FC = () => {
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm text-foreground/80">
         Full S/MIME &amp; CMS workshop — real OpenSSL 3.6 WASM sign+verify and encrypt+decrypt with
         optional softhsmv3 PKCS#11 HSM routing.{' '}
-        <Link to="/learn/email-signing?tab=workshop" className="text-primary hover:underline">
+        <Link
+          to="/learn/email-signing?tab=workshop"
+          className="text-primary underline underline-offset-2"
+        >
           Open the full learn module for guided walkthroughs and quizzes.
         </Link>
       </div>

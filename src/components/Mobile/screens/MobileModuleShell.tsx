@@ -30,6 +30,16 @@ export interface MobileModuleShellProps {
    *  caller (ModuleShell) so this component stays free of the bundle-size
    *  concern that keeps that resolution a plain literal, not a live import. */
   practiceTool?: string
+  /**
+   * Wave D (2026-09-18): the module's real Workshop tab body, passed only for
+   * modules on MOBILE_WORKSHOP_READY (src/data/mobileWorkshops.ts). When
+   * present the screen gains a Learn / Workshop switch and the "switch to a
+   * laptop" banner is not shown.
+   */
+  workshopContent?: ReactNode
+  /** ModuleShell's active tab ('learn' | 'workshop' | …); drives the switch. */
+  activeTab?: string
+  onTabChange?: (tab: string) => void
 }
 
 /**
@@ -77,7 +87,11 @@ export function MobileModuleShell({
   description,
   learnContent,
   practiceTool,
+  workshopContent,
+  activeTab,
+  onTabChange,
 }: MobileModuleShellProps) {
+  const showWorkshop = Boolean(workshopContent) && activeTab === 'workshop'
   const modules = useModuleStore((s) => s.modules)
   const toggleLearnSection = useModuleStore((s) => s.toggleLearnSection)
 
@@ -116,7 +130,43 @@ export function MobileModuleShell({
         )}
       </div>
 
-      {sections.length > 0 && (
+      {workshopContent ? (
+        <div
+          role="tablist"
+          aria-label="Module view"
+          className="grid grid-cols-2 gap-1 rounded-xl border border-border bg-card p-1"
+        >
+          {(['learn', 'workshop'] as const).map((tab) => {
+            const selected = tab === 'workshop' ? showWorkshop : !showWorkshop
+            return (
+              <Button
+                key={tab}
+                type="button"
+                variant="ghost"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => onTabChange?.(tab)}
+                className={cn(
+                  'h-auto min-h-[44px] rounded-lg text-[13px] font-semibold transition-colors',
+                  selected
+                    ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
+                    : 'text-muted-foreground'
+                )}
+              >
+                {tab === 'learn' ? 'Learn' : 'Workshop'}
+              </Button>
+            )
+          })}
+        </div>
+      ) : null}
+
+      {showWorkshop ? (
+        <div id="mobile-workshop" role="tabpanel" className="min-w-0">
+          {workshopContent}
+        </div>
+      ) : null}
+
+      {!showWorkshop && sections.length > 0 && (
         <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3.5">
           <MobileProgress
             tone="success"
@@ -164,11 +214,13 @@ export function MobileModuleShell({
         </div>
       )}
 
-      <div className="text-[13px] leading-relaxed text-foreground [&_h2]:mt-4 [&_h2]:text-[15px] [&_h2]:font-bold [&_h3]:mt-3 [&_h3]:text-[13.5px] [&_h3]:font-bold">
-        {learnContent}
-      </div>
+      {!showWorkshop && (
+        <div className="text-[13px] leading-relaxed text-foreground [&_h2]:mt-4 [&_h2]:text-[15px] [&_h2]:font-bold [&_h3]:mt-3 [&_h3]:text-[13.5px] [&_h3]:font-bold">
+          {learnContent}
+        </div>
+      )}
 
-      {practiceTool ? (
+      {workshopContent ? null : practiceTool ? (
         <Link
           to={`/playground/${practiceTool}`}
           className="flex items-center gap-2.5 rounded-xl border border-primary/30 bg-primary/5 p-3.5 transition-colors active:bg-primary/10"

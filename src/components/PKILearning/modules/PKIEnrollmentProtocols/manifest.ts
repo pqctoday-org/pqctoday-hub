@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pki-enrollment-protocols',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-055',
   title: 'PKI Enrollment Protocols (EST & CMP)',
   description:
@@ -38,6 +38,14 @@ const manifest: ModuleManifest = {
     { value: 'references', label: 'References' },
     { value: 'tools', label: 'Tools & Products' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: ['FIPS 203', 'FIPS 204'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.PKIEnrollmentProtocolsModule })),
 }

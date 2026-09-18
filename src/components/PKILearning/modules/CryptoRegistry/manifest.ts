@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-registry',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-062',
   title: 'CycloneDX Cryptography Registry',
   description:
@@ -27,7 +27,6 @@ const manifest: ModuleManifest = {
     { id: 'curve-lookup', label: 'Curve Identifier Lookup' },
   ],
   embeddable: false,
-  practiceInSim: true,
   taxonomy: {
     standards: ['CycloneDX Cryptography Registry'],
   },

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'ai-security-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-033',
   title: 'AI Security & PQC',
   description:
@@ -31,6 +31,14 @@ const manifest: ModuleManifest = {
     { id: 'agent-to-agent-protocol', label: 'Agent-to-Agent Protocol' },
     { id: 'scale-encryption-planner', label: 'Scale Encryption Planner' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM', 'SLH-DSA'],
+    standards: ['RFC 9846', 'FIPS 140-3'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.AISecurityPQCModule })),
 }

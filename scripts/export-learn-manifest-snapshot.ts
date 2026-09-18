@@ -86,7 +86,6 @@ interface ModuleSnapshot {
   frameworkPhase: string[]
   embeddable: boolean
   playgroundTool: string | null
-  practiceInSim: boolean
   whyThisMatters: string | null
   taxonomyAlgorithms: string[]
   taxonomyStandards: string[]
@@ -132,7 +131,6 @@ interface LoadedManifest {
   stepCountOverride?: number
   embeddable?: boolean
   playgroundTool?: string
-  practiceInSim?: boolean
   whyThisMatters?: string
   taxonomy?: { algorithms?: string[]; standards?: string[] }
   tabs?: { value: string; label: string }[]
@@ -751,7 +749,6 @@ async function buildModuleSnapshot(
     frameworkPhase: Array.isArray(m.frameworkPhase) ? [...m.frameworkPhase] : [m.frameworkPhase],
     embeddable: m.embeddable === true,
     playgroundTool: m.playgroundTool ?? null,
-    practiceInSim: m.practiceInSim === true,
     whyThisMatters: m.whyThisMatters ?? null,
     taxonomyAlgorithms: m.taxonomy?.algorithms ?? [],
     taxonomyStandards: m.taxonomy?.standards ?? [],

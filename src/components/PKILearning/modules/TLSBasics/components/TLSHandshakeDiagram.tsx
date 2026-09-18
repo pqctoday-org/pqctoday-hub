@@ -313,7 +313,7 @@ const MessageArrow: React.FC<{
               {sublabel}
             </div>
           )}
-          <div className="text-[9px] text-muted-foreground/50 text-center whitespace-nowrap font-mono">
+          <div className="text-[9px] text-muted-foreground/80 text-center whitespace-nowrap font-mono">
             {rfcRef}
           </div>
         </div>

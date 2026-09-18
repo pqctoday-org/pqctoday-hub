@@ -259,7 +259,7 @@ export const PQCJWTSigning: React.FC = () => {
             }`}
           >
             {alg.jose}
-            <span className="ml-1 text-[10px] opacity-70">L{alg.nistLevel}</span>
+            <span className="ml-1 text-[10px]">L{alg.nistLevel}</span>
           </Button>
         ))}
       </div>
@@ -399,6 +399,7 @@ export const PQCJWTSigning: React.FC = () => {
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3">JWT Payload (Editable)</h4>
         <Textarea
+          aria-label="JWT payload JSON (editable)"
           value={payloadJson}
           onChange={(e) => {
             setPayloadJson(e.target.value)

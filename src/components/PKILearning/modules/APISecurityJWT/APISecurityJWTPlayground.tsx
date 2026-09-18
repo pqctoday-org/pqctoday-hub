@@ -64,7 +64,10 @@ export const APISecurityJWTPlayground: React.FC = () => {
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm text-foreground/80">
         Full API Security &amp; JWT workshop — real PQC signing (ML-DSA, SLH-DSA, composite) and
         ML-KEM-768 JWE encryption, with optional softhsmv3 PKCS#11 routing.{' '}
-        <Link to="/learn/api-security-jwt?tab=workshop" className="text-primary hover:underline">
+        <Link
+          to="/learn/api-security-jwt?tab=workshop"
+          className="text-primary underline underline-offset-2"
+        >
           Open the full learn module for guided walkthroughs and quizzes.
         </Link>
       </div>

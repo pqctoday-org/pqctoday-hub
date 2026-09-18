@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'healthcare-pqc',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-041',
   title: 'Healthcare PQC',
   description:
@@ -29,6 +29,14 @@ const manifest: ModuleManifest = {
     { id: 'device-safety-simulator', label: 'Device Safety Simulator' },
     { id: 'hospital-migration-planner', label: 'Hospital Migration Planner' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: ['NIST IR 8547', 'FIPS 203', 'FIPS 204', 'FIPS 205'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.HealthcarePQCModule })),
 }

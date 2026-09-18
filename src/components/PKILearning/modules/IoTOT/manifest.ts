@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'iot-ot-pqc',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-032',
   title: 'IoT & OT Security',
   description:
@@ -36,6 +36,14 @@ const manifest: ModuleManifest = {
     { id: 'cert-chain-bloat', label: 'Chain Bloat Analysis' },
     { id: 'scada-assessment', label: 'SCADA Planner' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['Falcon', 'LMS/XMSS', 'ML-DSA', 'ML-KEM'],
+    standards: ['RFC 9846', 'NIST SP 800-208', 'NSA CNSA 2.0'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.IoTOTModule })),
 }

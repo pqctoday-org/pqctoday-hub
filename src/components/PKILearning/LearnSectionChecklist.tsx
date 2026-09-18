@@ -61,7 +61,7 @@ export const LearnSectionChecklist = ({ moduleId, className = '' }: LearnSection
                   <Square size={14} className="text-muted-foreground mt-0.5 shrink-0" />
                 )}
                 <span
-                  className={`min-w-0 break-words ${isChecked ? 'line-through opacity-70' : ''}`}
+                  className={`min-w-0 break-words ${isChecked ? 'line-through text-muted-foreground' : ''}`}
                 >
                   {section.label}
                 </span>

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'energy-utilities-pqc',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-042',
   title: 'Energy & Utilities PQC',
   description:
@@ -31,6 +31,14 @@ const manifest: ModuleManifest = {
     { id: 'safety-risk-scorer', label: 'Risk Scorer' },
     { id: 'grid-migration-roadmap', label: 'Grid Roadmap' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: ['NIST SP 800-227', 'FIPS 203', 'FIPS 204', 'FIPS 205'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.EnergyUtilitiesModule })),
 }

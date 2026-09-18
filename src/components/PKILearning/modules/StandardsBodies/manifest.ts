@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'standards-bodies',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-004',
   title: 'Standards, Certification & Compliance Bodies',
   description:
@@ -29,6 +29,14 @@ const manifest: ModuleManifest = {
     { id: 'coverage-grid', label: 'Coverage Grid' },
     { id: 'scenario-challenge', label: 'Scenario Challenge' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: ['ETSI TS 103 744', 'NIST SP 800-227', 'NSA CNSA 2.0', 'NIST IR 8547'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.StandardsBodiesModule })),
 }

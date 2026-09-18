@@ -317,7 +317,7 @@ export const DrbgArchitectureDemo: React.FC = () => {
 
           {/* Phase 2: Generate & Reseed */}
           <div
-            className={`glass-panel p-4 space-y-4 border ${instantiated ? 'border-success' : 'border-border/50 opacity-50'}`}
+            className={`glass-panel p-4 space-y-4 border ${instantiated ? 'border-success' : 'border-dashed border-border'}`}
           >
             <h4 className="text-sm font-semibold flex items-center gap-2">
               <span className="flex items-center justify-center bg-success text-success-foreground rounded-full w-5 h-5 text-xs">

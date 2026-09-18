@@ -287,7 +287,7 @@ export function OpenSslLearnView({
                     : 'text-muted-foreground hover:bg-muted/50'
                 )}
               >
-                <span className="mt-0.5 shrink-0 font-mono text-[10px] opacity-70">L{l.n}</span>
+                <span className="mt-0.5 shrink-0 font-mono text-[10px]">L{l.n}</span>
                 <span>{l.title}</span>
               </Button>
             ))}

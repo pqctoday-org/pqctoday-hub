@@ -56,9 +56,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <div className="text-2xl font-bold text-destructive">18&ndash;36 KB</div>
             <div className="text-xs text-muted-foreground">
               PQC TLS chain overhead
-              <span className="block text-[10px] mt-0.5 opacity-70">
-                (incl. cert body, SANs, extensions)
-              </span>
+              <span className="block text-[10px] mt-0.5">(incl. cert body, SANs, extensions)</span>
             </div>
           </div>
         </div>

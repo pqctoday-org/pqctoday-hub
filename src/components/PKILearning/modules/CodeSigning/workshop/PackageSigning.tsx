@@ -150,7 +150,7 @@ export const PackageSigning: React.FC = () => {
               }`}
             >
               <div>{mode.label}</div>
-              <div className="text-[10px] opacity-70">{mode.algorithm}</div>
+              <div className="text-[10px]">{mode.algorithm}</div>
             </Button>
           ))}
         </div>

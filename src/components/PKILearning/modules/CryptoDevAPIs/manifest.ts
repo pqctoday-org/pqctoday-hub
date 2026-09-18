@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-dev-apis',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-021',
   title: 'Cryptographic APIs & Developer Languages',
   description:
@@ -37,6 +37,14 @@ const manifest: ModuleManifest = {
     { id: 'crypto-agility-patterns', label: 'Crypto Agility Patterns' },
     { id: 'migration-decision-lab', label: 'Migration Decision Lab' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['Falcon', 'HQC', 'ML-DSA', 'ML-KEM', 'SLH-DSA'],
+    standards: ['FIPS 186-5', 'RFC 9846', 'NIST SP 800-208', 'FIPS 140-3'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.CryptoDevAPIsModule })),
 }

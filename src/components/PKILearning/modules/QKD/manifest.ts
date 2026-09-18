@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'qkd',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-017',
   title: 'Quantum Key Distribution',
   description:
@@ -28,6 +28,14 @@ const manifest: ModuleManifest = {
     { id: 'protocol-integration', label: 'Protocol Integration' },
     { id: 'hsm-derivation', label: 'HSM Key Derivation' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-KEM'],
+    standards: ['RFC 9846', 'NIST IR 8547'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.QKDModule })),
 }

@@ -43,13 +43,19 @@ import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { RelatedModulesPanel } from './RelatedModulesPanel'
 import { IndustryLandscapePanel } from './IndustryLandscapePanel'
-import { resolveModuleTool, mobilePracticeTool } from '@/data/moduleToolLinks'
+import {
+  resolveModuleTool,
+  resolveModuleTools,
+  mobilePracticeTool,
+  TOOL_TITLE_BY_ID,
+} from '@/data/moduleToolLinks'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { personaPracticesModulePhase } from '@/data/personaConfig'
 import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileModuleShell } from '@/components/Mobile/screens/MobileModuleShell'
+import { MOBILE_WORKSHOP_READY } from '@/data/mobileWorkshops'
 
 /** "Phase 4 · Execute" style label for the header context rail (P2.1). Spanning
  *  modules (frameworkPhase is an array) show their first/primary phase. */
@@ -342,7 +348,11 @@ export const ModuleShell = ({
       // exists, else scroll to the honest "not built for mobile yet" banner
       // MobileModuleShell renders — never a no-op.
       if (isMobileShell) {
-        if (practiceTool) {
+        // Wave D (2026-09-18): modules on MOBILE_WORKSHOP_READY mount their
+        // real workshop inside the phone shell, so the click switches to it.
+        if (MOBILE_WORKSHOP_READY.has(manifest.id)) {
+          navigateToTab('workshop')
+        } else if (practiceTool) {
           navigate(`/playground/${practiceTool}`)
         } else {
           document.getElementById('mobile-workshop-banner')?.scrollIntoView({
@@ -418,6 +428,10 @@ export const ModuleShell = ({
   // modules (confidential-computing, iam-pqc, secure-boot-pqc) had a real tool
   // linking to them and rendered nothing back; no manifest edit closes it.
   const relatedTool = resolveModuleTool(manifest)
+  // Wave B (2026-09-18, WS17 signal 13): the other tools that name this module
+  // as their home. Rendered as a second row under the primary link so a
+  // module with several twins (entropy-randomness has five) offers them all.
+  const moreTools = resolveModuleTools(manifest).filter((t) => t !== relatedTool)
   const footerLink =
     'flex items-center gap-2.5 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-colors hover:border-primary/40 hover:bg-muted'
 
@@ -487,6 +501,30 @@ export const ModuleShell = ({
     return <div className="space-y-6">{children}</div>
   }
 
+  const tabs = manifest.tabs ?? STANDARD_TABS
+  const present = new Set(tabs.map((t) => t.value))
+  const barTabs = tabs.map((t) => (t.value === 'workshop' ? { ...t, hasDot: workshopDot } : t))
+
+  // The Workshop tab body, shared by the desktop tab strip and (Wave D,
+  // 2026-09-18) the phone shell for modules on MOBILE_WORKSHOP_READY.
+  const workshopBody =
+    present.has('workshop') && workshop ? (
+      resolve(workshop)
+    ) : present.has('workshop') && !workshop && parts.length > 0 && renderWorkshopStep ? (
+      <WorkshopStepper
+        moduleId={manifest.id}
+        parts={parts}
+        currentPart={currentPart}
+        configKey={configKey}
+        onPartChange={handlePartChange}
+        onReset={resetWorkshop}
+        onComplete={(stepId) => completeStep(stepId)}
+        renderStep={(index, key, goToStep) =>
+          renderWorkshopStep(index, key, workshopConfig, goToStep)
+        }
+      />
+    ) : null
+
   if (isMobileShell) {
     const learnContent =
       learnRaw !== undefined ? (
@@ -494,6 +532,7 @@ export const ModuleShell = ({
       ) : (
         <GlossaryAutoWrap>{resolve(learn)}</GlossaryAutoWrap>
       )
+    const mobileWorkshop = MOBILE_WORKSHOP_READY.has(manifest.id) ? workshopBody : null
     return (
       <MobileModuleShell
         manifest={manifest}
@@ -501,13 +540,12 @@ export const ModuleShell = ({
         description={headerDescription}
         learnContent={learnContent}
         practiceTool={practiceTool}
+        workshopContent={mobileWorkshop}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
       />
     )
   }
-
-  const tabs = manifest.tabs ?? STANDARD_TABS
-  const present = new Set(tabs.map((t) => t.value))
-  const barTabs = tabs.map((t) => (t.value === 'workshop' ? { ...t, hasDot: workshopDot } : t))
 
   return (
     <div className="space-y-6">
@@ -529,25 +567,7 @@ export const ModuleShell = ({
             {visual !== undefined ? resolve(visual) : <ModuleVisualTab moduleId={manifest.id} />}
           </TabsContent>
         )}
-        {present.has('workshop') && workshop && (
-          <TabsContent value="workshop">{resolve(workshop)}</TabsContent>
-        )}
-        {present.has('workshop') && !workshop && parts.length > 0 && renderWorkshopStep && (
-          <TabsContent value="workshop">
-            <WorkshopStepper
-              moduleId={manifest.id}
-              parts={parts}
-              currentPart={currentPart}
-              configKey={configKey}
-              onPartChange={handlePartChange}
-              onReset={resetWorkshop}
-              onComplete={(stepId) => completeStep(stepId)}
-              renderStep={(index, key, goToStep) =>
-                renderWorkshopStep(index, key, workshopConfig, goToStep)
-              }
-            />
-          </TabsContent>
-        )}
+        {workshopBody && <TabsContent value="workshop">{workshopBody}</TabsContent>}
         {present.has('exercises') && (
           <TabsContent value="exercises">{resolve(exercises)}</TabsContent>
         )}
@@ -636,6 +656,22 @@ export const ModuleShell = ({
               </Link>
             ) : null}
           </div>
+          {moreTools.length > 0 ? (
+            <p className="mt-3 text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">Also in the Playground: </span>
+              {moreTools.map((t, i) => (
+                <span key={t}>
+                  {i > 0 ? ' · ' : ''}
+                  <Link
+                    to={`/playground/${t}`}
+                    className="text-primary underline underline-offset-2"
+                  >
+                    {TOOL_TITLE_BY_ID.get(t) ?? t}
+                  </Link>
+                </span>
+              ))}
+            </p>
+          ) : null}
         </div>
       ) : null}
     </div>

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'verification-closure',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-061',
   title: 'Decommissioning & Program Closure',
   description:
@@ -31,7 +31,6 @@ const manifest: ModuleManifest = {
     { id: 'closure-handover-register', label: 'Closure & Handover Register' },
   ],
   embeddable: true,
-  practiceInSim: true,
   taxonomy: {
     standards: ['NIST IR 8547', 'NIST SP 800-131A', 'ISO/IEC 27001'],
   },

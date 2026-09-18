@@ -176,9 +176,7 @@ export const SizeComparison: React.FC = () => {
               }`}
             >
               {a.shortName}
-              <span className="ml-1 text-[10px] opacity-70">
-                ({formatBytes(a.signatureBytes)} sig)
-              </span>
+              <span className="ml-1 text-[10px]">({formatBytes(a.signatureBytes)} sig)</span>
             </Button>
           ))}
         </div>

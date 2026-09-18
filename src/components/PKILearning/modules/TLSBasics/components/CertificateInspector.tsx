@@ -341,7 +341,7 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
                   <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-6 max-w-md text-center">
                     <AlertTriangle size={32} className="mx-auto mb-4 text-destructive" />
                     <h4 className="text-destructive font-bold mb-2">Parsing Failed</h4>
-                    <p className="text-sm text-destructive/80 font-mono whitespace-pre-wrap">
+                    <p className="text-sm text-destructive font-mono whitespace-pre-wrap">
                       {error}
                     </p>
                   </div>

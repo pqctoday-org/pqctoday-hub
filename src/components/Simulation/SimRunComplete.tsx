@@ -162,7 +162,7 @@ export function SimRunComplete({
               <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px] text-foreground/80 sm:grid-cols-4">
                 <div>
                   Pace <b>{score.paceScore}</b>
-                  <div className="text-[10px] opacity-70">par {score.parQuarters}q</div>
+                  <div className="text-[10px]">par {score.parQuarters}q</div>
                 </div>
                 <div>
                   Discipline <b>{score.trapScore}</b>
