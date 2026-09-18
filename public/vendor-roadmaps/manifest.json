@@ -608,7 +608,7 @@
       "artefact": "FORMAT-MISMATCH",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:19.054196+00:00",
+      "admittedAt": "2026-09-18T03:46:32.271659+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -643,9 +643,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:15:21.429818+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:56.145506+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "vendorId": "VND-259",
@@ -1314,7 +1314,7 @@
       "artefact": "FORMAT-MISMATCH",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.226917+00:00",
+      "admittedAt": "2026-09-18T03:46:32.938528+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -1566,9 +1566,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.754846+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:43:08.441763+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "vendorId": "VND-019",

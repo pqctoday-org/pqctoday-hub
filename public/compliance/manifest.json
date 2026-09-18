@@ -108,7 +108,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -229,7 +229,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:55:59.530566+00:00",
+      "admittedAt": "2026-09-18T03:46:07.220442+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -331,7 +331,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:56:01.710400+00:00",
+      "admittedAt": "2026-09-18T03:46:07.337384+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -632,7 +632,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -710,9 +710,9 @@
       "superseded_file": null,
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:56:20.726205+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:17:05.598535+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "CISA-PQC-PROCUREMENT",
@@ -826,9 +826,9 @@
       "superseded_file": null,
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:56:24.188926+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:20:44.023941+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "BIS-158-PQC",
@@ -1079,7 +1079,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:56:30.293219+00:00",
+      "admittedAt": "2026-09-18T03:46:08.227895+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -1660,7 +1660,11 @@
       "filename": "oscca-cryptographic-regulations-cn.html",
       "sizeBytes": 41773,
       "contentType": "text/html",
-      "sha256": "06e9eb085c91308ea0db5eb4929315c7004ef473d3dd07db8f4d2ce853813c36"
+      "sha256": "06e9eb085c91308ea0db5eb4929315c7004ef473d3dd07db8f4d2ce853813c36",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:40:57.272874+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "bsi-cc-certification",
@@ -2022,9 +2026,9 @@
       "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:56:10.067481+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:40.507543+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "INCD-PQC",
@@ -2036,9 +2040,9 @@
       "sha256": "ff42111be495c7c8bab64b80ceaeb78db4881033bc42abd375554a4828f7a853",
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T12:56:10.804900+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:20:34.827521+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "BOI-PQC",
@@ -2455,7 +2459,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:42.572722+00:00",
+      "admittedAt": "2026-09-18T03:46:09.338703+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {

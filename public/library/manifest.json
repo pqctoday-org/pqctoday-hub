@@ -592,7 +592,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -813,7 +813,7 @@
       "artefact": "PAYWALL",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:59:32.709016+00:00",
+      "admittedAt": "2026-09-18T03:46:10.537108+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -1765,7 +1765,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:00:00.284442+00:00",
+      "admittedAt": "2026-09-18T03:46:11.420595+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -2546,9 +2546,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:00:34.823681+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:20:44.023941+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "Microsoft-QSP-Roadmap-2025",
@@ -2938,9 +2938,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:00:46.761553+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:40.507543+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "SG-MAS-QKD-Sandbox-Report-2025",
@@ -4826,7 +4826,7 @@
       "artefact": "LANDING",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:02:23.915570+00:00",
+      "admittedAt": "2026-09-18T03:46:14.163374+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -6338,8 +6338,8 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "CONTRADICTED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:03:26.949088+00:00",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:46:18.350549+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -7291,7 +7291,7 @@
       "artefact": "SOURCE",
       "identity": "CONTRADICTED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:03:56.432375+00:00",
+      "admittedAt": "2026-09-18T03:46:19.358657+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -8923,7 +8923,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:04:10.570698+00:00",
+      "admittedAt": "2026-09-18T03:46:20.907453+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -8940,7 +8940,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:04:10.592115+00:00",
+      "admittedAt": "2026-09-18T03:46:20.938564+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -9024,9 +9024,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:04:13.786889+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:12.451591+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "NIST SP 800-53",
@@ -10856,7 +10856,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:05:06.159796+00:00",
+      "admittedAt": "2026-09-18T03:46:22.691389+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -11502,7 +11502,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:05:18.354271+00:00",
+      "admittedAt": "2026-09-18T03:46:23.296762+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -11723,7 +11723,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:05:20.603248+00:00",
+      "admittedAt": "2026-09-18T03:46:23.504263+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -13712,7 +13712,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:06:49.433989+00:00",
+      "admittedAt": "2026-09-18T03:46:25.417444+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -15599,7 +15599,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:07:54.751242+00:00",
+      "admittedAt": "2026-09-18T03:46:27.192923+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -15633,7 +15633,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:07:54.794383+00:00",
+      "admittedAt": "2026-09-18T03:46:27.271332+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -15854,7 +15854,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:07:56.304061+00:00",
+      "admittedAt": "2026-09-18T03:46:27.514474+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -15871,7 +15871,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:07:56.347778+00:00",
+      "admittedAt": "2026-09-18T03:46:27.565279+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -16673,7 +16673,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:08:09.707136+00:00",
+      "admittedAt": "2026-09-18T03:46:28.335512+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -17254,9 +17254,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:08:20.164900+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:38:59.062859+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "What-Are-NIST-PQC-Standards-Palo-Alto-Networks",
@@ -17578,7 +17578,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:03:55.344630+00:00",
+      "admittedAt": "2026-09-18T03:46:19.094437+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -17595,7 +17595,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:04:06.396247+00:00",
+      "admittedAt": "2026-09-18T03:46:19.565194+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -17612,7 +17612,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:07:54.815212+00:00",
+      "admittedAt": "2026-09-18T03:46:27.301861+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -17697,9 +17697,9 @@
       "url": "https://www.iso.org/standard/72892.html",
       "sha256": "f230e617ba9d371a4e2d346cd19f97fe6f9c4fd1f47a82acd161b7ed1b8a7640",
       "artefact": "SOURCE",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T20:59:49.655830+00:00",
-      "admittedBy": "admit.py",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:46:27.223828+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
       "file": "library/ISO-IEC-27005-2022-Guidance-on-managing-information-security.html",
       "status": "downloaded",
@@ -17714,7 +17714,12 @@
       "filename": "Key-Management-Interoperability-Protocol-Specification-Versi.html",
       "sizeBytes": 19266965,
       "contentType": "text/html",
-      "sha256": "89facc9d813f485492d609acfce160e6062986fb1d6fd2ee3ec098d588d8a3de"
+      "sha256": "89facc9d813f485492d609acfce160e6062986fb1d6fd2ee3ec098d588d8a3de",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:46:31.474533+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     }
   ],
   "archivedEntries": [
@@ -18305,7 +18310,7 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -18442,7 +18447,7 @@
       "artefact": "PAYWALL",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:59:32.709016+00:00",
+      "admittedAt": "2026-09-18T03:46:10.537108+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -19368,7 +19373,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:00:00.284442+00:00",
+      "admittedAt": "2026-09-18T03:46:11.420595+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -20083,9 +20088,9 @@
       "rehashedAt": "2026-08-21",
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:00:34.823681+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:20:44.023941+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "Microsoft-QSP-Roadmap-2025",
@@ -20407,9 +20412,9 @@
       "rehashedAt": "2026-08-22",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:00:46.761553+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:40.507543+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "SG-MAS-QKD-Sandbox-Report-2025",
@@ -20487,7 +20492,7 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -22229,7 +22234,7 @@
       "artefact": "LANDING",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:02:23.915570+00:00",
+      "admittedAt": "2026-09-18T03:46:14.163374+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -23543,8 +23548,8 @@
       "sha256": "3d3c9f160702bb9d426bd47498f0ad8f45de8a923e47d911a2c0fdde72e190b9",
       "artefact": "SOURCE",
       "identity": "CONTRADICTED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:03:26.949088+00:00",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:46:18.350549+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -24510,7 +24515,7 @@
       "artefact": "SOURCE",
       "identity": "CONTRADICTED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:03:56.432375+00:00",
+      "admittedAt": "2026-09-18T03:46:19.358657+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -24734,14 +24739,17 @@
       "url": "https://www.iso.org/standard/37971.html",
       "status": "downloaded",
       "filename": "ISO-IEC-18033-2-2006.html",
-      "sizeBytes": 101465,
+      "sizeBytes": 101872,
       "contentType": "text/html",
-      "sha256": "03083348412cbcd6a6ac9ae02cfe8912ba769cb9a7da96e5f813695019b86648",
+      "sha256": "dc04fb48f4f2c494089a48bbffa26d33fe06650f9827f0fcc8988933b7e9e06c",
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:04:06.396247+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-18T03:46:19.565194+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "previousSha256": "03083348412cbcd6a6ac9ae02cfe8912ba769cb9a7da96e5f813695019b86648",
+      "hashCorrectedAt": "2026-09-18T03:46:19.565194+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "refId": "RFC 3370",
@@ -26211,7 +26219,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:04:10.570698+00:00",
+      "admittedAt": "2026-09-18T03:46:20.907453+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -26226,7 +26234,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:04:10.592115+00:00",
+      "admittedAt": "2026-09-18T03:46:20.938564+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -28360,7 +28368,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:05:06.159796+00:00",
+      "admittedAt": "2026-09-18T03:46:22.691389+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -28864,7 +28872,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:05:18.354271+00:00",
+      "admittedAt": "2026-09-18T03:46:23.296762+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -29046,7 +29054,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:05:20.603248+00:00",
+      "admittedAt": "2026-09-18T03:46:23.504263+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -30604,7 +30612,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:06:49.433989+00:00",
+      "admittedAt": "2026-09-18T03:46:25.417444+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -32809,7 +32817,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:07:54.751242+00:00",
+      "admittedAt": "2026-09-18T03:46:27.192923+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -32820,7 +32828,12 @@
       "filename": "ISO-IEC-27005-2022-Guidance-on-managing-information-security.html",
       "sizeBytes": 0,
       "contentType": "text/html",
-      "sha256": ""
+      "sha256": "",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:46:27.223828+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "refId": "ISO-IEC-15408-1-2022-Evaluation-criteria-for-IT-security-Com",
@@ -32849,7 +32862,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:07:54.794383+00:00",
+      "admittedAt": "2026-09-18T03:46:27.271332+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -32864,7 +32877,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:07:54.815212+00:00",
+      "admittedAt": "2026-09-18T03:46:27.301861+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -33039,7 +33052,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:07:56.304061+00:00",
+      "admittedAt": "2026-09-18T03:46:27.514474+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -33054,7 +33067,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:07:56.347778+00:00",
+      "admittedAt": "2026-09-18T03:46:27.565279+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -33599,7 +33612,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:08:09.707136+00:00",
+      "admittedAt": "2026-09-18T03:46:28.335512+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -34078,9 +34091,9 @@
       "sha256": "4ebf4cd8290e319380d17d5feaa01a2f4774f235acd37208decde636a6b4a949",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:08:20.164900+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:38:59.062859+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "What-Are-NIST-PQC-Standards-Palo-Alto-Networks",

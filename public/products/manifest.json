@@ -654,7 +654,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:34.885665+00:00",
+      "admittedAt": "2026-09-18T03:45:52.198444+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -1024,7 +1024,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:36.332954+00:00",
+      "admittedAt": "2026-09-18T03:45:21.544247+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -2248,9 +2248,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T14:04:58.900366+00:00",
-      "admittedBy": "admit.py",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:56.678047+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "replacedAt": "2026-09-17T14:04:58.915647+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document",
@@ -4206,9 +4206,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:19.331453+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:38:40.642715+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "softwareName": "Fastly Edge Cloud",
@@ -5062,7 +5062,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:32.093748+00:00",
+      "admittedAt": "2026-09-18T03:45:12.706719+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -5302,7 +5302,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:42.925916+00:00",
+      "admittedAt": "2026-09-18T03:45:36.831929+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -5511,9 +5511,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:55.617909+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:26:39.089529+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "softwareName": "HQC Algorithm Manual",
@@ -7653,7 +7653,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:43.086477+00:00",
+      "admittedAt": "2026-09-18T03:45:58.996067+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -8988,7 +8988,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:36.226252+00:00",
+      "admittedAt": "2026-09-18T03:45:53.188152+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -9092,14 +9092,17 @@
       "url": "",
       "status": "downloaded",
       "refId": "Pqcee CNG Provider",
-      "sha256": "2162d07e33df4bd091acf453b210906017886991304c3a6d5ecff5667cd8cb37",
-      "sizeBytes": 166184,
+      "sha256": "6f1607465b0765babf9b6d349b3d618df09b058aa585121398dba96e91972e8e",
+      "sizeBytes": 168842,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:09:14.103266+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-18T03:45:58.045862+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "previousSha256": "2162d07e33df4bd091acf453b210906017886991304c3a6d5ecff5667cd8cb37",
+      "hashCorrectedAt": "2026-09-18T03:45:58.045862+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "softwareName": "Pqchat Quantum Safe Messaging",
@@ -9458,7 +9461,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:55:30.910982+00:00",
+      "admittedAt": "2026-09-18T03:45:09.776757+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -9472,8 +9475,8 @@
       "hashedAt": "2026-09-06",
       "artefact": "LANDING",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:55:41.404191+00:00",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:45:32.991084+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -9502,9 +9505,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T14:06:18.804296+00:00",
-      "admittedBy": "admit.py",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:55.388243+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "replacedAt": "2026-09-17T14:06:18.819564+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document",
@@ -11101,9 +11104,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:12.914532+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:32:42.165896+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "softwareName": "Signserver",
@@ -11242,7 +11245,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:42.870530+00:00",
+      "admittedAt": "2026-09-18T03:45:58.873518+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -11442,7 +11445,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:38.709256+00:00",
+      "admittedAt": "2026-09-18T03:45:26.939644+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -13082,7 +13085,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:34.007053+00:00",
+      "admittedAt": "2026-09-18T03:45:51.611614+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -14589,9 +14592,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:55.617909+00:00",
-      "admittedBy": "admit.py --stamp-existing",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:26:39.089529+00:00",
+      "admittedBy": "admit.py",
       "previousSha256": "1b38b7b380b6516db19c948102672e62309cdc9fca5755dc96e45aad012dba82",
       "previousSizeBytes": 92312,
       "hashCorrectedAt": "2026-09-17T17:51:50.232745+00:00",
@@ -18342,8 +18345,8 @@
       "hashedAt": "2026-09-06",
       "artefact": "LANDING",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:55:41.404191+00:00",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:45:32.991084+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "previousSha256": "85d9d0b42fb25efd26dcbfecf975b116b4430928334e1fe10f4330cc035ed9a3",
       "previousSizeBytes": 391077,
@@ -18385,7 +18388,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:55:30.910982+00:00",
+      "admittedAt": "2026-09-18T03:45:09.776757+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "previousSha256": "85d9d0b42fb25efd26dcbfecf975b116b4430928334e1fe10f4330cc035ed9a3",
       "previousSizeBytes": 391077,
@@ -21204,7 +21207,7 @@
       "artefact": "SOURCE",
       "identity": "RELEVANT",
       "unified": "converted",
-      "admittedAt": "2026-09-17T14:56:35.027673+00:00",
+      "admittedAt": "2026-09-18T03:29:15.088235+00:00",
       "admittedBy": "admit.py",
       "importedFrom": "pqctoday-priv-work/local-evidence-cache/products (same repo, sibling worktree) on 2026-09-17",
       "previousSha256": "14e5a90be8710593c3d61af2df3d4cfebe8be91110cbcb2fc00d5f936115e378",
@@ -23061,8 +23064,8 @@
       "hashedAt": "2026-09-06",
       "artefact": "LANDING",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:55:30.291271+00:00",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:45:08.008896+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -23107,7 +23110,12 @@
       "hashedAt": "2026-09-06",
       "restoredAt": "2026-09-17T17:42:33.765753+00:00",
       "restoredBy": "replace_evidence.py fix 2026-09-17",
-      "restore_reason": "retired in error by the ibm-hyper-protect-crypto re-source (same URL, another row's file); linked back from _superseded-09172026/products/"
+      "restore_reason": "retired in error by the ibm-hyper-protect-crypto re-source (same URL, another row's file); linked back from _superseded-09172026/products/",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:45:15.947296+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "softwareName": "marvell-liquidsecurity-2",
@@ -25514,7 +25522,7 @@
       "artefact": "SOURCE",
       "identity": "RELEVANT",
       "unified": "converted",
-      "admittedAt": "2026-09-17T14:57:03.852936+00:00",
+      "admittedAt": "2026-09-18T03:30:26.699601+00:00",
       "admittedBy": "admit.py",
       "importedFrom": "pqctoday-priv-work/local-evidence-cache/products (same repo, sibling worktree) on 2026-09-17"
     },
@@ -26086,7 +26094,7 @@
       "artefact": "SOURCE",
       "identity": "RELEVANT",
       "unified": "converted",
-      "admittedAt": "2026-09-17T14:57:07.430822+00:00",
+      "admittedAt": "2026-09-18T03:27:56.408685+00:00",
       "admittedBy": "admit.py",
       "importedFrom": "pqctoday-priv-work/local-evidence-cache/products (same repo, sibling worktree) on 2026-09-17"
     },
@@ -28731,7 +28739,7 @@
       "artefact": "SOURCE",
       "identity": "RELEVANT",
       "unified": "converted",
-      "admittedAt": "2026-09-17T14:57:43.494583+00:00",
+      "admittedAt": "2026-09-18T03:32:42.165896+00:00",
       "admittedBy": "admit.py",
       "importedFrom": "pqctoday-priv-work/local-evidence-cache/products (same repo, sibling worktree) on 2026-09-17"
     },
@@ -29238,9 +29246,9 @@
       "recoveredBy": "codex url research + lineage gates",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:12:41.297001+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:43:08.441763+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "softwareName": "intel-platform-trust-technology-ptt",
@@ -29592,7 +29600,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T14:06:19.721183+00:00",
+      "admittedAt": "2026-09-18T03:33:22.931768+00:00",
       "admittedBy": "admit.py",
       "replacedAt": "2026-09-17T14:06:19.736472+00:00",
       "replacedBy": "replace_evidence.py",
@@ -30118,8 +30126,8 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T14:07:52.311485+00:00",
-      "admittedBy": "admit.py",
+      "admittedAt": "2026-09-18T03:45:50.039428+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "replacedAt": "2026-09-17T14:07:52.326665+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document"
@@ -30283,8 +30291,8 @@
       "softwareName": "SailPoint Identity Security Cloud",
       "filename": "sailpoint-identity-security-cloud-8ac0fcdb.html",
       "url": "https://www.sailpoint.com/why-us/trust/cybersecurity",
-      "sha256": "1c9d2f927c5d32e06264c5f8cddd0a6de47532c6487d876677215ba3150e3e46",
-      "sizeBytes": 429813,
+      "sha256": "e9df5311d773c65b3974778f7a0201e6d6241b178cb0d279a78f5ddad48ed99f",
+      "sizeBytes": 439815,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:01:49.207825+00:00",
       "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
@@ -30292,17 +30300,17 @@
       "status": "downloaded",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T14:04:55.747867+00:00",
-      "admittedBy": "admit.py",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:50.382873+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "replacedAt": "2026-09-17T14:04:55.763181+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document",
       "superseded_file": "_superseded-09172026/migrate-proofs/sailpoint-identity-security-cloud-8ac0fcdb.html",
-      "previousSha256": "e9df5311d773c65b3974778f7a0201e6d6241b178cb0d279a78f5ddad48ed99f",
+      "previousSha256": "1c9d2f927c5d32e06264c5f8cddd0a6de47532c6487d876677215ba3150e3e46",
       "previousSizeBytes": 439815,
-      "hashCorrectedAt": "2026-09-17T17:51:50.373504+00:00",
-      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)"
+      "hashCorrectedAt": "2026-09-18T03:45:50.382873+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "softwareName": "IBM Security Guardium Data Protection",
@@ -34582,9 +34590,9 @@
       "status": "downloaded",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:08.134166+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:28:57.656703+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "softwareName": "Dell BSAFE Crypto Module for C",
@@ -36055,7 +36063,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T14:07:50.493441+00:00",
+      "admittedAt": "2026-09-18T03:24:42.585216+00:00",
       "admittedBy": "admit.py",
       "replacedAt": "2026-09-17T14:07:50.509266+00:00",
       "replacedBy": "replace_evidence.py",
@@ -40749,9 +40757,9 @@
       "status": "downloaded",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:49.078481+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:39:01.723945+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "softwareName": "What is Post-Quantum Encryption - And How to Enable It on ESA - Alibaba Cloud Community",
@@ -40945,8 +40953,8 @@
       "superseded_file": "_superseded-09162026/migrate-proofs/trezor-safe-7-pqc-9122fb08.html",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:11.007106+00:00",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:45:57.026274+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "previousSha256": "207ad64dcf8cb3b1b170f9c1a33d2dc6aca327c1b3a7b8af79c4853e2fc6282e",
       "previousSizeBytes": 583731,
@@ -40969,7 +40977,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:09:14.397813+00:00",
+      "admittedAt": "2026-09-18T03:45:58.316945+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "previousSha256": "8b42af5bba04aed2a716f35143108a6a51b5334ee7f6182e4d46bbef32c6db82",
       "previousSizeBytes": 1535317,
@@ -41028,7 +41036,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:55:31.209284+00:00",
+      "admittedAt": "2026-09-18T03:45:10.535894+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -41046,7 +41054,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:55:31.297117+00:00",
+      "admittedAt": "2026-09-18T03:45:10.704751+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -41064,7 +41072,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:55:32.224325+00:00",
+      "admittedAt": "2026-09-18T03:45:12.990604+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -41105,7 +41113,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:55:33.515269+00:00",
+      "admittedAt": "2026-09-18T03:45:15.324888+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -41123,7 +41131,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:55:34.178374+00:00",
+      "admittedAt": "2026-09-18T03:45:16.491297+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -41141,7 +41149,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:55:34.363283+00:00",
+      "admittedAt": "2026-09-18T03:45:16.807434+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -41159,7 +41167,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:55:37.656402+00:00",
+      "admittedAt": "2026-09-18T03:45:24.563404+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -41177,7 +41185,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:55:37.955751+00:00",
+      "admittedAt": "2026-09-18T03:45:25.320517+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {

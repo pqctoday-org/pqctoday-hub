@@ -1,0 +1,111 @@
+{
+  "generated": "2026-09-18T03:14:44.834628+00:00",
+  "source": "industry-market-size",
+  "generatedBy": "admit.py --stamp-existing --add-missing-entries",
+  "entries": [
+    {
+      "refId": "Cryptocurrency / Blockchain",
+      "file": "cryptocurrency-blockchain-b3955d6b.pdf",
+      "bytes": 1094194,
+      "content_type": "application/pdf",
+      "url": "https://www.imfconnect.org/content/dam/imf/News%20and%20Generic%20Content/GMM/Special%20Features/GMM%20Crypto%20Monitor%20Q2%202026.pdf",
+      "sha256": "3277c48c2ae73281eb0719c90b7456106ea9d59d6533dcf1482b483a2099873f",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:14:44.813484+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED"
+    },
+    {
+      "refId": "Education / Research",
+      "file": "education-research-4fe88a13.html",
+      "bytes": 329870,
+      "content_type": "text/html",
+      "url": "https://www.census.gov/newsroom/press-releases/2026/school-system-finances.html",
+      "sha256": "1f8122562a1a6aac507c9a5a078537842eb26b30ce96d4ef134c09aca16c3e09",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:14:47.333048+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "Critical Infrastructure / Energy",
+      "file": "critical-infrastructure-energy-b02afe14.pdf",
+      "bytes": 17403451,
+      "content_type": "application/pdf",
+      "url": "https://iea.blob.core.windows.net/assets/64594543-cf6e-4fd9-8238-d3cae35daf48/WorldEnergyInvestment2026.pdf",
+      "sha256": "d01085e24d956e655c16e37db185666a496af51b7510db0af9f3d7d054cd94b8",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:00.359415+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "Government & Defense",
+      "file": "government-defense-aa83bcfd.json",
+      "bytes": 1642,
+      "content_type": "application/json",
+      "url": "https://api.worldbank.org/v2/country/WLD/indicator/MS.MIL.XPND.CD?format=json&per_page=10&date=2018:2024",
+      "sha256": "29d25ef9ac42f8a159dc8986620669f38cfa23e362a79c4023bf2f913098315d",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:30.531433+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED"
+    },
+    {
+      "refId": "Healthcare / Pharmaceutical",
+      "file": "healthcare-pharmaceutical-6fc35382.html",
+      "bytes": 202653,
+      "content_type": "text/html",
+      "url": "https://www.cms.gov/data-research/statistics-trends-and-reports/national-health-expenditure-data/nhe-fact-sheet",
+      "sha256": "6b99053b6e7438f8a5afad89c26e1e23241e3a05c3d45ab2f6d64595656b82b1",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:32.987265+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED"
+    },
+    {
+      "refId": "Payment Card Industry",
+      "file": "payment-card-industry-ecf93543.html",
+      "bytes": 137445,
+      "content_type": "text/html",
+      "url": "https://www.federalreserve.gov/paymentsystems/frps_cy2015_24_topline.htm",
+      "sha256": "d144445e602c269073048958353aa10643ea51bbf19f8269e11568772a5d0428",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:43.304410+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "Retail & E-Commerce",
+      "file": "retail-e-commerce-c8985a2b.pdf",
+      "bytes": 711441,
+      "content_type": "application/pdf",
+      "url": "https://www2.census.gov/retail/releases/historical/ecomm/25q4.pdf",
+      "sha256": "700564e274925ace6b4aafe62d3d225c7359a29343ff44fc8213fdfef86f0ec3",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:48.759121+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "Cloud Computing / Data Centers",
+      "file": "cloud-computing-data-centers-9d3775f8.xlsx",
+      "bytes": 812286,
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "url": "https://apps.bea.gov/industry/Release/XLS/GDPxInd/ValueAdded.xlsx",
+      "sha256": "87b7484af9f75a06930151004f7f76a84b715e2ccb7ad20162e3c338e39b3e6c",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:35:24.274559+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED"
+    }
+  ]
+}

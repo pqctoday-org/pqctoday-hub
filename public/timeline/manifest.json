@@ -818,9 +818,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:06.556319+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:12.451591+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "france-anssi-pqc-position-paper-follow-up",
@@ -886,9 +886,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:06.556319+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:12.451591+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "france-anssi-cryptographic-accreditation-doctrine-updated",
@@ -988,9 +988,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:06.556319+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:12.451591+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "france-anssi-ipsec-dr-referential-update-planned",
@@ -1039,9 +1039,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:06.556319+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:12.451591+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "g7-g7-ceg-g7-statement-on-quantum-computing",
@@ -1192,9 +1192,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:15.843623+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:20:34.827521+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "israel-boi-banking-pqc-directive",
@@ -1226,9 +1226,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:18.624354+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:29.516097+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "japan-nedo-k-program-pqc-research",
@@ -1379,9 +1379,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:21.515082+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:40.507543+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "singapore-csa-govtech-imda-quantum-safe-handbook-and-quantum-readiness-index-rel",
@@ -1737,7 +1737,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -1874,7 +1874,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -1891,7 +1891,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -1976,7 +1976,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -2010,7 +2010,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -2061,7 +2061,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -2095,7 +2095,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -2400,9 +2400,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:40.391621+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:17:05.598535+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "hong-kong-hkma-fintech-promotion-blueprint-published",
@@ -2468,9 +2468,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:44.272955+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:56.145506+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "india-dst-nqm-cii-pqc-foundations-deadline",
@@ -2485,9 +2485,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:44.272955+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:56.145506+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "india-dst-nqm-india-national-pqc-migration",
@@ -2502,9 +2502,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:44.272955+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:56.145506+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "india-dst-nqm-full-nationwide-pqc-adoption",
@@ -2655,9 +2655,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:47.300569+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:20:44.023941+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "saudi-arabia-c4ir-quantum-economy-landscape-report",
@@ -2791,9 +2791,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:50.881860+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:40.507543+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "hong-kong-hkma-pqc-readiness-assessment-required",
@@ -2825,9 +2825,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:40.391621+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:17:05.598535+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "united-states-nist-112-bit-security-algorithms-fully-disallowed",
@@ -3114,9 +3114,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.797580+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:14:41.203553+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "international-itu-t-itu-t-x-1811-quantum-safe-security-guidelines-for-5g-publish",
@@ -3149,7 +3149,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.905656+00:00",
+      "admittedAt": "2026-09-18T03:46:05.596882+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -3216,9 +3216,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:55.455273+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:20:59.348945+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "kenya-odpc-odpc-guidance-on-data-protection-by-design",
@@ -3233,9 +3233,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:56.062351+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:21:09.639800+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "egypt-mcit-law-151-2020-executive-regulations-issued",
@@ -3897,9 +3897,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:15:10.827670+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:41.519737+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "australia-asd-legacy-asymmetric-crypto-disallowed-full-pqc-transition",
@@ -4135,9 +4135,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.012916+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:15:52.563478+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "switzerland-ncsc-quantum-computers-and-post-quantum-cryptogr",
@@ -4237,9 +4237,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.493510+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:15.278522+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "rbi-india-q-safe-expert-committee-on-quantum-technology-risk",
@@ -4649,7 +4649,11 @@
       "sizeBytes": 32330,
       "contentType": "text/html",
       "sha256": "30660b473b880d51bd7627210fd1544345604d10b798add01bdec68746df1c00",
-      "verifiedAt": "2026-09-06"
+      "verifiedAt": "2026-09-06",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:21.810338+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "file": "timeline/Saudi_Arabia_NCA_Saudi_National_Cryptographic_Standards.html",

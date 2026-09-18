@@ -2474,7 +2474,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:32.093748+00:00",
+      "admittedAt": "2026-09-18T03:45:12.706719+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -3153,7 +3153,7 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:34.007053+00:00",
+      "admittedAt": "2026-09-18T03:45:51.611614+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -3621,7 +3621,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:34.885665+00:00",
+      "admittedAt": "2026-09-18T03:45:52.198444+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -4301,7 +4301,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:36.226252+00:00",
+      "admittedAt": "2026-09-18T03:45:53.188152+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -4346,7 +4346,7 @@
       "artefact": "EMPTY",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:36.332954+00:00",
+      "admittedAt": "2026-09-18T03:45:21.544247+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -5669,7 +5669,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:38.709256+00:00",
+      "admittedAt": "2026-09-18T03:45:26.939644+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -5721,9 +5721,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T14:06:18.804296+00:00",
-      "admittedBy": "admit.py",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:55.388243+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "replacedAt": "2026-09-17T14:06:18.819564+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document",
@@ -6966,9 +6966,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T14:04:58.900366+00:00",
-      "admittedBy": "admit.py",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:56.678047+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "replacedAt": "2026-09-17T14:04:58.915647+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document",
@@ -7628,9 +7628,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:12.914532+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:32:42.165896+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "tiktok-pqc-data-protection",
@@ -8248,7 +8248,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:09:14.103266+00:00",
+      "admittedAt": "2026-09-18T03:45:58.045862+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "previousSha256": "6bef9089c0da76ea2b9030161d162603dbadf497acb3bab016743dc3b3e40201",
       "previousSizeBytes": 166184,
@@ -8908,7 +8908,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:42.870530+00:00",
+      "admittedAt": "2026-09-18T03:45:58.873518+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -8926,7 +8926,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:42.925916+00:00",
+      "admittedAt": "2026-09-18T03:45:36.831929+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -9034,7 +9034,7 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:55:43.086477+00:00",
+      "admittedAt": "2026-09-18T03:45:58.996067+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
     {
@@ -9816,9 +9816,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:19.331453+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:38:40.642715+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "hqc-reference-implementation",
@@ -10730,7 +10730,12 @@
       "url": "https://www.strongswan.org/blog/2024/12/03/strongswan-6.0.0-released.html",
       "file": "pfsense-community-edition-4daba946.html",
       "bytes": 19233,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:45:48.879705+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "product_id": "opnsense",
@@ -10801,14 +10806,14 @@
       "bytes": 427086,
       "tier": "curl_cffi:chrome124",
       "refId": "anchorage-digital",
-      "sha256": "119a848e03ab69b438211109af4a7025f874cee3586d00df686e7817573683bd",
+      "sha256": "bcd926ef00cd52e2bf000aeb26ff6fb624f9781298f1e5b8aeb0e29f3a2a6bd9",
       "sizeBytes": 379015,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:08:53.450501+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:22:34.806425+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "copper-co",
@@ -11100,9 +11105,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:02.551353+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:32:23.185101+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "unisys-clearpath-forward",
@@ -11497,9 +11502,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:08.134166+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:28:57.656703+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "ironcore-labs-saas-shield",
@@ -13254,9 +13259,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T14:04:55.747867+00:00",
-      "admittedBy": "admit.py",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:50.382873+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "replacedAt": "2026-09-17T14:04:55.763181+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document",
@@ -14161,7 +14166,12 @@
       "url": "https://www.strongswan.org/blog/2024/12/03/strongswan-6.0.0-released.html",
       "file": "pfsense-community-edition-4daba946.html",
       "bytes": 19233,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:45:48.879705+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "product_id": "opnsense",
@@ -14255,14 +14265,14 @@
       "bytes": 427086,
       "tier": "curl_cffi:chrome124",
       "refId": "anchorage-digital",
-      "sha256": "119a848e03ab69b438211109af4a7025f874cee3586d00df686e7817573683bd",
+      "sha256": "bcd926ef00cd52e2bf000aeb26ff6fb624f9781298f1e5b8aeb0e29f3a2a6bd9",
       "sizeBytes": 379015,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:08:53.450501+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:22:34.806425+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "copper-co",
@@ -14570,9 +14580,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:02.551353+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:32:23.185101+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "unisys-clearpath-forward",
@@ -14967,9 +14977,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:08.134166+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:28:57.656703+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "cato-networks-sase",
@@ -16213,14 +16223,14 @@
       "bytes": 36160,
       "tier": "curl_cffi:chrome124",
       "refId": "hpe-alletra-mp",
-      "sha256": "03db64f11ed99fd4e03f1bbe9e41deae32c1cc6fb0013e5a90dab23f47b68d70",
-      "sizeBytes": 299138,
+      "sha256": "8a86be970d0f5704dff087665a07457fcc14ae5a9699c983dfaa9f26c0889dc3",
+      "sizeBytes": 269107,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T14:04:40.514312+00:00",
-      "admittedBy": "admit.py",
+      "admittedAt": "2026-09-18T03:45:54.545531+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "replacedAt": "2026-09-17T14:04:40.529913+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document",
@@ -16228,7 +16238,10 @@
       "ok": false,
       "supersededAt": "2026-09-17T14:17:04.872460+00:00",
       "supersededBy": "replace_evidence.py",
-      "superseded_reason": "the capture failed the door's check (artefact EMPTY) on 2026-09-17 and was replaced by a fresh fetch of the row's URL; the first lane run moved it aside and crashed before recording it here"
+      "superseded_reason": "the capture failed the door's check (artefact EMPTY) on 2026-09-17 and was replaced by a fresh fetch of the row's URL; the first lane run moved it aside and crashed before recording it here",
+      "previousSha256": "03db64f11ed99fd4e03f1bbe9e41deae32c1cc6fb0013e5a90dab23f47b68d70",
+      "hashCorrectedAt": "2026-09-18T03:45:25.176304+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "product_id": "rubrik-security-cloud",
@@ -18747,9 +18760,9 @@
       "hashedAt": "2026-09-12",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:49.078481+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:39:01.723945+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "Cryptography-std-crypto-Zig",
@@ -18852,9 +18865,9 @@
       "hashedAt": "2026-09-12",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:49.246573+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:43:08.441763+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "product_id": "Lean-Consensus-Roadmap",
@@ -19268,8 +19281,8 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T14:07:52.311485+00:00",
-      "admittedBy": "admit.py",
+      "admittedAt": "2026-09-18T03:45:50.039428+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "replacedAt": "2026-09-17T14:07:52.326665+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "the capture on disk failed the door's check (artefact EMPTY) on 2026-09-17; the URL now serves the document",
@@ -20525,8 +20538,8 @@
       "superseded_file": "_superseded-09162026/migrate-proofs/trezor-safe-7-pqc-9122fb08.html",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:09:11.007106+00:00",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:45:57.026274+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "previousSha256": "207ad64dcf8cb3b1b170f9c1a33d2dc6aca327c1b3a7b8af79c4853e2fc6282e",
       "previousSizeBytes": 583731,
@@ -20548,7 +20561,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:09:14.397813+00:00",
+      "admittedAt": "2026-09-18T03:45:58.316945+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "previousSha256": "8b42af5bba04aed2a716f35143108a6a51b5334ee7f6182e4d46bbef32c6db82",
       "previousSizeBytes": 1535317,
@@ -20588,7 +20601,12 @@
       "previousSha256": "886f6da67ec1c889d58814d026cd9c1611f74a93eaf97d79ee27a5e8dac2acbd",
       "previousSizeBytes": 173568,
       "hashCorrectedAt": "2026-09-17T17:51:49.991895+00:00",
-      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)"
+      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:55.388243+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "product_id": "cilium-service-mesh-pqc",
@@ -20605,7 +20623,12 @@
       "previousSha256": "884ffe7473c3bc1b866ae9faa4b380b7cfec0f69ba5c95c24483cf189cf387a8",
       "previousSizeBytes": 139426,
       "hashCorrectedAt": "2026-09-17T17:51:49.991970+00:00",
-      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)"
+      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:56.678047+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "product_id": "pqcee-cng-provider",
@@ -20626,7 +20649,12 @@
       "previousSha256": "78ff961d9e7e1fb85d3ef6b164ebdb4661aaf2e9349418369f5e1ed269034fc7",
       "previousSizeBytes": 166184,
       "hashCorrectedAt": "2026-09-17T17:51:49.992050+00:00",
-      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)"
+      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:58.045862+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "product_id": "paradym-animo-solutions",
@@ -20656,7 +20684,12 @@
       "previousSha256": "ffe018d72157dd961afa4148fec393ef4724d51f7d1fea0d693e0c78c711b9e4",
       "previousSizeBytes": 253363,
       "hashCorrectedAt": "2026-09-17T17:51:49.992309+00:00",
-      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)"
+      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:50.382873+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "product_id": "qualcomm-snapdragon-spu",
@@ -20710,21 +20743,29 @@
       "bytes": 36160,
       "tier": "curl_cffi:chrome124",
       "refId": "hpe-alletra-mp",
-      "sha256": "3892b00f739adb1e7c0145ac98b600081f88bf578165d3dd9057ad250c688c30",
-      "sizeBytes": 36165,
+      "sha256": "8a86be970d0f5704dff087665a07457fcc14ae5a9699c983dfaa9f26c0889dc3",
+      "sizeBytes": 269107,
       "hashedAt": "2026-09-06",
       "ok": false,
       "superseded_file": "_superseded-09172026/migrate-proofs/hpe-alletra-mp-35748917.html",
       "supersededAt": "2026-09-17T14:18:22.508101+00:00",
       "supersededBy": "replace_evidence.py",
-      "superseded_reason": "the capture failed the door's check on 2026-09-17 and was replaced by a fresh fetch of the row's URL"
+      "superseded_reason": "the capture failed the door's check on 2026-09-17 and was replaced by a fresh fetch of the row's URL",
+      "previousSha256": "3892b00f739adb1e7c0145ac98b600081f88bf578165d3dd9057ad250c688c30",
+      "hashCorrectedAt": "2026-09-18T03:45:25.176304+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:45:54.545531+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "product_id": "nginx",
       "file": "nginx-9cb0ba7f.html",
       "url": "https://blog.nginx.org/blog/pqc-nginx",
-      "sha256": "c38195e213ae2c7b7956df23aec58a300e1b819e2bdfc546f6e687dd2d50dc99",
-      "sizeBytes": 110791,
+      "sha256": "102b18d7d74f8dc88523d67b97b495171979564139a1fc0c1559a2888f4032ff",
+      "sizeBytes": 112591,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
       "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
@@ -20734,7 +20775,15 @@
       "superseded_file": "_superseded-09172026/migrate-proofs/nginx-9cb0ba7f.html",
       "supersededAt": "2026-09-17T14:18:22.508101+00:00",
       "supersededBy": "replace_evidence.py",
-      "superseded_reason": "the capture failed the door's check on 2026-09-17 and was replaced by a fresh fetch of the row's URL"
+      "superseded_reason": "the capture failed the door's check on 2026-09-17 and was replaced by a fresh fetch of the row's URL",
+      "previousSha256": "c38195e213ae2c7b7956df23aec58a300e1b819e2bdfc546f6e687dd2d50dc99",
+      "hashCorrectedAt": "2026-09-18T03:45:50.039428+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:45:50.039428+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "product_id": "trezor-safe-7-pqc",
@@ -20748,7 +20797,12 @@
       "refId": "trezor-safe-7-pqc",
       "note": "additional document for a row that already has one | re-downloaded by the update lane 2026-09-16 (same URL, artefact SOURCE) | re-downloaded by the update lane 2026-09-16 (same URL, artefact SOURCE)",
       "superseded_file": "_superseded-09162026/migrate-proofs/trezor-safe-7-pqc-9122fb08.html",
-      "bytes": 583788
+      "bytes": 583788,
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:45:57.026274+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "product_id": "infineon-aurix-tc49-pqc",
@@ -20762,7 +20816,12 @@
       "refId": "infineon-aurix-tc49-pqc",
       "note": "additional document for a row that already has one | re-downloaded by the update lane 2026-09-16 (same URL, artefact SOURCE)",
       "superseded_file": "_superseded-09162026/migrate-proofs/infineon-aurix-tc49-pqc-dbeb35a9.html",
-      "bytes": 1607464
+      "bytes": 1607464,
+      "artefact": "SOURCE",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:58.316945+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH"
     },
     {
       "product_id": "zerto-11-0",
@@ -20794,10 +20853,10 @@
       "tier": "playwright-stealth",
       "sha256": "8a86be970d0f5704dff087665a07457fcc14ae5a9699c983dfaa9f26c0889dc3",
       "artefact": "SOURCE",
-      "identity": "RELEVANT",
+      "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T14:20:01.890757+00:00",
-      "admittedBy": "admit.py"
+      "admittedAt": "2026-09-18T03:45:54.545531+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "product_id": "general-dynamics-mission",
@@ -20827,10 +20886,10 @@
       "tier": "curl_cffi:chrome124",
       "sha256": "6f1607465b0765babf9b6d349b3d618df09b058aa585121398dba96e91972e8e",
       "artefact": "SOURCE",
-      "identity": "SKIPPED",
-      "unified": "converted",
-      "admittedAt": "2026-09-17T14:19:56.026687+00:00",
-      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:45:58.045862+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "superseded_file": "_superseded-09172026/migrate-proofs/pqcee-cng-provider-92c2fc75.html"
     },
     {
