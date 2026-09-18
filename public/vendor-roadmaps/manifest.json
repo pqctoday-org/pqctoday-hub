@@ -1669,6 +1669,22 @@
       "unified": "current",
       "admittedAt": "2026-09-17T13:15:23.912552+00:00",
       "admittedBy": "admit.py --stamp-existing"
+    },
+    {
+      "vendorId": "VND-057",
+      "refId": "VND-057",
+      "filename": "VND-057_Cloudflare_Inc_post-quantum-dnssec-1111.html",
+      "sizeBytes": 679456,
+      "contentType": "text/html",
+      "url": "https://blog.cloudflare.com/post-quantum-dnssec-1111/",
+      "sha256": "7fc72a1042748c27a603e49183cc19ce028c081325df55f66cfdf1422cb3e06f",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T02:07:30.410151+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "file": "vendor-roadmaps/VND-057_Cloudflare_Inc_post-quantum-dnssec-1111.html",
+      "status": "downloaded"
     }
   ],
   "archivedEntries": [
