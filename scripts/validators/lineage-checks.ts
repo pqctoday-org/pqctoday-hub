@@ -167,12 +167,28 @@ export function verdictLockFindings(
 
 interface CertRecord {
   id?: string | number
-  pqcCoverage?: string
-  pqcCoverageVerifiedAt?: string
   [k: string]: unknown
 }
 
-function certRecords(json: string | null): StampedRecord[] {
+/**
+ * Stamped fields on a compliance-data.json record: `<field>` may only change
+ * together with a newer `<stamp>`. securityTargetUrls added 2026-09-17 at
+ * the maintenance agent's request — the 16 CMVP rows whose Security Policy
+ * address serves a "Not Available" placeholder now carry
+ * securityTargetUrls=[] with securityTargetUrlsVerifiedAt, and
+ * sync-cert-data.py accepts that prune only with the stamp.
+ */
+export const CERT_STAMPED_FIELDS: ReadonlyArray<{ field: string; stamp: string }> = [
+  { field: 'pqcCoverage', stamp: 'pqcCoverageVerifiedAt' },
+  { field: 'securityTargetUrls', stamp: 'securityTargetUrlsVerifiedAt' },
+]
+
+function stableValue(v: unknown): string {
+  if (v === undefined || v === null) return ''
+  return typeof v === 'string' ? v : JSON.stringify(v)
+}
+
+function certRecords(json: string | null, field: string, stamp: string): StampedRecord[] {
   if (!json) return []
   let parsed: unknown
   try {
@@ -185,8 +201,10 @@ function certRecords(json: string | null): StampedRecord[] {
     .filter((r) => r.id !== undefined && r.id !== null)
     .map((r) => ({
       id: String(r.id),
-      value: String(r.pqcCoverage ?? ''),
-      stamp: String(r.pqcCoverageVerifiedAt ?? ''),
+      // eslint-disable-next-line security/detect-object-injection -- field/stamp come from CERT_STAMPED_FIELDS, not user input
+      value: stableValue(r[field]),
+      // eslint-disable-next-line security/detect-object-injection -- field/stamp come from CERT_STAMPED_FIELDS, not user input
+      stamp: stableValue(r[stamp]),
     }))
 }
 
@@ -251,13 +269,16 @@ export function runVerdictLockCheck(): CheckResult[] {
     if (existedAtBase && baselineJson === null) {
       findings.push(baselineUnreadable('compliance-data.json', base, certRel))
     } else {
-      findings.push(
-        ...verdictLockFindings(
-          certRecords(baselineJson),
-          certRecords(fs.readFileSync(certAbs, 'utf-8')),
-          { csv: 'compliance-data.json', field: 'pqcCoverage' }
+      const currentJson = fs.readFileSync(certAbs, 'utf-8')
+      for (const { field, stamp } of CERT_STAMPED_FIELDS) {
+        findings.push(
+          ...verdictLockFindings(
+            certRecords(baselineJson, field, stamp),
+            certRecords(currentJson, field, stamp),
+            { csv: 'compliance-data.json', field }
+          )
         )
-      )
+      }
     }
   }
 
@@ -358,7 +379,7 @@ export function archiveOnlyFindings(entries: readonly NameStatusEntry[]): Findin
       row: null,
       field: 'generation',
       value: e.to ? `${e.from} → ${e.to}` : e.from,
-      message: `${name} left src/data/ without arriving in src/data/archive/${name} — a dated generation is only ever archived (git mv), never deleted or renamed, so downstream citations (rag-corpus was_derived_from, revisions) keep resolving`,
+      message: `${name} left src/data/ without arriving in src/data/archive/${name} — a dated generation is only ever archived (\`git mv\`; a copied file needs \`git add -f\`, src/data/archive/ is gitignored), never deleted or renamed, so downstream citations (rag-corpus was_derived_from, revisions) keep resolving`,
     })
   }
   return findings
