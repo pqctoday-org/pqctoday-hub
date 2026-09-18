@@ -173,6 +173,7 @@ describe('industry-landscape driftguards', () => {
 
   it('pqc_claim_basis is a known value and within its matrix-derived ceiling (WS10)', () => {
     const rowById = new Map(PROTOCOL_MATRIX.map((r) => [r.id, r]))
+    const KEM_FAMILIES_FOR_CEILING = new Set(['ML-KEM', 'HQC', 'FrodoKEM', 'Classic-McEliece'])
     for (const uc of useCases) {
       expect(
         PQC_CLAIM_BASES as readonly string[],
@@ -191,24 +192,61 @@ describe('industry-landscape driftguards', () => {
       // more (that would be asserting a standard that does not exist).
       const targets = uc.protocolsTarget.map((id) => rowById.get(id)).filter(Boolean)
       if (targets.length === 0) continue
-      const bestStage = Math.max(
-        ...targets.flatMap((t) =>
-          Object.values(t!.dimensions).map((d) =>
-            d.stage
-              ? DRAFT_STAGE_LEVEL[d.stage]
-              : d.value === 'rfc'
-                ? 7
-                : d.value === 'draft'
-                  ? 4
-                  : 0
-          )
+      // PER MECHANISM, not per row (2026-09-17). The first version took the
+      // max over all four dimensions, so a TLS 1.3 row whose hybrid-KEM
+      // dimension is an RFC could label an ML-DSA claim "standardised" while
+      // the signature dimensions were still in the RFC Editor queue — 8 such
+      // claims on 5 rows slipped through. A KEM claim is bounded by the KEM
+      // dimensions of its targets; a signature claim by the signature ones.
+      const stageOf = (d: { stage?: string; value: string }) =>
+        d.stage
+          ? DRAFT_STAGE_LEVEL[d.stage as keyof typeof DRAFT_STAGE_LEVEL]
+          : d.value === 'rfc'
+            ? 7
+            : d.value === 'draft'
+              ? 4
+              : 0
+      for (const m of uc.pqcMechanisms) {
+        const dims = KEM_FAMILIES_FOR_CEILING.has(m)
+          ? (['pureKem', 'hybridKem'] as const)
+          : (['pureSig', 'hybridSig'] as const)
+        const ceiling = Math.max(
+          ...targets.flatMap((t) => dims.map((d) => stageOf(t!.dimensions[d])))
         )
-      )
-      if (bestStage < 7) {
+        if (ceiling < 7) {
+          expect(
+            ['adopted', 'standardised'].includes(uc.pqcClaimBasis),
+            `${uc.useCaseId}: basis "${uc.pqcClaimBasis}" exceeds the ceiling for "${m}" — no target protocol (${uc.protocolsTarget.join(', ')}) has a published ${dims[0] === 'pureKem' ? 'KEM' : 'signature'} standard`
+          ).toBe(false)
+        }
+      }
+    }
+  })
+
+  it('migration_status agrees with the PQC columns (G1, 2026-09-17)', () => {
+    // A tile badge reads "PQC in production" / "PQC pilots" / "PQC drafts"
+    // straight off migration_status. Two rows (telco-air-interface,
+    // pci-pboc-cards) carried `production` with NO PQC mechanism and their
+    // own summary saying no PQC path exists — the badge contradicted the
+    // row. Nothing related the two columns until this test.
+    for (const uc of useCases) {
+      if (uc.migrationStatus === 'none') continue
+      expect(
+        uc.pqcMechanisms.length,
+        `${uc.useCaseId}: migration_status "${uc.migrationStatus}" but no pqc_mechanisms`
+      ).toBeGreaterThan(0)
+      expect(
+        uc.pqcClaimBasis,
+        `${uc.useCaseId}: migration_status "${uc.migrationStatus}" but pqc_claim_basis is none`
+      ).not.toBe('none')
+      // "In production" means the sector runs it — which is exactly what
+      // basis=adopted asserts. Anything weaker beside a production badge
+      // contradicts itself ("Standardised — sector has not migrated yet").
+      if (uc.migrationStatus === 'production') {
         expect(
-          ['adopted', 'standardised'].includes(uc.pqcClaimBasis),
-          `${uc.useCaseId}: basis "${uc.pqcClaimBasis}" exceeds its ceiling — no target protocol has a published standard`
-        ).toBe(false)
+          uc.pqcClaimBasis,
+          `${uc.useCaseId}: migration_status production requires basis adopted, got "${uc.pqcClaimBasis}"`
+        ).toBe('adopted')
       }
     }
   })
@@ -313,6 +351,71 @@ describe('industry-landscape driftguards', () => {
     }
   })
 
+  it('replaces edges pair PQC families with classical families of the same kind (2026-09-17)', () => {
+    // The tile's per-kind grouping and the mechanism lens's "Replaces /
+    // Replaced by" chips both read this edge; a wrong-kind entry would tell a
+    // reader ML-KEM replaces ECDSA — the exact misreading the edge exists to
+    // prevent.
+    const byFam = new Map(CRYPTO_MECHANISMS.map((m) => [m.family, m]))
+    const groupOf = (m: (typeof CRYPTO_MECHANISMS)[number]) =>
+      m.kinds.includes('signature')
+        ? 'signature'
+        : m.kinds.includes('kem') || m.kinds.includes('key-exchange')
+          ? 'key-exchange'
+          : 'symmetric'
+    for (const m of CRYPTO_MECHANISMS) {
+      if (m.classical) {
+        expect(m.replaces, `${m.family}: classical families carry no replaces edge`).toBeUndefined()
+        continue
+      }
+      expect(
+        m.replaces?.length ?? 0,
+        `${m.family}: PQC family with no replaces edge`
+      ).toBeGreaterThan(0)
+      for (const c of m.replaces!) {
+        const target = byFam.get(c)
+        expect(
+          target?.classical,
+          `${m.family}: replaces "${c}" which is not a classical family`
+        ).toBe(true)
+        expect(
+          groupOf(target!),
+          `${m.family} (${groupOf(m)}) replaces "${c}" (${groupOf(target!)}) — kinds differ`
+        ).toBe(groupOf(m))
+      }
+    }
+    // Every classical ASYMMETRIC family is replaced by something, or says why not.
+    for (const m of CRYPTO_MECHANISMS) {
+      if (!m.classical || groupOf(m) === 'symmetric') continue
+      const replacedBy = CRYPTO_MECHANISMS.filter((p) => p.replaces?.includes(m.family))
+      expect(
+        replacedBy.length > 0 || Boolean(m.noReplacementReason),
+        `${m.family}: no PQC family replaces it and no noReplacementReason given`
+      ).toBe(true)
+    }
+    // Symmetric families explain themselves instead.
+    for (const m of CRYPTO_MECHANISMS) {
+      if (groupOf(m) === 'symmetric')
+        expect(
+          m.quantumSafeNote,
+          `${m.family}: symmetric family needs a quantumSafeNote`
+        ).toBeTruthy()
+    }
+  })
+
+  it('the pre-split RSA label is gone from every mechanism column (1c, 2026-09-17)', () => {
+    for (const uc of useCases) {
+      expect(
+        [...uc.classicalMechanisms, ...uc.pqcMechanisms],
+        `${uc.useCaseId}: bare "RSA"`
+      ).not.toContain('RSA')
+    }
+    for (const s of standards) {
+      expect(s.mechanismsReferenced, `${s.standardId}: bare "RSA"`).not.toContain('RSA')
+    }
+    expect(isKnownMechanism('RSA')).toBe(false)
+  })
+
   it('every standards row names at least one specific mechanism', () => {
     // Design rule (user decision 2026-07-29): the standards column exists to
     // show which SPECIFIC crypto mechanisms a technical standard references —
@@ -325,6 +428,52 @@ describe('industry-landscape driftguards', () => {
         s.mechanismsReferenced.length,
         `${s.standardId}: standards rows must reference >=1 specific mechanism`
       ).toBeGreaterThan(0)
+    }
+  })
+
+  it('a standards row lists every vocabulary family its own document title names (G3, 2026-09-17)', () => {
+    // RFC 9881 "Algorithm Identifiers for ML-DSA in X.509 PKI" carried
+    // mechanisms_referenced = ECDSA;RSA and no ML-DSA — in six industries —
+    // so the ML-DSA mechanism lens omitted the RFC that defines its X.509
+    // identifiers. 46 other standards rows DO list PQC families, so this was
+    // an omission, not a convention. Title matching is whole-word with the
+    // same non-alphanumeric boundary verify-mechanism-proofs.py uses; bare
+    // "RSA" is deliberately NOT matched — a title cannot say whether it means
+    // signing or key transport, and that is the row's call.
+    const TITLE_ALIASES: Record<string, string> = {
+      'ML-KEM': 'ML-KEM',
+      Kyber: 'ML-KEM',
+      'ML-DSA': 'ML-DSA',
+      Dilithium: 'ML-DSA',
+      'SLH-DSA': 'SLH-DSA',
+      'SPHINCS+': 'SLH-DSA',
+      'FN-DSA': 'FN-DSA',
+      Falcon: 'FN-DSA',
+      HQC: 'HQC',
+      FrodoKEM: 'FrodoKEM',
+      'Classic McEliece': 'Classic-McEliece',
+      LMS: 'LMS',
+      'HSS/LMS': 'LMS',
+      XMSS: 'XMSS',
+      ECDSA: 'ECDSA',
+      ECDH: 'ECDH',
+      EdDSA: 'EdDSA',
+      Ed25519: 'EdDSA',
+      X25519: 'X25519',
+      SM2: 'SM2',
+    }
+    const titleByRef = new Map(libraryData.map((d) => [d.referenceId, d.documentTitle]))
+    const escape = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    for (const std of standards) {
+      const title = titleByRef.get(std.libraryRef) ?? ''
+      for (const [needle, family] of Object.entries(TITLE_ALIASES)) {
+        const re = new RegExp(`(?<![A-Za-z0-9])${escape(needle)}(?![A-Za-z0-9])`)
+        if (!re.test(title)) continue
+        expect(
+          std.mechanismsReferenced,
+          `${std.standardId}: document title names "${needle}" but mechanisms_referenced (${std.mechanismsReferenced.join(';') || 'empty'}) lacks ${family}`
+        ).toContain(family)
+      }
     }
   })
 
@@ -356,6 +505,22 @@ describe('industry-landscape driftguards', () => {
   it('use-case ids are unique', () => {
     const ids = useCases.map((u) => u.useCaseId)
     expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('use-case ids are sector-topic slugs, not library reference ids (G5, 2026-09-17)', () => {
+    // Two rows arrived with a library reference_id as their use_case_id
+    // ("Mastercard-PQC-industry-awareness-…", "Controller-Pilot-Data-Link-
+    // Communications-CPDLC") — the add-row path had copied the evidence id
+    // into the slug. The id is a React key and a driftguard message today,
+    // but a mixed-case 60-character id in a column of `sector-topic` slugs is
+    // a symptom of a document being filed as a use case (the Mastercard row
+    // was a whitepaper), and the slug shape is the cheapest place to notice.
+    for (const uc of useCases) {
+      expect(
+        /^[a-z0-9]+(-[a-z0-9]+)+$/.test(uc.useCaseId),
+        `${uc.useCaseId}: use_case_id must be a lowercase sector-topic slug`
+      ).toBe(true)
+    }
   })
 
   it('icons are allowlisted', () => {
@@ -411,20 +576,32 @@ describe('industry-landscape driftguards', () => {
         `${uc.useCaseId}: learn_module_id "${uc.learnModuleId}" is not a real Learn module id`
       ).toBeDefined()
     }
-    // All rows for the same industry must agree on the same module id — the
-    // field is industry-level, repeated per use-case row; a mismatch means a
-    // stale row was edited without updating its siblings.
-    const byIndustry = new Map<string, Set<string>>()
+    // Rows of one industry share an industry DEFAULT module, and a row may
+    // carry its own instead (2026-09-17, replacing the "all rows must agree"
+    // rule). The strict rule forced Cross-Industry's seven rows to stay
+    // empty although each has an exact Protocols-track module (TLS, PKI,
+    // S/MIME, code signing, VPN, DNSSEC), and pushed all seven IT rows onto
+    // crypto-dev-apis. learnModulesForIndustry() already de-duplicates
+    // across rows, so the industry rollup lists every module its rows name.
+    // What is still guarded: an industry whose rows carry ≥2 modules must
+    // have one of them on a majority of rows — a spread with no default is
+    // the "stale row edited without its siblings" drift the old rule caught.
+    const byIndustry = new Map<string, string[]>()
     for (const uc of useCases) {
-      const set = byIndustry.get(uc.industry) ?? new Set<string>()
-      set.add(uc.learnModuleId)
-      byIndustry.set(uc.industry, set)
+      const list = byIndustry.get(uc.industry) ?? []
+      list.push(uc.learnModuleId)
+      byIndustry.set(uc.industry, list)
     }
     for (const [industry, ids] of byIndustry) {
+      const distinct = new Set(ids.filter(Boolean))
+      if (distinct.size <= 1) continue
+      const counts = new Map<string, number>()
+      for (const id of ids) counts.set(id, (counts.get(id) ?? 0) + 1)
+      const top = Math.max(...[...counts.values()])
       expect(
-        ids.size,
-        `industry "${industry}" has inconsistent learn_module_id values: ${[...ids]}`
-      ).toBe(1)
+        top * 2 >= ids.length,
+        `industry "${industry}" names ${distinct.size} Learn modules with no default on a majority of rows: ${[...counts.entries()].map(([k, v]) => `${k || '(empty)'}×${v}`).join(', ')}`
+      ).toBe(true)
     }
   })
 
@@ -735,6 +912,37 @@ describe('industry-landscape driftguards', () => {
           new Set([...NOT_A_SPEC, 'Reference']),
           `standard "${s.standardId}" is marked ${s.evidenceType} but its library row is a ${docType}`
         ).toContain(docType)
+      }
+    }
+  })
+
+  it('pqc_readiness is consistent with mechanisms_referenced and evidence_type (G8, 2026-09-17)', () => {
+    // The column was loaded and rendered nowhere until 2026-09-17, so wrong
+    // values cost nothing; now it is a badge on the standards chip. A row
+    // listing a PQC family cannot be readiness=none, and a row listing none
+    // cannot be readiness=published.
+    const PQC = new Set(CRYPTO_MECHANISMS.filter((m) => !m.classical).map((m) => m.family))
+    for (const std of standards) {
+      expect(
+        ['none', 'in-progress', 'published'],
+        `${std.standardId}: unknown pqc_readiness "${std.pqcReadiness}"`
+      ).toContain(std.pqcReadiness)
+      if (std.mechanismsReferenced.some((m) => PQC.has(m))) {
+        expect(
+          std.pqcReadiness,
+          `${std.standardId}: references a PQC family but pqc_readiness is none`
+        ).not.toBe('none')
+      }
+      // "published" is a claim that a PQC mechanism is standardised by (or
+      // through) this document — it needs a PQC family on the row to point
+      // at. Without one the value is the DOCUMENT's publication status, which
+      // is a different fact (ONC 170.315 (d)(8) is published; its PQC
+      // readiness is none).
+      if (std.pqcReadiness === 'published') {
+        expect(
+          std.mechanismsReferenced.some((m) => PQC.has(m)),
+          `${std.standardId}: pqc_readiness published but mechanisms_referenced (${std.mechanismsReferenced.join(';')}) names no PQC family`
+        ).toBe(true)
       }
     }
   })
