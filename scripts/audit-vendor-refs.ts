@@ -262,15 +262,23 @@ export function audit(): Finding[] {
   const roadmap = parseCSV(roadmapPath)
   const registry = parseCSV(registryPath)
 
-  // Build roadmap lookup: VND-* → { name, status }
-  const roadmapById = new Map<string, { name: string; status: string }>()
+  // Build roadmap lookup: VND-* → all of that vendor's roadmap rows (a
+  // vendor can carry more than one concurrently-active row since 2026-09-13
+  // — CHANGED from a single {name, status} value, which silently kept only
+  // the last-iterated row per vendor and could evaluate the checks below
+  // against an arbitrary row instead of "does ANY of this vendor's rows
+  // match / is ANY of them active").
+  const roadmapById = new Map<string, Array<{ name: string; status: string }>>()
   for (const row of roadmap) {
     const id = row['vendor_id']?.trim()
     if (id?.startsWith('VND-')) {
-      roadmapById.set(id, {
+      const entry = {
         name: row['vendor_name']?.trim() ?? '',
         status: row['status']?.trim() ?? 'active',
-      })
+      }
+      const list = roadmapById.get(id)
+      if (list) list.push(entry)
+      else roadmapById.set(id, [entry])
     }
   }
 
@@ -303,19 +311,25 @@ export function audit(): Finding[] {
     // Only validate vendor_ids that actually resolve in the roadmap CSV.
     // A VND-* with no roadmap entry means the vendor has no published
     // roadmap yet — that is expected and not an error.
-    const roadmapEntry = roadmapById.get(vendorId)
-    if (!roadmapEntry) continue
+    const roadmapEntries = roadmapById.get(vendorId)
+    if (!roadmapEntries || roadmapEntries.length === 0) continue
 
-    const { name: roadmapName, status: roadmapStatus } = roadmapEntry
+    const activeEntries = roadmapEntries.filter((e) => e.status !== 'deprecated')
+    // For messaging, prefer an active row's name; fall back to the first
+    // entry so a fully-deprecated vendor's finding still names a vendor.
+    const roadmapName = (activeEntries[0] ?? roadmapEntries[0]).name
 
-    // A) Deprecated vendor — only an error if the vendor ENTITY is deprecated in
-    //    the registry (the authoritative product↔vendor link). A deprecated
-    //    ROADMAP entry for an entity that is still active in the registry just
-    //    means "this active vendor has no published PQC roadmap"; the product is
-    //    correctly attributed and the roadmap UI filters the deprecated row, so
-    //    it is not a wrong/stale vendor_id.
+    // A) Deprecated vendor — only an error if ALL of this vendor's roadmap
+    //    rows are deprecated (an active row elsewhere means the vendor DOES
+    //    have a published, current roadmap — a stray deprecated row
+    //    alongside it is not an error) AND the vendor ENTITY is deprecated
+    //    in the registry (the authoritative product↔vendor link). A
+    //    deprecated ROADMAP for an entity still active in the registry just
+    //    means "this active vendor has no published PQC roadmap"; the
+    //    product is correctly attributed and the roadmap UI filters
+    //    deprecated rows, so it is not a wrong/stale vendor_id.
     const registryStatus = registryStatusById.get(vendorId)
-    if (roadmapStatus === 'deprecated' && registryStatus !== 'active') {
+    if (activeEntries.length === 0 && registryStatus !== 'active') {
       findings.push({
         productId,
         vendorId,
@@ -326,7 +340,7 @@ export function audit(): Finding[] {
       })
       continue
     }
-    if (roadmapStatus === 'deprecated') {
+    if (activeEntries.length === 0) {
       // active registry entity, deprecated roadmap → fine, skip name/other checks
       continue
     }
@@ -334,19 +348,24 @@ export function audit(): Finding[] {
     // B) Name mismatch — skip if this is a known-good indirect mapping.
     if (isKnownIndirect(productId, vendorId)) continue
 
-    const roadmapTokens = nameTokens(roadmapName)
+    // A vendor can have more than one active roadmap row (2026-09-13+) —
+    // match against ANY of them; only flag when NONE share a token, so a
+    // second, differently-titled announcement never produces a false
+    // positive against a product correctly attributed via the first.
+    const roadmapTokensList = activeEntries.map((e) => nameTokens(e.name))
+    const roadmapNamesJoined = activeEntries.map((e) => e.name).join(' / ')
 
     // Check vendor_name_original first (explicit name → strongest signal).
     if (vendorNameOrig) {
-      const origTokens = nameTokens(vendorNameOrig)
-      const overlap = [...origTokens].some((t) => roadmapTokens.has(t))
+      const origTokens = [...nameTokens(vendorNameOrig)]
+      const overlap = roadmapTokensList.some((tokens) => origTokens.some((t) => tokens.has(t)))
       if (!overlap) {
         findings.push({
           productId,
           vendorId,
           detail:
             `vendor_name_original '${vendorNameOrig}' shares no tokens with ` +
-            `roadmap vendor '${roadmapName}' — likely wrong VND assignment. ` +
+            `roadmap vendor(s) '${roadmapNamesJoined}' — likely wrong VND assignment. ` +
             `If intentional, add to KNOWN_INDIRECT in scripts/audit-vendor-refs.ts`,
           severity: 'warn',
         })
@@ -355,15 +374,15 @@ export function audit(): Finding[] {
     }
 
     // Fall back to product_id tokens when vendor_name_original is absent.
-    const productTokens = nameTokens(productId)
-    const overlap = [...productTokens].some((t) => roadmapTokens.has(t))
+    const productTokens = [...nameTokens(productId)]
+    const overlap = roadmapTokensList.some((tokens) => productTokens.some((t) => tokens.has(t)))
     if (!overlap) {
       findings.push({
         productId,
         vendorId,
         detail:
           `product_id '${productId}' shares no tokens with ` +
-          `roadmap vendor '${roadmapName}' (${vendorId}) — likely wrong VND assignment. ` +
+          `roadmap vendor(s) '${roadmapNamesJoined}' (${vendorId}) — likely wrong VND assignment. ` +
           `If intentional, add to KNOWN_INDIRECT in scripts/audit-vendor-refs.ts`,
         severity: 'warn',
       })

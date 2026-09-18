@@ -26,7 +26,7 @@ import {
 } from '@/data/migrationAssets'
 import { softwareData, vendorMap } from '@/data/migrateData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
-import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
+import { enrichmentByVendorId, enrichmentForRoadmap } from '@/data/vendorRoadmapEnrichmentData'
 import { getCertsForProduct } from '@/data/certificationXrefData'
 import {
   productsForDomain,
@@ -1184,7 +1184,7 @@ function MobileRoadmapsTab({
     const entries = [...ids].map((vendorId) => ({
       vendorId,
       vendorName:
-        roadmapByVendorId.get(vendorId)?.vendorName ||
+        roadmapByVendorId.get(vendorId)?.[0]?.vendorName ||
         vendorMap.get(vendorId)?.vendorDisplayName ||
         vendorId,
     }))
@@ -1289,7 +1289,7 @@ function MobileRoadmapsTab({
         onClose={() => setSelectedVendorId(null)}
         title={
           selectedVendorId
-            ? roadmapByVendorId.get(selectedVendorId)?.vendorName ||
+            ? roadmapByVendorId.get(selectedVendorId)?.[0]?.vendorName ||
               vendorMap.get(selectedVendorId)?.vendorDisplayName ||
               selectedVendorId
             : undefined
@@ -1297,19 +1297,31 @@ function MobileRoadmapsTab({
         large
         testId="vendor-roadmap-sheet"
       >
-        {selectedVendorId && (
-          <MobileVendorRoadmapPanel
-            roadmap={roadmapByVendorId.get(selectedVendorId)}
-            enrichment={enrichmentByVendorId.get(selectedVendorId)}
-          />
-        )}
+        {selectedVendorId &&
+          (() => {
+            const roadmaps = roadmapByVendorId.get(selectedVendorId) ?? []
+            const vendorEnrichments = enrichmentByVendorId.get(selectedVendorId) ?? []
+            return roadmaps.length > 0 ? (
+              <div className="space-y-4">
+                {roadmaps.map((r) => (
+                  <MobileVendorRoadmapPanel
+                    key={r.compositeId}
+                    roadmap={r}
+                    enrichment={enrichmentForRoadmap(r.vendorId, r.roadmapUrl)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <MobileVendorRoadmapPanel roadmap={undefined} enrichment={vendorEnrichments[0]} />
+            )
+          })()}
       </MobileSheet>
 
       <MobileVendorProductsSheet
         vendorId={viewingVendorId}
         vendorName={
           viewingVendorId
-            ? roadmapByVendorId.get(viewingVendorId)?.vendorName ||
+            ? roadmapByVendorId.get(viewingVendorId)?.[0]?.vendorName ||
               vendorMap.get(viewingVendorId)?.vendorDisplayName ||
               viewingVendorId
             : undefined
@@ -1455,7 +1467,7 @@ function RoadmapVendorCard({
   // 2026-08-24 audit R4.8: same real field + "None detected" sentinel guard
   // as VendorRoadmapPanel.tsx:136 (desktop) — a per-vendor dated milestone,
   // not invented, was the one concrete fact these cards were missing.
-  const targetDates = enrichmentByVendorId.get(vendorId)?.targetMigrationDates
+  const targetDates = enrichmentByVendorId.get(vendorId)?.[0]?.targetMigrationDates
   return (
     // 2026-08-28: was a single <Button> wrapping everything, including the
     // product-count line — no second tap target was possible without

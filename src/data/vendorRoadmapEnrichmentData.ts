@@ -38,6 +38,7 @@ function parseEnrichmentFile(raw: string): Map<string, VendorRoadmapEnrichment> 
 
     const F = {
       vendorId: /\*\*Vendor ID\*\*:\s*(.+)$/m,
+      roadmapUrl: /\*\*Roadmap URL\*\*:\s*(.+)$/m,
       scope: /\*\*Roadmap Scope\*\*:\s*(.+)$/m,
       algorithms: /\*\*PQC Algorithms Announced\*\*:\s*(.+)$/m,
       dates: /\*\*Target Migration Dates\*\*:\s*(.+)$/m,
@@ -56,8 +57,15 @@ function parseEnrichmentFile(raw: string): Map<string, VendorRoadmapEnrichment> 
     const quality = field(F.quality) ?? ''
     if (quality !== 'HIGH' && quality !== 'MEDIUM' && quality !== 'LOW') continue
 
-    result.set(vendorId, {
+    const rawRoadmapUrl = field(F.roadmapUrl) ?? ''
+    const roadmapUrl = rawRoadmapUrl === 'None' ? '' : rawRoadmapUrl
+    // Composite key: a vendor with more than one active roadmap row has one
+    // section per row (enrich-vendor-roadmaps.py's row_key()), and each
+    // needs its own enrichment record — vendorId alone would let the second
+    // section silently overwrite the first in this per-file map.
+    result.set(`${vendorId}|${roadmapUrl}`, {
       vendorId,
+      roadmapUrl,
       roadmapScope: field(F.scope) ?? '',
       pqcAlgorithms: splitSemicolon(field(F.algorithms)),
       targetMigrationDates: field(F.dates) ?? '',
@@ -96,12 +104,53 @@ function buildEnrichmentMap(): Map<string, VendorRoadmapEnrichment> {
     return da.date - db.date || da.rev - db.rev
   })
   for (const path of orderedPaths) {
-    for (const [id, enrichment] of parseEnrichmentFile(modules[path])) {
-      merged.set(id, enrichment)
+    for (const [key, enrichment] of parseEnrichmentFile(modules[path])) {
+      merged.set(key, enrichment)
     }
   }
   return merged
 }
 
-/** Lookup map: vendor_id → VendorRoadmapEnrichment */
-export const enrichmentByVendorId: Map<string, VendorRoadmapEnrichment> = buildEnrichmentMap()
+const enrichmentByCompositeKey = buildEnrichmentMap()
+
+/**
+ * Lookup map: vendor_id → all of that vendor's enrichment records (one per
+ * active roadmap row). Prefer {@link enrichmentForRoadmap} when you have a
+ * specific row's `roadmapUrl` — this raw map is for cases (like the vendor
+ * summary list) that only need "does this vendor have any enrichment at
+ * all."
+ */
+export const enrichmentByVendorId: Map<string, VendorRoadmapEnrichment[]> = new Map()
+for (const enrichment of enrichmentByCompositeKey.values()) {
+  const list = enrichmentByVendorId.get(enrichment.vendorId)
+  if (list) list.push(enrichment)
+  else enrichmentByVendorId.set(enrichment.vendorId, [enrichment])
+}
+
+/**
+ * Pure matcher, split out from {@link enrichmentForRoadmap} so the matching
+ * rule is unit-testable without depending on the real, module-level parsed
+ * data. Matches by roadmapUrl when the row has one; falls back to the
+ * vendor's only candidate when there's exactly one (covers legacy content
+ * from before roadmapUrl was recorded per section, and the common
+ * single-row-per-vendor case in general).
+ */
+export function pickEnrichmentForRoadmap(
+  candidates: VendorRoadmapEnrichment[] | undefined,
+  roadmapUrl: string | undefined
+): VendorRoadmapEnrichment | undefined {
+  if (!candidates || candidates.length === 0) return undefined
+  if (roadmapUrl) {
+    const exact = candidates.find((e) => e.roadmapUrl === roadmapUrl)
+    if (exact) return exact
+  }
+  return candidates.length === 1 ? candidates[0] : undefined
+}
+
+/** The enrichment record for one specific roadmap row — see {@link pickEnrichmentForRoadmap}. */
+export function enrichmentForRoadmap(
+  vendorId: string,
+  roadmapUrl: string | undefined
+): VendorRoadmapEnrichment | undefined {
+  return pickEnrichmentForRoadmap(enrichmentByVendorId.get(vendorId), roadmapUrl)
+}
