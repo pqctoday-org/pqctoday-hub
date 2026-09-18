@@ -290,10 +290,18 @@
     --tertiary-foreground: 210 40% 98%;
     /* Wave D (2026-08-29): 65% lightness measured 3.42:1 against the "Industries"
        track badge's bg-tertiary/10 (#f0e9fc) — axe color-contrast on every
-       module in that track. 55% clears 4.5:1 with margin (4.82:1 measured). */
-    --tertiary-legible: 270 95% 55%;
+       module in that track. 55% clears 4.5:1 with margin (4.82:1 measured).
+       Wave A (2026-09-18): the TLS simulator's selected tab sits on
+       bg-tertiary/20 (#e6d7fb), where 55% measured 4.20:1. 50% gives 4.69:1
+       there and 5.38:1 on the /10 tint. */
+    --tertiary-legible: 270 95% 50%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215 16% 35%;
+    /* Wave A (2026-09-18): 35% was 4.42:1 once used at `/80` opacity on white
+       (#fefefe), the caption pattern on Explore and Digital ID — 0.08 short of
+       AA. 32% clears it (4.80:1) and lifts the plain colour from 7.35:1 to
+       8.25:1. Opacities below /80 cannot be rescued by any lightness and were
+       raised at the call sites in the same change. */
+    --muted-foreground: 215 16% 32%;
     --accent: 153 60% 32%;
     --accent-foreground: 210 40% 98%;
     /* See the `-legible` note in the @theme block. Each value is the measured
@@ -310,7 +318,10 @@
        failed axe at 12px. 50% gives 4.83:1. This token exists precisely to be
        the legible-on-background variant of --info, so it has to clear AA. */
     --info-legible: 217 91% 50%;
-    --destructive-legible: 0 84.2% 38%;
+    /* Wave A (2026-09-18): 38% measured 4.23:1 on bg-destructive/30 (#f5babb,
+       the error-boundary "Reload" button). 36% gives 4.57:1 there and 5.28:1+
+       on the /10–/15 tints. */
+    --destructive-legible: 0 84.2% 36%;
     --destructive: 0 84.2% 50%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
@@ -410,6 +421,9 @@
        in both themes. */
     --accent-legible: 153 66% 51%;
     --destructive-legible: 343 93% 71%;
+    /* Wave A (2026-09-18): was never restated here, so dark mode inherited the
+       darkened light-mode purple — invisible on a dark surface. Equals base. */
+    --tertiary-legible: 270 91% 65%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 189 83% 53%;
@@ -687,6 +701,22 @@
     overflow-x: hidden;
     scroll-padding-top: 100px;
     /* Offset for sticky header */
+  }
+
+  /* Wave A (2026-09-18): links that sit inside running text are underlined,
+     not only on hover. Colour alone (text-primary against text-foreground is
+     under 3:1) does not mark them, which is axe `link-in-text-block` and
+     WCAG 1.4.1. Scoped to text containers so navigation, cards and buttons
+     built on anchors (and lesson lists, `li > a`) keep their own styling. `hover:underline` on the same
+     element is now a no-op, not a conflict. */
+  p > a,
+  dd > a,
+  td > a,
+  small > a,
+  figcaption > a,
+  blockquote a {
+    text-decoration-line: underline;
+    text-underline-offset: 0.15em;
   }
 }
 
@@ -1051,5 +1081,28 @@
   [data-embed][data-platform='android'] #main-content {
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
+  }
+}
+
+/* ── Wave A (2026-09-18): legible-by-default text utilities ─────────────────
+   `text-accent`, `text-tertiary` and `text-destructive` are the single most
+   common source of axe color-contrast findings on the site (60 serious nodes
+   over 40 items in the round-8 sweep). The base tokens are tuned for fills,
+   where 3:1 is enough; as TEXT they land at 3.0–4.3:1 on their own tints.
+   Rather than chase every call site again, the three text utilities now
+   resolve to the `-legible` variant of the same hue. Fills, borders, icons
+   (`bg-*`, `border-*`, `fill-*`) and opacity-modified text (`text-accent/80`)
+   are untouched, and in dark mode every `-legible` token equals its base, so
+   nothing changes there. Later in the sheet than Tailwind's generated
+   utilities, same specificity, so it wins the cascade. */
+@layer utilities {
+  .text-accent {
+    color: hsl(var(--accent-legible));
+  }
+  .text-tertiary {
+    color: hsl(var(--tertiary-legible));
+  }
+  .text-destructive {
+    color: hsl(var(--destructive-legible));
   }
 }

@@ -155,7 +155,10 @@ function ModeCard({ mode, selected }: { mode: IKEv2Mode; selected: boolean }) {
             {exchange.ikeIntermediate ? ' (incl. IKE_INTERMEDIATE)' : ''}
           </dd>
         </div>
-
+      </dl>
+      {/* Wave A (2026-09-18): the size bars are not name/value pairs, so they
+          live outside the <dl> (axe `definition-list`). */}
+      <div className="space-y-2 text-xs">
         <div className="pt-2 space-y-1.5">
           <p className="text-muted-foreground font-medium">Handshake total (PSK baseline)</p>
           <SizeBar
@@ -193,7 +196,7 @@ function ModeCard({ mode, selected }: { mode: IKEv2Mode; selected: boolean }) {
             mode — only ML-DSA certificates make IKE_AUTH quantum-safe (see table below).
           </p>
         </div>
-      </dl>
+      </div>
     </div>
   )
 }

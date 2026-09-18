@@ -346,7 +346,7 @@ export function TpmLearnView({
                     : 'text-muted-foreground hover:bg-muted/50'
                 )}
               >
-                <span className="mt-0.5 shrink-0 font-mono text-[10px] opacity-70">T{l.n}</span>
+                <span className="mt-0.5 shrink-0 font-mono text-[10px]">T{l.n}</span>
                 <span>{l.title}</span>
               </Button>
             ))}

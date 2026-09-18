@@ -294,7 +294,7 @@ export const BinarySigning: React.FC = () => {
               }`}
             >
               <div>{alg.name}</div>
-              <div className="text-[10px] opacity-70">{alg.level}</div>
+              <div className="text-[10px]">{alg.level}</div>
             </Button>
           ))}
         </div>

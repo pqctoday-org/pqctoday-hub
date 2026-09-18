@@ -58,9 +58,14 @@ export const BusinessToolRoute = () => {
           <ArrowLeft className="w-4 h-4 mr-1" />
           All Tools
         </Button>
-        <span className="text-sm text-muted-foreground">
-          {tool.category} / {tool.name}
-        </span>
+        {/* Wave A (2026-09-18): the tool name is the page's level-one heading.
+            Every business tool route rendered it as a breadcrumb span and the
+            tool body opens with an h2, so all 37 tools failed axe
+            `page-has-heading-one`. Same row, same size. */}
+        <h1 className="text-sm font-medium text-foreground">
+          <span className="font-normal text-muted-foreground">{tool.category} / </span>
+          {tool.name}
+        </h1>
         {/* Standards provenance. The registry has carried a validated
             cswp39SectionRef for every tool all along, and its own comment says
             it drives "the small provenance chip on each tool card" — but it was

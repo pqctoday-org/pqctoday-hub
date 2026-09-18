@@ -26,8 +26,15 @@ const manifest: ModuleManifest = {
     { id: 'kpi-dashboard', label: 'KPI Dashboard' },
     { id: 'escalation-framework', label: 'Escalation Framework' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['Falcon', 'HQC', 'ML-DSA', 'ML-KEM', 'SLH-DSA'],
+    standards: ['NIST SP 800-53', 'OMB M-23-02', 'NIST CSWP 39', 'FIPS 186-5', 'NIST SP 800-208'],
+  },
   embeddable: true,
-  practiceInSim: true,
   load: () => import('./index').then((m) => ({ default: m.PQCGovernanceModule })),
 }
 

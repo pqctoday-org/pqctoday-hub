@@ -593,7 +593,7 @@ export function StatefulSignaturesDemo() {
 
                   {/* Step 2 — Message + paste signature hex */}
                   <div
-                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null ? 'opacity-50 pointer-events-none' : ''}`}
+                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null ? 'pointer-events-none border-dashed opacity-90' : ''}`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
@@ -631,7 +631,7 @@ export function StatefulSignaturesDemo() {
 
                   {/* Step 3 — Tamper controls + Verify */}
                   <div
-                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null || !verifySignatureHex ? 'opacity-50 pointer-events-none' : ''}`}
+                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null || !verifySignatureHex ? 'pointer-events-none border-dashed opacity-90' : ''}`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
@@ -852,7 +852,7 @@ export function StatefulSignaturesDemo() {
 
                   {/* Step 2 — Message + paste signature hex */}
                   <div
-                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null ? 'opacity-50 pointer-events-none' : ''}`}
+                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null ? 'pointer-events-none border-dashed opacity-90' : ''}`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
@@ -890,7 +890,7 @@ export function StatefulSignaturesDemo() {
 
                   {/* Step 3 — Tamper controls + Verify */}
                   <div
-                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null || !verifySignatureHex ? 'opacity-50 pointer-events-none' : ''}`}
+                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null || !verifySignatureHex ? 'pointer-events-none border-dashed opacity-90' : ''}`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">

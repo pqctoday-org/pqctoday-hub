@@ -27,6 +27,14 @@ const manifest: ModuleManifest = {
     { id: 'sensitivity-scoring', label: 'Sensitivity Scoring' },
     { id: 'priority-map', label: 'Priority Map' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: ['NIST SP 800-53', 'NIST SP 800-57', 'NSM-10', 'FIPS 140-3', 'NIST IR 8547'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.DataAssetSensitivityModule })),
 }

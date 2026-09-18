@@ -84,9 +84,16 @@ export function AchievementToast() {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, y: 50, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.95 }}
+          // Wave A (2026-09-18): slide, don't fade. The toast auto-dismisses at
+          // 5 s, so any accessibility pass that samples the page around then
+          // catches its text at partial opacity — the round-8 sweep logged
+          // "Achievement Unlocked" at 1.1–3.7:1 on 16 playground tools, none of
+          // them a real defect. A transform-only motion keeps the text at full
+          // contrast for its whole life; the panel leaves through the bottom
+          // edge instead of dissolving.
+          initial={{ y: 96, scale: 0.95 }}
+          animate={{ y: 0, scale: 1 }}
+          exit={{ y: 160, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           className={`${isEmbedded ? 'absolute' : 'fixed'} bottom-6 left-4 right-4 md:right-auto md:left-6 z-toast max-w-xs print:hidden`}
           role="status"

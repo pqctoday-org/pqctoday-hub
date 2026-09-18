@@ -348,7 +348,7 @@ export const TLSClientPanel: React.FC = () => {
                   {results?.trace.filter(
                     (t) => t.event === 'message_received' && t.side === 'client'
                   ).length === 0 ? (
-                    <span className="text-muted-foreground/50 italic">
+                    <span className="text-muted-foreground/80 italic">
                       No messages received yet.
                     </span>
                   ) : (
@@ -628,7 +628,7 @@ export const TLSClientPanel: React.FC = () => {
                       )}
                     >
                       {GROUP_LABELS[group] ?? group}
-                      <span className="text-[9px] font-sans font-normal opacity-60">
+                      <span className="text-[9px] font-sans font-normal">
                         ({NIST_LEVEL[group]})
                       </span>
                     </Button>
@@ -656,7 +656,7 @@ export const TLSClientPanel: React.FC = () => {
                       )}
                     >
                       {group}
-                      <span className="text-[9px] font-sans font-normal opacity-60">
+                      <span className="text-[9px] font-sans font-normal">
                         ({NIST_LEVEL[group]})
                       </span>
                     </Button>
@@ -733,9 +733,7 @@ export const TLSClientPanel: React.FC = () => {
                   >
                     {alg}
                     {NIST_LEVEL[alg] && (
-                      <span className="text-[9px] font-sans font-normal opacity-60">
-                        ({NIST_LEVEL[alg]})
-                      </span>
+                      <span className="text-[9px] font-sans font-normal">({NIST_LEVEL[alg]})</span>
                     )}
                   </Button>
                 ))}

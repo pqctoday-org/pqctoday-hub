@@ -1,16 +1,42 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Navigate, useLocation } from 'react-router'
-import { useEmbed } from './EmbedProvider'
+import { Link, Navigate, useLocation } from 'react-router'
+import { useEmbedState } from './EmbedProvider'
 import { matchesAllowedRoute, getFirstAllowedRoute } from './routePresets'
 import { MODULE_CATALOG } from '../components/PKILearning/moduleData'
 import { logEmbedRouteBlocked } from '../utils/analytics'
 
 const DIFFICULTY_ORDER: Record<string, number> = { beginner: 0, intermediate: 1, advanced: 2 }
 
+/**
+ * Rendered when /embed is opened as a plain page — no signed partner URL, no
+ * native shell. Before Wave A (2026-09-18) this path threw from `useEmbed()`
+ * and the visitor got the generic error boundary ("useEmbed cannot be called
+ * when not embedded"). The route is only meaningful inside a partner's
+ * iframe, so say that and point back to the site.
+ */
+function NotEmbeddedNotice() {
+  return (
+    <main className="mx-auto max-w-lg px-4 py-16 text-center">
+      <h1 className="text-2xl font-bold text-foreground mb-3">This page is for partner embeds</h1>
+      <p className="text-muted-foreground mb-6">
+        The <code className="font-mono text-sm">/embed</code> address only works inside a partner
+        site that loads PQC Today with a signed embed link. Opened directly, there is nothing to
+        show here.
+      </p>
+      <Link to="/" className="text-primary font-medium underline underline-offset-2">
+        Go to PQC Today
+      </Link>
+    </main>
+  )
+}
+
 export function EmbedRouteGuard({ children }: { children: React.ReactNode }) {
-  const { allowedRoutes, allowedModules, allowedTools, policy } = useEmbed()
+  const embed = useEmbedState()
   const location = useLocation()
+
+  if (!embed.isEmbedded) return <NotEmbeddedNotice />
+  const { allowedRoutes, allowedModules, allowedTools, policy } = embed
 
   // useLocation returns the full pathname including the /embed prefix.
   // Strip it before checking against allowedRoutes (which use bare paths like /learn).

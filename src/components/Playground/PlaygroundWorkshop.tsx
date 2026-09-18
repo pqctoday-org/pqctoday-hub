@@ -1044,11 +1044,19 @@ export const PlaygroundWorkshop = () => {
   }, [visibleTools])
 
   // Overview "Start here" pool — 3 tools (playground.md Phase 9.2 acceptance).
+  // Wave B (2026-09-18, WS17 task 4): curated `startHere` picks lead, in
+  // registry order; the pool is topped up from `recommendedPersonas` only when
+  // a role has fewer than three picks (executive and grc have two eligible
+  // tools in the whole registry). Before this, filter-then-truncate over
+  // registry order gave developer, architect and researcher the same three
+  // HSM tools.
   const recommendedPool = useMemo(() => {
     const base = role
       ? visibleTools.filter((t) => t.recommendedPersonas.includes(role) && !isLocked(t))
       : visibleTools.filter((t) => t.difficulty === 'beginner' && !isLocked(t))
-    return sortTools(base).slice(0, 3)
+    const curated = role ? base.filter((t) => t.startHere?.includes(role)) : []
+    const rest = sortTools(base).filter((t) => !curated.includes(t))
+    return [...curated, ...rest].slice(0, 3)
   }, [role, visibleTools, isLocked, sortTools])
 
   // ── Actions ──────────────────────────────────────────────────────────────

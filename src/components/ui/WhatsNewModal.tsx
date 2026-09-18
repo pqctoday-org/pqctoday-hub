@@ -467,12 +467,12 @@ export const WhatsNewModal = () => {
                           <span className="text-muted-foreground/40 select-none">·</span>
                           <span className="tabular-nums">
                             <span className="text-primary/80">{filteredAppCount}</span>
-                            <span className="text-muted-foreground/50">/{totalAppCount}</span> app
+                            <span className="text-muted-foreground/80">/{totalAppCount}</span> app
                           </span>
                           <span className="text-muted-foreground/40 select-none">·</span>
                           <span className="tabular-nums">
                             <span className="text-status-info/80">{filteredDataCount}</span>
-                            <span className="text-muted-foreground/50">/{totalDataCount}</span> data
+                            <span className="text-muted-foreground/80">/{totalDataCount}</span> data
                           </span>
                         </>
                       )}

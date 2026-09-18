@@ -30,6 +30,14 @@ const manifest: ModuleManifest = {
     { id: 'ztna-pqc-designer', label: 'ZTNA PQC Designer' },
     { id: 'network-telemetry-analyzer', label: 'Network Telemetry Analyzer' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: ['RFC 9370', 'NSM-10', 'RFC 9846', 'NIST SP 800-227', 'NIST IR 8547'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.NetworkSecurityPQCModule })),
 }

@@ -29,6 +29,14 @@ const manifest: ModuleManifest = {
     { id: 'queryable-encryption-lab', label: 'Queryable Encryption Lab' },
     { id: 'database-readiness', label: 'Migration Readiness Assessment' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: ['NSM-10', 'FIPS 140-3'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.DatabaseEncryptionPQCModule })),
 }

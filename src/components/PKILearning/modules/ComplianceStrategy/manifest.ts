@@ -26,8 +26,21 @@ const manifest: ModuleManifest = {
     { id: 'compliance-timeline', label: 'Compliance Timeline' },
     { id: 'regulatory-gap-assessment', label: 'Regulatory Gap Assessment' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM'],
+    standards: [
+      'ETSI TS 103 744',
+      'NIST SP 800-161r1',
+      'EO 14306',
+      'NIST SP 800-90B',
+      'OMB M-23-02',
+    ],
+  },
   embeddable: true,
-  practiceInSim: true,
   load: () => import('./index').then((m) => ({ default: m.ComplianceStrategyModule })),
 }
 

@@ -29,7 +29,6 @@ const manifest: ModuleManifest = {
     { id: 'sbom-generation-picker', label: 'Generation Tool Picker' },
   ],
   embeddable: false,
-  practiceInSim: true,
   taxonomy: {
     standards: [
       'SPDX / ISO 5962',

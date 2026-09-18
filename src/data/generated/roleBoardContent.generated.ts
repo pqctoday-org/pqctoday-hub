@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_09072026.csv
+ * Source: src/data/role_board_content_09182026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -63,6 +63,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Why the mandate comes first',
             body: 'Phase 0 exists because a programme without a named sponsor and a standing committee stalls at the first budget review, whatever the inventory says.',
+            href: '/learn/pqc-governance',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -130,6 +131,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Two of these dates are not yours',
             body: 'You can change how long your migration takes. You cannot change when CNSA 2.0 lands or when the machine arrives — so the only variable you control is when you start.',
+            href: '/learn/compliance-strategy',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -195,6 +197,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Why a register, not just a score',
             body: 'A number persuades a meeting once. A register with an owner against each risk is what survives the meeting and gets re-read next quarter.',
+            href: '/learn/pqc-risk-management',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -260,6 +263,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Two tracks, not one list',
             body: 'Harvest-now-decrypt-later work and signature/PKI work have different deadlines and different owners — a single ordered list hides that.',
+            href: '/learn/migration-program',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -468,9 +472,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 4 hours 10, not 9¼.',
+        trackTitle: 'Then, the background: 4 hours 10, not 10¼.',
         trackNote:
-          "Eight essentials against the full 16-module path plus the quiz, 560 minutes in all. The path already inserts real checkpoints like Review Compliance Obligations, Record a Risk Treatment and Complete a Verification Artifact right where they're relevant.",
+          "Eight essentials against the full 17-module path plus the quiz, 620 minutes in all. The path already inserts real checkpoints like Review Compliance Obligations, Record a Risk Treatment and Complete a Verification Artifact right where they're relevant.",
         trackChips: [
           'PQC 101',
           'Risk management',
@@ -539,7 +543,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 4 hours 10, not 9¼.',
+        trackTitle: 'Then, the background: 4 hours 10, not 10¼.',
 
         trackChips: [
           'PQC 101',
@@ -611,7 +615,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 4 hours 10, not 9¼.',
+        trackTitle: 'Then, the background: 4 hours 10, not 10¼.',
 
         trackChips: [
           'PQC 101',
@@ -679,7 +683,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 4 hours 10, not 9¼.',
+        trackTitle: 'Then, the background: 4 hours 10, not 10¼.',
 
         trackChips: [
           'PQC 101',
@@ -750,7 +754,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 4 hours 10, not 9¼.',
+        trackTitle: 'Then, the background: 4 hours 10, not 10¼.',
 
         trackChips: [
           'PQC 101',
@@ -804,9 +808,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'A record, not a feeling',
         gridCards: [
           {
-            title: 'Start from the recommended actions',
-            body: "The comprehensive assessment's recommended actions are what closure verifies against — you are checking the plan was executed, not inventing new criteria at the end.",
-            href: '/assess?mode=comprehensive',
+            title: 'Learn what closure evidence must show',
+            body: 'The Verification & Closure module sets out what a closure claim has to prove — coverage, exceptions, sign-off — and which recommended actions from the assessment it verifies against.',
+            href: '/learn/verification-closure',
           },
           {
             title: 'Verify it yourself',
@@ -823,7 +827,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 4 hours 10, not 9¼.',
+        trackTitle: 'Then, the background: 4 hours 10, not 10¼.',
 
         trackChips: [
           'PQC 101',
@@ -1355,7 +1359,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours 20, not 33¾.',
+        trackTitle: 'Then, the background: 6 hours 20, not 36.',
 
         trackChips: [
           'PQC 101',
@@ -1431,7 +1435,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours 20, not 33¾.',
+        trackTitle: 'Then, the background: 6 hours 20, not 36.',
 
         trackChips: [
           'PQC 101',
@@ -1508,7 +1512,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours 20, not 33¾.',
+        trackTitle: 'Then, the background: 6 hours 20, not 36.',
 
         trackChips: [
           'PQC 101',
@@ -1588,7 +1592,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours 20, not 33¾.',
+        trackTitle: 'Then, the background: 6 hours 20, not 36.',
 
         trackChips: [
           'PQC 101',
@@ -1664,7 +1668,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours 20, not 33¾.',
+        trackTitle: 'Then, the background: 6 hours 20, not 36.',
 
         trackChips: [
           'PQC 101',
@@ -1733,13 +1737,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'An unnamed risk is an accepted one',
             body: 'Every choice on this board will be questioned. The ones that survive review are the ones whose residual risk was written down before someone else found it.',
+            href: '/learn/pqc-testing-validation',
           },
         ] as [
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours 20, not 33¾.',
+        trackTitle: 'Then, the background: 6 hours 20, not 36.',
 
         trackChips: [
           'PQC 101',
@@ -1820,7 +1825,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours, not 32.',
+        trackTitle: 'Then, the background: 6 hours, not 33¼.',
 
         trackChips: [
           'PQC 101',
@@ -1897,7 +1902,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours, not 32.',
+        trackTitle: 'Then, the background: 6 hours, not 33¼.',
 
         trackChips: [
           'PQC 101',
@@ -1973,7 +1978,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours, not 32.',
+        trackTitle: 'Then, the background: 6 hours, not 33¼.',
 
         trackChips: [
           'PQC 101',
@@ -2050,7 +2055,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours, not 32.',
+        trackTitle: 'Then, the background: 6 hours, not 33¼.',
 
         trackChips: [
           'PQC 101',
@@ -2126,7 +2131,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours, not 32.',
+        trackTitle: 'Then, the background: 6 hours, not 33¼.',
 
         trackChips: [
           'PQC 101',
@@ -2202,7 +2207,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours, not 32.',
+        trackTitle: 'Then, the background: 6 hours, not 33¼.',
 
         trackChips: [
           'PQC 101',
@@ -2350,6 +2355,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: '“Standardised” is four states wearing one word',
             body: 'Published, selected-but-unstandardised, draft and withdrawn are different claims with different citations. Flattening them is how a roadmap ends up wrong.',
+            href: '/learn/standards-bodies',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -2875,6 +2881,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Uncertain timing, certain outcome',
             body: 'Nobody can give you the year. That is not the same as nobody knowing what breaks, or what replaces it — both of those are settled.',
+            href: '/learn/quantum-threats',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -3021,6 +3028,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'The fix exists. Fitting it everywhere is the slow part',
             body: 'This is not a problem waiting on a discovery. It is waiting on millions of systems being changed one at a time.',
+            href: '/learn/standards-bodies',
           },
         ] as [
           { title: string; body: string; href?: string },

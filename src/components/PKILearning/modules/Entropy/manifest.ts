@@ -30,6 +30,14 @@ const manifest: ModuleManifest = {
     { id: 'source-combining', label: 'Combining Sources' },
   ],
   playgroundTool: 'entropy-test',
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-KEM'],
+    standards: ['NIST SP 800-90B', 'NIST SP 800-131A', 'NIST SP 800-57', 'FIPS 140-3'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.EntropyModule })),
 }

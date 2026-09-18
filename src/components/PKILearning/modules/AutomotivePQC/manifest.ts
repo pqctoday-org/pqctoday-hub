@@ -34,6 +34,14 @@ const manifest: ModuleManifest = {
     { id: 'car-key-protocol-explorer', label: 'Car Key Protocol Explorer' },
     { id: 'lifecycle-migration-roadmap', label: 'Lifecycle Migration Roadmap' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['Falcon', 'ML-DSA', 'ML-KEM', 'SLH-DSA'],
+    standards: ['NSM-10', 'NSA CNSA 2.0', 'FIPS 140-3'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.AutomotivePQCModule })),
 }

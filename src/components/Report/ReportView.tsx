@@ -356,8 +356,15 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           <div className="inline-flex items-center justify-center p-4 rounded-full bg-muted mb-6">
             <FileBarChart className="text-muted-foreground" size={32} />
           </div>
-          {/* h2, not h1 — same reasoning as the loading state above (WP5.7). */}
-          <h2 className="text-2xl font-bold text-foreground mb-3">No Report Yet</h2>
+          {/* Wave A (2026-09-18): on the standalone route this empty state IS
+              the page, so it carries the h1 (axe `page-has-heading-one`).
+              Inside the simulation (simEmbed) the pane stays headless — h2,
+              as WP5.7 required. */}
+          {simEmbed ? (
+            <h2 className="text-2xl font-bold text-foreground mb-3">No Report Yet</h2>
+          ) : (
+            <h1 className="text-2xl font-bold text-foreground mb-3">No Report Yet</h1>
+          )}
           <p className="text-muted-foreground mb-6">
             {isCurious
               ? 'Curious what a finished report looks like? Browse an example before committing to the assessment — or jump straight in.'

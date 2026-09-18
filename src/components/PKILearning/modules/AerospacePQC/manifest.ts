@@ -32,6 +32,14 @@ const manifest: ModuleManifest = {
     { id: 'export-control-classifier', label: 'Export Control Classifier' },
     { id: 'mission-crypto-lifecycle', label: 'Mission Lifecycle Planner' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['Falcon', 'ML-DSA', 'ML-KEM'],
+    standards: ['FIPS 203', 'FIPS 204', 'FIPS 205'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.AerospacePQCModule })),
 }

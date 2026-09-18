@@ -30,7 +30,6 @@ const manifest: ModuleManifest = {
     { id: 'key-correlator', label: 'Key Correlator' },
   ],
   embeddable: true,
-  practiceInSim: true,
   taxonomy: {
     standards: ['CycloneDX / ECMA-424', 'SPDX / ISO 5962', 'NIST SP 1800-38'],
   },

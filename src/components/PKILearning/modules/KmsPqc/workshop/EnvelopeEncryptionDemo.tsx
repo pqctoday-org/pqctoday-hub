@@ -895,7 +895,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                       }`}
                     >
                       {meta.label}
-                      <span className="ml-1 text-[10px] font-normal opacity-70 hidden sm:inline">
+                      <span className="ml-1 text-[10px] font-normal hidden sm:inline">
                         {meta.standard}
                       </span>
                     </Button>

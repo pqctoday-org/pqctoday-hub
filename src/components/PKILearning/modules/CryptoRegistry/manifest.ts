@@ -27,7 +27,6 @@ const manifest: ModuleManifest = {
     { id: 'curve-lookup', label: 'Curve Identifier Lookup' },
   ],
   embeddable: false,
-  practiceInSim: true,
   taxonomy: {
     standards: ['CycloneDX Cryptography Registry'],
   },

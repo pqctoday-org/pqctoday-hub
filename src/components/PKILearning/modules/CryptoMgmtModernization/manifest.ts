@@ -30,8 +30,15 @@ const manifest: ModuleManifest = {
     { id: 'no-regret-roi', label: 'No-Regret ROI Builder' },
     { id: 'posture-kpi', label: 'Posture KPI Dashboard Designer' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-DSA', 'ML-KEM', 'SLH-DSA'],
+    standards: ['NIST SP 800-90B', 'RFC 8555', 'OMB M-23-02', 'NIST SP 800-131A', 'RFC 9370'],
+  },
   embeddable: true,
-  practiceInSim: true,
   load: () => import('./index').then((m) => ({ default: m.CryptoMgmtModernizationModule })),
 }
 

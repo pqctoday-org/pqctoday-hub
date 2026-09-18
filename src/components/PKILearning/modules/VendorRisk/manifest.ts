@@ -27,6 +27,19 @@ const manifest: ModuleManifest = {
     { id: 'contract-clauses', label: 'Contract Clauses' },
     { id: 'supply-chain-matrix', label: 'Supply Chain Matrix' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    standards: [
+      'NIST SP 800-161r1',
+      'CycloneDX CBOM',
+      'NIST CSWP 39',
+      'NIST SP 800-208',
+      'NSA CNSA 2.0',
+    ],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.VendorRiskModule })),
 }

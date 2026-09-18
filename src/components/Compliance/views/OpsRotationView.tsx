@@ -267,9 +267,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
                       </Button>
                     </li>
                   ))}
-                  {fws.length > 4 && (
-                    <li className="text-[10px] opacity-70 px-1">+{fws.length - 4} more</li>
-                  )}
+                  {fws.length > 4 && <li className="text-[10px] px-1">+{fws.length - 4} more</li>}
                 </ul>
               </div>
             )

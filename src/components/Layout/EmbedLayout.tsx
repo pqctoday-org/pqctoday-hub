@@ -33,6 +33,7 @@ import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { logEmbedPolicyApplied } from '../../utils/analytics'
 import { INDUSTRY_SLUG_TO_LABEL } from '../../data/personaConfig'
 import { useSearchParams } from 'react-router'
+import { useFocusableScrollRegions } from '../../hooks/useFocusableScrollRegions'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -40,6 +41,8 @@ const RightPanel = React.lazy(() =>
 
 export const EmbedLayout = () => {
   const location = useLocation()
+  const mainRef = React.useRef<HTMLElement>(null)
+  useFocusableScrollRegions(mainRef)
   const [searchParams, setSearchParams] = useSearchParams()
   const embedConfig = useEmbed()
   const { isOpen: isPanelOpen } = useRightPanelStore()
@@ -575,6 +578,7 @@ export const EmbedLayout = () => {
           unwrapped-text badge) below md, matching MainLayout's scrollable-content containment —
           scoped to <main> rather than the outer wrapper so it can't affect the sticky header above. */}
       <main
+        ref={mainRef}
         id="main-content"
         className="flex-grow w-full py-4 px-4 md:py-6 md:px-6 max-md:overflow-x-hidden"
         role="main"

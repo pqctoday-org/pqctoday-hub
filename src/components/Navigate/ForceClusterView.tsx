@@ -1795,6 +1795,11 @@ export function ForceClusterView() {
 
   return (
     <div className="relative h-full w-full bg-background">
+      {/* Wave A (2026-09-18): the graph is a full-bleed canvas with no visible
+          title, so the page had no level-one heading at all (axe
+          `page-has-heading-one`). Visually hidden; screen readers and the
+          document outline get the page name. */}
+      <h1 className="sr-only">Navigate: the PQC Today knowledge graph</h1>
       <div ref={containerRef} className="h-full w-full" />
       {loading && !error && (
         <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">

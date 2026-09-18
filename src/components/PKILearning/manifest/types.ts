@@ -116,13 +116,6 @@ export interface ModuleManifest {
   contentVersion?: number
 
   /**
-   * Program/governance modules that map onto the CSWP.39 simulation (C1). When
-   * true, ModuleShell shows a "Practice in the Simulation" CTA on the standalone
-   * Learn page (hidden when the module is itself embedded inside the sim).
-   */
-  practiceInSim?: boolean
-
-  /**
    * One-line "why this matters" framing rendered as a callout under the module
    * header (P2.1). Optional and rendered only when present, so it can be filled
    * in progressively starting with the highest-traffic modules.

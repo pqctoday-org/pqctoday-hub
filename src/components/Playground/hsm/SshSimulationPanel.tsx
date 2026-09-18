@@ -672,10 +672,14 @@ export function SshSimulationPanel() {
 // Tiny inline badge marking whether a picker option drives the real binary or
 // the TS model. "real" only takes effect when BOTH the real KEX and real host
 // key are selected together (see the banner above the controls).
+// Wave A (2026-09-18): the badge sits inside the SELECTED picker button, whose
+// fill is bg-primary — a translucent success tint over teal gave green-on-teal
+// text at 1.17:1. Opaque fill + its own foreground, so the host button's
+// colour no longer leaks through.
 const RealityBadge: React.FC<{ real: boolean }> = ({ real }) => (
   <span
     className={`ml-1 px-1 rounded text-[8px] uppercase tracking-wide leading-tight ${
-      real ? 'bg-status-success/20 text-status-success' : 'bg-muted text-muted-foreground'
+      real ? 'bg-success text-success-foreground' : 'bg-muted text-muted-foreground'
     }`}
   >
     {real ? 'real' : 'model'}

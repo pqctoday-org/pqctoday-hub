@@ -130,10 +130,12 @@ export const InteractivePlayground = () => {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 shrink-0 gap-2">
-        <h3 className="text-xl md:text-2xl font-bold flex items-center gap-2">
+        {/* Wave A (2026-09-18): h1 — this component is the whole
+            /playground/interactive page and rendered no level-one heading. */}
+        <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">
           <Play className="text-secondary" aria-hidden="true" />
           Interactive Playground
-        </h3>
+        </h1>
       </div>
 
       {/* Last log entry strip */}

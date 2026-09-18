@@ -25,8 +25,15 @@ const manifest: ModuleManifest = {
     { id: 'kpi-tracker', label: 'KPI Tracker' },
     { id: 'deployment-playbook', label: 'Deployment Playbook' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['RSA'],
+    standards: ['EO 14306', 'OMB M-23-02', 'NIST CSWP 39', 'NSA CNSA 2.0', 'NIST IR 8547'],
+  },
   embeddable: true,
-  practiceInSim: true,
   load: () => import('./index').then((m) => ({ default: m.MigrationProgramModule })),
 }
 

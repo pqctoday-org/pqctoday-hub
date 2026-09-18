@@ -28,7 +28,14 @@ import {
   moduleRelations,
   relatedModules,
 } from './moduleRelations'
-import { TOOL_BY_MODULE_ID, moduleIdFromToolLink, resolveModuleTool } from './moduleToolLinks'
+import {
+  TOOL_BY_MODULE_ID,
+  TOOLS_BY_MODULE_ID,
+  TOOL_TITLE_BY_ID,
+  moduleIdFromToolLink,
+  resolveModuleTool,
+  resolveModuleTools,
+} from './moduleToolLinks'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 
 /** Real, non-synthetic modules — the population the panel renders for. */
@@ -278,25 +285,51 @@ describe('module → tool reverse links', () => {
     }
   })
 
-  it('TOOL_BY_MODULE_ID is exactly what the registry implies', () => {
+  it('TOOLS_BY_MODULE_ID is exactly what the registry implies', () => {
     // The map is a checked-in literal because a live import of WORKSHOP_TOOLS
     // from ModuleShell costs 2.11 MB of eager JS (see moduleToolLinks.ts). This
     // is the guard that makes the literal safe: it re-derives the same map from
-    // the real registry, so a new or renamed tool moduleLink fails here instead
-    // of silently leaving a module without its tool link.
-    const derived = new Map<string, string>()
+    // the real registry, so a new, renamed or re-ordered tool moduleLink fails
+    // here instead of silently leaving a module without its tool links.
+    const derived = new Map<string, string[]>()
     for (const tool of WORKSHOP_TOOLS) {
       if (tool.sandbox) continue
       const moduleId = moduleIdFromToolLink(tool.moduleLink)
-      if (moduleId && !derived.has(moduleId)) derived.set(moduleId, tool.id)
+      if (!moduleId) continue
+      if (!derived.has(moduleId)) derived.set(moduleId, [])
+      derived.get(moduleId)!.push(tool.id)
     }
-    const fmt = (m: ReadonlyMap<string, string>) =>
-      [...m.entries()].map(([k, v]) => `['${k}', '${v}'],`).sort()
+    const fmt = (m: ReadonlyMap<string, readonly string[]>) =>
+      [...m.entries()].map(([k, v]) => `['${k}', [${v.map((x) => `'${x}'`).join(', ')}]],`).sort()
     expect(
-      fmt(TOOL_BY_MODULE_ID),
-      'TOOL_BY_MODULE_ID drifted from workshopRegistry — paste the derived entries below ' +
+      fmt(TOOLS_BY_MODULE_ID),
+      'TOOLS_BY_MODULE_ID drifted from workshopRegistry — paste the derived entries below ' +
         'into src/data/moduleToolLinks.ts (registry order preserved).'
     ).toEqual(fmt(derived))
+    for (const [moduleId, tools] of TOOLS_BY_MODULE_ID) {
+      expect(TOOL_BY_MODULE_ID.get(moduleId)).toBe(tools[0])
+    }
+  })
+
+  it('TOOL_TITLE_BY_ID names every browser-runnable tool exactly as the registry does', () => {
+    const derived = new Map(WORKSHOP_TOOLS.filter((t) => !t.sandbox).map((t) => [t.id, t.name]))
+    expect(
+      [...TOOL_TITLE_BY_ID.entries()].sort(),
+      'TOOL_TITLE_BY_ID drifted from workshopRegistry — regenerate the literal in moduleToolLinks.ts'
+    ).toEqual([...derived.entries()].sort())
+  })
+
+  it('resolveModuleTools offers every linking tool once, own declaration first', () => {
+    for (const m of MANIFESTS) {
+      const all = resolveModuleTools(m)
+      expect(new Set(all).size).toBe(all.length)
+      if (m.playgroundTool) expect(all[0]).toBe(m.playgroundTool)
+      for (const t of TOOLS_BY_MODULE_ID.get(m.id) ?? []) expect(all).toContain(t)
+    }
+    // Wave B (2026-09-18): the module with the most linking tools offers them all.
+    expect(resolveModuleTools(MANIFEST_BY_ID['entropy-randomness']!).length).toBeGreaterThanOrEqual(
+      5
+    )
   })
 
   it("a module's own declaration always wins over the derived one", () => {

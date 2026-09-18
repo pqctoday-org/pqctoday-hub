@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, afterEach, vi } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobileModuleShell } from './MobileModuleShell'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -91,5 +91,44 @@ describe('MobileModuleShell', () => {
     )
     expect(screen.getByText(/guided workshop/)).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /practice on your phone/i })).not.toBeInTheDocument()
+  })
+
+  // Wave D (2026-09-18) — modules on MOBILE_WORKSHOP_READY mount their real
+  // workshop inside the phone shell behind a Learn / Workshop switch.
+  it('shows a Learn / Workshop switch and the workshop body when workshopContent is passed', () => {
+    const onTabChange = vi.fn()
+    const { rerender } = render(
+      <MemoryRouter>
+        <MobileModuleShell
+          manifest={{ ...minimal, workshopSteps: [{ id: 'a', label: 'A' }] }}
+          learnContent={<div>LEARN BODY</div>}
+          workshopContent={<div>WORKSHOP BODY</div>}
+          activeTab="learn"
+          onTabChange={onTabChange}
+        />
+      </MemoryRouter>
+    )
+    expect(screen.getByRole('tab', { name: 'Learn' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByText('LEARN BODY')).toBeInTheDocument()
+    expect(screen.queryByText('WORKSHOP BODY')).not.toBeInTheDocument()
+    expect(screen.queryByText(/guided workshop/)).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Workshop' }))
+    expect(onTabChange).toHaveBeenCalledWith('workshop')
+
+    rerender(
+      <MemoryRouter>
+        <MobileModuleShell
+          manifest={{ ...minimal, workshopSteps: [{ id: 'a', label: 'A' }] }}
+          learnContent={<div>LEARN BODY</div>}
+          workshopContent={<div>WORKSHOP BODY</div>}
+          activeTab="workshop"
+          onTabChange={onTabChange}
+        />
+      </MemoryRouter>
+    )
+    expect(screen.getByRole('tab', { name: 'Workshop' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByText('WORKSHOP BODY')).toBeInTheDocument()
+    expect(screen.queryByText('LEARN BODY')).not.toBeInTheDocument()
   })
 })

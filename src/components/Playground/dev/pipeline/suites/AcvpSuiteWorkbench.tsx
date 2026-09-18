@@ -254,7 +254,7 @@ export const AcvpSuiteWorkbench = () => {
             <tbody className="divide-y divide-border/40">
               {results.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-muted-foreground/60 italic">
+                  <td colSpan={6} className="p-8 text-center text-muted-foreground/80 italic">
                     No results yet. Pick categories on the left and press Run.
                   </td>
                 </tr>
@@ -402,7 +402,7 @@ export const AcvpSuiteWorkbench = () => {
           className="bg-muted/50 border border-border rounded-md p-2 font-mono text-[10.5px] text-status-success/80 overflow-y-auto custom-scrollbar flex-1 min-h-[6rem] max-h-64"
         >
           {logs.length === 0 ? (
-            <span className="text-muted-foreground/60 italic">Ready to engage HSM suite…</span>
+            <span className="text-muted-foreground/80 italic">Ready to engage HSM suite…</span>
           ) : (
             logs.map((log, i) => (
               <div key={i} className="mb-0.5">

@@ -90,6 +90,30 @@ export const STANDARD_TAXONOMY = [
   'X.509',
   'PKCS#11',
   'JOSE',
+  // Wave B (2026-09-18): 20 tokens added when taxonomy was derived for the 43
+  // manifests that had none. Each is declared by ≥3 modules' content.ts, so
+  // it is a real browse facet, not a one-off. Order: NIST guidance, mandates,
+  // then protocol RFCs.
+  'NIST IR 8547',
+  'FIPS 140-3',
+  'FIPS 186-5',
+  'NIST SP 800-227',
+  'NIST SP 800-57',
+  'NIST SP 800-131A',
+  'NIST SP 800-90B',
+  'NIST SP 800-53',
+  'NIST SP 800-161r1',
+  'NIST CSWP 39',
+  'NSA CNSA 2.0',
+  'NSM-10',
+  'EO 14306',
+  'OMB M-23-02',
+  'ETSI TS 103 744',
+  'CycloneDX CBOM',
+  'RFC 9370',
+  'RFC 8555',
+  'RFC 3161',
+  'RFC 9580',
 ] as const
 
 export type StandardTaxon = (typeof STANDARD_TAXONOMY)[number]

@@ -23,6 +23,14 @@ const manifest: ModuleManifest = {
     { id: 'kri-cascade', label: 'KRI Cascade' },
     { id: 'exception-triage', label: 'Exception Register' },
   ],
+  // Wave B (2026-09-18): derived from the algorithm and standard ids this
+  // module's content.ts declares (the References tab's own data), restricted to
+  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
+  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
+  taxonomy: {
+    algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'],
+    standards: ['CycloneDX CBOM', 'NIST SP 800-208', 'NSA CNSA 2.0', 'NIST IR 8547'],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.PqcGrcModule })),
 }
