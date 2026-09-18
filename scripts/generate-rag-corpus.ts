@@ -196,7 +196,14 @@ function loadSourcePassages(): Map<string, string[]> {
  *  Handles revision suffixes: prefix_MMDDYYYY.csv, prefix_MMDDYYYY_r1.csv, etc.
  *  Sorts by date first, then revision (higher revision wins within same date). */
 function findLatestCSV(prefix: string): string | null {
-  const files = fs.readdirSync(DATA_DIR).filter((f) => f.startsWith(prefix) && f.endsWith('.csv'))
+  // The date tag must follow the prefix DIRECTLY. Found 2026-09-18: with a
+  // plain startsWith(), 'compliance_' matched compliance_xwalk_candidates_
+  // 09172026.csv (newer date than compliance_09162026.csv), so 752 crosswalk
+  // rows were indexed as compliance frameworks — 131 duplicate chunk ids and
+  // a failed freshness gate. Sibling datasets share a prefix by naming
+  // convention; only <prefix><MMDDYYYY>[_rN].csv is a generation of it.
+  const generation = new RegExp(`^${prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\d{8}(?:_r\\d+)?\\.csv$`)
+  const files = fs.readdirSync(DATA_DIR).filter((f) => generation.test(f))
 
   if (files.length === 0) return null
 
