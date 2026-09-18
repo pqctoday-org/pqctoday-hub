@@ -252,7 +252,7 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   return (
     <div className="glass-panel p-6 space-y-4">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
         <div className="flex items-center gap-2 flex-wrap">
           {onExport && (
             <CompleteStepAction

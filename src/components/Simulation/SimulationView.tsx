@@ -1937,7 +1937,7 @@ export function SimulationView() {
             ← HUB
           </Link>
         </header>
-        <div className="flex min-h-0 flex-1 items-center justify-center p-6">
+        <main className="flex min-h-0 flex-1 items-center justify-center p-6">
           <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
             <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-primary">
               Choose how to start
@@ -2009,7 +2009,7 @@ export function SimulationView() {
               </p>
             </div>
           </div>
-        </div>
+        </main>
       </div>
     )
   }

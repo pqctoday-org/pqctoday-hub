@@ -2012,7 +2012,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
     <div className="flex flex-col h-full relative">
       {/* Header */}
       <div className="mb-4 space-y-1">
-        <h3 className="text-lg font-bold text-foreground">Firmware Signing Migrator</h3>
+        <h2 className="text-lg font-bold text-foreground">Firmware Signing Migrator</h2>
         <p className="text-sm text-muted-foreground">
           Sign firmware with both a classical algorithm and a post-quantum algorithm side-by-side.
           Compare keys, signatures, and CMS output. All PKCS#11 operations execute in SoftHSM3 WASM.

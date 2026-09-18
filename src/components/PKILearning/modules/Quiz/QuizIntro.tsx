@@ -128,9 +128,9 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
 
       {/* Time-based quiz selection */}
       <div>
-        <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">
+        <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">
           All Topics
-        </h3>
+        </h2>
         <motion.div
           initial={{ opacity: reduced ? 1 : 0, scale: reduced ? 1 : 0.95 }}
           animate={{ opacity: 1, scale: 1 }}

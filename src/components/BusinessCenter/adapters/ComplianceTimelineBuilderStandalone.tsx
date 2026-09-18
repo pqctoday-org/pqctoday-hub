@@ -208,7 +208,7 @@ export function ComplianceTimelineBuilderStandalone() {
       <div className="glass-panel p-4 space-y-3">
         <div className="flex items-center gap-2">
           <Globe size={16} className="text-primary" />
-          <h3 className="text-sm font-semibold text-foreground">Select jurisdictions</h3>
+          <h2 className="text-sm font-semibold text-foreground">Select jurisdictions</h2>
           <span className="text-xs text-muted-foreground">
             ({selectedJurisdictions.length} selected)
           </span>

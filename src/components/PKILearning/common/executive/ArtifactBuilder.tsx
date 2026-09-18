@@ -298,7 +298,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
           {sections.map((section) => (
             <div key={section.id} className="glass-panel p-6 space-y-4">
               <div>
-                <h3 className="text-lg font-semibold text-foreground">{section.title}</h3>
+                <h2 className="text-lg font-semibold text-foreground">{section.title}</h2>
                 {section.description && (
                   <p className="text-sm text-muted-foreground mt-1">{section.description}</p>
                 )}

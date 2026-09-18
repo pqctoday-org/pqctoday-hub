@@ -56,7 +56,7 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
 }) => {
   return (
     <div className="space-y-4">
-      {title && <h3 className="text-lg font-semibold text-foreground">{title}</h3>}
+      {title && <h2 className="text-lg font-semibold text-foreground">{title}</h2>}
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>

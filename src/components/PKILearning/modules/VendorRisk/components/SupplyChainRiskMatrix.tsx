@@ -1297,9 +1297,9 @@ export const SupplyChainRiskMatrix: React.FC<{
 
       {/* Likelihood × Impact Risk Matrix */}
       <div className={cardClass('p-4')}>
-        <h3 className="text-base font-semibold text-foreground mb-1">
+        <h2 className="text-base font-semibold text-foreground mb-1">
           Supply Chain Risk Matrix (Migration Gap × Impact)
-        </h3>
+        </h2>
         <p className="text-xs text-muted-foreground mb-3">
           Each migration domain plotted by <strong>migration gap</strong> (share of the domain not
           yet PQC-ready) × <strong>impact</strong> (the severity-weighted count of this

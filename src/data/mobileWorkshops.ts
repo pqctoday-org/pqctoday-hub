@@ -10,9 +10,9 @@
  * 2026-09-18) and showed 0 px horizontal overflow, no element wider than the
  * viewport, 0 page errors and 0 serious axe nodes. The user's decision was
  * "start with the cheapest five"; these five are the interactive workshops
- * (form inputs on their steps) from the passing set. Four more passed the
- * same probe with read-only steps and can join by adding their id here:
- * sbom, government-defense-pqc, trust-services-pqc, dnssec-pqc.
+ * (form inputs on their steps) from the passing set. The four read-only
+ * workshops that passed the same probe joined on 2026-09-18 evening (sbom,
+ * government-defense-pqc, trust-services-pqc, dnssec-pqc).
  *
  * A module whose workshop needs a wider screen (canvas, side-by-side panes,
  * PKCS#11 workbenches) stays OFF this list and keeps the honest banner or its
@@ -24,4 +24,8 @@ export const MOBILE_WORKSHOP_READY: ReadonlySet<string> = new Set([
   'pqc-business-case',
   'crypto-registry',
   'cbom',
+  'sbom',
+  'government-defense-pqc',
+  'trust-services-pqc',
+  'dnssec-pqc',
 ])

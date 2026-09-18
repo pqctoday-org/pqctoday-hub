@@ -410,7 +410,7 @@ export const MLSCryptoOperations: React.FC = () => {
   return (
     <div className="glass-panel p-6 space-y-4">
       <div>
-        <h3 className="text-lg font-semibold">Live MLS crypto primitives</h3>
+        <h2 className="text-lg font-semibold">Live MLS crypto primitives</h2>
         <p className="text-sm text-muted-foreground mt-1">
           Three in-browser operations that underpin every MLS session. Run each step to see real key
           material and verify the cryptographic invariants. Enable HSM mode below to route all steps

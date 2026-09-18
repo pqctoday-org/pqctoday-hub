@@ -62,7 +62,7 @@ export const OpsConfigGenerator: React.FC<OpsConfigGeneratorProps> = ({
         <Wrench size={20} className="text-primary" aria-hidden="true" />
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+            <h2 className="text-lg font-semibold text-foreground">{title}</h2>
             {isOps && (
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/30">
                 Ops Guide

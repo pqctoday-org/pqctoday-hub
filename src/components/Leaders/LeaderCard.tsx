@@ -107,7 +107,7 @@ export const LeaderCard = ({
         </div>
       </div>
 
-      <h3 className="text-xl font-bold mb-1">{leader.name}</h3>
+      <h2 className="text-xl font-bold mb-1">{leader.name}</h2>
       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 overflow-hidden">
         <Briefcase size={14} aria-hidden="true" className="shrink-0" />
         <span className="truncate">{leader.title}</span>

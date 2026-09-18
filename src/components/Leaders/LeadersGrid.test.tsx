@@ -352,7 +352,12 @@ describe('LeadersGrid', () => {
       fireEvent.click(screen.getByText(/By relevance to you|Name A-Z/))
       fireEvent.click(screen.getByText('Name A-Z'))
 
-      const names = screen.getAllByRole('heading', { level: 3 }).map((el) => el.textContent)
+      // Wave A2 (2026-09-18): leader names are h2 (page h1 -> card h2); the grid's
+      // own group headings are h2 too, so pick the names out of the cards.
+      const names = screen
+        .getAllByRole('heading', { level: 2 })
+        .map((el) => el.textContent)
+        .filter((t) => ['Alice Quant', 'Bob Cyber', 'Charlie Prof'].includes(t ?? ''))
       expect(names).toEqual(['Alice Quant', 'Bob Cyber', 'Charlie Prof'])
     })
   })

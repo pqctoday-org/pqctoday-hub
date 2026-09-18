@@ -416,7 +416,7 @@ export const SLHDSALiveDemo: React.FC = () => {
       <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
 
       <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">SLH-DSA Live Demo (FIPS 205)</h3>
+        <h2 className="text-lg font-bold text-foreground mb-2">SLH-DSA Live Demo (FIPS 205)</h2>
         <p className="text-sm text-muted-foreground">
           Generate SLH-DSA key pairs, sign messages, and verify signatures using a real PKCS#11 v3.2
           HSM emulator in-browser. SLH-DSA (standardized as FIPS 205, August 2024) is the NIST name

@@ -429,7 +429,7 @@ export const HybridCertFormats: React.FC = () => {
 
       <div className="space-y-6 px-1">
         <div>
-          <h3 className="text-lg font-bold text-foreground mb-2">Hybrid Certificate Formats</h3>
+          <h2 className="text-lg font-bold text-foreground mb-2">Hybrid Certificate Formats</h2>
           <p className="text-sm text-muted-foreground">
             Generate and compare X.509 hybrid certificate approaches. Each format combines classical
             and PQC algorithms differently, with distinct trade-offs for backward compatibility,

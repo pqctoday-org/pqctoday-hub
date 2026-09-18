@@ -807,7 +807,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-gradient mb-2">Envelope Encryption Demo</h3>
+        <h2 className="text-lg font-bold text-gradient mb-2">Envelope Encryption Demo</h2>
         <p className="text-sm text-muted-foreground">
           Step through the complete envelope encryption flow. Compare how RSA-OAEP directly wraps a
           DEK in one step versus the 3-step ML-KEM process: encapsulate &rarr; KDF &rarr; AES wrap
