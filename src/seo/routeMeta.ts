@@ -911,6 +911,13 @@ export const ROUTE_META: Record<string, RouteMeta> = {
       'Cryptographic patents relevant to post-quantum migration, enriched with 25 technical dimensions. For research purposes only — not legal or IP advice.',
     canonical: `${BASE_URL}/patents`,
   },
+
+  '/navigate': {
+    title: 'Navigate the PQC Knowledge Graph | PQC Today',
+    description:
+      'Interactive 3D map of the post-quantum cryptography landscape — standards, algorithms, protocols, compliance mandates, industries, use cases, products, vendors, patents, and community leaders, linked by how they relate.',
+    canonical: `${BASE_URL}/navigate`,
+  },
 }
 
 /** Build a CourseInstance JSON-LD schema for a learning module */
