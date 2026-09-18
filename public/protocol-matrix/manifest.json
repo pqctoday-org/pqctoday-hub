@@ -600,6 +600,71 @@
       "admittedAt": "2026-09-17T21:07:59.518570+00:00",
       "admittedBy": "admit.py",
       "identity": "UNCONFIRMED"
+    },
+    {
+      "refId": "5g-suci|pureKem|3GPP TR 33.938",
+      "file": "3gpp-tr-33-938-80644d51.html",
+      "bytes": 194770,
+      "content_type": "text/html",
+      "url": "https://www.3gpp.org/dynareport/33938.htm",
+      "sha256": "fea5b8b1e9933ff609baa180d9cafa3665526e1a56a279f2272d20c8b25e9fe9",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:14:36.537330+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED"
+    },
+    {
+      "refId": "tpm|pureKem|TCG TPM 2.0 v1.85",
+      "file": "tcg-tpm-2-0-v1-85-df2ca911.html",
+      "bytes": 153569,
+      "content_type": "text/html",
+      "url": "https://trustedcomputinggroup.org/resource/tpm-library-specification/",
+      "sha256": "a8aca2b123ab9e8ccdc60a07bea4d1a5c04726cca7f20725c665b33143729303",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:14:39.147278+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "tpm|pureKem|TCG PC Client PTP v1.07",
+      "file": "tcg-pc-client-ptp-v1-07-a65b3234.html",
+      "bytes": 114084,
+      "content_type": "text/html",
+      "url": "https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/",
+      "sha256": "e9055e7d3e0da9f50662167945159620db9ba837e0503801ee1879b617b40f52",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:14:41.660185+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "uefi|pureSig|UEFI 2.11",
+      "file": "uefi-2-11-2091e83d.html",
+      "bytes": 378403,
+      "content_type": "text/html",
+      "url": "https://uefi.org/specs/UEFI/2.11/",
+      "sha256": "cb8d0ab97cce7287ff86514dc0f575a5c4ee4c1d3d2cee6712e0f956f37146d0",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:14:44.127829+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "ieee-802-11bt|pureKem|IEEE P802.11BT",
+      "file": "ieee-p802-11bt-6b468809.html",
+      "bytes": 204765,
+      "content_type": "text/html",
+      "url": "https://standards.ieee.org/ieee/802.11bt/12187/",
+      "sha256": "082e58545aa2cc8c6cf06ed9f872140bb3fea4ff7c3acbe70d240dfb6c8af167",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:14:46.502068+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED"
     }
   ]
 }

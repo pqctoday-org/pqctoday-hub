@@ -1,82 +1,102 @@
 [
   {
     "term": "CKR_OK",
-    "definition": "PKCS#11 return value meaning the call succeeded (0x00000000)."
+    "definition": "PKCS#11 return value meaning the call succeeded (0x00000000).",
+    "relatedModule": "/learn/stateful-signatures"
   },
   {
     "term": "CKM_ECDH1_DERIVE",
-    "definition": "PKCS#11 mechanism for Diffie-Hellman key agreement; used for both P-256 and X25519."
+    "definition": "PKCS#11 mechanism for Diffie-Hellman key agreement; used for both P-256 and X25519.",
+    "relatedModule": "/learn/hybrid-crypto"
   },
   {
     "term": "CKM_ML_KEM",
-    "definition": "PKCS#11 mechanism for ML-KEM post-quantum key encapsulation (FIPS 203)."
+    "definition": "PKCS#11 mechanism for ML-KEM post-quantum key encapsulation (FIPS 203).",
+    "relatedModule": "/learn/hybrid-crypto"
   },
   {
     "term": "CKM_SHA256",
-    "definition": "SHA-256 hash mechanism — 256-bit classical digest."
+    "definition": "SHA-256 hash mechanism — 256-bit classical digest.",
+    "relatedModule": "/learn/hsm-pqc"
   },
   {
     "term": "CKM_SHA3_256",
-    "definition": "SHA3-256 hash mechanism — 256-bit digest, post-quantum robust KDF primitive."
+    "definition": "SHA3-256 hash mechanism — 256-bit digest, post-quantum robust KDF primitive.",
+    "relatedModule": "/learn/hsm-pqc"
   },
   {
     "term": "CKM_SHA3_256_HMAC",
-    "definition": "HMAC using SHA3-256 — post-quantum robust MAC construction."
+    "definition": "HMAC using SHA3-256 — post-quantum robust MAC construction.",
+    "relatedModule": "/learn/hsm-pqc"
   },
   {
     "term": "X9.63-KDF",
-    "definition": "Key derivation function from ANSI X9.63; iterates a hash over Z‖counter‖SharedInfo."
+    "definition": "Key derivation function from ANSI X9.63; iterates a hash over Z‖counter‖SharedInfo.",
+    "relatedModule": "/learn/5g-security"
   },
   {
     "term": "AES-128-CTR",
-    "definition": "AES encryption in Counter mode with a 128-bit key; length-preserving ciphertext."
+    "definition": "AES encryption in Counter mode with a 128-bit key; length-preserving ciphertext.",
+    "relatedModule": "/learn/5g-security"
   },
   {
     "term": "AES-256-CTR",
-    "definition": "AES encryption in Counter mode with a 256-bit key; length-preserving ciphertext."
+    "definition": "AES encryption in Counter mode with a 256-bit key; length-preserving ciphertext.",
+    "relatedModule": "/learn/5g-security"
   },
   {
     "term": "SHA-256",
-    "definition": "NIST 256-bit classical hash function (SHA-2 family)."
+    "definition": "NIST 256-bit classical hash function (SHA-2 family).",
+    "relatedModule": "/learn/digital-assets"
   },
   {
     "term": "SHA3-256",
-    "definition": "NIST 256-bit SHA-3 hash function; Keccak-based, distinct from SHA-2."
+    "definition": "NIST 256-bit SHA-3 hash function; Keccak-based, distinct from SHA-2.",
+    "relatedModule": "/learn/5g-security"
   },
   {
     "term": "HMAC-SHA-256",
-    "definition": "Hash-based MAC using SHA-256; provides integrity + authenticity of a message."
+    "definition": "Hash-based MAC using SHA-256; provides integrity + authenticity of a message.",
+    "relatedModule": "/learn/database-encryption-pqc"
   },
   {
     "term": "HMAC-SHA3-256",
-    "definition": "HMAC using SHA3-256; PQ-robust MAC used in Profile C."
+    "definition": "HMAC using SHA3-256; PQ-robust MAC used in Profile C.",
+    "relatedModule": "/learn/5g-security"
   },
   {
     "term": "ML-KEM-768",
-    "definition": "Post-quantum key encapsulation mechanism standardized in FIPS 203."
+    "definition": "Post-quantum key encapsulation mechanism standardized in FIPS 203.",
+    "relatedModule": "/learn/hybrid-crypto"
   },
   {
     "term": "X25519",
-    "definition": "Montgomery-curve Diffie-Hellman over Curve25519; 32-byte raw keys."
+    "definition": "Montgomery-curve Diffie-Hellman over Curve25519; 32-byte raw keys.",
+    "relatedModule": "/learn/hybrid-crypto"
   },
   {
     "term": "P-256",
-    "definition": "NIST prime256v1 (secp256r1) elliptic curve; 65-byte uncompressed points."
+    "definition": "NIST prime256v1 (secp256r1) elliptic curve; 65-byte uncompressed points.",
+    "relatedModule": "/learn/confidential-computing"
   },
   {
     "term": "SUCI",
-    "definition": "5G Subscription Concealed Identifier — the encrypted form of the SUPI transmitted on air."
+    "definition": "5G Subscription Concealed Identifier — the encrypted form of the SUPI transmitted on air.",
+    "relatedModule": "/learn/5g-security"
   },
   {
     "term": "SUPI",
-    "definition": "5G Subscription Permanent Identifier (e.g. your IMSI) — the plaintext identity."
+    "definition": "5G Subscription Permanent Identifier (e.g. your IMSI) — the plaintext identity.",
+    "relatedModule": "/learn/5g-security"
   },
   {
     "term": "SIDF",
-    "definition": "5G Subscription Identifier De-concealing Function at the home network — recovers SUPI from SUCI."
+    "definition": "5G Subscription Identifier De-concealing Function at the home network — recovers SUPI from SUCI.",
+    "relatedModule": "/learn/5g-security"
   },
   {
     "term": "MSIN",
-    "definition": "Mobile Subscriber Identification Number — the portion of the IMSI that is concealed."
+    "definition": "Mobile Subscriber Identification Number — the portion of the IMSI that is concealed.",
+    "relatedModule": "/learn/5g-security"
   }
 ]

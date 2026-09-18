@@ -19,8 +19,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:56.922879+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:56.922879+00:00"
     },
     {
       "refId": "aero-satcom",
@@ -36,7 +37,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -53,8 +54,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:56.922879+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:56.922879+00:00"
     },
     {
       "refId": "auto-v2x",
@@ -70,8 +72,9 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:41.480588+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:41.480588+00:00"
     },
     {
       "refId": "auto-secure-boot",
@@ -87,8 +90,9 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:41.480588+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:41.480588+00:00"
     },
     {
       "refId": "auto-telematics",
@@ -104,8 +108,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:57.298132+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:57.298132+00:00"
     },
     {
       "refId": "auto-invehicle",
@@ -121,8 +126,9 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:41.509196+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:41.509196+00:00"
     },
     {
       "refId": "cloud-kms",
@@ -138,8 +144,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:57.384898+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:57.384898+00:00"
     },
     {
       "refId": "cloud-tenant-tls",
@@ -172,8 +179,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:58.624283+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:58.624283+00:00"
     },
     {
       "refId": "cloud-backup",
@@ -189,8 +197,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:58.690976+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:58.690976+00:00"
     },
     {
       "refId": "energy-scada",
@@ -206,8 +215,9 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:43.494889+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:43.494889+00:00"
     },
     {
       "refId": "energy-nuclear",
@@ -240,8 +250,9 @@
       "artefact": "LANDING",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:06:49.433989+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-18T03:46:25.417444+00:00"
     },
     {
       "refId": "energy-pipeline",
@@ -257,8 +268,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:58.777456+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:58.777456+00:00"
     },
     {
       "refId": "cross-web-tls",
@@ -342,8 +354,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:00.384868+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:00.384868+00:00"
     },
     {
       "refId": "crypto-tx-signing",
@@ -359,8 +372,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:00.407452+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:00.407452+00:00"
     },
     {
       "refId": "crypto-custody",
@@ -376,8 +390,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:00.429556+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:00.429556+00:00"
     },
     {
       "refId": "crypto-consensus",
@@ -393,8 +408,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:00.453460+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:00.453460+00:00"
     },
     {
       "refId": "edu-sis",
@@ -410,8 +426,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:00.498861+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:00.498861+00:00"
     },
     {
       "refId": "edu-federation",
@@ -428,8 +445,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:01.457012+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:14:16.502884+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:01.457012+00:00"
     },
     {
       "refId": "edu-credentials",
@@ -445,8 +463,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:01.650040+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:01.650040+00:00"
     },
     {
       "refId": "edu-research-data",
@@ -462,8 +481,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:03.370781+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:03.370781+00:00"
     },
     {
       "refId": "fin-interbank",
@@ -480,8 +500,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:03.633961+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:14:16.786641+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:03.633961+00:00"
     },
     {
       "refId": "fin-customer",
@@ -514,8 +535,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:07.554833+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:07.554833+00:00"
     },
     {
       "refId": "fin-archives",
@@ -531,8 +553,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:07.577891+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:07.577891+00:00"
     },
     {
       "refId": "gov-nss",
@@ -548,7 +571,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -601,8 +624,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:07.824635+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:07.824635+00:00"
     },
     {
       "refId": "gov-classified",
@@ -618,7 +642,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -636,8 +660,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:08.068596+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-16T03:54:02.989509+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:08.068596+00:00"
     },
     {
       "refId": "hlth-ehr",
@@ -653,8 +678,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:08.103459+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:08.103459+00:00"
     },
     {
       "refId": "hlth-devices",
@@ -671,8 +697,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:09.293756+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:14:17.783301+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:09.293756+00:00"
     },
     {
       "refId": "hlth-implants",
@@ -688,8 +715,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:09.470797+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:09.470797+00:00"
     },
     {
       "refId": "hlth-supply",
@@ -706,8 +734,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:12.614272+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:14:18.412407+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:12.614272+00:00"
     },
     {
       "refId": "hsm-keygen",
@@ -723,8 +752,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:16.489539+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:16.489539+00:00"
     },
     {
       "refId": "hsm-api",
@@ -740,8 +770,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:18.833016+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:18.833016+00:00"
     },
     {
       "refId": "hsm-roots",
@@ -757,8 +788,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:16.489539+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:16.489539+00:00"
     },
     {
       "refId": "iot-provisioning",
@@ -774,8 +806,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:19.157444+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:19.157444+00:00"
     },
     {
       "refId": "iot-industrial",
@@ -791,8 +824,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:21.000679+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:21.000679+00:00"
     },
     {
       "refId": "iot-firmware",
@@ -808,8 +842,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:21.035700+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:21.035700+00:00"
     },
     {
       "refId": "it-libraries",
@@ -825,8 +860,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:21.047747+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:21.047747+00:00"
     },
     {
       "refId": "it-libraries-signatures",
@@ -842,9 +878,10 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:21.047747+00:00",
+      "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "note": "Row split from it-libraries on 2026-09-17 (landscape audit D3): same cited document, same bytes — the admission verdicts are the parent record's, which the door stamped on this file; nothing was re-fetched."
+      "note": "Row split from it-libraries on 2026-09-17 (landscape audit D3): same cited document, same bytes — the admission verdicts are the parent record's, which the door stamped on this file; nothing was re-fetched.",
+      "stampedAt": "2026-09-17T12:58:21.047747+00:00"
     },
     {
       "refId": "it-webpki",
@@ -860,8 +897,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:21.059777+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:21.059777+00:00"
     },
     {
       "refId": "it-supplychain",
@@ -877,8 +915,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:21.073010+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:21.073010+00:00"
     },
     {
       "refId": "it-identity",
@@ -894,8 +933,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:21.536488+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:21.536488+00:00"
     },
     {
       "refId": "it-ssh",
@@ -928,8 +968,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:22.012562+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:22.012562+00:00"
     },
     {
       "refId": "leg-wallet",
@@ -945,8 +986,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:22.152665+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:22.152665+00:00"
     },
     {
       "refId": "leg-timestamp",
@@ -962,8 +1004,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:22.337932+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:22.337932+00:00"
     },
     {
       "refId": "media-drm",
@@ -979,8 +1022,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:23.650748+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:23.650748+00:00"
     },
     {
       "refId": "media-broadcast",
@@ -997,8 +1041,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:23.707475+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:14:34.316301+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:23.707475+00:00"
     },
     {
       "refId": "media-streaming",
@@ -1014,8 +1059,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:23.721688+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:23.721688+00:00"
     },
     {
       "refId": "pci-emv",
@@ -1031,8 +1077,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:24.315952+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:24.315952+00:00"
     },
     {
       "refId": "pci-terminals",
@@ -1048,8 +1095,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:29.493439+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:29.493439+00:00"
     },
     {
       "refId": "pci-ecommerce",
@@ -1065,8 +1113,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:29.539732+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:29.539732+00:00"
     },
     {
       "refId": "rail-etcs",
@@ -1082,8 +1131,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:30.168461+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:30.168461+00:00"
     },
     {
       "refId": "rail-frmcs",
@@ -1099,8 +1149,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:30.607799+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:30.607799+00:00"
     },
     {
       "refId": "rail-ptc",
@@ -1116,8 +1167,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:30.716096+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:30.716096+00:00"
     },
     {
       "refId": "retail-checkout",
@@ -1133,8 +1185,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:30.765570+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:30.765570+00:00"
     },
     {
       "refId": "supply-maritime",
@@ -1150,8 +1203,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:30.944755+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:30.944755+00:00"
     },
     {
       "refId": "supply-ebl",
@@ -1168,8 +1222,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:30.969410+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:14:35.263621+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:30.969410+00:00"
     },
     {
       "refId": "supply-customs",
@@ -1185,8 +1240,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:31.040006+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:31.040006+00:00"
     },
     {
       "refId": "telco-suci",
@@ -1202,8 +1258,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:37.447294+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:37.447294+00:00"
     },
     {
       "refId": "telco-transport",
@@ -1219,8 +1276,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:39.162911+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:39.162911+00:00"
     },
     {
       "refId": "telco-certs",
@@ -1236,8 +1294,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:37.447294+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:37.447294+00:00"
     },
     {
       "refId": "telco-subscriber",
@@ -1254,8 +1313,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:39.373996+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:14:35.493988+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:39.373996+00:00"
     },
     {
       "refId": "water-scada",
@@ -1271,8 +1331,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:39.399490+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:39.399490+00:00"
     },
     {
       "refId": "water-ami",
@@ -1288,8 +1349,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:39.846525+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:39.846525+00:00"
     },
     {
       "refId": "water-dams",
@@ -1305,8 +1367,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:39.889039+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:39.889039+00:00"
     },
     {
       "refId": "ins-policyholder-data",
@@ -1322,8 +1385,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:39.915921+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:39.915921+00:00"
     },
     {
       "refId": "ins-cyber-underwriting",
@@ -1339,8 +1403,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:39.915921+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:39.915921+00:00"
     },
     {
       "refId": "Mastercard-PQC-industry-awareness-payment-ecosystem-quantum",
@@ -1356,8 +1421,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:40.947830+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:40.947830+00:00"
     },
     {
       "refId": "cross-openpgp",
@@ -1373,8 +1439,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:41.124121+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:41.124121+00:00"
     },
     {
       "refId": "cross-dnssec",
@@ -1390,8 +1457,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:41.150865+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:41.150865+00:00"
     },
     {
       "refId": "it-kerberos",
@@ -1407,8 +1475,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:41.190430+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:41.190430+00:00"
     },
     {
       "refId": "telco-routing",
@@ -1424,8 +1493,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:41.235649+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:41.235649+00:00"
     },
     {
       "refId": "crypto-solana-signing",
@@ -1441,8 +1511,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:41.280834+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:41.280834+00:00"
     },
     {
       "refId": "crypto-cardano-signing",
@@ -1458,8 +1529,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:41.306305+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:41.306305+00:00"
     },
     {
       "refId": "crypto-cardano-consensus",
@@ -1475,8 +1547,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:42.565062+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:42.565062+00:00"
     },
     {
       "refId": "crypto-defi-multisig",
@@ -1492,8 +1565,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:42.581750+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:42.581750+00:00"
     },
     {
       "refId": "crypto-defi-bridge",
@@ -1509,8 +1583,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:42.610799+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:42.610799+00:00"
     },
     {
       "refId": "crypto-defi-oracle",
@@ -1526,8 +1601,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:44.074913+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:44.074913+00:00"
     },
     {
       "refId": "crypto-polkadot-signing",
@@ -1543,8 +1619,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:44.099926+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:44.099926+00:00"
     },
     {
       "refId": "crypto-cosmos-signing",
@@ -1561,8 +1638,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:44.270937+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:14:35.873120+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:44.270937+00:00"
     },
     {
       "refId": "crypto-avalanche-signing",
@@ -1578,8 +1656,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:44.306165+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:44.306165+00:00"
     },
     {
       "refId": "crypto-avalanche-icm",
@@ -1595,8 +1674,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:44.336381+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:44.336381+00:00"
     },
     {
       "refId": "crypto-arbitrum-anytrust",
@@ -1629,8 +1709,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:44.370527+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:44.370527+00:00"
     },
     {
       "refId": "it-composite-certs",
@@ -1646,8 +1727,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:44.560536+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:44.560536+00:00"
     },
     {
       "refId": "iot-esim-provisioning",
@@ -1663,8 +1745,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:45.175147+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:45.175147+00:00"
     },
     {
       "refId": "leg-pdf-signing",
@@ -1680,8 +1763,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:45.187797+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:45.187797+00:00"
     },
     {
       "refId": "retail-pin-keys",
@@ -1718,8 +1802,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:45.217435+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:14:37.520134+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:45.217435+00:00"
     },
     {
       "refId": "hsm-certified-product",
@@ -1736,8 +1821,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:45.245684+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:14:39.763582+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:45.245684+00:00"
     },
     {
       "refId": "telco-air-interface",
@@ -1753,8 +1839,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:52.096309+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:52.096309+00:00"
     },
     {
       "refId": "pci-pboc-cards",
@@ -1770,8 +1857,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:52.123373+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:52.123373+00:00"
     },
     {
       "refId": "auto-tachograph",
@@ -1787,8 +1875,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:59:01.131888+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:59:01.131888+00:00"
     },
     {
       "refId": "aero-cpdlc",
@@ -1804,8 +1893,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:59:01.226185+00:00",
+      "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:59:01.226185+00:00",
       "note": "use_case_id renamed from Controller-Pilot-Data-Link-Communications-CPDLC on 2026-09-17 (landscape audit D6, slug gate G5); same document, same bytes."
     },
     {
@@ -1825,8 +1915,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:44.349298+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-16T03:27:41.261615+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:44.349298+00:00"
     },
     {
       "refId": "energy-nuclear",
@@ -1844,8 +1935,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:58.739787+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-16T05:14:28.992716+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:58.739787+00:00"
     },
     {
       "refId": "cross-code-signing",
@@ -1863,8 +1955,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:59.292230+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-16T05:14:29.369233+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:59.292230+00:00"
     },
     {
       "refId": "fin-customer",
@@ -1882,8 +1975,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:03.647313+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-16T05:14:29.614308+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:03.647313+00:00"
     },
     {
       "refId": "it-ssh",
@@ -1901,8 +1995,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:21.571416+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-16T05:14:29.861013+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:21.571416+00:00"
     },
     {
       "refId": "retail-pin-keys",
@@ -1920,8 +2015,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:45.207551+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-16T05:14:30.185043+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:45.207551+00:00"
     }
   ],
   "archivedEntries": [

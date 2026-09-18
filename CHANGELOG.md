@@ -29,6 +29,28 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.87.0] - 2026-09-18
+
+The Industry Landscape shows which post-quantum mechanism replaces which classical one, search results stop mixing crosswalk rows into the compliance frameworks, the site stays up for visitors in the minutes after a release, search engines can index every page, and a night of evidence work re-addresses 51 organisation sources and prunes copies that were never the cited document.
+
+### Added
+
+- **The Industry Landscape now says which post-quantum mechanism replaces which classical one** [view:/algorithms] [persona:architect] [persona:ops] [persona:executive]: RSA is split into its signature and key-exchange roles, every PQC family names what it replaces, each tile pairs mechanisms by kind instead of listing "Classical" beside "PQC", and every row links to the Learn module that teaches it. Four badge contradictions fixed (rows that showed "PQC in production" with no PQC mechanism, or "in production" beside "standardising").
+
+### Fixed
+
+- **Search results no longer show crosswalk rows as compliance frameworks** [view:/] [view:/compliance] [persona:grc] [persona:curious]: the search index had read 752 candidate crosswalk rows as frameworks since 09-17 (131 duplicate entries); the index is rebuilt with the 184 real frameworks.
+- **The site keeps working for visitors during the minutes after a release** [view:/] [persona:ops] [persona:curious]: a visitor who loaded the previous release could hit a blank page when its files were replaced; the previous release's boot files are now kept across a deploy, and the app retries once before showing an error.
+- **Search engines can index every page** [view:/navigate] [view:/] [persona:curious] [persona:executive]: sitemap and canonical addresses no longer redirect, the Navigate page is now prerendered and listed, and each page's last-modified date is real instead of a constant.
+
+### Data
+
+- **51 organisation sources re-addressed after a web-search pass** [view:/community] [view:/library] [persona:researcher] [persona:grc]: 25 Sources-directory and 26 trusted-sources rows that pointed at a dead or blocked address now point at a page the evidence door verified as the organisation's own; 145 could not be found and stay marked.
+- **250 registry concepts whose source row had been deprecated are resolved** [view:/compliance] [view:/learn] [persona:grc] [persona:researcher]: 68 remapped to the active successor, 18 resolved through their table, 165 deprecated with their source's own reason, with the crosswalks that cite them following; 280 verbatim crosswalk candidates merged at low confidence.
+- **Every glossary term now links to a Learn module that actually uses it** [view:/learn] [persona:curious]: 61 unlinked terms assigned (38 by whole-word use in the module's own text, 23 by their definitions).
+- **20 leader references added and 9 ANSSI certification reports re-addressed** [view:/leaders] [view:/compliance] [persona:researcher] [persona:grc]: 18 new library documents back leaders who cited nothing; 9 ANSSI reports whose cyber.gouv.fr addresses are dead now point at the Common Criteria portal copy, verified; 16 CMVP records lose a "Security Policy Not Available" placeholder that had been counted as a document.
+- **Copies that were never the cited document no longer back a row** [view:/library] [view:/compliance] [view:/migrate] [persona:grc] [persona:architect]: 15 paid ISO standards drop a local copy that was the publisher's paywall page, two vendor roadmap captures are re-filed in their real format, one African Union convention scan is now readable text, and two library dates (PCI DSS quick reference, CNSSP 15) now match the document they cite.
+
 ## [4.86.1] - 2026-09-17
 
 ### Data

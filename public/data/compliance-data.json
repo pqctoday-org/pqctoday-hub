@@ -4273,7 +4273,7 @@
     "productCategory": "Certified Product",
     "vendor": "IDEMIA",
     "date": "2025-03-17",
-    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-29-rapport.pdf",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/anssi-cc-2021_29.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-29-rapport.pdf"
     ],
@@ -4284,7 +4284,9 @@
         "name": "Certificate",
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-29-certificat.pdf"
       }
-    ]
+    ],
+    "linkVerifiedAt": "2026-09-18T04:24:08+00:00",
+    "linkPrevious": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-29-rapport.pdf"
   },
   {
     "id": "anssi-cc-2022-33",
@@ -4743,7 +4745,7 @@
     "productCategory": "Certified Product",
     "vendor": "NXP",
     "date": "2025-02-12",
-    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2020-72-rapport.pdf",
+    "link": "https://www.commoncriteriaportal.org/nfs/ccpfiles/files/epfiles/ANSSI-CC-2020_72fr.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2020-72-rapport.pdf"
     ],
@@ -4755,7 +4757,9 @@
         "name": "Certificate",
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2020-72-certificat.pdf"
       }
-    ]
+    ],
+    "linkVerifiedAt": "2026-09-18T04:24:08+00:00",
+    "linkPrevious": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2020-72-rapport.pdf"
   },
   {
     "id": "anssi-cc-2020-73",
@@ -4792,7 +4796,7 @@
     "productCategory": "Certified Product",
     "vendor": "ICAO BAC",
     "date": "2025-02-12",
-    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-18-rapport.pdf",
+    "link": "https://www.commoncriteriaportal.org/nfs/ccpfiles/files/epfiles/anssi-cc-2021_18cdv31bac2.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-18-rapport.pdf"
     ],
@@ -4804,7 +4808,9 @@
         "name": "Certificate",
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-18-certificat.pdf"
       }
-    ]
+    ],
+    "linkVerifiedAt": "2026-09-18T04:30:08+00:00",
+    "linkPrevious": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-18-rapport.pdf"
   },
   {
     "id": "anssi-cc-2021-19",
@@ -4816,7 +4822,7 @@
     "productCategory": "Certified Product",
     "vendor": "ICAO EAC",
     "date": "2026-02-16",
-    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-19-rapport.pdf",
+    "link": "https://www.commoncriteriaportal.org/nfs/ccpfiles/files/epfiles/anssi-cc-2021_19v2.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-19-rapport.pdf"
     ],
@@ -4828,7 +4834,9 @@
         "name": "Certificate",
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-19-certificat.pdf"
       }
-    ]
+    ],
+    "linkVerifiedAt": "2026-09-18T04:24:08+00:00",
+    "linkPrevious": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-19-rapport.pdf"
   },
   {
     "id": "anssi-cc-2021-20",
@@ -4840,7 +4848,7 @@
     "productCategory": "Certified Product",
     "vendor": "ICAO SSCD",
     "date": "2025-02-12",
-    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-20-rapport.pdf",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/anssi-cc-2021_20cdv31sscd2.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-20-rapport.pdf"
     ],
@@ -4852,7 +4860,9 @@
         "name": "Certificate",
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-20-certificat.pdf"
       }
-    ]
+    ],
+    "linkVerifiedAt": "2026-09-18T04:24:08+00:00",
+    "linkPrevious": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2021-20-rapport.pdf"
   },
   {
     "id": "anssi-cc-2023-11",
@@ -5164,7 +5174,7 @@
     "productCategory": "Certified Product",
     "vendor": "SAMSUNG",
     "date": "2024-12-18",
-    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2024-02-rapport.pdf",
+    "link": "https://www.commoncriteriaportal.org/nfs/ccpfiles/files/epfiles/ANSSI-CC-2024_02fr.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2024-02-rapport.pdf"
     ],
@@ -5176,7 +5186,9 @@
         "name": "Certificate",
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2024-02-certificat.pdf"
       }
-    ]
+    ],
+    "linkVerifiedAt": "2026-09-18T04:24:08+00:00",
+    "linkPrevious": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2024-02-rapport.pdf"
   },
   {
     "id": "anssi-cc-2024-07",
@@ -5436,7 +5448,7 @@
     "productCategory": "Certified Product",
     "vendor": "SAMSUNG",
     "date": "2025-10-14",
-    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2025-38-rapport.pdf",
+    "link": "https://www.commoncriteriaportal.org/nfs/ccpfiles/files/epfiles/ANSSI-CC-2025_38fr.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2025-38-rapport.pdf"
     ],
@@ -5448,7 +5460,9 @@
         "name": "Certificate",
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2025-38-certificat.pdf"
       }
-    ]
+    ],
+    "linkVerifiedAt": "2026-09-18T04:24:08+00:00",
+    "linkPrevious": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2025-38-rapport.pdf"
   },
   {
     "id": "anssi-cc-2020-04",
@@ -6057,7 +6071,7 @@
     "productCategory": "circuits",
     "vendor": "THALES DIS",
     "date": "2025-12-01",
-    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2017-41-rapport.pdf",
+    "link": "https://www.commoncriteriaportal.org/nfs/ccpfiles/files/epfiles/ANSSI-CC-2017_41fr.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2017-41-rapport.pdf"
     ],
@@ -6069,7 +6083,9 @@
         "name": "Certificate",
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2017-41-certificat.pdf"
       }
-    ]
+    ],
+    "linkVerifiedAt": "2026-09-18T04:24:08+00:00",
+    "linkPrevious": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2017-41-rapport.pdf"
   },
   {
     "id": "anssi-cc-2017-76",
@@ -6206,7 +6222,7 @@
     "productCategory": "Certified Product",
     "vendor": "THALES DIS",
     "date": "2025-02-12",
-    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2018-38-rapport.pdf",
+    "link": "https://www.commoncriteriaportal.org/nfs/ccpfiles/files/epfiles/ANSSI-CC-2018_38fr.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2018-38-rapport.pdf"
     ],
@@ -6218,7 +6234,9 @@
         "name": "Certificate",
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2018-38-certificat.pdf"
       }
-    ]
+    ],
+    "linkVerifiedAt": "2026-09-18T04:24:08+00:00",
+    "linkPrevious": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2018-38-rapport.pdf"
   },
   {
     "id": "anssi-cc-2018-51",
@@ -9266,9 +9284,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L1",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5239.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "5238",
@@ -13582,9 +13600,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4987.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4986",
@@ -14109,9 +14127,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4955.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4954",
@@ -21461,9 +21479,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4378.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4367",
@@ -21764,9 +21782,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4345.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4344",
@@ -21781,9 +21799,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4344.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4343",
@@ -21798,9 +21816,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4343.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4342",
@@ -21815,9 +21833,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4342.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4341",
@@ -21832,9 +21850,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4341.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4340",
@@ -21849,9 +21867,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4340.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4339",
@@ -22087,9 +22105,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4326.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4325",
@@ -22138,9 +22156,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4323.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4322",
@@ -22580,9 +22598,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4280.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4279",
@@ -23022,9 +23040,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4247.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4246",
@@ -24382,9 +24400,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4137.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4134",
@@ -25158,9 +25176,9 @@
     "productCategory": "Cryptographic Module",
     "vendor": "Classified",
     "certificationLevel": "FIPS 140-3 L2",
-    "securityTargetUrls": [
-      "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4054.pdf"
-    ]
+    "securityTargetUrls": [],
+    "securityTargetUrlsVerifiedAt": "2026-09-18T03:30:45+00:00",
+    "securityTargetUrlsNote": "CMVP serves its 'Security Policy Not Available' placeholder at the security-policy address (artefact.KNOWN_PLACEHOLDERS, ocr_scans.py 2026-09-18): no technical document is published; the certificate record is the row's evidence"
   },
   {
     "id": "4048",
@@ -29854,7 +29872,7 @@
     "productCategory": "Certified Product",
     "vendor": "Unknown Vendor",
     "date": "2026-09-02",
-    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2017-04-rapport.pdf",
+    "link": "https://cyber.gouv.fr/sites/default/files/2017/12/anssi-cspn-2017_04fr.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2017-04-rapport.pdf"
     ],
@@ -29864,7 +29882,9 @@
         "name": "Certificate",
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2017-04-certificat.pdf"
       }
-    ]
+    ],
+    "linkVerifiedAt": "2026-09-18T04:24:08+00:00",
+    "linkPrevious": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2017-04-rapport.pdf"
   },
   {
     "id": "anssi-cspn-2019-03",
@@ -29876,7 +29896,7 @@
     "productCategory": "Certified Product",
     "vendor": "Unknown Vendor",
     "date": "2026-09-02",
-    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2019-03-rapport.pdf",
+    "link": "https://cyber.gouv.fr/sites/default/files/2019/02/anssi-cspn-2019_03en.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2019-03-rapport.pdf"
     ],
@@ -29886,7 +29906,9 @@
         "name": "Certificate",
         "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2019-03-certificat.pdf"
       }
-    ]
+    ],
+    "linkVerifiedAt": "2026-09-18T04:24:08+00:00",
+    "linkPrevious": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2019-03-rapport.pdf"
   },
   {
     "id": "enisa-eucc-eucc-eucc-3087-2026-000012-i-00",

@@ -162,8 +162,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:24.667786+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-05-19T02:50:07.475429+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:24.667786+00:00"
     },
     {
       "gapId": "gsma-pq-02",
@@ -174,8 +175,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:25.464545+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-05-19T02:51:52.182344+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:25.464545+00:00"
     },
     {
       "gapId": "gsma-pq-03",
@@ -186,8 +188,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:28.185562+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-05-19T02:51:52.904528+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:28.185562+00:00"
     },
     {
       "gapId": "3gpp-rel19-pqc-study",

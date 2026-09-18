@@ -444,6 +444,32 @@
       "unified": "converted",
       "admittedAt": "2026-09-17T19:00:42.787766+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "refId": "FrodoKEM-640",
+      "file": "FrodoKEM-640-59abc763.html",
+      "bytes": 88444,
+      "content_type": "text/html",
+      "url": "https://www.iso.org/standard/85646.html",
+      "sha256": "8b8364274ad7bca236015719b3bdcf41ae98e88144ef042a4550391740675d24",
+      "artefact": "RECORD",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T04:27:23.227238+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED"
+    },
+    {
+      "refId": "Classic-McEliece-348864",
+      "file": "Classic-McEliece-348864-9fba9ec3.html",
+      "bytes": 85587,
+      "content_type": "text/html",
+      "url": "https://www.iso.org/standard/86890.html",
+      "sha256": "7de04ed879f167a3a357e21ea579c0b4e4249dffea150611bf9f8cafd65f00f4",
+      "artefact": "RECORD",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T04:27:25.939187+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED"
     }
   ]
 }
