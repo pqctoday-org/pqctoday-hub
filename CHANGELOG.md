@@ -29,6 +29,13 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.86.1] - 2026-09-17
+
+### Data
+
+- **Nearly every patent on the Patents page now has its source document cached** [view:/patents] [persona:researcher] [persona:executive]: 727 of the 729 in-scope patents carry a verified copy — 419 USPTO scans that were only images now have a searchable text layer, and 297 patents that had no document at all now have their Google Patents page captured. Each copy was admitted through the evidence door with its identity checked against the patent it claims to be.
+- **Cloudflare's post-quantum DNSSEC announcement now has an archived copy** [view:/migrate] [persona:architect] [persona:ops]: the "1.1.1.1 now supports post-quantum DNSSEC" roadmap row added in 4.86.0 linked only to the live blog post; its source page is now captured and verified, so the row offers the archived copy like every other vendor announcement.
+
 ## [4.86.0] - 2026-09-17
 
 The Navigate graph becomes readable when you zoom in, vendors can list more than one roadmap announcement, the Patents page stops carrying 1,133 patents it never showed, and a day of evidence work corrects certification, catalog, and reference data against the documents they cite.
