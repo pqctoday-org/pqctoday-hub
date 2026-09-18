@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.88.1] - 2026-09-18
+
+The 710 patents in scope were re-read from their cached documents and their summaries and claim descriptions rewritten from that text.
+
+### Data
+
+- **Patent summaries and claim descriptions now come from the cached patent text** [view:/patents] [persona:researcher] [persona:architect]: 710 of the 729 patents on the page were re-read from the stored document through the standard reader, and their one-sentence summary, primary inventive claim, claim structure and notes were rewritten from it. A sample of 11 patents was checked claim by claim against the documents by two independent readers (the local model and a second model): every date, number and title matched and no claim was found wrong. The relevance and algorithm labels that decide which patents appear on the page were kept at their previous values pending review, so no patent was added to or removed from the page.
+
 ## [4.88.0] - 2026-09-18
 
 Every page reads better for screen-reader and keyboard users, the learning paths and role boards reach more of the site, and the Crypto Lab opens on a different set of tools for each role.
