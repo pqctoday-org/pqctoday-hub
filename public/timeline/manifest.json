@@ -1430,9 +1430,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:28.732781+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T18:59:39.646819+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "south-korea-msit-pilot-transition-phase",
@@ -1736,9 +1736,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "united-states-nist-nsa-cryptographic-inventory",
@@ -1787,9 +1787,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:31.427362+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:49.204006+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "united-states-white-house-pqc-report-to-congress",
@@ -1873,9 +1873,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "united-states-nsa-traditional-networking-transition",
@@ -1890,9 +1890,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "united-states-nist-hqc-selected-as-fifth-algorithm",
@@ -1975,9 +1975,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "united-states-cisa-acdi-deployment-phase",
@@ -2009,9 +2009,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "united-states-nist-hqc-standard-finalized-expected",
@@ -2060,9 +2060,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "united-states-nsa-nss-quantum-resistant-majority",
@@ -2094,9 +2094,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.867976+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "united-states-cisa-cisa-pqc-product-category-list-publication",
@@ -2842,9 +2842,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:14:51.454241+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:49.204006+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "united-kingdom-ncsc-pqc-whitepaper-published",
@@ -3710,9 +3710,9 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:15:06.015362+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:00:17.003290+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "refId": "poland-psnc-pionier-q-quantum-network-launched",

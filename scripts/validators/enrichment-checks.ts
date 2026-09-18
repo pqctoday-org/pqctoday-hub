@@ -31,7 +31,8 @@ const APPROVED_MODELS = [
   'ollama-qwen3.6:27b',
   'qwen3.5:27b',
   'ollama-qwen3.5:27b',
-  'mlx-', // MLX backend (M5 Max local inference), any model/version
+  'mlx_lm.server-', // 2026-09-13+: the single runtime (mlx_lm.server, Qwen3.8-27B-8bit) — every new sidecar
+  'mlx-', // MLX backend (M5 Max local inference), any model/version — historical sidecars
   'claude-', // Claude-assisted extraction (e.g. PDF reads MLX can't parse)
   'manual-extraction',
   'manual',

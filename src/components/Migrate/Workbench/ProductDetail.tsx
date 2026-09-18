@@ -13,7 +13,7 @@ import { getCertsForProduct } from '@/data/certificationXrefData'
 import { cpeByProduct } from '@/data/cpeXrefData'
 import { purlByProduct } from '@/data/purlXrefData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
-import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
+import { enrichmentByVendorId, enrichmentForRoadmap } from '@/data/vendorRoadmapEnrichmentData'
 import { vendorMap } from '@/data/migrateData'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { VendorRoadmapPanel } from '../VendorRoadmapPanel'
@@ -47,8 +47,10 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
   const hasCpe = !!cpe && (cpe.status === 'matched' || cpe.status === 'partial') && !!cpe.nvdUrl
   const purl = purlByProduct.get(product.softwareName)
   const hasPurl = !!purl && purl.status === 'matched' && !!purl.registryUrl
-  const roadmap = product.vendorId ? roadmapByVendorId.get(product.vendorId) : undefined
-  const enrichment = product.vendorId ? enrichmentByVendorId.get(product.vendorId) : undefined
+  const roadmaps = product.vendorId ? (roadmapByVendorId.get(product.vendorId) ?? []) : []
+  const vendorEnrichments = product.vendorId
+    ? (enrichmentByVendorId.get(product.vendorId) ?? [])
+    : []
   const vendor = product.vendorId ? vendorMap.get(product.vendorId) : undefined
   const { revisions } = useRevisions()
   const [drilldownOpen, setDrilldownOpen] = useState(false)
@@ -190,7 +192,17 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
 
       <EvidenceWarnings flags={product.evidenceFlags} />
 
-      {(roadmap || enrichment) && <VendorRoadmapPanel roadmap={roadmap} enrichment={enrichment} />}
+      {roadmaps.length > 0
+        ? roadmaps.map((r) => (
+            <VendorRoadmapPanel
+              key={r.compositeId}
+              roadmap={r}
+              enrichment={enrichmentForRoadmap(r.vendorId, r.roadmapUrl)}
+            />
+          ))
+        : vendorEnrichments.length > 0 && (
+            <VendorRoadmapPanel roadmap={undefined} enrichment={vendorEnrichments[0]} />
+          )}
 
       <div className="flex flex-wrap items-center gap-3">
         {vendor?.website && (

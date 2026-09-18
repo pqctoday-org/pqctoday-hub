@@ -76,23 +76,26 @@ export function VendorCommitmentPanel() {
       {summary.committed.length > 0 && (
         <ul className="mt-3 space-y-1">
           {summary.committed.map((v) => {
-            const roadmap = roadmapByVendorId.get(v.id)
+            const roadmaps = roadmapByVendorId.get(v.id) ?? []
             return (
               <li key={v.id} className="flex flex-wrap items-baseline gap-x-2 text-sm">
                 <span className="font-medium text-foreground">{v.name}</span>
                 <span className="font-mono text-xs text-muted-foreground">
                   {v.products} product{v.products === 1 ? '' : 's'} you may run
                 </span>
-                {roadmap?.roadmapUrl && (
-                  <a
-                    href={roadmap.roadmapUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-primary hover:underline"
-                  >
-                    read their commitment
-                  </a>
-                )}
+                {roadmaps
+                  .filter((r) => r.roadmapUrl)
+                  .map((r) => (
+                    <a
+                      key={r.compositeId}
+                      href={r.roadmapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-primary hover:underline"
+                    >
+                      read their commitment
+                    </a>
+                  ))}
               </li>
             )
           })}

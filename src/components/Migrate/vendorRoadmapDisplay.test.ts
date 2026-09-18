@@ -18,6 +18,7 @@ function roadmap(overrides: Partial<VendorRoadmap> = {}): VendorRoadmap {
     publishDate: '',
     lastVerifiedDate: '',
     coverageNotes: '',
+    compositeId: 'v1|',
     ...overrides,
   }
 }
@@ -25,6 +26,7 @@ function roadmap(overrides: Partial<VendorRoadmap> = {}): VendorRoadmap {
 function enrichment(overrides: Partial<VendorRoadmapEnrichment> = {}): VendorRoadmapEnrichment {
   return {
     vendorId: 'v1',
+    roadmapUrl: '',
     roadmapScope: '',
     pqcAlgorithms: [],
     targetMigrationDates: '',

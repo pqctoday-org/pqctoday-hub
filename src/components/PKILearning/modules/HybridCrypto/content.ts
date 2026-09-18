@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-01',
+  lastEdited: '2026-09-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -23,7 +23,7 @@ export const content: ModuleContent = {
     getStandard('RFC 9802'), // LMS/XMSS OIDs
     getStandard('NIST SP 800-227'), // KEM recommendations
     getStandard('draft-ietf-lamps-pq-composite-sigs-19'), // Composite ML-DSA
-    getStandard('draft-ietf-lamps-pq-composite-kem-19'), // Composite ML-KEM
+    getStandard('Composite-ML-KEM-for-use-in-X-509-Public-Key-Infrastructure'), // Composite ML-KEM (draft -20; the library retired -19 as superseded, 2026-09-17)
     getStandard('RFC-9763'), // Related Certificates
     getStandard('draft-bonnell-lamps-chameleon-certs-07'), // Chameleon Certificates,
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this

@@ -1,0 +1,85 @@
+{
+  "generated": "2026-09-17T19:13:42.861011+00:00",
+  "source": "crqc-watch",
+  "generatedBy": "admit.py --stamp-existing --add-missing-entries",
+  "entries": [
+    {
+      "refId": "estimates:Google Quantum AI & Ethereum Foundation (2026)",
+      "file": "estimates:Google Quantum AI & Ethereum Foundation (2026)-e396347d.pdf",
+      "bytes": 1672456,
+      "content_type": "application/pdf",
+      "url": "https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf",
+      "sha256": "c2219f0ca0879a59824539057f95633b5bac882cc93734cbf2dcbf1559b123b6",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:42.843790+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "estimates:Global Risk Institute (2025)",
+      "file": "estimates:Global Risk Institute (2025)-62e3be6d.html",
+      "bytes": 256793,
+      "content_type": "text/html",
+      "url": "https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/",
+      "sha256": "189d7beb0f498d2c58baf77ffa1e7b02fc90e21add1937ccef02f8143a7569a2",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:45.371325+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "estimates:NIST IR 8547 (IPD, Nov 2024)",
+      "file": "estimates:NIST IR 8547 (IPD, Nov 2024)-43f50b64.pdf",
+      "bytes": 722379,
+      "content_type": "application/pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
+      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:49.204006+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "estimates:NSA CNSA 2.0 (2022)",
+      "file": "estimates:NSA CNSA 2.0 (2022)-2572f712.pdf",
+      "bytes": 586858,
+      "content_type": "application/pdf",
+      "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "estimates:BSI Germany (2024)",
+      "file": "estimates:BSI Germany (2024)-9b216996.pdf",
+      "bytes": 256435,
+      "content_type": "application/pdf",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Migration_to_Post_Quantum_Cryptography.pdf?__blob=publicationFile&v=2",
+      "sha256": "fb5780047897fffa0cc2ce956eb03e2f0009e9c7d546157da8588fdcd5377bfb",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:55.402925+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "estimates:ANSSI France (2022, upd. 2023)",
+      "file": "estimates:ANSSI France (2022, upd. 2023)-c641da81.html",
+      "bytes": 54903,
+      "content_type": "text/html",
+      "url": "https://messervices.cyber.gouv.fr/guides/en-anssi-views-post-quantum-cryptography-transition",
+      "sha256": "0931457105d8f557bda6d4575ef8ab0b81cf7180223187f3ee790019a2da5add",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:58.615503+00:00",
+      "admittedBy": "admit.py"
+    }
+  ]
+}

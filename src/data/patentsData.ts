@@ -48,6 +48,12 @@ interface RawPatentRow {
   nist_round_status: string
   pqc_migration_score: string
   pqc_migration_reason: string
+  // DS-series lifecycle (since patents_09172026.csv): rows outside the
+  // Patents page scope are deprecated, never deleted. Optional because
+  // the previous generation has no such columns.
+  status?: string
+  deprecated_at?: string
+  deprecated_reason?: string
 }
 
 const FIPS_STATUSES: NistStatusValue[] = ['fips_203', 'fips_204', 'fips_205']
@@ -101,8 +107,13 @@ function parseJsonField<T>(raw: string, fallback: T): T {
   }
 }
 
-function transformRow(row: RawPatentRow): PatentItem | null {
+export function transformRow(row: RawPatentRow): PatentItem | null {
   if (!row.patent_number?.trim()) return null
+  // Lifecycle filter (2026-09-17): a deprecated row is carried in the CSV
+  // for self-containment but is not a patent this page shows. Done here,
+  // on the raw row, because PatentItem.status is the New/Updated badge.
+  const lifecycle = row.status?.trim().toLowerCase()
+  if (lifecycle && lifecycle !== 'active') return null
 
   const partial: Omit<PatentItem, 'impactScore' | 'impactLevel'> = {
     patentNumber: `US${row.patent_number.trim()}`,

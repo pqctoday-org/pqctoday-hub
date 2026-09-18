@@ -14,7 +14,7 @@
  * directly instead.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Filter } from 'lucide-react'
+import { ChevronDown, Filter } from 'lucide-react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
@@ -26,6 +26,18 @@ import {
 } from '@/data/forceClusterGraph'
 import { NavigateDetailPanel } from './NavigateDetailPanel'
 import { GRAPH_TOKEN, NODE_TYPES, TYPE_LABEL } from './graphVisuals'
+import {
+  buildVisibleSubgraph,
+  DEFAULT_MAX_NODES,
+  filterNodes,
+  MAX_NODES_STEP,
+  MIN_MAX_NODES,
+  rankVisibleNodes,
+  subCategoriesOf,
+  subKey,
+  type GraphFilters,
+} from './graphFilters'
+import { placeLabels, truncateLabel, type LabelCandidate } from './labelPlacement'
 import {
   boundingSphere,
   easeInOutCubic,
@@ -110,20 +122,24 @@ function tierAppearance(
   return { color, opacity }
 }
 
-// Default view shows roughly the reference design's own scale (~330 nodes),
-// not the full live graph (2,382) — dense, but not what the handoff's own
-// prototype ever showed by default. The percent slider (0-100%, ranked by
-// connection count) reveals more; 100% still shows everything.
-const DEFAULT_VISIBLE_PERCENT = 14
+// How many node (or sub-category) labels may be on screen at once — the
+// placement pass (labelPlacement.ts) keeps at most this many, none
+// overlapping. 40 fits comfortably at 1440×900 with 40-char titles; the
+// slider lets a reader trade density for coverage.
+const DEFAULT_LABEL_BUDGET = 40
+const MIN_LABEL_BUDGET = 8
+const MAX_LABEL_BUDGET = 120
+const LABEL_BUDGET_STEP = 4
+// Clearance between two placed labels, in CSS pixels.
+const LABEL_MARGIN_PX = 3
+// Sub-label placement priorities sit this far above node-label priorities
+// (node degree, tops out in the low thousands) — see applyFilters' sub-label
+// block for why.
+const SUB_LABEL_PRIORITY_BASE = 1_000_000
 
 // How long the filter panel stays expanded after the last filter-changing
 // interaction before it collapses back to a pill, freeing up screen space.
 const PANEL_IDLE_COLLAPSE_MS = 3000
-
-// Auto-adapt's binary search over resolveAutoDensityPercent doesn't yet
-// converge on a result that looks right for every filter combination and
-// needs more tuning — hidden from the UI (not removed) until that's done.
-const AUTO_ADAPT_DENSITY_ENABLED = false
 
 // Ported directly from the design handoff's real reference implementation
 // (design_handoff_force_cluster/reference/ForceCluster3D.dc.html,
@@ -150,17 +166,7 @@ interface GraphLayout {
   subCenters: Map<string, THREE.Vector3>
 }
 
-// computeLayout's spring forces settle toward but never exactly reach their
-// target separation within a fixed iteration count (verified empirically:
-// even a lightly-populated sub-cluster's minimum pairwise distance lands a
-// few percent short of REPULSION_MIN_SEP at the default 60 iterations). The
-// interactive render path keeps 60 — it re-runs on every slider drag, so it
-// has to stay cheap — but resolveAutoDensityPercent's overlap search only
-// runs once per checkbox/filter change and can afford to run the same
-// relaxation longer for a materially tighter result.
-const AUTO_DENSITY_RELAX_ITERATIONS = 200
-
-function computeLayout(graph: ForceClusterGraph, iterations = RELAX_ITERATIONS): GraphLayout {
+function computeLayout(graph: ForceClusterGraph): GraphLayout {
   const typeCenters = new Map<ForceClusterNodeType, THREE.Vector3>(
     fibonacciSphere(NODE_TYPES.length, TYPE_SPHERE_RADIUS).map((p, i) => [
       // eslint-disable-next-line security/detect-object-injection -- i is a numeric loop index into a same-length array, not user input
@@ -225,7 +231,7 @@ function computeLayout(graph: ForceClusterGraph, iterations = RELAX_ITERATIONS):
   const cellKey = (p: THREE.Vector3) =>
     `${Math.floor(p.x / cellSize)}_${Math.floor(p.y / cellSize)}_${Math.floor(p.z / cellSize)}`
 
-  for (let iter = 0; iter < iterations; iter++) {
+  for (let iter = 0; iter < RELAX_ITERATIONS; iter++) {
     for (const [, nodes] of byType) {
       const grid = new Map<string, ForceClusterNode[]>()
       for (const node of nodes) {
@@ -294,132 +300,6 @@ function computeLayout(graph: ForceClusterGraph, iterations = RELAX_ITERATIONS):
   }
 
   return { position, typeCenters, subCenters }
-}
-
-/** Ranks type-filtered nodes by degree and keeps the top `percent`% — shared by applyFilters (the real render path, below) and resolveAutoDensityPercent (which needs to test the exact same candidate subgraphs without touching the scene). */
-function buildVisibleSubgraph(
-  graph: ForceClusterGraph,
-  enabledTypes: ReadonlySet<ForceClusterNodeType>,
-  percent: number
-): ForceClusterGraph {
-  const clamped = Math.min(100, Math.max(0, percent))
-  const typeFiltered = graph.nodes.filter((n) => enabledTypes.has(n.type))
-  const sortedDegreesDesc = typeFiltered.map((n) => n.degree).sort((a, b) => b - a)
-  const keepCount = Math.max(1, Math.ceil((clamped / 100) * sortedDegreesDesc.length))
-  const threshold =
-    clamped >= 100
-      ? -Infinity
-      : (sortedDegreesDesc[Math.min(keepCount - 1, sortedDegreesDesc.length - 1)] ?? -Infinity)
-  const visibleNodes = typeFiltered.filter((n) => n.degree >= threshold)
-  const visibleIds = new Set(visibleNodes.map((n) => n.id))
-  const visibleEdges = graph.edges.filter((e) => visibleIds.has(e.from) && visibleIds.has(e.to))
-  return { nodes: visibleNodes, edges: visibleEdges }
-}
-
-// computeLayout's repulsion is a soft spring, not a hard constraint solver —
-// verified empirically, even a lightly-populated, genuinely-uncrowded
-// sub-cluster settles a few percent short of two spheres' exact touching
-// distance (2*NODE_RADIUS) at any iteration budget this feature can afford,
-// because the per-iteration restore-to-home force never fully stops pulling
-// nodes back together. Checking against the exact geometric threshold would
-// make "no overlap" nearly unreachable for any cluster with more than a
-// couple of nodes, defeating the point of the feature. 90% of exact touching
-// is the tolerance that separates "genuinely crowded" (the higher-percent
-// cases this feature is supposed to reject) from "converged as far as the
-// simulation goes" (what it should accept).
-const OVERLAP_TOLERANCE = 0.9
-
-/**
- * True if any two same-type nodes end up with their (equal-radius, constant
- * NODE_RADIUS) spheres interpenetrating past OVERLAP_TOLERANCE. World-space,
- * camera-independent: it reflects the layout computeLayout() actually
- * produced, not what the current camera happens to project on screen.
- * Cross-type pairs are never checked — computeLayout's own repulsion is
- * scoped per-type for the same reason (type anchors sit >=19 units apart
- * while nodes never move remotely that far from their subcategory home), so
- * a cross-type overlap can't occur in practice. Reuses the same spatial-grid
- * technique as that repulsion loop, and exits on the first violation found —
- * this only needs a yes/no answer, not every offending pair.
- */
-function hasOverlap(graph: ForceClusterGraph, position: Map<string, THREE.Vector3>): boolean {
-  const minSep = NODE_RADIUS * 2 * OVERLAP_TOLERANCE
-  const byType = new Map<ForceClusterNodeType, ForceClusterNode[]>()
-  for (const node of graph.nodes) byType.set(node.type, [...(byType.get(node.type) ?? []), node])
-
-  for (const [, nodes] of byType) {
-    const grid = new Map<string, ForceClusterNode[]>()
-    for (const node of nodes) {
-      const p = position.get(node.id)
-      if (!p) continue
-      const key = `${Math.floor(p.x / minSep)}_${Math.floor(p.y / minSep)}_${Math.floor(p.z / minSep)}`
-      const bucket = grid.get(key)
-      if (bucket) bucket.push(node)
-      else grid.set(key, [node])
-    }
-    for (const node of nodes) {
-      const a = position.get(node.id)
-      if (!a) continue
-      const cx = Math.floor(a.x / minSep)
-      const cy = Math.floor(a.y / minSep)
-      const cz = Math.floor(a.z / minSep)
-      for (let dx = -1; dx <= 1; dx++) {
-        for (let dy = -1; dy <= 1; dy++) {
-          for (let dz = -1; dz <= 1; dz++) {
-            const neighbors = grid.get(`${cx + dx}_${cy + dy}_${cz + dz}`)
-            if (!neighbors) continue
-            for (const other of neighbors) {
-              if (other.id === node.id) continue
-              const b = position.get(other.id)
-              if (b && a.distanceTo(b) < minSep) return true
-            }
-          }
-        }
-      }
-    }
-  }
-  return false
-}
-
-/**
- * Binary-searches the largest `percent` (1-100) whose resulting layout has
- * no overlapping node spheres — the auto-adapt-density checkbox's
- * implementation. Assumes fewer nodes kept means no more crowding than more
- * nodes kept for the same type/degree ranking — true in practice (a smaller
- * keepCount is always a strict subset of a larger one's node set, per
- * buildVisibleSubgraph's own degree-rank truncation) even though it isn't a
- * strict mathematical guarantee once edge-attraction is in the mix, so this
- * is a reasonable working assumption, not a proof.
- */
-function resolveAutoDensityPercent(
-  graph: ForceClusterGraph,
-  enabledTypes: ReadonlySet<ForceClusterNodeType>
-): number {
-  const feasible = (percent: number) => {
-    const subgraph = buildVisibleSubgraph(graph, enabledTypes, percent)
-    if (subgraph.nodes.length <= 1) return true
-    const { position } = computeLayout(subgraph, AUTO_DENSITY_RELAX_ITERATIONS)
-    return !hasOverlap(subgraph, position)
-  }
-  let lo = 1
-  let hi = 100
-  // 1% (the slider's own floor — buildVisibleSubgraph never returns fewer
-  // than 1 node) is the fallback if NOTHING in [1,100] tests feasible: a
-  // dense filter selection (e.g. every category enabled, where a handful of
-  // highly-connected mechanism nodes alone outrank everything else) can mean
-  // even the smallest selectable set still has a marginal overlap the
-  // relaxation can't fully resolve. 1% is still the least-crowded option the
-  // slider can express, so showing it beats showing nothing.
-  let best = 1
-  while (lo <= hi) {
-    const mid = Math.floor((lo + hi) / 2)
-    if (feasible(mid)) {
-      best = mid
-      lo = mid + 1
-    } else {
-      hi = mid - 1
-    }
-  }
-  return best
 }
 
 async function createRenderer(canvas: HTMLCanvasElement): Promise<THREE.WebGLRenderer> {
@@ -578,18 +458,23 @@ interface SceneHandlers {
 interface BuiltScene {
   scene: THREE.Scene
   /**
-   * Filters to the enabled types and the top `percent`% of THOSE nodes by
-   * connection count (degree), then fully recomputes the cluster layout on
-   * that filtered subgraph — not a visibility toggle over the original
+   * Filters to the enabled types/sub-categories and the top `maxNodes` by
+   * connection count (degree, shared round-robin across categories — see
+   * graphFilters.rankVisibleNodes), then fully recomputes the cluster layout
+   * on that filtered subgraph — not a visibility toggle over the original
    * layout. Toggling a whole category off/on leaves gaps and stale positions
    * otherwise; a real re-cluster is what "refresh the clustering" means.
    */
-  applyFilters: (enabledTypes: ReadonlySet<ForceClusterNodeType>, percent: number) => LayoutSnapshot
+  applyFilters: (filters: GraphFilters) => LayoutSnapshot
   /** The layout produced by buildScene's own initial applyFilters() call, so callers don't need to re-derive it. */
   initialLayout: LayoutSnapshot
 }
 
-function buildScene(graph: ForceClusterGraph, handlers: SceneHandlers): BuiltScene {
+function buildScene(
+  graph: ForceClusterGraph,
+  handlers: SceneHandlers,
+  initialFilters: GraphFilters
+): BuiltScene {
   const scene = new THREE.Scene()
   scene.add(new THREE.AmbientLight(0xffffff, 0.6))
   const dirLight = new THREE.DirectionalLight(0xffffff, 0.8)
@@ -607,10 +492,7 @@ function buildScene(graph: ForceClusterGraph, handlers: SceneHandlers): BuiltSce
   rotatingGroup.name = 'force-cluster-graph'
   scene.add(rotatingGroup)
 
-  function applyFilters(
-    enabledTypes: ReadonlySet<ForceClusterNodeType>,
-    percent: number
-  ): LayoutSnapshot {
+  function applyFilters(filters: GraphFilters): LayoutSnapshot {
     for (const child of [...rotatingGroup.children]) {
       rotatingGroup.remove(child)
       if (child instanceof THREE.Mesh || child instanceof THREE.LineSegments) {
@@ -626,7 +508,7 @@ function buildScene(graph: ForceClusterGraph, handlers: SceneHandlers): BuiltSce
       }
     }
 
-    const subgraph = buildVisibleSubgraph(graph, enabledTypes, percent)
+    const subgraph = buildVisibleSubgraph(graph, filters)
     const { nodes: visibleNodes, edges: visibleEdges } = subgraph
     const nodesById = new Map(visibleNodes.map((n) => [n.id, n]))
 
@@ -804,6 +686,7 @@ function buildScene(graph: ForceClusterGraph, handlers: SceneHandlers): BuiltSce
       const label = new CSS2DObject(div)
       label.position.copy(center)
       label.userData.kind = 'type-label'
+      label.userData.placementId = `type::${type}`
       // Read by the tour's applyTourLabelFocus() to show only the ONE
       // type-label matching the category currently being framed — `kind`
       // alone can't tell 9 type-labels apart. Also read by updateLod()'s
@@ -813,19 +696,33 @@ function buildScene(graph: ForceClusterGraph, handlers: SceneHandlers): BuiltSce
       rotatingGroup.add(label)
     }
 
+    // Visible-node count per sub-category — the sub-label's placement
+    // priority (updateLod's mid tier), so when two sub-labels collide the
+    // bigger cluster keeps its name. Offset above any node degree so that
+    // in a spotlight (where sub- and node-labels compete for the same
+    // space) the structural sub-category names place first and node
+    // labels fill in around them — the sub-label is the drill-down
+    // control, the node label is one of many.
+    const subVisibleCount = new Map<string, number>()
+    for (const node of visibleNodes) {
+      const key = subKey(node.type, node.sub)
+      subVisibleCount.set(key, (subVisibleCount.get(key) ?? 0) + 1)
+    }
     const seenSub = new Set<string>()
     for (const node of visibleNodes) {
-      const key = `${node.type}::${node.sub}`
+      const key = subKey(node.type, node.sub)
       if (seenSub.has(key)) continue
       seenSub.add(key)
       const center = realSubCenters.get(key)
       if (!center) continue
       const div = makeLabelDiv(
-        node.sub,
+        node.sub || 'Unspecified',
         {
-          size: 9,
+          size: 10,
           weight: 600,
           color: `hsl(var(${GRAPH_TOKEN[node.type].varName}))`,
+          background: 'hsl(var(--card) / 0.8)',
+          padding: '1px 6px',
           uppercase: true,
         },
         {
@@ -841,26 +738,33 @@ function buildScene(graph: ForceClusterGraph, handlers: SceneHandlers): BuiltSce
       // the same `type`).
       label.userData.type = node.type
       label.userData.sub = node.sub
+      label.userData.placementId = key
+      label.userData.priority = SUB_LABEL_PRIORITY_BASE + (subVisibleCount.get(key) ?? 0)
       rotatingGroup.add(label)
     }
 
     for (const node of visibleNodes) {
       const pos = positionById.get(node.id)
       if (!pos) continue
+      // Truncated on screen (full titles ran to ~800px and could not
+      // coexist); the full text stays in the aria-label for screen readers
+      // and in the title attribute for a hover tooltip, and the detail
+      // panel shows it in full on click.
       const div = makeLabelDiv(
-        node.label,
+        truncateLabel(node.label),
         {
-          size: 10,
+          size: 11,
           weight: 500,
           color: `hsl(var(${GRAPH_TOKEN[node.type].varName}))`,
-          background: 'hsl(var(--card) / 0.75)',
-          padding: '1px 5px',
+          background: 'hsl(var(--card) / 0.92)',
+          padding: '2px 6px',
         },
         {
           ariaLabel: `Select ${node.label}`,
           onActivate: () => handlers.onSelectNode(node.id),
         }
       )
+      div.title = node.label
       const label = new CSS2DObject(div)
       label.position.copy(pos).add(new THREE.Vector3(0, NODE_RADIUS + 0.3, 0))
       label.userData.kind = 'node-label'
@@ -872,13 +776,17 @@ function buildScene(graph: ForceClusterGraph, handlers: SceneHandlers): BuiltSce
       label.userData.nodeId = node.id
       label.userData.type = node.type
       label.userData.sub = node.sub
+      // Read by updateLod()'s placement pass: which label this is, and who
+      // wins when two collide (the better-connected node).
+      label.userData.placementId = node.id
+      label.userData.priority = node.degree
       rotatingGroup.add(label)
     }
 
     return { positionById, typeCenters, subCenters, visibleNodes }
   }
 
-  const initialLayout = applyFilters(new Set(NODE_TYPES), DEFAULT_VISIBLE_PERCENT)
+  const initialLayout = applyFilters(initialFilters)
   return { scene, applyFilters, initialLayout }
 }
 
@@ -905,15 +813,35 @@ export function ForceClusterView() {
     clusterSelectionRef.current = clusterSelection
   }, [clusterSelection])
 
-  const [visiblePercent, setVisiblePercent] = useState(DEFAULT_VISIBLE_PERCENT)
-  // When on, visiblePercent is resolved automatically (see
-  // resolveAutoDensityPercent) instead of read from the slider — the slider
-  // itself is disabled while this is active, since its value would be
-  // ignored.
-  const [autoAdapt, setAutoAdapt] = useState(false)
+  const [maxNodes, setMaxNodes] = useState(DEFAULT_MAX_NODES)
   const [enabledTypes, setEnabledTypes] = useState<ReadonlySet<ForceClusterNodeType>>(
     () => new Set(NODE_TYPES)
   )
+  // Sub-categories switched off, keyed by graphFilters.subKey — see
+  // GraphFilters.disabledSubs for why these are exclusions.
+  const [disabledSubs, setDisabledSubs] = useState<ReadonlySet<string>>(() => new Set())
+  // Which category's sub-category chip row is expanded in the filter panel
+  // (one at a time — 12 rows of up to 26 chips would swamp the panel).
+  const [expandedType, setExpandedType] = useState<ForceClusterNodeType | null>(null)
+  const filters = useMemo<GraphFilters>(
+    () => ({ enabledTypes, disabledSubs, maxNodes }),
+    [enabledTypes, disabledSubs, maxNodes]
+  )
+  // The scene-setup effect runs once and needs the filters current at that
+  // moment for buildScene's initial layout — same mirror pattern as
+  // selectedNodeIdRef.
+  const filtersRef = useRef<GraphFilters>(filters)
+  useEffect(() => {
+    filtersRef.current = filters
+  }, [filters])
+  // Label budget is a render-loop concern (updateLod reads it every frame),
+  // not a layout one — changing it never relayouts, so it lives in a ref
+  // mirror rather than going through applyLayout.
+  const [labelBudget, setLabelBudget] = useState(DEFAULT_LABEL_BUDGET)
+  const labelBudgetRef = useRef(labelBudget)
+  useEffect(() => {
+    labelBudgetRef.current = labelBudget
+  }, [labelBudget])
   const [listOpen, setListOpen] = useState(false)
   // Starts collapsed to a small pill so the graph gets the full screen by
   // default; expanding is a deliberate click, and PANEL_IDLE_COLLAPSE_MS
@@ -928,10 +856,10 @@ export function ForceClusterView() {
     if (!panelOpen || listOpen) return
     const timer = setTimeout(() => setPanelOpen(false), PANEL_IDLE_COLLAPSE_MS)
     return () => clearTimeout(timer)
-  }, [panelOpen, listOpen, enabledTypes, visiblePercent, autoAdapt])
-  const applyFiltersRef = useRef<
-    ((enabledTypes: ReadonlySet<ForceClusterNodeType>, percent: number) => LayoutSnapshot) | null
-  >(null)
+    // expandedType is here too: opening a sub-category row is the start of
+    // an interaction, not the end of one.
+  }, [panelOpen, listOpen, filters, labelBudget, expandedType])
+  const applyFiltersRef = useRef<((filters: GraphFilters) => LayoutSnapshot) | null>(null)
   // The layout applyFilters() most recently produced — the tour reads real
   // node/category positions from here to build its itinerary and flight
   // targets; applyFilters itself only returns a snapshot to its caller, it
@@ -1020,63 +948,56 @@ export function ForceClusterView() {
 
   // Filter changes trigger a real re-cluster (buildScene's applyFilters
   // fully recomputes layout), so they're applied directly from the event
-  // handlers below rather than a useEffect watching [enabledTypes,
-  // visiblePercent] — calling setState synchronously inside an effect body
-  // is a real anti-pattern (cascading renders), not just a lint nit.
-  // The one place all three triggers that can change what's on screen (a
-  // type toggle, dragging the percent slider, checking auto-adapt) resolve
-  // and apply a layout, so they can never disagree on what "the current
-  // view" is. When auto-adapt is on, manualPercent is ignored in favor of
-  // resolveAutoDensityPercent's answer, and visiblePercent is updated to
-  // match it (so the slider's own label and the keyboard-accessible
-  // visibleNodeList below both reflect the resolved value, not a stale one).
-  const applyLayout = (
-    nextEnabledTypes: ReadonlySet<ForceClusterNodeType>,
-    auto: boolean,
-    manualPercent: number
-  ) => {
-    const percent =
-      auto && graph ? resolveAutoDensityPercent(graph, nextEnabledTypes) : manualPercent
-    if (auto) setVisiblePercent(percent)
-    const snapshot = applyFiltersRef.current?.(nextEnabledTypes, percent) ?? null
-    layoutSnapshotRef.current = snapshot
+  // handlers below rather than a useEffect watching [filters] — calling
+  // setState synchronously inside an effect body is a real anti-pattern
+  // (cascading renders), not just a lint nit. The one place every trigger
+  // that can change what's on screen (a type or sub-category toggle,
+  // dragging the node-count slider) resolves and applies a layout, so they
+  // can never disagree on what "the current view" is.
+  const applyLayout = (next: GraphFilters) => {
+    setEnabledTypes(next.enabledTypes)
+    setDisabledSubs(next.disabledSubs)
+    setMaxNodes(next.maxNodes)
+    setSelectedNodeId(null) // a relayout invalidates the previously selected node's on-screen position
+    setClusterSelection(null) // ...and the meshes/edges a spotlight was tracking
+    layoutSnapshotRef.current = applyFiltersRef.current?.(next) ?? null
+    // A filter change invalidates every position the tour's itinerary holds
+    // (navigate-motion-modes-plan-08292026.md §4.7) — rebuild it against the
+    // fresh layout, resuming at the start of whichever category was active.
+    if (motionModeRef.current === 'tour') {
+      tourControlRef.current?.rebuild(next.enabledTypes, currentTourStopTypeRef.current)
+    }
   }
 
   const toggleType = (type: ForceClusterNodeType) => {
     const next = new Set(enabledTypes)
     if (next.has(type)) next.delete(type)
     else next.add(type)
-    setEnabledTypes(next)
-    setSelectedNodeId(null) // a relayout invalidates the previously selected node's on-screen position
-    setClusterSelection(null) // ...and the meshes/edges a spotlight was tracking
-    applyLayout(next, autoAdapt, visiblePercent)
-    // A filter change invalidates every position the tour's itinerary holds
-    // (navigate-motion-modes-plan-08292026.md §4.7) — rebuild it against the
-    // fresh layout, resuming at the start of whichever category was active.
-    if (motionModeRef.current === 'tour') {
-      tourControlRef.current?.rebuild(next, currentTourStopTypeRef.current)
-    }
+    applyLayout({ ...filters, enabledTypes: next })
   }
 
-  const changeVisiblePercent = (percent: number) => {
-    setVisiblePercent(percent)
-    setSelectedNodeId(null)
-    setClusterSelection(null)
-    applyLayout(enabledTypes, false, percent)
-    if (motionModeRef.current === 'tour') {
-      tourControlRef.current?.rebuild(enabledTypes, currentTourStopTypeRef.current)
-    }
+  const toggleSub = (type: ForceClusterNodeType, sub: string) => {
+    const key = subKey(type, sub)
+    const next = new Set(disabledSubs)
+    if (next.has(key)) next.delete(key)
+    else next.add(key)
+    applyLayout({ ...filters, disabledSubs: next })
   }
 
-  const toggleAutoAdapt = () => {
-    const next = !autoAdapt
-    setAutoAdapt(next)
-    setSelectedNodeId(null)
-    setClusterSelection(null)
-    applyLayout(enabledTypes, next, visiblePercent)
-    if (motionModeRef.current === 'tour') {
-      tourControlRef.current?.rebuild(enabledTypes, currentTourStopTypeRef.current)
+  /** "All"/"None" for one category's sub-category row. */
+  const setAllSubs = (type: ForceClusterNodeType, on: boolean) => {
+    if (!graph) return
+    const next = new Set(disabledSubs)
+    for (const { sub } of subCategoriesOf(graph, type)) {
+      const key = subKey(type, sub)
+      if (on) next.delete(key)
+      else next.add(key)
     }
+    applyLayout({ ...filters, disabledSubs: next })
+  }
+
+  const changeMaxNodes = (count: number) => {
+    applyLayout({ ...filters, maxNodes: count })
   }
 
   // Drives the camera fly-to and the instance/edge dim-out whenever the
@@ -1117,17 +1038,28 @@ export function ForceClusterView() {
   }, [selectedNodeId, clusterSelection, nodesById])
 
   // Keyboard/screen-reader path to node selection — raycast-on-canvas-click
-  // (the only other way in) is reachable by pointer alone. Mirrors
-  // applyFilters' own type + top-percent-by-degree logic (buildScene above)
-  // so the list matches what's actually rendered, without touching the
-  // imperative three.js scene-building code to get there.
-  const visibleNodeList = useMemo(() => {
-    if (!graph) return []
-    const typeFiltered = graph.nodes.filter((n) => enabledTypes.has(n.type))
-    const sortedDesc = [...typeFiltered].sort((a, b) => b.degree - a.degree)
-    const keepCount = Math.max(1, Math.ceil((visiblePercent / 100) * sortedDesc.length))
-    return sortedDesc.slice(0, keepCount)
-  }, [graph, enabledTypes, visiblePercent])
+  // (the only other way in) is reachable by pointer alone. Uses the same
+  // rankVisibleNodes the scene's applyFilters uses, so the list matches
+  // what's actually rendered by construction.
+  const visibleNodeList = useMemo(
+    () => (graph ? rankVisibleNodes(graph, filters) : []),
+    [graph, filters]
+  )
+  // How many nodes pass the type/sub filters before the count cap — the
+  // node-count slider's ceiling and the "N of M" readout.
+  const filteredCount = useMemo(
+    () => (graph ? filterNodes(graph, filters).length : 0),
+    [graph, filters]
+  )
+  const nodeSliderMax = Math.max(
+    MIN_MAX_NODES,
+    Math.ceil(filteredCount / MAX_NODES_STEP) * MAX_NODES_STEP
+  )
+  const subsByType = useMemo(() => {
+    const map = new Map<ForceClusterNodeType, { sub: string; count: number }[]>()
+    if (graph) for (const type of NODE_TYPES) map.set(type, subCategoriesOf(graph, type))
+    return map
+  }, [graph])
 
   const connections = useMemo(() => {
     if (!graph || !selectedNodeId) return []
@@ -1247,7 +1179,11 @@ export function ForceClusterView() {
 
       breadcrumbSelectRef.current = (type, sub) => selectCluster(type, sub, false)
 
-      const { scene, applyFilters, initialLayout } = buildScene(builtGraph, handlers)
+      const { scene, applyFilters, initialLayout } = buildScene(
+        builtGraph,
+        handlers,
+        filtersRef.current
+      )
       applyFiltersRef.current = applyFilters
       layoutSnapshotRef.current = initialLayout
       const rotatingGroup = scene.getObjectByName('force-cluster-graph')
@@ -1265,16 +1201,71 @@ export function ForceClusterView() {
         element.tabIndex = show ? 0 : -1
       }
 
+      // --- Label placement (labelPlacement.ts) -----------------------------
+      // Sub-labels and node-labels are no longer shown wholesale by tier;
+      // the tier (or spotlight) only decides which labels are CANDIDATES,
+      // and placeLabels() decides which of those actually appear — at most
+      // labelBudget of them, none overlapping on screen. Type-labels (12)
+      // are few enough to skip the pass.
+      const projected = new THREE.Vector3()
+      // Ids shown on the previous frame — placeLabels' hysteresis input.
+      let stickyLabelIds: ReadonlySet<string> = new Set()
+
+      /** Projects a label to its CSS-pixel box, or null if it is behind the camera. Width is measured from the DOM once (offsetWidth is 0 while CSS2DRenderer has display:none'd the element, so fall back to an estimate until the first real measurement). */
+      function labelCandidate(
+        label: CSS2DObject,
+        width: number,
+        height: number
+      ): LabelCandidate | null {
+        projected.setFromMatrixPosition(label.matrixWorld).project(camera)
+        if (projected.z > 1) return null
+        const element = label.element
+        let boxWidth = label.userData.measuredWidth as number | undefined
+        if (!boxWidth) {
+          const measured = element.offsetWidth
+          if (measured > 0) {
+            boxWidth = measured
+            label.userData.measuredWidth = measured
+          } else {
+            boxWidth = (element.textContent?.length ?? 0) * 6.2 + 12
+          }
+        }
+        const boxHeight = element.offsetHeight || 18
+        // CSS2DRenderer centers the element on the projected point.
+        const cx = ((projected.x + 1) / 2) * width
+        const cy = ((1 - projected.y) / 2) * height
+        return {
+          id: label.userData.placementId as string,
+          x: cx - boxWidth / 2,
+          y: cy - boxHeight / 2,
+          width: boxWidth,
+          height: boxHeight,
+          priority: (label.userData.priority as number | undefined) ?? 0,
+          distance: camera.position.distanceToSquared(
+            projected.setFromMatrixPosition(label.matrixWorld)
+          ),
+          pinned: label.userData.nodeId === selectedNodeIdRef.current,
+        }
+      }
+
       function updateLod() {
-        if (!rotatingGroup || !controls) return
+        if (!rotatingGroup || !controls || !container) return
         const distance = camera.position.distanceTo(controls.target)
         const lod =
           distance > LOD_FAR_DISTANCE ? 'far' : distance > LOD_MID_DISTANCE ? 'mid' : 'near'
         const spotlight = clusterSelectionRef.current
-        // Applied every frame, not cached against the last tier — a filter
-        // change rebuilds labels fresh (opacity:0 by default) without
-        // necessarily changing the zoom tier, so caching would leave the new
-        // labels invisible until the user happened to zoom past a threshold.
+        const width = container.clientWidth || 1
+        const height = container.clientHeight || 1
+
+        // Pass 1 — decide candidates. Applied every frame, not cached
+        // against the last tier — a filter change rebuilds labels fresh
+        // (opacity:0 by default) without necessarily changing the zoom
+        // tier, so caching would leave the new labels invisible until the
+        // user happened to zoom past a threshold.
+        const placeable: { label: CSS2DObject; candidate: LabelCandidate }[] = []
+        // Category labels are never hidden by placement (they are the map's
+        // landmarks) but everything else has to steer clear of them.
+        const obstacles: LabelCandidate[] = []
         for (const child of rotatingGroup.children) {
           if (!(child instanceof CSS2DObject)) continue
           const kind = child.userData.kind as string | undefined
@@ -1285,10 +1276,10 @@ export function ForceClusterView() {
             // While spotlighted, distance no longer decides label visibility
             // — only the spotlighted category's own label (kept on as
             // context even for a sub-category spotlight), the matching
-            // sub-label(s), and that cluster's node-labels stay on; every
-            // other label is off regardless of zoom (applySpotlightVisibility
-            // has already hidden the geometry those other labels would sit
-            // on top of anyway).
+            // sub-label(s), and that cluster's node-labels are candidates;
+            // every other label is off regardless of zoom
+            // (applySpotlightVisibility has already hidden the geometry
+            // those other labels would sit on top of anyway).
             const inSpotlightedSub = spotlight.sub === null || sub === spotlight.sub
             show =
               (kind === 'type-label' && type === spotlight.type) ||
@@ -1300,8 +1291,35 @@ export function ForceClusterView() {
               (kind === 'sub-label' && lod === 'mid') ||
               (kind === 'node-label' && lod === 'near')
           }
+          if (show && kind !== 'type-label') {
+            const candidate = labelCandidate(child, width, height)
+            if (candidate) placeable.push({ label: child, candidate })
+            else setLabelShown(child.element, false)
+            continue
+          }
+          if (show) {
+            const obstacle = labelCandidate(child, width, height)
+            if (obstacle) obstacles.push(obstacle)
+          }
           setLabelShown(child.element, show)
         }
+
+        // Pass 2 — place the candidates within the budget, no overlaps.
+        const placed = placeLabels(
+          placeable.map((p) => p.candidate),
+          {
+            budget: labelBudgetRef.current,
+            viewportWidth: width,
+            viewportHeight: height,
+            margin: LABEL_MARGIN_PX,
+            sticky: stickyLabelIds,
+            obstacles,
+          }
+        )
+        for (const { label, candidate } of placeable) {
+          setLabelShown(label.element, placed.has(candidate.id))
+        }
+        stickyLabelIds = placed
       }
 
       // --- Category/sub-category spotlight (click a label to select) ------
@@ -1817,7 +1835,7 @@ export function ForceClusterView() {
       {!loading && !error && panelOpen && (
         <div
           id="navigate-filter-panel"
-          className="glass-panel absolute bottom-4 left-4 max-w-[360px] space-y-3 p-3"
+          className="glass-panel absolute bottom-4 left-4 max-w-[440px] space-y-3 p-3"
         >
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-medium text-muted-foreground">Filter</span>
@@ -1839,52 +1857,132 @@ export function ForceClusterView() {
               const token = GRAPH_TOKEN[type]
               // eslint-disable-next-line security/detect-object-injection -- type is drawn from the typed ForceClusterNodeType union (NODE_TYPES), not user input
               const label = TYPE_LABEL[type]
+              const subs = subsByType.get(type) ?? []
+              const subsOff = subs.filter((s) => disabledSubs.has(subKey(type, s.sub))).length
+              const expanded = expandedType === type
               return (
-                <Button
-                  key={type}
-                  variant={on ? 'secondary' : 'outline'}
-                  size="sm"
-                  onClick={() => toggleType(type)}
-                  className="h-auto gap-1.5 rounded-full px-2.5 py-1 text-xs"
-                  aria-pressed={on}
-                >
-                  <span
-                    className="inline-block h-2 w-2 shrink-0 rounded-full"
-                    style={{
-                      backgroundColor: `hsl(var(${token.varName}))`,
-                      opacity: on ? 1 : 0.35,
-                    }}
-                    aria-hidden="true"
-                  />
-                  {label}
-                </Button>
+                <div key={type} className="inline-flex items-stretch">
+                  <Button
+                    variant={on ? 'secondary' : 'outline'}
+                    size="sm"
+                    onClick={() => toggleType(type)}
+                    className={`h-auto gap-1.5 rounded-full px-2.5 py-1 text-xs ${
+                      subs.length > 1 ? 'rounded-r-none border-r-0 pr-2' : ''
+                    }`}
+                    aria-pressed={on}
+                  >
+                    <span
+                      className="inline-block h-2 w-2 shrink-0 rounded-full"
+                      style={{
+                        backgroundColor: `hsl(var(${token.varName}))`,
+                        opacity: on ? 1 : 0.35,
+                      }}
+                      aria-hidden="true"
+                    />
+                    {label}
+                    {subsOff > 0 && (
+                      <span
+                        className="opacity-70"
+                        aria-label={`${subs.length - subsOff} of ${subs.length} sub-categories on`}
+                      >
+                        {subs.length - subsOff}/{subs.length}
+                      </span>
+                    )}
+                  </Button>
+                  {subs.length > 1 && (
+                    <Button
+                      variant={on ? 'secondary' : 'outline'}
+                      size="sm"
+                      onClick={() => setExpandedType(expanded ? null : type)}
+                      className="h-auto rounded-full rounded-l-none px-1.5 py-1"
+                      aria-expanded={expanded}
+                      aria-controls="navigate-sub-panel"
+                      aria-label={`${expanded ? 'Hide' : 'Show'} ${label} sub-categories`}
+                    >
+                      <ChevronDown
+                        className={`h-3 w-3 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                        aria-hidden="true"
+                      />
+                    </Button>
+                  )}
+                </div>
               )
             })}
           </div>
-          {AUTO_ADAPT_DENSITY_ENABLED && (
-            <label className="flex items-center gap-2 text-xs text-muted-foreground">
-              <input
-                type="checkbox"
-                checked={autoAdapt}
-                onChange={toggleAutoAdapt}
-                className="accent-primary"
-              />
-              <span>Auto-adapt density (no overlap)</span>
-            </label>
+          {expandedType && (
+            <div id="navigate-sub-panel" className="space-y-1.5 border-t border-border pt-2">
+              <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+                <span>
+                  {/* eslint-disable-next-line security/detect-object-injection -- expandedType is drawn from the typed ForceClusterNodeType union, not user input */}
+                  {TYPE_LABEL[expandedType]} sub-categories
+                </span>
+                <span className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto px-1.5 py-0.5 text-xs"
+                    onClick={() => setAllSubs(expandedType, true)}
+                  >
+                    All
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto px-1.5 py-0.5 text-xs"
+                    onClick={() => setAllSubs(expandedType, false)}
+                  >
+                    None
+                  </Button>
+                </span>
+              </div>
+              <div className="flex max-h-32 flex-wrap gap-1 overflow-y-auto">
+                {(subsByType.get(expandedType) ?? []).map(({ sub, count }) => {
+                  const key = subKey(expandedType, sub)
+                  const on = !disabledSubs.has(key)
+                  return (
+                    <Button
+                      key={key}
+                      variant={on ? 'secondary' : 'outline'}
+                      size="sm"
+                      onClick={() => toggleSub(expandedType, sub)}
+                      className="h-auto gap-1 rounded-full px-2 py-0.5 text-[11px]"
+                      aria-pressed={on}
+                    >
+                      {sub || 'Unspecified'}
+                      <span className="opacity-70">{count}</span>
+                    </Button>
+                  )
+                })}
+              </div>
+            </div>
           )}
           <label className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="whitespace-nowrap">
-              {autoAdapt ? `Auto: ${visiblePercent}%` : `Showing ${visiblePercent}%`}
+            <span className="w-24 shrink-0 whitespace-nowrap">
+              Nodes {visibleNodeList.length}
+              <span className="opacity-70"> / {filteredCount}</span>
             </span>
             <input
               type="range"
-              min={1}
-              max={100}
-              value={visiblePercent}
-              onChange={(e) => changeVisiblePercent(Number(e.target.value))}
-              disabled={autoAdapt}
-              className="w-full accent-primary disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Percentage of nodes shown, ranked by connection count"
+              min={MIN_MAX_NODES}
+              max={nodeSliderMax}
+              step={MAX_NODES_STEP}
+              value={Math.min(maxNodes, nodeSliderMax)}
+              onChange={(e) => changeMaxNodes(Number(e.target.value))}
+              className="w-full accent-primary"
+              aria-label="Maximum number of nodes shown; each category contributes its most-connected nodes"
+            />
+          </label>
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="w-24 shrink-0 whitespace-nowrap">Labels {labelBudget}</span>
+            <input
+              type="range"
+              min={MIN_LABEL_BUDGET}
+              max={MAX_LABEL_BUDGET}
+              step={LABEL_BUDGET_STEP}
+              value={labelBudget}
+              onChange={(e) => setLabelBudget(Number(e.target.value))}
+              className="w-full accent-primary"
+              aria-label="Maximum number of labels shown at once; labels never overlap"
             />
           </label>
           <MotionControls

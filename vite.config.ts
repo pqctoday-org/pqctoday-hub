@@ -241,6 +241,21 @@ export default defineConfig({
           // now go to the network, with a narrow pass-through in src/sw.ts so
           // the shell stops shadowing them.
           'migrate-proofs/**/*.html',
+          // Per-source evidence manifests (public/<source>/manifest.json) —
+          // 8.0 MB across 14 files on 2026-09-17, the two largest being
+          // product-certifications (2.2 MB, ~500 CMVP Security Policies
+          // recorded that day) and products (1.7 MB). This is what pushed the
+          // payload from under budget to 27.8 MB. NOTHING fetches these at
+          // runtime: the four the app uses (library, timeline, threats,
+          // products) are bundled at build time via import.meta.glob in
+          // libraryDocumentWeight.ts / trustScoreData.ts, and the rest exist
+          // for the maintenance pipeline. A precached copy therefore serves
+          // no request — the same waste the data/ exclusion above describes.
+          // kmip-corpus/manifest.json is deliberately NOT listed: the KMIP
+          // playground fetches it at runtime (useKmipCorpus.ts) and it must
+          // stay available offline. embed/manifest.json (16 KB) is left
+          // alone too — not worth the risk for the bytes.
+          '{algorithms,compliance,compliance-docs,crqc-watch,library,migrate-proofs,patents,product-certifications,products,protocol-matrix,threats,timeline,vendor-roadmaps,vendors}/manifest.json',
         ],
         /**
          * Fail-safe. If the allow-list were ever empty — plugin removed, rollup

@@ -29,6 +29,34 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.86.0] - 2026-09-17
+
+The Navigate graph becomes readable when you zoom in, vendors can list more than one roadmap announcement, the Patents page stops carrying 1,133 patents it never showed, and a day of evidence work corrects certification, catalog, and reference data against the documents they cite.
+
+### Added
+
+- **The Navigate graph stays readable when you zoom in** [view:/navigate] [persona:curious] [persona:executive] [persona:developer] [persona:architect] [persona:researcher]: labels no longer pile on top of each other — zooming in used to switch on every one of ~800 node labels at once, and in a typical view 99% of them overlapped another. Now only the most connected nodes in view are named, never overlapping, with a "Labels" slider (8–120) for how many. Long titles are shortened on screen, with the full title on hover and in the detail panel.
+- **Every Navigate category now appears in the overview, and each can be narrowed to its sub-categories** [view:/navigate] [persona:curious] [persona:researcher]: the node budget is shared across categories, so Glossary, Community, and Use case — which the old "most connected first" ranking left completely empty at default — are on screen with everything else. You pick how many nodes to show as a count ("Nodes 240 / 5,595") instead of a percentage, and a chevron on each category chip opens its sub-categories (e.g. Standard → RFC, Internet-Draft, Regulation…) with All/None toggles. The experimental "Auto-adapt density" option is gone; the label budget does what it was meant to.
+- **A vendor can now have more than one active roadmap announcement** [view:/migrate] [persona:architect] [persona:ops] [persona:executive]: Cloudflare's "1.1.1.1 now supports post-quantum DNSSEC" announcement (2026-09-10 — ML-DSA-44 validation on by default on the resolver) is listed alongside its 2029 full-PQC roadmap instead of replacing it. The vendor commitment panel, the roadmaps tab, and the mobile Migrate view all show every active announcement per vendor.
+
+### Changed
+
+- **The Patents page's population is now honest: 1,133 patents outside the post-quantum scope are retired** [view:/patents] [persona:researcher] [persona:executive]: they were in the data but never shown by the page's default PQC scope, so the "all" toggle and the default view now show the same 729 patents. Retired rows are kept as deprecated (with the date and reason), not deleted; no Community profile cited any of them.
+
+### Fixed
+
+- **8 quiz questions and 2 glossary entries corrected for accuracy against live NIST/IETF/OASIS sources** [view:/learn] [persona:curious] [persona:researcher]: FIPS 206 (the upcoming post-quantum hash-based signature standard) has no confirmed draft date yet — three different invented dates were removed; HQC's planned standard number corrected from FIPS 206 to FIPS 207; RFC 8446 (TLS 1.3) is no longer described as "the latest version" now that RFC 9846 obsoletes it; PKCS#11 v3.2's real OASIS ratification date (July 2026) replaces two different wrong ones.
+- **3 timeline entries corrected** [view:/timeline] [persona:grc] [persona:researcher]: Executive Order 14144 (the 2025 cybersecurity order with PQC provisions) is restored to active after a prior deprecation turned out to be a false positive — a government website's automated crawler-blocking page had been mistaken for the real document, which the cached copy shows was never true; two HQC-related events corrected from FIPS 206 to FIPS 207 as their expected standard number.
+- **Learn, quiz, glossary, and Playground references now resolve to the documents they name** [view:/learn] [view:/playground] [persona:developer] [persona:curious]: 287 timeline references that were stored as event titles now point at the event itself, 81 library references that pointed at a retired document now point at its active successor, and 27 Playground spec references (PKCS#11 v3.2, SP 800-208, RFC 5649, TPM 2.0 v1.85, FIPS 203/204, KMIP 3.0) are linked to their library entries. Measured resolution: quiz 65% → 94%, glossary 49% → 84%, Learn modules 79% → 94%, Playground 32% → 100%.
+
+### Data
+
+- **33 FIPS 140-3 certifications' post-quantum coverage corrected to what their own Security Policy says** [view:/compliance] [persona:grc] [persona:ops] [persona:architect]: 28 records that claimed PQC mechanisms now read "No PQC Mechanisms Detected" because the module's Security Policy lists those algorithms as non-approved or non-compliant (e.g. SymCrypt 5313 puts ML-KEM/ML-DSA/LMS/XMSS under "Non-Approved, Not Allowed"; LS2 5220 prints "ML-DSA (non-compliant)"). Each corrected record says when and from which document it was verified, and 880 FIPS 140-3 records now link their Security Policy PDF directly.
+- **11 Migrate catalog proofs now point at the publisher's actual document instead of a landing or empty page** [view:/migrate] [persona:architect] [persona:ops]: including Xiphera XIP6220B, whose proof is now NIST's CAVP validation detail page (validation 40088: ML-DSA KeyGen, SigGen, SigVer) rather than a vendor brief that never carried the claim. Product statuses are unchanged.
+- **545 concept-crosswalk links whose quoted evidence is not in the cited document are marked low-confidence** [view:/compliance] [persona:grc] [persona:researcher]: 435 quotes were not found in the document and 110 only partly; the links stay (they may still hold) but no longer present a quote as verbatim. Verbatim replacements come from a re-run of the extractor, human-reviewed before merge.
+- **Vendor identifiers cleaned up** [view:/migrate] [persona:grc] [persona:executive]: 38 Legal Entity Identifiers GLEIF does not recognise (one was a placeholder) are cleared, and 45 pending ones resolved by name search — 9 matched, 24 confirmed as having no LEI.
+- **Library and Community references brought up to date** [view:/library] [view:/community] [persona:researcher]: KMIP 3.0 CSD02 (May 2026, the only text OASIS publishes) added; ISO/IEC 27005:2022 now names its ISO catalogue page; five Community profiles re-pointed from a superseded draft or report to the current one (draft-ietf-lamps-pq-composite-kem-20, GRI Quantum Threat Timeline 2025); Cloudflare's engineering blog registered as a trusted source.
+
 ## [4.85.0] - 2026-09-13
 
 ### Added

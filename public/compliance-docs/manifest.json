@@ -105,7 +105,11 @@
       "sourceUrl": "https://www.etsi.org/deliver/etsi_ts/104000_104099/104015/01.01.01_60/ts_104015v010101p.pdf",
       "filename": "GAP-ETSI-104015.pdf",
       "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288",
-      "fetchedAt": "2026-05-19T00:25:58.002732+00:00"
+      "fetchedAt": "2026-05-19T00:25:58.002732+00:00",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:00:17.003290+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "gapId": "GAP-EU-NIS2",

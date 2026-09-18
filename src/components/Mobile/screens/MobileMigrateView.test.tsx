@@ -187,11 +187,12 @@ describe('MobileMigrateView', () => {
     render(<MobileMigrateView />)
     fireEvent.click(screen.getByText('Vendors').closest('button')!)
     const withDates = [...enrichmentByVendorId.entries()].find(
-      ([, e]) => e.targetMigrationDates && e.targetMigrationDates !== 'None detected'
+      ([, list]) =>
+        list[0]?.targetMigrationDates && list[0].targetMigrationDates !== 'None detected'
     )
     if (!withDates) return
-    const [, enrichment] = withDates
-    expect(screen.getAllByText(enrichment.targetMigrationDates).length).toBeGreaterThan(0)
+    const [, list] = withDates
+    expect(screen.getAllByText(list[0].targetMigrationDates).length).toBeGreaterThan(0)
   })
 
   // 2026-08-28 legibility follow-up (rounds 1-2 already fixed sizing/wording;
@@ -462,7 +463,7 @@ describe('MobileMigrateView', () => {
   describe('Vendor product drill-down', () => {
     function vendorDisplayName(vendorId: string): string {
       return (
-        roadmapByVendorId.get(vendorId)?.vendorName ||
+        roadmapByVendorId.get(vendorId)?.[0]?.vendorName ||
         vendorMap.get(vendorId)?.vendorDisplayName ||
         vendorId
       )
