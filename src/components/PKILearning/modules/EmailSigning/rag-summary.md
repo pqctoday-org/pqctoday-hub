@@ -1,4 +1,4 @@
-# Email and Document Signing (S/MIME, CMS)
+# Email and Document Signing (S/MIME, CMS, OpenPGP)
 
 ## Overview
 
@@ -15,6 +15,7 @@ The Email and Document Signing module covers Cryptographic Message Syntax (CMS) 
 - **Signing certificates** require keyUsage: digitalSignature/nonRepudiation, extKeyUsage: id-kp-emailProtection, subjectAltName: rfc822Name; algorithm: ML-DSA-65 or ECDSA P-256
 - **Encryption certificates** require keyUsage: keyEncipherment (RSA) or keyAgreement (ECDH); KEM keyUsage is still being standardized; algorithm: ML-KEM-768 or RSA-2048
 - **Separate key pairs** — users typically have separate signing (ML-DSA) and encryption (ML-KEM) key pairs; smimeCapabilities attribute advertises supported algorithms
+- **OpenPGP (RFC 9580 / RFC 9980)** — the other email and file standard; no X.509 certificates or CA, keys carry their own identities. RFC 9980 (Post-Quantum Cryptography in OpenPGP, Proposed Standard) adds composite PQ/T algorithms: ML-KEM-768+X25519 (algorithm ID 35, MUST) and ML-KEM-1024+X448 (36, SHOULD) for encryption; ML-DSA-65+Ed25519 (30, MUST) and ML-DSA-87+Ed448 (31, SHOULD) for signatures; standalone SLH-DSA-SHAKE-128s/128f/256s (32-34, MAY). Lattice schemes only as composites (either half secures the message); SLH-DSA standalone because its hash-based assumptions are well understood. PQ algorithms are for v6 keys only, except ML-KEM-768+X25519, also allowed in v4 encryption-capable subkeys
 - **Migration challenges**:
   - **Bidirectional compatibility** — both sender and recipient must support the same algorithms (unlike TLS where servers can upgrade unilaterally)
   - **Dual-algorithm certificates** — organizations must issue both classical and PQC certificates during transition
