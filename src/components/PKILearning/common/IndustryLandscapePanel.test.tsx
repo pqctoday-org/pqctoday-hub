@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { IndustryLandscapePanel } from './IndustryLandscapePanel'
 import { loadIndustryLandscape } from '@/data/industryLandscapeData'
-import { landscapeIndustriesForModule } from '@/components/Algorithms/industryCrossRefs'
+import { landscapeIndustriesForModule } from '@/components/Algorithms/landscapeLearnLinks'
 
 const { useCases } = loadIndustryLandscape()
 

@@ -24,6 +24,10 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 import { WORKSHOP_TOOLS, type WorkshopTool } from '@/components/Playground/workshopRegistry'
 import type { IndustryStandard, IndustryUseCase } from '@/data/industryLandscapeData'
 import { learnHref } from './learnHref'
+export {
+  landscapeIndustriesForModule,
+  type LandscapeIndustryForModule,
+} from './landscapeLearnLinks'
 
 // ── Sector identity ──────────────────────────────────────────────────────────
 
@@ -252,35 +256,4 @@ export function defaultLearnModuleForIndustry(
     }
   }
   return best
-}
-
-export interface LandscapeIndustryForModule {
-  industry: string
-  /** Use-case labels on that industry that name this module. */
-  useCaseLabels: string[]
-  href: string
-}
-
-/**
- * Reverse of `learnModulesForIndustry`: the landscape industries whose rows
- * name a Learn module, for the module page's "In the Industry Landscape"
- * back-link (2026-09-17, audit L2 — the mapping was one-way). Read from the
- * landscape CSV so a data change is never also a code change here.
- */
-export function landscapeIndustriesForModule(
-  moduleId: string,
-  useCases: IndustryUseCase[]
-): LandscapeIndustryForModule[] {
-  const byIndustry = new Map<string, string[]>()
-  for (const uc of useCases) {
-    if (uc.learnModuleId !== moduleId) continue
-    const list = byIndustry.get(uc.industry) ?? []
-    list.push(uc.useCaseLabel)
-    byIndustry.set(uc.industry, list)
-  }
-  return [...byIndustry.entries()].map(([industry, useCaseLabels]) => ({
-    industry,
-    useCaseLabels,
-    href: `/algorithms?tab=landscape&industry=${encodeURIComponent(industry)}`,
-  }))
 }

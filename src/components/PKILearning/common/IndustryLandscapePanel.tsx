@@ -11,7 +11,7 @@
 import { Link } from 'react-router'
 import { Layers, ArrowRight } from 'lucide-react'
 import { loadIndustryLandscape } from '@/data/industryLandscapeData'
-import { landscapeIndustriesForModule } from '@/components/Algorithms/industryCrossRefs'
+import { landscapeIndustriesForModule } from '@/components/Algorithms/landscapeLearnLinks'
 
 export function IndustryLandscapePanel({ moduleId }: { moduleId: string }) {
   const { useCases } = loadIndustryLandscape()
