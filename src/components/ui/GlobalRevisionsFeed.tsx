@@ -48,6 +48,9 @@ const ALL_DOMAINS = [
   'rag-index',
   'multi',
   'data',
+  // ADDED 2026-09-17: live since 08-27 (one hand-written entry) and now
+  // written by emit_revision.py --data-edit; was invisible here until now.
+  'industry-landscape',
 ]
 
 interface GlobalRevisionsFeedProps {
