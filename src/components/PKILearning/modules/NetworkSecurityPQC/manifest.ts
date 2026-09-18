@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'network-security-pqc',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-012',
   title: 'Network Security & PQC Migration',
   description:

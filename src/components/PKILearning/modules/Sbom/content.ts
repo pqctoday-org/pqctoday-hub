@@ -15,7 +15,7 @@ export const content: ModuleContent = {
   moduleId: 'sbom',
   lastReviewed: '2026-08-23',
   version: '1.0.0',
-  lastEdited: '2026-08-22',
+  lastEdited: '2026-09-18',
 
   standards: [
     getStandard('SPDX-Spec-ISO-5962'),

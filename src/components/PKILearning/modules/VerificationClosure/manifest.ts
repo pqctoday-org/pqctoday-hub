@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'verification-closure',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-061',
   title: 'Decommissioning & Program Closure',
   description:
