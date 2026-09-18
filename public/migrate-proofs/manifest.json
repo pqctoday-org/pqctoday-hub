@@ -10811,9 +10811,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "converted",
-      "admittedAt": "2026-09-18T03:22:34.806425+00:00",
-      "admittedBy": "admit.py"
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:53:06.293193+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "product_id": "copper-co",
@@ -14270,9 +14270,9 @@
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "converted",
-      "admittedAt": "2026-09-18T03:22:34.806425+00:00",
-      "admittedBy": "admit.py"
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:53:06.293193+00:00",
+      "admittedBy": "admit.py --stamp-existing"
     },
     {
       "product_id": "copper-co",

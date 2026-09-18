@@ -20,7 +20,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -527,7 +527,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -545,7 +545,7 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -597,7 +597,7 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedAt": "2026-09-18T03:14:34.769635+00:00",
       "admittedBy": "admit.py"
     },
     {
@@ -1840,9 +1840,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:13:50.687449+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:36:03.182730+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "threatId": "PAYM-001",
@@ -1966,9 +1966,9 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:13:52.259009+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:16:40.507543+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "threatId": "TELE-001",
@@ -2165,9 +2165,9 @@
       "downloadedAt": "2026-09-12T21:17:52.912334+00:00",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.435583+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "unified": "converted",
+      "admittedAt": "2026-09-18T03:29:48.805892+00:00",
+      "admittedBy": "admit.py"
     },
     {
       "threatId": "FINA-011",

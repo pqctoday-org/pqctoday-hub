@@ -17720,6 +17720,176 @@
       "admittedAt": "2026-09-18T03:46:31.474533+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH"
+    },
+    {
+      "refId": "The-New-Quantum-Safe-Algorithms-Are-Here-Now-What-Keyfactor",
+      "title": "The New Quantum-Safe Algorithms Are Here, Now What? | Keyfactor",
+      "url": "https://www.keyfactor.com/blog/the-new-quantum-safe-algorithms-are-here-now-what/",
+      "status": "downloaded",
+      "filename": "The-New-Quantum-Safe-Algorithms-Are-Here-Now-What-Keyfactor.html",
+      "sizeBytes": 140837,
+      "contentType": "text/html",
+      "sha256": "9695f27fe0e81ca3576b888abac92c64b99eff81f6d23e66c3497dcb66c6ad91"
+    },
+    {
+      "refId": "Industry-Today-Reports-Why-Cryptography-Needs-to-Change-QuSe",
+      "title": "Industry Today Reports: Why Cryptography Needs to Change | QuSecure",
+      "url": "https://www.qusecure.com/industry-today-reports-why-cryptography-needs-to-change/",
+      "status": "downloaded",
+      "filename": "Industry-Today-Reports-Why-Cryptography-Needs-to-Change-QuSe.html",
+      "sizeBytes": 79123,
+      "contentType": "text/html",
+      "sha256": "e8735e726619a6165c7105a6371b7b7860e601cecda69695c9083430e88cdc41"
+    },
+    {
+      "refId": "Keyfactor-and-Quantinuum-Announce-Integration-to-Future-Proo",
+      "title": "Keyfactor and Quantinuum Announce Integration to Future-Proof Digital Certificates",
+      "url": "https://www.quantinuum.com/blog/keyfactor-and-quantinuum-announce-integration-to-help-organizations-further-post-quantum-readiness",
+      "status": "downloaded",
+      "filename": "Keyfactor-and-Quantinuum-Announce-Integration-to-Future-Proo.html",
+      "sizeBytes": 175548,
+      "contentType": "text/html",
+      "sha256": "26f0764f9654f22add76a1d8715b4a20b418e810578aceb370df37eb7f8a7fc5"
+    },
+    {
+      "refId": "Quantum-computers-are-speeding-towards-cryptographic-relevan",
+      "title": "Quantum computers are speeding towards cryptographic relevancy: The time to prepare is now. | IBM",
+      "url": "https://www.ibm.com/think/perspectives/quantum-computers-are-speeding-towards-cryptographic-relevancy",
+      "status": "downloaded",
+      "filename": "Quantum-computers-are-speeding-towards-cryptographic-relevan.html",
+      "sizeBytes": 167634,
+      "contentType": "text/html",
+      "sha256": "87fc2b3291b88cab88e855b856d1b30eb3a33a2a3704f2d63dce57ae956a09e8"
+    },
+    {
+      "refId": "White-House-PQC-Executive-Order-Signals-New-Security-Era-San",
+      "title": "White House PQC Executive Order Signals New Security Era | SandboxAQ",
+      "url": "https://www.sandboxaq.com/press/sandboxaq-supports-white-house-executive-order-as-post-quantum-cryptography-moves-to-implementation-for-national-security",
+      "status": "downloaded",
+      "filename": "White-House-PQC-Executive-Order-Signals-New-Security-Era-San.html",
+      "sizeBytes": 25047,
+      "contentType": "text/html",
+      "sha256": "03be88eaf93303ae01438af4a4c6312958ebc0b651ff48df0803faad33f9f428"
+    },
+    {
+      "refId": "PQShield-Leadership-Lounge-NIST-standards-the-PQC-turning-po",
+      "title": "PQShield Leadership Lounge: NIST standards, the PQC turning point | PQShield",
+      "url": "https://pqshield.com/pqshield-leadership-lounge-nist-standards-the-pqc-turning-point/",
+      "status": "downloaded",
+      "filename": "PQShield-Leadership-Lounge-NIST-standards-the-PQC-turning-po.html",
+      "sizeBytes": 81146,
+      "contentType": "text/html",
+      "sha256": "dbf9444cb7128bd30588f9eb3164a33af9bb8cb234bfd300c612f5691d3cfe42"
+    },
+    {
+      "refId": "DigiCert-Unveils-CEO-Predictions-for-Digital-Trust-in-2024-D",
+      "title": "DigiCert Unveils CEO Predictions for Digital Trust in 2024 | DigiCert",
+      "url": "https://www.digicert.com/news/predictions-for-digital-trust-in-2024",
+      "status": "downloaded",
+      "filename": "DigiCert-Unveils-CEO-Predictions-for-Digital-Trust-in-2024-D.html",
+      "sizeBytes": 120709,
+      "contentType": "text/html",
+      "sha256": "b088b5c3fcf0fa1665452d97aa986f2a11876c3ea3fcf863f4e25910ee4c1129"
+    },
+    {
+      "refId": "A-Q-A-with-Atsushi-Yamada-PQC-Addressing-Risk-Management-Nee",
+      "title": "A Q&A with Atsushi Yamada: PQC, Addressing Risk Management Needs, What\u2019s Ahead - ISARA Corporation",
+      "url": "https://www.isara.com/blog-posts/a-q-and-a-with-atsushi-yamada-pqc-addressing-risk-management-needs-whats-ahead.html",
+      "status": "downloaded",
+      "filename": "A-Q-A-with-Atsushi-Yamada-PQC-Addressing-Risk-Management-Nee.html",
+      "sizeBytes": 24289,
+      "contentType": "text/html",
+      "sha256": "a40ca431141f7bc25c54e995c1d310dbc2302c1ff0d673d9031279e4dbb3cf52"
+    },
+    {
+      "refId": "QuSecure-Launches-QuProtect-R3-Simplifying-Encryption-Modern",
+      "title": "QuSecure Launches QuProtect R3: Simplifying Encryption Modernization",
+      "url": "https://www.qusecure.com/qusecure-launches-quprotect-r3/",
+      "status": "downloaded",
+      "filename": "QuSecure-Launches-QuProtect-R3-Simplifying-Encryption-Modern.html",
+      "sizeBytes": 87922,
+      "contentType": "text/html",
+      "sha256": "7750e0a3c20e40d15d57255d129a355d93f73fb19290144e0cbbb4af8d733ca9"
+    },
+    {
+      "refId": "Why-Mythos-Finding-a-Flaw-in-HAWK-is-Good-for-PQC-Entrust",
+      "title": "Why Mythos Finding a Flaw in HAWK is Good for PQC | Entrust",
+      "url": "https://www.entrust.com/blog/2026/08/why-mythos-finding-a-flaw-in-hawk-is-good-for-pqc",
+      "status": "downloaded",
+      "filename": "Why-Mythos-Finding-a-Flaw-in-HAWK-is-Good-for-PQC-Entrust.html",
+      "sizeBytes": 103925,
+      "contentType": "text/html",
+      "sha256": "8409a77cdd582a5381e730ca4f93b7f6c12f3ac6cec5ee3d6a0d7b4b23719a7d"
+    },
+    {
+      "refId": "Quantum-Safe-Cryptography-Helping-customers-prepare-against",
+      "title": "Quantum-Safe Cryptography: Helping customers prepare against future threats \u2013 Vodafone",
+      "url": "https://www.vodafone.com/news/newsroom/technology/quantum-safe-cryptography-helping-customers-prepare-against-future-threats",
+      "status": "downloaded",
+      "filename": "Quantum-Safe-Cryptography-Helping-customers-prepare-against.html",
+      "sizeBytes": 197999,
+      "contentType": "text/html",
+      "sha256": "7cf279ebe5ddfdc4182bd5dccdda65300c086202fc9d89d551df54b7ea9966a7"
+    },
+    {
+      "refId": "IonQ-IonQ-Appoints-Marco-Pistoia-as-Senior-Vice-President-of",
+      "title": "IonQ | IonQ Appoints Marco Pistoia as Senior Vice President of Industry Relations to Drive Strategic Partnerships, Collaborations, and Quant",
+      "url": "https://www.ionq.com/news/ionq-appoints-marco-pistoia-as-senior-vice-president-of-industry-relations",
+      "status": "downloaded",
+      "filename": "IonQ-IonQ-Appoints-Marco-Pistoia-as-Senior-Vice-President-of.html",
+      "sizeBytes": 93502,
+      "contentType": "text/html",
+      "sha256": "8c2a58f6c680d1c610a31ca6e4edbdeacb162a092d56669f7bd4c0b8c53efb89"
+    },
+    {
+      "refId": "Efficient-Threshold-ML-DSA-Brave",
+      "title": "Efficient Threshold ML-DSA | Brave",
+      "url": "https://brave.com/research/threshold-mldsa/",
+      "status": "downloaded",
+      "filename": "Efficient-Threshold-ML-DSA-Brave.html",
+      "sizeBytes": 59752,
+      "contentType": "text/html",
+      "sha256": "8691c79b83dabed157f2264a03a5182210347702418151c9ccf3437b28ca0bf5"
+    },
+    {
+      "refId": "New-PQC-Standards-Set-to-Transform-Cybersecurity-SandboxAQ",
+      "title": "New PQC Standards Set to Transform Cybersecurity | SandboxAQ",
+      "url": "https://www.sandboxaq.com/post/new-pqc-standards-set-to-transform-cybersecurity",
+      "status": "downloaded",
+      "filename": "New-PQC-Standards-Set-to-Transform-Cybersecurity-SandboxAQ.html",
+      "sizeBytes": 34825,
+      "contentType": "text/html",
+      "sha256": "6e8ccd46442d823645a89b09ec6d27fc53582affa17bb20c507ec6bfb149f678"
+    },
+    {
+      "refId": "Root-Causes-626-TLS-1-3-Roadblock-Sectigo-Official",
+      "title": "Root Causes 626: TLS 1.3 Roadblock | Sectigo\u00ae Official",
+      "url": "https://www.sectigo.com/root-causes/root-causes-626-tls-1-3-roadblock",
+      "status": "downloaded",
+      "filename": "Root-Causes-626-TLS-1-3-Roadblock-Sectigo-Official.html",
+      "sizeBytes": 561501,
+      "contentType": "text/html",
+      "sha256": "d85a4bb90c87b81bbb7aa722c22a6b1912d6a078f2cdec01da4284f1533dc53d"
+    },
+    {
+      "refId": "Post-quantum-cryptography-on-Ethereum-ethereum-org",
+      "title": "Post-quantum cryptography on Ethereum | ethereum.org",
+      "url": "https://ethereum.org/roadmap/security/quantum-resistance/",
+      "status": "downloaded",
+      "filename": "Post-quantum-cryptography-on-Ethereum-ethereum-org.html",
+      "sizeBytes": 373877,
+      "contentType": "text/html",
+      "sha256": "c5264ca2edc2fcf2c20fab7a3e95baeca7e51d7113a2ee6304f6a084185bf837"
+    },
+    {
+      "refId": "The-Era-of-Mathematical-Zero-Days-Why-Post-Quantum-Security",
+      "title": "The Era of Mathematical Zero Days: Why Post-Quantum Security Requires an Architectural Shift, Not Just Better Algorithms - Qrypt",
+      "url": "https://www.qrypt.com/resources/the-era-of-mathematical-zero-days-why-post-quantum-security-requires-an-architectural-shift-not-just-better-algorithms/",
+      "status": "downloaded",
+      "filename": "The-Era-of-Mathematical-Zero-Days-Why-Post-Quantum-Security.html",
+      "sizeBytes": 262406,
+      "contentType": "text/html",
+      "sha256": "ac6b0d258314cab097a42aacdc2ba43379ad34e0d3fb9fec6c5613cff6b4d119"
     }
   ],
   "archivedEntries": [

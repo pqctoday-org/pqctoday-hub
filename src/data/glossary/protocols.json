@@ -627,14 +627,16 @@
     "acronym": "HDR",
     "definition": "The encrypted exchange header found at the start of an IKEv2 packet. Contains the SPIs, version, exchange type, and flags.",
     "complexity": "beginner",
-    "category": "protocol"
+    "category": "protocol",
+    "relatedModule": "/learn/vpn-ssh-pqc"
   },
   {
     "term": "Encrypted Payload",
     "acronym": "SK",
     "definition": "The secure container wrapping IKEv2 payloads like Identifiers (IDi/IDr), Certificates (CERT), and Authentication (AUTH) data.",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "relatedModule": "/learn/vpn-ssh-pqc"
   },
   {
     "term": "Messaging Layer Security",

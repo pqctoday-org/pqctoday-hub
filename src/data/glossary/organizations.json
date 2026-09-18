@@ -252,14 +252,16 @@
     "acronym": "Cyber Security Agency of Singapore",
     "definition": "Singapore's national cybersecurity authority. Publishes the Cybersecurity Code of Practice and PQC readiness guidance for critical-information-infrastructure operators. Note: also used for Cloud Security Alliance (separate org).",
     "complexity": "beginner",
-    "category": "organization"
+    "category": "organization",
+    "relatedModule": "/learn/standards-bodies"
   },
   {
     "term": "ITSM (CCCS)",
     "acronym": "Information Technology Security Management series",
     "definition": "CCCS Canada's technical-guidance document series (ITSM.40.xxx, ITSAP.xx.xxx). The PQC-relevant entry today is ITSAP.00.017 — Preparing your organization for the quantum threat to cryptography.",
     "complexity": "intermediate",
-    "category": "organization"
+    "category": "organization",
+    "relatedModule": "/learn/standards-bodies"
   },
   {
     "term": "MAS",
@@ -282,14 +284,16 @@
     "acronym": "Ministry of Science and ICT",
     "definition": "South Korea's policy ministry for science, ICT, and broadcasting. Co-sponsors the KpqC standardization competition with KISA and the National Intelligence Service.",
     "complexity": "beginner",
-    "category": "organization"
+    "category": "organization",
+    "relatedModule": "/learn/standards-bodies"
   },
   {
     "term": "DISA",
     "acronym": "Defense Information Systems Agency",
     "definition": "US Department of Defense combat-support agency that runs IT infrastructure for the joint warfighter. Maintains the STIG library that locks down DoD system configurations, including cryptographic-suite controls.",
     "complexity": "intermediate",
-    "category": "organization"
+    "category": "organization",
+    "relatedModule": "/learn/standards-bodies"
   },
   {
     "term": "TCG",

@@ -37,9 +37,9 @@
       "url": "https://www.btq.com",
       "sha256": "d4c739205c8b688764da4ef5891a4833d15eb0a2b167f086d7764e6d53dcbb6b",
       "artefact": "SOURCE",
-      "unified": "converted",
-      "admittedAt": "2026-09-18T03:30:45.276766+00:00",
-      "admittedBy": "admit.py",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:53:09.083599+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH"
     },
     {
@@ -258,9 +258,9 @@
       "url": "https://www.idemia.com",
       "sha256": "4c5706fe7161315c5731ee829872186391bf622e59fab1800df75f9f047178f2",
       "artefact": "SOURCE",
-      "unified": "converted",
-      "admittedAt": "2026-09-18T03:24:10.966453+00:00",
-      "admittedBy": "admit.py",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:53:20.114710+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH"
     },
     {
@@ -401,9 +401,9 @@
       "url": "https://openquantumsafe.org",
       "sha256": "2c1c43e2e0ee08fa1ab9eb55c4022f33921af9c3775c4b4a21841eb1333f4401",
       "artefact": "SOURCE",
-      "unified": "converted",
-      "admittedAt": "2026-09-18T03:30:42.391633+00:00",
-      "admittedBy": "admit.py",
+      "unified": "current",
+      "admittedAt": "2026-09-18T03:53:00.004650+00:00",
+      "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH"
     },
     {

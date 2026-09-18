@@ -106,6 +106,57 @@
       "admittedAt": "2026-09-18T03:35:24.274559+00:00",
       "admittedBy": "admit.py",
       "identity": "UNCONFIRMED"
+    },
+    {
+      "refId": "Aerospace / Aviation",
+      "file": "aerospace-aviation-94ea1576.xlsx",
+      "bytes": 812286,
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "url": "https://apps.bea.gov/industry/Release/ZIP/GdpByInd.zip",
+      "sha256": "87b7484af9f75a06930151004f7f76a84b715e2ccb7ad20162e3c338e39b3e6c",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T04:21:18.485132+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED",
+      "archive": "GdpByInd.zip",
+      "archiveMember": "ValueAdded.xlsx",
+      "archiveSha256": "d12def7ed53d276d40d2df9281424bdd69e89df361395a98c01bb71999d3bfc8",
+      "note": "the row cites the release archive; the member holding the Value Added by Industry table is the document"
+    },
+    {
+      "refId": "Automotive / Connected Vehicles",
+      "file": "automotive-connected-vehicles-94ea1576.xlsx",
+      "bytes": 812286,
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "url": "https://apps.bea.gov/industry/Release/ZIP/GdpByInd.zip",
+      "sha256": "87b7484af9f75a06930151004f7f76a84b715e2ccb7ad20162e3c338e39b3e6c",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T04:21:23.425525+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED",
+      "archive": "GdpByInd.zip",
+      "archiveMember": "ValueAdded.xlsx",
+      "archiveSha256": "d12def7ed53d276d40d2df9281424bdd69e89df361395a98c01bb71999d3bfc8",
+      "note": "the row cites the release archive; the member holding the Value Added by Industry table is the document"
+    },
+    {
+      "refId": "Finance & Banking",
+      "file": "finance-banking-94ea1576.xlsx",
+      "bytes": 812286,
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "url": "https://apps.bea.gov/industry/Release/ZIP/GdpByInd.zip",
+      "sha256": "87b7484af9f75a06930151004f7f76a84b715e2ccb7ad20162e3c338e39b3e6c",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T04:21:30.849057+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED",
+      "archive": "GdpByInd.zip",
+      "archiveMember": "ValueAdded.xlsx",
+      "archiveSha256": "d12def7ed53d276d40d2df9281424bdd69e89df361395a98c01bb71999d3bfc8",
+      "note": "the row cites the release archive; the member holding the Value Added by Industry table is the document"
     }
   ]
 }

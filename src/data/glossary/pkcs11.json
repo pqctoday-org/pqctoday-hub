@@ -16,15 +16,18 @@
   },
   {
     "term": "CKM_SHA256",
-    "definition": "SHA-256 hash mechanism — 256-bit classical digest."
+    "definition": "SHA-256 hash mechanism — 256-bit classical digest.",
+    "relatedModule": "/learn/hsm-pqc"
   },
   {
     "term": "CKM_SHA3_256",
-    "definition": "SHA3-256 hash mechanism — 256-bit digest, post-quantum robust KDF primitive."
+    "definition": "SHA3-256 hash mechanism — 256-bit digest, post-quantum robust KDF primitive.",
+    "relatedModule": "/learn/hsm-pqc"
   },
   {
     "term": "CKM_SHA3_256_HMAC",
-    "definition": "HMAC using SHA3-256 — post-quantum robust MAC construction."
+    "definition": "HMAC using SHA3-256 — post-quantum robust MAC construction.",
+    "relatedModule": "/learn/hsm-pqc"
   },
   {
     "term": "X9.63-KDF",
