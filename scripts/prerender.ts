@@ -115,10 +115,20 @@ function stripRuntimeInjectedPreloads(html: string): string {
   })
 }
 
-function outputPathFor(route: string): string {
-  const dir = route === '/' ? DIST_DIR : join(DIST_DIR, ...route.split('/').filter(Boolean))
+/**
+ * Every non-root route is written twice: dist/<route>/index.html AND
+ * dist/<route>.html. GitHub Pages answers `/about` with a 301 to `/about/` when
+ * only the directory exists, so every sitemap URL was a redirect and every
+ * canonical (which deliberately omits the slash) pointed at one — Search
+ * Console reported "Page with redirect" / "Duplicate, Google chose different
+ * canonical". With `about.html` present, `/about` is served directly with 200.
+ */
+function outputPathsFor(route: string): string[] {
+  if (route === '/') return [join(DIST_DIR, 'index.html')]
+  const segments = route.split('/').filter(Boolean)
+  const dir = join(DIST_DIR, ...segments)
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true })
-  return join(dir, 'index.html')
+  return [join(dir, 'index.html'), `${dir}.html`]
 }
 
 const normalize = (p: string) => (p.length > 1 && p.endsWith('/') ? p.slice(0, -1) : p)
@@ -170,7 +180,8 @@ async function renderRoute(browser: Browser, baseUrl: string, route: string): Pr
       }
     })
 
-    writeFileSync(outputPathFor(route), stripRuntimeInjectedPreloads(await page.content()), 'utf-8')
+    const html = stripRuntimeInjectedPreloads(await page.content())
+    for (const out of outputPathsFor(route)) writeFileSync(out, html, 'utf-8')
   } finally {
     await page.close()
   }

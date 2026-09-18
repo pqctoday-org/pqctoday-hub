@@ -93,16 +93,28 @@ export interface IndustryUseCase {
    * editorial judgment call that can silently go wrong.
    */
   sourceCitationType: 'technical' | 'driver' | ''
-  /** cryptoMechanisms family labels. */
+  /**
+   * cryptoMechanisms family labels. No bare `RSA` since 2026-09-17 — it is
+   * `RSA-sig` and/or `RSA-kex`, so the tile can pair each classical family
+   * with its PQC successor by kind (`replaces` edge in cryptoMechanisms.ts).
+   */
   classicalMechanisms: string[]
   pqcMechanisms: string[]
   migrationStatus: 'none' | 'draft' | 'pilot' | 'production'
   summary: string
   /** standard_ids in the standards CSV. */
   relatedStandards: string[]
-  /** Learn module id (PKILearning ModuleManifest.id) for this industry, e.g.
-   *  'healthcare-pqc' — empty when no Industries-track module exists yet
-   *  (validated non-empty values only; empty is a real, reportable gap). */
+  /**
+   * Learn module id (PKILearning ModuleManifest.id) for THIS ROW, e.g.
+   * 'healthcare-pqc'. Per row since 2026-09-17: most rows of an industry
+   * carry the industry's module, and a row whose topic has an exact module
+   * names it instead (cross-web-tls → tls-basics, it-ssh → vpn-ssh-pqc).
+   * The rollup lists every distinct module, the industry's most common one
+   * first, and the tile shows a per-row Learn chip where they differ. Empty
+   * when no module honestly covers the row (validated non-empty values only;
+   * empty is a real, reportable gap). The reverse edge — which industries
+   * point at a module — renders on the module page (IndustryLandscapePanel).
+   */
   learnModuleId: string
   /**
    * Playground tool ids (`WorkshopTool.id`, incl. generated `sbx-*` sandbox

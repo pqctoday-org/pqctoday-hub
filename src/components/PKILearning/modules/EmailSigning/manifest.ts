@@ -3,11 +3,11 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'email-signing',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-010',
   title: 'Email & Document Signing',
   description:
-    'S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), and PQC migration for email security.',
+    "S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), PQC migration for email security — and OpenPGP's PQC profile (RFC 9980).",
   duration: '40 min',
   whyThisMatters:
     'Signatures are long-lived: one trusted for 10 years must resist a quantum attacker who shows up in year 5.',

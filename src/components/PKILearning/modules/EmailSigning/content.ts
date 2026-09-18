@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'email-signing',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-09-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -22,6 +22,8 @@ export const content: ModuleContent = {
     getStandard('RFC 9690'),
     getStandard('RFC 9708'),
     getStandard('RFC 9882'),
+    getStandard('RFC 9580'),
+    getStandard('RFC 9980'),
     getStandard('RFC-9935'),
     getStandard('RFC-9936'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this

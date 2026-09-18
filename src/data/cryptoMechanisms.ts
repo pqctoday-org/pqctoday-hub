@@ -40,6 +40,28 @@ export interface CryptoMechanismFamily {
   cycloneDxFamilies: string[]
   /** Verified OIDs (NIST CSOR for PQC sets; curve OIDs for ECC families). */
   oids: string[]
+  /**
+   * The classical families this PQC family is the standards-track successor
+   * to (2026-09-17). PQC families only. Until this edge existed the
+   * classical→PQC pairing lived nowhere: the landscape tile put "Classical"
+   * chips beside "PQC" chips and left the reader to pair them — 16 TLS rows
+   * showed ECDSA beside a PQC column holding only ML-KEM, which reads as
+   * "ECDSA → ML-KEM". Every entry must be a classical family of a matching
+   * kind (a KEM replaces key-exchange/encryption families, a signature
+   * scheme replaces signature families) — driftguard-tested.
+   */
+  replaces?: string[]
+  /**
+   * Classical families with NO standardised PQC successor say why, so the
+   * driftguard's "every classical asymmetric family is replaced" rule can
+   * admit them explicitly rather than by omission (BLS, Schnorr).
+   */
+  noReplacementReason?: string
+  /**
+   * Symmetric/hash families are not replaced — they are re-sized. Rendered
+   * where a reader might otherwise look for the missing PQC chip.
+   */
+  quantumSafeNote?: string
 }
 
 /**
@@ -99,12 +121,25 @@ export const CYCLONEDX_MAPPING_FRESHNESS: Freshness = {
 
 export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
   {
-    family: 'RSA',
+    // Split from a single `RSA` family on 2026-09-17. One family spanning
+    // signature AND key transport made the classical→PQC pairing
+    // uncomputable: a row's "RSA" could not say whether ML-KEM or ML-DSA was
+    // its successor. CycloneDX already draws the same line (RSASSA vs RSAES).
+    family: 'RSA-sig',
     classical: true,
-    kinds: ['signature', 'encryption', 'key-exchange'],
+    kinds: ['signature'],
     registryMembers: ['RSA-2048', 'RSA-3072', 'RSA-4096'],
-    // No generic "RSA" family exists in the registry — it is split by use.
-    cycloneDxFamilies: ['RSASSA-PKCS1', 'RSASSA-PSS', 'RSAES-PKCS1', 'RSAES-OAEP'],
+    cycloneDxFamilies: ['RSASSA-PKCS1', 'RSASSA-PSS'],
+    oids: [],
+  },
+  {
+    // RSA key transport / key wrapping: TLS 1.2 RSA key exchange, RSAES-OAEP
+    // wrapping in KMS/HSM/PKCS#11, S/MIME and OpenPGP encrypt-to, PKINIT.
+    family: 'RSA-kex',
+    classical: true,
+    kinds: ['key-exchange', 'encryption'],
+    registryMembers: ['RSA-2048', 'RSA-3072', 'RSA-4096'],
+    cycloneDxFamilies: ['RSAES-PKCS1', 'RSAES-OAEP'],
     oids: [],
   },
   {
@@ -173,6 +208,8 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     // are not registered the way NIST/RFC curves are. Left empty rather than
     // invented; the CycloneDX family value carries the identity instead.
     oids: [],
+    noReplacementReason:
+      'No standardised PQC successor for pairing-based aggregate signatures; chains using BLS are researching lattice aggregation, none is on a standards track.',
   },
   {
     // Added 2026-08-16 — Polkadot/Substrate's default account-signing scheme
@@ -199,6 +236,8 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     // No established OID — Schnorrkel is a Web3 Foundation implementation,
     // not an IETF/NIST curve registration.
     oids: [],
+    noReplacementReason:
+      'Schnorr/sr25519 have no standardised PQC successor; the practical successor is a signature-scheme change (ML-DSA/SLH-DSA) at the chain level, which the chain rows claim directly.',
   },
   {
     // Added 2026-08-16 — confirmed real via the industry-landscape gap
@@ -214,6 +253,8 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     registryMembers: [],
     cycloneDxFamilies: ['SNOW3G'],
     oids: [],
+    quantumSafeNote:
+      'Symmetric stream cipher — no PQC replacement; the 3GPP uplift is the 256-bit Snow-5G family (TS 35.240).',
   },
   {
     // Added 2026-08-16 — same audit lead as SNOW3G, the 5G-carried sibling
@@ -226,6 +267,8 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     registryMembers: [],
     cycloneDxFamilies: ['ZUC'],
     oids: [],
+    quantumSafeNote:
+      'Symmetric stream cipher — no PQC replacement; the 3GPP uplift is 256-bit ZUC (TS 35.246).',
   },
   {
     // Added 2026-08-16 — confirmed real via the industry-landscape gap
@@ -255,6 +298,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     registryMembers: ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024'],
     cycloneDxFamilies: ['ML-KEM'],
     oids: ['2.16.840.1.101.3.4.4.1', '2.16.840.1.101.3.4.4.2', '2.16.840.1.101.3.4.4.3'],
+    replaces: ['ECDH', 'X25519', 'RSA-kex'],
   },
   {
     family: 'ML-DSA',
@@ -263,6 +307,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     registryMembers: ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'],
     cycloneDxFamilies: ['ML-DSA'],
     oids: ['2.16.840.1.101.3.4.3.17', '2.16.840.1.101.3.4.3.18', '2.16.840.1.101.3.4.3.19'],
+    replaces: ['RSA-sig', 'ECDSA', 'EdDSA', 'SM2'],
   },
   {
     family: 'SLH-DSA',
@@ -298,6 +343,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
       '2.16.840.1.101.3.4.3.30',
       '2.16.840.1.101.3.4.3.31',
     ],
+    replaces: ['RSA-sig', 'ECDSA', 'EdDSA', 'SM2'],
   },
   {
     family: 'FN-DSA',
@@ -306,6 +352,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     registryMembers: ['FN-DSA-512', 'FN-DSA-1024'],
     cycloneDxFamilies: [], // absent from the 1.7 registry (FIPS 206 pending)
     oids: [],
+    replaces: ['RSA-sig', 'ECDSA', 'EdDSA', 'SM2'],
   },
   {
     family: 'HQC',
@@ -314,6 +361,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     registryMembers: ['HQC-128', 'HQC-192', 'HQC-256'],
     cycloneDxFamilies: [], // absent from the 1.7 registry
     oids: [],
+    replaces: ['ECDH', 'X25519', 'RSA-kex'],
   },
   {
     family: 'FrodoKEM',
@@ -322,6 +370,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     registryMembers: ['FrodoKEM-640', 'FrodoKEM-976', 'FrodoKEM-1344'],
     cycloneDxFamilies: [], // absent from the 1.7 registry
     oids: [],
+    replaces: ['ECDH', 'X25519', 'RSA-kex'],
   },
   {
     family: 'Classic-McEliece',
@@ -334,6 +383,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     ],
     cycloneDxFamilies: [], // absent from the 1.7 registry
     oids: [],
+    replaces: ['ECDH', 'X25519', 'RSA-kex'],
   },
   {
     family: 'LMS',
@@ -342,6 +392,9 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     registryMembers: ['LMS-SHA256 (H20/W8)'],
     cycloneDxFamilies: ['LMS'],
     oids: [],
+    // Stateful: firmware/code signing profiles only (SP 800-208, CNSA 2.0),
+    // never general-purpose protocol authentication.
+    replaces: ['RSA-sig', 'ECDSA'],
   },
   {
     family: 'XMSS',
@@ -350,6 +403,9 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     registryMembers: ['XMSS-SHA2_20'],
     cycloneDxFamilies: ['XMSS'],
     oids: [],
+    // Stateful: firmware/code signing profiles only (SP 800-208, CNSA 2.0),
+    // never general-purpose protocol authentication.
+    replaces: ['RSA-sig', 'ECDSA'],
   },
   {
     family: 'AES',
@@ -358,6 +414,8 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     registryMembers: [], // symmetric — see interface doc; not in ALGORITHM_REGISTRY
     cycloneDxFamilies: ['AES'],
     oids: [],
+    quantumSafeNote:
+      'Not replaced — re-sized. Grover halves the effective key length, so AES-256 stays at 128-bit post-quantum strength.',
   },
   {
     family: 'SHA',
@@ -368,6 +426,8 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     // umbrella label industry-landscape CSVs use for any SHA-2/SHA-3 mention.
     cycloneDxFamilies: ['SHA-1', 'SHA-2', 'SHA-3'],
     oids: [],
+    quantumSafeNote:
+      'Not replaced — re-sized. Use SHA-384 or SHA3-384+ where 192-bit post-quantum collision strength is required; SHA-1 is broken classically.',
   },
 ]
 
@@ -383,3 +443,22 @@ export function isKnownMechanism(family: string): boolean {
 
 export const CLASSICAL_MECHANISM_FAMILIES = CRYPTO_MECHANISMS.filter((m) => m.classical)
 export const PQC_MECHANISM_FAMILIES = CRYPTO_MECHANISMS.filter((m) => !m.classical)
+
+/** PQC families that name `classicalFamily` in their `replaces` edge. */
+export function pqcReplacementsFor(classicalFamily: string): CryptoMechanismFamily[] {
+  return PQC_MECHANISM_FAMILIES.filter((m) => m.replaces?.includes(classicalFamily))
+}
+
+/**
+ * The kind a family is grouped under on the landscape tile: KEMs and
+ * key-exchange families share one row because a KEM is what replaces a key
+ * exchange; everything else groups by its first declared kind.
+ */
+export type MechanismGroup = 'key-exchange' | 'signature' | 'symmetric'
+export function mechanismGroup(family: string): MechanismGroup {
+  const def = byFamily.get(family)
+  if (!def) return 'symmetric'
+  if (def.kinds.includes('signature')) return 'signature'
+  if (def.kinds.includes('kem') || def.kinds.includes('key-exchange')) return 'key-exchange'
+  return 'symmetric'
+}

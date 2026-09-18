@@ -14,7 +14,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-101',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-31',
+  lastEdited: '2026-09-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -32,7 +32,7 @@ export const content: ModuleContent = {
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('FIPS 186-5'),
-    getStandard('FIPS 206'),
+    getStandard('Falcon-Spec-v12'),
     getStandard('NSA CNSA 2.0'),
     // DECLARED 2026-08-23: this module names "IR 8545" to a reader and cited
     // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
@@ -91,7 +91,7 @@ export const content: ModuleContent = {
     symmetricMention:
       "Symmetric cryptography (like AES-256) is largely unaffected by Shor's algorithm and remains quantum-safe.",
     fips206Mention:
-      "Note: The upcoming FIPS 206 (FN-DSA) standard will provide an additional lattice-based signature scheme optimized for small signatures — this hub's citation is deprecated until NIST publishes the final text.",
+      'Note: The upcoming FIPS 206 (FN-DSA) standard will provide an additional lattice-based signature scheme optimized for small signatures — this hub cites the Falcon v1.2 specification it standardises until NIST publishes the final text.',
   },
 }
 

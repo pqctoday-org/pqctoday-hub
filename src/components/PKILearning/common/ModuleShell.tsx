@@ -42,6 +42,7 @@ import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
 import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { RelatedModulesPanel } from './RelatedModulesPanel'
+import { IndustryLandscapePanel } from './IndustryLandscapePanel'
 import { resolveModuleTool, mobilePracticeTool } from '@/data/moduleToolLinks'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -567,6 +568,9 @@ export const ModuleShell = ({
           is to be found, not to be a reward; hidden in both embed contexts for
           the same reason the back link is. See src/data/moduleRelations.ts. */}
       {!embedded && !iframeEmbedded ? <RelatedModulesPanel moduleId={manifest.id} /> : null}
+      {/* 2026-09-17 — the reverse of the landscape's learn_module_id column:
+          which industries' use cases point at THIS module. Same embed rules. */}
+      {!embedded && !iframeEmbedded ? <IndustryLandscapePanel moduleId={manifest.id} /> : null}
       {/* P2.3 — completion handoff footer. Replaces the sidebar NextModuleCTA so
           finishing a module always routes somewhere, never a dead-end "Complete".
           The sim "Practice" CTA lives in the header (persistent, curated) so it is

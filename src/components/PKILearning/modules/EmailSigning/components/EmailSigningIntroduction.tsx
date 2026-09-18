@@ -271,6 +271,102 @@ const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
     </section>
 
     {/* Section 5: Migration Challenges */}
+    {/* Section: OpenPGP — the other email standard (RFC 9580 + RFC 9980).
+        Added 2026-09-17: the Industry Landscape's cross-openpgp row had no
+        Learn module because this module never mentioned OpenPGP. Every
+        algorithm, ID and requirement level below is from RFC 9980's own
+        tables (Sections 4.2, 5.2, 6.1) — the composite/standalone split and
+        the v4/v6 key rule are the RFC's design decisions, not paraphrase. */}
+    <section className="glass-panel p-6" data-section="openpgp-pqc">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-secondary/10">
+          <FileKey size={24} className="text-secondary" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">OpenPGP: the other email standard</h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          S/MIME is not the only way mail and files get signed and encrypted.{' '}
+          <InlineTooltip term="OpenPGP">OpenPGP</InlineTooltip> (RFC 9580, the 2024 revision that
+          introduced <strong>version 6 keys</strong>) has no X.509 certificates and no CA: keys
+          carry their own identities and are trusted through signatures from other keys. Its PQC
+          migration therefore arrives as new <em>algorithm IDs</em> inside keys and packets, not as
+          new certificate profiles — and it is already a Proposed Standard:{' '}
+          <strong>RFC 9980, Post-Quantum Cryptography in OpenPGP</strong>.
+        </p>
+        <p>
+          RFC 9980 takes a different line from the CMS RFCs above. Because lattice schemes are new,
+          ML-KEM and ML-DSA are used <strong>only as PQ/T composites</strong> — each one is bound to
+          an elliptic-curve partner so that, in the RFC&apos;s words, security is retained even if
+          all schemes but one in the combination are broken. The one exception is SLH-DSA, whose
+          hash-based security assumptions the RFC considers well enough understood to stand alone.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-border text-left text-muted-foreground">
+                <th className="py-1.5 pr-3">ID</th>
+                <th className="py-1.5 pr-3">Algorithm (RFC 9980)</th>
+                <th className="py-1.5 pr-3">Role</th>
+                <th className="py-1.5 pr-3">Requirement</th>
+                <th className="py-1.5">Replaces</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                [
+                  '35',
+                  'ML-KEM-768+X25519',
+                  'Composite KEM (encryption)',
+                  'MUST',
+                  'ECDH / X25519, RSA key transport',
+                ],
+                ['36', 'ML-KEM-1024+X448', 'Composite KEM (encryption)', 'SHOULD', 'ECDH / X448'],
+                [
+                  '30',
+                  'ML-DSA-65+Ed25519',
+                  'Composite signature',
+                  'MUST',
+                  'EdDSA, RSA, ECDSA signatures',
+                ],
+                ['31', 'ML-DSA-87+Ed448', 'Composite signature', 'SHOULD', 'EdDSA (Ed448)'],
+                [
+                  '32–34',
+                  'SLH-DSA-SHAKE-128s / 128f / 256s',
+                  'Standalone signature',
+                  'MAY',
+                  'Long-lived signatures where a lattice assumption is unwanted',
+                ],
+              ].map(([id, alg, role, req, rep]) => (
+                <tr key={id} className="border-b border-border/50">
+                  <td className="py-1.5 pr-3 font-mono">{id}</td>
+                  <td className="py-1.5 pr-3 font-mono">{alg}</td>
+                  <td className="py-1.5 pr-3">{role}</td>
+                  <td className="py-1.5 pr-3 font-mono">{req}</td>
+                  <td className="py-1.5 text-muted-foreground">{rep}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p>
+          A conformant implementation <strong>MUST</strong> implement ML-DSA-65+Ed25519 and
+          ML-KEM-768+X25519; the 1024/448 pair is SHOULD. Deployment detail that bites: the PQ
+          algorithms are for <strong>v6 keys only</strong>, with one exception — ML-KEM-768+X25519
+          (ID 35) is also allowed in <strong>v4 encryption-capable subkeys</strong>, so an existing
+          v4 key can gain a post-quantum encryption subkey without a full key rollover, while PQ
+          signing waits for a v6 primary key.
+        </p>
+        <p>
+          Compare with S/MIME: same primitives (ML-KEM, ML-DSA, SLH-DSA), same key-exchange →
+          signature split, but OpenPGP mandates the hybrid pairing that LAMPS leaves to the
+          deployment, and it has no certificate-profile work to do because it never had
+          certificates. The Industry Landscape tracks this as the cross-industry use case
+          &ldquo;OpenPGP email &amp; file encryption&rdquo;.
+        </p>
+      </div>
+    </section>
+
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 rounded-lg bg-primary/10">
