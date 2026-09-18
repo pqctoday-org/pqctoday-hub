@@ -47,7 +47,10 @@ import {
   CLASSICAL_MECHANISM_FAMILIES,
   PQC_MECHANISM_FAMILIES,
   getMechanismFamily,
+  mechanismGroup,
+  pqcReplacementsFor,
   CYCLONEDX_REGISTRY,
+  type MechanismGroup,
 } from '../../data/cryptoMechanisms'
 import { PROTOCOL_MATRIX } from '../../data/pqcProtocolMatrix'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from './landscapeIcons'
@@ -155,6 +158,83 @@ function MechanismChip({
 // EVIDENCE_LABEL / evidenceLabelFor moved to ./evidenceLabels (2026-08-15) so
 // the driftguard can pin vocabulary↔renderer agreement without importing this
 // component into a data test. See that module for why the guard exists.
+
+/**
+ * The classical → PQC pairing, PER KIND (2026-09-17, audit R1).
+ *
+ * The tile used to put every "Classical" chip beside every "PQC" chip on one
+ * line and leave the reader to pair them. On 16 TLS rows that meant ECDSA
+ * sat beside a PQC column holding only ML-KEM — which reads as "ECDSA →
+ * ML-KEM", when the truth is "key exchange migrated, authentication still
+ * classical". Grouping by kind makes that gap visible: a signature row with
+ * nothing on the right says so in words instead of implying the KEM covers
+ * it. Symmetric families get their re-size note rather than an empty arrow.
+ */
+const GROUP_LABEL: Record<MechanismGroup, string> = {
+  'key-exchange': 'Key exchange',
+  signature: 'Signatures',
+  symmetric: 'Symmetric',
+}
+const GROUP_ORDER: MechanismGroup[] = ['key-exchange', 'signature', 'symmetric']
+
+function MechanismPairing({
+  classical,
+  pqc,
+  onPickMechanism,
+}: {
+  classical: string[]
+  pqc: string[]
+  onPickMechanism?: (f: string) => void
+}) {
+  const rows = GROUP_ORDER.map((group) => ({
+    group,
+    classical: classical.filter((m) => mechanismGroup(m) === group),
+    pqc: pqc.filter((m) => mechanismGroup(m) === group),
+  })).filter((r) => r.classical.length + r.pqc.length > 0)
+  if (rows.length === 0) return null
+  return (
+    <div className="mt-3 space-y-1" data-testid="mechanism-pairing">
+      {rows.map((r) => {
+        const symmetricNote =
+          r.group === 'symmetric'
+            ? r.classical.map((m) => getMechanismFamily(m)?.quantumSafeNote).find(Boolean)
+            : undefined
+        return (
+          <div
+            key={r.group}
+            className="flex flex-wrap items-center gap-1.5"
+            data-testid={`mechanism-pairing-${r.group}`}
+          >
+            <span className="w-24 shrink-0 text-[11px] uppercase tracking-wide text-muted-foreground">
+              {GROUP_LABEL[r.group]}
+            </span>
+            {r.classical.map((m) => (
+              <MechanismChip key={m} family={m} onSelect={onPickMechanism} />
+            ))}
+            {r.group === 'symmetric' ? (
+              <span className="text-xs text-muted-foreground" title={symmetricNote}>
+                · not replaced — re-sized
+              </span>
+            ) : (
+              <>
+                <span aria-hidden className="px-1 text-muted-foreground">
+                  →
+                </span>
+                {r.pqc.length > 0 ? (
+                  r.pqc.map((m) => <MechanismChip key={m} family={m} onSelect={onPickMechanism} />)
+                ) : (
+                  <span className="text-xs text-muted-foreground" data-testid="no-pqc-claim">
+                    no PQC claim on this row
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 
 /** Protocol chip. `target` marks the PQC migration destination (WS11). */
 function ProtocolChip({ id, target }: { id: string; target?: boolean }) {
@@ -477,25 +557,18 @@ function UseCaseCard({
       {showIndustry && <p className="mt-1 text-xs text-muted-foreground">{uc.industry}</p>}
       <p className="mt-2 text-sm text-muted-foreground">{uc.summary}</p>
 
-      <div className="mt-3 flex flex-wrap items-center gap-1.5">
-        <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Classical</span>
-        {uc.classicalMechanisms.map((m) => (
-          <MechanismChip key={m} family={m} onSelect={onPickMechanism} />
-        ))}
-        {uc.pqcMechanisms.length > 0 && (
-          <>
-            <span className="ml-2 text-[11px] uppercase tracking-wide text-muted-foreground">
-              PQC
-            </span>
-            {uc.pqcMechanisms.map((m) => (
-              <MechanismChip key={m} family={m} onSelect={onPickMechanism} />
-            ))}
-            {/* WS10: says whether the PQC claim above is deployed, merely
-                standardised, still a draft, or only a proposal. */}
-            <ClaimBasisBadge basis={uc.pqcClaimBasis} />
-          </>
-        )}
-      </div>
+      <MechanismPairing
+        classical={uc.classicalMechanisms}
+        pqc={uc.pqcMechanisms}
+        onPickMechanism={onPickMechanism}
+      />
+      {uc.pqcMechanisms.length > 0 && (
+        <div className="mt-1.5 flex items-center gap-1.5">
+          {/* WS10: says whether the PQC claim above is deployed, merely
+              standardised, still a draft, or only a proposal. */}
+          <ClaimBasisBadge basis={uc.pqcClaimBasis} />
+        </div>
+      )}
 
       {/* WS11: the protocol migration path. Current and target are shown
           separately — a row naming only TLS 1.2 has no PQC path at all, and
@@ -871,7 +944,10 @@ export function IndustryLandscapeView() {
   const meta = getLandscapeMetadata()
 
   const selectedIndustry = searchParams.get('industry')
-  const selectedMechanism = searchParams.get('mechanism')
+  // The single RSA family became RSA-sig / RSA-kex on 2026-09-17; an old
+  // deep link lands on the signature half rather than an empty lens.
+  const rawMechanism = searchParams.get('mechanism')
+  const selectedMechanism = rawMechanism === 'RSA' ? 'RSA-sig' : rawMechanism
   const mode: 'industry' | 'mechanism' = selectedMechanism ? 'mechanism' : 'industry'
 
   const marketByIndustry = useMemo(
@@ -1028,6 +1104,46 @@ export function IndustryLandscapeView() {
                   </span>
                 )}
               </div>
+              {(() => {
+                const replacedBy = mechanismDef.classical
+                  ? pqcReplacementsFor(mechanismDef.family)
+                  : []
+                const replaces = mechanismDef.replaces ?? []
+                if (mechanismDef.quantumSafeNote) {
+                  return (
+                    <p
+                      className="mt-1.5 text-xs text-muted-foreground"
+                      data-testid="lens-quantum-safe"
+                    >
+                      {mechanismDef.quantumSafeNote}
+                    </p>
+                  )
+                }
+                if (mechanismDef.classical && replacedBy.length === 0) {
+                  return (
+                    <p
+                      className="mt-1.5 text-xs text-muted-foreground"
+                      data-testid="lens-no-replacement"
+                    >
+                      No standardised PQC successor. {mechanismDef.noReplacementReason}
+                    </p>
+                  )
+                }
+                const list = mechanismDef.classical ? replacedBy.map((m) => m.family) : replaces
+                return (
+                  <div
+                    className="mt-1.5 flex flex-wrap items-center gap-1.5"
+                    data-testid="lens-replacement"
+                  >
+                    <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                      {mechanismDef.classical ? 'Replaced by' : 'Replaces'}
+                    </span>
+                    {list.map((f) => (
+                      <MechanismChip key={f} family={f} onSelect={pickMechanism} />
+                    ))}
+                  </div>
+                )
+              })()}
               <p className="mt-1 text-xs text-muted-foreground">
                 Used in {mechanismHits.length} use case{mechanismHits.length === 1 ? '' : 's'}{' '}
                 across {new Set(mechanismHits.map((u) => u.industry)).size} industries
