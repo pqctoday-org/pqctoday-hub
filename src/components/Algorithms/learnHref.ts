@@ -20,7 +20,7 @@ import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
  * Industry → learn path id, for modules that serve more than one industry.
  * Keyed by the industry values used in `industry_landscape_*.csv`.
  */
-const INDUSTRY_TO_PATH: Record<string, string> = {
+export const INDUSTRY_TO_PATH: Record<string, string> = {
   'Payment Card Industry': 'cards',
   'Finance & Banking': 'banking',
   'Retail & E-Commerce': 'retail',

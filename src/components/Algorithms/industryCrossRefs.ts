@@ -24,6 +24,10 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 import { WORKSHOP_TOOLS, type WorkshopTool } from '@/components/Playground/workshopRegistry'
 import type { IndustryStandard, IndustryUseCase } from '@/data/industryLandscapeData'
 import { learnHref } from './learnHref'
+export {
+  landscapeIndustriesForModule,
+  type LandscapeIndustryForModule,
+} from './landscapeLearnLinks'
 
 // ── Sector identity ──────────────────────────────────────────────────────────
 
@@ -66,12 +70,10 @@ export interface IndustryLearnModule {
 /**
  * The Learn modules for an industry, resolved across ALL its use-case rows.
  *
- * `learn_module_id` is an industry-level field stored at use-case grain, and
- * the driftguard already asserts every row for an industry agrees — so this
- * returns the same single module `cases[0]` would. Reading every row anyway
- * keeps the invariant local instead of depending on a test in another file,
- * and means adding a genuinely per-use-case module later is a data change
- * rather than a code change.
+ * Since 2026-09-17 `learn_module_id` is per row: most rows of an industry
+ * carry the industry's module, and a row whose topic has an exact module
+ * (Web TLS → tls-basics, SSH → vpn-ssh-pqc) names that instead. The rollup
+ * lists every distinct module, industry default first.
  */
 export function learnModulesForIndustry(
   industry: string,
@@ -79,7 +81,14 @@ export function learnModulesForIndustry(
 ): IndustryLearnModule[] {
   const seen = new Set<string>()
   const out: IndustryLearnModule[] = []
-  for (const uc of useCases) {
+  const def = defaultLearnModuleForIndustry(industry, useCases)
+  const ordered = def
+    ? [
+        ...useCases.filter((u) => u.learnModuleId === def),
+        ...useCases.filter((u) => u.learnModuleId !== def),
+      ]
+    : useCases
+  for (const uc of ordered) {
     if (uc.industry !== industry || !uc.learnModuleId || seen.has(uc.learnModuleId)) continue
     seen.add(uc.learnModuleId)
     const manifest = MANIFEST_BY_ID[uc.learnModuleId]
@@ -222,4 +231,29 @@ export function regulatoryFor(
     req: [...PQC_RELEVANT].join(','),
   })
   return { count, href: `/compliance?${params}` }
+}
+
+/**
+ * The industry's most common `learn_module_id` — what the tile treats as the
+ * industry default, so a row naming a DIFFERENT module gets its own Learn
+ * chip. Empty when no row of the industry names a module.
+ */
+export function defaultLearnModuleForIndustry(
+  industry: string,
+  useCases: IndustryUseCase[]
+): string {
+  const counts = new Map<string, number>()
+  for (const uc of useCases) {
+    if (uc.industry !== industry || !uc.learnModuleId) continue
+    counts.set(uc.learnModuleId, (counts.get(uc.learnModuleId) ?? 0) + 1)
+  }
+  let best = ''
+  let bestN = 0
+  for (const [id, n] of counts) {
+    if (n > bestN) {
+      best = id
+      bestN = n
+    }
+  }
+  return best
 }

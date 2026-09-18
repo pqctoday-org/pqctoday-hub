@@ -184,7 +184,7 @@
       "id": "email-signing",
       "lm_id": "LM-010",
       "title": "Email & Document Signing",
-      "description": "S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), and PQC migration for email security.",
+      "description": "S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), PQC migration for email security — and OpenPGP's PQC profile (RFC 9980).",
       "duration": "40 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p5"
@@ -3581,7 +3581,7 @@
           "id": "email-signing",
           "lm_id": "LM-010",
           "title": "Email & Document Signing",
-          "description": "S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), and PQC migration for email security.",
+          "description": "S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), PQC migration for email security — and OpenPGP's PQC profile (RFC 9980).",
           "duration": "40 min",
           "difficulty": "intermediate",
           "frameworkPhase": "p5"

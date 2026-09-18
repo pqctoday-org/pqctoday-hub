@@ -552,6 +552,42 @@
       "admittedBy": "admit.py"
     },
     {
+      "refId": "gov-nss-authentication",
+      "label": "National security systems — protocol authentication (CNSA 2.0)",
+      "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
+      "status": "downloaded",
+      "file": "threats/GOV-001.pdf",
+      "filename": "GOV-001.pdf",
+      "sizeBytes": 586858,
+      "contentType": "application/pdf",
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py",
+      "note": "Row split from gov-nss on 2026-09-17 (landscape audit D3): same cited document, same bytes — the admission verdicts are the parent record's, which the door stamped on this file; nothing was re-fetched."
+    },
+    {
+      "refId": "gov-nss-firmware",
+      "label": "National security systems — software & firmware signing (CNSA 2.0)",
+      "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
+      "status": "downloaded",
+      "file": "threats/GOV-001.pdf",
+      "filename": "GOV-001.pdf",
+      "sizeBytes": 586858,
+      "contentType": "application/pdf",
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "converted",
+      "admittedAt": "2026-09-17T19:13:51.846159+00:00",
+      "admittedBy": "admit.py",
+      "note": "Row split from gov-nss on 2026-09-17 (landscape audit D3): same cited document, same bytes — the admission verdicts are the parent record's, which the door stamped on this file; nothing was re-fetched."
+    },
+    {
       "refId": "gov-fpki",
       "label": "Federal PKI & document signing",
       "url": "https://www.idmanagement.gov/fpki/",
@@ -791,6 +827,24 @@
       "unified": "current",
       "admittedAt": "2026-09-17T12:58:21.047747+00:00",
       "admittedBy": "admit.py --stamp-existing"
+    },
+    {
+      "refId": "it-libraries-signatures",
+      "label": "Crypto libraries & TLS stacks — PQC signatures",
+      "url": "https://openssl-library.org/post/2025-04-08-openssl-35-final-release/",
+      "status": "downloaded",
+      "file": "threats/IT-001.html",
+      "filename": "IT-001.html",
+      "sizeBytes": 34496,
+      "contentType": "text/html",
+      "sha256": "09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91",
+      "verifiedAt": "2026-09-11",
+      "artefact": "SOURCE",
+      "identity": "UNCONFIRMED",
+      "unified": "current",
+      "admittedAt": "2026-09-17T12:58:21.047747+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "note": "Row split from it-libraries on 2026-09-17 (landscape audit D3): same cited document, same bytes — the admission verdicts are the parent record's, which the door stamped on this file; nothing was re-fetched."
     },
     {
       "refId": "it-webpki",
@@ -1737,7 +1791,7 @@
       "admittedBy": "admit.py --stamp-existing"
     },
     {
-      "refId": "Controller-Pilot-Data-Link-Communications-CPDLC",
+      "refId": "aero-cpdlc",
       "label": "Controller-Pilot Data Link Communications (CPDLC)",
       "url": "https://www.iata.org/en/iata-repository/pressroom/fact-sheets/fact-sheet-cyber-security/",
       "status": "downloaded",
@@ -1751,7 +1805,8 @@
       "identity": "UNCONFIRMED",
       "unified": "current",
       "admittedAt": "2026-09-17T12:59:01.226185+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedBy": "admit.py --stamp-existing",
+      "note": "use_case_id renamed from Controller-Pilot-Data-Link-Communications-CPDLC on 2026-09-17 (landscape audit D6, slug gate G5); same document, same bytes."
     },
     {
       "refId": "crypto-arbitrum-anytrust",
