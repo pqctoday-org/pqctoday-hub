@@ -164,11 +164,16 @@ describe('conceptXwalkData', () => {
   // transformRow lower-cased without trimming, LABEL_TO_SCORE missed, and the
   // row silently scored 30 (low) instead of 85 (high). Loader now trims; the
   // r2 data file fixes the cell; these pin both.
-  it('xw-e1b7b78a scores high (85), not the silent low fallback', () => {
+  // 2026-09-17: the lineage quote check found this row's `evidence` is NOT in
+  // 23 NYCRR 500 (an extracted row, xw-<hash>, whose evidence claims to be a
+  // quote), so it is now an EXPLICIT low with a named verdict — the opposite
+  // of the silent fallback this test guards against. Pin the explicit verdict.
+  it('xw-e1b7b78a carries an explicit lineage verdict (low), not the silent low fallback', () => {
     const edge = conceptXwalkData.find((e) => e.xwalkId === 'xw-e1b7b78a')
     expect(edge).toBeDefined()
-    expect(edge?.confidence).toBe('high')
-    expect(edge?.confidenceScore).toBe(85)
+    expect(edge?.confidence).toBe('low')
+    expect(edge?.confidenceScore).toBe(30)
+    expect(edge?.verifiedBy).toMatch(/^lineage:quote-not-found-\d{4}-\d{2}-\d{2}$/)
   })
 
   it('every confidence label is an exact vocabulary token (no stray whitespace)', () => {
