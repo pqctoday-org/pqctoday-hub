@@ -56,6 +56,7 @@ import {
 } from './validators/self-containment-checks.js'
 import { runThreatsProofRule } from './validators/threats-proof-rule.js'
 import { runMigrateProofRule } from './validators/migrate-proof-rule.js'
+import { runLineageChecks } from './validators/lineage-checks.js'
 import { buildReport, printReport } from './validators/report-builder.js'
 import type { CheckResult } from './validators/types.js'
 import fs from 'fs'
@@ -196,6 +197,12 @@ try {
   // silently regressed across two later catalog passes with nothing
   // catching it. See: pqctoday-hub-migrate-data-remediation-plan-07072026.md
   allResults.push(...runMigrateProofRule())
+  // 7i. Data accuracy & lineage guarantee (LN-1 verdict lock, LN-4 archive-
+  // never-delete, LN-6 CONTRADICTED-never-ships) — added 2026-09-17 after the
+  // 4.86.0 release surfaced each as a real leak (see
+  // pqctoday-hub-data-lineage-guarantee-plan-09172026.md §1). Two tiers:
+  // post-cutoff = ERROR, legacy = WARNING (reported, not blocking).
+  allResults.push(...runLineageChecks())
 
   // 8. Graph consistency checks (GC-1..GC-12)
   const { results: graphResults, markdownReport: graphMarkdown } = runGraphConsistencyChecks()
