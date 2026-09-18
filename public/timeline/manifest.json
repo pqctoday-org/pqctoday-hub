@@ -19,8 +19,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.572387+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.572387+00:00"
     },
     {
       "refId": "global-ibm-quantum-safe-explorer-launched",
@@ -36,8 +37,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.595054+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.595054+00:00"
     },
     {
       "refId": "global-ibm-ibm-heron-r2-processor-available",
@@ -53,8 +55,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.618628+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.618628+00:00"
     },
     {
       "refId": "global-ibm-ibm-next-gen-processor-development",
@@ -70,8 +73,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.618628+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.618628+00:00"
     },
     {
       "refId": "global-ibm-ibm-kookaburra-processor-released",
@@ -87,8 +91,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.618628+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.618628+00:00"
     },
     {
       "refId": "global-ibm-ibm-quantum-advantage-target",
@@ -104,8 +109,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.650016+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.650016+00:00"
     },
     {
       "refId": "global-microsoft-quantum-safe-program-launch",
@@ -121,8 +127,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.682005+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.682005+00:00"
     },
     {
       "refId": "global-microsoft-majorana-1-quantum-chip",
@@ -138,8 +145,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.719182+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.719182+00:00"
     },
     {
       "refId": "global-microsoft-microsoft-qsp-roadmap-published",
@@ -155,8 +163,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.682005+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.682005+00:00"
     },
     {
       "refId": "global-microsoft-core-infrastructure-transition",
@@ -172,8 +181,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.682005+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.682005+00:00"
     },
     {
       "refId": "global-microsoft-early-quantum-safe-adoption",
@@ -189,8 +199,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.682005+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.682005+00:00"
     },
     {
       "refId": "global-microsoft-microsoft-full-pqc-transition",
@@ -206,8 +217,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.682005+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.682005+00:00"
     },
     {
       "refId": "global-pqshield-ultrapq-suite-launched",
@@ -223,8 +235,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.764930+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.764930+00:00"
     },
     {
       "refId": "global-pqshield-100th-research-paper-milestone",
@@ -240,8 +253,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.782545+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.782545+00:00"
     },
     {
       "refId": "global-pqshield-carahsoft-government-partnership",
@@ -257,8 +271,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.799440+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.799440+00:00"
     },
     {
       "refId": "global-pqshield-post-quantum-vpn-research-initiated",
@@ -274,8 +289,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.816961+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.816961+00:00"
     },
     {
       "refId": "united-states-sandboxaq-aqtive-guard-fedramp-ready",
@@ -291,8 +307,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.829299+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.829299+00:00"
     },
     {
       "refId": "united-states-sandboxaq-mitre-lf-rwpqc-2025-conference",
@@ -308,8 +325,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.843622+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.843622+00:00"
     },
     {
       "refId": "australia-asd-ism-december-2024-update",
@@ -325,8 +343,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:57.300393+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:57.300393+00:00"
     },
     {
       "refId": "australia-asd-ism-june-2025-cryptography-guidelines-update",
@@ -342,8 +361,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:57.774387+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:57.774387+00:00"
     },
     {
       "refId": "australia-asd-acsc-annual-cyber-threat-report-2024-25-pqc-as-a-national-priority",
@@ -359,8 +379,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:57.868743+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:57.868743+00:00"
     },
     {
       "refId": "australia-asd-commonwealth-cyber-security-posture-in-2025",
@@ -376,8 +397,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:57.930408+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:57.930408+00:00"
     },
     {
       "refId": "international-bis-paper-158-quantum-roadmap",
@@ -393,8 +415,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:58.606181+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:58.606181+00:00"
     },
     {
       "refId": "australia-disr-national-quantum-strategy",
@@ -410,8 +433,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:59.409208+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:59.409208+00:00"
     },
     {
       "refId": "canada-ised-pqc-best-practices-published",
@@ -427,8 +451,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:01.643551+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:01.643551+00:00"
     },
     {
       "refId": "canada-cccs-cccs-pqc-migration-roadmap-published",
@@ -444,8 +469,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:01.677635+00:00"
     },
     {
       "refId": "canada-tbs-spin-notice-published",
@@ -461,8 +487,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:01.698355+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:01.698355+00:00"
     },
     {
       "refId": "canada-cccs-departmental-planning-phase",
@@ -478,8 +505,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:01.677635+00:00"
     },
     {
       "refId": "canada-cccs-departmental-pqc-migration-plans-due",
@@ -495,8 +523,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:01.677635+00:00"
     },
     {
       "refId": "canada-cccs-high-priority-migration-phase",
@@ -512,8 +541,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:01.677635+00:00"
     },
     {
       "refId": "canada-cccs-high-priority-systems-complete",
@@ -529,8 +559,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:01.677635+00:00"
     },
     {
       "refId": "canada-cccs-remaining-systems-migration",
@@ -546,8 +577,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:01.677635+00:00"
     },
     {
       "refId": "canada-cccs-full-gc-migration-complete",
@@ -563,8 +595,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:01.677635+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:01.677635+00:00"
     },
     {
       "refId": "china-iccs-ngcc-program-launched",
@@ -580,8 +613,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:01.745363+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:01.745363+00:00"
     },
     {
       "refId": "china-china-telecom-hybrid-quantum-safe-system-launched",
@@ -598,8 +632,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:04.545798+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-09T01:24:59.603163+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:04.545798+00:00"
     },
     {
       "refId": "china-iccs-ngcc-algorithm-evaluation",
@@ -615,8 +650,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:04.557735+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:04.557735+00:00"
     },
     {
       "refId": "czech-republic-nukib-cryptographic-recommendations",
@@ -632,8 +668,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:04.810858+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:04.810858+00:00"
     },
     {
       "refId": "european-union-enisa-pqc-integration-study",
@@ -649,8 +686,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:04.828866+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:04.828866+00:00"
     },
     {
       "refId": "european-union-ec-eu-pqc-recommendation-published",
@@ -666,8 +704,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:04.971676+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:04.971676+00:00"
     },
     {
       "refId": "european-union-ec-critical-infrastructure-migration",
@@ -683,8 +722,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:05.466418+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:05.466418+00:00"
     },
     {
       "refId": "european-union-nis-cg-coordinated-roadmap-v1-1",
@@ -700,8 +740,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:05.466418+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:05.466418+00:00"
     },
     {
       "refId": "european-union-europol-qsff-call-to-action",
@@ -717,8 +758,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:05.648769+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:05.648769+00:00"
     },
     {
       "refId": "european-union-nis-cg-eu-pqc-survey-launched",
@@ -734,8 +776,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:05.663903+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:05.663903+00:00"
     },
     {
       "refId": "european-union-eccg-agreed-cryptographic-algorithms-v2",
@@ -751,8 +794,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:05.808120+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:05.808120+00:00"
     },
     {
       "refId": "european-union-ec-member-state-strategy-initiation",
@@ -768,8 +812,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:05.466418+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:05.466418+00:00"
     },
     {
       "refId": "european-union-ec-high-risk-systems-secured",
@@ -785,8 +830,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:05.466418+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:05.466418+00:00"
     },
     {
       "refId": "european-union-ec-full-eu-pqc-transition",
@@ -802,8 +848,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:06.316846+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:06.316846+00:00"
     },
     {
       "refId": "france-anssi-initial-pqc-position-paper",
@@ -836,8 +883,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:06.771719+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:06.771719+00:00"
     },
     {
       "refId": "france-anssi-bsi-nlncsa-se-joint-qkd-position-paper",
@@ -853,8 +901,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:07.117893+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:07.117893+00:00"
     },
     {
       "refId": "france-anssi-pqc-market-studies-published",
@@ -870,8 +919,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:07.132506+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:07.132506+00:00"
     },
     {
       "refId": "france-anssi-phase-1-pre-quantum-security",
@@ -904,8 +954,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:07.152963+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:07.152963+00:00"
     },
     {
       "refId": "france-anssi-cea-leti-cesti-pqc-accreditation",
@@ -921,8 +972,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:07.152963+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:07.152963+00:00"
     },
     {
       "refId": "france-anssi-first-pqc-security-visas-issued",
@@ -938,8 +990,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:07.152963+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:07.152963+00:00"
     },
     {
       "refId": "france-anssi-pqc-faq-published",
@@ -955,8 +1008,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:07.193438+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:07.193438+00:00"
     },
     {
       "refId": "france-anssi-pg-083-cryptographic-guide-update-planned",
@@ -972,8 +1026,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:07.193438+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:07.193438+00:00"
     },
     {
       "refId": "france-anssi-phase-2-hybridization-required",
@@ -1006,8 +1061,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:07.193438+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:07.193438+00:00"
     },
     {
       "refId": "france-anssi-pqc-qualification-requirement",
@@ -1023,8 +1079,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:07.152963+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:07.152963+00:00"
     },
     {
       "refId": "france-anssi-phase-3-standalone-pqc-optional",
@@ -1057,8 +1114,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:07.353460+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:07.353460+00:00"
     },
     {
       "refId": "international-gsma-pq-03-v2-0-guidelines",
@@ -1074,8 +1132,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:10.210745+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:10.210745+00:00"
     },
     {
       "refId": "germany-bsi-eu-joint-statement-on-pqc",
@@ -1091,8 +1150,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:10.434255+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:10.434255+00:00"
     },
     {
       "refId": "germany-bsi-tr-02102-1-pqc-update",
@@ -1108,8 +1168,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:12.044137+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:12.044137+00:00"
     },
     {
       "refId": "germany-bsi-dlr-quantity-initiative-launched",
@@ -1125,8 +1186,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:12.065688+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:12.065688+00:00"
     },
     {
       "refId": "germany-bsi-critical-applications-pqc-hybrid-no-longer-required",
@@ -1142,8 +1204,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:13.722755+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:13.722755+00:00"
     },
     {
       "refId": "india-cert-in-bom-guidelines-expanded",
@@ -1159,8 +1222,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:14.616372+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:14.616372+00:00"
     },
     {
       "refId": "international-pqcc-pqcc-pqc-migration-roadmap-published",
@@ -1176,8 +1240,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:15.069739+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:15.069739+00:00"
     },
     {
       "refId": "israel-incd-pqc-readiness-guide-published",
@@ -1210,8 +1275,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:15.974176+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:15.974176+00:00"
     },
     {
       "refId": "italy-acn-pqc-guidance-published",
@@ -1244,8 +1310,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:18.645180+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:18.645180+00:00"
     },
     {
       "refId": "japan-nisc-pqc-migration-planning",
@@ -1261,8 +1328,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:21.293750+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:21.293750+00:00"
     },
     {
       "refId": "japan-nec-nict-qkd-high-speed-data-integration-demo",
@@ -1278,8 +1346,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:21.317700+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:21.317700+00:00"
     },
     {
       "refId": "nato-nato-quantum-technologies-strategy",
@@ -1295,8 +1364,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:21.368182+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:21.368182+00:00"
     },
     {
       "refId": "new-zealand-gcsb-ncsc-nzism-v3-8-updated",
@@ -1312,8 +1382,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:21.381442+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:21.381442+00:00"
     },
     {
       "refId": "new-zealand-gcsb-ncsc-planning-phase",
@@ -1329,8 +1400,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:21.394620+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:21.394620+00:00"
     },
     {
       "refId": "new-zealand-gcsb-ncsc-nzism-v3-9-published",
@@ -1346,8 +1418,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:21.394620+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:21.394620+00:00"
     },
     {
       "refId": "new-zealand-gcsb-ncsc-transition-phase",
@@ -1363,8 +1436,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:21.394620+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:21.394620+00:00"
     },
     {
       "refId": "singapore-csa-mas-financial-sector-planning",
@@ -1397,8 +1471,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:22.484833+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:22.484833+00:00"
     },
     {
       "refId": "singapore-mas-financial-sector-qkd-sandbox-completed",
@@ -1414,8 +1489,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:28.717990+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:28.717990+00:00"
     },
     {
       "refId": "south-korea-nis-kisa-kpqc-competition-results",
@@ -1448,8 +1524,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:28.752861+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:28.752861+00:00"
     },
     {
       "refId": "south-korea-msit-full-pqc-roadmap-complete",
@@ -1465,8 +1542,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:28.773323+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:28.773323+00:00"
     },
     {
       "refId": "spain-ccn-four-phase-pqc-approach",
@@ -1482,8 +1560,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:29.316224+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:29.316224+00:00"
     },
     {
       "refId": "spain-ccn-pqc-transition-period",
@@ -1499,8 +1578,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:29.316224+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:29.316224+00:00"
     },
     {
       "refId": "taiwan-moda-interim-quantum-safe-milestone",
@@ -1516,8 +1596,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:29.905702+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:29.905702+00:00"
     },
     {
       "refId": "united-kingdom-ncsc-pqc-white-paper-updated",
@@ -1533,8 +1614,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:29.940005+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:29.940005+00:00"
     },
     {
       "refId": "united-kingdom-ncsc-ncsc-pqc-migration-roadmap-published",
@@ -1550,8 +1632,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:29.983566+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:29.983566+00:00"
     },
     {
       "refId": "united-kingdom-cmorg-financial-sector-pqc-guidance",
@@ -1567,8 +1650,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.207138+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:30.207138+00:00"
     },
     {
       "refId": "united-kingdom-dsit-cni-perspectives-report",
@@ -1584,8 +1668,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.225522+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:30.225522+00:00"
     },
     {
       "refId": "united-kingdom-ncsc-discovery-planning-phase",
@@ -1601,8 +1686,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:29.983566+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:29.983566+00:00"
     },
     {
       "refId": "united-kingdom-ncsc-priority-migration-phase",
@@ -1618,8 +1704,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:29.983566+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:29.983566+00:00"
     },
     {
       "refId": "united-kingdom-ncsc-ncsc-full-migration-phase",
@@ -1635,8 +1722,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:29.983566+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:29.983566+00:00"
     },
     {
       "refId": "united-kingdom-ncsc-full-pqc-compliance",
@@ -1652,8 +1740,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:29.983566+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:29.983566+00:00"
     },
     {
       "refId": "united-states-white-house-nsm-10-published",
@@ -1669,8 +1758,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.288367+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:30.288367+00:00"
     },
     {
       "refId": "united-states-omb-m-23-02-cryptographic-inventory",
@@ -1686,8 +1776,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.467253+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:30.467253+00:00"
     },
     {
       "refId": "united-states-congress-quantum-computing-cybersecurity-preparedness-act",
@@ -1703,8 +1794,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.595971+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:30.595971+00:00"
     },
     {
       "refId": "united-states-nsa-cnsa-2-0-published",
@@ -1720,8 +1812,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.618960+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:30.618960+00:00"
     },
     {
       "refId": "united-states-nsa-software-firmware-signing-transition",
@@ -1754,8 +1847,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.288367+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:30.288367+00:00"
     },
     {
       "refId": "united-states-nist-fips-203-204-205-published",
@@ -1771,8 +1865,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:30.891649+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:30.891649+00:00"
     },
     {
       "refId": "united-states-nist-nist-ir-8547-transition-guidance-draft",
@@ -1805,8 +1900,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:31.893859+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:31.893859+00:00"
     },
     {
       "refId": "united-states-nsa-cnsa-2-0-algorithms-revised",
@@ -1823,8 +1919,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:31.916111+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-09T01:24:59.812103+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:31.916111+00:00"
     },
     {
       "refId": "united-states-cisa-automated-pqc-discovery-strategy",
@@ -1840,8 +1937,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:32.128040+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:32.128040+00:00"
     },
     {
       "refId": "united-states-cisa-pqc-considerations-for-ot",
@@ -1857,8 +1955,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:32.477907+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:32.477907+00:00"
     },
     {
       "refId": "united-states-nsa-web-cloud-services-transition",
@@ -1908,8 +2007,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:32.513261+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:32.513261+00:00"
     },
     {
       "refId": "united-states-white-house-executive-order-14306-issued",
@@ -1925,8 +2025,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:32.611402+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:32.611402+00:00"
     },
     {
       "refId": "united-states-nist-ir-8547-public-comments-published",
@@ -1942,8 +2043,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:34.162307+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:34.162307+00:00"
     },
     {
       "refId": "united-states-nist-nccoe-cswp-48-pqc-migration-mappings-draft",
@@ -1959,8 +2061,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:34.183614+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:34.183614+00:00"
     },
     {
       "refId": "united-states-nsa-operating-systems-transition",
@@ -1993,8 +2096,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:32.128040+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:32.128040+00:00"
     },
     {
       "refId": "united-states-nsa-large-pki-systems-migration",
@@ -2027,8 +2131,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:32.513261+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:32.513261+00:00"
     },
     {
       "refId": "united-states-nsa-nss-acquisitions-cnsa-2-0-required",
@@ -2044,8 +2149,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:34.590763+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:34.590763+00:00"
     },
     {
       "refId": "united-states-nsa-cnsa-2-0-exclusive-network-signing",
@@ -2078,8 +2184,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:34.980884+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:34.980884+00:00"
     },
     {
       "refId": "united-states-nsa-cnsa-2-0-exclusive-os-web-cloud",
@@ -2112,8 +2219,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:35.018579+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:35.018579+00:00"
     },
     {
       "refId": "united-states-nsa-cnsa-1-0-compliance-deadline-for-nss",
@@ -2129,8 +2237,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:35.401173+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:35.401173+00:00"
     },
     {
       "refId": "international-pki-consortium-pki-consortium-pqc-conference-2025-conclusions",
@@ -2146,8 +2255,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:35.422982+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:35.422982+00:00"
     },
     {
       "refId": "united-states-microsoft-nist-pqc-algorithms-in-windows-platform",
@@ -2163,8 +2273,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:35.456781+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:35.456781+00:00"
     },
     {
       "refId": "united-states-sealsq-us-post-quantum-root-of-trust-service-launch",
@@ -2180,8 +2291,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:35.477775+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:35.477775+00:00"
     },
     {
       "refId": "international-samsung-thales-ml-kem-embedded-secure-element-breakthrough",
@@ -2197,8 +2309,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:35.508275+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:35.508275+00:00"
     },
     {
       "refId": "international-ietf-rfc-9794-pqc-hybrid-terminology",
@@ -2214,8 +2327,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:35.550326+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:35.550326+00:00"
     },
     {
       "refId": "international-gri-quantum-threat-timeline-report-2025",
@@ -2231,8 +2345,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:38.138651+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:38.138651+00:00"
     },
     {
       "refId": "global-quantinuum-helios-quantum-computer-commercial-launch",
@@ -2248,8 +2363,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:38.173316+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:38.173316+00:00"
     },
     {
       "refId": "united-states-congress-national-quantum-initiative-reauthorization-act",
@@ -2265,8 +2381,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:38.203483+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:38.203483+00:00"
     },
     {
       "refId": "g7-g7-ceg-g7-financial-sector-pqc-roadmap",
@@ -2282,8 +2399,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:38.234183+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:38.234183+00:00"
     },
     {
       "refId": "united-states-cisa-federal-pqc-procurement-guidance",
@@ -2299,8 +2417,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:35.018579+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:35.018579+00:00"
     },
     {
       "refId": "singapore-quantinuum-nqo-helios-quantum-computer-singapore-deployment",
@@ -2316,8 +2435,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:38.275873+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:38.275873+00:00"
     },
     {
       "refId": "international-etsi-iqc-etsi-iqc-qsc-conference-2026",
@@ -2333,8 +2453,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:38.328878+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:38.328878+00:00"
     },
     {
       "refId": "hong-kong-legco-critical-infrastructure-cybersecurity-ordinance",
@@ -2350,8 +2471,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:38.339665+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:38.339665+00:00"
     },
     {
       "refId": "hong-kong-hkma-fintech-2030-strategy-pqc-resilience-pillar",
@@ -2367,8 +2489,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:38.364900+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:38.364900+00:00"
     },
     {
       "refId": "hong-kong-hkma-fintech-promotion-blueprint-quantum-preparedness-index",
@@ -2384,8 +2507,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:38.391825+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:38.391825+00:00"
     },
     {
       "refId": "hong-kong-hkma-financial-sector-pqc-planning",
@@ -2418,8 +2542,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:41.877282+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:41.877282+00:00"
     },
     {
       "refId": "singapore-imda-nqsn-launched",
@@ -2435,8 +2560,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:41.919978+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:41.919978+00:00"
     },
     {
       "refId": "singapore-mas-bdf-cross-border-pqc-experiment",
@@ -2452,8 +2578,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:41.951917+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:41.951917+00:00"
     },
     {
       "refId": "india-dst-nqm-national-quantum-safe-roadmap-published",
@@ -2520,8 +2647,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:46.304988+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:46.304988+00:00"
     },
     {
       "refId": "japan-nco-government-pqc-transition-deadline",
@@ -2537,8 +2665,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:46.436076+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:46.436076+00:00"
     },
     {
       "refId": "malaysia-nacsa-national-pqc-migration-plan-published",
@@ -2554,8 +2683,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:46.454803+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:46.454803+00:00"
     },
     {
       "refId": "united-arab-emirates-tii-nist-additional-signatures-round-2-contributions",
@@ -2571,8 +2701,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:46.480647+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:46.480647+00:00"
     },
     {
       "refId": "united-arab-emirates-desc-dubai-pqc-guideline-launched",
@@ -2588,8 +2719,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:46.508845+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:46.508845+00:00"
     },
     {
       "refId": "united-arab-emirates-adgm-tii-quantum-secure-communications-testbed",
@@ -2605,8 +2737,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:46.528443+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:46.528443+00:00"
     },
     {
       "refId": "united-arab-emirates-uae-csc-national-encryption-policy-approved",
@@ -2622,8 +2755,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:46.545282+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:46.545282+00:00"
     },
     {
       "refId": "united-arab-emirates-uae-csc-national-pqc-migration-program",
@@ -2639,8 +2773,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:46.560247+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:46.560247+00:00"
     },
     {
       "refId": "saudi-arabia-nca-ecc-2-2024-cybersecurity-controls",
@@ -2673,8 +2808,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:48.002219+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:48.002219+00:00"
     },
     {
       "refId": "saudi-arabia-aramco-pasqal-first-quantum-computer-in-ksa",
@@ -2690,8 +2826,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:48.032604+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:48.032604+00:00"
     },
     {
       "refId": "global-ethereum-foundation-vitalik-buterin-publishes-pq-defense-roadmap",
@@ -2707,8 +2844,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:48.072294+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:48.072294+00:00"
     },
     {
       "refId": "united-states-google-google-cloud-ml-kem-default-and-chrome-mtc-program",
@@ -2724,8 +2862,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:48.098693+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:48.098693+00:00"
     },
     {
       "refId": "germany-bsi-hybrid-tls-required-for-classified-communications",
@@ -2741,8 +2880,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:48.598910+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:48.598910+00:00"
     },
     {
       "refId": "germany-bsi-hybrid-ipsec-and-ssh-required",
@@ -2758,8 +2898,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:49.110887+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:49.110887+00:00"
     },
     {
       "refId": "germany-bsi-full-pqc-transition-standalone-algorithms-required",
@@ -2775,8 +2916,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:50.771091+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:50.771091+00:00"
     },
     {
       "refId": "singapore-mas-financial-sector-pqc-migration-plans-due",
@@ -2809,8 +2951,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:50.908142+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:50.908142+00:00"
     },
     {
       "refId": "hong-kong-hkma-financial-sector-pqc-migration-complete",
@@ -2860,8 +3003,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:29.940005+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:29.940005+00:00"
     },
     {
       "refId": "united-states-nist-nist-sp-800-208-published-lms-xmss",
@@ -2877,8 +3021,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:52.306843+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:52.306843+00:00"
     },
     {
       "refId": "global-oasis-pkcs-11-v3-2-pqc-mechanisms-draft-published",
@@ -2894,8 +3039,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.232055+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.232055+00:00"
     },
     {
       "refId": "global-ca-browser-forum-ballot-smc013-ml-dsa-for-s-mime-adopted",
@@ -2911,8 +3057,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.251042+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.251042+00:00"
     },
     {
       "refId": "united-states-google-google-pqc-migration-2029-timeline",
@@ -2928,8 +3075,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.290930+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.290930+00:00"
     },
     {
       "refId": "canada-btq-technologies-bitcoin-quantum-testnet-launch",
@@ -2945,8 +3093,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.335164+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.335164+00:00"
     },
     {
       "refId": "united-states-algorand-foundation-first-post-quantum-mainnet-transaction",
@@ -2962,8 +3111,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.391993+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.391993+00:00"
     },
     {
       "refId": "united-states-bitcoin-core-bip-360-pay-to-merkle-root-proposal",
@@ -2979,8 +3129,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.455083+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.455083+00:00"
     },
     {
       "refId": "united-states-ethereum-foundation-strawmap-pqc-roadmap-published",
@@ -2996,8 +3147,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.480320+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.480320+00:00"
     },
     {
       "refId": "france-idemia-first-pqc-hardware-accelerator-announced",
@@ -3013,8 +3165,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.503360+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.503360+00:00"
     },
     {
       "refId": "germany-infineon-first-cc-eal6-pqc-security-controller",
@@ -3030,8 +3183,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.692424+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.692424+00:00"
     },
     {
       "refId": "united-states-ciena-1-6t-quantum-safe-optical-encryption",
@@ -3047,8 +3201,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.722483+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.722483+00:00"
     },
     {
       "refId": "germany-adva-bsi-approved-400g-pqc-encryptor",
@@ -3064,8 +3219,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.737913+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.737913+00:00"
     },
     {
       "refId": "united-states-openssl-openssl-3-6-1-pqc-release",
@@ -3081,8 +3237,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.754544+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.754544+00:00"
     },
     {
       "refId": "global-fs-isac-fs-isac-pqc-migration-timeline-position-paper-published",
@@ -3098,8 +3255,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.769344+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.769344+00:00"
     },
     {
       "refId": "brazil-iti-icp-brasil-mandates-ml-dsa-and-ml-kem-certificate-standards",
@@ -3132,8 +3290,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:53.807958+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:53.807958+00:00"
     },
     {
       "refId": "african-union-auc-malabo-convention-enters-into-force",
@@ -3142,15 +3301,19 @@
       "status": "downloaded",
       "file": "timeline/African_Union_Convention_Cyber_Security_Personal_Data_Protection_Malabo.pdf",
       "filename": "African_Union_Convention_Cyber_Security_Personal_Data_Protection_Malabo.pdf",
-      "sizeBytes": 13794400,
+      "sizeBytes": 12969827,
       "contentType": "application/pdf",
-      "sha256": "4564c7ee68658754590953f653b6aa43582d63fdd16f8614ecd0b4cf89c96485",
+      "sha256": "4113aebf83a972fde59ab4ae88a8ed2c42e9cf2aad1d044318fe0effe215d524",
       "verifiedAt": "2026-09-07",
-      "artefact": "EMPTY",
-      "identity": "UNCONFIRMED",
-      "unified": "current",
-      "admittedAt": "2026-09-18T03:46:05.596882+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T05:21:15.782956+00:00",
+      "admittedBy": "admit.py",
+      "stampedAt": "2026-09-18T03:46:05.596882+00:00",
+      "superseded_file": "_superseded-09182026/timeline/African_Union_Convention_Cyber_Security_Personal_Data_Protection_Malabo.pdf",
+      "ocr": "ocrmypdf --skip-text (tesseract)",
+      "originalSha256": "4564c7ee68658754590953f653b6aa43582d63fdd16f8614ecd0b4cf89c96485"
     },
     {
       "refId": "g7-g7-ceg-g7-financial-sector-critical-systems-pqc-transition",
@@ -3166,8 +3329,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:54.040984+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:54.040984+00:00"
     },
     {
       "refId": "global-3gpp-sa3-3gpp-tr-33-938-pqc-transition-study",
@@ -3183,8 +3347,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:54.062118+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:54.062118+00:00"
     },
     {
       "refId": "global-tcg-tpm-2-0-v1-85-pqc-library-specification-draft",
@@ -3200,8 +3365,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:54.091575+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:54.091575+00:00"
     },
     {
       "refId": "south-africa-ir-popia-enforcement-begins",
@@ -3251,8 +3417,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:56.143166+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:56.143166+00:00"
     },
     {
       "refId": "global-openssl-openssl-3-5-0-native-pqc-release",
@@ -3268,8 +3435,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:56.162641+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:56.162641+00:00"
     },
     {
       "refId": "united-states-cisa-cisa-pqc-product-category-list-eo-14306-deadline",
@@ -3285,8 +3453,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:56.185755+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:56.185755+00:00"
     },
     {
       "refId": "united-states-nist-nist-sp-800-227-kem-recommendations",
@@ -3302,8 +3471,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:57.365736+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:57.365736+00:00"
     },
     {
       "refId": "united-states-dod-dod-pqc-migration-memorandum-2",
@@ -3319,8 +3489,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:57.640124+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:57.640124+00:00"
     },
     {
       "refId": "united-states-nist-nist-ir-8545-round-4-status-report",
@@ -3336,8 +3507,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:58.297577+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:58.297577+00:00"
     },
     {
       "refId": "united-states-gsa-gsa-pqc-buyer-guide-v1-0",
@@ -3353,8 +3525,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:59.225738+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:59.225738+00:00"
     },
     {
       "refId": "united-states-nist-additional-signatures-round-3-advances",
@@ -3370,8 +3543,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:59.245529+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:59.245529+00:00"
     },
     {
       "refId": "european-union-ec-eu-cyber-resilience-act-in-force",
@@ -3387,8 +3561,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:59.452280+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:59.452280+00:00"
     },
     {
       "refId": "european-union-enisa-enisa-pqc-anticipating-threats",
@@ -3404,8 +3579,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:59.472836+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:59.472836+00:00"
     },
     {
       "refId": "japan-cryptrec-cryptrec-adds-ml-kem-to-ciphers-list",
@@ -3421,8 +3597,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:59.657336+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:59.657336+00:00"
     },
     {
       "refId": "saudi-arabia-nca-saudi-national-cryptographic-standards",
@@ -3439,8 +3616,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:01.341258+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-08T23:54:45.637807+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:01.341258+00:00"
     },
     {
       "refId": "united-arab-emirates-uae-csc-uae-crypto-discovery-tool-and-pqc-index",
@@ -3456,8 +3634,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:01.377932+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:01.377932+00:00"
     },
     {
       "refId": "international-ietf-rfc-9881-ml-dsa-in-x-509",
@@ -3473,8 +3652,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:01.460020+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:01.460020+00:00"
     },
     {
       "refId": "international-ietf-rfc-9941-ssh-pq-hybrid-key-exchange",
@@ -3490,8 +3670,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:01.486928+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:01.486928+00:00"
     },
     {
       "refId": "international-ietf-rfc-9370-multiple-key-exchanges-in-ikev2",
@@ -3507,8 +3688,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:01.539348+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:01.539348+00:00"
     },
     {
       "refId": "international-ietf-draft-ietf-tls-ecdhe-mlkem-hybrid-kex",
@@ -3524,8 +3706,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:01.568622+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:01.568622+00:00"
     },
     {
       "refId": "international-iso-iec-iso-iec-sc27-pqc-standardization",
@@ -3541,8 +3724,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:01.620161+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:01.620161+00:00"
     },
     {
       "refId": "international-ietf-draft-ietf-lamps-kyber-certificates",
@@ -3558,8 +3742,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:01.691268+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:01.691268+00:00"
     },
     {
       "refId": "germany-bsi-bsi-tr-02102-1-2026-edition",
@@ -3575,8 +3760,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:03.392448+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:03.392448+00:00"
     },
     {
       "refId": "canada-cccs-itsp-40-111-v4-pqc-algorithms-approved",
@@ -3592,8 +3778,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:03.447274+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:03.447274+00:00"
     },
     {
       "refId": "nigeria-ndpc-ndpa-general-application-directive-2025",
@@ -3609,8 +3796,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:04.990134+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:04.990134+00:00"
     },
     {
       "refId": "spain-ccn-ccn-tec-009-post-quantum-transition",
@@ -3626,8 +3814,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:05.490276+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:05.490276+00:00"
     },
     {
       "refId": "south-korea-msit-k-pqc-master-plan-to-2035",
@@ -3643,8 +3832,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:05.508863+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:05.508863+00:00"
     },
     {
       "refId": "czech-republic-czqci-czqci-euroqci-backbone-launched",
@@ -3660,8 +3850,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:05.523427+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:05.523427+00:00"
     },
     {
       "refId": "chile-chile-govt-national-quantum-strategy-launched",
@@ -3677,8 +3868,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:05.542382+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:05.542382+00:00"
     },
     {
       "refId": "estonia-cybernetica-estonia-pqc-transition-led-by-cybernetica",
@@ -3694,8 +3886,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:05.566539+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:05.566539+00:00"
     },
     {
       "refId": "international-etsi-etsi-ts-104-105-hybrid-pqc-standard-published",
@@ -3728,8 +3921,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:06.059703+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:06.059703+00:00"
     },
     {
       "refId": "south-africa-sa-quti-sa-quti-quantum-communications-program",
@@ -3745,8 +3939,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:06.072063+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:06.072063+00:00"
     },
     {
       "refId": "saudi-arabia-stc-stc-quantum-safe-framework-launched",
@@ -3762,8 +3957,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:06.110219+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:06.110219+00:00"
     },
     {
       "refId": "spain-spain-govt-spain-quantum-technologies-strategy-eur-808m",
@@ -3779,8 +3975,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:06.132316+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:06.132316+00:00"
     },
     {
       "refId": "spain-telefonica-telefonica-quantum-centre-of-excellence-opened",
@@ -3796,8 +3993,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:06.163129+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:06.163129+00:00"
     },
     {
       "refId": "japan-cryptrec-pqc-guideline-gl-2004-2022-2",
@@ -3813,8 +4011,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:08.357399+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:08.357399+00:00"
     },
     {
       "refId": "united-states-white-house-securing-the-nation-against-advanced-cryptographic-att",
@@ -3830,8 +4029,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:05:01.612672+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:05:01.612672+00:00"
     },
     {
       "refId": "united-states-nist-nist-pqc-migration-pilot-complete-eo-june-22-2026",
@@ -3847,8 +4047,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:08.401451+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:08.401451+00:00"
     },
     {
       "refId": "united-states-federal-agencies-key-establishment-migration-deadline-eo-june-22-2",
@@ -3864,8 +4065,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:08.413532+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:08.413532+00:00"
     },
     {
       "refId": "united-states-federal-agencies-digital-signature-migration-deadline-eo-june-22-2",
@@ -3881,8 +4083,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:08.446159+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:08.446159+00:00"
     },
     {
       "refId": "netherlands-aivd-pqc-migration-handbook-2nd-edition",
@@ -3915,8 +4118,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:57.774387+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:57.774387+00:00"
     },
     {
       "refId": "united-states-omb-omb-memorandum-m-26-15-published",
@@ -3932,8 +4136,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:11.072752+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:11.072752+00:00"
     },
     {
       "refId": "united-states-federal-agencies-agency-pqc-migration-plans-due-to-omb-oncd-m-26-1",
@@ -3949,8 +4154,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:11.309298+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:11.309298+00:00"
     },
     {
       "refId": "united-states-far-council-far-council-proposed-rule-contractor-pqc-fips-complian",
@@ -3966,8 +4172,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:11.344142+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:11.344142+00:00"
     },
     {
       "refId": "united-states-cisa-cisa-cbom-guidance-far-contractor-vdp-rule-due-eo-14412",
@@ -3983,8 +4190,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:11.378111+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:11.378111+00:00"
     },
     {
       "refId": "united-states-white-house-executive-order-14413-issued-quantum-innovation-qc-add",
@@ -4000,8 +4208,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:11.416343+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:11.416343+00:00"
     },
     {
       "refId": "united-states-white-house-nspm-12-published",
@@ -4017,8 +4226,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:11.459644+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:11.459644+00:00"
     },
     {
       "refId": "going-beyond-encryption-malaysia-rolls-out-quantum-cryptogra",
@@ -4034,8 +4244,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:11.482476+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:11.482476+00:00"
     },
     {
       "refId": "czech-republic-nukib-national-cyber-and-information-security",
@@ -4051,8 +4262,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:11.496187+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:11.496187+00:00"
     },
     {
       "refId": "czech-republic-nukib-national-cyber-and-information-security-2",
@@ -4068,8 +4280,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:11.592459+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:11.592459+00:00"
     },
     {
       "refId": "bank-of-israel-banking-system-preparedness-for-quantum-compu",
@@ -4085,8 +4298,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:15.974176+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:15.974176+00:00"
     },
     {
       "refId": "denmark-transition-to-quantum-safe-cryptography-guidance",
@@ -4102,8 +4316,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:11.626544+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:11.626544+00:00"
     },
     {
       "refId": "finland-traficom-quantum-safe-encryption-transition-guidance",
@@ -4119,8 +4334,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:11.661793+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:11.661793+00:00"
     },
     {
       "refId": "sweden-ncsc-national-recommendations-for-quantum-safe-crypto",
@@ -4153,8 +4369,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.240156+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:12.240156+00:00"
     },
     {
       "refId": "central-bank-of-jordan-quantum-resistant-encryption-roadmap",
@@ -4170,8 +4387,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.264595+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:12.264595+00:00"
     },
     {
       "refId": "canada-osfi-guideline-b-13-technology-and-cyber-risk-managem",
@@ -4187,8 +4405,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.283723+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:12.283723+00:00"
     },
     {
       "refId": "acpr-banque-de-france-post-quantum-cryptography-transition-r",
@@ -4204,8 +4423,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.330824+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:12.330824+00:00"
     },
     {
       "refId": "uk-ico-quantum-computing-tech-horizons-report",
@@ -4221,8 +4441,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.356358+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:12.356358+00:00"
     },
     {
       "refId": "norway-nsm-quantum-migration-guidance",
@@ -4255,8 +4476,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.515012+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:12.515012+00:00"
     },
     {
       "refId": "thailand-ncsa-quantum-ready-2030-roadmap",
@@ -4272,8 +4494,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.533961+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:12.533961+00:00"
     },
     {
       "refId": "indonesia-bssn-national-pqc-migration-roadmap-task-force",
@@ -4289,8 +4512,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.559375+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:12.559375+00:00"
     },
     {
       "refId": "russia-tc26-post-quantum-cryptographic-mechanisms-working-gr",
@@ -4306,8 +4530,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.579005+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:12.579005+00:00"
     },
     {
       "refId": "bsi-vs-it-umstellungsfristen-fuer-post-quanten-kryptografie",
@@ -4323,8 +4548,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.595550+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:12.595550+00:00"
     },
     {
       "refId": "ncsc-post-quantum-cryptography-pqc-migration-workshop-report",
@@ -4340,8 +4566,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:12.623091+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:12.623091+00:00"
     },
     {
       "refId": "faa-request-for-information-post-quantum-cryptography-suppor",
@@ -4357,8 +4584,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:13.090723+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:13.090723+00:00"
     },
     {
       "refId": "european-union-ec-eudi-wallet-available-all-member-states",
@@ -4374,8 +4602,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:13.254045+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:13.254045+00:00"
     },
     {
       "refId": "australia-apra-system-risk-outlook-flags-quantum-computing-risk",
@@ -4391,8 +4620,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:13.343992+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:13.343992+00:00"
     },
     {
       "refId": "france-amf-sets-2026-priorities-names-quantum-computing-in-cyber-inspections",
@@ -4408,8 +4638,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:13.366637+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:13.366637+00:00"
     },
     {
       "refId": "brazil-bacen-lift-papers-post-quantum-cryptography-feasibility-study-for-pix",
@@ -4425,8 +4656,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:13.683824+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:13.683824+00:00"
     },
     {
       "refId": "uruguay-agesic-national-cybersecurity-strategy-2024-2030-commits-to-quantum-resistant-pki",
@@ -4442,8 +4674,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:15.802067+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:15.802067+00:00"
     },
     {
       "label": "DHS-Post-Quantum-Cryptography",
@@ -4457,8 +4690,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:15.831963+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07T15:56:42.688460+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:15.831963+00:00"
     },
     {
       "label": "NCCoE-Migration-to-Post-Quantum-Cryptography",
@@ -4472,8 +4706,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:15.856659+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07T15:56:53.856362+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:15.856659+00:00"
     },
     {
       "label": "NSA-Post-Quantum-Cybersecurity-Resources",
@@ -4487,8 +4722,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:15.879207+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07T15:57:05.058738+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:15.879207+00:00"
     },
     {
       "refId": "united-states-white-house-executive-order-14144",
@@ -4505,8 +4741,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:14:32.578325+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-08-22T17:41:13.831136+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:14:32.578325+00:00"
     },
     {
       "refId": "dhs-post-quantum-cryptography",
@@ -4524,8 +4761,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:15.831963+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07T15:56:42.688460+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:15.831963+00:00"
     },
     {
       "refId": "nccoe-migration-to-post-quantum-cryptography",
@@ -4543,8 +4781,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:15.856659+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07T15:56:53.856362+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:15.856659+00:00"
     },
     {
       "refId": "nsa-post-quantum-cybersecurity-resources",
@@ -4562,8 +4801,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:15.879207+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-07T15:57:05.058738+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:15.879207+00:00"
     }
   ],
   "archivedEntries": [

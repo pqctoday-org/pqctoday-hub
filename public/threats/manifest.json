@@ -38,8 +38,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:56.922879+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:56.922879+00:00"
     },
     {
       "threatId": "AUTO-001",
@@ -56,8 +57,9 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:41.480588+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:41.480588+00:00"
     },
     {
       "threatId": "AUTO-003",
@@ -74,8 +76,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:57.298132+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:57.298132+00:00"
     },
     {
       "threatId": "AUTO-004",
@@ -92,8 +95,9 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:41.509196+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:41.509196+00:00"
     },
     {
       "threatId": "CLOUD-001",
@@ -110,8 +114,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:58.690976+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:58.690976+00:00"
     },
     {
       "threatId": "CLOUD-002",
@@ -128,8 +133,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:57.384898+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:57.384898+00:00"
     },
     {
       "threatId": "CLOUD-003",
@@ -164,8 +170,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:57:58.624283+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:57:58.624283+00:00"
     },
     {
       "threatId": "CROSS-002",
@@ -200,8 +207,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:41.563161+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:41.563161+00:00"
     },
     {
       "threatId": "CROSS-006",
@@ -236,8 +244,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:42.582337+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:42.582337+00:00"
     },
     {
       "threatId": "CROSS-008",
@@ -254,8 +263,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:00.384868+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:00.384868+00:00"
     },
     {
       "threatId": "CRYPTO-001",
@@ -272,8 +282,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:43.011158+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:43.011158+00:00"
     },
     {
       "threatId": "CRYPTO-002",
@@ -291,8 +302,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:43.046100+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:12:38.909049+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:43.046100+00:00"
     },
     {
       "threatId": "CRYPTO-003",
@@ -309,8 +321,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:43.462963+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:43.462963+00:00"
     },
     {
       "threatId": "ENERGY-001",
@@ -327,8 +340,9 @@
       "artefact": "PAYWALL",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:43.494889+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:43.494889+00:00"
     },
     {
       "threatId": "ENERGY-002",
@@ -345,8 +359,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:43.516707+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:43.516707+00:00"
     },
     {
       "threatId": "ENERGY-003",
@@ -364,8 +379,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:43.610249+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:12:39.475646+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:43.610249+00:00"
     },
     {
       "threatId": "ENERGY-004",
@@ -382,8 +398,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:43.969456+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:43.969456+00:00"
     },
     {
       "threatId": "FIN-001",
@@ -400,8 +417,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:43.994599+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:43.994599+00:00"
     },
     {
       "threatId": "FIN-002",
@@ -418,8 +436,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:44.414177+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:44.414177+00:00"
     },
     {
       "threatId": "FIN-003",
@@ -436,8 +455,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:44.966589+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:44.966589+00:00"
     },
     {
       "threatId": "FIN-004",
@@ -454,8 +474,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:46.088672+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:46.088672+00:00"
     },
     {
       "threatId": "FIN-005",
@@ -473,8 +494,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:46.824834+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:12:39.681156+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:46.824834+00:00"
     },
     {
       "threatId": "AUS-FIN-001",
@@ -491,8 +513,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:47.001738+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:47.001738+00:00"
     },
     {
       "threatId": "AUS-FIN-002",
@@ -509,8 +532,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:47.014609+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:47.014609+00:00"
     },
     {
       "threatId": "GOV-001",
@@ -579,8 +603,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:07.824635+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:07.824635+00:00"
     },
     {
       "threatId": "GOV-005",
@@ -615,8 +640,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:47.378208+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:47.378208+00:00"
     },
     {
       "threatId": "HLTH-001",
@@ -633,8 +659,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:08.103459+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:08.103459+00:00"
     },
     {
       "threatId": "HLTH-002",
@@ -651,8 +678,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:47.469183+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:47.469183+00:00"
     },
     {
       "threatId": "HLTH-003",
@@ -669,8 +697,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:48.694946+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:48.694946+00:00"
     },
     {
       "threatId": "HLTH-004",
@@ -687,8 +716,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:09.470797+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:09.470797+00:00"
     },
     {
       "threatId": "HLTH-005",
@@ -705,8 +735,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:48.884285+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:48.884285+00:00"
     },
     {
       "threatId": "IOT-002",
@@ -723,8 +754,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:49.290455+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:49.290455+00:00"
     },
     {
       "threatId": "IOT-003",
@@ -741,8 +773,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:49.326187+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:49.326187+00:00"
     },
     {
       "threatId": "IT-001",
@@ -759,8 +792,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:21.047747+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:21.047747+00:00"
     },
     {
       "threatId": "IT-002",
@@ -778,8 +812,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:49.360351+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:12:39.902285+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:49.360351+00:00"
     },
     {
       "threatId": "IT-003",
@@ -796,8 +831,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:49.383171+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:49.383171+00:00"
     },
     {
       "threatId": "IT-004",
@@ -814,8 +850,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:21.073010+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:21.073010+00:00"
     },
     {
       "threatId": "LEG-001",
@@ -832,8 +869,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:22.012562+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:22.012562+00:00"
     },
     {
       "threatId": "LEG-002",
@@ -850,8 +888,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:22.152665+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:22.152665+00:00"
     },
     {
       "threatId": "LEG-003",
@@ -868,8 +907,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:22.337932+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:22.337932+00:00"
     },
     {
       "threatId": "MEDIA-001",
@@ -886,8 +926,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:50.576732+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:50.576732+00:00"
     },
     {
       "threatId": "MEDIA-002",
@@ -904,8 +945,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:23.721688+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:23.721688+00:00"
     },
     {
       "threatId": "MEDIA-003",
@@ -922,8 +964,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:12:54.833537+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:12:54.833537+00:00"
     },
     {
       "threatId": "PCI-002",
@@ -940,8 +983,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:00.783225+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:00.783225+00:00"
     },
     {
       "threatId": "PCI-003",
@@ -958,8 +1002,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:06.138447+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:06.138447+00:00"
     },
     {
       "threatId": "RAIL-001",
@@ -976,8 +1021,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:30.168461+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:30.168461+00:00"
     },
     {
       "threatId": "RETAIL-001",
@@ -994,8 +1040,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:12.372326+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:12.372326+00:00"
     },
     {
       "threatId": "SUPPLY-001",
@@ -1012,8 +1059,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:30.944755+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:30.944755+00:00"
     },
     {
       "threatId": "SUPPLY-002",
@@ -1030,8 +1078,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:12.405570+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:12.405570+00:00"
     },
     {
       "threatId": "SUPPLY-003",
@@ -1048,8 +1097,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:13.781592+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:13.781592+00:00"
     },
     {
       "threatId": "TELCO-001",
@@ -1066,8 +1116,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:15.614356+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:15.614356+00:00"
     },
     {
       "threatId": "TELCO-002",
@@ -1084,8 +1135,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:39.162911+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:39.162911+00:00"
     },
     {
       "threatId": "TELCO-003",
@@ -1102,8 +1154,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:37.447294+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:37.447294+00:00"
     },
     {
       "threatId": "TELCO-004",
@@ -1120,8 +1173,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:22.249042+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:22.249042+00:00"
     },
     {
       "threatId": "TELCO-005",
@@ -1138,8 +1192,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:22.656410+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:22.656410+00:00"
     },
     {
       "threatId": "WATER-001",
@@ -1156,8 +1211,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:39.399490+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:39.399490+00:00"
     },
     {
       "threatId": "EDU-001",
@@ -1174,8 +1230,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:00.498861+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:00.498861+00:00"
     },
     {
       "threatId": "EDU-002",
@@ -1192,8 +1249,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:22.683987+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:22.683987+00:00"
     },
     {
       "threatId": "EDU-003",
@@ -1210,8 +1268,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:01.650040+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:01.650040+00:00"
     },
     {
       "threatId": "EDU-004",
@@ -1228,8 +1287,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:03.370781+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:03.370781+00:00"
     },
     {
       "threatId": "EDU-005",
@@ -1246,8 +1306,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:22.719823+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:22.719823+00:00"
     },
     {
       "threatId": "CROSS-009",
@@ -1264,8 +1325,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:22.737494+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:22.737494+00:00"
     },
     {
       "threatId": "CROSS-010",
@@ -1282,8 +1344,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:22.799842+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:22.799842+00:00"
     },
     {
       "threatId": "CROSS-011",
@@ -1300,8 +1363,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:22.815308+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:22.815308+00:00"
     },
     {
       "threatId": "CROSS-012",
@@ -1318,8 +1382,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:22.834003+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:22.834003+00:00"
     },
     {
       "threatId": "CROSS-013",
@@ -1336,8 +1401,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:22.866877+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:22.866877+00:00"
     },
     {
       "threatId": "RAIL-003",
@@ -1354,8 +1420,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:23.332055+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:23.332055+00:00"
     },
     {
       "threatId": "RAIL-004",
@@ -1372,8 +1439,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:30.716096+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:30.716096+00:00"
     },
     {
       "threatId": "WATER-005",
@@ -1390,8 +1458,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:39.889039+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:39.889039+00:00"
     },
     {
       "threatId": "WATER-003",
@@ -1408,8 +1477,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:39.846525+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:39.846525+00:00"
     },
     {
       "threatId": "WATER-004",
@@ -1426,8 +1496,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:23.763694+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:23.763694+00:00"
     },
     {
       "threatId": "CI-001",
@@ -1444,8 +1515,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:23.788015+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:23.788015+00:00"
     },
     {
       "threatId": "CI-003",
@@ -1462,8 +1534,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:24.394291+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:24.394291+00:00"
     },
     {
       "threatId": "CROSS-014",
@@ -1498,8 +1571,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:28.090473+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:28.090473+00:00"
     },
     {
       "threatId": "CROSS-016",
@@ -1516,8 +1590,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:30.543058+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:30.543058+00:00"
     },
     {
       "threatId": "CROSS-017",
@@ -1534,8 +1609,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:35.129886+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:35.129886+00:00"
     },
     {
       "threatId": "CROSS-018",
@@ -1552,8 +1628,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:36.813272+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:36.813272+00:00"
     },
     {
       "threatId": "HSM-001",
@@ -1570,8 +1647,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:16.489539+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:16.489539+00:00"
     },
     {
       "threatId": "IOT-005",
@@ -1588,8 +1666,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:40.298213+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:40.298213+00:00"
     },
     {
       "threatId": "AUS-TEL-001",
@@ -1606,8 +1685,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:40.745825+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:40.745825+00:00"
     },
     {
       "threatId": "IT-006",
@@ -1624,8 +1704,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:40.761368+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:40.761368+00:00"
     },
     {
       "threatId": "HSM-002",
@@ -1642,8 +1723,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:18.833016+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:18.833016+00:00"
     },
     {
       "threatId": "WATE-001",
@@ -1660,8 +1742,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:41.043522+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:41.043522+00:00"
     },
     {
       "threatId": "FINA-001",
@@ -1678,8 +1761,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:42.471849+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:42.471849+00:00"
     },
     {
       "threatId": "CROS-001",
@@ -1696,8 +1780,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:43.561228+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:43.561228+00:00"
     },
     {
       "threatId": "CROS-002",
@@ -1714,8 +1799,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:43.888565+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:43.888565+00:00"
     },
     {
       "threatId": "FINA-002",
@@ -1732,8 +1818,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:44.547321+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:44.547321+00:00"
     },
     {
       "threatId": "CROS-003",
@@ -1751,8 +1838,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:47.190107+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:12:40.222825+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:47.190107+00:00"
     },
     {
       "threatId": "INTE-001",
@@ -1769,8 +1857,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:47.419840+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:47.419840+00:00"
     },
     {
       "threatId": "CROS-004",
@@ -1787,8 +1876,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:59:26.957013+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:59:26.957013+00:00"
     },
     {
       "threatId": "CROS-005",
@@ -1805,8 +1895,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:49.487705+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:49.487705+00:00"
     },
     {
       "threatId": "ENER-001",
@@ -1823,8 +1914,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:50.364515+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:50.364515+00:00"
     },
     {
       "threatId": "HEAL-001",
@@ -1859,8 +1951,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:24.315952+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:24.315952+00:00"
     },
     {
       "threatId": "FINA-003",
@@ -1877,8 +1970,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:50.848099+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:50.848099+00:00"
     },
     {
       "threatId": "CRIT-001",
@@ -1895,8 +1989,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:50.877194+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:50.877194+00:00"
     },
     {
       "threatId": "FINA-004",
@@ -1913,8 +2008,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:50.901151+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:50.901151+00:00"
     },
     {
       "threatId": "FINA-005",
@@ -1931,8 +2027,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:51.678140+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:51.678140+00:00"
     },
     {
       "threatId": "CROS-006",
@@ -1949,8 +2046,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:52.152505+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:52.152505+00:00"
     },
     {
       "threatId": "FINA-006",
@@ -1985,8 +2083,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:53.278611+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:53.278611+00:00"
     },
     {
       "threatId": "FINA-007",
@@ -2004,8 +2103,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:55.939739+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:12:41.132793+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:55.939739+00:00"
     },
     {
       "threatId": "CRIT-002",
@@ -2022,8 +2122,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:55.964018+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:55.964018+00:00"
     },
     {
       "threatId": "CRIT-003",
@@ -2040,8 +2141,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.025925+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.025925+00:00"
     },
     {
       "threatId": "INSU-001",
@@ -2058,8 +2160,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.053808+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.053808+00:00"
     },
     {
       "threatId": "CROS-007",
@@ -2076,8 +2179,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.121409+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.121409+00:00"
     },
     {
       "threatId": "CROS-008",
@@ -2094,8 +2198,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.347365+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.347365+00:00"
     },
     {
       "threatId": "CROS-009",
@@ -2112,8 +2217,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.364400+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T21:16:59.373797+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.364400+00:00"
     },
     {
       "threatId": "FINA-008",
@@ -2130,8 +2236,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.389338+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T21:17:25.574156+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.389338+00:00"
     },
     {
       "threatId": "FINA-009",
@@ -2148,8 +2255,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.413767+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T21:17:40.240546+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.413767+00:00"
     },
     {
       "threatId": "FINA-010",
@@ -2184,8 +2292,9 @@
       "artefact": "LANDING",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.452843+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T21:18:12.905808+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.452843+00:00"
     },
     {
       "threatId": "CROS-010",
@@ -2202,8 +2311,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:13:56.476366+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T21:18:29.429359+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:13:56.476366+00:00"
     },
     {
       "threatId": "GOV-003",
@@ -2225,8 +2335,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:08.068596+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-16T03:54:02.989509+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T12:58:08.068596+00:00"
     }
   ],
   "archivedEntries": [],

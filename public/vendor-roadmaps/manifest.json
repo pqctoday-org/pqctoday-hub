@@ -21,8 +21,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:15.993241+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:15.993241+00:00"
     },
     {
       "vendorId": "VND-017",
@@ -39,8 +40,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.063184+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.063184+00:00"
     },
     {
       "vendorId": "VND-018",
@@ -57,8 +59,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.101391+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.101391+00:00"
     },
     {
       "vendorId": "VND-019",
@@ -93,8 +96,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.341422+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.341422+00:00"
     },
     {
       "vendorId": "VND-024",
@@ -111,8 +115,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.370574+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.370574+00:00"
     },
     {
       "vendorId": "VND-027",
@@ -129,8 +134,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.402785+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.402785+00:00"
     },
     {
       "vendorId": "VND-028",
@@ -147,8 +153,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.424534+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.424534+00:00"
     },
     {
       "vendorId": "VND-029",
@@ -165,8 +172,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.451976+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.451976+00:00"
     },
     {
       "vendorId": "VND-032",
@@ -183,8 +191,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.491459+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.491459+00:00"
     },
     {
       "vendorId": "VND-041",
@@ -201,8 +210,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.540413+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.540413+00:00"
     },
     {
       "vendorId": "VND-045",
@@ -219,8 +229,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.555113+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.555113+00:00"
     },
     {
       "vendorId": "VND-057",
@@ -238,8 +249,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.627403+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.627403+00:00"
     },
     {
       "vendorId": "VND-058",
@@ -256,8 +268,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.662748+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.662748+00:00"
     },
     {
       "vendorId": "VND-146",
@@ -274,8 +287,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.756710+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.756710+00:00"
     },
     {
       "vendorId": "VND-168",
@@ -293,8 +307,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:17.221694+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:12:57.459653+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:17.221694+00:00"
     },
     {
       "vendorId": "VND-171",
@@ -311,8 +326,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:17.264032+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:17.264032+00:00"
     },
     {
       "vendorId": "VND-178",
@@ -330,8 +346,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:17.282651+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-16T03:33:13.179645+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:17.282651+00:00"
     },
     {
       "vendorId": "VND-225",
@@ -348,8 +365,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:17.319123+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:17.319123+00:00"
     },
     {
       "vendorId": "VND-304",
@@ -366,8 +384,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:17.351512+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:17.351512+00:00"
     },
     {
       "vendorId": "VND-089",
@@ -384,8 +403,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:17.377128+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:17.377128+00:00"
     },
     {
       "vendorId": "VND-054",
@@ -402,8 +422,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:17.399689+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:17.399689+00:00"
     },
     {
       "vendorId": "VND-064",
@@ -443,8 +464,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:17.440284+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:12:58.064926+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:17.440284+00:00"
     },
     {
       "vendorId": "VND-015",
@@ -461,8 +483,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:17.468750+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:17.468750+00:00"
     },
     {
       "vendorId": "VND-157",
@@ -479,8 +502,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:17.503320+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:17.503320+00:00"
     },
     {
       "vendorId": "VND-152",
@@ -498,8 +522,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:18.764096+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:12:58.386014+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:18.764096+00:00"
     },
     {
       "vendorId": "VND-155",
@@ -516,8 +541,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:18.821167+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:18.821167+00:00"
     },
     {
       "vendorId": "VND-190",
@@ -534,8 +560,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:18.859979+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:18.859979+00:00"
     },
     {
       "vendorId": "VND-011",
@@ -552,8 +579,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:18.883688+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:18.883688+00:00"
     },
     {
       "vendorId": "VND-039",
@@ -571,8 +599,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:19.007544+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:12:59.114247+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:19.007544+00:00"
     },
     {
       "vendorId": "VND-233",
@@ -589,8 +618,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:19.034321+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:19.034321+00:00"
     },
     {
       "vendorId": "VND-235",
@@ -608,8 +638,9 @@
       "artefact": "FORMAT-MISMATCH",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-18T03:46:32.271659+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:13:00.242965+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-18T03:46:32.271659+00:00"
     },
     {
       "vendorId": "VND-239",
@@ -626,8 +657,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:19.079573+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:19.079573+00:00"
     },
     {
       "vendorId": "VND-251",
@@ -662,8 +694,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:21.450618+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:21.450618+00:00"
     },
     {
       "vendorId": "VND-169",
@@ -680,8 +713,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:21.490222+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:21.490222+00:00"
     },
     {
       "vendorId": "VND-291",
@@ -717,8 +751,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:21.680310+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:13:01.732978+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:21.680310+00:00"
     },
     {
       "vendorId": "VND-140",
@@ -735,8 +770,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:21.713676+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:21.713676+00:00"
     },
     {
       "vendorId": "VND-269",
@@ -753,8 +789,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:21.751165+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:21.751165+00:00"
     },
     {
       "vendorId": "VND-341",
@@ -771,8 +808,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:22.958776+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:22.958776+00:00"
     },
     {
       "vendorId": "VND-118",
@@ -789,8 +827,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:22.993611+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:22.993611+00:00"
     },
     {
       "vendorId": "VND-390",
@@ -807,8 +846,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.092858+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.092858+00:00"
     },
     {
       "vendorId": "VND-319",
@@ -825,8 +865,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.119359+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.119359+00:00"
     },
     {
       "vendorId": "VND-034",
@@ -843,8 +884,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.154759+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.154759+00:00"
     },
     {
       "vendorId": "VND-038",
@@ -861,8 +903,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.187983+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.187983+00:00"
     },
     {
       "vendorId": "VND-040",
@@ -879,8 +922,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.218824+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.218824+00:00"
     },
     {
       "vendorId": "VND-273",
@@ -897,8 +941,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.239896+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.239896+00:00"
     },
     {
       "vendorId": "VND-409",
@@ -915,8 +960,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.275930+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.275930+00:00"
     },
     {
       "vendorId": "VND-048",
@@ -933,8 +979,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.289749+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.289749+00:00"
     },
     {
       "vendorId": "VND-159",
@@ -951,8 +998,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.315085+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.315085+00:00"
     },
     {
       "vendorId": "VND-180",
@@ -969,8 +1017,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.624555+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.624555+00:00"
     },
     {
       "vendorId": "VND-229",
@@ -988,8 +1037,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.662167+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:13:02.568347+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.662167+00:00"
     },
     {
       "vendorId": "VND-247",
@@ -1024,8 +1074,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.710259+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.710259+00:00"
     },
     {
       "vendorId": "VND-254",
@@ -1042,8 +1093,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.730566+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.730566+00:00"
     },
     {
       "vendorId": "VND-256",
@@ -1060,8 +1112,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.751647+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.751647+00:00"
     },
     {
       "vendorId": "VND-262",
@@ -1078,8 +1131,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.770203+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.770203+00:00"
     },
     {
       "vendorId": "VND-286",
@@ -1096,8 +1150,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.821040+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.821040+00:00"
     },
     {
       "vendorId": "VND-288",
@@ -1114,8 +1169,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.867969+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.867969+00:00"
     },
     {
       "vendorId": "VND-306",
@@ -1132,8 +1188,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.888283+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.888283+00:00"
     },
     {
       "vendorId": "VND-153",
@@ -1168,8 +1225,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.945771+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.945771+00:00"
     },
     {
       "vendorId": "VND-092",
@@ -1186,8 +1244,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.975854+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.975854+00:00"
     },
     {
       "vendorId": "VND-527",
@@ -1204,8 +1263,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:24.365906+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:24.365906+00:00"
     },
     {
       "vendorId": "VND-523",
@@ -1222,8 +1282,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:24.389763+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:24.389763+00:00"
     },
     {
       "vendorId": "VND-522",
@@ -1240,8 +1301,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:24.409094+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:24.409094+00:00"
     },
     {
       "vendorId": "VND-052",
@@ -1259,8 +1321,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:24.622159+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:13:03.050710+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:24.622159+00:00"
     },
     {
       "vendorId": "VND-456",
@@ -1277,8 +1340,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:24.649437+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:24.649437+00:00"
     },
     {
       "vendorId": "VND-524",
@@ -1296,8 +1360,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.207857+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:13:28.538890+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.207857+00:00"
     },
     {
       "vendorId": "VND-525",
@@ -1314,8 +1379,9 @@
       "artefact": "FORMAT-MISMATCH",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-18T03:46:32.938528+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-18T03:46:32.938528+00:00"
     },
     {
       "vendorId": "VND-526",
@@ -1332,8 +1398,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.240090+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.240090+00:00"
     },
     {
       "vendorId": "VND-528",
@@ -1350,8 +1417,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.266934+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.266934+00:00"
     },
     {
       "vendorId": "VND-255",
@@ -1368,8 +1436,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.319356+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.319356+00:00"
     },
     {
       "vendorId": "VND-049",
@@ -1386,8 +1455,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.336729+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.336729+00:00"
     },
     {
       "vendorId": "VND-056",
@@ -1404,8 +1474,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.356470+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.356470+00:00"
     },
     {
       "vendorId": "VND-154",
@@ -1422,8 +1493,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.406235+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.406235+00:00"
     },
     {
       "vendorId": "VND-249",
@@ -1440,8 +1512,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.433485+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.433485+00:00"
     },
     {
       "vendorId": "VND-236",
@@ -1459,8 +1532,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.590249+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-12T11:13:34.323270+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.590249+00:00"
     },
     {
       "vendorId": "VND-311",
@@ -1477,8 +1551,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.610228+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.610228+00:00"
     },
     {
       "vendorId": "VND-315",
@@ -1495,8 +1570,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:29.629442+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.629442+00:00"
     },
     {
       "vendorId": "VND-277",
@@ -1513,8 +1589,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:15:29.657496+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.657496+00:00"
     },
     {
       "vendorId": "VND-283",
@@ -1531,8 +1608,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:15:29.688905+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.688905+00:00"
     },
     {
       "vendorId": "VND-284",
@@ -1549,8 +1627,9 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "converted",
-      "admittedAt": "2026-09-17T13:15:29.742296+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-11",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:29.742296+00:00"
     },
     {
       "vendorId": "VND-553",
@@ -1587,8 +1666,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:16.123690+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-15T03:08:21.578906+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:16.123690+00:00"
     },
     {
       "vendorId": "VND-064",
@@ -1607,8 +1687,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:17.415735+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-15T03:08:18.150272+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:17.415735+00:00"
     },
     {
       "vendorId": "VND-291",
@@ -1627,8 +1708,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:21.512324+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-15T03:08:19.143081+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:21.512324+00:00"
     },
     {
       "vendorId": "VND-247",
@@ -1647,8 +1729,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.683767+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-15T03:08:19.837023+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.683767+00:00"
     },
     {
       "vendorId": "VND-153",
@@ -1667,8 +1750,9 @@
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "current",
-      "admittedAt": "2026-09-17T13:15:23.912552+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedAt": "2026-09-15T03:08:20.056349+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "stampedAt": "2026-09-17T13:15:23.912552+00:00"
     },
     {
       "vendorId": "VND-057",
@@ -1684,6 +1768,38 @@
       "admittedBy": "admit.py",
       "identity": "MATCH",
       "file": "vendor-roadmaps/VND-057_Cloudflare_Inc_post-quantum-dnssec-1111.html",
+      "status": "downloaded"
+    },
+    {
+      "vendorId": "VND-235",
+      "refId": "VND-235",
+      "filename": "VND-235.html",
+      "sizeBytes": 56407,
+      "contentType": "text/html",
+      "url": "https://www.samsungsds.com/en/research-blog/samsung-sds-security-team-quantum-resistant-cryptography.html",
+      "sha256": "a84c76110acef1264c0acce5f8ae0a309d4b2053da88061ae308fbd6101e2d5d",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T05:20:35.297624+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "file": "vendor/VND-235.html",
+      "status": "downloaded"
+    },
+    {
+      "vendorId": "VND-525",
+      "refId": "VND-525",
+      "filename": "VND-525.html",
+      "sizeBytes": 3581445,
+      "contentType": "text/html",
+      "url": "https://docs.onespan.com/sec/docs/a3s-release-notes-4-0-1",
+      "sha256": "144d0d2ed9ffb26b4ced6369da9f61dde1671e4ea38710e4103ee6d0c1d7ba57",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-18T05:20:35.511821+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "file": "vendor/VND-525.html",
       "status": "downloaded"
     }
   ],
