@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { StrictMode, Suspense, lazy } from 'react'
+import { StrictMode, Suspense } from 'react'
 import { MotionConfig } from 'framer-motion'
 import { Toaster } from 'react-hot-toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -7,9 +7,12 @@ import { GoogleAuthProvider } from './contexts/GoogleAuthContext'
 import { useSyncEffect } from './hooks/useSyncEffect'
 import { EmbedProvider } from './embed/EmbedProvider'
 import { getEmbedState } from './embed/embedContext'
+import { lazyWithRetry } from './utils/lazyWithRetry'
 
-// Lazy load App to catch evaluation errors
-const App = lazy(() => import('./App.tsx'))
+// Lazy load App to catch evaluation errors. Same retry-then-reload wrapper as
+// every route: this was the one dynamic import a stale post-deploy index.html
+// could fail on with no recovery path.
+const App = lazyWithRetry(() => import('./App.tsx'))
 
 function SyncMount() {
   useSyncEffect()
