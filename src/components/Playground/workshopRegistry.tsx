@@ -201,7 +201,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hsm-capacity',
     pt_id: 'PT-026',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'HSM Capacity Calculator',
     description:
       'Size your HSM fleet for the top 10 enterprise use cases. Compare classical vs next-gen PQC HSM, tune per-algorithm TPS, and see whether your fleet is sufficient.',
@@ -348,7 +348,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'slh-dsa',
     pt_id: 'PT-001',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'SLH-DSA Sign & Verify',
     description: 'All 12 FIPS 205 parameter sets with pre-hash support',
     category: 'HSM / PKCS#11',
@@ -367,7 +367,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'lms-hss',
     pt_id: 'PT-002',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Stateful Hash Signatures',
     description: 'LMS and XMSS stateful signature trees using SoftHSMv3',
     category: 'HSM / PKCS#11',
@@ -385,7 +385,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hybrid-sigs',
     pt_id: 'PT-027',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Hybrid Signature Spectrums',
     description:
       'Live concatenation, nesting, and Silithium (fused Fiat-Shamir) — from no non-separability to SNS',
@@ -451,7 +451,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tee-channel',
     pt_id: 'PT-006',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'TEE-HSM Secure Channel',
     description: 'Build a TEE-to-HSM trusted channel with ML-DSA + ML-KEM + AES wrap',
     category: 'HSM / PKCS#11',
@@ -469,7 +469,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tls-simulator',
     pt_id: 'PT-024',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'TLS 1.3 Simulator',
     description:
       'Client–server TLS 1.3 handshake simulator: configure cipher suites, key exchange groups, mTLS, PQC and hybrid certificates',
@@ -580,7 +580,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'suci-flow',
     pt_id: 'PT-018',
-    version: '1.0.2',
+    version: '1.0.3',
     name: '5G SUCI Construction',
     // Profiles A/B are the ratified 3GPP TS 33.501 §C.3.3 constructions; Profile C
     // is the post-quantum profile the tool also implements (ML-KEM, hybrid with
@@ -650,7 +650,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tpm-playground',
     pt_id: 'PT-028',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'TPM 2.0 PQC Playground',
     description:
       'Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.',
@@ -672,7 +672,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'rng-demo',
     pt_id: 'PT-010',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Random Generation',
     description: 'Web Crypto + OpenSSL DRBG random generation with statistical analysis',
     category: 'Entropy & Random',
@@ -687,7 +687,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'qrng-demo',
     pt_id: 'PT-012',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'QRNG Demo',
     description:
       'Simulates quantum random number generation patterns using CSPRNG statistical analysis. Note: runs in-browser via Web Crypto — not a physical QRNG device.',
@@ -741,7 +741,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'drbg-demo',
     pt_id: 'PT-014',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'SP 800-90A DRBG',
     description:
       'Interactive visualization of HMAC_DRBG internal state (Instantiate, Generate, Reseed) complying with NIST SP 800-90A.',
@@ -830,7 +830,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'cert-capacity',
     pt_id: 'PT-025',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Cert Capacity Calculator',
     description:
       'Model storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA — adjust cert counts and renewal cadence.',
@@ -976,7 +976,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'solana-flow',
     pt_id: 'PT-021',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Solana Transaction',
     description: 'Ed25519 keypair generation and transaction signing',
     category: 'Blockchain & Digital Assets',
@@ -1037,7 +1037,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'API Security & JWT Workshop',
     description:
       // The JWE half is pinned to draft-ietf-jose-pqc-kem-05 ON PURPOSE. That
