@@ -56,9 +56,12 @@ import { PROTOCOL_MATRIX } from '../../data/pqcProtocolMatrix'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from './landscapeIcons'
 import { Button } from '../ui/button'
 import { libraryHref } from './libraryRef'
+import { learnHref } from './learnHref'
+import { MANIFEST_BY_ID } from '../PKILearning/manifest/registry'
 import { softwareData } from '../../data/migrateData'
 import {
   learnModulesForIndustry,
+  defaultLearnModuleForIndustry,
   librarySectorHref,
   regulatoryFor,
   standardsForIndustry,
@@ -522,13 +525,21 @@ function UseCaseCard({
   standards,
   onPickMechanism,
   showIndustry,
+  industryDefaultModuleId,
 }: {
   uc: IndustryUseCase
   standards: IndustryStandard[]
   onPickMechanism: (f: string) => void
   showIndustry?: boolean
+  /** The industry's most common module; a row naming a different one gets
+   *  its own Learn chip (per-row mapping, 2026-09-17). */
+  industryDefaultModuleId?: string
 }) {
   const Icon = USE_CASE_ICONS[uc.useCaseIcon] ?? Lock
+  const rowModule =
+    uc.learnModuleId && uc.learnModuleId !== industryDefaultModuleId
+      ? MANIFEST_BY_ID[uc.learnModuleId]
+      : undefined
   const tools = toolsForUseCase(uc)
   const workshopTools = tools.filter((t) => !t.sandbox)
   const sandboxTools = tools.filter((t) => t.sandbox)
@@ -640,6 +651,20 @@ function UseCaseCard({
           {sandboxTools.map((t) => (
             <ToolChip key={t.id} tool={t} />
           ))}
+        </div>
+      )}
+
+      {rowModule && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5" data-testid="row-learn-module">
+          <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Learn</span>
+          <Link
+            to={learnHref(rowModule.id, uc.industry)}
+            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/60 px-2 py-0.5 text-xs font-medium text-foreground hover:border-primary/50"
+            title={`${rowModule.title} — ${rowModule.track} track`}
+          >
+            <GraduationCapIcon className="h-3 w-3" aria-hidden />
+            {rowModule.title}
+          </Link>
         </div>
       )}
 
@@ -1191,6 +1216,7 @@ export function IndustryLandscapeView() {
                           uc={uc}
                           standards={standards}
                           onPickMechanism={pickMechanism}
+                          industryDefaultModuleId={defaultLearnModuleForIndustry(ind, useCases)}
                         />
                       ))}
                     </div>
@@ -1295,6 +1321,10 @@ export function IndustryLandscapeView() {
                       uc={uc}
                       standards={standards}
                       onPickMechanism={pickMechanism}
+                      industryDefaultModuleId={defaultLearnModuleForIndustry(
+                        selectedIndustry,
+                        useCases
+                      )}
                     />
                   ))}
                 </div>

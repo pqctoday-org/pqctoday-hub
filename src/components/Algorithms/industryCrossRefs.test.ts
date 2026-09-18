@@ -68,7 +68,7 @@ describe('sectorCodesFor', () => {
 })
 
 describe('learnModulesForIndustry', () => {
-  it('resolves a module for the 19 industries that declare one', () => {
+  it('resolves a module for the 20 industries that declare one', () => {
     // 2026-08-19: was 20 — Supply Chain / Logistics's learn_module_id was
     // cleared (vendor-risk covers vendor/software supply-chain risk, not the
     // physical maritime/customs/EBL use cases this industry actually lists;
@@ -85,16 +85,39 @@ describe('learnModulesForIndustry', () => {
     // the industry's other (module-less) rows — the driftguard requires
     // every row sharing an industry to agree on one module id, and
     // 'Cross-Industry' as a whole has no single dedicated module.
+    // 2026-09-17: 19 → 20 — the sibling rule that forced the 09-01 clearing
+    // is gone; learn_module_id is per row now, so Cross-Industry's rows each
+    // carry their own Protocols-track module (tls-basics, pki-workshop, …).
     const withModule = getLandscapeIndustries().filter(
       (i) => learnModulesForIndustry(i, useCases).length > 0
     )
-    expect(withModule).toHaveLength(19)
+    expect(withModule).toHaveLength(20)
   })
 
-  it('returns nothing for the three industries with no module', () => {
-    expect(learnModulesForIndustry('Cross-Industry', useCases)).toEqual([])
+  it('returns nothing for the two industries with no module', () => {
     expect(learnModulesForIndustry('Media / Entertainment / DRM', useCases)).toEqual([])
     expect(learnModulesForIndustry('Supply Chain / Logistics', useCases)).toEqual([])
+  })
+
+  it('lists every distinct per-row module for a mixed industry, default first', () => {
+    const cross = learnModulesForIndustry('Cross-Industry', useCases).map((m) => m.manifest.id)
+    expect(new Set(cross).size).toBe(cross.length)
+    for (const m of [
+      'tls-basics',
+      'pki-workshop',
+      'email-signing',
+      'code-signing',
+      'vpn-ssh-pqc',
+      'dnssec-pqc',
+    ]) {
+      expect(cross).toContain(m)
+    }
+    // IT keeps crypto-dev-apis as its default (most rows) and lists it first.
+    const it_ = learnModulesForIndustry('IT Industry / Software', useCases).map(
+      (m) => m.manifest.id
+    )
+    expect(it_[0]).toBe('crypto-dev-apis')
+    expect(it_).toContain('vpn-ssh-pqc')
   })
 
   it('de-duplicates the industry-level module across its use-case rows', () => {

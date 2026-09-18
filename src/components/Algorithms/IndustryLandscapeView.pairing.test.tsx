@@ -123,3 +123,33 @@ describe('mechanism lens — replacement chips', () => {
     expect(screen.getAllByText('RSA-sig').length).toBeGreaterThan(0)
   })
 })
+
+describe('landscape tile — per-row Learn module', () => {
+  it('a row whose module differs from the industry default shows its own Learn chip; the default rows do not', () => {
+    renderAt('&industry=IT%20Industry%20%2F%20Software')
+    // eslint-disable-next-line testing-library/no-node-access
+    const ssh = document.querySelector('[data-use-case="it-ssh"]') as HTMLElement
+    expect(within(ssh).getByTestId('row-learn-module')).toHaveTextContent(/VPN|SSH/i)
+    // eslint-disable-next-line testing-library/no-node-access
+    const libs = document.querySelector('[data-use-case="it-libraries"]') as HTMLElement
+    expect(within(libs).queryByTestId('row-learn-module')).toBeNull()
+  })
+
+  it('the industry rollup lists every module its rows name, default first', () => {
+    renderAt('&industry=Cross-Industry')
+    const links = screen.getAllByRole('link').map((a) => a.getAttribute('href') ?? '')
+    for (const m of [
+      'tls-basics',
+      'pki-workshop',
+      'email-signing',
+      'code-signing',
+      'vpn-ssh-pqc',
+      'dnssec-pqc',
+    ]) {
+      expect(
+        links.some((h) => h.startsWith(`/learn/${m}`)),
+        `rollup lacks ${m}`
+      ).toBe(true)
+    }
+  })
+})
