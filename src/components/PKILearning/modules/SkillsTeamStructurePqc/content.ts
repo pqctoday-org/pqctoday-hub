@@ -17,7 +17,7 @@ export const content: ModuleContent = {
   moduleId: 'skills-team-structure',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-02',
+  lastEdited: '2026-09-18',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. A staffing module: what the programme must deliver and by when drives it, so the
@@ -30,7 +30,7 @@ export const content: ModuleContent = {
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
-    getStandard('FIPS 206'),
+    getStandard('Falcon-Spec-v12'),
     // DECLARED 2026-08-22. This is a WORKFORCE module and every other document
     // here is an algorithm or transition standard — none of them say anything
     // about roles, skills or team sizing, which is why the accuracy check graded
@@ -84,6 +84,6 @@ export const content: ModuleContent = {
     cryptoChampions:
       'The Crypto Champion Program designates one champion per platform or application team (web, mobile, data, infrastructure, OT, identity). Champions attend PQC foundations training, join quarterly crypto-agility briefings, serve as liaison between the PQC program and their platform team, sign off on crypto readiness in design reviews for new systems, and shepherd PQC library upgrades within their domain. The model scales the program reach without requiring every developer to become a cryptography specialist; champions become a standing network after migration, analogous to security champion programs.',
     relatedStandards:
-      "NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, in development — this hub's citation is deprecated pending NIST's final publication). NSA CNSA 2.0 (algorithm suite and timelines for national security systems). CycloneDX (CBOM format the team operates and maintains — this hub's OWASP CycloneDX CBOM Guide citation is deprecated pending re-capture of the source page, not because the guide changed).",
+      "NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, in development — this hub cites the Falcon v1.2 specification it standardises pending NIST's final publication). NSA CNSA 2.0 (algorithm suite and timelines for national security systems). CycloneDX (CBOM format the team operates and maintains — this hub's OWASP CycloneDX CBOM Guide citation is deprecated pending re-capture of the source page, not because the guide changed).",
   },
 }

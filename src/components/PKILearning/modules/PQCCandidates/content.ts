@@ -9,7 +9,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-candidates',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-08-31',
+  lastEdited: '2026-09-18',
 
   standards: [
     // ORDERED FOR THE SAMPLER, and this module is the clearest case for why.
@@ -41,7 +41,7 @@ export const content: ModuleContent = {
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
-    getStandard('FIPS 206'),
+    getStandard('Falcon-Spec-v12'),
     // DECLARED 2026-08-23: this module names "IR 8528" to a reader and cited
     // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
@@ -86,7 +86,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      "PQC standardisation is a continuous, multi-track process — not a single 2024 event. NIST has finalised one KEM (ML-KEM / FIPS 203) and two signatures (ML-DSA / FIPS 204, SLH-DSA / FIPS 205), with a third signature (FN-DSA / FIPS 206) still in development — no public draft has been released yet, so this hub's citation for it stays deprecated until NIST publishes the final text. HQC was selected as the alternate KEM in March 2025, and a signature on-ramp is mid-flight — NIST IR 8610 (May 2026) closed Round 2 and advanced nine third-round candidates across four mathematical families. Parallel national processes in Korea (KpqC), China (CACR / OSCCA), and Japan (CRYPTREC) plus international tracks at ISO/IEC, IETF, and ETSI shape what actually ships in different jurisdictions.",
+      'PQC standardisation is a continuous, multi-track process — not a single 2024 event. NIST has finalised one KEM (ML-KEM / FIPS 203) and two signatures (ML-DSA / FIPS 204, SLH-DSA / FIPS 205), with a third signature (FN-DSA / FIPS 206) still in development — no public draft has been released yet, so this hub cites the Falcon v1.2 specification it standardises until NIST publishes the final text. HQC was selected as the alternate KEM in March 2025, and a signature on-ramp is mid-flight — NIST IR 8610 (May 2026) closed Round 2 and advanced nine third-round candidates across four mathematical families. Parallel national processes in Korea (KpqC), China (CACR / OSCCA), and Japan (CRYPTREC) plus international tracks at ISO/IEC, IETF, and ETSI shape what actually ships in different jurisdictions.',
     keyConcepts:
       'Four mathematical families on the table: MPC-in-the-Head (FAEST, MQOM, SDitH) — symmetric-primitive trust, large signatures, small keys. Multivariate (UOV, MAYO, QR-UOV, SNOVA) — tiny signatures, big keys, recovering from the 2025 wedge attack. Isogeny (SQIsign) — smallest combined size of any PQC candidate but young assumptions and slow signing. Lattice (HAWK) — integer-only sampling alternative to FN-DSA.',
     validationProcess:
