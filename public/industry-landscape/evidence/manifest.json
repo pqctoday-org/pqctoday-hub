@@ -878,9 +878,10 @@
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
       "unified": "current",
-      "admittedAt": "2026-09-17T12:58:21.047747+00:00",
+      "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "note": "Row split from it-libraries on 2026-09-17 (landscape audit D3): same cited document, same bytes — the admission verdicts are the parent record's, which the door stamped on this file; nothing was re-fetched."
+      "note": "Row split from it-libraries on 2026-09-17 (landscape audit D3): same cited document, same bytes — the admission verdicts are the parent record's, which the door stamped on this file; nothing was re-fetched.",
+      "stampedAt": "2026-09-17T12:58:21.047747+00:00"
     },
     {
       "refId": "it-webpki",
