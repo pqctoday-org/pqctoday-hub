@@ -4,8 +4,10 @@ import { ArrowRight, RotateCcw, CheckCircle2, GitBranch } from 'lucide-react'
 import {
   DECISION_QUESTIONS,
   MIGRATION_PATHS,
+  WIZARD_RECOMMENDATIONS,
   INTEROP_PATTERNS,
   type MigrationPath,
+  type WizardRecommendation,
 } from '../data/migrationData'
 import { Button } from '@/components/ui/button'
 
@@ -44,9 +46,16 @@ export const MigrationDecisionLab: React.FC = () => {
     setSelectedPath(null)
   }
 
-  const recommendedPath = recommendationId
-    ? MIGRATION_PATHS.find((p) => p.id === recommendationId)
+  // A wizard outcome is either a full migration path (with before/after code)
+  // or an inline recommendation (steps only). Before WIZARD_RECOMMENDATIONS,
+  // 11 of 17 outcomes matched nothing and the wizard stalled on its last question.
+  const recommendedPath: MigrationPath | WizardRecommendation | null = recommendationId
+    ? (MIGRATION_PATHS.find((p) => p.id === recommendationId) ??
+      WIZARD_RECOMMENDATIONS.find((r) => r.id === recommendationId) ??
+      null)
     : null
+  const recommendedFullPath: MigrationPath | null =
+    recommendedPath && 'beforeCode' in recommendedPath ? (recommendedPath as MigrationPath) : null
 
   return (
     <div className="space-y-6">
@@ -111,16 +120,27 @@ export const MigrationDecisionLab: React.FC = () => {
                   {recommendedPath.effort} effort
                 </span>
               </div>
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setSelectedPath(recommendedPath)
-                  setActiveTab('paths')
-                }}
-                className="mt-3 text-sm text-primary hover:text-primary/80 flex items-center gap-1"
-              >
-                View full migration path <ArrowRight size={14} />
-              </Button>
+              {recommendedFullPath ? (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setSelectedPath(recommendedFullPath)
+                    setActiveTab('paths')
+                  }}
+                  className="mt-3 text-sm text-primary hover:text-primary/80 flex items-center gap-1"
+                >
+                  View full migration path <ArrowRight size={14} />
+                </Button>
+              ) : (
+                <ol
+                  className="mt-3 list-decimal space-y-1 pl-5 text-sm text-foreground"
+                  aria-label="Recommended steps"
+                >
+                  {recommendedPath.steps.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ol>
+              )}
               <Button
                 variant="ghost"
                 onClick={handleReset}

@@ -29,6 +29,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.105.0] - 2026-09-19
+
+Every Learn workshop step that takes input now ends with a question you can answer from that step, and the Crypto Dev APIs decision wizard no longer runs out of answers.
+
+### Added
+
+- **A question under every workshop step that takes input** [view:/learn] [persona:developer] [persona:architect] [persona:ops] [persona:executive] [persona:grc]: 37 more steps across 18 modules (Crypto Agility, Web Gateway, HSM, Secrets Management, Network Security, Crypto Dev APIs, PQC Testing, Verification Closure, Vendor Risk, the four role impact modules, PQC Business Case, PQC Governance, Compliance Strategy, Migration Program, Skills & Team Structure), each answerable from the step's own inputs, tables or formula, with a reason that names the concept — 50 steps in all now.
+
+### Fixed
+
+- **The Crypto Dev APIs decision wizard answers every branch** [view:/learn/crypto-dev-apis] [persona:developer]: 11 of its 17 outcomes (JCProv, Botan, wolfSSL, ring, aws-lc-rs, circl, liboqs-go, Bouncy Castle C#, the Python libraries, HSM and software FIPS) pointed at recommendations that did not exist, so the wizard stopped on its last question with nothing shown; each now renders a recommendation with effort and steps.
+
 ## [4.104.0] - 2026-09-19
 
 Every top-level page was walked end to end on a laptop and a phone; the handful of things the walk found are put right.
