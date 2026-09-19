@@ -18,7 +18,7 @@ function FAQAccordionItem({ item, recommended }: { item: FAQItem; recommended: b
     <div className="border-b border-border last:border-b-0">
       <Button
         variant="ghost"
-        className={`flex w-full items-start gap-3 py-4 min-h-[44px] text-left transition-colors hover:text-accent ${recommended ? 'bg-primary/5' : ''}`}
+        className={`flex h-auto w-full items-start gap-3 whitespace-normal py-4 min-h-[44px] text-left transition-colors hover:text-accent ${recommended ? 'bg-primary/5' : ''}`}
         onClick={() => {
           if (!open) logFaqExpand(item.question)
           setOpen((o) => !o)
@@ -30,7 +30,7 @@ function FAQAccordionItem({ item, recommended }: { item: FAQItem; recommended: b
         ) : (
           <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
         )}
-        <span className="flex-1 font-medium text-foreground">{item.question}</span>
+        <span className="min-w-0 flex-1 font-medium text-foreground">{item.question}</span>
         {recommended && (
           <span className="flex shrink-0 items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
             <Sparkles size={9} aria-hidden="true" />

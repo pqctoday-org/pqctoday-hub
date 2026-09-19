@@ -29,6 +29,17 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.104.0] - 2026-09-19
+
+Every top-level page was walked end to end on a laptop and a phone; the handful of things the walk found are put right.
+
+### Fixed
+
+- **The Timeline's filter bar no longer runs off the right edge** [view:/timeline] [persona:grc] [persona:executive]: on a laptop-width window the "Deadlines" and "Export" buttons sat past the viewport; the bar wraps now.
+- **FAQ questions wrap on phones** [view:/faq] [persona:curious]: long questions were cut off at the screen edge instead of wrapping onto a second line.
+- **Changelog entries with long technical names wrap on phones** [view:/changelog] [persona:developer]: an unbreakable file path or identifier in an entry title pushed the page wider than the screen.
+- **The Compliance table's PQC filter has a name for assistive technology** [view:/compliance] [persona:grc]: the small funnel button in the PQC column header announced nothing; it reads "Filter by PQC status" now, with its open/closed state.
+
 ## [4.103.0] - 2026-09-19
 
 Every Learn module's workshop was walked end to end on a laptop; a step that crashed for everyone is fixed, and the small things the walk found are put right.

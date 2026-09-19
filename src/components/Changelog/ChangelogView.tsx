@@ -773,7 +773,7 @@ export const ChangelogView = () => {
                                   >
                                     ›
                                   </span>
-                                  <div className="flex-1 min-w-0">
+                                  <div className="flex-1 min-w-0 break-words">
                                     <span className="font-semibold text-sm text-foreground">
                                       {cleanTitle(entry.title)}
                                     </span>

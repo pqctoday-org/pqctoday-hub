@@ -1403,6 +1403,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                     <div className="relative">
                       <Button
                         variant="ghost"
+                        type="button"
+                        aria-expanded={showFilterMenu}
+                        aria-label="Filter by PQC status"
                         onClick={(e) => {
                           e.stopPropagation()
                           setShowFilterMenu(!showFilterMenu)
