@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { Suspense, useEffect } from 'react'
+import { NextStepCard } from '@/components/shared/NextStepCard'
+import { RelatedContentPanel } from '@/components/shared/RelatedContentPanel'
+import { businessToolRelations } from '@/data/toolRelations'
 import { useParams, useNavigate, Navigate } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -147,6 +150,11 @@ export const BusinessToolRoute = () => {
       <div className="glass-panel p-4 border border-border">
         <RecommendedResourcesPanel stepId={primaryStepForZone(tool.cswp39Zone)} />
       </div>
+      {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts):
+          the next tool in this category, or the report for the last one. */}
+      <NextStepCard route={`/business/tools/${tool.id}`} />
+      {/* Round 9, wave 1.1 — related content (category neighbours, same-phase tools, the phase's module). */}
+      <RelatedContentPanel id={tool.id} entries={businessToolRelations(tool.id)} />
     </div>
   )
 }

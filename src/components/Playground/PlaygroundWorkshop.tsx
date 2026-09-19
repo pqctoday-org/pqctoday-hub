@@ -48,6 +48,7 @@ import {
   roleLabel,
   PERSONA_CHIP_LABEL,
   FEATURE_PLAYGROUNDS,
+  featurePlaygroundsFor,
   KMIP_PLAYGROUND_ROUTE,
   SANDBOX_ACCESS_URL,
   type FeatureAccent,
@@ -1495,10 +1496,14 @@ export const PlaygroundWorkshop = () => {
         </div>
 
         <p className="mt-8 mb-3 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
-          Full playgrounds
+          {role
+            ? `Full playgrounds and picks for ${roleLabel(role)}`
+            : 'Full playgrounds and picks'}
         </p>
+        {/* Round 9, wave 1.5 (2026-09-19): the marquee is per persona — the four
+            full playgrounds, then the role's featured tools (cryptoLabMeta). */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {FEATURE_PLAYGROUNDS.map((item) => (
+          {featurePlaygroundsFor(role).map((item) => (
             <FeatureCard key={item.to} item={item} />
           ))}
         </div>

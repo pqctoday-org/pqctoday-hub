@@ -109,3 +109,41 @@ describe('BusinessToolsGrid — URL is the source of truth', () => {
     expect(screen.queryByText(ROI.name)).toBeNull()
   })
 })
+
+/** Tool ids in one grid group, in rendered order (scoped so the start-here strip's links are not counted). */
+const groupIds = (category: string) =>
+  Array.from(screen.getByTestId(`tool-group-${category}`).querySelectorAll('a[href]'))
+    .map((a) => a.getAttribute('href') ?? '')
+    .map((h) => BUSINESS_TOOLS.find((t) => h.endsWith(`/business/tools/${t.id}`))?.id)
+    .filter((id): id is string => Boolean(id))
+
+describe('persona-ranked groups (round 9, wave 1.4)', () => {
+  it('with the executive persona, Risk & Strategy opens on the sequence tools in sequence order', async () => {
+    const { usePersonaStore } = await import('@/store/usePersonaStore')
+    const { getBusinessRoleSequence } = await import('@/data/businessRoleConfig')
+    usePersonaStore.setState({ selectedPersona: 'executive' })
+    try {
+      renderGrid()
+      const riskSeq = getBusinessRoleSequence('executive')
+        .steps.map((s) => s.id)
+        .filter((id) => BUSINESS_TOOLS.find((t) => t.id === id)?.category === 'Risk & Strategy')
+      // roi-calculator (step 2) then board-pitch (step 5): registry order would
+      // put board-pitch second as well, so also check a non-sequence tool sits
+      // after every sequence tool.
+      expect(riskSeq).toEqual(['roi-calculator', 'board-pitch'])
+      const riskIds = groupIds('Risk & Strategy')
+      expect(riskIds.slice(0, 2)).toEqual(riskSeq)
+      expect(riskIds.indexOf('breach-simulator')).toBeGreaterThan(1)
+    } finally {
+      usePersonaStore.setState({ selectedPersona: null })
+    }
+  })
+  it('without a persona the group keeps registry order', () => {
+    renderGrid()
+    expect(groupIds('Risk & Strategy').slice(0, 3)).toEqual(
+      BUSINESS_TOOLS.filter((t) => t.category === 'Risk & Strategy')
+        .slice(0, 3)
+        .map((t) => t.id)
+    )
+  })
+})

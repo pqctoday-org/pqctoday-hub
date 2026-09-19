@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import type React from 'react'
 import type { PersonaId } from '@/data/learningPersonas'
-import { CATEGORIES, type WorkshopCategory } from './workshopRegistry'
+import { CATEGORIES, WORKSHOP_TOOLS, type WorkshopCategory } from './workshopRegistry'
 
 export interface CategoryMeta {
   icon: React.ElementType
@@ -159,6 +159,51 @@ export const FEATURE_PLAYGROUNDS: readonly FeaturePlayground[] = [
     accent: 'secondary',
   },
 ]
+
+/**
+ * Round 9, wave 1.5 (2026-09-19) — the marquee per persona. Five cards for
+ * everyone left ten tools with no scarce signal at all (WS17: a tool with no
+ * pool, marquee or board card tops out in the 40s), and every repoint needed
+ * a named loser. Per persona nobody loses: the four full playgrounds stay,
+ * and each role gets its own featured tools after them. Every id must be in
+ * that tool's `recommendedPersonas` and the tool may not be WIP
+ * (cryptoLabMeta.test.ts), so a card is a claim the registry already makes. The allocation favours tools that had no
+ * Start-here pool slot; the no-persona set keeps the 2026-08-10 HSM capacity
+ * promotion.
+ */
+export const PERSONA_FEATURED_TOOL_IDS: Record<PersonaId | 'none', readonly string[]> = {
+  none: ['hsm-capacity', 'cert-capacity', 'pki-workshop'],
+  executive: ['hsm-capacity', 'cert-capacity'],
+  grc: ['cert-capacity', 'hsm-capacity'],
+  developer: ['hybrid-sigs', 'tpm-playground', 'email-signing', 'solana-flow'],
+  architect: ['tee-channel', 'kdf-derivation', 'hsm-capacity'],
+  researcher: ['source-combining', 'lms-hss', 'suci-flow', 'hd-wallet'],
+  ops: ['vpn-sim', 'hsm-capacity', 'hybrid-certs'],
+  curious: ['merkle-proof', 'pki-workshop', 'qrng-demo'],
+}
+
+const FEATURED_ACCENTS: readonly FeatureAccent[] = ['secondary', 'success', 'primary', 'warning']
+
+/** The four full playgrounds plus the persona's featured tools, as marquee cards. */
+export function featurePlaygroundsFor(persona: PersonaId | null): FeaturePlayground[] {
+  const base = FEATURE_PLAYGROUNDS.filter((f) => f.to !== '/playground/hsm-capacity')
+  const ids = PERSONA_FEATURED_TOOL_IDS[persona ?? 'none']
+  const cards = ids.flatMap((id, i) => {
+    const t = WORKSHOP_TOOLS.find((x) => x.id === id)
+    if (!t) return []
+    return [
+      {
+        to: `/playground/${t.id}`,
+        icon: t.icon,
+        title: t.name,
+        description: t.description,
+        tag: t.algorithms.slice(0, 3).join(' · '),
+        accent: FEATURED_ACCENTS[i % FEATURED_ACCENTS.length],
+      } satisfies FeaturePlayground,
+    ]
+  })
+  return [...base, ...cards]
+}
 
 /** Route target for the featured KMIP banner (the crypto-agile KMIP playground). */
 export const KMIP_PLAYGROUND_ROUTE = '/playground/cacp'
