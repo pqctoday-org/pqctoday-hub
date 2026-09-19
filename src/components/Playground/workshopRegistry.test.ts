@@ -127,3 +127,31 @@ describe('workshopRegistry — Start-here allocation (WS17)', () => {
     }
   })
 })
+
+describe('workshopRegistry — Wave C intro strip (2026-09-18)', () => {
+  const withIntro = WORKSHOP_TOOLS.filter((t) => t.intro)
+
+  it('carries an intro for the eight Wave C tools', () => {
+    expect(withIntro.map((t) => t.id).sort()).toEqual(
+      [
+        'email-signing',
+        'kdf-derivation',
+        'mls-group-messaging',
+        'qrng-demo',
+        'rng-demo',
+        'solana-flow',
+        'source-combining',
+        'tee-channel',
+      ].sort()
+    )
+  })
+
+  it('every intro has both lines, each a full sentence', () => {
+    for (const t of withIntro) {
+      expect(t.intro!.whatYouWillDo.length, t.id).toBeGreaterThan(40)
+      expect(t.intro!.workedExample.length, t.id).toBeGreaterThan(40)
+      expect(t.intro!.whatYouWillDo.trim().endsWith('.'), `${t.id} whatYouWillDo`).toBe(true)
+      expect(t.intro!.workedExample.trim().endsWith('.'), `${t.id} workedExample`).toBe(true)
+    }
+  })
+})

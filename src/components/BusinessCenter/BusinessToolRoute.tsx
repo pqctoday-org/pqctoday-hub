@@ -117,6 +117,14 @@ export const BusinessToolRoute = () => {
           <span className="font-semibold text-foreground">What a good answer looks like:</span>{' '}
           {tool.goodAnswer}
         </p>
+        {/* B+ round 8, Wave C (2026-09-18): one concrete run, written from the
+            tool's real inputs, so "using it" is pictured before the form. */}
+        {tool.workedExample && (
+          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+            <span className="font-semibold text-foreground">Worked example:</span>{' '}
+            {tool.workedExample}
+          </p>
+        )}
       </section>
 
       <Suspense

@@ -83,6 +83,13 @@ export interface BusinessTool {
    * itself by BusinessToolRoute.
    */
   goodAnswer: string
+  /**
+   * B+ round 8, Wave C (2026-09-18). One concrete run of the tool, written from
+   * its real inputs (the field labels and options it actually has), so a first-time
+   * user sees what "using it" looks like before the form. Optional: a tool without
+   * one renders only the two lines above.
+   */
+  workedExample?: string
 }
 
 export const BUSINESS_TOOLS: BusinessTool[] = [
@@ -91,6 +98,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'roi-calculator',
     goodAnswer:
       'A payback period you would defend under questioning — which means the breach-avoidance input is a number you can source, not the one that makes the case work.',
+    workedExample:
+      "Pick the 'Average org' tier, enter your products to migrate and planning horizon, then halve the breach-probability input: if the payback period still lands inside the horizon, the case does not depend on the scary number.",
     name: 'ROI Calculator',
     description:
       'Calculate migration ROI with breach avoidance, compliance savings, and payback period',
@@ -122,6 +131,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'breach-simulator',
     goodAnswer:
       'A scenario your own incident team recognises. If nobody in the room says "that is roughly what would happen", the inputs are wrong, not the model.',
+    workedExample:
+      'Your industry, data retained for 10 years and a migration that takes 3 years: the classical and quantum-enabled breach costs update together, and the Mosca verdict says whether migration is already late.',
     name: 'Breach Scenario Simulator',
     description:
       'Compare classical vs quantum-enabled breach cost (per-event and annual expected loss) with HNDL exposure',
@@ -138,6 +149,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'cost-of-inaction',
     goodAnswer:
       'A figure that changes a decision. If waiting and acting come out within rounding of each other, say so plainly rather than tuning the inputs until they diverge.',
+    workedExample:
+      'Keep the horizon fixed and slide the migration delay from 0 to 3 years: the cumulative-NPV chart shows the year where waiting becomes the more expensive choice, and the breakdown shows which cost drives it.',
     name: 'Cost of Inaction Analyzer',
     description:
       'Model the discounted cost of delaying PQC migration — breach exposure, HNDL residual, and regulatory penalties',
@@ -154,6 +167,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'cost-model-explorer',
     goodAnswer:
       'A range, not a point. The honest output of this tool is the spread between your best and worst assumptions, and which assumption drives it.',
+    workedExample:
+      'Enter the systems in scope and the annual IT budget, then compare the parametric, bottom-up and Monte Carlo estimates: the spread between them is your honest range, and the driver that moves it most is the assumption to defend.',
     name: 'Cost Model Explorer',
     description:
       'Compare the six PQC costing-model families on one scenario, with a live Monte Carlo run',
@@ -170,6 +185,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'crqc-scenario',
     goodAnswer:
       'A plan that survives the machine arriving early. If your roadmap only works at the median estimate, it is a forecast, not a plan.',
+    workedExample:
+      'Set the CRQC arrival year to 2030 and tick your compliance deadlines: the tool lists which of RSA-2048, ECDSA P-256 and the others are broken by then, and the HNDL exposure window for data you keep past that year.',
     name: 'CRQC Scenario Planner',
     description: 'Plan for cryptographically relevant quantum computer threat scenarios',
     category: 'Risk & Strategy',
@@ -200,6 +217,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'risk-treatment-plan',
     goodAnswer:
       'Each high risk maps to a treatment someone has actually agreed to fund. Accepting a risk is a valid answer — leaving it blank is not.',
+    workedExample:
+      'Place a risk at Likelihood 4 / Impact 5 on the heatmap, choose Mitigate and write the rationale: it appears in the Treatment Summary and in the Migration Priority Order, where you can move it up or down and say why.',
     name: 'Risk Heatmap & Treatment Plan',
     description: 'Visualise residual risk and draft treatment strategies per risk category',
     category: 'Risk & Strategy',
@@ -217,6 +236,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'compliance-checklist',
     goodAnswer:
       'Every "yes" points at evidence that exists today. A checklist of intentions passes no audit.',
+    workedExample:
+      "Pick your industry and primary jurisdiction: each starred framework gets its own checklist with a deadline, a compliance owner and evidence items such as 'Crypto inventory mapped to this framework'.",
     name: 'Compliance Checklist',
     description:
       'Per-framework PQC compliance checklist seeded from your starred frameworks and assessment',
@@ -233,6 +254,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'audit-checklist',
     goodAnswer:
       'You could hand this to an auditor tomorrow. If an item needs a conversation to explain, write the explanation into the item.',
+    workedExample:
+      "Tick 'CBOM generated' and 'All systems cataloged', then add an evidence row with a CMVP certificate number: the Cryptographic Inventory readiness moves from Not Started toward Established, and an auditor can follow the row to the certificate.",
     name: 'Audit Readiness Checklist',
     description:
       'Multi-section audit checklist covering inventory, policy, controls, and documentation',
@@ -249,6 +272,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'compliance-timeline',
     goodAnswer:
       'Dates you did not choose, next to dates you did. The gap between the two is the plan.',
+    workedExample:
+      "Select your jurisdictions and add a milestone such as 'Complete crypto inventory' with a year: the Gap Analysis says, per framework, whether the plan meets the deadline or how many years remain.",
     name: 'Compliance Timeline Builder',
     description: 'Plot framework milestones, deadlines, and dependencies on a single timeline',
     category: 'Compliance & Audit',
@@ -266,6 +291,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'raci-builder',
     goodAnswer:
       'Exactly one Accountable per row. Two means nobody, and that is the failure this tool exists to prevent.',
+    workedExample:
+      'Set Enterprise Architect as Accountable for Crypto Inventory and the CISO as Consulted, then try a second Accountable on the same row: the row is flagged, because two Accountables means nobody.',
     name: 'RACI Builder',
     description: 'Build RACI matrices for 10 PQC activities across 6 organizational roles',
     category: 'Governance & Policy',
@@ -281,6 +308,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'policy-generator',
     goodAnswer:
       'A policy someone can be non-compliant with. If no realistic action would breach it, it is a statement of values, not a policy.',
+    workedExample:
+      'Approve ML-KEM (FIPS 203) and ML-DSA (FIPS 204), list RSA, ECDSA and ECDH as classical algorithms to retire, allow a 2-year exception window and set an annual review: the generated policy names each of them.',
     name: 'Policy Template Generator',
     description: 'Generate cryptographic algorithm, key management, vendor, and migration policies',
     category: 'Governance & Policy',
@@ -313,6 +342,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'vendor-scorecard',
     goodAnswer:
       'Scores backed by something the vendor published, not by what they said on a call. The migrate catalog carries the proof and its date.',
+    workedExample:
+      'Score two HSM vendors on the same six criteria — PQC Algorithm Support, FIPS 140-3 Validation, Hybrid Mode Support, Crypto Agility, Published PQC Roadmap, SBOM/CBOM Delivery — and compare the totals, with the migrate catalog as the evidence for each score.',
     name: 'Vendor Scorecard Builder',
     description: 'Create vendor assessment scorecards for PQC readiness evaluation',
     category: 'Vendor & Supply Chain',
@@ -328,6 +359,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'contract-clause',
     goodAnswer:
       'Language your procurement team will actually accept. A clause nobody will sign protects nothing.',
+    workedExample:
+      "Require ML-KEM (FIPS 203) and ML-DSA (FIPS 204), a CMVP certificate number as evidence, CycloneDX 1.7 CBOM delivery and 90 days' notice of cryptographic changes: the generated clause carries each obligation.",
     name: 'Contract Clause Generator',
     description: 'Generate PQC-ready contract clauses for vendor agreements',
     category: 'Vendor & Supply Chain',
@@ -392,6 +425,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'stakeholder-comms',
     goodAnswer:
       'Each audience gets the one thing they need to decide. If two audiences get the same message, one of them is being ignored.',
+    workedExample:
+      "Put the board in 'Manage closely' with a quarterly cadence and a dashboard status report, write the Board / C-Suite message, then give development teams their own message on a weekly cadence.",
     name: 'Stakeholder Comms Planner',
     description: 'Plan stakeholder communication strategies for PQC migration programs',
     category: 'Migration Planning',
@@ -407,6 +442,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'kpi-tracker',
     goodAnswer:
       'A trend, not a snapshot. Two data points is a line; the value starts at the third.',
+    workedExample:
+      'Pick Systems Inventoried, CBOM Completeness and Algorithms Migrated from the catalog and enter three reporting periods for each: the third value is where a trend starts to mean something.',
     name: 'KPI Tracker Template',
     description: 'Track migration KPIs with configurable metrics and reporting templates',
     category: 'Migration Planning',
@@ -557,6 +594,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'crypto-architecture-diagram',
     goodAnswer:
       'Every trust boundary shows which algorithm crosses it. A diagram without algorithms on the arrows cannot tell you what breaks.',
+    workedExample:
+      "Add a customer-facing web app, OpenSSL, a network HSM and an internal root CA with their dependencies: the Mermaid preview draws the chain, and the HSM's detail line says whether it has ML-DSA firmware yet.",
     name: 'Crypto Architecture Diagram',
     description:
       'Document apps, libraries, HSMs, protocols, key stores, and CAs with their dependencies; renders as a Mermaid diagram',
@@ -584,6 +623,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'management-tools-audit',
     goodAnswer:
       'You know which of your own tools would have to change before a single production key does.',
+    workedExample:
+      'Fill in the seven categories from Asset Management (CMDB / SBOM pipeline) to Zero-Trust Enforcement with the tool you use for each: the export shows which of them would have to change before a production key does.',
     name: 'Management Tools Audit',
     description:
       'Audit your discovery, assessment, configuration, and enforcement tooling stack — feeds the Information Repository per CSWP.39 §5',
@@ -644,6 +685,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'program-charter',
     goodAnswer:
       'A named sponsor and a stated scope boundary. The boundary matters more — a charter without one absorbs every adjacent problem.',
+    workedExample:
+      'Name the sponsor (for example the CISO), write the purpose and the scope boundary, add the Steering Committee seats, enter a budget such as $4.5M over 3 years and tick the workstreams: the export is a one-page charter.',
     name: 'Program Charter',
     description:
       'Phase 0 mandate artifact — sponsor sign-off, Steering Committee, QRPM appointment, governance cadence, and the multi-year budget commitment',
@@ -695,6 +738,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'skills-team-plan',
     goodAnswer:
       'A plan that works with the people you have. Hiring is a dependency, not a mitigation.',
+    workedExample:
+      'Enter the instances in scope (for example 2,400): the 1-FTE-per-500-instances heuristic sizes the core roles for years 1–2 and for production rollout, and each role gets build, borrow or buy.',
     name: 'Skills & Team Plan',
     description:
       'Foundations staffing plan — core roles + FTE from the framework role model, the 1-FTE-per-500-instances sizing heuristic, and build / borrow / buy per role',
@@ -722,6 +767,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'infra-modernization-planner',
     goodAnswer:
       'PQC work rides existing refresh cycles wherever it can. Hardware you were replacing anyway is the cheapest migration you will ever do.',
+    workedExample:
+      'List your HSMs with firmware and PQC capability (for example 4× Luna 7 PQC-capable, 2× nCipher without), the protocols you tested and the per-handshake growth: the export consolidates the PKI plan, the HSM/KMS upgrade schedule, the middlebox report and the capacity plan.',
     name: 'Infrastructure Modernization Planner',
     description:
       'Phase 6 deliverable — consolidates the PKI modernization plan, HSM/KMS upgrade schedule, network/middlebox compatibility report, and PQC capacity plan into one infrastructure-readiness artifact',
@@ -778,6 +825,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'accelerated-execution-profile',
     goodAnswer:
       'The specific things you would drop to go faster, listed before you need them. Deciding under pressure is how scope gets cut badly.',
+    workedExample:
+      'Tick a trigger such as a board directive to accelerate, write the compressed sequence, pre-approve a risk acceptance (for example a temporary performance regression on internal APIs), size the surge request and name who can activate it.',
     name: 'Accelerated Execution Profile',
     description:
       'Phase 4 Activity 4.7 — a pre-drafted contingency package (trigger conditions, compressed sequence, pre-approved risk acceptances, emergency resource request, activation authority) activated if the quantum timeline accelerates',
