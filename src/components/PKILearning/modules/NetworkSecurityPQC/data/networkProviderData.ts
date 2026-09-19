@@ -37,7 +37,11 @@ export interface StatusLabel {
   color: string
 }
 
-export const PQC_STATUS_LABELS: Record<PQCStatusKey, StatusLabel> = {
+// The per-capability fields use 'not-supported' (a vendor that ships the
+// product without the capability) while the catalogue-derived headline uses
+// 'not-planned'; both need a label, or a vendor row with an unsupported
+// capability crashed the Vendor Matrix step (round-9 walk, 2026-09-19).
+export const PQC_STATUS_LABELS: Record<PQCStatusKey | 'not-supported', StatusLabel> = {
   ga: {
     label: 'GA',
     className: 'bg-success/10 text-status-success border-success/30',
@@ -55,6 +59,11 @@ export const PQC_STATUS_LABELS: Record<PQCStatusKey, StatusLabel> = {
   },
   'not-planned': {
     label: 'Not Planned',
+    className: 'bg-destructive/10 text-status-error border-destructive/30',
+    color: 'text-status-error',
+  },
+  'not-supported': {
+    label: 'Not Supported',
     className: 'bg-destructive/10 text-status-error border-destructive/30',
     color: 'text-status-error',
   },
