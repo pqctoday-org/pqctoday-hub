@@ -12,6 +12,7 @@ import { MODULE_TO_TRACK, LEARN_SECTIONS } from '@/components/PKILearning/module
 import { moduleRelations } from '@/data/moduleRelations'
 import { MobileNextStepCard } from '../MobileNextStepCard'
 import { MobileUnderstandingCheckCard } from '../MobileUnderstandingCheckCard'
+import { MobilePersonaBlock } from '../MobilePersonaBlock'
 import { useModuleStore } from '@/store/useModuleStore'
 import { MobileProgress } from '../primitives/Progress'
 import { mobileChip } from '../mobileTokens'
@@ -158,6 +159,8 @@ export function MobileModuleShell({
             )}
           </div>
         )}
+        {/* Round 9, wave 2 — "For your role" (src/data/personaBlocks.ts), phone twin. */}
+        <MobilePersonaBlock route={`/learn/${manifest.id}`} className="mt-2" />
       </div>
 
       {workshopContent ? (

@@ -45,6 +45,7 @@ import { RelatedModulesPanel } from './RelatedModulesPanel'
 import { NextStepCard } from '@/components/shared/NextStepCard'
 import { UnderstandingCheckCard } from '@/components/shared/UnderstandingCheckCard'
 import { StepExercise } from '@/components/shared/StepExercise'
+import { PersonaBlock } from '@/components/shared/PersonaBlock'
 import { IndustryLandscapePanel } from './IndustryLandscapePanel'
 import {
   resolveModuleTool,
@@ -509,6 +510,9 @@ export const ModuleShell = ({
                 </Button>
               </div>
             ) : null}
+            {/* Round 9, wave 2 — "For your role", one paragraph per persona whose
+                path carries this module (src/data/personaBlocks.ts). */}
+            <PersonaBlock route={`/learn/${manifest.id}`} className="mt-3" />
           </>
         )}
       </div>
