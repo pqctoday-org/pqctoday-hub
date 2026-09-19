@@ -43,6 +43,7 @@ import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { RelatedModulesPanel } from './RelatedModulesPanel'
 import { NextStepCard } from '@/components/shared/NextStepCard'
+import { UnderstandingCheckCard } from '@/components/shared/UnderstandingCheckCard'
 import { IndustryLandscapePanel } from './IndustryLandscapePanel'
 import {
   resolveModuleTool,
@@ -613,6 +614,10 @@ export const ModuleShell = ({
       {!embedded && !iframeEmbedded ? <IndustryLandscapePanel moduleId={manifest.id} /> : null}
       {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts),
           rendered whether or not the module is completed. Same embed rules. */}
+      {/* Round 9, wave 2 — the quiz handoff, visible before completion. */}
+      {!embedded && !iframeEmbedded ? (
+        <UnderstandingCheckCard moduleId={manifest.id} moduleTitle={manifest.title} />
+      ) : null}
       {!embedded && !iframeEmbedded ? <NextStepCard route={`/learn/${manifest.id}`} /> : null}
       {/* P2.3 — completion handoff footer. Replaces the sidebar NextModuleCTA so
           finishing a module always routes somewhere, never a dead-end "Complete".
