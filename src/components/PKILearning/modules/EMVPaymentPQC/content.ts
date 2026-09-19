@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'emv-payment-pqc',
   version: '2.1.1',
   lastReviewed: '2026-08-23',
-  lastEdited: '2026-09-18',
+  lastEdited: '2026-09-19',
 
   standards: [
     getStandard('FIPS 186-5'),

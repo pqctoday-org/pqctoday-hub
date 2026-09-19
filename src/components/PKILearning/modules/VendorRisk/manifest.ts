@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'vendor-risk',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-038',
   title: 'Vendor & Supply Chain Risk',
   description:
@@ -27,6 +27,10 @@ const manifest: ModuleManifest = {
     { id: 'contract-clauses', label: 'Contract Clauses' },
     { id: 'supply-chain-matrix', label: 'Supply Chain Matrix' },
   ],
+  startHere: {
+    step: 'vendor-scorecard',
+    text: 'Select your products in step 1, then score two vendors on the same PQC readiness dimensions in the Vendor Scorecard and compare the totals.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'iam-pqc',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-028',
   title: 'Identity & Access Management with PQC',
   description:
@@ -33,6 +33,10 @@ const manifest: ModuleManifest = {
     { id: 'vendor-readiness', label: 'Vendor Readiness Scorer' },
     { id: 'zero-trust-identity', label: 'Zero Trust Identity Architect' },
   ],
+  startHere: {
+    step: 'token-migration-lab',
+    text: 'Migrate a SAML or JWT signature to ML-DSA in the Token Migration step: the signature sizes and header changes are compared on the same token.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

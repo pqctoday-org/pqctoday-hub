@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'automotive-pqc',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-043',
   title: 'Automotive PQC',
   description:
@@ -34,6 +34,10 @@ const manifest: ModuleManifest = {
     { id: 'car-key-protocol-explorer', label: 'Car Key Protocol Explorer' },
     { id: 'lifecycle-migration-roadmap', label: 'Lifecycle Migration Roadmap' },
   ],
+  startHere: {
+    step: 'ota-orchestration-planner',
+    text: 'Plan a multi-ECU firmware campaign in the OTA Orchestration Planner: dependency ordering, fleet size and the bandwidth cost of PQC signatures on every update.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

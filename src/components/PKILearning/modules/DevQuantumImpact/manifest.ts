@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'dev-quantum-impact',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-048',
   title: 'Developer Quantum Impact',
   description:
@@ -26,6 +26,10 @@ const manifest: ModuleManifest = {
     { id: 'how-to-act', label: 'How to Act' },
     { id: 'self-assessment', label: 'Skill Self-Assessment' },
   ],
+  startHere: {
+    step: 'self-assessment',
+    text: 'Score yourself on the nine developer competencies in the Skill Self-Assessment: the result says which of the three earlier steps to go back to first.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

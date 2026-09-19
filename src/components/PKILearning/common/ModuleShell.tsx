@@ -338,6 +338,10 @@ export const ModuleShell = ({
       setWorkshopConfig(undefined)
       onReset?.()
     })
+  // Wave C: index of the manifest's "Start here" step, or -1 when absent/unknown.
+  const startHereIndex = manifest.startHere
+    ? (manifest.workshopSteps ?? []).findIndex((st) => st.id === manifest.startHere?.step)
+    : -1
   const slotApi: ModuleSlotApi = {
     goToWorkshop: (step) => {
       // Wave B1 (2026-08-29): MobileModuleShell never mounts a Workshop tab,
@@ -483,6 +487,28 @@ export const ModuleShell = ({
             {manifest.whyThisMatters}
           </p>
         ) : null}
+        {/* B+ round 8, Wave C (2026-09-18): "Start here" — one real workshop step
+            and what a first run of it gives you, with a button that opens it.
+            The step index is looked up in the manifest so the button can never
+            point at a step the module does not declare. */}
+        {manifest.startHere && startHereIndex >= 0 ? (
+          <div className="mt-3 flex flex-wrap items-start gap-x-4 gap-y-2 border-l-2 border-primary/60 pl-3 text-sm text-foreground/90">
+            <p className="min-w-0 flex-1">
+              <span className="font-semibold">Start here: </span>
+              {manifest.startHere.text}
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => slotApi.goToWorkshop(startHereIndex)}
+              className="h-7 shrink-0 gap-1 border-primary/30 bg-primary/10 px-2.5 text-xs font-bold text-primary hover:bg-primary/20"
+            >
+              Open step {startHereIndex + 1}
+              <ArrowRight size={12} aria-hidden="true" />
+            </Button>
+          </div>
+        ) : null}
       </div>
       {showSimCta ? (
         <Link
@@ -543,6 +569,7 @@ export const ModuleShell = ({
         workshopContent={mobileWorkshop}
         activeTab={activeTab}
         onTabChange={handleTabChange}
+        onStartHere={startHereIndex >= 0 ? () => slotApi.goToWorkshop(startHereIndex) : undefined}
       />
     )
   }

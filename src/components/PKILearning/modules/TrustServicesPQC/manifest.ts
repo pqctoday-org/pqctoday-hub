@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'trust-services-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-063',
   title: 'Trust Services & Long-Term Signatures',
   description:
@@ -27,6 +27,10 @@ const manifest: ModuleManifest = {
     { id: 'supersession-explorer', label: 'Standards Supersession Explorer' },
     { id: 'hybrid-suite-picker', label: 'Hybrid Suite Picker' },
   ],
+  startHere: {
+    step: 'longevity-calculator',
+    text: 'Set how long a signature must stay evaluable in the Signature Longevity Calculator: it shows which degradation stages fall inside that window and when the archive must be re-timestamped.',
+  },
   // reduced 5-tab set (no Exercises) — no exercises component is wired for
   // this module; the default STANDARD_TABS set was rendering an empty tab.
   tabs: [

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-governance',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-037',
   title: 'PQC Governance & Policy',
   description:
@@ -26,6 +26,10 @@ const manifest: ModuleManifest = {
     { id: 'kpi-dashboard', label: 'KPI Dashboard' },
     { id: 'escalation-framework', label: 'Escalation Framework' },
   ],
+  startHere: {
+    step: 'raci-builder',
+    text: 'Fill the RACI Matrix for the ten migration activities across six roles: one Accountable per row, and the tool flags a row that has two.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

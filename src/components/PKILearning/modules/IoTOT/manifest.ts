@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'iot-ot-pqc',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-032',
   title: 'IoT & OT Security',
   description:
@@ -36,6 +36,10 @@ const manifest: ModuleManifest = {
     { id: 'cert-chain-bloat', label: 'Chain Bloat Analysis' },
     { id: 'scada-assessment', label: 'SCADA Planner' },
   ],
+  startHere: {
+    step: 'constrained-algorithm',
+    text: "Pick a device class in the Algorithm Explorer: it compares each PQC algorithm's memory and compute needs against that class's constraints.",
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

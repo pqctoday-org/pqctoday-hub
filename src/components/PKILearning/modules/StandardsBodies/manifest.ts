@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'standards-bodies',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-004',
   title: 'Standards, Certification & Compliance Bodies',
   description:
@@ -29,6 +29,10 @@ const manifest: ModuleManifest = {
     { id: 'coverage-grid', label: 'Coverage Grid' },
     { id: 'scenario-challenge', label: 'Scenario Challenge' },
   ],
+  startHere: {
+    step: 'chain-builder',
+    text: 'Trace one of the four real scenarios from algorithm standard to certification programme to compliance mandate: three bodies, three different jobs, one chain.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

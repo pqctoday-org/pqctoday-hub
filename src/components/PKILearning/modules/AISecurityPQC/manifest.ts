@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'ai-security-pqc',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-033',
   title: 'AI Security & PQC',
   description:
@@ -31,6 +31,10 @@ const manifest: ModuleManifest = {
     { id: 'agent-to-agent-protocol', label: 'Agent-to-Agent Protocol' },
     { id: 'scale-encryption-planner', label: 'Scale Encryption Planner' },
   ],
+  startHere: {
+    step: 'data-protection-analyzer',
+    text: "Audit a sample AI pipeline in the Data Protection Analyzer: each stage's crypto operations are listed with the quantum-vulnerable touchpoints and HNDL exposure marked.",
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

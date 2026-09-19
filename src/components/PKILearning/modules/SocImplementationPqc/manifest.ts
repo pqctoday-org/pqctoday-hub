@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'soc-implementation-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-057',
   title: 'SOC Implementation for PQC',
   description:
@@ -36,6 +36,10 @@ const manifest: ModuleManifest = {
     { id: 'detection-planner', label: 'Detection Planner' },
     { id: 'self-assessment', label: 'SOC Readiness' },
   ],
+  startHere: {
+    step: 'detection-planner',
+    text: 'Set each of the five detection use cases to not-started, building or operational in the Detection Planner and watch the SOC coverage score move.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

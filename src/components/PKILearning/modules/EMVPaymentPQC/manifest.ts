@@ -11,7 +11,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'emv-payment-pqc',
-  contentVersion: 8,
+  contentVersion: 9,
   lm_id: 'LM-044',
   title: 'Financial Services & Payments PQC',
   description:
@@ -97,6 +97,10 @@ const manifest: ModuleManifest = {
     { id: 'settlement-exposure', label: 'Settlement Exposure Modeller' },
     { id: 'regulation-timeline', label: 'Sector Regulation Timeline' },
   ],
+  startHere: {
+    step: 'transaction-simulator',
+    text: 'Step through an EMV flow in the Transaction Simulator — online, offline DDA/CDA, contactless or mobile — and see which messages are quantum-vulnerable.',
+  },
   // simRelevance.ts already maps this module to the financial and retail
   // scenarios; declaring it here is what actually surfaces the sim as practice.
   // Wave B (2026-09-18): derived from the algorithm and standard ids this

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'aerospace-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-040',
   title: 'Aerospace PQC',
   description:
@@ -32,6 +32,10 @@ const manifest: ModuleManifest = {
     { id: 'export-control-classifier', label: 'Export Control Classifier' },
     { id: 'mission-crypto-lifecycle', label: 'Mission Lifecycle Planner' },
   ],
+  startHere: {
+    step: 'satellite-link-budget',
+    text: 'Configure a mission profile in the Satellite Link Budget Calculator — LEO to HEO — and read the PQC bandwidth overhead, handshake latency and SEU-adjusted key refresh interval.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-risk-management',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-034',
   title: 'PQC Risk Management',
   description:
@@ -26,6 +26,10 @@ const manifest: ModuleManifest = {
     { id: 'risk-heatmap', label: 'Risk Heatmap' },
     { id: 'compliance-gap-analysis', label: 'Compliance Gap Analysis' },
   ],
+  startHere: {
+    step: 'risk-register-builder',
+    text: 'Write one HNDL risk in the Risk Register Builder — asset, likelihood, impact, owner — then carry it into the heatmap in step 3 to assign its treatment.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

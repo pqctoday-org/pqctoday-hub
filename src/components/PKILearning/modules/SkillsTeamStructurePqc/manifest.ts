@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'skills-team-structure',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-059',
   title: 'Skills & Team Structure',
   description:
@@ -23,6 +23,10 @@ const manifest: ModuleManifest = {
     { id: 'team-sizing', label: 'Team Sizing Calculator' },
     { id: 'crypto-champions', label: 'Crypto Champion Roster' },
   ],
+  startHere: {
+    step: 'team-sizing',
+    text: 'Enter your estate size in the Team Sizing Calculator: the 1-FTE-per-500-instances heuristic turns it into a programme FTE estimate, then step 2 assigns a crypto champion per platform team.',
+  },
   // reduced 5-tab set (no Tools & Products) — this module is staffing/process
   // methodology (FTE sizing, Crypto Champion roster), not a product category;
   // the migrate catalog has no workforce/training category to ever populate it.

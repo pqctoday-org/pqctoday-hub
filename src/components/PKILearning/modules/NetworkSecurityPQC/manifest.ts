@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'network-security-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-012',
   title: 'Network Security & PQC Migration',
   description:
@@ -30,6 +30,10 @@ const manifest: ModuleManifest = {
     { id: 'ztna-pqc-designer', label: 'ZTNA PQC Designer' },
     { id: 'network-telemetry-analyzer', label: 'Network Telemetry Analyzer' },
   ],
+  startHere: {
+    step: 'ngfw-cipher-analyzer',
+    text: 'Switch the NGFW Cipher Policy from classical to hybrid to pure PQC: the analyzer shows the certificate-size, handshake-latency and hardware-offload impact of each.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

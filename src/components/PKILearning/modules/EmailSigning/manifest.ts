@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'email-signing',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-010',
   title: 'Email & Document Signing',
   description:
@@ -24,6 +24,10 @@ const manifest: ModuleManifest = {
     { id: 'cms-signing', label: 'CMS Signing' },
     { id: 'cms-encryption', label: 'CMS Encryption' },
   ],
+  startHere: {
+    step: 'cms-signing',
+    text: 'Walk the CMS SignedData workflow in step 2: the ASN.1 structure is shown field by field, so you see where the ML-DSA signature and its certificate sit.',
+  },
   playgroundTool: 'email-signing',
   taxonomy: { algorithms: ['ML-DSA'], standards: ['JOSE', 'X.509'] },
   embeddable: true,

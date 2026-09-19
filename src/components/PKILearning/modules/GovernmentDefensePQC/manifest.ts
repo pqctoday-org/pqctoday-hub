@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'government-defense-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-062',
   title: 'Government & Defense PQC',
   description:
@@ -27,6 +27,10 @@ const manifest: ModuleManifest = {
     { id: 'mandate-explorer', label: 'Federal Mandate Explorer' },
     { id: 'fpki-profile-pair', label: 'Federal PKI Profile Pair' },
   ],
+  startHere: {
+    step: 'mandate-explorer',
+    text: 'Pick a system class in the Federal Mandate Explorer — National Security System, federal civilian, or a nonfederal system handling CUI — and see which instruments bind it and whether any of them has a dated deadline.',
+  },
   // reduced 5-tab set (no Exercises) — no exercises component is wired for
   // this module; the default STANDARD_TABS set was rendering an empty tab.
   tabs: [

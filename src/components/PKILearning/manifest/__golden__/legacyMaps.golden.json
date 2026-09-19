@@ -598,7 +598,7 @@
     "ai-security-pqc": 7,
     "api-security-jwt": 5,
     "aerospace-pqc": 6,
-    "arch-quantum-impact": 4,
+    "arch-quantum-impact": 5,
     "automotive-pqc": 6,
     "cbom": 4,
     "code-signing": 5,
@@ -2114,6 +2114,10 @@
       {
         "id": "self-assessment",
         "label": "Architecture Readiness Self-Assessment"
+      },
+      {
+        "id": "strangler-fig",
+        "label": "Strangler Fig"
       }
     ],
     "automotive-pqc": [

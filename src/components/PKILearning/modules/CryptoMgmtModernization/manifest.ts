@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-mgmt-modernization',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-052',
   title: 'Cryptographic Management Modernization',
   description:
@@ -30,6 +30,10 @@ const manifest: ModuleManifest = {
     { id: 'no-regret-roi', label: 'No-Regret ROI Builder' },
     { id: 'posture-kpi', label: 'Posture KPI Dashboard Designer' },
   ],
+  startHere: {
+    step: 'library-cbom-builder',
+    text: 'Load a sample SBOM into the Library & Hardware CBOM Builder: it becomes a crypto-focused CBOM with library end-of-life and FIPS 140-3 status, and feeds the risk engine in step 7.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'web-gateway-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-013',
   title: 'Web Gateway PQC',
   description:
@@ -30,6 +30,10 @@ const manifest: ModuleManifest = {
     { id: 'cert-rotation', label: 'Certificate Rotation Planner' },
     { id: 'vendor-readiness', label: 'Vendor Readiness Matrix' },
   ],
+  startHere: {
+    step: 'topology-builder',
+    text: 'Build a gateway topology in the Topology Builder: it marks the PQC upgrade points, so you see which hops change and which stay classical.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

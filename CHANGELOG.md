@@ -29,6 +29,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.92.0] - 2026-09-18
+
+Thirty-eight modules now tell you where to start: one real workshop step, what a first run of it gives you, and a button that opens it.
+
+### Added
+
+- **A "Start here" line on 38 modules** [view:/learn] [persona:curious] [persona:developer] [persona:architect] [persona:executive]: under "Why this matters", each module names one of its own workshop steps and what you get from running it — the Candidate Comparator for PQC Candidates, the CMS SignedData walk-through for Email Signing, the Federal Mandate Explorer for Government & Defense, the Team Sizing Calculator for Skills & Team Structure — with an "Open step N" button that jumps to it. On a phone the button opens the real workshop where one runs in the phone view and the honest "not built for mobile yet" notice otherwise. Every line was written from the step's own description and checked against the step it names; a guard test refuses any line that points at a step the module does not declare.
+
+### Fixed
+
+- **Architecture Quantum Impact declares all five of its workshop steps** [view:/learn/arch-quantum-impact] [persona:architect]: the Strangler Fig step existed in the workshop but was missing from the module's manifest, so step counts and the workshop index under-reported it.
+
 ## [4.91.0] - 2026-09-18
 
 Every tool now opens with a worked example, so you can picture a run of it before the form.
