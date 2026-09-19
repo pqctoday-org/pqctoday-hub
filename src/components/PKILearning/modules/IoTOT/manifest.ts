@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'iot-ot-pqc',
-  contentVersion: 7,
+  contentVersion: 8,
   lm_id: 'LM-032',
   title: 'IoT & OT Security',
   description:
@@ -35,6 +35,7 @@ const manifest: ModuleManifest = {
     { id: 'dtls-handshake', label: 'DTLS Handshake' },
     { id: 'cert-chain-bloat', label: 'Chain Bloat Analysis' },
     { id: 'scada-assessment', label: 'SCADA Planner' },
+    { id: 'hardware-constraints', label: 'Hardware Constraints' },
   ],
   startHere: {
     step: 'constrained-algorithm',

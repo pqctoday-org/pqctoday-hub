@@ -195,41 +195,10 @@ function WorkshopStepper({
         </Button>
       </div>
 
-      <div className="overflow-x-auto px-2 sm:px-0">
-        <div className="flex justify-evenly relative min-w-0">
-          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
-          {parts.map((part, idx) => {
-            const Icon = part.icon
-            return (
-              <Button
-                variant="ghost"
-                key={part.id}
-                onClick={() => onPartChange(idx)}
-                aria-label={part.title}
-                aria-current={idx === currentPart ? 'step' : undefined}
-                className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
-              >
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
-                    ${
-                      idx === currentPart
-                        ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
-                        : idx < currentPart
-                          ? 'border-success text-success'
-                          : 'border-border text-muted-foreground'
-                    }`}
-                >
-                  <Icon size={16} />
-                </div>
-                <span className="block max-w-[68px] truncate text-[11px] font-medium leading-tight sm:max-w-none sm:text-sm">
-                  {part.title.split(':')[0]}
-                </span>
-              </Button>
-            )
-          })}
-        </div>
-      </div>
-
+      {/* UX batch 2 (2026-09-19, CC-3): the icon step rail that sat here duplicated
+          the titled chip stepper WorkshopStepHeader renders inside the card (same
+          steps, same click, same aria-current). The chips carry the step titles;
+          the rail only repeated the numbers and cost ~90 px above the fold. */}
       <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
         <WorkshopStepHeader
           moduleId={moduleId}
@@ -338,6 +307,8 @@ export const ModuleShell = ({
       setWorkshopConfig(undefined)
       onReset?.()
     })
+  // CC-5: Learn-tab framing folded on the Workshop tab until the reader asks for it.
+  const [introOpen, setIntroOpen] = useState(false)
   // Wave C: index of the manifest's "Start here" step, or -1 when absent/unknown.
   const startHereIndex = manifest.startHere
     ? (manifest.workshopSteps ?? []).findIndex((st) => st.id === manifest.startHere?.step)
@@ -477,38 +448,59 @@ export const ModuleShell = ({
           ) : null}
         </div>
         <h1 className="text-3xl font-bold text-foreground">{title ?? manifest.title}</h1>
-        {headerDescription ? (
-          <p className="text-muted-foreground mt-2">{headerDescription}</p>
-        ) : null}
-        {/* "Why this matters" entry frame (P2.1) — rendered only when authored. */}
-        {manifest.whyThisMatters ? (
-          <p className="mt-3 border-l-2 border-primary pl-3 text-sm text-foreground/90">
-            <span className="font-semibold">Why this matters: </span>
-            {manifest.whyThisMatters}
+        {/* UX batch 2 (2026-09-19, CC-5): on the Workshop tab the description,
+            "Why this matters" and "Start here" are Learn-tab framing that pushed
+            the first workshop control below the fold at 1280×800. They fold to one
+            line with a toggle there; on every other tab they render as before. */}
+        {activeTab === 'workshop' && !introOpen ? (
+          <p className="mt-2 text-sm text-muted-foreground">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setIntroOpen(true)}
+              aria-expanded={false}
+              className="h-7 px-2 text-sm text-primary"
+            >
+              Show module intro
+            </Button>
           </p>
-        ) : null}
-        {/* B+ round 8, Wave C (2026-09-18): "Start here" — one real workshop step
+        ) : (
+          <>
+            {headerDescription ? (
+              <p className="text-muted-foreground mt-2">{headerDescription}</p>
+            ) : null}
+            {/* "Why this matters" entry frame (P2.1) — rendered only when authored. */}
+            {manifest.whyThisMatters ? (
+              <p className="mt-3 border-l-2 border-primary pl-3 text-sm text-foreground/90">
+                <span className="font-semibold">Why this matters: </span>
+                {manifest.whyThisMatters}
+              </p>
+            ) : null}
+            {/* B+ round 8, Wave C (2026-09-18): "Start here" — one real workshop step
             and what a first run of it gives you, with a button that opens it.
             The step index is looked up in the manifest so the button can never
             point at a step the module does not declare. */}
-        {manifest.startHere && startHereIndex >= 0 ? (
-          <div className="mt-3 flex flex-wrap items-start gap-x-4 gap-y-2 border-l-2 border-primary/60 pl-3 text-sm text-foreground/90">
-            <p className="min-w-0 flex-1">
-              <span className="font-semibold">Start here: </span>
-              {manifest.startHere.text}
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => slotApi.goToWorkshop(startHereIndex)}
-              className="h-7 shrink-0 gap-1 border-primary/30 bg-primary/10 px-2.5 text-xs font-bold text-primary hover:bg-primary/20"
-            >
-              Open step {startHereIndex + 1}
-              <ArrowRight size={12} aria-hidden="true" />
-            </Button>
-          </div>
-        ) : null}
+            {manifest.startHere && startHereIndex >= 0 ? (
+              <div className="mt-3 flex flex-wrap items-start gap-x-4 gap-y-2 border-l-2 border-primary/60 pl-3 text-sm text-foreground/90">
+                <p className="min-w-0 flex-1">
+                  <span className="font-semibold">Start here: </span>
+                  {manifest.startHere.text}
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => slotApi.goToWorkshop(startHereIndex)}
+                  className="h-7 shrink-0 gap-1 border-primary/30 bg-primary/10 px-2.5 text-xs font-bold text-primary hover:bg-primary/20"
+                >
+                  Open step {startHereIndex + 1}
+                  <ArrowRight size={12} aria-hidden="true" />
+                </Button>
+              </div>
+            ) : null}
+          </>
+        )}
       </div>
       {showSimCta ? (
         <Link

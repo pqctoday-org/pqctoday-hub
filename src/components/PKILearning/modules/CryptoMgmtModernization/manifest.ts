@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-mgmt-modernization',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-052',
   title: 'Cryptographic Management Modernization',
   description:
@@ -29,6 +29,10 @@ const manifest: ModuleManifest = {
     { id: 'library-cbom-builder', label: 'Library & Hardware CBOM Builder' },
     { id: 'no-regret-roi', label: 'No-Regret ROI Builder' },
     { id: 'posture-kpi', label: 'Posture KPI Dashboard Designer' },
+    { id: 'management-tools-audit', label: 'Management Tools Coverage Audit' },
+    { id: 'risk-analysis-engine', label: 'Risk Analysis & Prioritisation Engine' },
+    { id: 'mitigate-migrate', label: 'Implement — Mitigate or Migrate' },
+    { id: 'clm-vendor-evaluator', label: 'CLM Vendor Evaluator' },
   ],
   startHere: {
     step: 'library-cbom-builder',

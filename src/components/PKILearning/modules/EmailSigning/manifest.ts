@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'email-signing',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-010',
   title: 'Email & Document Signing',
   description:
@@ -23,6 +23,7 @@ const manifest: ModuleManifest = {
     { id: 'smime-cert', label: 'S/MIME Certificates' },
     { id: 'cms-signing', label: 'CMS Signing' },
     { id: 'cms-encryption', label: 'CMS Encryption' },
+    { id: 'live-hsm', label: 'Live HSM Provider' },
   ],
   startHere: {
     step: 'cms-signing',

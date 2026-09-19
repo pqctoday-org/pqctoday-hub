@@ -596,7 +596,7 @@
   },
   "MODULE_STEP_COUNTS": {
     "ai-security-pqc": 7,
-    "api-security-jwt": 5,
+    "api-security-jwt": 6,
     "aerospace-pqc": 6,
     "arch-quantum-impact": 5,
     "automotive-pqc": 6,
@@ -606,7 +606,7 @@
     "confidential-computing": 5,
     "crypto-agility": 4,
     "crypto-dev-apis": 8,
-    "crypto-mgmt-modernization": 5,
+    "crypto-mgmt-modernization": 9,
     "crypto-registry": 2,
     "dnssec-pqc": 3,
     "data-asset-sensitivity": 5,
@@ -615,18 +615,18 @@
     "digital-assets": 6,
     "digital-id": 5,
     "emv-payment-pqc": 8,
-    "email-signing": 3,
-    "energy-utilities-pqc": 5,
+    "email-signing": 4,
+    "energy-utilities-pqc": 6,
     "entropy-randomness": 5,
     "exec-quantum-impact": 4,
     "5g-security": 3,
     "government-defense-pqc": 3,
     "healthcare-pqc": 5,
     "hsm-pqc": 5,
-    "hybrid-crypto": 6,
-    "iam-pqc": 5,
-    "iot-ot-pqc": 5,
-    "kms-pqc": 5,
+    "hybrid-crypto": 7,
+    "iam-pqc": 6,
+    "iot-ot-pqc": 6,
+    "kms-pqc": 6,
     "mls-group-messaging": 2,
     "merkle-tree-certs": 5,
     "migration-program": 4,
@@ -654,7 +654,7 @@
     "skills-team-structure": 2,
     "soc-implementation-pqc": 5,
     "standards-bodies": 5,
-    "stateful-signatures": 4,
+    "stateful-signatures": 5,
     "tls-basics": 4,
     "trust-services-pqc": 3,
     "vpn-ssh-pqc": 3,
@@ -2070,6 +2070,10 @@
       {
         "id": "size-analyzer",
         "label": "Token Size Analyzer"
+      },
+      {
+        "id": "matrix-audit",
+        "label": "Matrix Audit"
       }
     ],
     "aerospace-pqc": [
@@ -2298,6 +2302,22 @@
       {
         "id": "posture-kpi",
         "label": "Posture KPI Dashboard Designer"
+      },
+      {
+        "id": "management-tools-audit",
+        "label": "Management Tools Coverage Audit"
+      },
+      {
+        "id": "risk-analysis-engine",
+        "label": "Risk Analysis & Prioritisation Engine"
+      },
+      {
+        "id": "mitigate-migrate",
+        "label": "Implement — Mitigate or Migrate"
+      },
+      {
+        "id": "clm-vendor-evaluator",
+        "label": "CLM Vendor Evaluator"
       }
     ],
     "crypto-registry": [
@@ -2330,12 +2350,12 @@
         "label": "Asset Inventory"
       },
       {
-        "id": "compliance-matrix",
-        "label": "Compliance Matrix"
+        "id": "classification-challenge",
+        "label": "Classification Challenge"
       },
       {
-        "id": "risk-methodology",
-        "label": "Risk Methodology"
+        "id": "conflict-resolver",
+        "label": "Conflict Resolver"
       },
       {
         "id": "sensitivity-scoring",
@@ -2480,6 +2500,10 @@
       {
         "id": "cms-encryption",
         "label": "CMS Encryption"
+      },
+      {
+        "id": "live-hsm",
+        "label": "Live HSM Provider"
       }
     ],
     "energy-utilities-pqc": [
@@ -2502,6 +2526,10 @@
       {
         "id": "grid-migration-roadmap",
         "label": "Grid Roadmap"
+      },
+      {
+        "id": "rf-mesh-simulator",
+        "label": "RF Mesh Simulator"
       }
     ],
     "entropy-randomness": [
@@ -2638,6 +2666,10 @@
         "label": "Inspect & Compare"
       },
       {
+        "id": "hybrid-signatures",
+        "label": "Hybrid Signatures"
+      },
+      {
         "id": "hpke",
         "label": "HPKE"
       }
@@ -2662,6 +2694,10 @@
       {
         "id": "zero-trust-identity",
         "label": "Zero Trust Identity Architect"
+      },
+      {
+        "id": "identity-proxy",
+        "label": "Identity Proxy"
       }
     ],
     "iot-ot-pqc": [
@@ -2684,6 +2720,10 @@
       {
         "id": "scada-assessment",
         "label": "SCADA Planner"
+      },
+      {
+        "id": "hardware-constraints",
+        "label": "Hardware Constraints"
       }
     ],
     "kms-pqc": [
@@ -2706,6 +2746,10 @@
       {
         "id": "kmip-explorer",
         "label": "KMIP Protocol Explorer"
+      },
+      {
+        "id": "aws-policy-lab",
+        "label": "AWS Policy Lab"
       }
     ],
     "mls-group-messaging": [
@@ -3252,6 +3296,10 @@
       {
         "id": "slh-dsa-live",
         "label": "SLH-DSA Live Demo"
+      },
+      {
+        "id": "threshold-signing",
+        "label": "Threshold Signing"
       }
     ],
     "tls-basics": [

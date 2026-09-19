@@ -512,7 +512,8 @@ export const CryptoArchitectureDiagram: React.FC = () => {
                       value={c.name}
                       onChange={(e) => updateRow(c.id, { name: e.target.value })}
                       placeholder="Component name"
-                      className="h-8 text-xs"
+                      aria-label={`Name of ${c.id}`}
+                      className="h-8 min-w-[12rem] text-xs"
                     />
                   </td>
                   <td className="px-3 py-2 align-top">
@@ -520,16 +521,31 @@ export const CryptoArchitectureDiagram: React.FC = () => {
                       value={c.detail}
                       onChange={(e) => updateRow(c.id, { detail: e.target.value })}
                       placeholder={KIND_PLACEHOLDERS[c.kind]}
-                      className="h-8 text-xs"
+                      aria-label={`Detail of ${c.id}`}
+                      className="h-8 min-w-[18rem] text-xs"
                     />
                   </td>
                   <td className="px-3 py-2 align-top">
+                    {/* UX batch 2 (2026-09-19): ids were typed blind; a datalist of the
+                        other rows' ids offers them as you type, and the label says what
+                        the field wants. */}
                     <Input
                       value={c.dependsOn}
                       onChange={(e) => updateRow(c.id, { dependsOn: e.target.value })}
                       placeholder="lib-1, hsm-1"
-                      className="h-8 text-xs font-mono"
+                      aria-label={`Ids ${c.id} depends on, comma-separated`}
+                      list={`arch-ids-${c.id}`}
+                      className="h-8 min-w-[10rem] text-xs font-mono"
                     />
+                    <datalist id={`arch-ids-${c.id}`}>
+                      {components
+                        .filter((o) => o.id !== c.id)
+                        .map((o) => (
+                          <option key={o.id} value={o.id}>
+                            {o.name || o.id}
+                          </option>
+                        ))}
+                    </datalist>
                   </td>
                   <td className="px-3 py-2 align-top">
                     <Button

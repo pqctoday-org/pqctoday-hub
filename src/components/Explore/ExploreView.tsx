@@ -43,6 +43,11 @@ export function ExploreView() {
       ? // eslint-disable-next-line security/detect-object-injection -- typed PersonaId union
         PERSONAS[selectedPersona].essentialsMinutes
       : tile.firstLookMinutes
+  // UX batch 2 (2026-09-19): the number was already honest; the label was not —
+  // "~380 min for a first look" read as absurd because a whole essentials track
+  // is not a first look. Name what the figure is.
+  const tileMinutesLabel = (tile: ExploreTile): string =>
+    tile.path === '/learn' && selectedPersona ? 'for your essentials track' : 'for a first look'
 
   return (
     <div className="max-w-5xl mx-auto py-4 md:py-8 px-2">
@@ -92,7 +97,7 @@ export function ExploreView() {
                 {tile.description}
               </span>
               <span className="mt-2 text-[11px] font-mono text-muted-foreground/80">
-                ~{tileMinutes(tile)} min for a first look
+                ~{tileMinutes(tile)} min {tileMinutesLabel(tile)}
               </span>
             </Button>
           )

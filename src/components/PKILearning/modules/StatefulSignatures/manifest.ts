@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'stateful-signatures',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-026',
   title: 'Stateful Hash Signatures',
   description:
@@ -25,6 +25,7 @@ const manifest: ModuleManifest = {
     { id: 'xmss-keygen', label: 'XMSS Key Generation' },
     { id: 'state-management', label: 'State Management' },
     { id: 'slh-dsa-live', label: 'SLH-DSA Live Demo' },
+    { id: 'threshold-signing', label: 'Threshold Signing' },
   ],
   playgroundTool: 'lms-hss',
   taxonomy: { algorithms: ['LMS/XMSS'], standards: ['NIST SP 800-208'] },

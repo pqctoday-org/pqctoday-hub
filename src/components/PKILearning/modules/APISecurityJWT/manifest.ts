@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'api-security-jwt',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-011',
   title: 'API Security & JWT',
   description:
@@ -28,6 +28,7 @@ const manifest: ModuleManifest = {
     { id: 'hybrid-jwt', label: 'Hybrid JWT' },
     { id: 'jwe-encryption', label: 'JWE Encryption' },
     { id: 'size-analyzer', label: 'Token Size Analyzer' },
+    { id: 'matrix-audit', label: 'Matrix Audit' },
   ],
   playgroundTool: 'api-security-jwt',
   taxonomy: { algorithms: ['ML-DSA', 'SLH-DSA'], standards: ['JOSE', 'RFC 9421'] },

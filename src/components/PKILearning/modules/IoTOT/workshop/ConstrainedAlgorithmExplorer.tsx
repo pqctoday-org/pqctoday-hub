@@ -38,7 +38,7 @@ export const ConstrainedAlgorithmExplorer: React.FC = () => {
               variant="ghost"
               key={dc.id}
               onClick={() => setSelectedClassIdx(idx)}
-              className={`p-3 rounded-lg border text-left transition-colors ${
+              className={`h-auto flex-col items-start whitespace-normal p-3 rounded-lg border text-left transition-colors ${
                 idx === selectedClassIdx
                   ? 'border-primary bg-primary/10 text-foreground'
                   : 'border-border bg-muted/30 text-muted-foreground hover:border-primary/30'
