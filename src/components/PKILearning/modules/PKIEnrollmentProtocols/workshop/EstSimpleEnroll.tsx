@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
+import { GateReason } from '@/components/shared/GateReason'
 import { Loader2, Inbox, AlertTriangle, CheckCircle2, Info } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
@@ -174,6 +175,9 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
         <Input id="est-csr-subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
       </div>
 
+      <GateReason when={!busy && !eeKeyPem} className="mt-0">
+        Generate the end-entity key in Step 1 first; simpleenroll builds the CSR from it.
+      </GateReason>
       <Button
         variant="gradient"
         onClick={handleRun}

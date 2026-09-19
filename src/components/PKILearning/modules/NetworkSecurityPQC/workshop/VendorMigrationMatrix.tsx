@@ -14,7 +14,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
-function StatusIcon({ status }: { status: PQCStatusKey }) {
+function StatusIcon({ status }: { status: PQCStatusKey | 'not-supported' }) {
   if (status === 'ga') return <CheckCircle size={12} className="text-status-success inline" />
   if (status === 'beta') return <Clock size={12} className="text-primary inline" />
   if (status === 'roadmap')
@@ -172,15 +172,15 @@ export const VendorMigrationMatrix: React.FC = () => {
                         </div>
                       </td>
                       <td className="py-3 px-2 text-center">
-                        <StatusIcon status={vendor.mlKemStatus as PQCStatusKey} />
+                        <StatusIcon status={vendor.mlKemStatus} />
                         <div className="text-[9px] text-muted-foreground mt-0.5">
-                          {PQC_STATUS_LABELS[vendor.mlKemStatus as PQCStatusKey].label}
+                          {PQC_STATUS_LABELS[vendor.mlKemStatus].label}
                         </div>
                       </td>
                       <td className="py-3 px-2 text-center">
-                        <StatusIcon status={vendor.mlDsaStatus as PQCStatusKey} />
+                        <StatusIcon status={vendor.mlDsaStatus} />
                         <div className="text-[9px] text-muted-foreground mt-0.5">
-                          {PQC_STATUS_LABELS[vendor.mlDsaStatus as PQCStatusKey].label}
+                          {PQC_STATUS_LABELS[vendor.mlDsaStatus].label}
                         </div>
                       </td>
                       <td className="py-3 px-2 text-center">
@@ -284,11 +284,11 @@ export const VendorMigrationMatrix: React.FC = () => {
                   <span className="text-muted-foreground">TLS Inspect</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <StatusIcon status={vendor.mlKemStatus as PQCStatusKey} />
+                  <StatusIcon status={vendor.mlKemStatus} />
                   <span className="text-muted-foreground">ML-KEM</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <StatusIcon status={vendor.mlDsaStatus as PQCStatusKey} />
+                  <StatusIcon status={vendor.mlDsaStatus} />
                   <span className="text-muted-foreground">ML-DSA</span>
                 </div>
                 <div className="flex items-center gap-1">

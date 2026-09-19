@@ -195,6 +195,7 @@ export const FleetInteroperabilityMatrix: React.FC = () => {
           </div>
           <input
             type="range"
+            aria-label="PQC deployment, percent of capable fleet"
             min={0}
             max={100}
             step={5}

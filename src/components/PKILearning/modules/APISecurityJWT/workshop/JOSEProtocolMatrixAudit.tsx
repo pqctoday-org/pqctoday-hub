@@ -829,6 +829,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
                       href={r.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      title={r.id}
                       className="text-primary underline block truncate"
                     >
                       {r.id}
