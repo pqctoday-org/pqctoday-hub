@@ -85,12 +85,51 @@ export const CuriousGuide: React.FC = () => {
   const curiousGuideDismissed = usePersonaStore((s) => s.curiousGuideDismissed)
   const dismissCuriousGuide = usePersonaStore((s) => s.dismissCuriousGuide)
   const [stepIndex, setStepIndex] = useState(0)
+  // UX fix (B+ round 8, 2026-09-19): the tour no longer opens itself. A
+  // first-time Curious visitor sees a one-line "Take the tour" offer instead
+  // of a dialog appearing unbidden over the page; the dialog opens on click.
+  // Dismissing the offer is the same permanent dismiss as finishing the tour.
+  const [opened, setOpened] = useState(false)
 
   const eligible = selectedPersona === 'curious' && !curiousGuideDismissed
   const step = STEPS[stepIndex]
   const isLastStep = stepIndex === STEPS.length - 1
 
   if (!eligible || !step) return null
+
+  if (!opened) {
+    return (
+      <div
+        className="fixed bottom-4 right-4 z-overlay flex items-center gap-1 rounded-full border border-primary/30 bg-card/95 py-1 pl-3 pr-1 shadow-lg backdrop-blur"
+        data-testid="curious-guide-offer"
+      >
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 gap-1.5 px-2 text-xs font-medium text-primary"
+          onClick={() => {
+            logEvent('Curious Guide', 'Opened', personaLabel('from=offer'))
+            setOpened(true)
+          }}
+        >
+          <Compass size={14} aria-hidden="true" />
+          Take the {STEPS.length}-step tour
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            logEvent('Curious Guide', 'Dismissed', personaLabel('step=0|reason=offer'))
+            dismissCuriousGuide()
+          }}
+          aria-label="Dismiss tour offer"
+          className="h-7 w-7 p-0"
+        >
+          <X size={14} aria-hidden="true" />
+        </Button>
+      </div>
+    )
+  }
 
   const handleDismiss = (reason: 'x' | 'finish' | 'cta') => {
     logEvent('Curious Guide', 'Dismissed', personaLabel(`step=${stepIndex + 1}|reason=${reason}`))

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { Construction, Wrench } from 'lucide-react'
+import { Construction } from 'lucide-react'
 import { Link } from 'react-router'
 
 export function TransparencyBanner() {
@@ -13,13 +13,13 @@ export function TransparencyBanner() {
     >
       <Construction size={18} className="text-primary mt-0.5 shrink-0" />
       <div className="flex-1">
+        {/* UX fix (B+ round 8, 2026-09-19): the bouncing "WIP" pill that sat
+            beside this title was a platform-level work-in-progress badge on the
+            site's first screen; the sentence below already says what it needs to.
+            Per-page WIP signals (top-bar chip, module/tool chips) are unchanged. */}
         <div className="flex items-center gap-2 mb-1">
           <span className="font-medium text-foreground text-sm">
             Community-Driven Educational Resource
-          </span>
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border border-status-warning/40 bg-status-warning/15 text-status-warning animate-pulse-glow">
-            <Wrench size={10} className="animate-bounce-subtle" />
-            WIP
           </span>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">

@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.94.0] - 2026-09-19
+
+Returning visitors see what changed since they were last here, the Curious tour asks before it opens, and the home page no longer opens on a "WIP" badge.
+
+### Added
+
+- **"Reviewed data updates since your last visit" on the home page** [view:/] [view:/revisions] [persona:executive] [persona:grc] [persona:researcher]: when you come back, one line says how many reviewed corrections merged since your previous visit and in which areas, with a link to the revisions ledger. It appears only when there is something to say — never on a first visit — and the count is measured from your previous visit, not from a fixed window.
+
+### Changed
+
+- **The Curious tour offers itself instead of opening** [view:/] [persona:curious]: a first-time Curious visitor now sees a one-line "Take the 5-step tour" offer in the corner; the tour opens when you click it. Dismissing the offer is permanent, as finishing the tour was.
+- **No more "WIP" badge on the home page banner** [view:/] [persona:curious] [persona:executive]: the bouncing work-in-progress pill beside "Community-Driven Educational Resource" is gone; the sentence under it already says the site may contain inaccuracies. Per-page in-progress markers (the top-bar chip for in-progress rail rows, module and tool chips) are unchanged.
+
 ## [4.93.0] - 2026-09-19
 
 Eleven reference pages now open with one line that says what the page means for your role.

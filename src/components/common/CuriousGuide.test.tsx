@@ -38,9 +38,13 @@ describe('CuriousGuide', () => {
     expect(container.firstChild).toBeNull()
   })
 
-  it('renders step 1 by default for the curious persona', () => {
+  // UX fix (2026-09-19): the tour no longer opens itself — a one-line offer
+  // renders first and the dialog opens on click.
+  it('offers the tour first, then renders step 1 when the offer is taken', () => {
     usePersonaStore.setState({ selectedPersona: 'curious' })
     renderGuide()
+    expect(screen.queryByText(/Step 1 of 5/i)).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Take the 5-step tour/i }))
     expect(screen.getByText(/Step 1 of 5/i)).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /everything's encrypted/i })).toBeInTheDocument()
   })
@@ -52,6 +56,7 @@ describe('CuriousGuide', () => {
   it('advances through steps with Next and reaches Finish on step 5', () => {
     usePersonaStore.setState({ selectedPersona: 'curious' })
     renderGuide()
+    fireEvent.click(screen.getByRole('button', { name: /Take the 5-step tour/i }))
     fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
     expect(screen.getByText(/Step 2 of 5/i)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
@@ -65,6 +70,7 @@ describe('CuriousGuide', () => {
   it('Finish dismisses the guide and sets curiousGuideDismissed', () => {
     usePersonaStore.setState({ selectedPersona: 'curious' })
     renderGuide()
+    fireEvent.click(screen.getByRole('button', { name: /Take the 5-step tour/i }))
     fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
     fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
     fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
@@ -77,7 +83,8 @@ describe('CuriousGuide', () => {
     const { logEvent } = await import('@/utils/analytics')
     usePersonaStore.setState({ selectedPersona: 'curious' })
     renderGuide()
-    fireEvent.click(screen.getByRole('button', { name: /Dismiss tour/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Take the 5-step tour/i }))
+    fireEvent.click(screen.getByRole('button', { name: /^Dismiss tour$/i }))
     expect(usePersonaStore.getState().curiousGuideDismissed).toBe(true)
     expect(logEvent).toHaveBeenCalledWith(
       'Curious Guide',
