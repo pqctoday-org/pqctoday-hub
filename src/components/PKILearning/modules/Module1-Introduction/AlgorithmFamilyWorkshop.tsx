@@ -245,13 +245,14 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
                 ))
               )}
               {/* Target (noisy) point */}
-              <motion.circle
+              {/* Pulsed with CSS rather than a framer `r` tween: under
+                  prefers-reduced-motion the tween emitted r="undefined" on the
+                  first frame (console error on every load; round-9 walk). */}
+              <circle
                 cx={targetPoint.x}
                 cy={targetPoint.y}
                 r={2.5}
-                className="fill-destructive"
-                animate={{ r: [2.5, 3.2, 2.5] }}
-                transition={{ repeat: Infinity, duration: 2 }}
+                className="fill-destructive motion-safe:animate-pulse"
               />
               {/* Label */}
               <text
