@@ -177,8 +177,14 @@ function RunnerInner({ algorithm }: Props) {
           >
             <Play className="w-3 h-3 mr-1" /> {runLabel}
           </Button>
-          <Button size="sm" variant="outline" onClick={handleReset} disabled={isRunning}>
-            <RotateCcw className="w-3 h-3" />
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleReset}
+            disabled={isRunning}
+            aria-label="Reset the handshake"
+          >
+            <RotateCcw className="w-3 h-3" aria-hidden="true" />
           </Button>
         </div>
       </div>

@@ -81,6 +81,7 @@ export const AwsKmsPolicyLab: React.FC = () => {
             </Button>
           </div>
           <textarea
+            aria-label="key-policy.json editor"
             value={policyJson}
             onChange={(e) => setPolicyJson(e.target.value)}
             spellCheck={false}

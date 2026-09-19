@@ -153,7 +153,7 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
                     className="h-full bg-primary rounded-full transition-all duration-500 flex items-center justify-end pr-2"
                     style={{ width: `${(algorithmData.classicalBits / maxBits) * 100}%` }}
                   >
-                    <span className="text-[10px] font-bold text-black">
+                    <span className="text-[10px] font-bold text-primary-foreground">
                       {algorithmData.classicalBits}-bit
                     </span>
                   </div>
@@ -174,7 +174,7 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
                       className={`h-full ${getBarColor(algorithmData.status)} rounded-full transition-all duration-500 flex items-center justify-end pr-2`}
                       style={{ width: `${(algorithmData.quantumBits / maxBits) * 100}%` }}
                     >
-                      <span className="text-[10px] font-bold text-black">
+                      <span className="text-[10px] font-bold text-primary-foreground">
                         {algorithmData.quantumBits}-bit
                       </span>
                     </div>

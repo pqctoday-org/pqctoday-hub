@@ -354,11 +354,11 @@ export const SecureBootChain: React.FC = () => {
                 </div>
 
                 {/* Stage content */}
-                <div className={`flex-1 pb-4 ${isFuture ? 'opacity-40' : ''}`}>
+                <div className={`flex-1 pb-4 ${isFuture ? 'text-muted-foreground' : ''}`}>
                   <Button
                     variant="ghost"
                     onClick={() => setActiveStage(idx)}
-                    className="text-left w-full"
+                    className="h-auto w-full flex-col items-start whitespace-normal text-left"
                   >
                     <div
                       className={`text-sm font-bold ${

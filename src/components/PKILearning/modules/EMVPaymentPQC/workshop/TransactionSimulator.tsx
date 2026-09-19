@@ -253,6 +253,7 @@ export const TransactionSimulator: React.FC = () => {
             variant="ghost"
             role="switch"
             aria-checked={quantumExposure}
+            aria-label="Quantum exposure"
             onClick={() => setQuantumExposure((p) => !p)}
             className={`relative w-10 h-5 rounded-full transition-colors ${
               quantumExposure ? 'bg-status-error' : 'bg-muted'

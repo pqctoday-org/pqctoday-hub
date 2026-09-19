@@ -178,7 +178,7 @@ export const VehicleArchitectureMapper: React.FC = () => {
               variant="ghost"
               key={style}
               onClick={() => setSelectedArchitecture(style)}
-              className={`flex-1 p-3 rounded-lg border text-left transition-all ${
+              className={`flex-1 h-auto whitespace-normal flex-col items-start p-3 rounded-lg border text-left transition-all ${
                 selectedArchitecture === style
                   ? 'border-primary bg-primary/10'
                   : 'border-border bg-card hover:border-primary/50'

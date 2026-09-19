@@ -128,6 +128,7 @@ export const TVLALeakageAnalyzer: React.FC = () => {
         </div>
         <input
           type="range"
+          aria-label="TVLA threshold, absolute t value"
           min="2.0"
           max="8.0"
           step="0.5"

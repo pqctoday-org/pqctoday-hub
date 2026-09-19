@@ -203,6 +203,7 @@ export const TokenSizeAnalyzer: React.FC = () => {
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3">JWT Payload (Editable)</h4>
         <Textarea
+          aria-label="JWT payload (editable JSON)"
           value={payloadJson}
           onChange={(e) => setPayloadJson(e.target.value)}
           className={`h-36 text-xs font-mono ${isPayloadValid ? '' : 'border-status-error'}`}

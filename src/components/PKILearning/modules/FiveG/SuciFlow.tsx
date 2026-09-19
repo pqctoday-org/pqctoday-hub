@@ -1525,7 +1525,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
                 changeProfile('A')
               }}
               className={clsx(
-                'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
+                'flex-1 p-3 rounded border text-left transition-all hover:bg-muted h-auto whitespace-normal',
                 profile === 'A'
                   ? 'border-primary bg-primary/10 text-primary'
                   : 'border-border text-muted-foreground'
@@ -1549,7 +1549,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
                 changeProfile('B')
               }}
               className={clsx(
-                'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
+                'flex-1 p-3 rounded border text-left transition-all hover:bg-muted h-auto whitespace-normal',
                 profile === 'B'
                   ? 'border-secondary bg-secondary/10 text-secondary'
                   : 'border-border text-muted-foreground'
@@ -1573,7 +1573,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
                 changeProfile('C')
               }}
               className={clsx(
-                'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
+                'flex-1 p-3 rounded border text-left transition-all hover:bg-muted h-auto whitespace-normal',
                 profile === 'C'
                   ? 'border-tertiary bg-tertiary/10 text-tertiary'
                   : 'border-border text-muted-foreground'
@@ -1609,7 +1609,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
                   changePqcMode('hybrid')
                 }}
                 className={clsx(
-                  'flex-1 p-3 rounded border text-left transition-all',
+                  'flex-1 p-3 rounded border text-left transition-all h-auto whitespace-normal',
                   pqcMode === 'hybrid'
                     ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
                     : 'border-border text-muted-foreground hover:bg-muted'
@@ -1625,7 +1625,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
                   changePqcMode('pure')
                 }}
                 className={clsx(
-                  'flex-1 p-3 rounded border text-left transition-all',
+                  'flex-1 p-3 rounded border text-left transition-all h-auto whitespace-normal',
                   pqcMode === 'pure'
                     ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
                     : 'border-border text-muted-foreground hover:bg-muted'
