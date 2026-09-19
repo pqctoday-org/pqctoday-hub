@@ -126,7 +126,7 @@ function SectionToggle({
     <Button
       variant="ghost"
       onClick={onToggle}
-      className="w-full flex items-center gap-2 text-sm font-semibold py-3 px-4 justify-start"
+      className="w-full flex items-center gap-2 text-sm font-semibold py-3 px-4 justify-start h-auto whitespace-normal text-left"
       aria-expanded={open}
     >
       {open ? (
@@ -135,7 +135,7 @@ function SectionToggle({
         <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
       )}
       <Icon className="w-4 h-4 text-primary shrink-0" />
-      <span className="text-gradient">{label}</span>
+      <span className="min-w-0 text-gradient">{label}</span>
     </Button>
   )
 }

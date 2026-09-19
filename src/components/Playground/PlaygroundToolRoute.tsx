@@ -5,6 +5,7 @@ import { ArrowLeft, Wrench, ArrowRight, GraduationCap } from 'lucide-react'
 import { Button } from '../ui/button'
 import { NextStepCard } from '@/components/shared/NextStepCard'
 import { PersonaBlock } from '@/components/shared/PersonaBlock'
+import { ToolExercise } from '@/components/shared/ToolExercise'
 import { RelatedContentPanel } from '@/components/shared/RelatedContentPanel'
 import { playgroundToolRelations } from '@/data/toolRelations'
 import { Skeleton } from '../ui/skeleton'
@@ -210,6 +211,8 @@ export const PlaygroundToolRoute = () => {
 
       {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts):
           the chain tool → business tool → report, beside the in-category rotation below. */}
+      {/* Round 9, wave 2 — "Try it": questions answerable from the tool (src/data/toolExercises.ts). */}
+      <ToolExercise toolId={tool.id} />
       <NextStepCard route={`/playground/${tool.id}`} />
       {/* Round 9, wave 1.1 — related content (module, category siblings, shared algorithms). */}
       <RelatedContentPanel id={tool.id} entries={playgroundToolRelations(tool.id)} />

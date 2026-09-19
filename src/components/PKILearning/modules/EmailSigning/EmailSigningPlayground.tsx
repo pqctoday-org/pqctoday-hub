@@ -61,14 +61,14 @@ export const EmailSigningPlayground: React.FC = () => {
             <Button
               variant="ghost"
               onClick={() => toggle(id)}
-              className="flex w-full items-center justify-start gap-3 px-4 py-3 text-left hover:bg-muted/30 transition-colors rounded-lg h-auto"
+              className="flex w-full items-center justify-start gap-3 px-4 py-3 text-left hover:bg-muted/30 transition-colors rounded-lg h-auto whitespace-normal"
             >
               {expanded[id] ? (
                 <ChevronDown size={16} className="shrink-0 text-primary" />
               ) : (
                 <ChevronRight size={16} className="shrink-0 text-muted-foreground" />
               )}
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm font-semibold text-foreground">{title}</p>
                 <p className="text-xs text-muted-foreground">{description}</p>
               </div>
