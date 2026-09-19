@@ -427,13 +427,19 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
           >
             {isMulti ? multiButtonIcon : isDefaultSelected ? defaultIcon : selectedItem?.icon}
           </span>
-          <span className="truncate max-w-[120px]">
+          {/* UX batch 2 (2026-09-19, CC-4): the selected label used to be capped at a
+              hard 120 px whatever the control's width, so full-width selects read
+              "Fingerprint Tem…". The button is overflow-hidden and this span's parent
+              is min-w-0, so the button's own width is the only limit needed. */}
+          <span className="min-w-0 truncate">
             {isMulti ? multiButtonLabel : isDefaultSelected ? defaultLabel : selectedItem?.label}
           </span>
         </span>
       )}
+      {/* Compact triggers size to their label; cap at 24rem (or 60vw on a phone) so
+          a long algorithm name still fits without blowing up a filter bar. */}
       {size === 'sm' && (
-        <span className="truncate max-w-[160px] text-foreground">
+        <span className="truncate max-w-[min(24rem,60vw)] text-foreground">
           {isMulti ? multiButtonLabel : isDefaultSelected ? defaultLabel : selectedItem?.label}
         </span>
       )}

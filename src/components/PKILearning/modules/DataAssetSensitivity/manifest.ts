@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'data-asset-sensitivity',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-005',
   title: 'Data & Asset Sensitivity',
   description:
@@ -22,8 +22,8 @@ const manifest: ModuleManifest = {
   ],
   workshopSteps: [
     { id: 'asset-inventory', label: 'Asset Inventory' },
-    { id: 'compliance-matrix', label: 'Compliance Matrix' },
-    { id: 'risk-methodology', label: 'Risk Methodology' },
+    { id: 'classification-challenge', label: 'Classification Challenge' },
+    { id: 'conflict-resolver', label: 'Conflict Resolver' },
     { id: 'sensitivity-scoring', label: 'Sensitivity Scoring' },
     { id: 'priority-map', label: 'Priority Map' },
   ],

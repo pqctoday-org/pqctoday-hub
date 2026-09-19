@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'kms-pqc',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-016',
   title: 'KMS & PQC Key Management',
   description:
@@ -29,6 +29,7 @@ const manifest: ModuleManifest = {
     { id: 'hybrid-wrapping', label: 'Hybrid Wrapping' },
     { id: 'rotation-planner', label: 'Rotation Planner' },
     { id: 'kmip-explorer', label: 'KMIP Protocol Explorer' },
+    { id: 'aws-policy-lab', label: 'AWS Policy Lab' },
   ],
   startHere: {
     step: 'envelope-encryption',

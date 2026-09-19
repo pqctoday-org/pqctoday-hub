@@ -156,7 +156,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                         key={opt.id}
                         disabled={isSubmitted}
                         onClick={() => updateResult(card.id, { selectedType: opt.id })}
-                        className={`text-xs px-2 py-1.5 rounded border transition-colors text-left
+                        className={`h-auto min-h-[2rem] whitespace-normal justify-start text-xs px-2 py-1.5 rounded border transition-colors text-left
                           ${
                             showFeedback && isCorrectOption
                               ? 'bg-status-success/10 border-status-success/40 text-status-success font-semibold'
@@ -188,7 +188,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                         key={opt.id}
                         disabled={isSubmitted}
                         onClick={() => updateResult(card.id, { selectedScope: opt.id })}
-                        className={`flex-1 text-xs px-2 py-1.5 rounded border transition-colors
+                        className={`flex-1 h-auto min-h-[2rem] whitespace-normal text-xs px-2 py-1.5 rounded border transition-colors
                           ${
                             showFeedback && isCorrectOption
                               ? 'bg-status-success/10 border-status-success/40 text-status-success font-semibold'
@@ -220,7 +220,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                         key={opt.id}
                         disabled={isSubmitted}
                         onClick={() => updateResult(card.id, { selectedAuthority: opt.id })}
-                        className={`flex-1 text-xs px-2 py-1.5 rounded border transition-colors
+                        className={`flex-1 h-auto min-h-[2rem] whitespace-normal text-xs px-2 py-1.5 rounded border transition-colors
                           ${
                             showFeedback && isCorrectOption
                               ? 'bg-status-success/10 border-status-success/40 text-status-success font-semibold'

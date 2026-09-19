@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'energy-utilities-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-042',
   title: 'Energy & Utilities PQC',
   description:
@@ -30,6 +30,7 @@ const manifest: ModuleManifest = {
     { id: 'smart-meter-key-manager', label: 'Meter Key Manager' },
     { id: 'safety-risk-scorer', label: 'Risk Scorer' },
     { id: 'grid-migration-roadmap', label: 'Grid Roadmap' },
+    { id: 'rf-mesh-simulator', label: 'RF Mesh Simulator' },
   ],
   startHere: {
     step: 'substation-migration-planner',

@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.95.0] - 2026-09-19
+
+Module workshops are tidier — one step navigator, the right step count, the intro folded away while you work — and a handful of controls that clipped or overlapped now fit.
+
+### Fixed
+
+- **Ten modules now declare every workshop step they render** [view:/learn] [persona:developer] [persona:architect] [persona:ops]: the sidebar said "Workshop 0/5" beside a nine-step rail on Cryptographic Management Modernization, and one step each was missing from API Security & JWT, Email Signing, Energy & Utilities, Hybrid Cryptography, IAM, IoT/OT, KMS and Stateful Signatures; Data Asset Sensitivity listed two step ids that no step had. Progress counts, search and the workshop audit read the manifest, so all of them were off. A guard test now refuses any manifest whose steps differ from the rendered ones.
+- **Selected values in drop-downs are no longer cut short** [view:/learn] [view:/playground] [view:/business] [persona:curious] [persona:developer]: full-width selects read "Fingerprint Tem…" and "RS256 (RSA-20…" because the label was capped at a fixed 120 px regardless of the control's width; the control's own width is now the only limit (177 places use this component).
+- **"First Steps" is awarded for a real step, not for opening the Workshop tab** [view:/learn] [persona:curious]: leaving the Learn tab was being counted as a completed workshop step.
+- **Overlapping option buttons in two workshops** [view:/learn/standards-bodies] [view:/learn/iot-ot-pqc] [persona:grc] [persona:developer]: the Body Classifier's type/scope/authority buttons and the IoT device-class cards ran their labels into each other; they now wrap.
+- **Architecture Diagram inputs fit their content and say what they are** [view:/business/tools/crypto-architecture-diagram] [persona:architect]: the Name and Detail fields clipped mid-word; the "Depends on" field offers the other rows' ids as you type instead of expecting them typed blind; all three carry labels for assistive technology.
+- **"~380 min for a first look" on Explore** [view:/explore] [persona:architect] [persona:curious]: the figure is the length of your essentials track and now says so.
+
+### Changed
+
+- **One step navigator per workshop** [view:/learn] [persona:developer] [persona:curious]: the icon rail above each workshop card duplicated the titled step chips inside it; the rail is gone and the chips (which carry the step titles) stay.
+- **The module intro folds away on the Workshop tab** [view:/learn] [persona:developer] [persona:ops]: the description, "Why this matters" and "Start here" blocks pushed the first workshop control below the fold on a laptop screen; on the Workshop tab they collapse to a "Show module intro" link.
+
 ## [4.94.0] - 2026-09-19
 
 Returning visitors see what changed since they were last here, the Curious tour asks before it opens, and the home page no longer opens on a "WIP" badge.

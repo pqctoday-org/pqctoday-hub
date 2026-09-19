@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'iam-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-028',
   title: 'Identity & Access Management with PQC',
   description:
@@ -32,6 +32,7 @@ const manifest: ModuleManifest = {
     { id: 'directory-services', label: 'Directory Services Analyzer' },
     { id: 'vendor-readiness', label: 'Vendor Readiness Scorer' },
     { id: 'zero-trust-identity', label: 'Zero Trust Identity Architect' },
+    { id: 'identity-proxy', label: 'Identity Proxy' },
   ],
   startHere: {
     step: 'token-migration-lab',

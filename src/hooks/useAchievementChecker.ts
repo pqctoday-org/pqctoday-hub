@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
+import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useChatStore } from '@/store/useChatStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
@@ -69,7 +70,12 @@ export function useAchievementChecker() {
     for (const [id, mod] of Object.entries(modules)) {
       if (!mod) continue
 
-      totalCompletedSteps += mod.completedSteps?.length ?? 0
+      // UX batch 2 (2026-09-19, CC-2): completedSteps also holds tab ids — leaving
+      // the Learn tab records 'learn' — so counting its length awarded "First
+      // Steps" the moment the Workshop tab opened. Count real workshop steps only.
+      // eslint-disable-next-line security/detect-object-injection -- id is a key of the typed module-progress map, not user input
+      const workshopIds = new Set((WORKSHOP_STEPS[id] ?? []).map((st) => st.id))
+      totalCompletedSteps += (mod.completedSteps ?? []).filter((st) => workshopIds.has(st)).length
       totalTimeMinutes += mod.timeSpent ?? 0
 
       if (mod.status === 'completed') {
