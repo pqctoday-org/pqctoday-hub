@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'mls-group-messaging',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-054',
   title: 'MLS — Group Messaging',
   description:
@@ -23,6 +23,10 @@ const manifest: ModuleManifest = {
     { id: 'treekem', label: 'TreeKEM Ratchet Tree Visualizer' },
     { id: 'provider-arch', label: 'OpenMLS ↔ PKCS#11 Provider Architecture' },
   ],
+  startHere: {
+    step: 'treekem',
+    text: 'Alice and Bob start the group in the TreeKEM visualizer; add a third member and see which nodes on the direct path have to re-key.',
+  },
   playgroundTool: 'mls-group-messaging',
   taxonomy: { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['JOSE'] },
   // reduced 5-tab set (no Exercises) — matches the original render

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'ops-quantum-impact',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-050',
   title: 'Ops Quantum Impact',
   description:
@@ -26,6 +26,10 @@ const manifest: ModuleManifest = {
     { id: 'how-to-act', label: 'How to Act' },
     { id: 'self-assessment', label: 'Ops Readiness Self-Assessment' },
   ],
+  startHere: {
+    step: 'how-to-act',
+    text: 'Build the operational action plan in How to Act: from infrastructure inventory to a pilot migration, with certificate, VPN/SSH and pipeline work in order.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

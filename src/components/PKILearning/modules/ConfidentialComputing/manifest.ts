@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'confidential-computing',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-019',
   title: 'Confidential Computing & TEEs',
   description:
@@ -30,6 +30,10 @@ const manifest: ModuleManifest = {
     { id: 'tee-hsm-channel', label: 'TEE-HSM Trusted Channel' },
     { id: 'quantum-threat-migration', label: 'Quantum Threat Migration' },
   ],
+  startHere: {
+    step: 'tee-hsm-channel',
+    text: 'Design the TEE-HSM Trusted Channel in step 4: mutual attestation between enclave and HSM, then PQC key provisioning across it.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

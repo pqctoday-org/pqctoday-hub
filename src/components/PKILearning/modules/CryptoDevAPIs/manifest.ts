@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-dev-apis',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-021',
   title: 'Cryptographic APIs & Developer Languages',
   description:
@@ -37,6 +37,10 @@ const manifest: ModuleManifest = {
     { id: 'crypto-agility-patterns', label: 'Crypto Agility Patterns' },
     { id: 'migration-decision-lab', label: 'Migration Decision Lab' },
   ],
+  startHere: {
+    step: 'provider-patterns',
+    text: 'Open the Provider Pattern Workshop: KeyGen, Sign, Verify, Encrypt and KEM Encapsulate shown side by side across JCA/JCE, OpenSSL, PKCS#11, CNG and Bouncy Castle.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

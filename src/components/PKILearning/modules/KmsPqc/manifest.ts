@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'kms-pqc',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-016',
   title: 'KMS & PQC Key Management',
   description:
@@ -30,6 +30,10 @@ const manifest: ModuleManifest = {
     { id: 'rotation-planner', label: 'Rotation Planner' },
     { id: 'kmip-explorer', label: 'KMIP Protocol Explorer' },
   ],
+  startHere: {
+    step: 'envelope-encryption',
+    text: 'Run the Envelope Encryption step: it wraps a data key with ML-KEM and with RSA-OAEP and lays the two stored envelopes side by side, with the size difference.',
+  },
   playgroundTool: 'envelope-encrypt',
   taxonomy: { algorithms: ['ML-KEM'], standards: ['FIPS 203'] },
   embeddable: true,

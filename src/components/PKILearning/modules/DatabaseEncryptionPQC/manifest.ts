@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'database-encryption-pqc',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-023',
   title: 'Database Encryption & PQC',
   description:
@@ -29,6 +29,10 @@ const manifest: ModuleManifest = {
     { id: 'queryable-encryption-lab', label: 'Queryable Encryption Lab' },
     { id: 'database-readiness', label: 'Migration Readiness Assessment' },
   ],
+  startHere: {
+    step: 'tde-migration-planner',
+    text: 'Step through the TDE Migration Planner: the AES-256 master key is re-wrapped under ML-KEM, and you see what the database has to re-encrypt — the key hierarchy, not the data.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

@@ -40,6 +40,8 @@ export interface MobileModuleShellProps {
   /** ModuleShell's active tab ('learn' | 'workshop' | …); drives the switch. */
   activeTab?: string
   onTabChange?: (tab: string) => void
+  /** Wave C: opens the manifest's "Start here" workshop step (via ModuleShell's goToWorkshop). */
+  onStartHere?: () => void
 }
 
 /**
@@ -90,6 +92,7 @@ export function MobileModuleShell({
   workshopContent,
   activeTab,
   onTabChange,
+  onStartHere,
 }: MobileModuleShellProps) {
   const showWorkshop = Boolean(workshopContent) && activeTab === 'workshop'
   const modules = useModuleStore((s) => s.modules)
@@ -126,6 +129,31 @@ export function MobileModuleShell({
             <p className="mt-1 text-[12.5px] leading-[1.55] text-foreground/90">
               {manifest.whyThisMatters}
             </p>
+          </div>
+        )}
+        {/* Wave C (2026-09-18): "Start here" — same text as the desktop shell; the
+            button goes through ModuleShell's goToWorkshop, which on a phone opens
+            the real workshop when the module is on MOBILE_WORKSHOP_READY and the
+            honest "not built for mobile yet" banner otherwise. */}
+        {manifest.startHere && (
+          <div className="mt-2 rounded-xl border border-border bg-muted/30 p-3">
+            <p className="text-[10.5px] font-bold uppercase tracking-wide text-primary">
+              Start here
+            </p>
+            <p className="mt-1 text-[12.5px] leading-[1.55] text-foreground/90">
+              {manifest.startHere.text}
+            </p>
+            {onStartHere && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onStartHere}
+                className="mt-2 h-7 border-primary/30 bg-primary/10 px-2.5 text-[11.5px] font-bold text-primary"
+              >
+                Open this step
+              </Button>
+            )}
           </div>
         )}
       </div>

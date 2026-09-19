@@ -121,6 +121,14 @@ export interface ModuleManifest {
    * in progressively starting with the highest-traffic modules.
    */
   whyThisMatters?: string
+  /**
+   * B+ round 8, Wave C (2026-09-18). "Start here" — one sentence naming a real
+   * workshop step and what a first run of it gives you, plus a button that opens
+   * that step. `step` must be an id in `workshopSteps` (guarded by
+   * moduleStartHere.test.ts); the text is written from the step's own
+   * WorkshopPart description, not from the module summary.
+   */
+  startHere?: { step: string; text: string }
 }
 
 /** The default tab set used by a standard module when `tabs` is omitted. */

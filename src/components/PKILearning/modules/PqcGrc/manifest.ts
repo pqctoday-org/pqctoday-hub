@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-grc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-058',
   title: 'PQC GRC',
   description:
@@ -23,6 +23,10 @@ const manifest: ModuleManifest = {
     { id: 'kri-cascade', label: 'KRI Cascade' },
     { id: 'exception-triage', label: 'Exception Register' },
   ],
+  startHere: {
+    step: 'kri-cascade',
+    text: 'Assign each Key Risk Indicator to the board, CISO or operational level in the KRI Cascade and set its status against the framework thresholds.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

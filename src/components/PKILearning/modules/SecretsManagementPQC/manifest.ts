@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'secrets-management-pqc',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-022',
   title: 'Secrets Management & PQC',
   description:
@@ -29,6 +29,10 @@ const manifest: ModuleManifest = {
     { id: 'cloud-secrets-comparator', label: 'Cloud Provider Comparator' },
     { id: 'pipeline-integration-lab', label: 'Pipeline Integration Lab' },
   ],
+  startHere: {
+    step: 'rotation-policy-designer',
+    text: 'Design a PQC-aware rotation policy in step 3: each secret type gets a recommended TTL based on its risk level and HNDL exposure.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

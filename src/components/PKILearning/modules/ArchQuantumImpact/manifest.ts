@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'arch-quantum-impact',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-049',
   title: 'Architect Quantum Impact',
   description:
@@ -25,7 +25,12 @@ const manifest: ModuleManifest = {
     { id: 'what-to-learn', label: 'What to Learn' },
     { id: 'how-to-act', label: 'How to Act' },
     { id: 'self-assessment', label: 'Architecture Readiness Self-Assessment' },
+    { id: 'strangler-fig', label: 'Strangler Fig' },
   ],
+  startHere: {
+    step: 'strangler-fig',
+    text: 'Model the Strangler Fig migration in step 5: a legacy monolith moves behind a PQC API gateway one route at a time.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

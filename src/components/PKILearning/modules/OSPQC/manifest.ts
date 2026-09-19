@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'os-pqc',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-024',
   title: 'Operating System & Platform Crypto PQC',
   description:
@@ -29,6 +29,10 @@ const manifest: ModuleManifest = {
     { id: 'package-signing', label: 'Package Signing Migrator' },
     { id: 'fips-compat', label: 'FIPS Compatibility Checker' },
   ],
+  startHere: {
+    step: 'ssh-keys',
+    text: 'Migrate SSH host keys to ML-DSA-65 in step 3: the sshd_config changes and the known_hosts roll-out across a fleet are laid out in order.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

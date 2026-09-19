@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'compliance-strategy',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-035',
   title: 'Compliance & Regulatory Strategy',
   description:
@@ -26,6 +26,10 @@ const manifest: ModuleManifest = {
     { id: 'compliance-timeline', label: 'Compliance Timeline' },
     { id: 'regulatory-gap-assessment', label: 'Regulatory Gap Assessment' },
   ],
+  startHere: {
+    step: 'compliance-timeline',
+    text: 'Overlay your migration milestones on the framework deadlines in the Compliance Timeline: the gap between dates you chose and dates you did not is the plan.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-candidates',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-053',
   title: 'PQC Candidates & Lifecycle',
   description:
@@ -30,6 +30,10 @@ const manifest: ModuleManifest = {
     { id: 'future-rounds', label: 'Future Rounds Forecaster' },
     { id: 'worldwide-map', label: 'Worldwide Standardisation Map' },
   ],
+  startHere: {
+    step: 'comparator',
+    text: 'Sort and filter the nine candidates for one use case in the Candidate Comparator: it tells ML-KEM-768 apart from Classic McEliece by what each is for, not by name.',
+  },
   taxonomy: { algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'Falcon', 'HQC'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.PQCCandidatesModule })),

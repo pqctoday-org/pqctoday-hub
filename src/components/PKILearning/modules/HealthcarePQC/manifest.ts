@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'healthcare-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-041',
   title: 'Healthcare PQC',
   description:
@@ -29,6 +29,10 @@ const manifest: ModuleManifest = {
     { id: 'device-safety-simulator', label: 'Device Safety Simulator' },
     { id: 'hospital-migration-planner', label: 'Hospital Migration Planner' },
   ],
+  startHere: {
+    step: 'patient-privacy-mapper',
+    text: 'Map a data category in the Patient Privacy Mapper: pediatric, genomic and mental-health records get their true lifecycle and an HNDL window calculated from it.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

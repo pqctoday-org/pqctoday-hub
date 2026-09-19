@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'verification-closure',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-061',
   title: 'Decommissioning & Program Closure',
   description:
@@ -30,6 +30,10 @@ const manifest: ModuleManifest = {
     { id: 'coverage-planner', label: 'Verification Coverage Planner' },
     { id: 'closure-handover-register', label: 'Closure & Handover Register' },
   ],
+  startHere: {
+    step: 'decommission-checklist',
+    text: 'Retire one classical asset in the Decommission Checklist: deprecate, remove, verify removed, log — the four gates a closure claim has to show.',
+  },
   embeddable: true,
   taxonomy: {
     standards: ['NIST IR 8547', 'NIST SP 800-131A', 'ISO/IEC 27001'],

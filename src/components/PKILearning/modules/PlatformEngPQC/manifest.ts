@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'platform-eng-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-031',
   title: 'Platform Engineering & PQC',
   description:
@@ -32,6 +32,10 @@ const manifest: ModuleManifest = {
     { id: 'crypto-posture-monitor', label: 'Crypto Posture Monitor' },
     { id: 'platform-migration-planner', label: 'Platform Migration Planner' },
   ],
+  startHere: {
+    step: 'container-signing-migration',
+    text: 'Compare OCI signing tools in Container Signing Migration and walk the ECDSA-to-ML-DSA path for cosign and Notation.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

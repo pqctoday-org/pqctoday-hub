@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'verification-closure',
   lastReviewed: '2026-08-23',
   version: '1.1.0',
-  lastEdited: '2026-09-18',
+  lastEdited: '2026-09-19',
 
   // CORRECTED 2026-08-23. This read that NCSC-UK's 2028/2031/2035 targets and ISO/IEC
   // 27001 "have no ACTIVE library row to cite". Both halves were wrong by the time it was

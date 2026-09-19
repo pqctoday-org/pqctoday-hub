@@ -13,7 +13,7 @@ export const content: ModuleContent = {
   moduleId: 'soc-implementation-pqc',
   lastReviewed: '2026-08-23',
   version: '1.0.0',
-  lastEdited: '2026-09-18',
+  lastEdited: '2026-09-19',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Detection engineering: RFC 8446 leads because hybrid-downgrade detection parses
