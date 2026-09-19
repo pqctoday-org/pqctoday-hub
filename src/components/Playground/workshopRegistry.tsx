@@ -126,6 +126,13 @@ export interface WorkshopTool {
    */
   startHere?: PersonaId[]
   /**
+   * B+ round 8, Wave C (2026-09-18). Intro strip rendered above the tool by
+   * PlaygroundToolRoute: what the user will do, and one concrete run written
+   * from the tool's real steps and controls (not from its summary — the first
+   * drafts named things the tools do not do). Optional.
+   */
+  intro?: { whatYouWillDo: string; workedExample: string }
+  /**
    * Cross-cutting facet: this tool is a Docker-sandbox scenario that runs in a
    * real, access-gated container (vs. in-browser WASM). It still has a real
    * domain `category`; `sandbox` only marks *where/how* it runs. Drives the
@@ -421,7 +428,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'kdf-derivation',
     pt_id: 'PT-008',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'SP 800-108 KDF',
     description:
       'NIST SP 800-108 counter-mode key derivation — applicable to KEM secrets, PSK, QKD, and password-derived keys',
@@ -444,6 +451,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Retrieve a QKD key over ETSI QKD 014, import it into the HSM, and derive a session key from it with SP 800-108 counter-mode KDF over PKCS#11.',
+      workedExample:
+        'One QKD key in, one session key out, with the label and context that bind the derived key to its purpose — then the session key is used.',
+    },
     hasOutput: true,
     outputSpec:
       'SP 800-108 derived key material (32 or 64 bytes hex); deterministic given same PRF, context, and label.',
@@ -451,7 +464,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tee-channel',
     pt_id: 'PT-006',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'TEE-HSM Secure Channel',
     description: 'Build a TEE-to-HSM trusted channel with ML-DSA + ML-KEM + AES wrap',
     category: 'HSM / PKCS#11',
@@ -462,6 +475,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['architect', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Open a trusted channel from an enclave to the HSM: an ML-DSA-65 attestation key, ML-KEM key agreement, and an AES key wrapped across the channel.',
+      workedExample:
+        'Run the flow end to end; the PKCS#11 call log shows which call each algorithm makes, and the generated-keys panel shows what ended up where.',
+    },
     hasOutput: true,
     outputSpec:
       'ML-DSA attestation signature (hex) over TEE measurement digest; ML-KEM-768 encapsulated session key (1088 bytes); AES-256 wrapped channel secret verifiable by recipient HSM.',
@@ -618,7 +637,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'mls-group-messaging',
     pt_id: 'PT-030',
-    version: '0.1.1',
+    version: '0.1.2',
     name: 'MLS Group Messaging',
     description:
       'RFC 9420 TreeKEM visualizer + PKCS#11 provider architecture. Add/remove members, trace re-keyed nodes on each Commit, and see how openmls_pqctoday_crypto routes every crypto op through softhsmv3.',
@@ -640,6 +659,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Run the MLS primitives with real keys — ML-DSA-65 credential signing, ML-KEM-768 TreeKEM updates, AES-128-GCM messages — and watch the ratchet tree change as members join.',
+      workedExample:
+        'Alice and Bob start the group; add a third member and see which nodes on the direct path have to re-key.',
+    },
     // Pre-1.0 — see the note on PT-029.
     wip: true,
     opensourceTool: {
@@ -672,7 +697,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'rng-demo',
     pt_id: 'PT-010',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Random Generation',
     description: 'Web Crypto + OpenSSL DRBG random generation with statistical analysis',
     category: 'Entropy & Random',
@@ -683,11 +708,17 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'beginner',
     requires: [],
     recommendedPersonas: ['researcher', 'developer', 'architect', 'ops'],
+    intro: {
+      whatYouWillDo:
+        'Generate random bytes from Web Crypto, OpenSSL WASM, Math.random() and a linear congruential generator, and run the same statistical tests on each.',
+      workedExample:
+        'Generate from the LCG source, then predict its next output from the bytes it already produced — the test table shows which checks it fails.',
+    },
   },
   {
     id: 'qrng-demo',
     pt_id: 'PT-012',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'QRNG Demo',
     description:
       'Simulates quantum random number generation patterns using CSPRNG statistical analysis. Note: runs in-browser via Web Crypto — not a physical QRNG device.',
@@ -699,6 +730,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'beginner',
     requires: [],
     recommendedPersonas: ['researcher', 'curious'],
+    intro: {
+      whatYouWillDo:
+        'Compare a simulated QRNG sample, a CSPRNG sample and a deliberately broken PRNG on the same statistical tests.',
+      workedExample:
+        'The monobit, runs and chi-squared results for all three, side by side: see which source fails and by how much.',
+    },
     startHere: ['curious'],
   },
   {
@@ -773,7 +810,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'source-combining',
     pt_id: 'PT-013',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Source Combining',
     description:
       'SP 800-90C source combining: XOR, Hash, HMAC, Concat + HKDF/Hash_df/AES-CMAC conditioning via SoftHSMv3',
@@ -796,6 +833,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['researcher', 'architect', 'developer'],
+    intro: {
+      whatYouWillDo:
+        'Combine two entropy sources with SP 800-90C concatenation and condition the result with Hash_df or HMAC, step by step.',
+      workedExample:
+        "Replace Source A with all zeros and re-run the pipeline: Source B's entropy survives the conditioning step, which is the point of combining.",
+    },
   },
   {
     id: 'pki-workshop',
@@ -976,7 +1019,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'solana-flow',
     pt_id: 'PT-021',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Solana Transaction',
     description: 'Ed25519 keypair generation and transaction signing',
     category: 'Blockchain & Digital Assets',
@@ -987,6 +1030,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Follow a Solana transfer from an Ed25519 keypair to an address, a formatted transaction and a signed message.',
+      workedExample:
+        'The eight steps end with the signed message; the notes explain why an Ed25519 signature is a post-quantum liability and what would replace it.',
+    },
     hasOutput: true,
     outputSpec:
       'Ed25519 keypair (public key 32 bytes); signature (64 bytes) must verify against message under same public key.',
@@ -1131,7 +1180,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'email-signing',
     pt_id: 'PT-031',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'S/MIME & CMS Workshop',
     description:
       'Real OpenSSL 3.6 WASM CMS SignedData sign+verify (ML-DSA-44/65/87, SLH-DSA, RSA-PSS) and ML-KEM-768 AuthEnvelopedData encrypt+decrypt. Toggle routes signing key through softhsmv3 PKCS#11.',
@@ -1169,6 +1218,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Sign, verify, encrypt and decrypt CMS messages with real OpenSSL 3.6 running in the browser, using ML-DSA, SLH-DSA and ML-KEM-768.',
+      workedExample:
+        'An ML-DSA-65 CMS SignedData signed and verified end to end, then an ML-KEM-768 AuthEnvelopedData encrypted and decrypted; toggle the signing key through the PKCS#11 provider.',
+    },
     hasOutput: true,
     outputSpec:
       'CMS SignedData DER blob: outer ASN.1 SEQUENCE header (30 82 …), recovered plaintext matches input byte-for-byte. KEM path: decrypted plaintext matches DEFAULT_PAYLOAD.',

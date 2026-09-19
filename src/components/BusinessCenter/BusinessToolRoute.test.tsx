@@ -32,6 +32,21 @@ describe('BusinessToolRoute — provenance and resources', () => {
     expect(screen.getByText(tool.cswp39SectionRef)).toBeInTheDocument()
   })
 
+  it('renders the worked example when the registry carries one (Wave C, 2026-09-18)', () => {
+    const tool = BUSINESS_TOOLS.find((t) => t.id === 'raci-builder')!
+    expect(tool.workedExample).toBeTruthy()
+    renderTool(tool.id)
+    expect(screen.getByText(/Worked example:/)).toBeInTheDocument()
+    expect(screen.getByText(new RegExp(tool.workedExample!.slice(0, 40)))).toBeInTheDocument()
+  })
+
+  it('omits the worked-example line for a tool without one', () => {
+    const tool = BUSINESS_TOOLS.find((t) => !t.workedExample)
+    if (!tool) return // every tool has one — nothing to assert
+    renderTool(tool.id)
+    expect(screen.queryByText(/Worked example:/)).not.toBeInTheDocument()
+  })
+
   it('renders the recommended-resources panel with in-app hub links', () => {
     renderTool('policy-generator')
     expect(screen.getByText(/Recommended resources/i)).toBeInTheDocument()

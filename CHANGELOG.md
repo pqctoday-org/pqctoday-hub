@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.91.0] - 2026-09-18
+
+Every tool now opens with a worked example, so you can picture a run of it before the form.
+
+### Added
+
+- **A worked example on all 21 business tools** [view:/business] [persona:executive] [persona:grc] [persona:ops]: under "What this is for" and "What a good answer looks like", each tool now shows one concrete run written from its real inputs — the RACI builder's Enterprise Architect accountable for Crypto Inventory, the CRQC planner set to 2030, the vendor scorecard's six criteria, the charter's $4.5M-over-3-years budget — so a first-time user knows what to type and what comes out.
+- **An intro strip on eight Playground tools** [view:/playground] [persona:developer] [persona:researcher] [persona:architect]: TEE-HSM Secure Channel, SP 800-108 KDF, MLS Group Messaging, Random Generation, QRNG Demo, Source Combining, Solana Transaction and the S/MIME & CMS Workshop open with "What you will do" and a worked example taken from the tool's actual steps (the LCG source you can predict, Alice and Bob's two-member group, the all-zeros Source A). The first drafts described features these tools do not have; every line shipped here was checked against the tool.
+
 ## [4.90.0] - 2026-09-18
 
 Every page now passes the automated accessibility check with no serious or moderate findings.

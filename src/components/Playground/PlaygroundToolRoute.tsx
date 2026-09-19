@@ -151,6 +151,25 @@ export const PlaygroundToolRoute = () => {
         />
       )}
 
+      {/* B+ round 8, Wave C (2026-09-18): intro strip — what you will do, and one
+          concrete run written from the tool's real steps. Mirrors the business
+          tools' "What this is for" section so both tool families open the same way. */}
+      {tool.intro && (
+        <section
+          aria-label="What you will do"
+          className="rounded-lg border border-border bg-muted/20 p-3"
+        >
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            <span className="font-semibold text-foreground">What you will do:</span>{' '}
+            {tool.intro.whatYouWillDo}
+          </p>
+          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+            <span className="font-semibold text-foreground">Worked example:</span>{' '}
+            {tool.intro.workedExample}
+          </p>
+        </section>
+      )}
+
       {tool.wip && (
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/30 text-status-warning text-sm">
           <Wrench className="w-4 h-4 shrink-0" aria-hidden="true" />
