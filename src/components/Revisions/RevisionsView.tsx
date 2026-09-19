@@ -3,6 +3,7 @@ import { GitMerge } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router'
 import { GlobalRevisionsFeed } from '@/components/ui/GlobalRevisionsFeed'
 import { useRevisions, type RevisionEntry } from '@/hooks/useRevisions'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 // Kept as a module-level helper (like formatRelative in GlobalRevisionsFeed) so the
 // Date.now() read isn't an impure call in the component render body.
@@ -70,6 +71,8 @@ export function RevisionsView() {
         </p>
         <RevisionsSummary />
       </header>
+
+      <PersonaPageNote route="/revisions" />
 
       <div className="glass-panel p-4">
         <GlobalRevisionsFeed

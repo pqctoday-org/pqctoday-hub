@@ -10,6 +10,7 @@ import type { CryptoAgilityMode, QuantumRelevance, PatentItem } from '@/types/Pa
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 import { AGILITY_LABELS } from '@/data/patentAgilityLabels'
+import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
 
 const AGILITY_ORDER: CryptoAgilityMode[] = [
   'classical_only',
@@ -101,6 +102,7 @@ export function MobilePatentsView() {
       <p className="mb-4 text-[11.5px] leading-relaxed text-muted-foreground">
         Three figures worth carrying. Tap High migration impact to narrow the list below.
       </p>
+      <MobilePersonaPageNote route="/patents" className="mb-3" />
 
       <div className="mb-3 grid grid-cols-2 gap-2.5">
         <div className="glass-panel p-3">

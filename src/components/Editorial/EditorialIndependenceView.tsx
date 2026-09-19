@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { ShieldCheck, ExternalLink } from 'lucide-react'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 const EFFECTIVE_DATE = 'May 9, 2026'
 const POLICY_VERSION = '1.0'
@@ -55,6 +56,7 @@ export function EditorialIndependenceView() {
           Effective Date: {EFFECTIVE_DATE} &middot; Last Updated: {EFFECTIVE_DATE} &middot; Policy
           Version: {POLICY_VERSION}
         </p>
+        <PersonaPageNote route="/editorial-independence" className="mt-4" />
       </div>
 
       <nav aria-label="Table of contents" className="glass-panel p-4 mb-6">

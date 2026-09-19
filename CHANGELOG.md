@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.93.0] - 2026-09-19
+
+Eleven reference pages now open with one line that says what the page means for your role.
+
+### Added
+
+- **"What this means for you" on eleven reference pages** [view:/] [view:/patents] [view:/leaders] [view:/explore] [view:/revisions] [view:/changelog] [view:/faq] [view:/about] [view:/editorial-independence] [view:/sponsor] [view:/terms] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: under the page header, one sentence for your role — which control to use, which section answers your question, what the page cannot do for you — or all seven lines when you have not picked a role. Each line names something the page actually has (its filters, sections and categories were checked one by one; the first drafts cited a patent CPC filter, an About "Data Foundation" section and a public sponsor list that do not exist). The Navigate graph has no header to sit under and carries no line.
+
 ## [4.92.0] - 2026-09-18
 
 Thirty-eight modules now tell you where to start: one real workshop step, what a first run of it gives you, and a button that opens it.

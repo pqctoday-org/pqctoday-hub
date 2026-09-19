@@ -7,6 +7,7 @@ import { logExploreTileClick, logExploreUnlock } from '@/utils/analytics'
 import { PERSONA_RECOMMENDED_PATHS } from '@/data/personaConfig'
 import { PERSONAS } from '@/data/learningPersonas'
 import { TILES, type ExploreTile } from '@/data/exploreTiles'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 export function ExploreView() {
   const navigate = useNavigate()
@@ -56,6 +57,8 @@ export function ExploreView() {
           exploring — no background required.
         </p>
       </div>
+
+      <PersonaPageNote route="/explore" className="mb-8 text-left" />
 
       {/* Tile grid — max-w-5xl prevents stretching on ultrawide */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { Scale, ExternalLink } from 'lucide-react'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 // Bump this date whenever a substantive edit is made to this file.
 const EFFECTIVE_DATE = 'March 22, 2026'
@@ -60,6 +61,7 @@ export function TermsView() {
         <p className="text-xs text-muted-foreground mt-2">
           Effective Date: {EFFECTIVE_DATE} &middot; Last Updated: {EFFECTIVE_DATE}
         </p>
+        <PersonaPageNote route="/terms" className="mt-4" />
         <p className="text-xs text-muted-foreground mt-1">
           This document is updated when the platform&apos;s terms materially change; see the date
           above.
