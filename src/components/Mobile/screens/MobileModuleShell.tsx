@@ -285,7 +285,10 @@ export function MobileModuleShell({
           unconditionally, same rationale as desktop: the point is to be
           found, not a reward for completion. */}
       {relatedModules.length > 0 && (
-        <div className="rounded-xl border border-border bg-card p-3.5">
+        <div
+          className="rounded-xl border border-border bg-card p-3.5"
+          data-testid="related-content"
+        >
           <div className="mb-2.5 flex items-center gap-2">
             <Network size={15} className="shrink-0 text-primary" aria-hidden="true" />
             <h2 className="text-[13px] font-semibold text-foreground">Related modules</h2>

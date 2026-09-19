@@ -19,6 +19,9 @@ import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
 import { PERSONA_IDS } from '@/data/personaIds'
+import { loadIndustryLandscape } from '@/data/industryLandscapeData'
+import { PAGE_RELATIONS } from '@/data/pageRelations'
+import { protocolModulesForUseCase } from '@/components/Algorithms/landscapeProtocolModules'
 
 it('exports the round-9 discoverability signals when asked', () => {
   const out = process.env.ROUND9_SIGNALS_OUT
@@ -69,6 +72,8 @@ it('exports the round-9 discoverability signals when asked', () => {
   for (const t of BUSINESS_TOOLS)
     for (const e of businessToolRelations(t.id))
       relatedInbound[e.to] = [...(relatedInbound[e.to] ?? []), `/business/tools/${t.id}`]
+  for (const [route, es] of Object.entries(PAGE_RELATIONS))
+    for (const e of es) relatedInbound[e.to] = [...(relatedInbound[e.to] ?? []), route]
   const nextStepIn: Record<string, string[]> = {}
   for (const [from, s] of Object.entries(NEXT_STEPS)) nextStepIn[s.to] = [...(nextStepIn[s.to] ?? []), from]
   const roleRows: Record<string, string[]> = {}
@@ -76,8 +81,18 @@ it('exports the round-9 discoverability signals when asked', () => {
     const r = toolsForRole(p)
     roleRows[p] = [...r.playground.map((t) => `/playground/${t.id}`), ...r.business.map((t) => `/business/tools/${t.id}`)]
   }
+  // landscape rows per module: sector column plus the protocol edge (wave 1.6)
+  const landscapeInbound: Record<string, number> = {}
+  for (const uc of loadIndustryLandscape().useCases) {
+    const ids = new Set<string>([uc.learnModuleId, ...protocolModulesForUseCase(uc).map((l) => l.moduleId)].filter(Boolean))
+    for (const id of ids) landscapeInbound[id] = (landscapeInbound[id] ?? 0) + 1
+  }
   fs.writeFileSync(
     out,
-    JSON.stringify({ nextSteps: NEXT_STEPS, nextStepIn, relatedInbound, railPos, gridPos, roleRows, marquee: PERSONA_FEATURED_TOOL_IDS }, null, 1)
+    JSON.stringify(
+      { nextSteps: NEXT_STEPS, nextStepIn, relatedInbound, railPos, gridPos, roleRows, marquee: PERSONA_FEATURED_TOOL_IDS, landscapeInbound },
+      null,
+      1
+    )
   )
 })

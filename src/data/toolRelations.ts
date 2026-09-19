@@ -117,21 +117,19 @@ export function businessToolRelations(toolId: string): RelatedEntry[] {
   for (const t of BUSINESS_TOOLS) {
     if (t.category === self.category || t.frameworkPhase !== self.frameworkPhase) continue
     push({ to: `/business/tools/${t.id}`, title: t.name, reason: `Same ${label} deliverable` })
-    if (out.filter((e) => e.reason.startsWith('Same ')).length >= 2) break
+    break
   }
+  // Up to two Learn modules of the same phase, most keyword overlap first; a
+  // module with no overlap is listed only when the phase has nothing closer,
+  // so every phase's modules are reachable from that phase's tools.
   const mine = words(self.name, self.keywords)
   const modules = MANIFESTS.filter((m) => {
     const ph = Array.isArray(m.frameworkPhase) ? m.frameworkPhase : [m.frameworkPhase]
     return m.id !== 'quiz' && ph.includes(self.frameworkPhase)
   })
     .map((m) => ({ m, score: overlap(mine, words(m.title, m.id, m.description)) }))
-    .filter((x) => x.score > 0)
     .sort((a, b) => b.score - a.score || a.m.id.localeCompare(b.m.id))
-  if (modules[0])
-    push({
-      to: `/learn/${modules[0].m.id}`,
-      title: modules[0].m.title,
-      reason: `Learn module for ${label}`,
-    })
+  for (const { m } of modules.slice(0, 2))
+    push({ to: `/learn/${m.id}`, title: m.title, reason: `Learn module for ${label}` })
   return out
 }
