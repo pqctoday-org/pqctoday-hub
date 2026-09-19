@@ -117,7 +117,7 @@ export function StateInspector({ objects, isWasmReady }: StateInspectorProps) {
           )}
 
           {objects.length === 0 ? (
-            <div className="border border-border rounded p-3 bg-background flex items-start gap-3 opacity-50">
+            <div className="border border-dashed border-border rounded p-3 bg-background flex items-start gap-3">
               <div className="text-sm text-muted-foreground italic w-full text-center py-2">
                 No objects loaded.
               </div>

@@ -7,6 +7,7 @@
 // no container required.
 
 import { useState, useCallback, useMemo } from 'react'
+import { GateReason } from '@/components/shared/GateReason'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import {
@@ -371,6 +372,10 @@ export function SshSimulationPanel() {
       </div>
 
       {/* Controls */}
+      <GateReason when={!browserSupport.supported} className="mt-0">
+        The handshakes need a Chromium-based browser (Chrome, Edge or Brave) for the live softhsmv3
+        session.
+      </GateReason>
       <div className="flex items-center gap-2 flex-wrap">
         <Button
           variant="gradient"

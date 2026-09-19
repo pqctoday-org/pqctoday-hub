@@ -136,7 +136,7 @@ export const DirectoryServicesAnalyzer: React.FC = () => {
             }}
             className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors min-h-[44px] ${
               activeTab === tab
-                ? 'bg-primary text-black'
+                ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
             }`}
           >

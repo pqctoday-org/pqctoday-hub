@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback } from 'react'
+import { GateReason } from '@/components/shared/GateReason'
 import {
   Workflow,
   KeyRound,
@@ -376,6 +377,12 @@ export const DrbgArchitectureDemo: React.FC = () => {
                 </div>
               )}
 
+              <GateReason when={!instantiated} className="mt-0 mb-2">
+                Instantiate the DRBG first; Generate and Reseed unlock once it has a state.
+              </GateReason>
+              <GateReason when={instantiated && isReseedRequired} className="mt-0 mb-2">
+                The reseed interval is reached: press Reseed before generating again.
+              </GateReason>
               <div className="flex gap-2">
                 <Button
                   variant="default"

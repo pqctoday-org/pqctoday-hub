@@ -87,7 +87,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
                 disabled={!isIdle}
                 className={`px-3 py-1.5 text-sm rounded border transition-colors ${
                   numQubits === n
-                    ? 'bg-primary text-black border-primary font-bold'
+                    ? 'bg-primary text-primary-foreground border-primary font-bold'
                     : 'bg-muted border-border text-foreground hover:border-primary/50 disabled:opacity-50'
                 }`}
               >
@@ -156,7 +156,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
             <div
               className={`px-2 py-1 text-xs rounded whitespace-nowrap transition-colors ${
                 idx === currentPhaseIndex
-                  ? 'bg-primary text-black font-bold'
+                  ? 'bg-primary text-primary-foreground font-bold'
                   : idx < currentPhaseIndex
                     ? 'bg-success/20 text-success'
                     : 'bg-muted text-muted-foreground'

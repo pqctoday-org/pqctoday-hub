@@ -274,7 +274,7 @@ export const AttestationWorkshop: React.FC = () => {
             <div
               key={step.id}
               className={`glass-panel p-4 border-2 transition-all ${borderClass} ${
-                status === 'future' ? 'opacity-60' : 'opacity-100'
+                status === 'future' ? 'border-dashed' : ''
               }`}
             >
               {/* Step Header */}

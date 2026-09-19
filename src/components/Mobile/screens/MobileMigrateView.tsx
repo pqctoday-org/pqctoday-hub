@@ -401,7 +401,16 @@ export function MobileMigrateView() {
                     )}
                   >
                     {a.label}
-                    {a.hndl && <span className="ml-1 text-sim-chip text-status-error">HNDL</span>}
+                    {a.hndl && (
+                      <span
+                        className={cn(
+                          'ml-1 text-sim-chip',
+                          selectedDomain === a.id ? 'text-primary-foreground' : 'text-status-error'
+                        )}
+                      >
+                        HNDL
+                      </span>
+                    )}
                   </Button>
                 ))}
               </div>

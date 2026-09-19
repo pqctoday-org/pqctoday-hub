@@ -389,9 +389,10 @@ export const ChangelogView = () => {
           </div>
           <Link
             to="/"
+            aria-label="Back to App"
             className="flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={16} aria-hidden="true" />
             <span className="hidden sm:inline">Back to App</span>
           </Link>
         </div>

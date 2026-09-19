@@ -707,7 +707,9 @@ export function PolicyView({
                         className={cn(
                           'rounded-md border px-2 py-1',
                           s.cls,
-                          specOnly && 'opacity-70'
+                          // Round 9 (2026-09-19): opacity-70 pushed the 9 px labels below
+                          // AA contrast; a dashed border marks spec-only rows instead.
+                          specOnly && 'border-dashed'
                         )}
                         title={
                           specOnly

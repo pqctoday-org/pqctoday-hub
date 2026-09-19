@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState } from 'react'
+import { GateReason } from '@/components/shared/GateReason'
 import {
   ChevronRight,
   ChevronLeft,
@@ -1371,6 +1372,9 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         >
           <ChevronLeft size={14} aria-hidden="true" /> Previous
         </Button>
+        <GateReason when={!executedSteps.has(currentStep)} className="mt-0 self-center">
+          Run the live demo for this step to unlock Complete &amp; Next.
+        </GateReason>
         <Button
           variant="gradient"
           size="sm"

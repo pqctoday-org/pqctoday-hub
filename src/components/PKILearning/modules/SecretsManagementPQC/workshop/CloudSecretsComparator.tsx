@@ -62,7 +62,7 @@ export const CloudSecretsComparator: React.FC = () => {
             onClick={() => setFilter(id)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
               filter === id
-                ? 'bg-primary text-black border-primary'
+                ? 'bg-primary text-primary-foreground border-primary'
                 : 'border-border text-muted-foreground hover:bg-muted'
             }`}
           >

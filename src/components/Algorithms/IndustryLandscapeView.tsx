@@ -118,7 +118,7 @@ function MarketSizeBadge({ m }: { m: IndustryMarketSize }) {
       className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
     >
       {formatMarketSize(m.marketSizeUsd)}
-      <span className="opacity-70">
+      <span className="font-normal">
         {m.regionScope} {metric} ({m.marketSizeYear}) · {m.mainSource}
       </span>
     </span>
@@ -956,7 +956,7 @@ function CyberOpportunityBadge({ industry }: { industry: string }) {
       className="inline-flex items-center gap-1 rounded-full bg-status-info/10 px-2 py-0.5 text-xs font-medium text-status-info"
     >
       Est. cyber opportunity: {formatMarketSize(est.lo)}–{formatMarketSize(est.hi)}
-      <span className="opacity-70">({est.confidence} confidence)</span>
+      <span className="font-normal">({est.confidence} confidence)</span>
     </span>
   )
 }

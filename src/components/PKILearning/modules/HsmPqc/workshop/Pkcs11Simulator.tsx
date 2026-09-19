@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useRef } from 'react'
+import { GateReason } from '@/components/shared/GateReason'
 import {
   Play,
   ChevronDown,
@@ -628,6 +629,9 @@ export const Pkcs11Simulator: React.FC = () => {
       </div>
 
       {/* Step Navigation */}
+      <GateReason when={!stepCompleted && currentStep < operations.length - 1}>
+        Run this step to unlock Next.
+      </GateReason>
       <div className="flex justify-between gap-3">
         <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 0}>
           &larr; Previous
