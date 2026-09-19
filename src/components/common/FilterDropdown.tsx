@@ -483,7 +483,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               {label}:
             </span>
           )}
-          <div className="relative">
+          <div className="relative min-w-0">
             {renderButton()}
             {isOpen && renderMenu()}
           </div>

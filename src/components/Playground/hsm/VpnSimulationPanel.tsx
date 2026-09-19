@@ -3671,7 +3671,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           </div>
 
           <div className="mt-3 p-3 border border-border rounded-lg bg-muted/30">
-            <div className="flex items-center justify-between gap-3 mb-2">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
               <div className="text-xs text-muted-foreground">
                 Benchmark keygen + self-sign across RSA-3072 and ML-DSA-{'{44,65,87}'} on the live
                 softhsmv3 session. Mirrors the sandbox
@@ -3682,7 +3682,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 The matrix needs a Chromium-based browser (Chrome, Edge or Brave) for the live
                 softhsmv3 session.
               </GateReason>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   variant="outline"
                   className="text-xs whitespace-nowrap"
@@ -4074,7 +4074,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         </div>
       </GlossaryAutoWrap>
 
-      <div className="flex items-center justify-between mt-4 bg-muted/30 p-2 rounded-lg border border-border">
+      <div className="flex flex-wrap items-center justify-between gap-2 mt-4 bg-muted/30 p-2 rounded-lg border border-border">
         <Button
           variant="ghost"
           onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
@@ -4093,7 +4093,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             Daemon: {ssState}
           </span>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             variant="ghost"
             onClick={handleReset}
