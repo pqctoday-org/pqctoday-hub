@@ -547,7 +547,7 @@ export const HybridSignatures: React.FC = () => {
       <div className="flex items-start gap-3">
         <Fingerprint className="text-primary mt-1 shrink-0" size={22} />
         <div>
-          <h3 className="text-lg font-semibold text-foreground">Hybrid Signature Spectrums</h3>
+          <h2 className="text-lg font-semibold text-foreground">Hybrid Signature Spectrums</h2>
           <p className="text-sm text-muted-foreground mt-0.5">
             Compare concatenation, nesting, and Silithium — ranging from no non-separability to
             Strong Non-Separability (SNS).

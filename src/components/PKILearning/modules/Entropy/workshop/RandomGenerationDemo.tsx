@@ -413,7 +413,7 @@ export const RandomGenerationDemo: React.FC = () => {
       <div className="flex items-center gap-3">
         <Dice5 size={24} className="text-primary" />
         <div>
-          <h3 className="text-lg font-semibold text-foreground">Random Byte Generation</h3>
+          <h2 className="text-lg font-semibold text-foreground">Random Byte Generation</h2>
           <p className="text-sm text-muted-foreground">
             Compare cryptographically secure and insecure random sources side by side. See the
             difference between true randomness and deterministic PRNGs.

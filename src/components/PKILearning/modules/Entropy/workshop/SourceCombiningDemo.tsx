@@ -253,7 +253,7 @@ export const SourceCombiningDemo: React.FC = () => {
       <div className="flex items-center gap-3">
         <Combine size={24} className="text-primary" />
         <div>
-          <h3 className="text-lg font-semibold text-foreground">Source Combining Pipeline</h3>
+          <h2 className="text-lg font-semibold text-foreground">Source Combining Pipeline</h2>
           <p className="text-sm text-muted-foreground">
             SP 800-90 series source assembly and conditioning. Default flow follows NIST standards
             (90C §3.1 concatenation + 90A §10.3.1 Hash_df). Powered by{' '}

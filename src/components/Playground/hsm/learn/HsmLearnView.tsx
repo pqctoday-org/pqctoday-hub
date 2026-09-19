@@ -271,7 +271,7 @@ function LessonRunner({
             <span className="rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
               {lesson.tag}
             </span>
-            <h3 className="text-[15px] font-bold text-foreground">{lesson.title}</h3>
+            <h2 className="text-[15px] font-bold text-foreground">{lesson.title}</h2>
           </div>
           <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">
             {lesson.blurb}

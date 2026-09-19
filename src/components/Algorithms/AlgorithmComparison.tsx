@@ -224,10 +224,10 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
 
   return (
     <div className="mb-12">
-      <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
+      <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
         <Shield className="text-primary" />
         Algorithm Transition
-      </h3>
+      </h2>
 
       {isLoading ? (
         <div className="glass-panel p-12 flex items-center justify-center">

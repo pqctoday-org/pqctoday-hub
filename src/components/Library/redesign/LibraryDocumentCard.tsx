@@ -70,7 +70,7 @@ export function LibraryDocumentCard({
         )}
       </div>
 
-      <h3 className="mt-1.5 text-[14px] font-bold leading-snug text-foreground">
+      <h2 className="mt-1.5 text-[14px] font-bold leading-snug text-foreground">
         {/* The card's one focusable control — see the container comment. Styled
             to look like plain text; `text-left`/`whitespace-normal` undo the
             Button base styles so the title still wraps and clamps as before. */}
@@ -86,7 +86,7 @@ export function LibraryDocumentCard({
         >
           {item.documentTitle}
         </Button>
-      </h3>
+      </h2>
 
       {/* B+ remediation 3.3 (2026-08-10): "what this settles", plus how long it
           is. The sentence is `short_description`, already authored for ~90% of

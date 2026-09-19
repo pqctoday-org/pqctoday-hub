@@ -211,7 +211,7 @@ export const DrbgArchitectureDemo: React.FC = () => {
       <div className="glass-panel p-4 space-y-2">
         <div className="flex items-center gap-2 mb-2">
           <Workflow className="text-primary" size={20} />
-          <h3 className="text-lg font-bold text-foreground">SP 800-90A HMAC_DRBG</h3>
+          <h2 className="text-lg font-bold text-foreground">SP 800-90A HMAC_DRBG</h2>
         </div>
         <p className="text-sm text-foreground leading-relaxed">
           Explore the internal lifecycle of a Deterministic Random Bit Generator. Unlike simple

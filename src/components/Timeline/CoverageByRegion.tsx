@@ -72,9 +72,9 @@ export const CoverageByRegion = ({ data, selectedRegion, onSelectRegion }: Props
     >
       <div className="flex items-center gap-2 mb-2">
         <Globe size={13} className="text-primary" aria-hidden="true" />
-        <h3 className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
+        <h2 className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
           Coverage by region
-        </h3>
+        </h2>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
         {stats.map((s) => {

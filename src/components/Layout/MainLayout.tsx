@@ -622,7 +622,10 @@ export const MainLayout = () => {
       </a>
 
       {/* ── Desktop left rail (lg+) — persistent two-axis nav ──────────────── */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-[168px] lg:shrink-0 border-r border-border/60 bg-card/30 print:hidden">
+      <aside
+        aria-label="Site navigation rail"
+        className="hidden lg:flex lg:flex-col lg:w-[168px] lg:shrink-0 border-r border-border/60 bg-card/30 print:hidden"
+      >
         {/* Brand wordmark — desktop copy lives here now; mobile copy stays in the header below */}
         <div className="p-3 border-b border-border/40">
           <Button

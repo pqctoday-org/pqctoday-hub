@@ -225,7 +225,7 @@ export const PQCJWTSigning: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">Real PQC JWT Signing</h3>
+        <h2 className="text-lg font-bold text-foreground mb-2">Real PQC JWT Signing</h2>
         <p className="text-sm text-muted-foreground">
           Generate a real ML-DSA keypair, sign a JWT over the canonical signing input{' '}
           <code className="text-foreground/80">b64u(header).b64u(payload)</code>, and verify the

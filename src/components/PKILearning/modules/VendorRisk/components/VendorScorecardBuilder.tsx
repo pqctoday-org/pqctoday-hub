@@ -811,9 +811,9 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
       {/* CSWP.39 §5.3 — Observability tooling notes */}
       <div className="glass-panel p-4 space-y-3">
         <div>
-          <h3 className="text-base font-semibold text-foreground">
+          <h2 className="text-base font-semibold text-foreground">
             Observability Tooling Notes (CSWP.39 §5.3)
-          </h3>
+          </h2>
           <p className="text-xs text-muted-foreground mt-1">
             Document which observability tooling this vendor relationship relies on. Educational —
             these notes export with the scorecard. Browse{' '}

@@ -21,7 +21,7 @@ describe('RefreshCycleAlignment (render smoke)', () => {
   it('renders and seeds the editable refresh programs', () => {
     render(<RefreshCycleAlignment />)
     expect(
-      screen.getByRole('heading', { level: 2, name: /Refresh-Cycle Alignment/ })
+      screen.getByRole('heading', { level: 2, name: /^Refresh-Cycle Alignment$/ })
     ).toBeInTheDocument()
     expect(screen.getByDisplayValue('Data center hardware')).toBeInTheDocument()
   })

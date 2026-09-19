@@ -187,7 +187,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
       <div className={mode === 'static' ? 'block space-y-6' : 'hidden'}>
         {/* Header */}
         <div>
-          <h3 className="text-lg font-bold text-foreground mb-2">Entropy Testing Dashboard</h3>
+          <h2 className="text-lg font-bold text-foreground mb-2">Entropy Testing Dashboard</h2>
           <p className="text-sm text-muted-foreground">
             Load a data sample and run simplified entropy tests to see how randomness quality is
             evaluated. Compare truly random data against known-bad samples.

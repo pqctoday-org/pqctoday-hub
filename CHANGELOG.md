@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.89.0] - 2026-09-18
+
+Screen-reader outlines are in order on the tool, module and reference pages, and four more guided workshops run on a phone.
+
+### Added
+
+- **Four more guided workshops run on a phone** [view:/learn] [persona:executive] [persona:grc] [persona:researcher] [persona:developer]: SBOM, Government & Defense PQC, Trust Services PQC and DNSSEC & Post-Quantum Signatures open their real workshop inside the mobile module view, verified step by step at phone width. Nine workshops now work on a phone.
+
+### Fixed
+
+- **Headings read in order on 40 tool, module and reference pages** [view:/playground] [view:/business] [view:/learn] [view:/library] [view:/leaders] [view:/algorithms] [persona:curious] [persona:developer]: tool titles, section titles in the business-tool builders, lesson titles in the HSM and OpenSSL learn views, and the library and community cards jumped from a level-one heading straight to level three or four; they now step down one level at a time, so a screen reader's page outline matches what is on screen. Remaining moderate findings dropped from 85 to about 40, all inside individual content sections.
+- **The side navigation rail and the simulation start screen are labelled landmarks** [view:/simulation] [view:/timeline] [persona:curious]: assistive technology can tell the rail from a page's own side panel, and the simulation's start screen sits inside a main region.
+
 ## [4.88.1] - 2026-09-18
 
 The 710 patents in scope were re-read from their cached documents and their summaries and claim descriptions rewritten from that text.

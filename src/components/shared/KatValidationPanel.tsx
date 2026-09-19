@@ -117,7 +117,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
         <div className="flex items-center gap-2">
           <ShieldCheck size={18} className="text-primary shrink-0" aria-hidden="true" />
           <div>
-            <h4 className="font-semibold text-foreground text-sm">{label}</h4>
+            <h3 className="font-semibold text-foreground text-sm">{label}</h3>
             <p className="text-xs text-muted-foreground mt-0.5">{authorityNote}</p>
           </div>
         </div>

@@ -34,7 +34,7 @@ export const PKIEnrollmentPlayground: React.FC = () => {
       </div>
 
       <section className="space-y-3">
-        <h3 className="text-lg font-semibold text-foreground">Step 1 — Generate end-entity key</h3>
+        <h2 className="text-lg font-semibold text-foreground">Step 1 — Generate end-entity key</h2>
         <KeyGenStep
           onKeyReady={(algorithm, key) => {
             setEeKeyAlgorithm(algorithm)

@@ -380,7 +380,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
       {/* Summary */}
       {riskEntries.length > 0 && (
         <div className="glass-panel p-6">
-          <h3 className="text-base font-semibold text-foreground mb-3">Risk Summary</h3>
+          <h2 className="text-base font-semibold text-foreground mb-3">Risk Summary</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               {
