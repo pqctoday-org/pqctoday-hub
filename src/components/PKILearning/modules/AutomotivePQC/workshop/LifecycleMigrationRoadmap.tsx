@@ -100,6 +100,7 @@ const ConfigPanel: React.FC<{
       </label>
       <input
         type="range"
+        aria-label="Model year"
         min={2024}
         max={2032}
         value={modelYear}
@@ -119,6 +120,7 @@ const ConfigPanel: React.FC<{
       </label>
       <input
         type="range"
+        aria-label="Road life, years"
         min={10}
         max={25}
         value={roadLifeYears}
@@ -172,6 +174,7 @@ const ConfigPanel: React.FC<{
       </label>
       <input
         type="range"
+        aria-label="CRQC arrival year"
         min={2030}
         max={2045}
         value={crqcArrivalYear}

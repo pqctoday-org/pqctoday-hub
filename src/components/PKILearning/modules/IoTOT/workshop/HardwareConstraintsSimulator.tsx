@@ -98,6 +98,7 @@ export const HardwareConstraintsSimulator: React.FC = () => {
                 </div>
                 <input
                   type="range"
+                  aria-label="SPI flash read speed, megabytes per second"
                   min="1"
                   max="20"
                   value={spiSpeedMBps}
@@ -112,6 +113,7 @@ export const HardwareConstraintsSimulator: React.FC = () => {
                 </div>
                 <input
                   type="range"
+                  aria-label="MCU clock speed, megahertz"
                   min="48"
                   max="400"
                   step="12"
@@ -188,6 +190,7 @@ export const HardwareConstraintsSimulator: React.FC = () => {
                 </div>
                 <input
                   type="range"
+                  aria-label="Vehicles at intersection"
                   min="10"
                   max="300"
                   step="10"

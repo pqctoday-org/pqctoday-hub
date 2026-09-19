@@ -127,6 +127,7 @@ export const ScaleEncryptionPlanner: React.FC = () => {
               <label className="text-xs text-muted-foreground block mb-1">{input.label}</label>
               <input
                 type="number"
+                aria-label={input.label}
                 value={input.value}
                 onChange={(e) => input.onChange(Number(e.target.value) || input.min)}
                 min={input.min}

@@ -3582,6 +3582,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 <span>strongswan.conf (Initiator)</span>
               </div>
               <textarea
+                aria-label="strongswan.conf (Initiator)"
                 value={activeInitConfig}
                 onChange={(e) => setActiveInitConfig(e.target.value)}
                 className="w-full h-24 bg-transparent border border-border rounded-lg text-[10px] font-mono p-3 text-muted-foreground focus:outline-none focus:border-primary"
@@ -3591,6 +3592,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 <span>strongswan.conf (Responder)</span>
               </div>
               <textarea
+                aria-label="strongswan.conf (Responder)"
                 value={activeRespConfig}
                 onChange={(e) => setActiveRespConfig(e.target.value)}
                 className="w-full h-24 bg-transparent border border-border rounded-lg text-[10px] font-mono p-3 text-muted-foreground focus:outline-none focus:border-primary"
@@ -3602,6 +3604,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 <span>ipsec.conf (Initiator)</span>
               </div>
               <textarea
+                aria-label="ipsec.conf (Initiator)"
                 value={activeInitIpsec}
                 onChange={(e) => setActiveInitIpsec(e.target.value)}
                 className="w-full h-24 bg-transparent border border-border rounded-lg text-[10px] font-mono p-3 text-muted-foreground focus:outline-none focus:border-primary"
@@ -3611,6 +3614,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 <span>ipsec.conf (Responder)</span>
               </div>
               <textarea
+                aria-label="ipsec.conf (Responder)"
                 value={activeRespIpsec}
                 onChange={(e) => setActiveRespIpsec(e.target.value)}
                 className="w-full h-24 bg-transparent border border-border rounded-lg text-[10px] font-mono p-3 text-muted-foreground focus:outline-none focus:border-primary"

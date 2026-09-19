@@ -29,6 +29,16 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.98.0] - 2026-09-19
+
+Sliders, inputs and icon buttons inside workshop steps now say what they are to assistive technology.
+
+### Fixed
+
+- **Fifteen workshop sliders and inputs now carry a name** [view:/learn/automotive-pqc] [view:/learn/energy-utilities-pqc] [view:/learn/iot-ot-pqc] [view:/learn/ai-security-pqc] [view:/learn/verification-closure] [view:/playground/vpn-sim] [persona:ops] [persona:developer]: model year, road life and CRQC arrival year; mesh bandwidth and meters in cell; SPI speed, MCU clock, vehicles at intersection and device RAM budget; the scale-planner numbers; the handover date; the four strongSwan and ipsec config editors. A screen reader read each as an unnamed control.
+- **Nine icon-only buttons now have a name** [view:/learn/crypto-dev-apis] [view:/learn/iam-pqc] [view:/learn/platform-eng-pqc] [view:/learn/healthcare-pqc] [persona:developer]: expand and collapse on the API, language and library explorers and the migration planner's phases; the phase-complete toggle; the IAM component details button; the pharma compound remove button.
+- **The web gateway vendor picker is one control, not two** [view:/learn/web-gateway-pqc] [persona:ops]: a real checkbox sat inside each vendor button; the button now carries the pressed state and the box is decorative.
+
 ## [4.97.0] - 2026-09-19
 
 Reference pages now show what is related to them, Industry Landscape use cases reach the module that teaches their protocol, and Command Center tools list two Learn modules for their phase.

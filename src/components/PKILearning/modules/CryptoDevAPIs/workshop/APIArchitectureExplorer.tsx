@@ -122,9 +122,14 @@ const APICard: React.FC<APICardProps> = ({
             <Button
               variant="ghost"
               onClick={onToggleExpand}
+              aria-label={isExpanded ? `Collapse ${api.name}` : `Expand ${api.name}`}
               className="text-muted-foreground hover:text-primary transition-colors"
             >
-              {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              {isExpanded ? (
+                <ChevronUp size={20} aria-hidden="true" />
+              ) : (
+                <ChevronDown size={20} aria-hidden="true" />
+              )}
             </Button>
           </div>
         </div>

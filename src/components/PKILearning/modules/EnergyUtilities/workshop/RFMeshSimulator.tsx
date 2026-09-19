@@ -64,6 +64,7 @@ export const RFMeshSimulator: React.FC = () => {
             </div>
             <input
               type="range"
+              aria-label="Cell mesh bandwidth, kilobits per second"
               min="10"
               max="500"
               step="10"
@@ -84,6 +85,7 @@ export const RFMeshSimulator: React.FC = () => {
             </div>
             <input
               type="range"
+              aria-label="Meters in cell"
               min="1000"
               max="25000"
               step="500"

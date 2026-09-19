@@ -239,10 +239,11 @@ export const PharmaIPCalculator: React.FC = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => removeCompound(compound.id)}
+                    aria-label={`Remove ${compound.compoundName || 'compound'}`}
                     className="text-status-error hover:text-status-error h-9"
                     disabled={pipeline.length <= 1}
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={14} aria-hidden="true" />
                   </Button>
                 </div>
               </div>
