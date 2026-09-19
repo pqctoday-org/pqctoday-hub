@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { ReactNode } from 'react'
 import { useNavigate, Link } from 'react-router'
-import { Check } from 'lucide-react'
+import { Check, BookOpen, Briefcase, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
@@ -12,6 +12,7 @@ import {
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { RoleToolsRow } from './RoleToolsRow'
+import { boardRelatedLinks } from '@/data/boardRelatedLinks'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
 import { logRoleBoardVariantSelected, logRoleBoardCtaClick } from '@/utils/analytics'
@@ -139,6 +140,7 @@ export function PersonaBoardView({
   const variants = PERSONA_JOURNEY_BOARD_VARIANTS[personaId]
   const active = resolveRoleBoardVariant(personaId, variantId)
   const board = active.board
+  const relatedLinks = boardRelatedLinks(active)
   const useCustomSideCard = personaId === 'researcher' && customSideCard !== undefined
 
   // Live region/industry badge (2026-09-03, home-scenarios remediation
@@ -360,31 +362,40 @@ export function PersonaBoardView({
         </div>
       </div>
 
-      {/* Related workshops — see WORKSHOP_NAME_BY_ID's own comment for why
-          this exists: a board's proof chips can name a workshop that lives
-          only in `active.workshopIds`' unrendered metadata unless this row
-          gives it an actual link. Hidden entirely when a board names none. */}
-      {active.workshopIds.length > 0 && (
+      {/* Related on this site — the variant's modules, workshops and Command
+          Center tools. Until round 9 (2026-09-19) only the workshops rendered;
+          the moduleIds and businessToolIds were validated metadata nobody could
+          reach from the board. See src/data/boardRelatedLinks.ts. */}
+      {relatedLinks.length > 0 && (
         <div className="mt-6">
           <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
             Related on this site
           </h2>
-          <ul className="mt-2 flex flex-wrap gap-2" aria-label="Related workshops">
-            {active.workshopIds.map((id) => {
-              // eslint-disable-next-line security/detect-object-injection -- id comes from active.workshopIds, CSV-derived repo data, not user input
-              const name = WORKSHOP_NAME_BY_ID[id]
-              if (!name) return null
-              return (
-                <li key={id}>
-                  <Link
-                    to={`/playground/${id}`}
-                    className="inline-flex items-center rounded-full border border-border bg-muted/30 px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
-                  >
-                    {name}
-                  </Link>
-                </li>
-              )
-            })}
+          <ul className="mt-2 flex flex-wrap gap-2" aria-label="Related on this site">
+            {relatedLinks.map((l) => (
+              <li key={l.to}>
+                <Link
+                  to={l.to}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/30 px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                >
+                  {l.kind === 'module' ? (
+                    <BookOpen size={12} aria-hidden="true" />
+                  ) : l.kind === 'business' ? (
+                    <Briefcase size={12} aria-hidden="true" />
+                  ) : (
+                    <Wrench size={12} aria-hidden="true" />
+                  )}
+                  {l.name}
+                  <span className="sr-only">
+                    {l.kind === 'module'
+                      ? ' (Learn module)'
+                      : l.kind === 'business'
+                        ? ' (Command Center tool)'
+                        : ' (Playground tool)'}
+                  </span>
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       )}
