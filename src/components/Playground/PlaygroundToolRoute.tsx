@@ -4,6 +4,7 @@ import { useParams, useNavigate, useSearchParams, Navigate, Link } from 'react-r
 import { ArrowLeft, Wrench, ArrowRight, GraduationCap } from 'lucide-react'
 import { Button } from '../ui/button'
 import { NextStepCard } from '@/components/shared/NextStepCard'
+import { PersonaBlock } from '@/components/shared/PersonaBlock'
 import { RelatedContentPanel } from '@/components/shared/RelatedContentPanel'
 import { playgroundToolRelations } from '@/data/toolRelations'
 import { Skeleton } from '../ui/skeleton'
@@ -172,6 +173,9 @@ export const PlaygroundToolRoute = () => {
           </p>
         </section>
       )}
+
+      {/* Round 9, wave 2 — "For your role", one paragraph per claimed persona (src/data/personaBlocks.ts). */}
+      <PersonaBlock route={`/playground/${tool.id}`} />
 
       {tool.wip && (
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/30 text-status-warning text-sm">

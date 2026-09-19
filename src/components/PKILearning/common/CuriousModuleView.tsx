@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback } from 'react'
+import { PersonaBlock } from '@/components/shared/PersonaBlock'
 import { useNavigate } from 'react-router'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { MODULE_CATALOG } from '../moduleData'
@@ -90,6 +91,8 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
           </Button>
           <h1 className="text-3xl font-bold text-gradient">{moduleMeta.title}</h1>
           <p className="text-muted-foreground mt-2 text-lg">{moduleMeta.description}</p>
+          {/* Round 9, wave 2 — "For your role" (the curious persona's paragraph; src/data/personaBlocks.ts). */}
+          <PersonaBlock route={`/learn/${moduleId}`} className="mt-3" />
           {/* Endorse/Flag used to sit here as a pair of icons. PKILearningView
               now registers this module's Endorse/Flag into the global top bar
               for every /learn/<module-id> route, curious mode included, so a

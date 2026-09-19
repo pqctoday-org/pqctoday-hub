@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { Suspense, useEffect } from 'react'
 import { NextStepCard } from '@/components/shared/NextStepCard'
+import { PersonaBlock } from '@/components/shared/PersonaBlock'
 import { RelatedContentPanel } from '@/components/shared/RelatedContentPanel'
 import { businessToolRelations } from '@/data/toolRelations'
 import { useParams, useNavigate, Navigate } from 'react-router'
@@ -129,6 +130,9 @@ export const BusinessToolRoute = () => {
           </p>
         )}
       </section>
+
+      {/* Round 9, wave 2 — "For your role" (src/data/personaBlocks.ts). */}
+      <PersonaBlock route={`/business/tools/${tool.id}`} />
 
       <Suspense
         fallback={

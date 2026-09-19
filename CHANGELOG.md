@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.100.0] - 2026-09-19
+
+Every module and tool now says, for your role, what to do with it — written from the item's real steps and controls.
+
+### Added
+
+- **"For your role" on every Learn module, Playground tool and Command Center tool** [view:/learn] [view:/playground] [view:/business] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: one paragraph per role the item is meant for, naming the steps, buttons and fields to use and what they give that role — 402 paragraphs across 65 modules, 34 Playground tools and 37 Command Center tools. With a role set you see yours; with none, all of them.
+
 ## [4.99.0] - 2026-09-19
 
 Every module now offers its quiz before you finish it, disabled buttons say why, and the small labels inside workshop steps are readable again.
