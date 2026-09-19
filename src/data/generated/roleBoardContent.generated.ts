@@ -17,7 +17,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'The board decision that unlocks budget and names an owner.',
       phaseId: 'p0',
       cswp39Zone: 'governance',
-      moduleIds: ['pqc-business-case', 'pqc-governance'],
+      moduleIds: ['pqc-business-case', 'pqc-governance', 'exec-quantum-impact'],
       workshopIds: [],
       businessToolIds: ['program-charter'],
       board: {
@@ -84,7 +84,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'The mandates that already bind you, and the year that ends RSA.',
       phaseId: 'p3',
       cswp39Zone: 'risk-management',
-      moduleIds: ['compliance-strategy', 'pqc-risk-management'],
+      moduleIds: ['compliance-strategy', 'pqc-risk-management', 'government-defense-pqc'],
       workshopIds: [],
       businessToolIds: ['compliance-timeline'],
       board: {
@@ -217,7 +217,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'The roadmap, policy and KPIs a regulator will accept.',
       phaseId: 'p4',
       cswp39Zone: 'governance',
-      moduleIds: ['migration-program', 'compliance-strategy', 'pqc-governance'],
+      moduleIds: [
+        'migration-program',
+        'compliance-strategy',
+        'pqc-governance',
+        'skills-team-structure',
+      ],
       workshopIds: [],
       businessToolIds: ['roadmap-builder'],
       board: {
@@ -1003,7 +1008,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'Build the CBOM before you plan a single change.',
       phaseId: 'p2',
       cswp39Zone: 'assets',
-      moduleIds: ['cbom', 'sbom', 'crypto-registry'],
+      moduleIds: ['cbom', 'sbom', 'crypto-registry', 'platform-eng-pqc'],
       workshopIds: ['openssl-studio'],
       businessToolIds: ['crypto-cbom-builder'],
       board: {
@@ -1078,7 +1083,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'Bigger keys and signatures hit schemas and budgets first.',
       phaseId: 'p6',
       cswp39Zone: 'mitigation',
-      moduleIds: ['crypto-dev-apis', 'pqc-testing-validation'],
+      moduleIds: ['crypto-dev-apis', 'pqc-testing-validation', 'dev-quantum-impact'],
       workshopIds: ['api-security-jwt', 'cert-capacity'],
       businessToolIds: [],
       board: {
@@ -1308,7 +1313,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'A policy-driven control plane you can re-key from.',
       phaseId: 'p4',
       cswp39Zone: 'governance',
-      moduleIds: ['crypto-agility', 'crypto-mgmt-modernization'],
+      moduleIds: ['crypto-agility', 'crypto-mgmt-modernization', 'arch-quantum-impact'],
       workshopIds: ['cacp-kmip'],
       businessToolIds: ['hybrid-transition-planner'],
       board: {
@@ -1459,7 +1464,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         'Which protocols are ready, which are drafts, and what that means for the design.',
       phaseId: 'p5',
       cswp39Zone: 'migration',
-      moduleIds: ['pqc-candidates', 'network-security-pqc'],
+      moduleIds: ['pqc-candidates', 'network-security-pqc', 'dnssec-pqc', 'mls-group-messaging'],
       workshopIds: ['hybrid-certs'],
       businessToolIds: ['cloud-responsibility-matrix'],
       board: {
@@ -1535,7 +1540,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'Where keys live, and what changes when they get bigger.',
       phaseId: 'p6',
       cswp39Zone: 'mitigation',
-      moduleIds: ['hsm-pqc', 'kms-pqc'],
+      moduleIds: ['hsm-pqc', 'kms-pqc', 'secrets-management-pqc'],
       workshopIds: ['envelope-encrypt'],
       businessToolIds: ['infra-modernization-planner'],
       board: {
@@ -1615,7 +1620,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'What moves first, what waits, and what your vendors decide for you.',
       phaseId: 'p4',
       cswp39Zone: 'migration',
-      moduleIds: ['crypto-mgmt-modernization', 'crypto-registry'],
+      moduleIds: ['crypto-mgmt-modernization', 'crypto-registry', 'database-encryption-pqc'],
       workshopIds: [],
       businessToolIds: ['data-at-rest-strategy'],
       board: {
@@ -1849,7 +1854,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         'About three minutes to a scored position and the checklist an auditor will ask for.',
       phaseId: 'p1',
       cswp39Zone: 'assets',
-      moduleIds: ['cbom', 'crypto-registry'],
+      moduleIds: ['cbom', 'crypto-registry', 'ops-quantum-impact'],
       workshopIds: [],
       businessToolIds: ['audit-checklist'],
       board: {
@@ -2002,7 +2007,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         'Named cipher suites and groups, per protocol, against what your stack supports.',
       phaseId: 'p5',
       cswp39Zone: 'migration',
-      moduleIds: ['standards-bodies', 'pki-enrollment-protocols'],
+      moduleIds: ['standards-bodies', 'pki-enrollment-protocols', 'os-pqc'],
       workshopIds: ['pki-enrollment'],
       businessToolIds: ['kpi-tracker'],
       board: {
@@ -2078,7 +2083,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'A hybrid IKEv2 tunnel and an ML-DSA certificate on a real renewal window.',
       phaseId: 'p5',
       cswp39Zone: 'migration',
-      moduleIds: ['vpn-ssh-pqc', 'tls-basics'],
+      moduleIds: ['vpn-ssh-pqc', 'tls-basics', 'web-gateway-pqc'],
       workshopIds: ['vpn-sim'],
       businessToolIds: ['deployment-playbook'],
       board: {
@@ -2232,7 +2237,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'Source tiers and verification dates across the whole corpus.',
       phaseId: 'p1',
       cswp39Zone: 'assets',
-      moduleIds: ['standards-bodies', 'pqc-candidates'],
+      moduleIds: ['standards-bodies', 'pqc-candidates', 'research-quantum-impact'],
       workshopIds: [],
       businessToolIds: [],
       board: {
@@ -2614,7 +2619,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       chipDescription: 'Where the algorithms actually show up: sectors, products, regulations.',
       phaseId: 'p7',
       cswp39Zone: 'migration',
-      moduleIds: ['emv-payment-pqc', 'energy-utilities-pqc'],
+      moduleIds: ['emv-payment-pqc', 'energy-utilities-pqc', 'aerospace-pqc'],
       workshopIds: ['suci-flow'],
       businessToolIds: ['supply-chain-matrix'],
       board: {

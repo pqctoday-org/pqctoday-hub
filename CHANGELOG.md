@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.106.0] - 2026-09-19
+
+Fourteen role-board options now also list the Learn module that argues their case, so fifteen modules that only the Learn catalogue reached have a second front door.
+
+### Added
+
+- **More modules reachable from the role boards** [view:/] [view:/learn] [persona:executive] [persona:developer] [persona:architect] [persona:ops] [persona:researcher]: each board option lists one more module from that role's own learning path, matched to what the option is for — the executive, developer, architect, ops and researcher impact guides on their roles' first boards; Government & Defense under "Know your deadlines"; Skills & Team Structure under "Show a credible plan"; Platform Engineering under "Find the crypto in your code"; DNSSEC and MLS under "Choose the protocols"; Database Encryption under "Sequence the estate"; Secrets Management under "Plan the key infrastructure"; OS & Platform Crypto under "Know which suite to turn on"; Web Gateway under "Rehearse the cutover"; Aerospace under "Follow it into the field". Nothing already on a board moved.
+
 ## [4.105.0] - 2026-09-19
 
 Every Learn workshop step that takes input now ends with a question you can answer from that step, and the Crypto Dev APIs decision wizard no longer runs out of answers.
