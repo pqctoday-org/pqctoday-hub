@@ -443,7 +443,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A trend, not a snapshot. Two data points is a line; the value starts at the third.',
     workedExample:
-      'Pick Systems Inventoried, CBOM Completeness and Algorithms Migrated from the catalog and enter three reporting periods for each: the third value is where a trend starts to mean something.',
+      'Set the program start year and switch the "View as" role: the vendor, FIPS, threat and compliance KPIs auto-score from your Migrate catalog and assessment, Pace-to-Deadline becomes a real number, and the trend fills in as later assessments add snapshots.',
     name: 'KPI Tracker Template',
     description: 'Track migration KPIs with configurable metrics and reporting templates',
     category: 'Migration Planning',
@@ -624,7 +624,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'You know which of your own tools would have to change before a single production key does.',
     workedExample:
-      'Fill in the seven categories from Asset Management (CMDB / SBOM pipeline) to Zero-Trust Enforcement with the tool you use for each: the export shows which of them would have to change before a production key does.',
+      'Rate your coverage — None, Manual, Partial or Automated — for each of the seven categories from Asset Management (CMDB / SBOM pipeline) to Zero-Trust Enforcement: the gap list, ordered by importance, says which tool has to change before a production key does.',
     name: 'Management Tools Audit',
     description:
       'Audit your discovery, assessment, configuration, and enforcement tooling stack — feeds the Information Repository per CSWP.39 §5',

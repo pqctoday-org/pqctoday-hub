@@ -22,6 +22,7 @@ import { ScoreCard } from './ScoreCard'
 import { OnboardingCTAs } from './OnboardingCTAs'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { TransparencyBanner } from './TransparencyBanner'
+import { UpdatedSinceLastVisit } from './UpdatedSinceLastVisit'
 import { ResumeBanner } from '@/components/common/ResumeBanner'
 import { CuriousGuide } from '@/components/common/CuriousGuide'
 import { logEvent, personaLabel } from '@/utils/analytics'
@@ -432,7 +433,11 @@ export const LandingView = () => {
             encouraged path), so a returning visitor's "continue where I left
             off" affordance needs to survive scanning, not require scrolling
             past the whole board to find it. */}
-        <ResumeBanner dismissKey="landing-persona-board" />
+        {/* Grouped so the container's space-y-24 applies once, not per line. */}
+        <div className="space-y-3">
+          <ResumeBanner dismissKey="landing-persona-board" />
+          <UpdatedSinceLastVisit />
+        </div>
 
         <PersonaPageNote route="/" />
 
@@ -468,6 +473,7 @@ export const LandingView = () => {
     <div className="w-full space-y-16 md:space-y-24">
       {/* Hero Section */}
       <section className="text-center pt-8 md:pt-16">
+        <UpdatedSinceLastVisit className="mx-auto mb-8 max-w-3xl text-left" />
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
           <p className="text-sm font-mono uppercase tracking-widest text-primary-legible mb-4">
             Prepare for the Quantum Era
