@@ -43,7 +43,11 @@ export const KpiPersonaSelector: React.FC<KpiPersonaSelectorProps> = ({
   disabled,
 }) => {
   return (
-    <div className="flex items-center gap-2" role="radiogroup" aria-label="KPI persona lens">
+    <div
+      className="flex flex-wrap items-center gap-2"
+      role="radiogroup"
+      aria-label="KPI persona lens"
+    >
       <span className="text-xs text-muted-foreground">View as:</span>
       <div className="flex items-center rounded-md border border-border bg-background p-0.5">
         {KPI_PERSONAS.map((p) => {

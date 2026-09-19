@@ -4,11 +4,18 @@ import { useState } from 'react'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TOOL_EXERCISES } from '@/data/toolExercises'
+import { BUSINESS_TOOL_EXERCISES } from '@/data/businessToolExercises'
 import { cn } from '@/lib/utils'
 
-export function ToolExercise({ toolId }: { toolId: string }) {
+export function ToolExercise({
+  toolId,
+  family = 'playground',
+}: {
+  toolId: string
+  family?: 'playground' | 'business'
+}) {
   // eslint-disable-next-line security/detect-object-injection -- toolId comes from the registry route
-  const list = TOOL_EXERCISES[toolId]
+  const list = family === 'business' ? BUSINESS_TOOL_EXERCISES[toolId] : TOOL_EXERCISES[toolId]
   const [picked, setPicked] = useState<Record<number, number>>({})
   if (!list || list.length === 0) return null
   return (
@@ -21,6 +28,7 @@ export function ToolExercise({ toolId }: { toolId: string }) {
         Try it
       </p>
       {list.map((ex, qi) => {
+        // eslint-disable-next-line security/detect-object-injection -- qi is the map index
         const p = picked[qi]
         const correct = p !== undefined && p === ex.answer
         return (

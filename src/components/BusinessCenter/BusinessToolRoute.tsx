@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { Suspense, useEffect } from 'react'
 import { NextStepCard } from '@/components/shared/NextStepCard'
+import { ToolExercise } from '@/components/shared/ToolExercise'
 import { PersonaBlock } from '@/components/shared/PersonaBlock'
 import { RelatedContentPanel } from '@/components/shared/RelatedContentPanel'
 import { businessToolRelations } from '@/data/toolRelations'
@@ -156,6 +157,8 @@ export const BusinessToolRoute = () => {
       </div>
       {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts):
           the next tool in this category, or the report for the last one. */}
+      {/* Round 9, wave 2 — "Try it": one question answerable from the tool (src/data/businessToolExercises.ts). */}
+      <ToolExercise toolId={tool.id} family="business" />
       <NextStepCard route={`/business/tools/${tool.id}`} />
       {/* Round 9, wave 1.1 — related content (category neighbours, same-phase tools, the phase's module). */}
       <RelatedContentPanel id={tool.id} entries={businessToolRelations(tool.id)} />
