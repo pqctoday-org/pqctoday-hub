@@ -175,18 +175,26 @@ export const VendorReadinessMatrix: React.FC = () => {
                     variant="ghost"
                     key={vendor.id}
                     onClick={() => toggleVendor(vendor.id)}
+                    aria-pressed={isSelected}
                     className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-colors ${
                       isSelected
                         ? 'border-primary bg-primary/5'
                         : 'border-border bg-background hover:bg-muted'
                     }`}
                   >
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      readOnly
-                      className="accent-primary shrink-0"
-                    />
+                    {/* Round 9 (2026-09-19): a real checkbox inside a button was a
+                        nested interactive control with no label; the button now
+                        carries aria-pressed and the box is decorative. */}
+                    <span
+                      aria-hidden="true"
+                      className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
+                        isSelected
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-border'
+                      }`}
+                    >
+                      {isSelected ? <Check size={12} strokeWidth={3} /> : null}
+                    </span>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-foreground truncate">
                         {vendor.name}

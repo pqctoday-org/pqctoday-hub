@@ -332,14 +332,17 @@ export const PlatformMigrationPlanner: React.FC = () => {
                   variant="ghost"
                   onClick={() => !isLocked && togglePhaseComplete(phase.id)}
                   disabled={isLocked}
+                  aria-label={`Mark ${phase.title} ${isComplete ? 'not complete' : 'complete'}`}
+                  aria-pressed={isComplete}
                   className="shrink-0"
                 >
                   {isComplete ? (
-                    <CheckCircle size={20} className="text-status-success" />
+                    <CheckCircle size={20} className="text-status-success" aria-hidden="true" />
                   ) : (
                     <Circle
                       size={20}
                       className={isLocked ? 'text-muted-foreground' : 'text-primary'}
+                      aria-hidden="true"
                     />
                   )}
                 </Button>
@@ -376,12 +379,14 @@ export const PlatformMigrationPlanner: React.FC = () => {
                   <Button
                     variant="ghost"
                     onClick={() => toggleExpand(phase.id)}
+                    aria-label={isExpanded ? `Collapse ${phase.title}` : `Expand ${phase.title}`}
+                    aria-expanded={isExpanded}
                     className="shrink-0"
                   >
                     {isExpanded ? (
-                      <ChevronUp size={16} className="text-muted-foreground" />
+                      <ChevronUp size={16} className="text-muted-foreground" aria-hidden="true" />
                     ) : (
-                      <ChevronDown size={16} className="text-muted-foreground" />
+                      <ChevronDown size={16} className="text-muted-foreground" aria-hidden="true" />
                     )}
                   </Button>
                 )}

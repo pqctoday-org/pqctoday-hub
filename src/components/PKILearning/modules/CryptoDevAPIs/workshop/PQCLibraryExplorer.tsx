@@ -161,9 +161,14 @@ const LibCard: React.FC<LibCardProps> = ({
           <Button
             variant="ghost"
             onClick={onToggleExpand}
+            aria-label={isExpanded ? `Collapse ${lib.name}` : `Expand ${lib.name}`}
             className="text-muted-foreground hover:text-primary transition-colors"
           >
-            {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            {isExpanded ? (
+              <ChevronUp size={20} aria-hidden="true" />
+            ) : (
+              <ChevronDown size={20} aria-hidden="true" />
+            )}
           </Button>
         </div>
       </div>

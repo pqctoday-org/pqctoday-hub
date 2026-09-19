@@ -204,9 +204,11 @@ export const IAMCryptoInventory: React.FC = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => setSelectedId(isSelected ? null : component.id)}
+                          aria-label={`${isSelected ? 'Hide' : 'Show'} details for ${component.name}`}
+                          aria-expanded={isSelected}
                           className="text-xs"
                         >
-                          <Info size={14} />
+                          <Info size={14} aria-hidden="true" />
                         </Button>
                       </td>
                     </tr>

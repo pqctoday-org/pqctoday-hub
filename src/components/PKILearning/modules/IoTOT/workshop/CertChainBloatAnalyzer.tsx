@@ -150,6 +150,7 @@ export const CertChainBloatAnalyzer: React.FC = () => {
         </div>
         <input
           type="range"
+          aria-label="Device RAM budget, kilobytes"
           min={2}
           max={256}
           step={1}

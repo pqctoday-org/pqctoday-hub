@@ -82,6 +82,7 @@ export function ClosureHandoverRegister() {
                 />
                 <input
                   type="date"
+                  aria-label={`Handover date for ${c.label}`}
                   value={date[c.id] ?? ''}
                   onChange={(e) => setDate((p) => ({ ...p, [c.id]: e.target.value }))}
                   className="rounded border border-border bg-transparent px-1.5 py-1 text-xs text-foreground"
