@@ -1800,7 +1800,7 @@ export function ForceClusterView() {
           `page-has-heading-one`). Visually hidden; screen readers and the
           document outline get the page name. */}
       <h1 className="sr-only">Navigate: the PQC Today knowledge graph</h1>
-      <div ref={containerRef} className="h-full w-full" />
+      <div ref={containerRef} className="h-full w-full" data-scene-viewport="" />
       {loading && !error && (
         <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
           <div className="flex flex-col items-center gap-4">

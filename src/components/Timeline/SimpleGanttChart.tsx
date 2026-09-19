@@ -529,7 +529,7 @@ export const SimpleGanttChart = ({
       {/* Controls — hidden in embedded/sim mode */}
       {!embedded && (
         <>
-          <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-2 flex flex-col md:flex-row items-center gap-4 relative z-40">
+          <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-2 flex flex-col md:flex-row md:flex-wrap items-center gap-4 relative z-40">
             <div className="flex items-center gap-2 w-full md:w-auto text-xs">
               <div className="flex-1 min-w-[120px]">
                 <FilterDropdown
