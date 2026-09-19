@@ -292,6 +292,711 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       'Run the ML-DSA and ML-KEM steps and compare the CMS structures with and without the HSM key; the Live HSM Provider smoke test at the top shows whether the PKCS#11 provider initialised.',
   },
+  // ── Business tools (batch 2b, 2026-09-19) — written from each tool's rendered controls ──
+  '/business/tools/roi-calculator': {
+    executive:
+      'Pick the SMB, Average org or Fortune-1000-class tier, enter the products to migrate, capex per product and the planning horizon: the three-year total cost against the cost of inaction is the payback figure for the board, exportable as .pdf or .docx.',
+    grc: 'The Applicable Frameworks and Penalty per Incident inputs put regulatory exposure into the same figure as breach cost; keep the HNDL exposure and breach-probability inputs you used, because they are the assumptions an auditor will ask about.',
+  },
+  '/business/tools/board-pitch': {
+    executive:
+      'Fill the Executive Summary, Harvest-Now Risks, Migration Timeline and Budget Request sections in Edit, then Preview: one ask, one date, one consequence of missing it is the test the tool sets for the deck.',
+    grc: 'The Risk Assessment Summary, Governance Structure and Peer Benchmark sections are where the compliance position goes; the Recommended Actions section is what the board is asked to approve and later hold the programme to.',
+  },
+  '/business/tools/breach-simulator': {
+    executive:
+      "Choose your industry sector and region, the data type you hold and the years of stored data: the classical and quantum-enabled breach costs update together, and the Mosca's theorem verdict says whether migration is already late.",
+    grc: 'Set Years of Stored Data to your retention period and the migration time to your plan: the HNDL exposure factor and the Key Findings give the risk-register entry its likelihood and impact, with the IBM 2025 baseline cited on the page.',
+  },
+  '/business/tools/cost-of-inaction': {
+    executive:
+      'Slide Migration delay from 0 to 3 years with the horizon fixed: the ten-year cumulative NPV chart shows the year where waiting becomes the more expensive choice, and the breakdown shows which cost drives it.',
+    grc: 'The Delay cost breakdown separates accumulated exposure from delay premium; record the annual breach probability and migration duration you chose, since they carry the whole comparison.',
+  },
+  '/business/tools/cost-model-explorer': {
+    executive:
+      'Enter the systems in scope and the annual IT budget, then read the parametric, bottom-up and Monte Carlo estimates side by side: the spread between them is the honest range to bring to a budget discussion.',
+    grc: 'Run Monte Carlo and note which slider moves the result most: that assumption is the one to document and defend, and the cost-of-inaction line is shown as a reference because it measures a different thing.',
+  },
+  '/business/tools/crqc-scenario': {
+    executive:
+      'Set the CRQC arrival year and read which of RSA-2048, ECDSA P-256 and the others are broken by then, and the HNDL exposure window for data kept past that year; the default is the 2038 consensus median.',
+    grc: 'Tick your compliance deadlines against the arrival year you chose: the Compliance Deadlines panel shows which obligations fall before the algorithms break, which is the order the controls have to land in.',
+  },
+  '/business/tools/risk-register': {
+    executive:
+      'Read the four example entries, RSA-2048, AES-128, ECDSA P-256 and DH-2048, with their likelihood and impact: the Risk Summary is the shape of the register the programme will be held to, and every entry needs a named owner.',
+    grc: 'Add Risk Entry for each asset with its threat, likelihood, impact, owner and mitigation strategy; the How Likelihood × Impact Scoring Works panel is the method to cite, and Copy Markdown or .pdf exports the register for the risk committee.',
+  },
+  '/business/tools/risk-treatment-plan': {
+    executive:
+      'Load sample entries or build the register first, then read the Migration Priority Order: it is the sequence of what gets fixed first and why, and each move up or down has to carry a stated reason.',
+    grc: 'Place each risk on the heatmap, choose Mitigate, Accept, Transfer or Avoid with a rationale: the Treatment Summary is the treatment plan a risk framework expects, one decision per entry.',
+  },
+  '/business/tools/compliance-checklist': {
+    executive:
+      'Enter the industry and primary jurisdiction and star your frameworks on the Compliance page: each starred framework gets a checklist with a deadline and an owner, which is the compliance programme in one view.',
+    grc: "Each per-framework checklist carries evidence items such as 'Crypto inventory mapped to this framework' with a compliance owner; complete Scope & context first so exclusions are recorded before the controls are.",
+  },
+  '/business/tools/audit-checklist': {
+    executive:
+      'The seven readiness areas, from Cryptographic Inventory to Exceptions, each move from Not Started toward Established as items are ticked: the overall picture is what an audit will find today.',
+    grc: "Tick each control, for example 'CBOM generated' or 'RACI defined', and add an evidence row with the reference such as a CMVP certificate number; every item cites its source (EO 14028, SP 800-131A, CSF 2.0) so the auditor can follow the row.",
+  },
+  '/business/tools/compliance-timeline': {
+    executive:
+      'Select the jurisdictions you operate in and add milestones with a year: the Gap Analysis says, per framework, whether the plan meets the deadline or by how many years it misses.',
+    grc: "Choose the jurisdictions, then add milestones such as 'Complete crypto inventory' against each framework's deadline: the gap per framework is the finding to put in front of the compliance committee.",
+  },
+  '/business/tools/raci-builder': {
+    executive:
+      'Read the pre-filled matrix: each PQC activity has one Accountable role and the tool flags a row with two, because two Accountables means nobody owns it.',
+    grc: 'Set Accountable, Responsible and Consulted per activity, for example the Enterprise Architect as Accountable for Crypto Inventory; the RACI Matrix Export is the governance artefact the programme charter refers to.',
+  },
+  '/business/tools/policy-generator': {
+    executive:
+      'Choose the Cryptographic Algorithm Policy, Key Management Policy, Vendor Crypto Requirements or Migration Timeline Policy template, name the policy owner and approver, and export: the policy names the approved and prohibited algorithms and the review cadence.',
+    grc: 'Approve ML-KEM and ML-DSA, list the classical algorithms to retire, define the exception process and add KPI drift rules; the Applicable Standards section (NIST, ENISA, ISO/IEC, IETF, FIPS 140-3) ties the policy to its references.',
+  },
+  '/business/tools/kpi-dashboard': {
+    executive:
+      'Switch View as to Executive: the overall score and the KPIs such as Algorithms Migrated and Budget Utilization are the three to five measures that would move if the programme stalled.',
+    grc: "Enter the scores you can evidence, Customise Weights to your framework's priorities, and note which KPIs need assessment or compliance data to unlock; How this score is computed is the method to cite with the .csv export.",
+  },
+  '/business/tools/vendor-scorecard': {
+    executive:
+      'Score each vendor on the six criteria, PQC Algorithm Support, FIPS 140-3 Validation, Published PQC Roadmap, Crypto Agility, SBOM/CBOM Delivery and Hybrid Mode Support: the weighted total ranks the vendors you depend on.',
+    grc: 'Set each score with the migrate catalogue as evidence and fill the Observability Tooling Notes (crypto scanner, CVE feed, SIEM rules, zero-trust enforcement): the export is the vendor-assurance record.',
+  },
+  '/business/tools/contract-clause': {
+    executive:
+      'Pick the PQC compliance deadline year, the required algorithms and the non-compliance penalty: the generated clauses are the obligations to put on the table with a vendor, with counsel review noted on the page.',
+    grc: 'Require ML-KEM and ML-DSA, a CMVP certificate number as evidence, CBOM delivery in a chosen format and a notice period for cryptographic changes, plus audit rights: each section becomes a clause with the evidence requirement written in.',
+  },
+  '/business/tools/supply-chain-matrix': {
+    executive:
+      'The matrix maps the products you selected on Migrate across TLS, VPN, SSH, email and messaging by migration gap and impact: the suppliers you cannot replace inside your own deadline are the programme.',
+    grc: 'Read the Product Dependencies per domain with the catalogue evidence behind each cell; a product in the high-gap, high-impact corner is a third-party risk entry with its proof attached.',
+  },
+  '/business/tools/roadmap-builder': {
+    executive:
+      'Track A (confidentiality, key exchange) and Track B (integrity, signatures and PKI) run in parallel on the eight-phase spine with gates G0 to G6: each phase needs an exit test, not only an end date.',
+    grc: "Add milestones against the regulatory dates listed for your countries and check the Mitigation Gateways: the Roadmap Export shows each gate's criterion, which is the evidence the programme review will ask for.",
+  },
+  '/business/tools/stakeholder-comms': {
+    executive:
+      'Write the Board / C-Suite message and set the reporting frequency and status-report format: the export is the communication plan that keeps the board informed without a second briefing.',
+    grc: 'List the stakeholders with their power and interest, set the engagement strategy per group and the escalation triggers and path: the plan documents who is told what, when, which an audit of programme governance expects.',
+  },
+  '/business/tools/kpi-tracker': {
+    executive:
+      'Set the programme start year and switch View as to Executive: Pace-to-Deadline becomes a real number and the vendor, FIPS, threat and compliance KPIs score from your Migrate catalogue and assessment.',
+    grc: 'Enter the scores you can evidence, note which KPIs are auto-scored from live data and which need input, and export the .csv each period: the trend fills in as later assessments add snapshots.',
+  },
+  '/business/tools/deployment-playbook': {
+    executive:
+      'Seven phases from Pre-Deployment Preparation to Rollback Procedures, each a checklist: the test the tool sets is that a colleague could run it at 3am without calling you.',
+    grc: 'Tick the items as they are done, from feature flags and hybrid mode to Post-Deployment Validation and the Decommission Plan: the .pdf is the change record, with the CSWP.39 §4 methodology cited at the top.',
+  },
+  '/business/tools/hybrid-transition-planner': {
+    architect:
+      "Inventory the protocol, the algorithm in use, the data lifetime and the deployment maturity, set the interoperability and compliance constraints, then edit the plan narrative: the tool's decision tree from CSWP.39 §3.2.4 picks traditional+PQC, PQC+PQC, pure PQC or a gateway, and a hybrid without an exit trigger is flagged as permanent.",
+  },
+  '/business/tools/mti-negotiator': {
+    architect:
+      'Choose the protocol and audience, the interoperability profile (non-PQC, hybrid-only or pure-PQC peers), the compliance deadline and hardware constraints: the tool picks the mandatory-to-implement signature, KEM and hash with alternates, checked against the protocol matrix.',
+  },
+  '/business/tools/crypto-api-refactor-audit': {
+    developer:
+      'Enter the application type, language and the crypto APIs in use (OpenSSL EVP, BoringSSL, libsodium, BouncyCastle, .NET, Web Crypto, JCE, PKCS#11), the call-site count and how hardcoded they are: the plan is a phased refactor checklist by call site with language-specific guidance.',
+  },
+  '/business/tools/cloud-responsibility-matrix': {
+    architect:
+      'Select the cloud providers and service-model mix, the key-management posture and data lifetime, then edit the responsibility plan: the matrix says per asset class who acts first, with the PQC availability per cloud and the BYOK, FedRAMP and sovereign-cloud watch-outs.',
+  },
+  '/business/tools/crypto-architecture-diagram': {
+    executive:
+      'Add the applications, libraries, HSMs, protocols, key stores and certificate authorities with their dependencies: the diagram preview draws the chain and the detail lines say which components have post-quantum support yet.',
+    grc: "Capture each cryptographic component with its version and dependencies (for example an HSM's firmware and whether it has ML-DSA): the structured table and the Mermaid diagram are the inventory artefact, exportable as markdown or PDF.",
+  },
+  '/business/tools/management-tools-audit': {
+    executive:
+      'Rate coverage None, Manual, Partial or Automated for the seven tool categories from crypto scanners to zero-trust enforcement: the gap list, ordered by importance, says which tool has to change before a production key does.',
+    grc: 'Enter the systems covered by each category and the coverage level: the export records the management-tools gap the CSWP.39 §5 step 3 audit requires, with the ordering already applied.',
+  },
+  '/business/tools/crypto-cbom-builder': {
+    executive:
+      'Three linked views, SBOM to CBOM, library posture and hardware FIPS 140-3 inventory, produce a CBOM slice: the point is a bill of materials you can regenerate, not one built by hand.',
+    grc: "Map an SBOM into a CBOM, record library posture and the HSM inventory with CMVP references, then Download CycloneDX 1.7: it is the inventory evidence that feeds the assets pipeline and the audit checklist's 'CBOM generated' item.",
+  },
+  '/business/tools/crypto-vulnerability-watch': {
+    executive:
+      'The digest lists the top CVEs by severity for the products you selected on Migrate, joined through CPE from the NVD snapshot: a short list you will actually read, not everything.',
+    grc: 'Open Migrate to select the products in your estate, then read the CVE digest per product with How this data is sourced open: it is the vulnerability-management evidence for the crypto components you depend on.',
+  },
+  '/business/tools/program-charter': {
+    executive:
+      'Name the sponsor, write the purpose and scope boundary, fill the Steering Committee seats and cadence, and enter the year-one budget and multi-year commitment: the export is the one-page charter that closes gate G0.',
+    grc: 'Record the mandate sign-off date, the QRPM appointment, the governance cadence and the success criteria: these are the Phase 0 records a programme review checks first.',
+  },
+  '/business/tools/initial-scoping': {
+    executive:
+      'List the top in-scope systems, give an estate-size estimate and the top vendor dependencies, seeded from your Migrate selection: an honest inventory gap is a finding, and often the most valuable one.',
+    grc: 'Triage each system as internal or external with its protocols and sensitivity, and enter the estate-size estimate: the export is the Phase 0 scope statement the later inventory is measured against.',
+  },
+  '/business/tools/skills-team-plan': {
+    executive:
+      'Enter the instances in scope: the one-FTE-per-500-instances heuristic sizes the core roles for years one and two and for production rollout, and each role gets build, borrow or buy.',
+    grc: 'Record the build, borrow or buy decision per core role and where the sizing comes from: the export is the resourcing evidence behind the training and staffing controls.',
+  },
+  '/business/tools/infra-modernization-planner': {
+    executive:
+      'The PKI modernization, HSM and KMS upgrade schedule, middlebox report and capacity plan consolidate into one export: it is the infrastructure investment the migration needs, with hardware replacement planned two to four years out.',
+    grc: 'Enter the CA lifetimes, the HSMs inventoried with firmware and PQC status, the protocols tested through middleboxes and the capacity impact: the export records the infrastructure controls and their dates.',
+  },
+  '/business/tools/refresh-cycle-alignment': {
+    executive:
+      'Set the planning horizon and list the refresh programmes with their years: the assets whose refresh lands after the deadline are named, and those need a decision now rather than later.',
+    grc: 'Add each funded refresh programme (data centre, SD-WAN, cloud, PKI, HSM, vendor renewals) with its year and the PQC task that rides it: the export shows which migration work has a budget line and which does not.',
+  },
+  '/business/tools/accelerated-execution-profile': {
+    executive:
+      'Tick the trigger conditions, write the compressed wave order, size the emergency resource request and name who can activate it: a contingency package ready before the quantum timeline moves.',
+    grc: 'Pre-approve the risk acceptances (for example a temporary performance regression during rollout) and record the activation authority: the export is the documented contingency the risk committee signs before it is needed.',
+  },
+  '/business/tools/data-at-rest-strategy': {
+    executive:
+      'For each data store, set the sensitivity and choose re-encrypt, re-wrap, crypto-shred, delete or accept and monitor: retention drives the order, because data that stays secret for ten years is the harvest-now target.',
+    grc: 'Enter each store with its retention note and the decision taken: the export records the per-store data-at-rest disposition back into the CBOM, which is the evidence of Phase 5 activity 5.6.',
+  },
+  '/business/tools/migration-verification': {
+    executive:
+      'Add each system and tick the five evidence points, observed negotiation, negative test, certificate chain under PQC, downgrade documented and evidence in the dossier: a system counts as migrated only when the old algorithm is gone.',
+    grc: 'Attach an evidence reference to each of the five points per system, log the decommissioning of classical key material with its SP 800-88 method, and complete the closure and BAU handover: the export is the closure evidence.',
+  },
+  // ── Learn modules (batch 2c, 2026-09-19) — written from each module's description, why-this-matters and step titles ──
+  '/learn/ai-security-pqc': {
+    executive:
+      "Step 1's Data Protection Analyzer lists where training data and model weights are protected by quantum-vulnerable cryptography today: stolen now, readable the day a large quantum computer arrives, which is the exposure to put beside your AI investment.",
+    developer:
+      "Run the Data Protection Analyzer over an AI pipeline, then Step 3's model-weight encryption, key wrapping and signing configuration and Step 6's agent-to-agent protocol design: they are the touch points your code changes.",
+    researcher:
+      "Step 2's Data Authenticity Verifier and Step 5's Agentic Commerce Simulator model synthetic-data contamination and agent transactions under a quantum overlay, a threat model the literature is still writing.",
+    ops: "Step 4's authentication architectures and delegation chains for agents, and Step 6's protocol design, are the pieces that go into production; the analyzer in Step 1 is the inventory to run first.",
+  },
+  '/learn/api-security-jwt': {
+    developer:
+      'Decode a JWT in the inspector, sign and verify with ML-DSA, build a dual classical-plus-PQC token, encrypt with ML-KEM and compare sizes across algorithms: the workshop is the token pipeline you ship, step by step.',
+    architect:
+      'The dual-signature step and the size comparison decide whether a PQC token still fits your headers and gateways; the last step audits the JOSE row of the protocol matrix and proposes a patch.',
+    researcher:
+      'The size comparison across ML-DSA and SLH-DSA sets and the JOSE matrix audit are the measurements; the workshop runs real PQC signing with in-browser KAT vectors.',
+  },
+  '/learn/aerospace-pqc': {
+    researcher:
+      'The Satellite Link Budget Calculator across LEO, MEO, GEO and HEO and the Avionics Protocol Analyzer quantify PQC overhead on links no other sector runs; the Certification Impact Analyzer estimates DO-178C recertification cost.',
+    ops: 'The Fleet Interoperability Matrix builds a mixed-generation fleet and shows which data links interoperate under PQC, and the Export Control Classifier places PQC-equipped products under ITAR, EAR and Wassenaar.',
+  },
+  '/learn/arch-quantum-impact': {
+    architect:
+      "Score your architecture across nine criteria in the Architecture Readiness step, then model a legacy monolith's gradual migration behind a PQC abstraction layer: the action plan runs from crypto mapping to a reference architecture.",
+  },
+  '/learn/automotive-pqc': {
+    architect:
+      'Map a domain-based or zonal E/E architecture in Step 1, then use the Safety-Crypto Analyzer to see how ISO 26262 ASIL levels constrain verification timing under PQC signatures.',
+    researcher:
+      'The Sensor Data Integrity Simulator compares signing throughput for LiDAR, radar, camera and V2X under classical and PQC algorithms, and the Car Key Protocol Explorer steps through CCC Digital Key 3.0 over NFC, BLE and UWB.',
+    ops: 'The OTA Orchestration Planner plans multi-ECU firmware campaigns with dependency ordering and fleet sizing: the rollout problem a 15-year vehicle lifecycle turns into.',
+  },
+  '/learn/cbom': {
+    executive:
+      'The Source Coverage Mapper shows which discovery tools you already run and where the blind spots are: the inventory every later migration phase depends on, and the first thing an auditor asks for.',
+    grc: "Pick CycloneDX or SPDX for the CBOM, evaluate the inventory against a quantum-safe policy, and collapse four artifacts into one logical key by SPKI fingerprint: the machine-verifiable inventory the audit checklist's 'CBOM generated' item refers to.",
+    developer:
+      'The Source Coverage Mapper reuses the scanners and build tooling you already run; the format step compares CycloneDX and SPDX for cryptographic assets, and the last step deduplicates keys by SPKI fingerprint.',
+    architect:
+      'Choose the BOM format, then evaluate the resulting inventory against a quantum-safe policy: the module shows what a CBOM has to carry for a migration decision to be made from it.',
+    ops: "Map your existing discovery sources first, then evaluate the inventory against policy: the gaps are the systems nobody's scanner covers, which is where key rotations fail.",
+  },
+  '/learn/code-signing': {
+    developer:
+      'Sign a file hash with ML-DSA and verify it, build a PQC code-signing chain, simulate RPM-style hybrid ML-DSA-87 plus Ed448 package signing and walk through Sigstore keyless signing with transparency logs.',
+    architect:
+      'The certificate-chain step and the hybrid package-signing step show the two migration patterns for software distribution; the firmware step compares LMS, XMSS and ML-DSA trust chains for secure boot.',
+    researcher:
+      'Compare the hybrid ML-DSA-87 plus Ed448 package signature with a pure ML-DSA one and the LMS, XMSS and ML-DSA firmware chains: the size and verification-time trade-offs are on screen.',
+  },
+  '/learn/compliance-strategy': {
+    executive:
+      'Map the PQC frameworks and deadlines across the jurisdictions you operate in, then build the compliance timeline overlaying those deadlines on your migration: the gap assessment says where you are late.',
+    grc: "The audit-readiness checklist and the Regulatory Gap Assessment across your selected jurisdictions produce the compliance position from live framework data rather than last year's summary.",
+    researcher:
+      'The framework map is built from the live compliance dataset, so the deadlines and their sources can be checked on the Compliance page; the gap assessment is reproducible for any set of jurisdictions.',
+    curious:
+      'Pick a country or two and see which rules about post-quantum cryptography already apply there and by when: the module turns a pile of regulations into a list with dates.',
+  },
+  '/learn/confidential-computing': {
+    developer:
+      'Compare seven TEE architectures in Step 1, step through remote attestation for Intel DCAP, ARM CCA and AMD SEV in Step 2, then design the TEE-to-HSM trusted channel in Step 4: the same flow the TEE-HSM Secure Channel tool runs live.',
+    architect:
+      "Step 4's TEE-HSM Trusted Channel designs mutual attestation and PQC key provisioning between an enclave and an HSM, and Step 5 assesses quantum risk per TEE component into a prioritised migration plan.",
+    researcher:
+      'Step 3 covers memory encryption engines, sealing-key derivation and the Grover margin on symmetric keys; the attestation flows in Step 2 are per vendor, which is where the differences live.',
+    ops: "Step 5's per-component quantum risk assessment and migration plan is the operational output; Step 1's architecture comparison says which TEE features your platforms expose today.",
+  },
+  '/learn/crypto-agility': {
+    executive:
+      'Score your organisation across four crypto-agility dimensions in the last step: the result says whether the next algorithm change is a configuration change or a rebuild.',
+    grc: 'The scan of a sample enterprise for quantum-vulnerable algorithms and the four-dimension agility score are the two artefacts a governance review wants: what is exposed and how fast it can change.',
+    developer:
+      'The first step shows algorithm-agnostic APIs swapping backends without code changes; the scanner then finds the hardcoded algorithms in a sample enterprise, which is what your codebase would look like.',
+    architect:
+      'Abstraction layers, CBOM scanning and the seven-phase migration framework are the design pattern; the agility score across four dimensions tells you which layer to fix first.',
+    researcher:
+      "The seven-phase framework and the four-dimension scoring model are stated explicitly; the module is the reference the rest of the curriculum's migration steps cite.",
+    ops: 'Walk the seven-phase migration framework: it is the operating sequence the Command Center tools follow, and the scanner step shows what discovery has to find before rollout.',
+    curious:
+      'The one certainty is that algorithms will change again; this module shows, with a swap-the-backend demo, what it takes to be able to change them without rebuilding everything.',
+  },
+  '/learn/crypto-dev-apis': {
+    developer:
+      'Compare JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG and Bouncy Castle across seven languages, then work through the provider-pattern examples for KeyGen, Sign, Verify, Encrypt and KEM and the API-by-algorithm support matrix.',
+    researcher:
+      'The eight-library deep dive (liboqs, AWS-LC, Bouncy Castle and others) and the support matrix with status badges and versions are the current state of PQC library support, with the build-versus-buy scoring wizard on top.',
+  },
+  '/learn/crypto-mgmt-modernization': {
+    executive:
+      'The CPM Maturity Self-Assessment scores five pillars and four asset classes, and the ROI step models quantum-happens and quantum-never-happens scenarios: certificate outages and forgotten keys pay for the programme either way.',
+    developer:
+      'The Library & Hardware CBOM Builder maps SBOMs into crypto-focused CBOMs and tracks library end of life: the inventory step where your dependencies show up.',
+    architect:
+      'The Inventory Lifecycle Simulator walks assets through the six-stage loop from Discover onward, and the CBOM builder covers libraries and hardware: the posture-management design in nine steps.',
+    researcher:
+      "The maturity model's five pillars and four asset classes are explicit, and the ROI model's two scenarios are parameterised, so both can be reproduced against your own estate.",
+    ops: 'The six-stage operational loop in Step 2 is the certificate and key lifecycle you run; the maturity self-assessment in Step 1 says which stage is manual today.',
+  },
+  '/learn/crypto-registry': {
+    executive:
+      'One canonical name per mechanism is what lets a CBOM from several scanners be read as one inventory; the two lookups show the problem and the fix in a minute.',
+    grc: 'Resolve an HSM, JWT or scanner identifier to its canonical family with the Algorithm Name Normalizer: the same mechanism named three ways is the reconciliation problem in every crypto inventory audit.',
+    developer:
+      'Use the Algorithm Name Normalizer and the Curve Identifier Lookup to map the identifiers your libraries and tokens emit to the CycloneDX registry names a CBOM expects.',
+    architect:
+      'The registry is the shared vocabulary between discovery tools, HSMs, certificates and libraries; the lookups show where PQC families sit in it.',
+    ops: "Resolve the names your scanners and HSM logs emit to the registry's canonical entries so the same key does not appear as three assets.",
+  },
+  '/learn/dnssec-pqc': {
+    developer:
+      'Compare RSA, ECDSA, Ed25519, ML-DSA-44 and SLH-DSA signature sizes against DNS response limits in Step 1, then walk the root, TLD and domain validation chain to see where algorithm 18 sits today.',
+    architect:
+      "The PQ Validation Chain Walkthrough and the Deployment Roadmap Tracker set Cloudflare's resolver-side pilot against the DNS root's separate rollover estimate: the dependencies a signed-zone plan waits on.",
+  },
+  '/learn/data-asset-sensitivity': {
+    executive:
+      'Catalogue data assets by type, sensitivity tier and retention, score them across four weighted dimensions, and read the prioritised migration list: not every dataset moves on the same timeline.',
+    grc: 'The Classification Challenge scores ten real scenarios on the four-tier model and the conflict step resolves GDPR, HIPAA and CNSA obligations against each other; the output is a prioritised list with recommended algorithms.',
+    researcher:
+      'The four-dimension composite score and the multi-framework conflict resolution are explicit methods (NIST RMF, ISO 27005, FAIR), so the priority map is reproducible.',
+    curious:
+      'Ten short scenarios ask you to rate how sensitive a piece of data is and for how long it matters; the answer shows why some data needs protecting from future computers now and some does not.',
+  },
+  '/learn/database-encryption-pqc': {
+    developer:
+      'Map the encryption layers of a database in Step 1, step through the TDE migration from AES-256 to an ML-KEM-wrapped key hierarchy, and check queryable encryption schemes against PQC compatibility in Step 4.',
+    architect:
+      'The BYOK Architecture Designer in Step 3 places key ownership with an external PQC KMS; the readiness assessment in Step 5 covers the fleet.',
+    researcher:
+      "Step 4's Queryable Encryption Lab lays out the schemes and their PQC compatibility matrix, the part of database encryption where the research is least settled.",
+    ops: "The TDE re-key walkthrough and Step 5's guided fleet readiness checklist are the operational path; a re-key done wrong re-encrypts the wrong data, and the walkthrough shows the order.",
+    curious:
+      'Databases keep their encryption keys for years; this module shows, layer by layer, what has to change so that stored data stays private after quantum computers arrive.',
+  },
+  '/learn/dev-quantum-impact': {
+    developer:
+      'Score your readiness across nine developer competencies with the exposure checklist, then build the action plan from auditing your crypto usage to deployment: what breaks is key sizes, signature sizes and TLS handshakes, not the word RSA.',
+  },
+  '/learn/digital-assets': {
+    executive:
+      "Choose a blockchain and see the primitives it signs with, then the custody step's wallet tiers, HSM, MPC and PQC threats: every public key already on-chain is exposed, which is the risk to size before the migration proposals.",
+    researcher:
+      "Bitcoin's secp256k1, ECDSA and Keccak-256 and Solana's Ed25519 are explored hands-on, with the migration proposals and initiatives step tracking what each chain is considering.",
+    curious:
+      "Pick a blockchain and see the cryptography it actually uses; the module explains why a wallet's public key being visible on-chain is a problem once quantum computers exist.",
+  },
+  '/learn/digital-id': {
+    architect:
+      "Activate the wallet, issue the PID and a diploma attestation, verify at a bank and sign with a QTSP: the five steps are the EUDI architecture, and the wallet's PQC Readiness note says where post-quantum keys are expected in the ARF.",
+    researcher:
+      "Follow the OpenID4VCI issuance, the attestation and the QES steps with the wallet's history open; the credentials use P-256 and P-384 today, which the module states beside each step.",
+    curious:
+      'Get a national digital ID, add a diploma, open a bank account and sign a document with it: the module walks the European digital wallet end to end.',
+  },
+  '/learn/emv-payment-pqc': {
+    researcher:
+      'Eight steps cover the stack: payment network comparison, EMV transaction flows, card personalisation with RSA against PQC, tokenisation, DUKPT key management, a severity-effort matrix of ten components, HNDL exposure for settlement rails and the sector regulation timeline.',
+  },
+  '/learn/email-signing': {
+    developer:
+      'Compare classical and PQC certificate structures, walk the CMS SignedData workflow and its ASN.1, then compare RSA key transport with KEM-based encryption (RFC 9629); the live step loads OpenSSL WASM with the PKCS#11 provider.',
+    architect:
+      'The KEM-based encryption step (RFC 9629) replaces key transport with KEMRecipientInfo; the certificate-structure step shows what a PQC S/MIME certificate changes for relying parties.',
+    researcher:
+      'The CMS SignedData and AuthEnvelopedData structures are shown in ASN.1 with the RFC references; the live step runs real OpenSSL 3.6 through the PKCS#11 provider.',
+    curious:
+      'A signature on an email has to be trustworthy for years; this module shows what a signed and an encrypted message are made of and what changes for post-quantum algorithms.',
+  },
+  '/learn/energy-utilities-pqc': {
+    researcher:
+      'Assess IEC 61850, DNP3, Modbus and DLMS readiness, model 900 MHz smart-meter time-on-air and saturation with PQC message sizes, and score safety and environmental consequences: the constraints are physical, not informational.',
+    ops: 'Plan IEC 61850 substation migration across protection and control, PQC key rotation for a smart-meter fleet of millions, and the utility-wide roadmap with NERC CIP milestones.',
+  },
+  '/learn/entropy-randomness': {
+    developer:
+      'Generate random bytes from Web Crypto and OpenSSL, run the simplified SP 800-90B tests, then combine TRNG and QRNG output with the SP 800-90C conditioning step: the entropy every key you generate depends on.',
+    architect:
+      'The Entropy Source Validation walkthrough and the source-combining step are the design references for where keys are generated and how two sources are combined for defence in depth.',
+    researcher:
+      'The SP 800-90B tests, the pre-fetched quantum random data against local TRNG output, and the 90C XOR-and-conditioning step are all runnable, with the Entropy Testing tool for your own samples.',
+    curious:
+      'Every secret key starts as random numbers; the module shows the difference between good randomness and predictable numbers with tests you can run on both.',
+  },
+  '/learn/exec-quantum-impact': {
+    executive:
+      "Score your organisation's quantum exposure across nine criteria in the self-assessment, then build the phased action plan with milestones from this week onward: fiduciary risk and the 2030 and 2035 regulatory dates, in board terms.",
+  },
+  '/learn/5g-security': {
+    developer:
+      'Subscriber privacy with ECIES Profiles A and B and the proposed KEM Profile C, mutual authentication with 5G-AKA and MILENAGE, then provisioning and key lifecycle: the SUCI tool runs the concealment live.',
+    architect:
+      'The proposed KEM-based Profile C beside Profiles A and B shows what changes in subscriber concealment under PQC; the provisioning step covers the supply-chain and key-lifecycle side.',
+  },
+  '/learn/government-defense-pqc': {
+    executive:
+      'CNSA 2.0 is required for new National Security System acquisitions from 1 January 2027; the CNSA 1.0 to 2.0 comparator and the Federal Mandate Explorer say which instruments bind a system you sell into or run.',
+    researcher:
+      'The suite comparator maps every public-key purpose line by line, and the Federal PKI Profile Pair puts the classical Common Policy profile beside the draft PQC certificate profile.',
+  },
+  '/learn/healthcare-pqc': {
+    researcher:
+      'The Biometric Vault Assessor and the Patient Privacy Mapper set data lifecycles that never expire against the HNDL window; the Device Safety Simulator models attacks on medical devices whose cryptography fails physically.',
+    curious:
+      'Fingerprints and genomes cannot be reissued; the module shows why health data is the clearest case of steal-now, read-later and how a hospital would plan its way out.',
+  },
+  '/learn/hsm-pqc': {
+    architect:
+      'Step through eight PKCS#11 PQC operations with the on-prem versus cloud comparison, then the nine-vendor comparison by PQC maturity, algorithms and FIPS validation, and the fleet sizing for ten enterprise use cases.',
+    researcher:
+      'Track CMVP and CAVP PQC validation status across HSM vendors in Step 4: it is the current record of which modules have validated ML-KEM and ML-DSA implementations.',
+    ops: 'Plan the firmware migration from classical to PQC with dual partitions in Step 3 and size the fleet in Step 5: the two operations a PQC rollout adds to an HSM estate.',
+  },
+  '/learn/hybrid-crypto': {
+    developer:
+      'Compare classical, PQC and hybrid key generation, run KEM encapsulation and hybrid signatures, generate the two root CAs and the hybrid X.509 formats, then the HPKE step composed from PKCS#11 v3.2 mechanisms.',
+    architect:
+      'The certificate steps generate and compare the hybrid X.509 approaches with the IETF reference artifacts, and the signature-spectrum step covers concatenation, nesting and Silithium: the relying-party compatibility decision.',
+    researcher:
+      'The IETF reference artifacts in the certificate deep-dive and the three signature compositions with their non-separability properties are the material to check against the drafts.',
+    ops: 'Generate the classical and PQC root CAs and the hybrid certificate formats: which one a relying party that only knows ECDSA still validates is the property your fleet needs during migration.',
+  },
+  '/learn/iam-pqc': {
+    executive:
+      'Audit eight IAM components by quantum risk and migration priority, and score Okta, Entra, PingFederate and ForgeRock across PQC dimensions: the vendors are on different timelines you have to track.',
+    developer:
+      'Migrate SAML and JWT signing to ML-DSA and compare signature sizes and headers, then simulate translating a PQC SAML assertion to classical RSA for legacy relying parties.',
+    architect:
+      'Design the phased roadmap across the five identity pillars in Step 5, with the AD, OpenLDAP and Entra vulnerability analysis in Step 3 behind it.',
+    researcher:
+      'The vendor scoring across PQC dimensions and the directory vulnerability analysis with HNDL exposure are explicit and repeatable; the token-migration step gives the signature sizes.',
+    ops: 'The eight-component audit in Step 1 orders the work, and the legacy-translation step in Step 6 is what keeps old relying parties working during the cutover.',
+    curious:
+      'Every login token your systems issue is signed; the module shows which parts of an identity system a quantum computer would break and in what order to fix them.',
+  },
+  '/learn/iot-ot-pqc': {
+    developer:
+      'Compare PQC algorithm resource requirements against device classes, sign and verify a firmware image with LMS, XMSS or ML-DSA, and simulate a CoAP/DTLS 1.3 handshake with PQC to measure the overhead.',
+    architect:
+      'Certificate chain sizes on constrained devices and the SCADA/ICS migration plan across the Purdue levels are the two design constraints; the device-class comparison says what fits in memory.',
+    researcher:
+      'The Secure Boot RAM load latency and V2X broadcast simulations, and the CoAP/DTLS overhead measurement, quantify what constrained devices pay for each algorithm.',
+    ops: 'The SCADA/ICS assessment across Purdue levels and the firmware signing step are the two operations a plant migration consists of; a deployed device cannot be patched later.',
+  },
+  '/learn/kms-pqc': {
+    architect:
+      'Design the three-level key hierarchy (root KEK, zone KEK, DEK), compare ML-KEM envelope encryption with RSA-OAEP wrapping, explore the X25519 plus ML-KEM-768 combiner per provider, and write an AWS KMS key policy that enforces hybrid PQC.',
+    researcher:
+      'The envelope-encryption comparison and the hybrid combiner step are the primitives, and the KMIP v3.0 step maps PQC key types across providers.',
+    ops: 'Plan PQC key rotation with provider-specific strategies and compliance windows in Step 4, and the KMIP operations in Step 5: the KMS is where every downstream key lives.',
+    curious:
+      'A key-management system holds the keys that protect everything else; the module shows how a data key is wrapped and rotated, and what changes when the wrapping key goes post-quantum.',
+  },
+  '/learn/mls-group-messaging': {
+    developer:
+      'TreeKEM, HPKE and a PKCS#11-backed OpenMLS provider: the workshop tool runs the ML-DSA-65 credential signing, the ML-KEM-768 HPKE node update and the AES-128-GCM message encryption, then adds members to the ratchet tree.',
+    architect:
+      "Group key agreement that scales to thousands while signature keys stay in the HSM: the tool's Add, Remove and Update on the ratchet tree show how many nodes re-key per change.",
+    researcher:
+      "RFC 9420's TreeKEM and the post-quantum ciphersuites are shown with live primitives and the authoritative references; enable HSM mode to route them through softhsmv3.",
+  },
+  '/learn/merkle-tree-certs': {
+    developer:
+      'Build a Merkle tree from certificate leaves, generate and verify an inclusion proof, test tampering, compare handshake sizes against X.509 chains and simulate a CT log signing with ML-DSA-65.',
+    architect:
+      'The handshake-size comparison between traditional chains and Merkle Tree Certificates is the number that decides which post-quantum TLS ecosystem your edge can carry.',
+    researcher:
+      'The proof verification step and the size comparison are reproducible against the draft; the CT-log step shows the ML-DSA-65 signing that anchors the tree.',
+  },
+  '/learn/migration-program': {
+    executive:
+      'Build the roadmap with milestones on the regulatory deadlines for your countries, the stakeholder communication plan and the KPI tracker: the operating model that turns a mandate into shipped systems.',
+    grc: 'The roadmap overlays framework deadlines on your milestones and the KPI tracker pulls live data; the execution checklist covers pre-migration, migration and validation, which is the evidence trail.',
+    researcher:
+      "The roadmap's deadlines come from the live compliance data and the KPI tracker scores from the migrate catalogue, so both are checkable against their sources.",
+    ops: 'The step-by-step execution checklist from pre-migration through validation is the runbook; the roadmap and KPI tracker are what the programme office reports from.',
+    curious:
+      'A migration is a project with dates, people to tell and numbers to watch; the module builds each of the three in turn.',
+  },
+  '/learn/pqc-101': {
+    executive:
+      "Start here: why lattice, hash-based and code-based algorithms resist quantum computers, then the side-by-side algorithm comparison; 'harvest now, decrypt later' is the reason the deadline is today, not when the computer arrives.",
+    grc: 'The algorithm comparison and the key-size step give the vocabulary every framework and mandate in this site uses; the ground floor for reading a compliance deadline.',
+    developer:
+      'Generate a real key pair with OpenSSL and see the size difference, then sign a message: the two operations your code will make with new algorithms.',
+    architect:
+      'The side-by-side comparison of classical and post-quantum algorithms with key and signature sizes is the first design input; the rest of the curriculum assumes it.',
+    researcher:
+      'The three algorithm families and the NIST standards are introduced with their security basis; the workshop generates real keys and signatures to measure.',
+    ops: 'Generate a key pair and see the size difference in the third step: bigger keys and signatures are what change in your certificates, configs and logs.',
+    curious:
+      'Start here: what a quantum computer can and cannot break, why data captured today is at risk, and what the new algorithms are, in four short steps with a real key pair at the end.',
+  },
+  '/learn/network-security-pqc': {
+    architect:
+      'Simulate TLS-intercept proxy behaviour with PQC certificate chains, design a quantum-safe zero-trust network access architecture, and analyse PQC payload sizes against TCP initial congestion windows.',
+    researcher:
+      'The initcwnd analysis and the DPI-with-larger-certificates simulation quantify what PQC handshakes do to inspection appliances; the vendor comparison across Cisco, Palo Alto, Fortinet, Juniper and Check Point records the schedules.',
+    ops: 'Analyse NGFW cipher suites and the impact of enabling PQC, configure IDS/IPS rule categories for PQC traffic, and read the vendor roadmaps: the appliances migrate on different schedules you plan around.',
+  },
+  '/learn/os-pqc': {
+    developer:
+      'Audit the OS crypto components, then configure system-wide TLS policy on RHEL, Ubuntu and Windows, migrate SSH host keys to ML-DSA-65 with the sshd_config changes, and move RPM and DEB signing from RSA-4096 to ML-DSA-65.',
+    architect:
+      'FIPS 140-3 module PQC inclusion and the hybrid FIPS design in Step 5 decide what the platform layer can offer applications; the audit in Step 1 is the inventory.',
+    researcher:
+      'The FIPS 140-3 PQC inclusion analysis and the package-signing migration are the two areas where distribution support is still moving; the module records the current state.',
+    ops: "System crypto-policies, sshd_config for ML-DSA host keys and package-signing keys are the three changes you roll out; Step 1's audit lists what each host runs today.",
+  },
+  '/learn/ops-quantum-impact': {
+    ops: 'Score your operational exposure across nine criteria, then build the action plan from infrastructure inventory onward: certificate scaling, fleet upgrades, VPN and SSH key exchange and monitoring recalibration are rollout problems, and the plan treats them that way.',
+  },
+  '/learn/pki-enrollment-protocols': {
+    developer:
+      'EST (RFC 7030) and CMP (RFC 9810) enrollment with real OpenSSL 3.6 WASM crypto against an in-browser mock CA, including the KEM key update: the exchanges a client library implements.',
+    architect:
+      'The CMP KEM key update with an encrypted-certificate proof of possession is how enrollment works when the key cannot sign; the module shows both protocols against the same CA.',
+    researcher:
+      'Compare the EST and CMP enrollments of the same key against the RFCs, with the composite enrollment and certificate inspection steps the tool page defers to here.',
+    ops: 'EST and CMP are how certificates get issued at scale; the module shows the requests and responses your enrollment endpoints will exchange with devices after the switch.',
+  },
+  '/learn/pki-workshop': {
+    developer:
+      'Create a CSR, generate a root CA, sign the CSR, inspect the certificate and issue a CRL, then compare with Merkle Tree Certificates and walk the RFC 8555 ACME issuance with an ML-DSA key.',
+    architect:
+      'The chain comparison with Merkle Tree Certificates and the storage, bandwidth and CPU model for migrating a PKI to PQC are the two design inputs after the five-step basics.',
+    researcher:
+      'The ACME (RFC 8555) issuance flow with a real ML-DSA key and the PKI migration cost model are the parts to reproduce; the session artifacts panel keeps what each step produced.',
+    ops: 'Issue, inspect and revoke in the first five steps, then model storage, bandwidth and CPU for your PKI under PQC: the certificate operations you run, with their new sizes.',
+  },
+  '/learn/pqc-business-case': {
+    executive:
+      'See the six costing models diverge on one scenario, calculate the ROI, simulate breach costs today against quantum-enabled breaches, model the cost of delay and assemble the board brief: the funding case in five steps.',
+    researcher:
+      'The six costing models are stated with their assumptions and the breach simulator cites its baseline; the comparison shows how far estimates diverge on the same inputs.',
+  },
+  '/learn/pqc-candidates': {
+    developer:
+      'Sort and filter the nine signature on-ramp candidates by use case in Step 3, and read the cryptanalysis timeline: choosing the wrong scheme means migrating twice.',
+    architect:
+      'The Standardisation Lifecycle step advances a candidate through the NIST rounds, and the Future Rounds Forecaster says where each is likely to land: the basis for not betting a design on one scheme.',
+    researcher:
+      'The animated visualisers for MPCitH, multivariate, isogeny and lattice families, the cryptanalysis timeline with every attack and reparameterisation, and the worldwide map of KpqC, CACR and ISO/IEC tracks.',
+    curious:
+      'How a new cryptographic algorithm becomes a standard: pick a candidate and advance it through the rounds, watching what an attack does to it along the way.',
+  },
+  '/learn/pqc-governance': {
+    executive:
+      "Define roles and responsibilities, generate the policy templates and design the governance KPI dashboard for board reporting: without a policy naming owners, deadlines and exceptions, migration is everyone's job and no one's.",
+    grc: 'The RACI step, the policy generator and the escalation-tier step that evaluates exception requests are the governance controls a framework expects, each producing an exportable artefact.',
+    researcher:
+      "The governance model's roles, policy structure and exception criteria are explicit and map to the Command Center tools the module hands off to.",
+  },
+  '/learn/pqc-risk-management': {
+    executive:
+      'Model when a cryptographically relevant quantum computer could arrive, build the risk register, assign treatments and read the residual risk: priority without waiting for a certainty that will never come.',
+    grc: 'The register with likelihood and impact, the treatment step with residual risk, and the Compliance Gap Analysis against CNSA 2.0 and NIST IR 8547 deadlines are the risk artefacts an audit expects.',
+    researcher:
+      'The CRQC timeline scenarios are parameterised and the register is built from real threat data on this site; the heatmap method is explicit.',
+    curious:
+      "Nobody knows when a quantum computer will break today's encryption; the module shows how to decide what to fix first anyway, with a simple risk table.",
+  },
+  '/learn/pqc-testing-validation': {
+    developer:
+      'Run an active PQC readiness scan against simulated endpoints, build the interoperability matrix of client and server combinations and run the NIST KATs against the SoftHSMv3 WASM engine.',
+    architect:
+      "Design the performance test plan comparing classical, hybrid and PQC, then compose the complete validation programme from your migration scope: what 'PQC-working' rather than 'PQC-capable' has to prove.",
+    researcher:
+      'The TVLA side-channel assessment visualiser for ML-KEM and ML-DSA and the KAT runs against the WASM engine are the measurable parts; the passive tap classifier shows what discovery can see.',
+    ops: 'The passive tap and SPAN classifier and the active endpoint scan are what you run on the network; the interoperability matrix says which client and server pairs complete.',
+  },
+  '/learn/platform-eng-pqc': {
+    developer:
+      'Inventory every cryptographic primitive in the CI/CD pipeline, compare OCI artifact signing tools by PQC readiness, and write the OPA and Kyverno rules that block quantum-vulnerable algorithm OIDs.',
+    architect:
+      "The Quantum Threat Timeline models HNDL risk per pipeline asset under different CRQC arrival years; the Policy-as-Code Enforcer is where the architecture's algorithm decisions become enforceable.",
+    researcher:
+      'The four-panel Crypto Posture Monitor (Prometheus metrics, SIEM queries, capacity) shows what a measured pipeline posture looks like; the signing-tool comparison records current PQC readiness.',
+    ops: 'The Crypto Posture Monitor and the container-signing migration are the operational pieces; the pipeline inventory in Step 1 finds the defaults nobody chose deliberately.',
+  },
+  '/learn/pqc-grc': {
+    executive:
+      'Assign each Key Risk Indicator to the board, the CISO or the operational level: a KRI that never reaches the board is a spreadsheet, and the cascade is what turns a SOC finding into a decision.',
+    grc: 'Cascade the KRIs across the three levels, then triage the deferral exception register into the SOC suppression list, escalating what should not be suppressed: the GRC-to-SOC handoff, made auditable.',
+  },
+  '/learn/qkd': {
+    architect:
+      'Integrate QKD keys into TLS 1.3, IKEv2, MACsec and SSH as nonce or PSK material in Part 4, and use a QKD secret as SP 800-108 key material inside an HSM in Part 5: where QKD fits beside PQC rather than instead of it.',
+    researcher:
+      'The BB84 visual simulation, the error-correction and privacy-amplification post-processing and the worldwide deployment explorer are the reference; the HSM step runs the derivation over PKCS#11.',
+  },
+  '/learn/quantum-threats': {
+    executive:
+      'Calculate your migration deadline and when signing credentials must rotate, and track logical-qubit progress against what is needed to break elliptic curves: which algorithms Shor and Grover break is what separates risk from vendor hype.',
+    grc: 'The Security Level Degradation step and the deadline calculators put a number on the exposure; the qubit tracker is the evidence line for a risk register entry.',
+    developer:
+      "See how quantum attacks reduce each algorithm's security level and compare two algorithms side by side: which of the primitives your code calls survive.",
+    architect:
+      'The full algorithm-versus-attack comparison and the credential-rotation calculator set the order in which key exchange and signatures have to move.',
+    researcher:
+      'The qubit tracker sets logical-qubit progress against the requirement to break ECC, and the degradation model states its assumptions; both are checkable against the sources cited.',
+    ops: 'The two calculators, migration deadline and credential rotation, give the dates your certificate and key rotation plans have to meet.',
+    curious:
+      "How a quantum computer actually breaks today's encryption, which algorithms survive, and a calculator that turns it into a date for you.",
+  },
+  '/learn/research-quantum-impact': {
+    researcher:
+      'Score your quantum risk exposure across nine research-specific criteria, from long-lived data confidentiality to publication integrity, then build the action plan from data risk assessment to PQC publication practice.',
+  },
+  '/learn/slh-dsa': {
+    developer:
+      'Generate SLH-DSA key pairs across all twelve FIPS 205 parameter sets, sign in Pure and HashSLH-DSA modes, explore context strings and deterministic signing, and compare LMS, XMSS and SLH-DSA side by side.',
+    architect:
+      'The parameter explorer shows the size-versus-speed trade-off across the twelve sets, and the LMS/XMSS/SLH-DSA comparison says when a stateless scheme is worth its signature size.',
+    researcher:
+      'FIPS 205 §9.2 context strings for domain separation and the deterministic mode are explored directly; the KAT tool verifies the implementation against the published vectors.',
+  },
+  '/learn/sbom': {
+    executive:
+      'SPDX against CycloneDX mapped onto the NTIA minimum elements, then the Generation Tool Picker: the software inventory that vulnerability management, licensing and the CBOM all build on.',
+    grc: "The NTIA minimum-elements mapping is the check for whether a supplier's SBOM is usable; the tool picker matches build artifact types to generators and formats.",
+    developer:
+      'Match your build artifact type to a generator and format in Step 2: the SBOM is what the CBOM and VEX triage read, so it has to come out of the build, not a spreadsheet.',
+    architect:
+      'SPDX or CycloneDX, and which generator per artifact type: the two decisions that make the dependency graph reusable downstream.',
+    ops: 'Pick the generator per artifact type and keep the SBOM regenerated per build: it is the inventory that vulnerability triage with VEX closes the loop on.',
+  },
+  '/learn/secrets-management-pqc': {
+    developer:
+      'Classify secret types by HNDL exposure, simulate Vault transit operations with PQC algorithms, and integrate PQC-safe secrets into Kubernetes, GitHub Actions and Terraform in the Pipeline Integration Lab.',
+    architect:
+      'The Rotation Policy Designer with automated TTL recommendations and the cloud provider comparison across AWS, Azure, GCP and Vault are the design decisions; a five-year rotation policy needs a plan now.',
+    researcher:
+      'The provider comparison records current PQC readiness of the secrets managers, and the Vault transit simulator shows the operations with PQC algorithms.',
+    ops: 'The rotation policy designer and the pipeline integration steps are the operational changes; the classification step says which secrets go first.',
+  },
+  '/learn/secure-boot-pqc': {
+    architect:
+      'Analyse the UEFI PK, KEK and db hierarchy, explore TPM 2.0 key hierarchies with the hybrid RSA TPM plus ML-DSA approach, and design attestation flows for Measured Boot, TPM Quote and DICE.',
+    researcher:
+      'The vendor readiness comparison across AMI, Insyde, EDK2 and Dell and the live TPM 2.0 V1.85 key generation in the sandbox are the current state of firmware PQC; the TPM playground runs the commands.',
+    ops: 'Walk the four-step ML-DSA-65 firmware signing migration from inventory onward: it is the rollout across the fleet, and the vendor comparison says which firmware can take it.',
+  },
+  '/learn/skills-team-structure': {
+    executive:
+      'Convert the estate size into an FTE estimate with the 1-FTE-per-500-instances heuristic, then build the Crypto Champion roster: who does the migration, by when.',
+    grc: "The Team Sizing Calculator and the champion roster with each champion's four readiness commitments are the staffing evidence behind the programme's training and ownership controls.",
+  },
+  '/learn/soc-implementation-pqc': {
+    grc: 'The five detection use cases (hybrid downgrade, crypto drift, certificate-lifecycle anomalies, signature integrity, HNDL indicators) and the coverage planner are the monitoring controls to evidence; the readiness score across nine criteria is the gap.',
+    architect:
+      "The posture registry the detections depend on and the phased SOC implementation plan are the design work; the coverage planner sets each capability's target state.",
+    ops: 'Plan coverage across the five detection use cases and score SOC readiness across nine criteria: a SOC that cannot detect hybrid downgrade misses a PQC incident even after a perfect migration.',
+  },
+  '/learn/standards-bodies': {
+    executive:
+      'Classify twelve organisations by type, scope and authority, then trace the chain from algorithm standard to certification programme to compliance mandate: who requires what, where.',
+    grc: "The Standards, Certification and Compliance chain and the five-region by four-type coverage grid are the map of which body's requirement applies in each jurisdiction; the scored scenarios test it.",
+    researcher:
+      'Twelve bodies with founding, scope and authority, the standard-to-certification-to-compliance chain and the regional grid: the reference for citing the right body.',
+    ops: 'The regional coverage grid says which certification programme a product in a given region has to hold; the scenarios show how to pick the right body for a question.',
+    curious:
+      'Who decides which cryptography is allowed, who checks products, and who makes rules: the module sorts the alphabet soup of organisations into three jobs and five regions.',
+  },
+  '/learn/stateful-signatures': {
+    developer:
+      'Explore LMS parameter sets and Merkle-tree structure, compare XMSS with LMS at equal security, simulate signing, key exhaustion and state loss, then generate real SLH-DSA keys over PKCS#11 for comparison.',
+    architect:
+      'The state-loss simulation is the design constraint: a reused one-time key voids the scheme, which decides where these keys may live; the Haystack coalition step shows distributed key control.',
+    researcher:
+      'The parameter explorer, the XMSS-versus-LMS comparison at equal security levels, and the Haystack coalition construction are the material to reproduce; the LMS tool runs cross-engine verification.',
+    ops: 'The exhaustion and state-loss simulation shows the operational failure mode: state must be tracked correctly, forever, and backups cannot restore it.',
+  },
+  '/learn/tls-basics': {
+    developer:
+      'The TLS 1.3 handshake, certificates and cipher suites, then the simulator: choose a hybrid key share and an ML-DSA certificate and read every message in TXT and HEX, with the OpenSSL config that produced it.',
+    architect:
+      'The handshake is the prerequisite for every hybrid-PQC rollout; the simulator shows what a PQC certificate chain and a hybrid key share add to each connection.',
+    researcher:
+      'The simulator supports pure ML-DSA certificates and the IETF hybrid key shares; inspect the encodings against the drafts listed at the top of the tool.',
+    ops: "Set the server side as your edge is configured and run the simulator: the Config File tab and the module's Apache, nginx, HAProxy and Caddy snippets are what you deploy.",
+    curious:
+      'The padlock in your browser is TLS; the module shows what happens in the handshake and what changes when the algorithms inside it go post-quantum.',
+  },
+  '/learn/trust-services-pqc': {
+    executive:
+      'A qualified signature made today may be evaluated in 2050: the Signature Longevity Calculator shows which parts degrade first, and the ETSI standards explorer shows what changed when PQC arrived.',
+    developer:
+      'The longevity calculator sets how long a signature must remain evaluable; the ETSI TS 119 312 hybrid combinations step lists the algorithm pairings to implement.',
+    architect:
+      'Timestamping, proof of existence, long-term validation and re-timestamping are the mechanisms; the standards supersession explorer shows the same ETSI standard before and after PQC.',
+    ops: 'The longevity calculator and the re-timestamping mechanism define the maintenance a long-lived signature archive needs; the ETSI hybrid table says which combinations conform.',
+  },
+  '/learn/vpn-ssh-pqc': {
+    developer:
+      'Step through IKEv2 in Classical, Hybrid and Pure PQC modes, compare SSH key exchange with curve25519, sntrup761 and mlkem768, and compare IKEv2, SSH, WireGuard and TLS 1.3 sizes and round trips.',
+    researcher:
+      'The protocol comparison of sizes, RTTs and features across IKEv2, SSH, WireGuard and TLS 1.3 is the measurement; the VPN and SSH simulators produce the packets.',
+    ops: 'The IKEv2 modes and the SSH KEX comparison are what your VPN and SSH configurations will carry; the simulators produce the strongSwan config and the sshd changes.',
+  },
+  '/learn/vendor-risk': {
+    executive:
+      'Select the products you run from the Migrate catalogue, score the vendors on PQC readiness from real product data, and read the three scenarios: a critical vendor without a roadmap is the one to act on.',
+    grc: 'Score vendors from product data rather than marketing pages, generate the contract clauses, and map dependencies across infrastructure layers; the FIPS-validation-gap scenario is the audit finding to look for.',
+    researcher:
+      "The scoring uses the migrate catalogue's product records, so every score can be traced to a row with its evidence.",
+    ops: 'Map vendor dependencies across your infrastructure layers in Step 4: the appliance vendors on your critical path are the ones whose roadmaps decide your cutover dates.',
+  },
+  '/learn/verification-closure': {
+    executive:
+      'Retire one classical asset through deprecate, remove, verify removed and close, plan which systems to verify with what proof per tier, and hand standing capabilities to permanent owners: done means proven, not ticketed.',
+    grc: 'The Verification Coverage Planner sets the proof per tier, and the Closure & Handover Register records the transfer of standing capabilities: the closure evidence the Migration Verification tool collects.',
+    ops: 'The Decommission Checklist is the runbook for retiring a classical asset; the coverage planner says which systems need observed-behaviour proof and which a lighter check.',
+  },
+  '/learn/web-gateway-pqc': {
+    developer:
+      'Build a gateway architecture and mark the PQC upgrade points, compare terminate, passthrough, re-encrypt and split TLS under PQC, and calculate handshake sizes and bandwidth.',
+    researcher:
+      'The handshake-size and bandwidth calculation and the four termination patterns under PQC quantify what the edge pays; the product assessment records vendor readiness.',
+    ops: 'Plan the certificate migration across edge nodes with a phased rollout and assess your gateway products against PQC readiness criteria: if the gateway breaks, every application behind it inherits the outage.',
+  },
 }
 
 export function personaBlocksFor(route: string): PersonaBlockSet | undefined {
