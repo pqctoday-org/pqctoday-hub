@@ -1588,7 +1588,7 @@ export const PlaygroundWorkshop = () => {
           />
         </Button>
         {sidebar}
-        <main className="min-w-0 flex-1 lg:max-w-[1180px] lg:py-6">
+        <section aria-label="Playground tools" className="min-w-0 flex-1 lg:max-w-[1180px] lg:py-6">
           {/* Control bar */}
           <div className="flex flex-wrap items-center gap-2.5">
             <div className="relative min-w-[220px] flex-1">
@@ -1696,7 +1696,7 @@ export const PlaygroundWorkshop = () => {
           </div>
 
           <div className="mt-6">{mainBody}</div>
-        </main>
+        </section>
 
         {selectedTool && (
           <ToolDetailModal

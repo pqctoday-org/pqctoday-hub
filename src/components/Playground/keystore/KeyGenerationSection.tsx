@@ -299,9 +299,9 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
       <div className="bg-muted/30 border border-border rounded-xl p-6">
         <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border">
           <Layers size={16} className="text-secondary" />
-          <h5 className="text-sm font-bold text-foreground uppercase tracking-wider">
+          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
             Generate New Keys
-          </h5>
+          </h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -381,9 +381,9 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
       <div className="bg-muted/30 border border-border rounded-xl p-6 mt-4">
         <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border">
           <Lock size={16} className="text-accent" />
-          <h5 className="text-sm font-bold text-foreground uppercase tracking-wider">
+          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
             Generate Classical Keys
-          </h5>
+          </h3>
           {!hideSnippets && (
             <span className="text-xs text-muted-foreground ml-auto">(Web Crypto API)</span>
           )}

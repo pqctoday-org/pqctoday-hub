@@ -498,10 +498,10 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
 
       {/* Side-by-side year table */}
       <div className="space-y-2">
-        <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+        <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
           <Calendar size={14} className="text-primary" />
           {inputs.horizonYears}-Year Cost Comparison (cumulative NPV)
-        </h4>
+        </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-xs border-collapse">
             <thead>
@@ -548,7 +548,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
           computation the panels above render, so the sentence cannot disagree
           with the numbers it is summarising. */}
       <div className="glass-panel border-l-4 border-l-primary p-4">
-        <h4 className="mb-1 text-sm font-semibold text-foreground">What this is telling you</h4>
+        <h2 className="mb-1 text-sm font-semibold text-foreground">What this is telling you</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
           Waiting {delayYears} year{delayYears === 1 ? '' : 's'} costs you about{' '}
           <strong className="text-foreground">{fmt(costOfInaction)}</strong> more over{' '}
@@ -563,9 +563,9 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
 
       {/* Cost breakdown for delayed scenario */}
       <div className="glass-panel p-4 border-l-4 border-l-status-warning space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">
+        <h2 className="text-sm font-semibold text-foreground">
           Delay {delayYears}yr — Cost Breakdown ({inputs.horizonYears}-year NPV)
-        </h4>
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
           <div>
             <p className="text-xs text-muted-foreground mb-0.5">Migration (with delay premium)</p>

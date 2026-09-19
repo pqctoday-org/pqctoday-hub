@@ -283,7 +283,7 @@ export function CertCapacityCalculator() {
 
       {/* Business Impact Summary */}
       <div className="glass-panel p-4 border-l-4 border-l-primary bg-primary/5 space-y-2">
-        <h4 className="text-sm font-bold text-foreground">Business Impact Summary</h4>
+        <h2 className="text-sm font-bold text-foreground">Business Impact Summary</h2>
         <p className="text-xs text-foreground leading-relaxed">
           Transitioning from <span className="font-semibold text-primary">ECDSA P-256</span> to{' '}
           <span className="font-semibold text-primary">ML-DSA-44</span> (PQC equivalent security)
@@ -328,9 +328,9 @@ export function CertCapacityCalculator() {
         const pct = (n: number) => `${((n / classicalLeaf) * 100 - 100).toFixed(0)}%`
         return (
           <div className="glass-panel p-4 border-l-4 border-l-accent bg-accent/5 space-y-2">
-            <h4 className="text-sm font-bold text-foreground">
+            <h2 className="text-sm font-bold text-foreground">
               Staged migration: hybrid PKI (classical CA, PQC leaf)
-            </h4>
+            </h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
               A full flag-day switch to an all-PQC chain is rarely the first step. The realistic
               near-term path keeps roots and intermediates on ECDSA/RSA (small, long-lived, verified

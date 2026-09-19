@@ -124,7 +124,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
             },
           ].map(({ title, desc }) => (
             <div key={title} className="bg-muted/30 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-1">{title}</h4>
+              <h3 className="text-sm font-bold text-foreground mb-1">{title}</h3>
               <p className="text-xs text-muted-foreground">{desc}</p>
             </div>
           ))}

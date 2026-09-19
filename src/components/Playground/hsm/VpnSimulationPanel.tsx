@@ -3800,7 +3800,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           <div className="flex items-center gap-3">
             <ShieldAlert size={24} />
             <div>
-              <h4 className="font-bold">Tunnel initialization failed</h4>
+              <h2 className="font-bold">Tunnel initialization failed</h2>
               <p className="text-xs opacity-80">
                 charon aborted the IKE_SA. Common causes: PKCS#11 session not logged in, proposal
                 mismatch, MTU exceeded with fragmentation off ({mtu}-byte limit), or cert-auth
@@ -3823,7 +3823,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           <div className="flex items-center gap-3">
             <ShieldAlert size={24} />
             <div>
-              <h4 className="font-bold">Execution Environment Unsupported</h4>
+              <h2 className="font-bold">Execution Environment Unsupported</h2>
               <p className="text-xs opacity-80 max-w-[600px] mt-1 line-clamp-2">{sabError}</p>
             </div>
           </div>
@@ -4489,9 +4489,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       </div>
 
       <div className="pt-4 border-t border-border space-y-3">
-        <h4 className="text-sm font-bold flex items-center gap-2 mb-3">
+        <h2 className="text-sm font-bold flex items-center gap-2 mb-3">
           <ArrowRight size={16} /> Live Wire Capture
-        </h4>
+        </h2>
         <p className="text-[10px] text-muted-foreground -mt-2">
           Real IKE messages routed between the two charon WASM workers. Click a packet to inspect
           its ISAKMP header and hex dump.
@@ -4515,9 +4515,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       </div>
 
       <div className="pt-4 border-t border-border">
-        <h4 className="text-sm font-bold flex items-center gap-2 mb-3">
+        <h2 className="text-sm font-bold flex items-center gap-2 mb-3">
           <Cpu size={16} /> Tunnel Statistics
-        </h4>
+        </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div
             className={`p-3 rounded-xl border flex flex-col justify-center items-center ${currentStep === steps.length - 1 && !hasCrashed ? 'bg-success/10 border-success/30' : 'bg-card border-border'}`}
@@ -4600,9 +4600,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
       {(kemSecrets.responder || kemSecrets.initiator) && (
         <div className="pt-4 border-t border-border">
-          <h4 className="text-sm font-bold flex items-center gap-2 mb-3">
+          <h3 className="text-sm font-bold flex items-center gap-2 mb-3">
             <ShieldAlert size={16} /> ML-KEM Shared Secret Verification
-          </h4>
+          </h3>
           {(() => {
             const rHex = kemSecrets.responder?.hex ?? ''
             const iHex = kemSecrets.initiator?.hex ?? ''
@@ -4674,9 +4674,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
       {(kemSecrets.responder || kemSecrets.initiator) && selectedMode !== 'classical' && (
         <div className="pt-4 border-t border-border">
-          <h4 className="text-sm font-bold flex items-center gap-2 mb-3">
+          <h3 className="text-sm font-bold flex items-center gap-2 mb-3">
             <KeyRound size={16} /> SKEYSEED Key Derivation
-          </h4>
+          </h3>
           <div className="rounded-xl border border-border bg-card p-4 space-y-3">
             <pre className="text-[11px] font-mono bg-muted/40 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
               {selectedMode === 'pure-pqc'
@@ -5085,9 +5085,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       <VpnComparisonPanel selectedMode={selectedMode} />
 
       <div className="pt-4 border-t border-border">
-        <h4 className="text-sm font-bold flex items-center gap-2 mb-3">
+        <h2 className="text-sm font-bold flex items-center gap-2 mb-3">
           <BookOpen size={16} /> Related Standards
-        </h4>
+        </h2>
         <div className="flex flex-wrap gap-2 text-xs">
           <Link
             to="/library?ref=IETF%20RFC%207296"

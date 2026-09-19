@@ -515,7 +515,7 @@ export const HybridCertFormats: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileText size={18} className="text-primary" />
-                    <h4 className="font-bold text-foreground text-sm">{fmt.label}</h4>
+                    <h3 className="font-bold text-foreground text-sm">{fmt.label}</h3>
                   </div>
                   <span className={`text-xs px-2 py-0.5 rounded border font-bold ${badgeClass}`}>
                     {fmt.status}
@@ -833,7 +833,7 @@ export const HybridCertFormats: React.FC = () => {
         {/* Comparison table — shown as soon as any format is generated */}
         {anyGenerated && (
           <div className="glass-panel p-4">
-            <h4 className="text-sm font-bold text-foreground mb-3">Format Comparison</h4>
+            <h3 className="text-sm font-bold text-foreground mb-3">Format Comparison</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>

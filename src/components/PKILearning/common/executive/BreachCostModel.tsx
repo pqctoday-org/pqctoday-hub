@@ -642,9 +642,9 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
       <div className="glass-panel p-4 space-y-3 border-l-4 border-l-status-warning">
         <div className="flex items-center gap-2">
           <Clock size={16} className="text-status-warning" />
-          <h4 className="text-sm font-bold text-foreground">
+          <h2 className="text-sm font-bold text-foreground">
             When does migration need to start? (Mosca&apos;s theorem)
-          </h4>
+          </h2>
         </div>
         <p className="text-xs text-muted-foreground">
           If (data shelf life) + (migration time) exceeds the time until a CRQC exists, you are

@@ -237,12 +237,12 @@ export const DrbgArchitectureDemo: React.FC = () => {
           <div
             className={`glass-panel p-4 space-y-4 border ${!instantiated ? 'border-primary' : 'border-border/50 opacity-60'}`}
           >
-            <h4 className="text-sm font-semibold flex items-center gap-2">
+            <h3 className="text-sm font-semibold flex items-center gap-2">
               <span className="flex items-center justify-center bg-primary text-primary-foreground rounded-full w-5 h-5 text-xs">
                 1
               </span>
               Instantiate Phase
-            </h4>
+            </h3>
 
             <div className="space-y-3">
               <div>
@@ -319,12 +319,12 @@ export const DrbgArchitectureDemo: React.FC = () => {
           <div
             className={`glass-panel p-4 space-y-4 border ${instantiated ? 'border-success' : 'border-dashed border-border'}`}
           >
-            <h4 className="text-sm font-semibold flex items-center gap-2">
+            <h3 className="text-sm font-semibold flex items-center gap-2">
               <span className="flex items-center justify-center bg-success text-success-foreground rounded-full w-5 h-5 text-xs">
                 2
               </span>
               Generate & Reseed
-            </h4>
+            </h3>
 
             <div className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -403,10 +403,10 @@ export const DrbgArchitectureDemo: React.FC = () => {
         <div className="space-y-4">
           <div className="glass-panel p-4 space-y-4 bg-muted/10 h-full flex flex-col relative">
             <div className="flex justify-between items-center">
-              <h4 className="text-sm font-semibold flex items-center gap-2 text-foreground">
+              <h3 className="text-sm font-semibold flex items-center gap-2 text-foreground">
                 <Database size={16} className="text-primary" />
                 Internal State Tracker
-              </h4>
+              </h3>
               <div
                 className="text-xs bg-muted/50 px-2 py-1 rounded font-medium text-muted-foreground cursor-help"
                 title="Starts at 1 after instantiation or reseed (SP 800-90A §10.1.2.4). Production limit: 2^48 requests."

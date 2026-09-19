@@ -117,10 +117,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             {/* Threat model: what TEEs protect against */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
-                <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                   <ShieldCheck size={16} className="text-status-success" />
                   TEEs Protect Against
-                </h4>
+                </h3>
                 <ul className="text-xs text-muted-foreground space-y-1">
                   <li>&bull; Compromised operating system or hypervisor</li>
                   <li>&bull; Malicious cloud administrator or co-tenant</li>
@@ -130,10 +130,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 </ul>
               </div>
               <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
-                <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                   <AlertTriangle size={16} className="text-status-error" />
                   TEEs Do NOT Protect Against
-                </h4>
+                </h3>
                 <ul className="text-xs text-muted-foreground space-y-1">
                   <li>&bull; Microarchitectural side channels (Spectre, Meltdown)</li>
                   <li>&bull; Supply chain attacks on CPU manufacturing</li>
@@ -146,10 +146,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
             {/* Trusted Computing Base (TCB) */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Layers size={16} className="text-primary" />
                 Trusted Computing Base (TCB)
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 The <strong>TCB</strong> is the set of all hardware, firmware, and software
                 components that must function correctly for the security guarantees to hold. A
@@ -160,7 +160,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </div>
 
             {/* Data-in-use vs data-at-rest vs data-in-transit */}
-            <h4 className="text-sm font-bold text-foreground">Data Protection Comparison</h4>
+            <h3 className="text-sm font-bold text-foreground">Data Protection Comparison</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="bg-muted/50 rounded-lg p-3 border border-border">
                 <div className="text-sm font-bold text-primary mb-1">Data at Rest</div>
@@ -215,7 +215,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <div key={arch.id} className="bg-muted/50 rounded-lg p-4 border border-border">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-bold text-foreground">{arch.name}</h4>
+                      <h3 className="text-sm font-bold text-foreground">{arch.name}</h3>
                       <span
                         className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${SCOPE_LABELS[arch.scope] ? 'bg-primary/10 text-primary border-primary/30' : ''}`}
                       >
@@ -253,7 +253,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </div>
 
             {/* Comparison summary table */}
-            <h4 className="text-sm font-bold text-foreground">Architecture Comparison</h4>
+            <h3 className="text-sm font-bold text-foreground">Architecture Comparison</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -325,7 +325,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
             {/* Attestation flow diagram */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-3">Attestation Trust Chain</h4>
+              <h3 className="text-sm font-bold text-foreground mb-3">Attestation Trust Chain</h3>
               <div className="flex flex-col sm:flex-row items-center gap-2 text-xs font-mono text-foreground justify-center">
                 <div className="bg-primary/10 border border-primary/30 rounded px-4 py-2 text-center">
                   Enclave
@@ -352,7 +352,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </div>
 
             {/* Attestation flows table */}
-            <h4 className="text-sm font-bold text-foreground">Attestation Flow Comparison</h4>
+            <h3 className="text-sm font-bold text-foreground">Attestation Flow Comparison</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -395,9 +395,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <div className="flex items-start gap-2">
                 <AlertTriangle size={16} className="text-status-error shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-bold text-foreground mb-1">
+                  <h3 className="text-sm font-bold text-foreground mb-1">
                     All Attestation Chains Are Quantum-Vulnerable
-                  </h4>
+                  </h3>
                   <p className="text-xs text-muted-foreground">
                     Every current attestation implementation &mdash; Intel DCAP, ARM CCA, AMD
                     SEV-SNP, and AWS Nitro &mdash; uses <strong>ECDSA P-256 or P-384</strong> for
@@ -427,9 +427,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </p>
 
             {/* Engine comparison table */}
-            <h4 className="text-sm font-bold text-foreground">
+            <h3 className="text-sm font-bold text-foreground">
               Memory Encryption Engine Comparison
-            </h4>
+            </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -483,10 +483,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
             {/* Sealing key explanation */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <HardDrive size={16} className="text-primary" />
                 Sealing Keys
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground">
                 A <strong>sealing key</strong> is a symmetric key derived from the platform&apos;s
                 hardware root of trust, bound to the enclave&apos;s identity (code measurement
@@ -507,9 +507,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <div className="flex items-start gap-2">
                 <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-bold text-foreground mb-1">
+                  <h3 className="text-sm font-bold text-foreground mb-1">
                     Grover&apos;s Algorithm Halves AES-128 Security
-                  </h4>
+                  </h3>
                   <p className="text-xs text-muted-foreground">
                     Intel TME-MK and AMD SME/SEV use <strong>AES-XTS-128</strong> for memory
                     encryption. AES-128 sits in NIST security Category 1, and Grover&apos;s
@@ -544,9 +544,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
             {/* Architecture diagram */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-3">
+              <h3 className="text-sm font-bold text-foreground mb-3">
                 TEE-HSM Communication Architecture
-              </h4>
+              </h3>
               <div className="flex flex-col sm:flex-row items-center gap-2 text-xs font-mono text-foreground justify-center">
                 <div className="bg-primary/10 border border-primary/30 rounded px-4 py-2 text-center">
                   TEE / Enclave
@@ -574,10 +574,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             {/* Mutual attestation */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                   <Eye size={14} className="text-primary" />
                   Mutual Attestation
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground mb-2">
                   The TEE presents its attestation report (e.g., SGX Quote, SEV-SNP Report) to the
                   HSM. The HSM verifies the report against the vendor&apos;s root CA, checks the
@@ -589,10 +589,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 </p>
               </div>
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                   <Server size={14} className="text-primary" />
                   Key Provisioning Flow
-                </h4>
+                </h3>
                 <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
                   <li>TEE generates attestation report with nonce</li>
                   <li>HSM verifies attestation + TCB status</li>
@@ -609,9 +609,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <div className="flex items-start gap-2">
                 <Shield size={16} className="text-primary shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-bold text-foreground mb-1">
+                  <h3 className="text-sm font-bold text-foreground mb-1">
                     Explore PKCS#11 PQC Operations
-                  </h4>
+                  </h3>
                   <p className="text-xs text-muted-foreground">
                     The HSM &amp; PQC module includes an interactive PKCS#11 simulator where you can
                     step through ML-KEM encapsulation, ML-DSA signing, and key provisioning
@@ -688,10 +688,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
             {/* Vendor PQC timeline summary */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Cpu size={16} className="text-primary" />
                 Vendor PQC Attestation Timeline
-              </h4>
+              </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
                   { vendor: 'Intel (SGX/TDX)', year: '2027', status: 'planned' as const },

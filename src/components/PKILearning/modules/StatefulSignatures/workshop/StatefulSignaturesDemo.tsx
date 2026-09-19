@@ -456,7 +456,9 @@ export function StatefulSignaturesDemo() {
 
       <Card className="border border-input overflow-hidden">
         <CardHeader className="bg-muted/30 border-b border-border/50 pb-4">
-          <CardTitle className="text-xl">Stateful Hash Signatures</CardTitle>
+          <CardTitle as="h2" className="text-xl">
+            Stateful Hash Signatures
+          </CardTitle>
           <CardDescription>
             Strictly operating under PKCS#11 v3.2: <code>CKM_HSS</code> and <code>CKM_XMSS</code>.
           </CardDescription>
@@ -488,9 +490,9 @@ export function StatefulSignaturesDemo() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 border border-status-info/30 rounded-md bg-status-info/10 text-status-info">
-                    <h4 className="font-semibold flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold flex items-center gap-2 mb-1">
                       <Info className="h-4 w-4" /> Strict PKCS#11 v3.2 Compliance
-                    </h4>
+                    </h3>
                     <p className="text-xs">
                       Under PKCS#11 v3.2, <strong>LMS</strong> does not have a standalone
                       capability. It is mapped as an <strong>HSS</strong> tree with exactly 1 level
@@ -498,9 +500,9 @@ export function StatefulSignaturesDemo() {
                     </p>
                   </div>
                   <div className="p-4 border border-status-error/30 rounded-md bg-status-error/10 text-status-error">
-                    <h4 className="font-semibold flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold flex items-center gap-2 mb-1">
                       <Info className="h-4 w-4" /> State Exhaustion Handling
-                    </h4>
+                    </h3>
                     <p className="text-xs">
                       State exhaustion is managed by the WASM boundary natively returning{' '}
                       <code>CKR_KEY_EXHAUSTED</code> when the Final Node is consumed.
@@ -514,10 +516,10 @@ export function StatefulSignaturesDemo() {
 
                 {/* ── Cross-Engine Verification (HSS) ── */}
                 <div className="pt-4 border-t border-border space-y-5">
-                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
                     <ShieldCheck className="h-4 w-4 text-primary" />
                     Cross-Engine Verification — Rust Signs · C++ Verifies
-                  </h3>
+                  </h2>
                   {hsmCpp.phase === 'loading' && (
                     <p className="text-xs text-muted-foreground">
                       C++ verification engine initializing…
@@ -758,9 +760,9 @@ export function StatefulSignaturesDemo() {
             {activeTab === 'xmss' && (
               <div className="space-y-6">
                 <div className="p-4 border rounded-md bg-muted/50 text-foreground">
-                  <h4 className="font-semibold flex items-center gap-2 mb-1">
+                  <h3 className="font-semibold flex items-center gap-2 mb-1">
                     <Info className="h-4 w-4" /> XMSS (eXtended Merkle Signature Scheme)
-                  </h4>
+                  </h3>
                   <p className="text-sm">
                     XMSS applies bitmasks via pseudo-randomly generated tree hashes, removing the
                     requirement for collision resistance. It uses standard <code>CKM_XMSS</code>{' '}
@@ -773,10 +775,10 @@ export function StatefulSignaturesDemo() {
 
                 {/* ── Cross-Engine Verification (XMSS) ── */}
                 <div className="pt-4 border-t border-border space-y-5">
-                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
                     <ShieldCheck className="h-4 w-4 text-primary" />
                     Cross-Engine Verification — Rust Signs · C++ Verifies
-                  </h3>
+                  </h2>
                   {hsmCpp.phase === 'loading' && (
                     <p className="text-xs text-muted-foreground">
                       C++ verification engine initializing…
@@ -1017,9 +1019,9 @@ export function StatefulSignaturesDemo() {
             {activeTab === 'comparison' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">
+                  <h2 className="text-lg font-bold text-foreground mb-2">
                     Stateful Signature Architectures
-                  </h3>
+                  </h2>
                   <p className="text-sm text-muted-foreground">
                     Both LMS (RFC 8554) and XMSS (RFC 8391) are stateful hash-based signature
                     schemes approved by NIST (SP 800-208). While they share the identical underlying
@@ -1034,7 +1036,7 @@ export function StatefulSignaturesDemo() {
                       <div className="p-1.5 bg-primary/20 rounded text-primary">
                         <ShieldCheck size={18} />
                       </div>
-                      <h4 className="font-bold text-lg">LMS / HSS</h4>
+                      <h3 className="font-bold text-lg">LMS / HSS</h3>
                     </div>
                     <ul className="space-y-3 text-sm">
                       <li>
@@ -1068,7 +1070,7 @@ export function StatefulSignaturesDemo() {
                       <div className="p-1.5 bg-secondary/20 rounded text-secondary">
                         <ShieldCheck size={18} />
                       </div>
-                      <h4 className="font-bold text-lg">XMSS / XMSS^MT</h4>
+                      <h3 className="font-bold text-lg">XMSS / XMSS^MT</h3>
                     </div>
                     <ul className="space-y-3 text-sm">
                       <li>
@@ -1101,9 +1103,9 @@ export function StatefulSignaturesDemo() {
 
                 {/* Multi-tree production variants comparison */}
                 <div className="p-4 border border-border rounded-lg bg-muted/20">
-                  <h4 className="text-sm font-bold text-foreground mb-3">
+                  <h3 className="text-sm font-bold text-foreground mb-3">
                     Multi-Tree Production Variants: HSS vs XMSS^MT
-                  </h4>
+                  </h3>
                   <p className="text-xs text-muted-foreground mb-3">
                     Single-tree LMS and XMSS are primarily for learning. Production deployments use
                     their multi-tree variants to dramatically increase the number of available
@@ -1186,9 +1188,9 @@ export function StatefulSignaturesDemo() {
 
                 {/* Stateful vs Stateless trade-off */}
                 <div className="p-4 border border-border rounded-lg bg-muted/20">
-                  <h4 className="text-sm font-bold text-foreground mb-1">
+                  <h3 className="text-sm font-bold text-foreground mb-1">
                     Stateful vs Stateless: The Core Trade-off
-                  </h4>
+                  </h3>
                   <p className="text-xs text-muted-foreground mb-3">
                     LMS and XMSS are <strong>stateful</strong> — each key can sign a bounded number
                     of messages (2<sup>H</sup>). Once exhausted, the key is retired.{' '}
@@ -1271,7 +1273,7 @@ export function StatefulSignaturesDemo() {
             {activeTab === 'kat' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-medium mb-1">Known Answer Tests</h3>
+                  <h2 className="text-lg font-medium mb-1">Known Answer Tests</h2>
                   <p className="text-sm text-muted-foreground">
                     Verify the WASM PKCS#11 engine against RFC reference test vectors. Select a
                     scheme, then run the KAT. The PKCS#11 call trace appears below.

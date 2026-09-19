@@ -579,7 +579,7 @@ export const TokenMigrationLab: React.FC = () => {
       <div className="glass-panel p-5">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp size={16} className="text-primary" aria-hidden="true" />
-          <h4 className="text-sm font-bold text-foreground">Size Impact Analysis</h4>
+          <h3 className="text-sm font-bold text-foreground">Size Impact Analysis</h3>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
@@ -674,9 +674,9 @@ export const TokenMigrationLab: React.FC = () => {
       <div className="glass-panel p-5">
         <div className="flex items-center gap-2 mb-3">
           <Info size={16} className="text-accent" aria-hidden="true" />
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             Alternative: CBOR Token Encoding (CWT / COSE)
-          </h4>
+          </h3>
         </div>
         <p className="text-xs text-muted-foreground mb-4">
           JWT uses text-based JSON encoding. For constrained environments (IoT, mobile credentials,
@@ -731,9 +731,9 @@ export const TokenMigrationLab: React.FC = () => {
       <div className="glass-panel p-5">
         <div className="flex items-center gap-2 mb-3">
           <ShieldCheck size={16} className="text-primary" aria-hidden="true" />
-          <h4 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground">
             Verification Flow — Relying Party Perspective
-          </h4>
+          </h3>
         </div>
         <p className="text-xs text-muted-foreground mb-4">
           After the IdP signs a JWT, the relying party must verify it. The verification chain: fetch

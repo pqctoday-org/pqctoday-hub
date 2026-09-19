@@ -78,7 +78,7 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
         </div>
 
         <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30 space-y-2">
-          <h4 className="font-semibold text-foreground">Same requirement, two vocabularies</h4>
+          <h3 className="font-semibold text-foreground">Same requirement, two vocabularies</h3>
           <p className="text-sm text-muted-foreground">
             The 2022 advisory names {CNSA_NAMING_DRIFT.advisory2022.join(' and ')}. The December
             2024 FAQ names {CNSA_NAMING_DRIFT.faq2024.join(' and ')} for the same algorithms.{' '}
@@ -92,7 +92,7 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
         </div>
 
         <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-2">
-          <h4 className="font-semibold text-foreground">Hybrids: not required, not forbidden</h4>
+          <h3 className="font-semibold text-foreground">Hybrids: not required, not forbidden</h3>
           <p className="text-sm text-muted-foreground">{CNSA_HYBRID_POSITION}</p>
           <p className="text-sm text-muted-foreground">
             NSA&rsquo;s stated objections, which are worth knowing because most of the commercial
@@ -143,7 +143,7 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
         </div>
 
         <div className="space-y-2">
-          <h4 className="font-semibold text-foreground">The instruments behind the dates</h4>
+          <h3 className="font-semibold text-foreground">The instruments behind the dates</h3>
           {FEDERAL_MANDATES.map((m) => (
             <div key={m.id} className="p-3 rounded-lg bg-muted/50 border border-border">
               <div className="flex flex-wrap items-baseline gap-2">

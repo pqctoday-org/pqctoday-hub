@@ -365,9 +365,9 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
       <div className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <Clock size={20} className="text-primary" />
-          <h3 className="text-lg font-semibold text-foreground">
+          <h2 className="text-lg font-semibold text-foreground">
             <InlineTooltip term="CRQC">CRQC</InlineTooltip> Arrival Year
-          </h3>
+          </h2>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
           Adjust the slider to model when a cryptographically relevant quantum computer might
@@ -496,9 +496,9 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
         <div className="glass-panel p-6">
           <div className="flex items-center gap-2 mb-4">
             <ShieldAlert size={18} className="text-status-error" />
-            <h3 className="text-base font-semibold text-foreground">
+            <h2 className="text-base font-semibold text-foreground">
               Algorithms Broken at {crqcYear}
-            </h3>
+            </h2>
           </div>
           <div
             className="space-y-2 max-h-[300px] overflow-y-auto"
@@ -531,7 +531,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
         <div className="glass-panel p-6">
           <div className="flex items-center gap-2 mb-4">
             <Calendar size={18} className="text-status-warning" />
-            <h3 className="text-base font-semibold text-foreground">Compliance Deadlines</h3>
+            <h2 className="text-base font-semibold text-foreground">Compliance Deadlines</h2>
           </div>
           <div
             className="space-y-2 max-h-[300px] overflow-y-auto"
@@ -594,7 +594,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
       <div className="glass-panel p-6">
         <div className="flex items-center gap-2 mb-4">
           <ShieldAlert size={18} className="text-primary" />
-          <h3 className="text-base font-semibold text-foreground">HNDL Exposure Window</h3>
+          <h2 className="text-base font-semibold text-foreground">HNDL Exposure Window</h2>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
           Data encrypted today with quantum-vulnerable algorithms can be stored by adversaries and

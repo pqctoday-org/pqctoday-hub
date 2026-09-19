@@ -108,10 +108,10 @@ export function LiveHSMProvider() {
   return (
     <div className="space-y-4">
       <header className="space-y-1">
-        <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
           <FlaskConical size={18} className="text-primary" />
           Live HSM Provider — bundle smoke test
-        </h3>
+        </h2>
         <p className="text-sm text-muted-foreground">
           Loads the OpenSSL WASM bundle with{' '}
           <code className="rounded bg-muted px-1 py-0.5 text-xs">pkcs11-provider</code> +{' '}

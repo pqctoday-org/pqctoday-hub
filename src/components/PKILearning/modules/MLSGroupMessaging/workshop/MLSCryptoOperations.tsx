@@ -87,7 +87,7 @@ function StepCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             {icon}
-            <h4 className="text-sm font-semibold">{title}</h4>
+            <h3 className="text-sm font-semibold">{title}</h3>
           </div>
           <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
         </div>

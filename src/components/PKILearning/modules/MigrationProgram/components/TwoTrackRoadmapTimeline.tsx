@@ -118,9 +118,9 @@ export const TwoTrackRoadmapTimeline: React.FC<TwoTrackRoadmapTimelineProps> = (
         return (
           <div key={track} className={`rounded-lg border p-3 ${TRACK_ACCENT[track]}`}>
             <div className="flex items-baseline justify-between gap-2 mb-2">
-              <h4 className="text-sm font-semibold text-foreground" title={meta.rationale}>
+              <h2 className="text-sm font-semibold text-foreground" title={meta.rationale}>
                 {meta.label}
-              </h4>
+              </h2>
               <span className="text-[10px] text-muted-foreground">{meta.focus}</span>
             </div>
             {laneMs.length === 0 ? (
@@ -198,7 +198,7 @@ export const TwoTrackRoadmapTimeline: React.FC<TwoTrackRoadmapTimelineProps> = (
 
       {/* Add-milestone form */}
       <div className="glass-panel p-3 space-y-2">
-        <h4 className="text-sm font-semibold text-foreground">Add milestone</h4>
+        <h2 className="text-sm font-semibold text-foreground">Add milestone</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
           <input
             type="text"

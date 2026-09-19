@@ -237,7 +237,7 @@ export const QRNGDemo: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 pr-20">
             <Atom size={18} className="text-primary" />
-            <h4 className="text-sm font-semibold text-foreground">QRNG Reference</h4>
+            <h2 className="text-sm font-semibold text-foreground">QRNG Reference</h2>
           </div>
           <span className="inline-flex items-center text-xs text-muted-foreground bg-muted/40 rounded-full px-2 py-0.5">
             Reference random sample
@@ -252,7 +252,7 @@ export const QRNGDemo: React.FC = () => {
         <div className="min-w-0 glass-panel p-4 space-y-3">
           <div className="flex items-center gap-2">
             <Cpu size={18} className="text-primary" />
-            <h4 className="text-sm font-semibold text-foreground">CSPRNG (OS Entropy)</h4>
+            <h2 className="text-sm font-semibold text-foreground">CSPRNG (OS Entropy)</h2>
           </div>
           <span className="inline-flex items-center text-xs text-muted-foreground bg-muted/40 rounded-full px-2 py-0.5">
             Browser Web Crypto API
@@ -284,7 +284,7 @@ export const QRNGDemo: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 pr-20">
             <Cpu size={18} className="text-status-error" />
-            <h4 className="text-sm font-semibold text-foreground">Weak PRNG</h4>
+            <h2 className="text-sm font-semibold text-foreground">Weak PRNG</h2>
           </div>
           <span className="inline-flex items-center text-xs text-muted-foreground bg-muted/40 rounded-full px-2 py-0.5">
             Math.random() &amp; 0x0F · high nibble forced to 0
@@ -343,7 +343,7 @@ export const QRNGDemo: React.FC = () => {
       {/* Comparison Results Table */}
       {hasComparison && (
         <div className="glass-panel p-4 space-y-3">
-          <h4 className="text-sm font-semibold text-foreground">Comparison Results</h4>
+          <h2 className="text-sm font-semibold text-foreground">Comparison Results</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
