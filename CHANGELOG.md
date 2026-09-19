@@ -29,6 +29,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.103.0] - 2026-09-19
+
+Every Learn module's workshop was walked end to end on a laptop; a step that crashed for everyone is fixed, and the small things the walk found are put right.
+
+### Fixed
+
+- **The Network Security module's Vendor Matrix step no longer crashes** [view:/learn/network-security-pqc] [persona:ops] [persona:architect]: seven vendors record an unsupported ML-KEM or ML-DSA capability, which the step's label table did not know; the step threw on first render, and steps 5 and 6 were unreachable for every visitor.
+- **PQC 101 no longer logs an error on every load** [view:/learn/pqc-101] [persona:curious]: the lattice target's pulse animation wrote an invalid radius under reduced-motion settings; it pulses with CSS now.
+- **Option cards that cut their text off** [view:/learn/5g-security] [view:/learn/automotive-pqc] [view:/learn/code-signing] [persona:developer] [persona:architect]: the 5G profile cards, the vehicle architecture styles and the secure-boot chain stages wrap their descriptions.
+- **Inputs and buttons that had no name for assistive technology** [view:/learn/aerospace-pqc] [view:/learn/api-security-jwt] [view:/learn/kms-pqc] [view:/learn/pqc-testing-validation] [view:/learn/emv-payment-pqc] [view:/learn/vpn-ssh-pqc] [persona:researcher] [persona:developer]: the fleet deployment slider, the JWT payload editor, the KMS key-policy editor, the TVLA threshold slider, the EMV quantum-exposure switch and the SSH reset button.
+- **Readable and explained** [view:/learn/quantum-threats] [view:/learn/pki-enrollment-protocols] [persona:curious] [persona:ops]: the security-level bar labels use the foreground token; "Run simpleenroll" says it needs the Step 1 key; the JOSE audit's truncated draft names show in full on hover.
+
 ## [4.102.0] - 2026-09-19
 
 Every Command Center tool was walked end to end on a laptop and a phone, and each now ends with a question you can answer by using it.
