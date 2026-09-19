@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.90.0] - 2026-09-18
+
+Every page now passes the automated accessibility check with no serious or moderate findings.
+
+### Fixed
+
+- **Headings read in order on the remaining 45 module, tool and business-tool pages** [view:/learn] [view:/playground] [view:/business] [persona:curious] [persona:developer] [persona:executive]: section headings in twelve module introductions (Automotive, Energy & Utilities, Government & Defense, HSM, Healthcare, Aerospace, Confidential Computing, TLS Basics, AI Security, VPN & SSH, Data Asset Sensitivity, Quiz) and in 23 tools and business tools (SLH-DSA, LMS/HSS, Envelope Encryption, Token Migration, KDF, VPN Simulator, MLS, the four entropy demos, Hybrid Certificates, Cert Capacity, S/MIME workshop, KMIP learn view, Key Store, Breach Simulator, Cost of Inaction, CRQC Scenario, Roadmap Builder) skipped a level; they now step down one level at a time. Across all 165 audited pages the automated check reports zero serious and zero moderate findings, down from 269 serious and 200 moderate at the start of this programme.
+- **The Playground tool grid no longer sits inside a second main region** [view:/playground] [persona:curious]: screen readers see one main region per page, so "jump to main content" lands in the right place.
+
 ## [4.89.0] - 2026-09-18
 
 Screen-reader outlines are in order on the tool, module and reference pages, and four more guided workshops run on a phone.
