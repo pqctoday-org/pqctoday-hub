@@ -111,6 +111,195 @@ export const DECISION_QUESTIONS: DecisionQuestion[] = [
   },
 ]
 
+/**
+ * Wizard outcomes that have no full before/after migration path (2026-09-19).
+ * Before this table, 11 of the wizard's 17 outcomes pointed at ids with no
+ * entry in MIGRATION_PATHS, so those branches ended on the last question with
+ * nothing rendered. Each entry states the recommendation, the effort and the
+ * steps; facts follow this module's own library data (languageData, apiData,
+ * pqcLibraryData). The lab renders these inline; a full path (with code) is
+ * still the target for the six ids in MIGRATION_PATHS.
+ */
+export interface WizardRecommendation {
+  id: string
+  title: string
+  from: string
+  to: string
+  effort: 'low' | 'medium' | 'high'
+  description: string
+  steps: string[]
+}
+
+export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
+  {
+    id: 'upgrade-jcprov',
+    title: 'JCProv / Luna: PQC through the HSM firmware',
+    from: 'JCProv over Luna HSM (classical mechanisms)',
+    to: 'JCProv over Luna HSM (PKCS#11 v3.2 ML-KEM / ML-DSA mechanisms)',
+    effort: 'medium',
+    description:
+      'JCProv is a Java wrapper over the PKCS#11 C API, so PQC arrives when the HSM firmware exposes the ML-KEM and ML-DSA mechanisms. Keys stay in hardware; your JCA calls change only in the algorithm names.',
+    steps: [
+      'Confirm the Luna firmware and client versions that expose ML-KEM and ML-DSA mechanisms',
+      'Upgrade JCProv to the release that maps those mechanisms into the JCA provider',
+      'Generate ML-DSA signing keys inside the HSM and sign through the same JCA Signature calls',
+      'Keep classical keys in place for the transition; plan hybrid signatures where relying parties need them',
+      'Re-run your FIPS Level 3 evidence with the new firmware version',
+    ],
+  },
+  {
+    id: 'botan-upgrade',
+    title: 'Botan: Upgrade to 3.x for native PQC',
+    from: 'Botan 2.x (classical algorithms)',
+    to: 'Botan 3.x (classical + ML-KEM, ML-DSA, SLH-DSA)',
+    effort: 'low',
+    description:
+      'Botan 3.x ships ML-KEM, ML-DSA and SLH-DSA natively, so no extra provider or FFI layer is needed. The cost is the 2.x to 3.x API changes, not the PQC itself.',
+    steps: [
+      'Move to Botan 3.x and fix the 2.x to 3.x API changes in your build',
+      'Add ML-KEM key encapsulation next to your existing key agreement',
+      'Add ML-DSA signing next to ECDSA or RSA; keep both during the transition',
+      'Botan has no FIPS validation — if you need one, pair it with a validated module for the regulated paths',
+    ],
+  },
+  {
+    id: 'wolfssl-pqc',
+    title: 'wolfSSL: Enable the PQC algorithms in your build',
+    from: 'wolfSSL (classical TLS and crypto)',
+    to: 'wolfSSL with ML-KEM and ML-DSA enabled',
+    effort: 'low',
+    description:
+      'wolfSSL supports PQC and is FIPS validated, which makes it one of the two libraries this module lists with FIPS-certified PQC. The work is a rebuild with the PQC options on, then enabling the hybrid TLS groups.',
+    steps: [
+      'Rebuild wolfSSL with its ML-KEM and ML-DSA options enabled',
+      'Enable the hybrid X25519 + ML-KEM key-share groups on your TLS endpoints',
+      'Add ML-DSA certificates to a test chain and verify the peers you must interoperate with',
+      'Under the commercial licence, confirm which PQC builds sit inside the FIPS boundary',
+    ],
+  },
+  {
+    id: 'ring-to-awslc',
+    title: 'Rust: Move from ring to aws-lc-rs',
+    from: 'ring (classical, no PQC)',
+    to: 'aws-lc-rs (classical + ML-KEM, FIPS-validated backend)',
+    effort: 'medium',
+    description:
+      'ring has a deliberately small algorithm set and no PQC. aws-lc-rs mirrors the ring API on top of AWS-LC, so most call sites move with a crate swap, and ML-KEM becomes available.',
+    steps: [
+      'Swap the ring dependency for aws-lc-rs and fix the API differences the compiler reports',
+      'Switch rustls (if used) to its aws-lc-rs crypto provider',
+      'Add ML-KEM key encapsulation where you do key agreement today',
+      'Use the FIPS feature of aws-lc-rs if you need a validated module',
+    ],
+  },
+  {
+    id: 'stay-awslc',
+    title: 'Rust: Stay on aws-lc-rs and turn on PQC',
+    from: 'aws-lc-rs (classical)',
+    to: 'aws-lc-rs (classical + ML-KEM)',
+    effort: 'low',
+    description:
+      'You are already on the library this module lists as the Rust route to FIPS-validated PQC. ML-KEM is available now; track the crate for ML-DSA as AWS-LC exposes it.',
+    steps: [
+      'Update to a current aws-lc-rs release',
+      'Add ML-KEM key encapsulation next to your existing key agreement',
+      'Enable the hybrid key-share groups in your rustls provider configuration',
+      'Track ML-DSA in the aws-lc-rs changelog for the signature side',
+    ],
+  },
+  {
+    id: 'stay-circl',
+    title: 'Go: Stay on cloudflare/circl',
+    from: 'cloudflare/circl (classical use)',
+    to: 'cloudflare/circl (ML-KEM, ML-DSA, SLH-DSA, hybrid KEM)',
+    effort: 'low',
+    description:
+      'circl already carries ML-KEM, ML-DSA, SLH-DSA and hybrid KEMs in pure Go, the same library Cloudflare runs on its edge for hybrid TLS. Adopt the PQC packages you need without changing libraries.',
+    steps: [
+      'Update circl to a current release',
+      'Use the ML-KEM package for key encapsulation and the hybrid KEM for the transition',
+      'Add ML-DSA signing beside your Ed25519 or ECDSA code paths',
+      "Go 1.24 added an ML-KEM package to the standard library; consider it where you do not need circl's wider set",
+    ],
+  },
+  {
+    id: 'circl-over-cgo',
+    title: 'Go: Prefer pure-Go circl over liboqs-go',
+    from: 'liboqs-go (cgo binding to liboqs)',
+    to: 'cloudflare/circl (pure Go)',
+    effort: 'medium',
+    description:
+      'liboqs-go needs cgo and a native liboqs build on every target, which complicates cross-compilation and static binaries. circl gives you the standardised algorithms in pure Go; keep liboqs-go only for algorithms circl lacks.',
+    steps: [
+      'List the algorithms you call through liboqs-go and match them to circl packages',
+      'Replace ML-KEM, ML-DSA and SLH-DSA calls with circl',
+      'Drop the cgo build requirement where nothing else needs it',
+      'Keep liboqs-go behind a build tag for any algorithm circl does not carry',
+    ],
+  },
+  {
+    id: 'stay-bc-dotnet',
+    title: '.NET: Stay on Bouncy Castle C# and add PQC',
+    from: 'Bouncy Castle C# (classical algorithms)',
+    to: 'Bouncy Castle C# (classical + PQC)',
+    effort: 'low',
+    description:
+      'Bouncy Castle C# carries the PQC algorithms, so the work is a package update and new algorithm calls, mirroring the Java advice for teams already on Bouncy Castle.',
+    steps: [
+      'Update the BouncyCastle.Cryptography NuGet package to a current release',
+      'Add ML-DSA signing alongside the existing ECDSA or RSA signer',
+      'Add ML-KEM key encapsulation for key exchange',
+      'Test hybrid signatures for the transition period',
+    ],
+  },
+  {
+    id: 'add-liboqs-python',
+    title: 'Python: Add liboqs-python for PQC',
+    from: 'cryptography / pyOpenSSL / PyCryptodome (classical)',
+    to: 'Existing library for classical and X.509 + liboqs-python for PQC',
+    effort: 'medium',
+    description:
+      'None of the common Python libraries expose PQC yet. liboqs-python wraps liboqs with the full PQC suite; keep your current library for classical operations, certificates and TLS, and call liboqs-python for ML-KEM and ML-DSA.',
+    steps: [
+      'Install liboqs and the liboqs-python binding for your platform',
+      'Put PQC operations behind a small interface so the binding can be swapped later',
+      'Add ML-KEM encapsulation and ML-DSA signing behind that interface',
+      'Keep certificates and TLS on your existing library until it gains PQC support',
+    ],
+  },
+  {
+    id: 'pkcs11-hsm',
+    title: 'HSM: PQC through PKCS#11 v3.2 mechanisms',
+    from: 'HSM-backed keys via PKCS#11 (classical mechanisms)',
+    to: 'HSM-backed keys via PKCS#11 v3.2 (ML-KEM, ML-DSA mechanisms)',
+    effort: 'high',
+    description:
+      'FIPS Level 3 means keys never leave the HSM, so PQC arrives with the firmware that exposes the PKCS#11 v3.2 mechanisms. Expect a firmware upgrade, a client library update and a re-validation of your evidence.',
+    steps: [
+      'Ask your HSM vendor which firmware exposes the ML-KEM and ML-DSA mechanisms and its FIPS status',
+      'Upgrade the PKCS#11 client library to a v3.2-aware release',
+      'Generate PQC keys in the HSM and call them through the same CK_MECHANISM pattern as today',
+      'Plan for larger key and signature sizes in your PKCS#11 buffers and object storage',
+      'Refresh your FIPS evidence for the new firmware version',
+    ],
+  },
+  {
+    id: 'fips-software',
+    title: 'Software FIPS: Pick a validated module with PQC',
+    from: 'Homegrown or unvalidated crypto',
+    to: 'A FIPS-validated software module (AWS-LC, BC-FIPS, wolfSSL)',
+    effort: 'medium',
+    description:
+      'Software FIPS with PQC narrows the choice: this module lists AWS-LC and wolfSSL as the libraries with FIPS-certified PQC, and BC-FIPS for Java. Pick the one that matches your language, then move the regulated paths onto it.',
+    steps: [
+      'Choose the validated module for your language: AWS-LC (C, Rust via aws-lc-rs), BC-FIPS (Java), wolfSSL (C, commercial)',
+      'Route the regulated operations through that module behind an abstraction layer',
+      'Check the certificate scope: which PQC algorithms sit inside the validated boundary',
+      'Keep the abstraction so you can move to a hardware module later without rewriting callers',
+    ],
+  },
+]
+
 export const MIGRATION_PATHS: MigrationPath[] = [
   {
     id: 'stay-bc',
