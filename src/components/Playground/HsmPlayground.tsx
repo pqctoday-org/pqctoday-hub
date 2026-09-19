@@ -655,7 +655,8 @@ export const HsmPlayground = () => {
                   <span
                     className={clsx(
                       'font-mono text-[10px] rounded px-1 py-0.5',
-                      on ? 'bg-primary/20' : 'bg-muted'
+                      // bg-primary/20 under text-primary sat at 4.05:1 (round-9 probe); /10 clears AA.
+                      on ? 'bg-primary/10' : 'bg-muted'
                     )}
                     aria-hidden="true"
                   >

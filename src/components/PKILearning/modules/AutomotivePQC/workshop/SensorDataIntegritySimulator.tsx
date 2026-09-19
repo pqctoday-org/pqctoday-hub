@@ -96,7 +96,7 @@ export const SensorDataIntegritySimulator: React.FC = () => {
                 className={`flex items-center gap-3 rounded-lg p-3 border text-left transition-colors ${
                   isEnabled
                     ? 'border-primary/50 bg-primary/10'
-                    : 'border-border bg-muted/20 opacity-60'
+                    : 'border-dashed border-border bg-muted/20'
                 }`}
               >
                 <div

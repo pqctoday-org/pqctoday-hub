@@ -386,7 +386,9 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
                         {log}
                       </div>
                     ))}
-                    {logs.length === 0 && <span className="opacity-50">Waiting to start...</span>}
+                    {logs.length === 0 && (
+                      <span className="text-muted-foreground">Waiting to start...</span>
+                    )}
                   </>
                 ) : (
                   <>
@@ -396,7 +398,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
                       </div>
                     ))}
                     {opensslLogs.length === 0 && (
-                      <span className="opacity-50">
+                      <span className="text-muted-foreground">
                         No cryptographic operations logged yet. Run the flow to see OpenSSL
                         commands.
                       </span>

@@ -22,7 +22,7 @@ export const PipelineIntegrationLab: React.FC = () => {
             onClick={() => setActiveTab(p.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
               activeTab === p.id
-                ? 'bg-primary text-black border-primary'
+                ? 'bg-primary text-primary-foreground border-primary'
                 : 'border-border text-muted-foreground hover:bg-muted'
             }`}
           >

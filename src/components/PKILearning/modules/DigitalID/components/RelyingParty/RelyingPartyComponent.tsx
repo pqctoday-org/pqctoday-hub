@@ -606,7 +606,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
                     </div>
                   ))}
                   {logs.length === 0 && (
-                    <span className="opacity-50">Waiting for connection...</span>
+                    <span className="text-muted-foreground">Waiting for connection...</span>
                   )}
                 </>
               ) : (
@@ -617,7 +617,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
                     </div>
                   ))}
                   {opensslLogs.length === 0 && (
-                    <span className="opacity-50">No commands executed yet.</span>
+                    <span className="text-muted-foreground">No commands executed yet.</span>
                   )}
                 </>
               )}

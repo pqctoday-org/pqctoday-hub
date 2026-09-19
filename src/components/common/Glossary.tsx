@@ -214,7 +214,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                       className={clsx(
                         'w-9 h-9 rounded text-xs font-bold transition-colors',
                         activeLetter === letter
-                          ? 'bg-primary text-black'
+                          ? 'bg-primary text-primary-foreground'
                           : 'text-muted-foreground hover:bg-muted/50'
                       )}
                     >

@@ -271,7 +271,7 @@ export const InclusionProofGenerator: React.FC<InclusionProofGeneratorProps> = (
                               <span
                                 className={`absolute -top-2 -right-2 w-4 h-4 rounded-full text-[8px] font-bold flex items-center justify-center ${
                                   annotation.type === 'selected'
-                                    ? 'bg-primary text-black'
+                                    ? 'bg-primary text-primary-foreground'
                                     : annotation.type === 'provided'
                                       ? 'bg-warning text-black'
                                       : annotation.type === 'root'

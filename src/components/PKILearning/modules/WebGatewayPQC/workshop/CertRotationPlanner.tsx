@@ -251,7 +251,7 @@ export const CertRotationPlanner: React.FC = () => {
                     className={`absolute inset-y-0 left-0 ${colors[idx]} rounded-full flex items-center px-2`}
                     style={{ width: `${Math.max(widthPercent, 10)}%` }}
                   >
-                    <span className="text-[10px] text-black font-medium truncate">
+                    <span className="text-[10px] text-primary-foreground font-medium truncate">
                       {phase.days}d
                     </span>
                   </div>

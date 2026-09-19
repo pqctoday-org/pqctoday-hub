@@ -225,7 +225,7 @@ export const TDEMigrationPlanner: React.FC = () => {
               className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-colors ${
                 completedSteps.has(currentStep)
                   ? 'bg-status-success/10 text-status-success border border-status-success/30'
-                  : 'bg-primary text-black hover:bg-primary/90'
+                  : 'bg-primary text-primary-foreground hover:bg-primary/90'
               }`}
             >
               {completedSteps.has(currentStep)

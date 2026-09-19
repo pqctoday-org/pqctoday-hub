@@ -349,7 +349,9 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
                       {log}
                     </div>
                   ))}
-                  {logs.length === 0 && <span className="opacity-50">Waiting for document...</span>}
+                  {logs.length === 0 && (
+                    <span className="text-muted-foreground">Waiting for document...</span>
+                  )}
                 </>
               ) : (
                 <>
@@ -359,7 +361,9 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
                     </div>
                   ))}
                   {opensslLogs.length === 0 && (
-                    <span className="opacity-50">No cryptographic operations logged yet.</span>
+                    <span className="text-muted-foreground">
+                      No cryptographic operations logged yet.
+                    </span>
                   )}
                 </>
               )}

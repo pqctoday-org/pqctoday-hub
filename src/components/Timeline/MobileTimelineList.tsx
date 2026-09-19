@@ -223,9 +223,7 @@ export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimeli
                         </span>
                         <span
                           className={`text-[9px] font-semibold uppercase tracking-wide ${
-                            phase.startYear < currentYear
-                              ? 'text-muted-foreground/70'
-                              : 'text-primary'
+                            phase.startYear < currentYear ? 'text-muted-foreground' : 'text-primary'
                           }`}
                         >
                           {proximityLabel(phase.startYear, currentYear)}
