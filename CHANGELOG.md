@@ -41,6 +41,7 @@ Every module now offers its quiz before you finish it, disabled buttons say why,
 
 ### Fixed
 
+- **The phone changelog's back arrow has a name** [view:/changelog] [persona:curious]: the "Back to App" text is hidden at phone width, which left the link unnamed for a screen reader.
 - **Small labels inside workshop steps are readable again** [view:/playground/cacp] [view:/migrate] [view:/timeline] [view:/learn/confidential-computing] [view:/learn/automotive-pqc] [view:/learn/digital-id] [view:/learn/web-gateway-pqc] [persona:architect] [persona:ops]: spec-only policy rows, future attestation steps and unselected sensors were dimmed with opacity, which pushed their 9–10 px text below the contrast minimum; they now use a dashed border. Black text on the selected phone Migrate chip, the certificate rotation bar and eight selected buttons uses the foreground token; the HSM engine badge and the "Waiting to start" log lines were lightened to pass.
 
 ## [4.98.0] - 2026-09-19
