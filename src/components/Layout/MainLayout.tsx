@@ -58,6 +58,7 @@ import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import { useIsBelowLgViewport } from '../../hooks/useIsBelowLgViewport'
 import { useIsMobileShell } from '../../hooks/useIsMobileShell'
+import { RouteNextStep } from './RouteNextStep'
 
 // Lazy — same reasoning as RightPanel/VideoOverlay/WorkshopOverlayHost below:
 // MainLayout is mounted on every route, so a static import here would put
@@ -1498,6 +1499,8 @@ export const MainLayout = () => {
                           present (e.g. a deep link); self-skips Assess/Report/Command Center. */}
                       <PhaseContextBanner />
                       <Outlet />
+                      {/* Round 9, wave 1.2 — the declared exit for routed pages. */}
+                      <RouteNextStep mobile={isMobileShell} />
                     </div>
                   </motion.div>
                 </React.Suspense>

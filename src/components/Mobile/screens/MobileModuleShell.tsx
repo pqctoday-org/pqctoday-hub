@@ -10,6 +10,7 @@ import { MODULE_TO_TRACK, LEARN_SECTIONS } from '@/components/PKILearning/module
 // its own mobile-styled list off the same computed relations instead of
 // reusing that component. See eslint.config.js's no-restricted-imports rule.
 import { moduleRelations } from '@/data/moduleRelations'
+import { MobileNextStepCard } from '../MobileNextStepCard'
 import { useModuleStore } from '@/store/useModuleStore'
 import { MobileProgress } from '../primitives/Progress'
 import { mobileChip } from '../mobileTokens'
@@ -315,6 +316,9 @@ export function MobileModuleShell({
           </ul>
         </div>
       )}
+      {/* Round 9, wave 1.2 (2026-09-19) — the declared exit, phone twin of the
+          desktop NextStepCard (reads the same data module). */}
+      <MobileNextStepCard route={`/learn/${manifest.id}`} />
     </div>
   )
 }

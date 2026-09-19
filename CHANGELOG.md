@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.96.0] - 2026-09-19
+
+Every page, module and tool now ends with a next step, tools show what is related to them, and the Playground and Command Center put a role's own tools first.
+
+### Added
+
+- **A "Next step" at the end of every page, module and tool** [view:/learn] [view:/playground] [view:/business] [persona:curious] [persona:executive] [persona:developer] [persona:architect] [persona:ops] [persona:grc] [persona:researcher]: modules hand off to the tool that practises them or the Command Center tool that produces their phase's deliverable; Playground tools hand off to that deliverable; Command Center tools chain through their category and end at the readiness report; the reference pages point at the natural follow-on (Patents to Algorithms, Library to Revisions, Compliance to the checklist tool). 165 exits, each one sentence on why.
+- **Related content on every Playground and Command Center tool** [view:/playground] [view:/business] [persona:developer] [persona:architect] [persona:ops]: the module a tool practises, its category neighbours, tools that share an algorithm or a framework phase, and the Learn module of that phase.
+- **"Tools for this role" on every role board** [view:/] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:ops] [persona:researcher] [persona:curious]: every Playground and Command Center tool that names the role, Start-here picks first, so a tool without a board card still has a board. The seven rows together reach every tool.
+- **Playground picks per role** [view:/playground] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: the four full playgrounds are followed by the role's own featured tools instead of one fixed set for everyone — 20 tools are featured across the seven roles.
+
+### Changed
+
+- **Command Center tools are ordered for your role** [view:/business/tools] [persona:executive] [persona:grc] [persona:architect] [persona:developer]: inside each category the role's recommended sequence comes first, then the tools written for that audience, then the rest; without a role the order is unchanged.
+
 ## [4.95.0] - 2026-09-19
 
 Module workshops are tidier — one step navigator, the right step count, the intro folded away while you work — and a handful of controls that clipped or overlapped now fit.

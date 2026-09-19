@@ -11,6 +11,7 @@ import {
 } from '@/data/personaConfig'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { RoleToolsRow } from './RoleToolsRow'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
 import { logRoleBoardVariantSelected, logRoleBoardCtaClick } from '@/utils/analytics'
@@ -425,6 +426,10 @@ export function PersonaBoardView({
           )}
         </ul>
       </div>
+
+      {/* Round 9, wave 1.3 (2026-09-19) — every tool the role can reach, so a
+          tool without a board card still has a board. See src/data/roleTools.ts. */}
+      <RoleToolsRow personaId={personaId} />
     </div>
   )
 }

@@ -171,9 +171,33 @@ export const BusinessToolsGrid = () => {
     [groupBy]
   )
 
+  // Round 9, wave 1.4 (2026-09-19) — persona-ranked inside each group: the
+  // role's recommended sequence first (in sequence order), then tools whose
+  // audience is the role's, then registry order. Grid position was the
+  // strongest predictor of a business tool being found (WS17: r = 0.81) and
+  // it was the same fixed order for every visitor; now nobody is "position 19
+  // of 19" for the role the tool was written for. No persona: registry order.
+  const rankFor = useCallback(
+    (t: (typeof filteredTools)[number]): number => {
+      if (!selectedPersona) return 1
+      const step = startHere.steps.findIndex((s) => s.id === t.id)
+      if (step !== -1) return -100 + step
+      const audience = t.audience ?? 'business'
+      const mine =
+        (selectedPersona === 'executive' || selectedPersona === 'grc') && audience === 'business'
+          ? true
+          : audience === selectedPersona
+      return mine ? 0 : 1
+    },
+    [selectedPersona, startHere]
+  )
   const groupedTools: Record<string, typeof filteredTools> = {}
   for (const section of groupSections) {
-    const tools = filteredTools.filter((t) => groupKeyFor(t) === section.key)
+    const tools = filteredTools
+      .map((t, i) => ({ t, i }))
+      .filter(({ t }) => groupKeyFor(t) === section.key)
+      .sort((a, b) => rankFor(a.t) - rankFor(b.t) || a.i - b.i)
+      .map(({ t }) => t)
     if (tools.length > 0) groupedTools[section.key] = tools
   }
 
@@ -372,7 +396,7 @@ export const BusinessToolsGrid = () => {
         const tools = groupedTools[section.key]
         if (!tools) return null
         return (
-          <div key={section.key}>
+          <div key={section.key} data-testid={`tool-group-${section.key}`}>
             <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
               {section.label}
             </h4>

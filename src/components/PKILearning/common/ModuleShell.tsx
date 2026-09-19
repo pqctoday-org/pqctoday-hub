@@ -42,6 +42,7 @@ import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
 import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { RelatedModulesPanel } from './RelatedModulesPanel'
+import { NextStepCard } from '@/components/shared/NextStepCard'
 import { IndustryLandscapePanel } from './IndustryLandscapePanel'
 import {
   resolveModuleTool,
@@ -610,6 +611,9 @@ export const ModuleShell = ({
       {/* 2026-09-17 — the reverse of the landscape's learn_module_id column:
           which industries' use cases point at THIS module. Same embed rules. */}
       {!embedded && !iframeEmbedded ? <IndustryLandscapePanel moduleId={manifest.id} /> : null}
+      {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts),
+          rendered whether or not the module is completed. Same embed rules. */}
+      {!embedded && !iframeEmbedded ? <NextStepCard route={`/learn/${manifest.id}`} /> : null}
       {/* P2.3 — completion handoff footer. Replaces the sidebar NextModuleCTA so
           finishing a module always routes somewhere, never a dead-end "Complete".
           The sim "Practice" CTA lives in the header (persistent, curated) so it is

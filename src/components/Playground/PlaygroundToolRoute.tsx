@@ -3,6 +3,9 @@ import React, { Suspense, useEffect, useState } from 'react'
 import { useParams, useNavigate, useSearchParams, Navigate, Link } from 'react-router'
 import { ArrowLeft, Wrench, ArrowRight, GraduationCap } from 'lucide-react'
 import { Button } from '../ui/button'
+import { NextStepCard } from '@/components/shared/NextStepCard'
+import { RelatedContentPanel } from '@/components/shared/RelatedContentPanel'
+import { playgroundToolRelations } from '@/data/toolRelations'
 import { Skeleton } from '../ui/skeleton'
 import { WORKSHOP_TOOLS, TOOL_COMPONENTS, ONBACK_COMPONENTS } from './workshopRegistry'
 import { useAchievementStore } from '@/store/useAchievementStore'
@@ -201,6 +204,11 @@ export const PlaygroundToolRoute = () => {
           ))}
       </Suspense>
 
+      {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts):
+          the chain tool → business tool → report, beside the in-category rotation below. */}
+      <NextStepCard route={`/playground/${tool.id}`} />
+      {/* Round 9, wave 1.1 — related content (module, category siblings, shared algorithms). */}
+      <RelatedContentPanel id={tool.id} entries={playgroundToolRelations(tool.id)} />
       <NextToolSuggestion currentToolId={tool.id} currentCategory={tool.category} />
     </div>
   )
