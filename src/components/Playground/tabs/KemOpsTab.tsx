@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
+import { GateReason } from '@/components/shared/GateReason'
 import { Activity, Lock, Key as KeyIcon, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { useSettingsContext } from '../contexts/SettingsContext'
 import { useKeyStoreContext } from '../contexts/KeyStoreContext'
@@ -555,13 +556,14 @@ const KemOpsTabSoftware: React.FC = () => {
               >
                 Run Encapsulate
               </Button>
-              {!loading && (!selectedEncKeyId || (isHybridMode && !secondaryEncKeyId)) && (
-                <p className="mt-2 text-xs text-muted-foreground text-center">
-                  {!selectedEncKeyId
-                    ? 'Generate or pick a public key above to enable this.'
-                    : 'Pick the secondary classical public key to enable this.'}
-                </p>
-              )}
+              <GateReason
+                when={!loading && (!selectedEncKeyId || (isHybridMode && !secondaryEncKeyId))}
+                className="text-center"
+              >
+                {!selectedEncKeyId
+                  ? 'Generate or pick a public key above to enable this.'
+                  : 'Pick the secondary classical public key to enable this.'}
+              </GateReason>
             </div>
 
             {/* Step 3: Ciphertext Output */}

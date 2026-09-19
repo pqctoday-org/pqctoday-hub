@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
+import { GateReason } from '@/components/shared/GateReason'
 import { ShieldAlert, Loader2, Plus, Trash2, Check, AlertTriangle, X } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -478,6 +479,9 @@ authorityKeyIdentifier = keyid:always
               </Button>
             </div>
           )}
+          <GateReason when={!selectedKeyId && !isGenerating} className="mt-0 mb-2">
+            Select the CA key above; the CRL is signed with it.
+          </GateReason>
           <Button
             variant="gradient"
             onClick={handleGenerate}

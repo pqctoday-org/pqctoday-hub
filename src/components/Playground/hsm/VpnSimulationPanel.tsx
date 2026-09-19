@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
+import { GateReason } from '@/components/shared/GateReason'
 import {
   Info,
   X,
@@ -3677,6 +3678,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 <code className="text-[10px] mx-1">/api/run/vpn/matrix</code> endpoint at the
                 cert-path level.
               </div>
+              <GateReason when={!browserSupport.supported} className="mt-0">
+                The matrix needs a Chromium-based browser (Chrome, Edge or Brave) for the live
+                softhsmv3 session.
+              </GateReason>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
