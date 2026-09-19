@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.102.0] - 2026-09-19
+
+Every Command Center tool was walked end to end on a laptop and a phone, and each now ends with a question you can answer by using it.
+
+### Added
+
+- **"Try it" under every Command Center tool** [view:/business] [persona:executive] [persona:grc] [persona:architect] [persona:developer]: one question per tool, answerable from its own inputs and outputs, with a reason that names the concept — 37 tools.
+
+### Fixed
+
+- **The KPI persona lens fits a phone** [view:/business/tools/kpi-dashboard] [view:/business/tools/kpi-tracker] [persona:executive] [persona:grc]: the "View as" segmented control and the Save row ran off the screen at 390 px; both wrap.
+- **Supply Chain Risk Matrix bars stay inside their track** [view:/business/tools/supply-chain-matrix] [persona:grc]: a gap count larger than the badge's total drew the fill past the bar.
+
 ## [4.101.0] - 2026-09-19
 
 Every Playground tool was walked end to end on a laptop and a phone; what clipped or ran off the screen now wraps, and each tool ends with a question you can answer by using it.
