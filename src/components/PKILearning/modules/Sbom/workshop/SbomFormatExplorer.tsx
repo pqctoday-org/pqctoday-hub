@@ -119,7 +119,10 @@ export function SbomFormatExplorer() {
         <h4 className="mb-2 text-sm font-semibold text-foreground">9 minimum elements, mapped</h4>
         <div className="space-y-1">
           {ELEMENT_MAP.map((m) => (
-            <div key={m.element} className="flex items-center justify-between text-xs gap-2">
+            <div
+              key={m.element}
+              className="flex flex-wrap items-center justify-between text-xs gap-x-2 gap-y-0.5"
+            >
               <span className="text-foreground w-40 shrink-0 flex items-center gap-1.5">
                 {m.element}
                 {m.addedIn2026 && (
@@ -128,10 +131,10 @@ export function SbomFormatExplorer() {
                   </span>
                 )}
               </span>
-              <span className="flex-1 text-muted-foreground text-right">
+              <span className="min-w-0 flex-1 break-all text-muted-foreground text-right">
                 CDX <code>{m.cdx}</code>
               </span>
-              <span className="flex-1 text-muted-foreground text-right">
+              <span className="min-w-0 flex-1 break-all text-muted-foreground text-right">
                 SPDX <code>{m.spdx}</code>
               </span>
               <Check size={12} className="text-status-success shrink-0" />

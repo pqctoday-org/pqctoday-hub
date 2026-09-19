@@ -47,15 +47,15 @@ const FamilySection: React.FC<FamilySectionProps> = ({
       <Button
         variant="ghost"
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/30 transition-colors"
+        className="w-full h-auto flex items-center justify-between gap-3 p-5 text-left whitespace-normal hover:bg-muted/30 transition-colors"
         aria-expanded={isExpanded}
         aria-controls={`family-${title.replace(/\s+/g, '-').toLowerCase()}`}
       >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-2 border-border flex items-center justify-center bg-background">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="w-10 h-10 shrink-0 rounded-full border-2 border-border flex items-center justify-center bg-background">
             <Icon size={18} className="text-foreground" />
           </div>
-          <div>
+          <div className="min-w-0">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
               {title}
               {isCompleted && (

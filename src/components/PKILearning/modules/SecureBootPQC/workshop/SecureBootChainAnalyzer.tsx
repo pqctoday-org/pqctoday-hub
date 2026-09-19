@@ -310,7 +310,7 @@ export const SecureBootChainAnalyzer: React.FC = () => {
                 <Button
                   variant="ghost"
                   onClick={() => setExpandedStage(isExpanded ? null : stage.id)}
-                  className="flex items-center gap-3 w-full p-3 text-left"
+                  className="flex h-auto items-center gap-3 w-full p-3 text-left whitespace-normal"
                 >
                   <span className="text-xs font-bold text-muted-foreground w-6 text-center shrink-0">
                     {stage.order + 1}

@@ -150,7 +150,7 @@ export const VehicleArchitectureMapper: React.FC = () => {
               variant="ghost"
               key={vt.id}
               onClick={() => handleVehicleChange(vt.id)}
-              className={`p-3 rounded-lg border text-left transition-all ${
+              className={`h-auto whitespace-normal flex-col items-start p-3 rounded-lg border text-left transition-all ${
                 selectedVehicle === vt.id
                   ? 'border-primary bg-primary/10 shadow-[0_0_12px_hsl(var(--primary)/0.2)]'
                   : 'border-border bg-card hover:border-primary/50 hover:bg-primary/5'
@@ -220,14 +220,14 @@ export const VehicleArchitectureMapper: React.FC = () => {
                 variant="ghost"
                 key={zone.id}
                 onClick={() => handleZoneClick(zone.id)}
-                className={`p-4 rounded-lg border text-left transition-all ${
+                className={`h-auto whitespace-normal flex-col items-start p-4 rounded-lg border text-left transition-all ${
                   isSelected
                     ? 'ring-2 ring-primary border-primary bg-primary/5'
                     : 'border-border bg-card hover:border-primary/50'
                 }`}
               >
                 {/* Zone name with color accent */}
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex w-full items-center justify-between mb-2">
                   <span
                     className={`text-xs font-bold px-2 py-0.5 rounded border ${ZONE_COLORS[zone.id]}`}
                   >
