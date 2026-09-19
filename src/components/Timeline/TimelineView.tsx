@@ -47,6 +47,7 @@ import { phasesToIcs, downloadIcs } from '../../utils/timelineIcs'
 import { WhenDoesThisReachMe } from './WhenDoesThisReachMe'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileTimelineView } from '@/components/Mobile/screens/MobileTimelineView'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
@@ -515,6 +516,8 @@ export const TimelineView = () => {
         description="Compare Post-Quantum Cryptography migration roadmaps across nations. Track phases from discovery to full migration and key regulatory milestones."
         testId="timeline-header"
       />
+
+      <PersonaPageNote route="/timeline" className="mb-4" />
 
       {/* eslint-disable-next-line security/detect-object-injection */}
       {selectedPersona && TIMELINE_PERSONA_HINTS[selectedPersona] && (

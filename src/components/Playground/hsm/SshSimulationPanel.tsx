@@ -230,8 +230,8 @@ export function SshSimulationPanel() {
           <p className="text-sm text-muted-foreground mt-0.5">
             Real softhsmv3 PKCS#11 SSH handshakes — pick any ML-KEM KEX (hybrid or pure) plus an
             ML-DSA or SLH-DSA host-key variant and compare it against the classical curve25519 +
-            Ed25519 baseline. All key material lives inside the softhsmv3 WASM token; no network or
-            container required.
+            ECDSA P-256 baseline. All key material lives inside the softhsmv3 WASM token; no network
+            or container required.
           </p>
         </div>
         <Link to="/learn/vpn-ssh-pqc">

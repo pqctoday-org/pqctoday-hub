@@ -30,6 +30,7 @@ import { isSimResumePending } from '../../Simulation/simChrome'
 import { metadata } from '../../../data/industryAssessConfig'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileAssessView } from '@/components/Mobile/screens/MobileAssessView'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { usePhaseFilter } from '../../../hooks/usePhaseFilter'
 import { FRAMEWORK_PHASES } from '../../../data/frameworkPhases'
 import { ASSESS_STEP_MAPPINGS } from '../../../data/assessStepToCswp39'
@@ -369,6 +370,7 @@ export const AssessViewRedesign: React.FC<{
             title="PQC Risk Assessment"
             description="Answer a few questions to get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
           />
+          <PersonaPageNote route="/assess" className="mb-6" />
         </>
       )}
 

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'sbom',
-  contentVersion: 9,
+  contentVersion: 10,
   lm_id: 'LM-063',
   title: 'Software Bill of Materials (SBOM)',
   description:
@@ -28,6 +28,11 @@ const manifest: ModuleManifest = {
     { id: 'sbom-format-explorer', label: 'SBOM Format Explorer' },
     { id: 'sbom-generation-picker', label: 'Generation Tool Picker' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'sbom-format-explorer',
+    text: "Pick a sample component in the SBOM Format Explorer: the same package is shown as a CycloneDX entry and an SPDX package side by side, with the nine minimum elements mapped to each format's fields.",
+  },
   embeddable: false,
   taxonomy: {
     standards: [

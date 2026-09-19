@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'entropy-randomness',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-003',
   title: 'Entropy & Randomness',
   description:
@@ -29,6 +29,11 @@ const manifest: ModuleManifest = {
     { id: 'qrng-comparison', label: 'QRNG Exploration' },
     { id: 'source-combining', label: 'Combining Sources' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'random-generation',
+    text: "Toggle the sources — Web Crypto API, OpenSSL WASM, Math.random() and Timestamp LCG — pick a byte count and press Generate: each source's bytes, frequency histogram and lag plot appear side by side.",
+  },
   playgroundTool: 'entropy-test',
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to

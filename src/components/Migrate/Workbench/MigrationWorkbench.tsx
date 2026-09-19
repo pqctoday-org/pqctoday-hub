@@ -40,6 +40,7 @@ import { WhoHasMovedPanel } from './WhoHasMovedPanel'
 import { VendorCommitmentPanel, ClaimsAndEvidencePanel } from './VendorCommitmentPanel'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileMigrateView } from '@/components/Mobile/screens/MobileMigrateView'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 interface MigrationWorkbenchProps {
   /** When embedded in the Simulation, hide the PageHeader and don't touch the URL. */
@@ -286,6 +287,8 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
           // rollout existed to stop.
         />
       )}
+
+      {!embedded && <PersonaPageNote route="/migrate" className="mb-4" />}
 
       {/* B+ remediation 4.6 (2026-08-10): a newcomer meets an unfiltered vendor
           catalog they have no basis to evaluate. Their question is not "which

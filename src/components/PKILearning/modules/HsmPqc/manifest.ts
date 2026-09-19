@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'hsm-pqc',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-015',
   title: 'HSM & PQC Operations',
   description:
@@ -27,6 +27,11 @@ const manifest: ModuleManifest = {
     { id: 'fips-tracker', label: 'FIPS Tracker' },
     { id: 'capacity-calculator', label: 'Capacity Calculator' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'pkcs11-simulator',
+    text: 'Step through the 8 PKCS#11 operations in order: each shows the API call and detail, and Execute Operation reveals the expected output — or live output from the in-browser HSM in Live WASM mode.',
+  },
   taxonomy: { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['PKCS#11'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.HsmPqcModule })),

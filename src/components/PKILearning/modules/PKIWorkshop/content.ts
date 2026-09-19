@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'pki-workshop',
   version: '1.1.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-09-19',
 
   standards: [
     getStandard('FIPS 204'),

@@ -56,6 +56,7 @@ import { LibraryDocumentCard } from './LibraryDocumentCard'
 import { LibraryDetailDrawer } from './LibraryDetailDrawer'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileLibraryView } from '@/components/Mobile/screens/MobileLibraryView'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 const FILTER_PARAMS = [
   'purpose',
@@ -503,6 +504,8 @@ export function LibraryViewRedesign({
           }
         />
       )}
+
+      {!simEmbed && <PersonaPageNote route="/library" />}
 
       <LibraryRecentlyChanged items={pipeline.activityItems} onOpen={openDetail} />
 

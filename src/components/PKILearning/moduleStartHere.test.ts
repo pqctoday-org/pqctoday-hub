@@ -13,8 +13,9 @@ import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 const withStartHere = MANIFESTS.filter((m) => m.startHere)
 
 describe('module manifests — Start here', () => {
-  it('ships on the 38 Wave C modules', () => {
-    expect(withStartHere.length).toBe(38)
+  it('ships on every module with a workshop (38 in Wave C; the other 26 in round 9, 2026-09-19)', () => {
+    const withWorkshop = MANIFESTS.filter((m) => (m.workshopSteps ?? []).length > 0)
+    expect(withStartHere.map((m) => m.id).sort()).toEqual(withWorkshop.map((m) => m.id).sort())
   })
 
   it('every Start-here step is a declared workshop step of the same module', () => {

@@ -15,6 +15,7 @@ import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileCommandCenterView } from '@/components/Mobile/screens/MobileCommandCenterView'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { PreviewBanner } from '@/components/common/PreviewBanner'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -564,6 +565,8 @@ export function BusinessCenterView() {
           'Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025).'
         }
       />
+
+      <PersonaPageNote route="/business" className="mb-4" />
 
       {/* LearningFrame — names what kind of artifact this page is. The
            Command Center is a worked example of a PQC program (NIST CSWP.39

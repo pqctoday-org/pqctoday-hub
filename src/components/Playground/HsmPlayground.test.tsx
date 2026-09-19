@@ -124,7 +124,11 @@ describe('HsmPlayground persona gating', () => {
     mockPersona = 'executive'
     renderHsmPlayground()
     expect(screen.queryByRole('radio', { name: /rust/i })).not.toBeInTheDocument()
-    expect(screen.getByText(/hands-on engineering workbench/i)).toBeInTheDocument()
+    // Full banner title, not the bare phrase: the /playground/hsm PersonaPageNote
+    // (B+ round 9) paraphrases this banner in the executive line.
+    expect(
+      screen.getByText(/^PKCS#11 HSM Playground is a hands-on engineering workbench\.$/i)
+    ).toBeInTheDocument()
     fireEvent.click(screen.getByRole('tab', { name: /^build$/i }))
     expect(screen.queryByRole('tab', { name: /^acvp$/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: /^conformance$/i })).not.toBeInTheDocument()
@@ -139,7 +143,11 @@ describe('HsmPlayground persona gating', () => {
     mockPersona = 'grc'
     renderHsmPlayground()
     expect(screen.queryByRole('radio', { name: /rust/i })).not.toBeInTheDocument()
-    expect(screen.getByText(/hands-on engineering workbench/i)).toBeInTheDocument()
+    // Full banner title, not the bare phrase: the /playground/hsm PersonaPageNote
+    // (B+ round 9) paraphrases this banner in the executive line.
+    expect(
+      screen.getByText(/^PKCS#11 HSM Playground is a hands-on engineering workbench\.$/i)
+    ).toBeInTheDocument()
     fireEvent.click(screen.getByRole('tab', { name: /^build$/i }))
     expect(screen.queryByRole('tab', { name: /^acvp$/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: /^conformance$/i })).not.toBeInTheDocument()

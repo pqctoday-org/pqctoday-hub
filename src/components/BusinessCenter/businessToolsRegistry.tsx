@@ -116,6 +116,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'board-pitch',
     goodAnswer:
       'One ask, one date, one consequence of missing it. If the deck needs a second slide to explain the ask, the ask is not clear enough yet.',
+    workedExample:
+      'Run the ROI Calculator first, then open the pitch: the Budget Request field pre-fills with that investment, the Cost-Benefit section quotes the payback in months, and the export is a numbered proposal with a Basis of figures footer.',
     name: 'Board Pitch Builder',
     description: 'Build board-ready investment proposals with executive summary and budget request',
     category: 'Risk & Strategy',
@@ -200,10 +202,16 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'risk-register',
+    // 2026-09-19: the builder's fields are asset, current algorithm, threat
+    // vector, likelihood, impact and mitigation — it has no owner or review-date
+    // field, so these lines describe what it renders.
     goodAnswer:
-      'Every entry has a named owner and a review date. An unowned risk is a note, and notes do not get treated.',
+      'Every entry is scored (likelihood × impact) and carries a written mitigation. A risk with no mitigation is a note, and notes do not get treated.',
+    workedExample:
+      "Add a risk entry for 'TLS Certificates (Public Web)' on RSA-2048 with Shor's Algorithm as the threat vector, Likelihood 4 — Likely and Impact 5 — Catastrophic: the card shows Score: 20 (Critical) and the Risk Summary counts it as Critical.",
     name: 'Risk Register Builder',
-    description: 'Build a PQC risk register with impact, likelihood, owners, and mitigations',
+    description:
+      'Build a PQC risk register with current algorithm, threat vector, likelihood, impact and mitigation',
     category: 'Risk & Strategy',
     icon: ListChecks,
     keywords: ['risk', 'register', 'inventory', 'mitigation', 'likelihood', 'impact'],
@@ -325,6 +333,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'kpi-dashboard',
     goodAnswer:
       'Three to five measures that would move if the programme stalled. Anything that stays flat either way is reporting, not measurement.',
+    workedExample:
+      "Choose the Executive lens, drag Systems Inventoried down to 40 and leave Vendor Readiness auto-scored from your Migrate catalog: the Overall Score becomes the weighted average, and the export lists each KPI's score, weight and target.",
     name: 'KPI Dashboard Builder',
     description: 'Build KPI dashboards for tracking PQC migration metrics and progress',
     category: 'Governance & Policy',
@@ -376,6 +386,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'supply-chain-matrix',
     goodAnswer:
       'The suppliers you cannot replace inside your own deadline are visible at a glance. Those are the programme, the rest are logistics.',
+    workedExample:
+      "Pick your products on Migrate and set your industry: a domain such as 'HSM-protected keys' gets PQC Ready, FIPS Validated, Hybrid Support and Known CVEs counts and a Migration Gap × Impact score, and one click downloads a CycloneDX CBOM.",
     name: 'Supply Chain Risk Matrix',
     description: 'Assess supply chain risks with dependency mapping and impact analysis',
     category: 'Vendor & Supply Chain',
@@ -393,6 +405,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'roadmap-builder',
     goodAnswer:
       'Each phase has an exit test, not just an end date. "Done" has to be checkable by someone who was not in the room.',
+    workedExample:
+      "Tick your country's deadline chips, keep the defaults — 'Pilot ML-KEM hybrid in TLS' (2027, Track A), 'Re-issue root / intermediate CAs (PQC)' (2030, Track B) — and add a mitigation with a sunset date: the export shows the critical path.",
     name: 'Roadmap Builder',
     description:
       'Build a two-track migration roadmap (key-exchange/HNDL ∥ signatures-PKI/TNFL) on the 8-phase spine, with gates G0–G6 (+ G8 at closure) and milestone dependencies',
@@ -459,6 +473,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'deployment-playbook',
     goodAnswer:
       'A colleague could run it at 3am without calling you. That is the only real test of a playbook.',
+    workedExample:
+      "Tick 'Configure hybrid classical+PQC mode' and 'Prepare rollback automation scripts' under Pre-Deployment Preparation: the counter reads 2/38, the outlined critical items cannot be skipped, and the saved playbook keeps the checkmarks.",
     name: 'Deployment Playbook',
     description: 'Generate deployment playbooks with rollback procedures and validation steps',
     category: 'Migration Planning',
@@ -474,6 +490,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'hybrid-transition-planner',
     goodAnswer:
       'A stated exit from hybrid, with a trigger. Hybrid without an end date is permanent, and permanent hybrid is twice the maintenance forever.',
+    workedExample:
+      'Leave the defaults — TLS 1.3 on X25519, key exchange only, data lifetime 5 - 15 years, deadline 2030: the preview recommends Hybrid (Traditional + PQC) with X25519MLKEM768, a hybrid target of Q4 2028 and a pure-PQC sunset of Q4 2030.',
     name: 'Hybrid Transition Planner',
     audience: 'architect',
     description:
@@ -501,6 +519,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'mti-negotiator',
     goodAnswer:
       'A mandatory-to-implement set both ends can actually negotiate today, checked against the protocol matrix rather than assumed.',
+    workedExample:
+      "Keep TLS 1.3, Global commercial and 'Must interop with non-PQC peers': the table names ML-DSA-65 as signature MTI, X25519MLKEM768 as KEM with ML-KEM-768 as alternate and SHA-256 as hash, and a watch-out gives the TLS named-group codepoint.",
     name: 'MTI Negotiator',
     audience: 'architect',
     description:
@@ -530,6 +550,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'crypto-api-refactor-audit',
     goodAnswer:
       'A list of call sites, not a list of libraries. The refactor happens where the API is called, and that is where the estimate has to come from.',
+    workedExample:
+      "Choose Go, OpenSSL (libcrypto / EVP), '10 - 50 call sites' and 'Partially hardcoded': the audit grades it 'Phase 2 - Complete the facade', and the checklist names the Go imports to grep for outside the facade and a lint rule to ban them.",
     name: 'Crypto API Refactor Audit',
     audience: 'developer',
     description:
@@ -560,6 +582,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'cloud-responsibility-matrix',
     goodAnswer:
       'No cell reads "shared" without saying who acts first. Shared responsibility is where migrations stall.',
+    workedExample:
+      "Keep the defaults — AWS, IaaS + PaaS, TLS termination and KMS-backed keys in scope: the matrix has four rows, each naming Customer, Provider or Shared as owner with both sides' actions and a PQC availability read from the product catalog.",
     name: 'Cloud Responsibility Matrix',
     audience: 'architect',
     description:
@@ -651,6 +675,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'crypto-cbom-builder',
     goodAnswer:
       'A CBOM you can regenerate. A hand-built one is accurate for a week; a generated one is accurate for as long as you keep generating it.',
+    workedExample:
+      'Switch to SBOM → CBOM and pick the payments-service sample: its five components, OpenSSL 1.1.1w and a non-FIPS Bouncy Castle among them, each get a FIPS, ESV, PQC and posture reading, and one click downloads a CycloneDX 1.7 CBOM.',
     name: 'Crypto BOM (CBOM) Builder',
     description:
       'Build a CBOM slice from an SBOM, library posture, or HSM inventory; feeds the Assets pipeline',
@@ -667,6 +693,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'crypto-vulnerability-watch',
     goodAnswer:
       'A short list you will actually read. A watch that surfaces everything gets ignored like everything else.',
+    workedExample:
+      'Bookmark OpenSSL on Migrate and switch off the MEDIUM and LOW chips: the tiles count products tracked, filtered CVEs, Critical + High and CPE coverage gaps, and expanding OpenSSL lists its top 20 CVEs by ID, score, date and summary.',
     name: 'Crypto Vulnerability Watch',
     description:
       'NIST NVD CVE digest for the products on your /migrate selection, joined via CPE — the top CVEs per product by severity from the current snapshot',
@@ -713,6 +741,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'initial-scoping',
     goodAnswer:
       'An honest inventory gap. "We do not know what is in this estate" is a finding, and often the most valuable one.',
+    workedExample:
+      "List 'Customer-facing TLS gateway' as system 1 with priority A and owner Vendor, enter 2400 as the estate estimate and name OpenSSL, Microsoft and F5 as vendor dependencies: the export is a numbered systems table, the estimate and vendors.",
     name: 'Initial Scoping Assessment',
     description:
       'Phase 0 first-cut scope — top-20 in-scope systems, an estate-size estimate, and the top-10 vendor dependencies; seedable from your /migrate selection',
@@ -800,6 +830,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'refresh-cycle-alignment',
     goodAnswer:
       'The assets whose refresh lands AFTER your deadline are named. Those need a decision now, not later.',
+    workedExample:
+      "Keep the 3-year horizon, give 'HSM replacement' a next refresh of 2027 and 'Data center hardware' 2031: the first badge reads On budget, the second After horizon, and the banner counts how many of the seven programs need separate PQC spend.",
     name: 'Refresh-Cycle Alignment',
     description:
       'Phase 4 Activity 4.3 — maps PQC migration tasks onto already-funded infrastructure refresh programs (data center, SD-WAN, cloud, PKI, HSM, vendor renewals) so PQC work rides existing budgets',
@@ -851,6 +883,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'data-at-rest-strategy',
     goodAnswer:
       'Retention drives the order. Data that stays secret for ten years is the harvest-now target; data that expires next quarter is not.',
+    workedExample:
+      "Keep the four seeded stores, 'Customer PII database' on High with 'Re-encrypt with fresh AES-256 DEK (PQC-wrapped KEK)' and 'Backups & archives' on 'Re-wrap existing DEK under PQC KEK': the export is a store / sensitivity / strategy table.",
     name: 'Data-at-Rest Strategy',
     description:
       'Phase 5 Activity 5.6 — per-store data-at-rest decision (re-encrypt under PQC keys, PQC key-wrap, crypto-shred, delete, or accept & monitor), recorded back into the CBOM',
@@ -882,6 +916,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     id: 'migration-verification',
     goodAnswer:
       'Evidence that the old algorithm is gone, not just that the new one works. Both running is the normal state, and it is not done.',
+    workedExample:
+      "Fill all five evidence fields for 'Public web TLS (edge)' but three for 'Internal mTLS service mesh', and leave the RSA-4096 root CA key unconfirmed: the badges read Verified and Unverified 3/5, the key row flags TNFL, the header says 1/2.",
     name: 'Migration Verification & Closure',
     description:
       "Prove migration with the framework's 5-point evidence standard, log classical-key decommissioning (SP 800-88), and record program closure & BAU handover",

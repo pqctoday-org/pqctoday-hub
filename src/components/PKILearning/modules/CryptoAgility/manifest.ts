@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-agility',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-007',
   title: 'Crypto Agility',
   description:
@@ -26,6 +26,11 @@ const manifest: ModuleManifest = {
     { id: 'migration-planning', label: 'Migration Planning' },
     { id: 'agility-assessment', label: 'Agility Readiness Assessment' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'abstraction-layer',
+    text: 'Toggle between the RSA-2048, ML-KEM-768 and X25519MLKEM768 backends in the Abstraction Layer demo: the application code never changes while the backend config flips to quantum-safe.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

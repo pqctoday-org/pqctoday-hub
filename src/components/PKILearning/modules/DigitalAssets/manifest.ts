@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'digital-assets',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-045',
   title: 'Digital Assets',
   description:
@@ -35,6 +35,11 @@ const manifest: ModuleManifest = {
     { id: 'pqc-migration', label: 'PQC Defense' },
     { id: 'custody-architecture', label: 'Custody Architecture' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'bitcoin',
+    text: 'Choose Bitcoin on the chain selector and walk its nine steps: a secp256k1 key is generated inside the in-browser HSM, an address derived, then a transaction formatted, signed and verified.',
+  },
   playgroundTool: 'bitcoin-flow',
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to

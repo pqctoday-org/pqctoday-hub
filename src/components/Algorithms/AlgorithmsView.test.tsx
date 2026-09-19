@@ -229,8 +229,12 @@ describe('AlgorithmsView', () => {
       expect(screen.queryByText('Transition Guide')).not.toBeInTheDocument()
       expect(screen.queryByTestId('algorithm-comparison')).not.toBeInTheDocument()
       // Unlock CTA + learn-the-basics escape hatch both render.
-      expect(screen.getByText(/Show full algorithm comparison/)).toBeInTheDocument()
-      expect(screen.getByText(/Learn the basics first/)).toBeInTheDocument()
+      // getByRole, not getByText: the /algorithms PersonaPageNote quotes this
+      // CTA label in its curious line (B+ round 9), so text alone is ambiguous.
+      expect(
+        screen.getByRole('button', { name: /Show full algorithm comparison/ })
+      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Learn the basics first/ })).toBeInTheDocument()
     })
 
     it('shows the full comparison when curious clicks Unlock', async () => {
@@ -240,7 +244,7 @@ describe('AlgorithmsView', () => {
           <AlgorithmsView />
         </MemoryRouter>
       )
-      const unlock = await screen.findByText(/Show full algorithm comparison/)
+      const unlock = await screen.findByRole('button', { name: /Show full algorithm comparison/ })
       fireEvent.click(unlock)
       // After unlock the teaser disappears and the tabs return.
       await waitFor(() => {

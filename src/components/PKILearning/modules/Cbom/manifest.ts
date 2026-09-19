@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'cbom',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-060',
   title: 'Cryptography Bill of Materials (CBOM)',
   description:
@@ -29,6 +29,11 @@ const manifest: ModuleManifest = {
     { id: 'cbom-verify', label: 'Policy-as-Code Verify' },
     { id: 'key-correlator', label: 'Key Correlator' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'source-coverage-mapper',
+    text: 'Tick the discovery tools you already run in the Source Coverage Mapper: the assets found in the sample estate, the per-layer gaps, the best next scanner and the hidden ghost assets update live.',
+  },
   embeddable: true,
   taxonomy: {
     standards: ['CycloneDX / ECMA-424', 'SPDX / ISO 5962', 'NIST SP 1800-38'],

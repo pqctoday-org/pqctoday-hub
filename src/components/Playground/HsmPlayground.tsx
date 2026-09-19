@@ -63,6 +63,7 @@ import { WorkshopShell, type WorkshopTab } from './learnkit/WorkshopShell'
 import { InspectChip } from './learnkit/InspectChip'
 import { isRailId, type RailId } from './hsm/railIds'
 import type { Pkcs11LessonStep } from './hsm/learn/pkcs11Lessons'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 /**
  * Four modes (design handoff design_handoff_kmip_pkcs11_playground,
@@ -857,21 +858,24 @@ export const HsmPlayground = () => {
           </>
         }
         preamble={
-          <div className="mb-3 shrink-0 text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className="font-semibold text-foreground">New to PKCS#11?</span>
-            <span>Hover a term:</span>
-            <InlineTooltip term="C_GenerateKeyPair" />
-            <span aria-hidden="true">·</span>
-            <InlineTooltip term="CKA_EXTRACTABLE" />
-            <span aria-hidden="true">·</span>
-            <InlineTooltip term="CKA_SENSITIVE" />
-            <span aria-hidden="true">·</span>
-            <InlineTooltip term="C_WrapKey" />
-            <span aria-hidden="true">·</span>
-            <InlineTooltip term="CKM_AES_KW" />
-            <span aria-hidden="true">·</span>
-            <InlineTooltip term="C_EncapsulateKey" />
-          </div>
+          <>
+            <PersonaPageNote route="/playground/hsm" className="mb-3 shrink-0" />
+            <div className="mb-3 shrink-0 text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="font-semibold text-foreground">New to PKCS#11?</span>
+              <span>Hover a term:</span>
+              <InlineTooltip term="C_GenerateKeyPair" />
+              <span aria-hidden="true">·</span>
+              <InlineTooltip term="CKA_EXTRACTABLE" />
+              <span aria-hidden="true">·</span>
+              <InlineTooltip term="CKA_SENSITIVE" />
+              <span aria-hidden="true">·</span>
+              <InlineTooltip term="C_WrapKey" />
+              <span aria-hidden="true">·</span>
+              <InlineTooltip term="CKM_AES_KW" />
+              <span aria-hidden="true">·</span>
+              <InlineTooltip term="C_EncapsulateKey" />
+            </div>
+          </>
         }
         tabs={tabs}
         value={activeTab}

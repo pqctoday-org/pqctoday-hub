@@ -18,6 +18,7 @@ import { useModuleStore } from '../../store/useModuleStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileReportView } from '@/components/Mobile/screens/MobileReportView'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { useResolvedSharedReport } from '@/hooks/useResolvedSharedReport'
 import { getReportSectionConfig, type ReportSectionId } from '../../data/personaConfig'
 import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
@@ -410,6 +411,8 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           description="Your personalized post-quantum cryptography risk report with scores, priorities, and recommendations."
         />
       )}
+
+      {!simEmbed && <PersonaPageNote route="/report" className="mb-4" />}
 
       {!sharedView && <MaturityTierChip />}
 

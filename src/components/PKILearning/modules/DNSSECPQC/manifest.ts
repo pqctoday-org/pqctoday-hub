@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'dnssec-pqc',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-064',
   title: 'DNSSEC & Post-Quantum Signatures',
   description:
@@ -26,6 +26,11 @@ const manifest: ModuleManifest = {
     { id: 'validation-chain-walkthrough', label: 'PQ Validation Chain Walkthrough' },
     { id: 'deployment-roadmap-tracker', label: 'Deployment Roadmap Tracker' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'signature-size-explorer',
+    text: 'Click each algorithm row in the Signature Size Explorer: its signature is drawn against the 1,232-byte DNS UDP limit, and the two post-quantum rows show why an ML-DSA-44 or SLH-DSA response needs TCP.',
+  },
   taxonomy: {
     algorithms: ['ML-DSA', 'ECDSA'],
     standards: ['RFC 4034', 'RFC 9364', 'draft-westerbaan-dnssec-mldsa'],

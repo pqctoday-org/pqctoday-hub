@@ -7,6 +7,7 @@ import { PERSONA_IDS } from '@/data/personaIds'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 const ROUTES = [
+  // Wave C (2026-09-19) — the eleven routed reference pages.
   '/',
   '/patents',
   '/leaders',
@@ -18,10 +19,26 @@ const ROUTES = [
   '/editorial-independence',
   '/sponsor',
   '/terms',
+  // B+ round 9 (2026-09-19) — the sixteen working pages.
+  '/report',
+  '/assess',
+  '/playground/cacp',
+  '/learn',
+  '/playground/hsm',
+  '/algorithms',
+  '/migrate',
+  '/compliance',
+  '/business',
+  '/timeline',
+  '/library',
+  '/playground/interactive',
+  '/openssl',
+  '/threats',
+  '/playground',
 ]
 
 describe('PAGE_PERSONA_NOTES — shape (Wave C, 2026-09-19)', () => {
-  it('covers exactly the eleven routed reference pages (navigate is a full-screen canvas)', () => {
+  it('covers exactly the twenty-seven routed pages (navigate is a full-screen canvas)', () => {
     expect(Object.keys(PAGE_PERSONA_NOTES).sort()).toEqual([...ROUTES].sort())
   })
 

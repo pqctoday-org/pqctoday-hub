@@ -59,6 +59,7 @@ import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import { useIsBelowLgViewport } from '../../hooks/useIsBelowLgViewport'
 import { useIsMobileShell } from '../../hooks/useIsMobileShell'
 import { RouteNextStep } from './RouteNextStep'
+import { RoutePageExercise } from './RoutePageExercise'
 import { RouteRelated } from './RouteRelated'
 
 // Lazy — same reasoning as RightPanel/VideoOverlay/WorkshopOverlayHost below:
@@ -1501,6 +1502,7 @@ export const MainLayout = () => {
                       <PhaseContextBanner />
                       <Outlet />
                       {/* Round 9, wave 1.1 / 1.2 — related content and the declared exit for routed pages. */}
+                      <RoutePageExercise mobile={isMobileShell} />
                       <RouteRelated mobile={isMobileShell} />
                       <RouteNextStep mobile={isMobileShell} />
                     </div>

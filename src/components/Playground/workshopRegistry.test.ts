@@ -131,17 +131,42 @@ describe('workshopRegistry — Start-here allocation (WS17)', () => {
 describe('workshopRegistry — Wave C intro strip (2026-09-18)', () => {
   const withIntro = WORKSHOP_TOOLS.filter((t) => t.intro)
 
-  it('carries an intro for the eight Wave C tools', () => {
+  it('carries an intro for the eight Wave C tools and the 25 tracked tools of round 9 (2026-09-19)', () => {
     expect(withIntro.map((t) => t.id).sort()).toEqual(
       [
+        'api-security-jwt',
+        'bitcoin-flow',
+        'cacp-kmip',
+        'digital-id',
+        'drbg-demo',
         'email-signing',
+        'entropy-test',
+        'envelope-encrypt',
+        'firmware-signing',
+        'hd-wallet',
+        'hsm-capacity',
+        'hybrid-certs',
+        'hybrid-encrypt',
+        'hybrid-sigs',
         'kdf-derivation',
+        'lms-hss',
+        'merkle-proof',
         'mls-group-messaging',
+        'openssl-studio',
+        'pki-enrollment',
+        'pki-workshop',
+        'pqc-ssh-sim',
         'qrng-demo',
         'rng-demo',
+        'slh-dsa',
         'solana-flow',
         'source-combining',
+        'suci-flow',
         'tee-channel',
+        'tls-simulator',
+        'token-migration',
+        'tpm-playground',
+        'vpn-sim',
       ].sort()
     )
   })

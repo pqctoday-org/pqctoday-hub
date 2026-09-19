@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'tls-basics',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-008',
   title: 'TLS Basics',
   description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
@@ -36,6 +36,11 @@ const manifest: ModuleManifest = {
     { id: 'comparison', label: 'Cipher Suite Comparison' },
     { id: 'hsm-demo', label: 'HSM-Backed TLS Server' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'simulate',
+    text: 'Set the client and server panels — identity certificates and key exchange groups — then press Start Full Interaction: the handshake runs and a summary plus the negotiated results appear below.',
+  },
   playgroundTool: 'tls-simulator',
   taxonomy: {
     algorithms: ['ML-KEM', 'X25519', 'ECDSA', 'ML-DSA'],

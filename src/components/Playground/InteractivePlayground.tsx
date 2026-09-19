@@ -31,6 +31,7 @@ import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { SimplifiedViewNotice } from '../common/SimplifiedViewNotice'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 export const InteractivePlayground = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
@@ -137,6 +138,8 @@ export const InteractivePlayground = () => {
           Interactive Playground
         </h1>
       </div>
+
+      <PersonaPageNote route="/playground/interactive" className="mb-4 shrink-0" />
 
       {/* Last log entry strip */}
       {lastLogEntry && (

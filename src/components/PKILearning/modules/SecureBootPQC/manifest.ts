@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'secure-boot-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-018',
   title: 'Secure Boot & Firmware PQC',
   description:
@@ -31,6 +31,11 @@ const manifest: ModuleManifest = {
     { id: 'vendor-matrix', label: 'Firmware Vendor Matrix' },
     { id: 'attestation-designer', label: 'Attestation Flow Designer' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'boot-chain-analyzer',
+    text: 'Expand any key in the UEFI hierarchy (PK, KEK, db) and press Analyze PQC Requirements: each key gets a risk level, finding and PQC action, plus the db storage impact of ML-DSA-65 certificates.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

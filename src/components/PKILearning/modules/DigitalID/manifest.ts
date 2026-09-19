@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'digital-id',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-030',
   title: 'Digital ID',
   description:
@@ -35,6 +35,11 @@ const manifest: ModuleManifest = {
     { id: 'relying-party', label: 'Relying Party' },
     { id: 'qes', label: 'Qualified Electronic Signature' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'pid-issuer',
+    text: 'Press Start Issuance Flow at the PID Issuer: the flow walks Discovery, Authorization, HSM Key Gen and Issuance with the protocol log alongside, and the PID lands in your wallet.',
+  },
   playgroundTool: 'digital-id',
   taxonomy: { algorithms: ['ML-DSA'], standards: ['X.509'] },
   embeddable: true,

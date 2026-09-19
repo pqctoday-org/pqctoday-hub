@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'merkle-tree-certs',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-025',
   title: 'Merkle Tree Certificates',
   description:
@@ -36,6 +36,11 @@ const manifest: ModuleManifest = {
     { id: 'size-comparison', label: 'Size Comparison' },
     { id: 'ct-log', label: 'CT Log Simulator' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'build-tree',
+    text: 'Load the 8 sample certificates (or add your own subject names) and press Build Merkle Tree: SHA-256 hashes are computed level by level up to a signed root, and hovering any node reveals its full hash.',
+  },
   playgroundTool: 'merkle-proof',
   taxonomy: { algorithms: ['LMS/XMSS'], standards: ['NIST SP 800-208'] },
   embeddable: true,

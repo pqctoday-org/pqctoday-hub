@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-business-case',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-036',
   title: 'PQC Business Case',
   description:
@@ -26,6 +26,11 @@ const manifest: ModuleManifest = {
     { id: 'cost-of-inaction', label: 'Cost of Inaction' },
     { id: 'board-pitch', label: 'Board Pitch Builder' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'cost-model-explorer',
+    text: 'Set systems in scope, IT budget, complexity and planning horizon with the sliders in the Cost Model Explorer: five costing methods price the same migration and the spread between them is shown.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

@@ -162,10 +162,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'cacp-kmip',
     pt_id: 'PT-033',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'KMIP Control Plane',
     description:
-      'In-browser KMIP 3.0 control plane + softhsmrustv3 HSM, compiled to WebAssembly. Load a crypto-agility policy (pqc.yaml / classical.yaml), run key lifecycle ops (CreateKeyPair → Activate → Sign / Encap / Decap), and watch the policy auto-rekey classical keys to ML-DSA-87 on the same Sign call — no server, no Docker.',
+      'In-browser KMIP 3.0 control plane + softhsmrustv3 HSM, compiled to WebAssembly. Load a crypto-agility policy (pqc.yaml / classical.yaml), run key lifecycle ops (CreateKeyPair → Activate → Sign / Encap / Decap), and watch the policy auto-rekey a classical ECDSA-P256 key to ML-DSA-65 on the same Sign call — no server, no Docker.',
     category: 'HSM / PKCS#11',
     algorithms: [
       'ML-DSA-44',
@@ -204,11 +204,17 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       name: 'pqctoday-kmip',
       url: 'https://github.com/pqctoday/pqctoday-kmip',
     },
+    intro: {
+      whatYouWillDo:
+        'Load a policy (Classical, PQC or auto-migrate-on-use), pick an algorithm or Auto — let the policy decide, then step through Create, Activate, Sign, Verify and Revoke on an in-browser KMIP 3.0 engine and WebAssembly HSM.',
+      workedExample:
+        'Create an ECDSA-P256 signing key under Classical, switch to auto-migrate-on-use and press Sign: the result shows policy: Rekey → ML-DSA-65 as the legacy key is superseded, and Inspect records every step.',
+    },
   },
   {
     id: 'hsm-capacity',
     pt_id: 'PT-026',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'HSM Capacity Calculator',
     description:
       'Size your HSM fleet for the top 10 enterprise use cases. Compare classical vs next-gen PQC HSM, tune per-algorithm TPS, and see whether your fleet is sufficient.',
@@ -252,12 +258,18 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['architect', 'ops', 'executive', 'grc'],
     startHere: ['executive', 'grc'],
+    intro: {
+      whatYouWillDo:
+        "Pick a Small, Medium or Large deployment, switch on enterprise use cases and set each one's transactions per second, choose N+1 or 2N redundancy and the number of locations, then read the three fleet-sizing cards.",
+      workedExample:
+        'Keep the Medium preset (about 7,145 TPS) and compare Today, Post-PQC on the existing fleet and Post-PQC on next-gen HSM: each card reads Sufficient, Demand only or Overloaded, with the bottleneck algorithm explained.',
+    },
     hasOutput: false,
   },
   {
     id: 'hybrid-encrypt',
     pt_id: 'PT-003',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Hybrid KEM + ECDH',
     description: 'ML-KEM + X25519 ECDH + HKDF hybrid encryption pipeline',
     category: 'HSM / PKCS#11',
@@ -269,6 +281,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     startHere: ['developer'],
+    intro: {
+      whatYouWillDo:
+        'Execute six steps in order: Alice and Bob X25519 keypairs, ECDH in both directions, an ML-KEM-768 keypair, encapsulation, then decapsulate and HKDF-combine both secrets into one 32-byte session key.',
+      workedExample:
+        'Step 3 prints both ECDH secrets and confirms they match; Step 5 shows the 1088-byte ciphertext; Step 6 lists the HKDF inputs (ECDH secret, ML-KEM secret, info string) and the final 32-byte hybrid key.',
+    },
     hasOutput: true,
     outputSpec:
       'ML-KEM-768 encapsulated key (1088 bytes) + shared secret (32 bytes hex); ECDH shared secret must equal both sides.',
@@ -276,7 +294,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'envelope-encrypt',
     pt_id: 'PT-004',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Envelope Encryption',
     description: 'ML-KEM + AES key wrap in a KMS envelope encryption pattern',
     category: 'HSM / PKCS#11',
@@ -288,6 +306,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['architect', 'researcher', 'ops'],
     startHere: ['architect'],
+    intro: {
+      whatYouWillDo:
+        'Pick a KEK algorithm (ML-KEM-512/768/1024 or RSA-2048/4096) and a wrap mechanism (AES-KW, AES-KWP or AES-GCM), press Execute (Live WASM), then step through the five-step classical-vs-PQC comparison.',
+      workedExample:
+        'With ML-KEM-768 and AES-KW the run generates an AES-256 DEK, encapsulates a 1088 B KEM ciphertext, wraps the DEK into 40 B and unwraps it again; the Key Integrity Verification panel shows the DEK before and after match.',
+    },
     hasOutput: true,
     outputSpec:
       'AES-256-GCM wrapped DEK (base64) + ML-KEM ciphertext; unwrapped DEK must equal original DEK.',
@@ -295,7 +319,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'token-migration',
     pt_id: 'PT-005',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Multi-Algorithm Signing',
     description: 'Compare ML-DSA, ECDSA, and RSA signing in a token migration workflow',
     category: 'HSM / PKCS#11',
@@ -307,6 +331,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     startHere: ['ops'],
+    intro: {
+      whatYouWillDo:
+        'Choose a JWT signing algorithm (RS256, ES256 or ML-DSA-44/65/87), Sign Token to see the header, unchanged payload and signature, then Verify Signature against the JWKS public key over PKCS#11.',
+      workedExample:
+        'Switch from the default RS256 to ML-DSA-65: the signature grows from 256 to 3,309 bytes (12.9x vs RS256) in the Size Impact Analysis, and Verify Signature returns Signature valid — CKR_OK.',
+    },
     hasOutput: true,
     outputSpec:
       'ML-DSA / ECDSA / RSA signature bytes (hex); each must verify under corresponding public key.',
@@ -314,7 +344,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'firmware-signing',
     pt_id: 'PT-007',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Firmware Signing',
     // The tool offers ML-DSA-44/65/87 and SLH-DSA-SHA2-128s (PQC_ALGO_OPTIONS in
     // FirmwareSigningMigrator.tsx) and *defaults* to ML-DSA-65 — the previous
@@ -348,6 +378,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     startHere: ['ops'],
+    intro: {
+      whatYouWillDo:
+        'Upload a firmware binary (or use the mock UEFI manifest), pick PQC, classical and hash algorithms, then Generate Both Keys, Sign Both and Verify Both Signatures across the four wizard steps.',
+      workedExample:
+        'With the defaults — ML-DSA-65 against RSA-2048 with SHA-256 — both signatures come back VERIFIED and the Migration Comparison table shows the signature growing from 256 B to 3,309 B (12.9×).',
+    },
     hasOutput: true,
     outputSpec:
       'ML-DSA-87 signature over firmware image digest (hex, 4627 bytes); verify must return true against same ML-DSA-87 public key.',
@@ -355,7 +391,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'slh-dsa',
     pt_id: 'PT-001',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'SLH-DSA Sign & Verify',
     description: 'All 12 FIPS 205 parameter sets with pre-hash support',
     category: 'HSM / PKCS#11',
@@ -367,6 +403,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     startHere: ['researcher'],
+    intro: {
+      whatYouWillDo:
+        'Pick one of the 12 FIPS 205 parameter sets and a pre-hash mode, then Generate Key Pair, Sign Message and Verify Signature on a real PKCS#11 v3.2 HSM emulator in the browser.',
+      workedExample:
+        'With the default SHA2-128s set the 32-byte public key appears, the message signs into a 7.7 KB signature, Verify Signature reports Signature Valid, and the PKCS#11 call log lists every call.',
+    },
     hasOutput: true,
     outputSpec:
       'ML-DSA/SLH-DSA signature (hex); verify step must return true under same key pair. Signature size varies by param set (7856–49856 bytes for SLH-DSA).',
@@ -374,7 +416,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'lms-hss',
     pt_id: 'PT-002',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Stateful Hash Signatures',
     description: 'LMS and XMSS stateful signature trees using SoftHSMv3',
     category: 'HSM / PKCS#11',
@@ -385,6 +427,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Choose an SP 800-208 LMS/HSS parameter set (hash, height, W, levels), Sign Message to advance the one-time key counter, Simulate State Loss, then verify a Rust-signed signature with the C++ engine.',
+      workedExample:
+        'With the default LMS_SHA256_M32_H5 / LMOTS_W8 key each Sign Message moves the Signature Counter toward 32; at 32 the panel shows KEY EXHAUSTED, and Simulate State Loss names the leaf indexes that would be reused.',
+    },
     hasOutput: true,
     outputSpec:
       'LMS/XMSS stateful signature (hex). Signature binds to one-time leaf; verification must succeed on unmodified message.',
@@ -392,7 +440,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hybrid-sigs',
     pt_id: 'PT-027',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Hybrid Signature Spectrums',
     description:
       'Live concatenation, nesting, and Silithium (fused Fiat-Shamir) — from no non-separability to SNS',
@@ -419,6 +467,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Choose Concatenation, Nesting or Silithium (Fused), then Generate Key Pairs, Sign the message and Verify to see whether the EC-Schnorr and ML-DSA-65 halves still verify once stripped apart.',
+      workedExample:
+        'Concatenation verifies but both halves strip cleanly (Separable); with Silithium the Verification Results show EC-Schnorr alone and ML-DSA alone as Blocked, and Recombination Attack tries to reassemble the parts.',
+    },
     hasOutput: true,
     outputSpec:
       'Concatenated/nested ML-DSA-65 + EC-Schnorr signature; each component must independently verify under respective public key.',
@@ -488,7 +542,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tls-simulator',
     pt_id: 'PT-024',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'TLS 1.3 Simulator',
     description:
       'Client–server TLS 1.3 handshake simulator: configure cipher suites, key exchange groups, mTLS, PQC and hybrid certificates',
@@ -516,6 +570,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     startHere: ['developer'],
+    intro: {
+      whatYouWillDo:
+        'Configure the client and server panels — cipher suites, key exchange groups, an RSA-2048 or ML-DSA identity, optional client verification — then Start Full Interaction to run a real OpenSSL TLS 1.3 handshake.',
+      workedExample:
+        'With the defaults (X25519MLKEM768 offered first, RSA-2048 certificates) the summary names the negotiated cipher and key exchange, how many KB the handshake moved, and notes that hybrid ML-KEM plus ECDH was used.',
+    },
     hasOutput: true,
     outputSpec:
       'Simulated TLS 1.3 handshake transcript; master secret and HKDF-derived traffic keys (hex); leaf certificate chain with PQC or hybrid signature verified against configured trust anchor.',
@@ -523,7 +583,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'vpn-sim',
     pt_id: 'PT-009',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
@@ -557,6 +617,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: ['sab', 'threads', 'chromium'],
     recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Pick Classical, Hybrid (ML-KEM-768 + ECP-256) or Pure PQC key exchange, set the MTU and fragmentation, choose PSK or certificate auth, then Start Daemon and watch two strongSwan WASM workers run IKEv2.',
+      workedExample:
+        'Select Hybrid with ML-KEM-768 and Start Daemon: the charon log tags IKE_SA_INIT and IKE_AUTH lines, the status turns to Tunnel Established, and Tunnel Statistics report Total Bytes, Round Trips and Quantum-Safe: KEX ✓.',
+    },
     hasOutput: true,
     outputSpec:
       'IKEv2 SKEYSEED and child SA keys derived per RFC 7296 (prf+); ECDH shared secret (32 bytes hex); live C_* PKCS#11 call log with CK_RV return codes.',
@@ -564,7 +630,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pqc-ssh-sim',
     pt_id: 'PT-SSH-PQC',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'PQC SSH Simulator',
     description:
       'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11. Compare classical vs PQC byte sizes and latency.',
@@ -590,6 +656,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: ['sab', 'threads', 'chromium'],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Pick a PQC KEX (hybrid or pure ML-KEM) and an ML-DSA or SLH-DSA host key, press Run both handshakes, then compare the classical curve25519 baseline with the PQC run in the Handshake Log, PKCS#11 Calls and Wire tabs.',
+      workedExample:
+        'With the default mlkem768-curve25519-sha256 + ssh-mldsa-65 a real OpenSSH handshake runs: the log reports host and user C_Sign sizes and auth time, and the comparison bars show host pubkey, signature and KEX share bytes.',
+    },
     hasOutput: true,
     outputSpec:
       'SSH session ID (SHA-256, 32 bytes hex); ML-DSA-65 host key signature (3309 bytes hex); mlkem768x25519-sha256 shared secret (32 bytes hex); latency and wire-size comparison vs classical.',
@@ -599,7 +671,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'suci-flow',
     pt_id: 'PT-018',
-    version: '1.0.3',
+    version: '1.0.4',
     name: '5G SUCI Construction',
     // Profiles A/B are the ratified 3GPP TS 33.501 §C.3.3 constructions; Profile C
     // is the post-quantum profile the tool also implements (ML-KEM, hybrid with
@@ -631,6 +703,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: ['sab'],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Enter a 15-digit SUPI, pick Profile A (X25519), Profile B (P-256) or Profile C (ML-KEM, hybrid or pure), then execute eleven steps from home-network key generation to SUCI assembly and SIDF decryption.',
+      workedExample:
+        'Default SUPI 310260123456789 under Profile A: X25519 ECDH, X9.63-KDF, AES-128 MSIN encryption and a MAC tag, then Decrypt SUCI at SIDF recovers the original SUPI.',
+    },
   },
 
   // ── Digital Identity ──────────────────────────────────────────────────────
@@ -675,7 +753,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tpm-playground',
     pt_id: 'PT-028',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'TPM 2.0 PQC Playground',
     description:
       'Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.',
@@ -690,6 +768,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: ['sab'],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Send raw TPM 2.0 commands from the Command Builder — TPM2_GetCapability, TPM2_CreatePrimary, TPM2_Encapsulate, TPM2_SignDigest — with ML-KEM or ML-DSA, then run Quote or Certify on the Attestation tab.',
+      workedExample:
+        'On Attestation keep the ML-DSA-65 key, PCRs sha256:0,1,2,3,7 and the default nonce, press Run Quote: the result shows the 3309-byte signature, OpenSSL WASM verify says Signature Verified Successfully, plus a JSON bundle.',
+    },
     hasOutput: true,
     outputSpec:
       'Attestation tab produces a downloadable JSON bundle: TPM2_Quote output, PCR digest, and the AK signature — independently verifiable outside the browser session.',
@@ -741,7 +825,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'entropy-test',
     pt_id: 'PT-011',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Entropy Testing',
     // Previously "NIST SP 800-90B entropy test suite: monobit, frequency,
     // min-entropy", which attributed monobit and frequency to SP 800-90B —
@@ -774,11 +858,17 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['researcher', 'architect', 'developer'],
     startHere: ['researcher'],
+    intro: {
+      whatYouWillDo:
+        'Load a 64-byte sample (Generate Random, All Zeros, Repeating Pattern, Incrementing, or Paste Hex), press Run All Entropy Tests, and read the six pass/fail cards plus the byte histogram and lag plot.',
+      workedExample:
+        'Load Repeating Pattern (deadbeef repeated over 64 bytes) and run: the summary bar reports how many of the six tests passed and each failing card shows its value against the threshold.',
+    },
   },
   {
     id: 'drbg-demo',
     pt_id: 'PT-014',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'SP 800-90A DRBG',
     description:
       'Interactive visualization of HMAC_DRBG internal state (Instantiate, Generate, Reseed) complying with NIST SP 800-90A.',
@@ -804,6 +894,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['architect', 'developer', 'researcher'],
     startHere: ['researcher'],
+    intro: {
+      whatYouWillDo:
+        'Instantiate HMAC_DRBG from a 32-byte entropy input, a nonce and a personalization string, then press Generate and Reseed while the Internal State Tracker shows the working key K, state value V and the counter.',
+      workedExample:
+        'Instantiate with the default personalization string and generate 32 bytes ten times: the counter hits 10 and a Reseed required banner blocks Generate until you press Reseed, which resets it to 1.',
+    },
   },
 
   // ── Certificates & Proofs ─────────────────────────────────────────────────
@@ -843,7 +939,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pki-workshop',
     pt_id: 'PT-015',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'PKI Workshop',
     description:
       'Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL',
@@ -866,6 +962,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'curious'],
     startHere: ['curious'],
+    intro: {
+      whatYouWillDo:
+        'Work through five steps: generate a CSR, create a Root CA, issue a certificate by signing the CSR with that CA, parse the certificate, then build a CRL.',
+      workedExample:
+        'Generate a CSR for example.com with a new RSA 2048-bit key, self-sign a Root CA, press Sign Certificate to issue the leaf, then Parse Details shows its subject and issuer.',
+    },
     hasOutput: true,
     outputSpec:
       'DER-encoded X.509 certificate chain; leaf cert must verify under root CA public key. CSR subject matches issued cert subject.',
@@ -901,10 +1003,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hybrid-certs',
     pt_id: 'PT-016',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Hybrid Certificates',
     description:
-      'Generate and compare six X.509 hybrid certificate formats via SoftHSM PKCS#11 + real DER encoding',
+      'Generate and compare eight X.509 hybrid and post-quantum certificate formats via SoftHSM PKCS#11 + real DER encoding',
     category: 'Certificates & Proofs',
     algorithms: ['SLH-DSA', 'ML-DSA-65', 'ECDSA-P256'],
     icon: ShieldCheck,
@@ -914,6 +1016,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     startHere: ['architect'],
+    intro: {
+      whatYouWillDo:
+        'Enable the HSM, press Generate on any of the eight certificate format cards or Generate All Formats, then read each PEM or parsed view and the Format Comparison table.',
+      workedExample:
+        'Generate Pure PQC (ML-DSA-65) and Related Certificates (RFC 9763) first: the comparison table shows their DER size, generation time and quantum-safe status side by side.',
+    },
     hasOutput: true,
     outputSpec:
       'DER-encoded hybrid X.509 certificate with composite public key; ML-DSA-65 signature must verify under PQC public key component.',
@@ -921,7 +1029,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'merkle-proof',
     pt_id: 'PT-017',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Merkle Tree Workshop',
     description:
       'Build trees, generate inclusion proofs, verify with tamper detection, compare PQC cert sizes, and simulate Certificate Transparency logs',
@@ -945,6 +1053,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['developer', 'researcher', 'curious'],
     startHere: ['curious'],
+    intro: {
+      whatYouWillDo:
+        'Add certificate leaves and build a SHA-256 Merkle tree, generate an inclusion proof for one leaf, verify it and tamper with it, compare handshake sizes, then simulate a Certificate Transparency log.',
+      workedExample:
+        'Load 8 sample certs and Build Merkle Tree, generate an inclusion proof for one leaf, then press Auto-Tamper and Verify Tampered: one flipped character makes the computed root diverge and verification fails.',
+    },
     hasOutput: true,
     outputSpec:
       'Merkle root hash (SHA-256, 32 bytes hex); inclusion proof as ordered sibling-hash array verifiable by recomputation to root; consistency proof between two tree sizes.',
@@ -953,7 +1067,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'digital-id',
     pt_id: 'PT-019',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'EUDI Wallet Architecture',
     description:
       'Complete digital identity lifecycle: Wallet, PID Issuance, Attestation, RP Verification, and QES Provider.',
@@ -975,13 +1089,19 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Walk five steps: open the EUDI Wallet, get a PID issued, receive a university diploma attestation, present your identity to a bank as relying party, then sign a document with a QTSP.',
+      workedExample:
+        'Start Issuance Flow at the PID Issuer to get a P-256-bound mdoc, then Login with Wallet at the bank, Consent & Share family name, given name, degree and age_over_18, and the bank confirms Account Opened.',
+    },
   },
 
   // ── Blockchain / Digital Assets ───────────────────────────────────────────
   {
     id: 'bitcoin-flow',
     pt_id: 'PT-020',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Bitcoin Transaction',
     description: 'secp256k1 ECDSA keypair, SHA256 + RIPEMD160, transaction signing',
     category: 'Blockchain & Digital Assets',
@@ -992,6 +1112,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Run nine steps: generate the source key, extract its public key, create the source address, generate a recipient key and address, format the transaction, visualize the message, sign it and verify the signature.',
+      workedExample:
+        "Format a 0.5 BTC transfer with a 0.0001 BTC fee between the two generated addresses, sign it with secp256k1 ECDSA, and Verify Signature reports VALID against the sender's public key.",
+    },
     hasOutput: true,
     outputSpec:
       'secp256k1 keypair (compressed public key 33 bytes); ECDSA signature (DER) verifiable against public key.',
@@ -999,7 +1125,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hd-wallet',
     pt_id: 'PT-022',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'HD Wallet Derivation',
     description: 'BIP39 mnemonic + BIP32/SLIP-0010 multi-coin HD key derivation',
     category: 'Blockchain & Digital Assets',
@@ -1010,6 +1136,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'researcher'],
+    intro: {
+      whatYouWillDo:
+        'Generate a BIP39 mnemonic, derive the seed with PBKDF2, see hardened versus non-hardened derivation, derive Bitcoin, Ethereum and Solana addresses, then read the quantum threat assessment.',
+      workedExample:
+        "Generate Mnemonic gives 24 words from 32 bytes of entropy; Derive Accounts then shows a Bitcoin address at m/44'/0'/0'/0/0, an Ethereum address at m/44'/60'/0'/0/0 and a Solana address at m/44'/501'/0'/0'.",
+    },
     hasOutput: true,
     outputSpec:
       'BIP39 mnemonic (12/24 words); BIP32 child keys deterministic from same mnemonic + derivation path.',
@@ -1043,7 +1175,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'openssl-studio',
     pt_id: 'PT-023',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'OpenSSL Studio',
     description:
       'Full OpenSSL v3.6.3 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM',
@@ -1079,6 +1211,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     startHere: ['ops'],
+    intro: {
+      whatYouWillDo:
+        'Pick the Learn, Explore or Workbench tab; in the Workbench choose a command category such as genpkey, req, x509, dgst, kem or enc, set its parameters, press Run Command and read the terminal output and logs.',
+      workedExample:
+        'Choose the preset Generate ML-DSA-65 key, which runs openssl genpkey with the ML-DSA-65 algorithm and writes ml-dsa-65.key into the file manager, ready for a self-signed certificate.',
+    },
     hasOutput: true,
     outputSpec:
       'Output depends on command: keygen → PEM/DER key; sign → signature hex; KEM → encapsulated key + shared secret.',
@@ -1086,7 +1224,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'API Security & JWT Workshop',
     description:
       // The JWE half is pinned to draft-ietf-jose-pqc-kem-05 ON PURPOSE. That
@@ -1131,6 +1269,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     startHere: ['developer'],
+    intro: {
+      whatYouWillDo:
+        'Open six sections: inspect a JWT, sign one with ML-DSA or SLH-DSA, build a composite ML-DSA-65+Ed25519 JWT, encrypt a payload as ML-KEM-768 JWE, compare token sizes, and run the JOSE known-answer audit.',
+      workedExample:
+        "In PQC JWT Signing pick ML-DSA-65 on the @noble/post-quantum backend, Generate Keypair, sign the sample payload for Alice Engineer, then Verify (noble) reports Signature valid with the token's byte sizes.",
+    },
     hasOutput: true,
     outputSpec:
       'Signed JWT with ML-DSA header; verifyJWS() must return true with the matching public key. JWE path: plaintext round-trips through ML-KEM-768 encap/decap.',
@@ -1138,7 +1282,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pki-enrollment',
     pt_id: 'PT-029',
-    version: '0.1.1',
+    version: '0.1.2',
     name: 'PKI Enrollment (EST + CMP)',
     description:
       'RFC 7030 EST + RFC 4210/9810 CMP — generate an ML-DSA-65 key, run CMP IR against an in-WASM mock CA, verify the issued cert.',
@@ -1169,6 +1313,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     // is still moving. `workshopRegistry.test.ts` enforces that every 0.x tool
     // sets this, so a new pre-1.0 tool cannot ship looking finished.
     wip: true,
+    intro: {
+      whatYouWillDo:
+        'Generate an end-entity keypair, send a CMP Initial Request to an in-browser mock CA, run EST simpleenroll with the same key, then perform an ML-KEM-768 key update with encrCert proof of possession.',
+      workedExample:
+        'Generate an ML-DSA-65 keypair and press Send CMP Initial Request: the mock CA issues a certificate chain-validated against its root and shows it decoded; the KEM key update then reports whether both shared secrets match.',
+    },
     hasOutput: true,
     outputSpec:
       'Issued X.509 cert (PEM) chained to the workshop mock CA root, signed with ML-DSA-65. Chain verification must succeed (openssl verify -CAfile root.crt ee.crt → OK).',
