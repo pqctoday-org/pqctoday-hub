@@ -44,6 +44,7 @@ import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { RelatedModulesPanel } from './RelatedModulesPanel'
 import { NextStepCard } from '@/components/shared/NextStepCard'
 import { UnderstandingCheckCard } from '@/components/shared/UnderstandingCheckCard'
+import { StepExercise } from '@/components/shared/StepExercise'
 import { IndustryLandscapePanel } from './IndustryLandscapePanel'
 import {
   resolveModuleTool,
@@ -214,6 +215,13 @@ function WorkshopStepper({
           onStepClick={onPartChange}
         />
         {renderStep(currentPart, configKey, onPartChange)}
+        {/* Round 9, wave 2 — one question per step with feedback that names the
+            concept (src/data/stepExercises.ts); nothing for steps without one. */}
+        <StepExercise
+          key={parts[currentPart].id}
+          moduleId={moduleId}
+          stepId={parts[currentPart].id}
+        />
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between gap-3">
