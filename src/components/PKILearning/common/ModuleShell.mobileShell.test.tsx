@@ -105,12 +105,12 @@ describe('ModuleShell — mobile UX layer wiring', () => {
       mockUseIsMobileShell.mockReturnValue(true)
       renderShell(
         <ModuleShell
-          manifest={{ ...base, id: 'slh-dsa' }}
+          manifest={{ ...base, id: 'tls-basics' }}
           learn={(api) => <Button onClick={() => api.goToWorkshop()}>Start Workshop</Button>}
         />
       )
       fireEvent.click(screen.getByRole('button', { name: 'Start Workshop' }))
-      expect(mockNavigate).toHaveBeenCalledWith('/playground/slh-dsa')
+      expect(mockNavigate).toHaveBeenCalledWith('/playground/tls-simulator')
     })
 
     it('scrolls to the honest banner instead of a no-op when the module has no twin', () => {
@@ -119,10 +119,15 @@ describe('ModuleShell — mobile UX layer wiring', () => {
       Element.prototype.scrollIntoView = scrollIntoView
       renderShell(
         <ModuleShell
-          // base.id === 'hsm-pqc': a real module, confirmed to have no
-          // mobilePracticeTool (see moduleToolLinks.test.ts) — the "no twin"
-          // case, not a synthetic id.
-          manifest={{ ...base, workshopSteps: [{ id: 'a', label: 'A' }] }}
+          // Round 9 wave 3 (2026-09-19): hsm-pqc and slh-dsa joined
+          // MOBILE_WORKSHOP_READY, so the "no twin, not ready" case now uses
+          // mls-group-messaging (MOBILE_PRACTICE_EXCLUDED, off the ready list)
+          // and the "twin" case above uses tls-basics → tls-simulator.
+          manifest={{
+            ...base,
+            id: 'mls-group-messaging',
+            workshopSteps: [{ id: 'a', label: 'A' }],
+          }}
           learn={(api) => <Button onClick={() => api.goToWorkshop()}>Start Workshop</Button>}
         />
       )

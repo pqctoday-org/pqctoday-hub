@@ -49,7 +49,7 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
       description:
         'Enable LiDAR (300 MB/s, 20 Hz) in the Sensor Data Integrity Simulator. Compare ML-DSA-44 vs FN-DSA-512 signing throughput. Determine whether per-frame signing meets the 50ms ADAS latency budget.',
       badge: 'Sensor',
-      badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
+      badgeColor: 'bg-secondary/10 text-secondary border-secondary/50',
       observe:
         'The size trade is the one you can rely on: FN-DSA-512 signatures are 666 bytes against ML-DSA-44’s 2,420, which is what matters on CAN FD, while LiDAR on Ethernet can carry either. The speed trade runs the other way — ML-DSA-44 signs faster than FN-DSA-512 — but per-frame timings depend entirely on the target silicon and whether it has a hardware accelerator, so measure on YOUR ECU against your frame budget rather than trusting a figure from someone else’s board.',
       config: { step: 1 },
@@ -96,7 +96,7 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
       description:
         'Configure a 2027 model-year vehicle with 20-year road life in the Lifecycle Migration Roadmap. Set CRQC arrival to 2035. Examine the vulnerability window and planned OTA crypto upgrade windows.',
       badge: 'Capstone',
-      badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
+      badgeColor: 'bg-secondary/10 text-secondary border-secondary/50',
       observe:
         'A 2027 vehicle lasts until 2047 \u2014 12 years past the 2035 CRQC estimate. With OTA upgrades every 4 years, there are 5 crypto upgrade opportunities. The first PQC OTA should target 2031 (before CRQC) to protect long-lived root keys. Factory HSMs must dual-provision classical+PQC keys from day one.',
       config: { step: 5 },

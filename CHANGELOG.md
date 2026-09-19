@@ -29,6 +29,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.108.0] - 2026-09-19
+
+Sixty-two Learn workshops now run on a phone; a step-by-step walk of every workshop at phone width found the four that needed a fix, and three stay on the laptop banner until walked by hand.
+
+### Added
+
+- **Workshops on your phone for 53 more modules** [view:/learn] [persona:developer] [persona:architect] [persona:ops] [persona:executive] [persona:grc] [persona:researcher] [persona:curious]: the Learn / Workshop switch in the phone shell now offers the real workshop on 62 modules (9 before); every step of each was walked at 390 px with no overflow, no element wider than the screen, no errors and no serious accessibility findings. Digital Assets, MLS Group Messaging and TLS Basics keep the laptop banner or their Playground twin for now.
+
+### Fixed
+
+- **Four workshops that ran past a phone screen** [view:/learn/pqc-101] [view:/learn/automotive-pqc] [view:/learn/sbom] [view:/learn/secure-boot-pqc] [persona:curious] [persona:developer]: the PQC 101 family headers, the automotive vehicle and zone cards, the SBOM element map rows and the secure-boot stage rows wrap instead of overflowing.
+
 ## [4.107.0] - 2026-09-19
 
 Every page, module and tool now opens the same way — what it is for, one worked run, a line for your role — and ends with a question you can answer from what you just used.

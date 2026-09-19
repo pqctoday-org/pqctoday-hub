@@ -95,7 +95,7 @@ export const ZONE_COLORS: Record<ECUZone, string> = {
   chassis: 'bg-status-warning/20 text-status-warning border-status-warning/50',
   adas: 'bg-primary/20 text-primary border-primary/50',
   body: 'bg-status-info/20 text-status-info border-status-info/50',
-  infotainment: 'bg-secondary/20 text-secondary border-secondary/50',
+  infotainment: 'bg-secondary/10 text-secondary border-secondary/50',
   connectivity: 'bg-status-success/20 text-status-success border-status-success/50',
 }
 
