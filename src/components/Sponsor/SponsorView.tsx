@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 const SPONSORSHIP_EMAIL = 'sponsor@pqctoday.com'
 const GITHUB_SPONSORS_URL = 'https://github.com/sponsors/pqctoday-org'
@@ -181,6 +182,7 @@ function Hero() {
         Used by security architects, compliance officers, vendors, and consultants preparing for the
         2030–2035 PQC mandate window.
       </p>
+      <PersonaPageNote route="/sponsor" className="mx-auto mb-8 max-w-2xl text-left" />
       <div className="flex flex-wrap justify-center gap-3">
         <a href={GITHUB_SPONSORS_URL} target="_blank" rel="noopener noreferrer">
           <Button variant="gradient" size="lg" className="gap-2">

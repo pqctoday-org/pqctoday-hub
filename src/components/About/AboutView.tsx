@@ -23,6 +23,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { logAboutOutboundLink } from '@/utils/analytics'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileAboutView } from '@/components/Mobile/screens/MobileAboutView'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 export function AboutView() {
   const isMobileShell = useIsMobileShell()
@@ -78,6 +79,7 @@ export function AboutView() {
           visible one to satisfy a linter would be the tail wagging the dog.
           Screen readers and axe both get the landmark they need. */}
       <h1 className="sr-only">About PQC Today</h1>
+      <PersonaPageNote route="/about" />
       {isExecutive && !isEmbedded && <ExecutiveAboutSummary />}
       <AboutSection slug="vision">
         <VisionSection defaultExpanded={isExecutive} />

@@ -38,6 +38,7 @@ import {
 import { sortCSVFiles } from '../../data/csvUtils'
 import { Button } from '@/components/ui/button'
 import { SPONSORS } from '@/data/sponsors'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 type FilterType = 'added' | 'changed' | 'fixed' | 'data' | 'security'
 
@@ -395,6 +396,8 @@ export const ChangelogView = () => {
           </Link>
         </div>
       </motion.div>
+
+      <PersonaPageNote route="/changelog" />
 
       {/* Sponsor thanks — real, wired to src/data/sponsors.ts (the same
           registry that drives the /migrate "Sponsor" badge). Renders nothing

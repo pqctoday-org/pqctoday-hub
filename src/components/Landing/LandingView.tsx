@@ -33,6 +33,7 @@ import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileHomeBoard } from '@/components/Mobile/screens/MobileHomeBoard'
 import { MobileRoleSelection } from '@/components/Mobile/shell/MobileRoleSelection'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 
@@ -432,6 +433,8 @@ export const LandingView = () => {
             off" affordance needs to survive scanning, not require scrolling
             past the whole board to find it. */}
         <ResumeBanner dismissKey="landing-persona-board" />
+
+        <PersonaPageNote route="/" />
 
         <PersonaBoardView
           personaId={selectedPersona}

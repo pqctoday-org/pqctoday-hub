@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { logFaqSearch, logFaqExpand } from '@/utils/analytics'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 function FAQAccordionItem({ item, recommended }: { item: FAQItem; recommended: boolean }) {
   const [open, setOpen] = useState(false)
@@ -151,6 +152,8 @@ export function FAQPage() {
           migration timelines, compliance, and more.
         </p>
       </div>
+
+      <PersonaPageNote route="/faq" />
 
       {/* Search */}
       <div className="relative">

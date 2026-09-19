@@ -45,6 +45,7 @@ import { PatentsRoleLens } from '../PatentsRoleLens'
 import { PQC_ONLY_LS_KEY, SCOPE_PARAM, readPqcOnly, readScopeParam } from '@/data/patentsScope'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobilePatentsView } from '@/components/Mobile/screens/MobilePatentsView'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 const SORT_LS_KEY = 'pqc-patents-sort'
 const VALID_SORT_KEYS: SortKey[] = ['issueDate', 'impactScore', 'title', 'priorityDate']
@@ -404,6 +405,8 @@ export function PatentsViewRedesign() {
         title="PQC Patents"
         description="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions. For research — not legal or IP advice."
       />
+
+      <PersonaPageNote route="/patents" />
 
       {/* Control deck */}
       <div className="glass-panel space-y-3 rounded-2xl p-3 sm:p-4">

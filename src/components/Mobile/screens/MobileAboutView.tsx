@@ -30,6 +30,7 @@ import {
   CRYPTO_BUFF_BOOKS,
 } from '@/components/About/aboutData'
 import { SBOM_CATEGORIES } from '@/data/sbomCategories'
+import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
 
 declare const __BUILD_TIMESTAMP__: string
 
@@ -106,6 +107,7 @@ export function MobileAboutView() {
         v{version} · PQCToday exists to close the gap between the coming quantum-cryptographic
         transition and how ready most organisations actually are.
       </p>
+      <MobilePersonaPageNote route="/about" className="mb-3" />
 
       <div className="flex flex-col gap-2.5">
         {GROUPS.map((group) => {

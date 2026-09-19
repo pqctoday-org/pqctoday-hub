@@ -16,6 +16,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
 import { cn } from '@/lib/utils'
 import { MobileWorkshopEntry } from '../shell/MobileWorkshopEntry'
+import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
 
 type SideCardTone = PersonaJourneyBoard['sideCard']['tone']
 
@@ -168,6 +169,7 @@ export function MobileHomeBoard({
         {board.headline}
       </h1>
       <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground/90">{board.sub}</p>
+      <MobilePersonaPageNote route="/" className="mt-3" />
 
       <div className="mt-4 flex flex-col gap-2.5">
         <Button

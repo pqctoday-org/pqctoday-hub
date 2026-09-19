@@ -46,6 +46,7 @@ import { LeaderConsentModal } from './LeaderConsentModal'
 import { LeaderRemovalModal } from './LeaderRemovalModal'
 import { Button } from '../ui/button'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 type FilterKey = 'region' | 'country' | 'sector' | 'category' | 'layer'
 
@@ -670,6 +671,8 @@ export const LeadersGrid = () => {
         title="Community"
         description="People contributing to the advances of post-quantum cryptography."
       />
+
+      <PersonaPageNote route="/leaders" />
 
       {/* Executive overview — institutional influence + why each group matters.
           Exec only; other roles see the directory unchanged. */}
