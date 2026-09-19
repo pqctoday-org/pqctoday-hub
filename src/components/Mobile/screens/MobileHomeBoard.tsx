@@ -10,7 +10,8 @@ import {
   type PersonaJourneyBoard,
 } from '@/data/personaConfig'
 import { Button } from '@/components/ui/button'
-import { PROVENANCE_LABEL, WORKSHOP_NAME_BY_ID } from '@/components/PersonaJourney/PersonaBoardView'
+import { PROVENANCE_LABEL } from '@/components/PersonaJourney/PersonaBoardView'
+import { boardRelatedLinks } from '@/data/boardRelatedLinks'
 import { logRoleBoardVariantSelected, logRoleBoardCtaClick } from '@/utils/analytics'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
@@ -104,6 +105,7 @@ export function MobileHomeBoard({
   const variants = PERSONA_JOURNEY_BOARD_VARIANTS[persona]
   const active = resolveRoleBoardVariant(persona, variantId)
   const board = active.board
+  const relatedLinks = boardRelatedLinks(active)
   const tone = TONE_CLASS[board.sideCard.tone]
   const regionLabel = selectedRegion ? REGION_LABELS[selectedRegion] : null
   const industryLabel = selectedIndustries.length > 0 ? selectedIndustries.join(', ') : null
@@ -308,30 +310,32 @@ export function MobileHomeBoard({
         )}
       </div>
 
-      {/* Related workshops — desktop parity, see PersonaBoardView.tsx's
-          WORKSHOP_NAME_BY_ID comment. Hidden when a board names none. */}
-      {active.workshopIds.length > 0 && (
+      {/* Related on this site — desktop parity (PersonaBoardView): the variant's
+          modules, workshops and Command Center tools (src/data/boardRelatedLinks.ts). */}
+      {relatedLinks.length > 0 && (
         <div className="mt-4">
           <h2 className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
             Related on this site
           </h2>
-          <div className="mt-2 flex flex-wrap gap-2" aria-label="Related workshops">
-            {active.workshopIds.map((id) => {
-              // eslint-disable-next-line security/detect-object-injection -- id comes from active.workshopIds, CSV-derived repo data, not user input
-              const name = WORKSHOP_NAME_BY_ID[id]
-              if (!name) return null
-              return (
-                <Button
-                  key={id}
-                  type="button"
-                  variant="ghost"
-                  onClick={() => navigate(`/playground/${id}`)}
-                  className="h-auto rounded-full border border-border bg-muted/30 px-3 py-1 text-[11px] text-muted-foreground"
-                >
-                  {name}
-                </Button>
-              )
-            })}
+          <div className="mt-2 flex flex-wrap gap-2" aria-label="Related on this site">
+            {relatedLinks.map((l) => (
+              <Button
+                key={l.to}
+                type="button"
+                variant="ghost"
+                onClick={() => navigate(l.to)}
+                className="h-auto rounded-full border border-border bg-muted/30 px-3 py-1 text-[11px] text-muted-foreground"
+              >
+                {l.name}
+                <span className="sr-only">
+                  {l.kind === 'module'
+                    ? ' (Learn module)'
+                    : l.kind === 'business'
+                      ? ' (Command Center tool)'
+                      : ' (Playground tool)'}
+                </span>
+              </Button>
+            ))}
           </div>
         </div>
       )}

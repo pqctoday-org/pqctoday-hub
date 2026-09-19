@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.101.0] - 2026-09-19
+
+Every Playground tool was walked end to end on a laptop and a phone; what clipped or ran off the screen now wraps, and each tool ends with a question you can answer by using it.
+
+### Added
+
+- **"Try it" under every Playground tool** [view:/playground] [persona:developer] [persona:architect] [persona:researcher] [persona:curious]: one question per tool, answerable only by using the tool, with a reason that names the concept whether you were right or not — 34 tools.
+
+### Fixed
+
+- **Long headers and step titles wrap on a phone** [view:/playground/email-signing] [view:/playground/api-security-jwt] [view:/playground/vpn-sim] [view:/playground/pqc-ssh-sim] [view:/playground/mls-group-messaging] [view:/playground/hybrid-certs] [persona:developer]: the S/MIME and JWT workshop step buttons, the VPN and SSH learn accordions and every "Why this matters" header cut their text off at 390 px; the VPN simulator's PSK and benchmark rows now wrap instead of running off the screen.
+- **A long selected value no longer widens a drop-down past its cell** [view:/playground/pki-enrollment] [persona:ops]: "ML-DSA-65 (NIST Cat 3) — recommended" pushed the algorithm chooser off a phone screen.
+- **Tab bars used as switches no longer point at a panel that does not exist** [view:/playground/cacp] [view:/playground/cacp-kmip] [persona:developer]: the KMIP Operate mode switch declared a panel it never rendered, an accessibility error on the Operate and Dev tabs; a tab now names its panel only when the panel is on the page.
+- **The OpenSSL Studio file manager's buttons keep their names on a phone** [view:/openssl] [view:/playground/openssl-studio] [persona:developer]: Add File, Clear All, Backup All and Import ZIP hide their text below 640 px and had no name left for assistive technology.
+
 ## [4.100.0] - 2026-09-19
 
 Every module and tool now says, for your role, what to do with it — written from the item's real steps and controls.

@@ -471,7 +471,10 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       ) : (
         <div
           className={clsx(
-            'border border-border rounded-lg shadow-lg p-2 inline-flex items-center gap-2',
+            // Round 9 (2026-09-19): max-w-full so a long selected label cannot push
+            // the box past its grid cell at phone width (PKI enrollment, 390 px);
+            // the label span inside already truncates within the button.
+            'border border-border rounded-lg shadow-lg p-2 inline-flex max-w-full items-center gap-2',
             opaque ? 'bg-card' : 'bg-card/95 backdrop-blur-md'
           )}
         >
@@ -480,7 +483,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               {label}:
             </span>
           )}
-          <div className="relative">
+          <div className="relative min-w-0">
             {renderButton()}
             {isOpen && renderMenu()}
           </div>

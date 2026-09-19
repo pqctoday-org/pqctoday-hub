@@ -170,11 +170,12 @@ export const WorkbenchFileManager: React.FC = () => {
         </span>
         <div className="flex flex-wrap gap-2">
           <Button
+            aria-label="Add File"
             variant="ghost"
             className="px-3 py-1.5 bg-background hover:bg-accent border border-input rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('add-file-input')?.click()}
           >
-            <Plus size={14} /> <span className="hidden sm:inline">Add File</span>
+            <Plus size={14} aria-hidden="true" /> <span className="hidden sm:inline">Add File</span>
             <input
               id="add-file-input"
               type="file"
@@ -211,6 +212,7 @@ export const WorkbenchFileManager: React.FC = () => {
             />
           </Button>
           <Button
+            aria-label="Clear All"
             variant="ghost"
             onClick={() => {
               if (confirmClear) {
@@ -241,25 +243,30 @@ export const WorkbenchFileManager: React.FC = () => {
               'Confirm Clear?'
             ) : (
               <>
-                <Trash2 size={14} /> <span className="hidden sm:inline">Clear All</span>
+                <Trash2 size={14} aria-hidden="true" />{' '}
+                <span className="hidden sm:inline">Clear All</span>
               </>
             )}
           </Button>
           <Button
+            aria-label="Backup All"
             variant="ghost"
             onClick={handleBackupAllFiles}
             disabled={files.length === 0}
             className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 disabled:bg-muted disabled:text-muted-foreground border border-primary/40 disabled:border-border rounded text-xs font-medium text-primary disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             title="Backup all files to ZIP"
           >
-            <Archive size={14} /> <span className="hidden sm:inline">Backup All</span>
+            <Archive size={14} aria-hidden="true" />{' '}
+            <span className="hidden sm:inline">Backup All</span>
           </Button>
           <Button
+            aria-label="Import ZIP"
             variant="ghost"
             className="px-3 py-1.5 bg-background hover:bg-accent border border-input rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('import-zip-input')?.click()}
           >
-            <Upload size={14} /> <span className="hidden sm:inline">Import ZIP</span>
+            <Upload size={14} aria-hidden="true" />{' '}
+            <span className="hidden sm:inline">Import ZIP</span>
             <input
               id="import-zip-input"
               type="file"

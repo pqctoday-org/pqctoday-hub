@@ -32,12 +32,12 @@ export const WhyThisMatters = ({
       <Button
         type="button"
         variant="ghost"
-        className="flex w-full items-center gap-2 text-left h-auto p-0 hover:bg-transparent"
+        className="flex w-full items-center gap-2 text-left h-auto whitespace-normal p-0 hover:bg-transparent"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
       >
         <Info size={14} className="shrink-0" />
-        <span className="flex-1 text-xs font-semibold">{title}</span>
+        <span className="min-w-0 flex-1 text-xs font-semibold">{title}</span>
         {open ? (
           <ChevronUp size={14} className="shrink-0" />
         ) : (

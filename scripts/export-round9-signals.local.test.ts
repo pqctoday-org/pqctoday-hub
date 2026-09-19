@@ -21,6 +21,8 @@ import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
 import { PERSONA_IDS } from '@/data/personaIds'
 import { loadIndustryLandscape } from '@/data/industryLandscapeData'
 import { PAGE_RELATIONS } from '@/data/pageRelations'
+import { boardRelatedLinks } from '@/data/boardRelatedLinks'
+import { PERSONA_JOURNEY_BOARD_VARIANTS } from '@/data/generated/roleBoardContent.generated'
 import { protocolModulesForUseCase } from '@/components/Algorithms/landscapeProtocolModules'
 
 it('exports the round-9 discoverability signals when asked', () => {
@@ -87,10 +89,15 @@ it('exports the round-9 discoverability signals when asked', () => {
     const ids = new Set<string>([uc.learnModuleId, ...protocolModulesForUseCase(uc).map((l) => l.moduleId)].filter(Boolean))
     for (const id of ids) landscapeInbound[id] = (landscapeInbound[id] ?? 0) + 1
   }
+  // board "Related on this site" links per route (variant moduleIds / workshopIds / businessToolIds, rendered since round 9)
+  const boardLinks: Record<string, number> = {}
+  for (const p of PERSONA_IDS)
+    for (const v of PERSONA_JOURNEY_BOARD_VARIANTS[p])
+      for (const l of boardRelatedLinks(v)) boardLinks[l.to] = (boardLinks[l.to] ?? 0) + 1
   fs.writeFileSync(
     out,
     JSON.stringify(
-      { nextSteps: NEXT_STEPS, nextStepIn, relatedInbound, railPos, gridPos, roleRows, marquee: PERSONA_FEATURED_TOOL_IDS, landscapeInbound },
+      { nextSteps: NEXT_STEPS, nextStepIn, relatedInbound, railPos, gridPos, roleRows, marquee: PERSONA_FEATURED_TOOL_IDS, landscapeInbound, boardLinks },
       null,
       1
     )

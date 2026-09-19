@@ -15,6 +15,7 @@
  * returns null otherwise), the same unmount-on-switch contract the previous
  * hand-rolled bars had, so nothing downstream changes its state handling.
  */
+import { useEffect } from 'react'
 import type { ReactNode } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import clsx from 'clsx'
@@ -42,6 +43,13 @@ function KeepMountedPanel({
 }) {
   const ctx = useTabsContext()
   const active = ctx?.value === value
+  // The panel is always mounted here, so register it once so the trigger's
+  // aria-controls keeps pointing at it (ui/tabs only emits it for a live panel).
+  const registerPanel = ctx?.registerPanel
+  useEffect(() => {
+    if (!registerPanel) return
+    return registerPanel(value)
+  }, [registerPanel, value])
   return (
     <div
       role="tabpanel"

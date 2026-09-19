@@ -7,6 +7,12 @@ import { cn } from '@/lib/utils'
 interface TabsContextValue {
   value: string
   onValueChange: (value: string) => void
+  /** Round 9 (2026-09-19): values whose `<TabsContent>` is mounted. A tab bar
+   *  used as a segmented control (the KMIP Operate mode switch) has no panels,
+   *  and an `aria-controls` pointing at a missing id is an axe serious node
+   *  (`aria-valid-attr-value`); the trigger emits it only for a live panel. */
+  hasPanel: (value: string) => boolean
+  registerPanel: (value: string) => () => void
   /** Per-`<Tabs>` id namespace so trigger/panel ids never collide between two
    *  tab bars on the same page (e.g. a module's ModuleTabBar and a nested
    *  workshop TabsList). */
@@ -103,9 +109,29 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
       [onValueChange]
     )
 
+    const [panels, setPanels] = React.useState<Set<string>>(() => new Set())
+    const registerPanel = React.useCallback((v: string) => {
+      setPanels((prev) => (prev.has(v) ? prev : new Set(prev).add(v)))
+      return () => {
+        setPanels((prev) => {
+          if (!prev.has(v)) return prev
+          const next = new Set(prev)
+          next.delete(v)
+          return next
+        })
+      }
+    }, [])
+    const hasPanel = React.useCallback((v: string) => panels.has(v), [panels])
+
     const ctx = React.useMemo(
-      () => ({ value: currentValue, onValueChange: handleValueChange, baseId }),
-      [currentValue, handleValueChange, baseId]
+      () => ({
+        value: currentValue,
+        onValueChange: handleValueChange,
+        baseId,
+        hasPanel,
+        registerPanel,
+      }),
+      [currentValue, handleValueChange, baseId, hasPanel, registerPanel]
     )
 
     return (
@@ -234,7 +260,11 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
         // TabsContent unmounts inactive panels, so only the selected tab has a
         // panel to point at. axe skips aria-controls validation when
         // aria-selected="false", so the dangling-reference case never arises.
-        aria-controls={context && isActive ? tabPanelId(context.baseId, value) : undefined}
+        aria-controls={
+          context && isActive && context.hasPanel(value)
+            ? tabPanelId(context.baseId, value)
+            : undefined
+        }
         className={cn(
           'inline-flex items-center justify-center whitespace-nowrap shrink-0 rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm min-h-[44px] md:min-h-0',
           className
@@ -259,7 +289,13 @@ interface TabsContentProps extends React.HTMLAttributes<HTMLDivElement> {
 const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(
   ({ className, value, ...props }, ref) => {
     const context = React.useContext(TabsContext)
-    if (context?.value !== value) return null
+    const active = context?.value === value
+    const registerPanel = context?.registerPanel
+    React.useEffect(() => {
+      if (!active || !registerPanel) return
+      return registerPanel(value)
+    }, [active, registerPanel, value])
+    if (!active) return null
 
     return (
       <div

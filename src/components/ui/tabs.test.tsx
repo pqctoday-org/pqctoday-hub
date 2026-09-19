@@ -147,3 +147,33 @@ describe('Tabs', () => {
     expect(ids.every(Boolean)).toBe(true)
   })
 })
+
+describe('aria-controls only for a mounted panel (round 9, 2026-09-19)', () => {
+  it('a segmented control with no TabsContent emits no aria-controls', () => {
+    render(
+      <Tabs defaultValue="single">
+        <TabsList>
+          <TabsTrigger value="single">Single</TabsTrigger>
+          <TabsTrigger value="batch">Batch</TabsTrigger>
+        </TabsList>
+      </Tabs>
+    )
+    expect(screen.getByRole('tab', { name: 'Single' })).not.toHaveAttribute('aria-controls')
+  })
+  it('a tab whose panel is mounted points at it', () => {
+    render(
+      <Tabs defaultValue="a">
+        <TabsList>
+          <TabsTrigger value="a">A</TabsTrigger>
+          <TabsTrigger value="b">B</TabsTrigger>
+        </TabsList>
+        <TabsContent value="a">Panel A</TabsContent>
+        <TabsContent value="b">Panel B</TabsContent>
+      </Tabs>
+    )
+    const tab = screen.getByRole('tab', { name: 'A' })
+    const panel = screen.getByRole('tabpanel')
+    expect(tab).toHaveAttribute('aria-controls', panel.id)
+    expect(screen.getByRole('tab', { name: 'B' })).not.toHaveAttribute('aria-controls')
+  })
+})

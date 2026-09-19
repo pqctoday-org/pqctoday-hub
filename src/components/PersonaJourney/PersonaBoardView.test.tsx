@@ -9,7 +9,7 @@
  * replaces the data-driven side card.
  */
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import type { ReactElement } from 'react'
 import { PersonaBoardView } from './PersonaBoardView'
@@ -165,8 +165,14 @@ describe('PersonaBoardView', () => {
     const essentials = PERSONAS[personaId].essentials
     // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
     const chips = PERSONA_JOURNEY_BOARD[personaId].trackChips
+    // Scoped to the track strip: since round 9 the "Related on this site" row
+    // renders module titles too, and a chip label can equal a module title.
+
+    const strip = screen.getByRole('heading', {
+      name: PERSONA_JOURNEY_BOARD[personaId].trackTitle,
+    }).parentElement!
     chips.forEach((chip, i) => {
-      const link = screen.getByText(chip).closest('a')
+      const link = within(strip).getByText(chip).closest('a')
       expect(link, `chip "${chip}" isn't rendered as a link`).not.toBeNull()
       expect(link).toHaveAttribute('href', `/learn/${essentials[i]}`)
     })
