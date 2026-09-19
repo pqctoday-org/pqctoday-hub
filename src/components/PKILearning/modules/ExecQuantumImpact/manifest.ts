@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'exec-quantum-impact',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-047',
   title: 'Executive Quantum Impact',
   description:
@@ -26,6 +26,11 @@ const manifest: ModuleManifest = {
     { id: 'how-to-act', label: 'How to Act' },
     { id: 'self-assessment', label: 'Org Risk Self-Assessment' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'self-assessment',
+    text: 'Tick the statements that apply to your organisation in the Org Risk Self-Assessment: nine weighted criteria give an exposure score and a Low, Moderate or High Exposure band with a next step.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

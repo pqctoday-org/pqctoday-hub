@@ -13,7 +13,7 @@ export const content: ModuleContent = {
   // module's factual claims via record_module_review.py. Leave it unset
   // (see ModuleContentTypes.ts) rather than claim a review that hasn't
   // happened; ModuleReferencesTab renders nothing when it's absent.
-  lastEdited: '2026-09-13',
+  lastEdited: '2026-09-19',
 
   standards: [
     getStandard('RFC 4034'),

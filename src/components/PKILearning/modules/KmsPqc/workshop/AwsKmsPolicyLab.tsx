@@ -14,7 +14,6 @@ const INITIAL_JSON = `{
       "Action": ["kms:Encrypt", "kms:Decrypt", "kms:GenerateDataKey"],
       "Resource": "*"
     }
-    // Add a Deny statement below to enforce aws:tlsCipherSuites contains "_PQ"
   ]
 }`
 
@@ -61,6 +60,14 @@ export const AwsKmsPolicyLab: React.FC = () => {
         <p className="text-muted-foreground mt-2">
           Configure an AWS KMS Key Policy to strictly enforce Hybrid PQC TLS connections for all
           `kms:Decrypt` requests, protecting sensitive Master Keys from HNDL harvesting.
+        </p>
+        {/* 2026-09-19: this hint used to live inside the starter policy as a `//`
+            comment, which is not JSON — "Valid JSON Syntax" stayed red on load
+            and even after Insert Solution Snippet. The policy is valid JSON now
+            and the task is stated here instead. */}
+        <p className="text-sm text-muted-foreground mt-2">
+          Your task: add a Deny statement on <code>kms:Decrypt</code> whose condition requires{' '}
+          <code>aws:tlsCipherSuites</code> to be a <code>_PQ</code> suite.
         </p>
       </div>
 

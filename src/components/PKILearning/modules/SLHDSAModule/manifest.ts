@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'slh-dsa',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-027',
   title: 'SLH-DSA: Stateless Hash Signatures',
   description:
@@ -27,6 +27,11 @@ const manifest: ModuleManifest = {
     { id: 'context-deterministic', label: 'Context Strings & Deterministic Mode' },
     { id: 'comparison', label: 'LMS vs XMSS vs SLH-DSA Comparison' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'keygen',
+    text: 'Turn on Live WASM mode, pick one of the 12 FIPS 205 parameter sets, then Generate Key Pair, Sign Message and Verify Signature: public key, signature and verdict come from a real in-browser HSM.',
+  },
   playgroundTool: 'slh-dsa',
   taxonomy: { algorithms: ['SLH-DSA'], standards: ['FIPS 205'] },
   embeddable: true,

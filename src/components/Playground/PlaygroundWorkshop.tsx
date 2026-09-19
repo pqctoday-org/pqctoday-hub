@@ -82,6 +82,7 @@ import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { logEvent, personaLabel } from '@/utils/analytics'
 import { SimplifiedViewNotice } from '../common/SimplifiedViewNotice'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 // ---------------------------------------------------------------------------
 // Constants & small style maps
@@ -1471,6 +1472,8 @@ export const PlaygroundWorkshop = () => {
           Pick a category on the left, jump into a full playground, or start with what fits your
           role. Nothing is installed — every operation executes locally via WebAssembly.
         </p>
+
+        <PersonaPageNote route="/playground" className="mt-4" />
 
         <p className="mt-6 mb-3 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
           I want to…

@@ -28,6 +28,7 @@ import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileAlgorithmsView } from '@/components/Mobile/screens/MobileAlgorithmsView'
 import { MobileProtocolMatrixView } from '@/components/Mobile/screens/MobileProtocolMatrixView'
 import { MobileKATValidationView } from '@/components/Mobile/screens/MobileKATValidationView'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   executive:
@@ -324,6 +325,8 @@ export function AlgorithmsView() {
         title="Post-Quantum Algorithms & Protocols"
         description="Compare post-quantum algorithms and track their support across IETF protocols"
       />
+
+      <PersonaPageNote route="/algorithms" className="mb-4" />
 
       <AlgorithmEntryStrip
         persona={selectedPersona}

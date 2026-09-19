@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'quantum-threats',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-002',
   title: 'Quantum Threats',
   description:
@@ -28,6 +28,11 @@ const manifest: ModuleManifest = {
     { id: 'hnfl-timeline', label: 'HNFL Risk Calculator' },
     { id: 'crqc-trajectory', label: 'Trajectory to Q-Day' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'security-levels',
+    text: 'Pick an algorithm in Security Level Degradation: its classical and quantum security bits are drawn as two bars, with a BROKEN, WEAKENED or SAFE verdict and the logical qubits needed to break it.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

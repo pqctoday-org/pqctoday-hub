@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.107.0] - 2026-09-19
+
+Every page, module and tool now opens the same way — what it is for, one worked run, a line for your role — and ends with a question you can answer from what you just used.
+
+### Added
+
+- **"Start here" on 27 more Learn modules** [view:/learn] [persona:curious] [persona:developer] [persona:architect] [persona:ops] [persona:executive]: one real workshop step named at the top of the module — what to do in it and what you will see — written from that step's own controls; every module has one now.
+- **"What you will do" and a worked example on 25 more Playground tools** [view:/playground] [persona:developer] [persona:architect] [persona:researcher] [persona:ops]: the tool's real steps and one concrete run with its default inputs and the output it shows; all 33 tracked tools carry the strip.
+- **A worked example on 16 more Command Center tools** [view:/business] [persona:executive] [persona:grc] [persona:architect]: one run with the tool's own defaults and the artifact or number it produces; every Command Center tool has one.
+- **"What this means for you" on 15 more pages** [view:/report] [view:/assess] [view:/learn] [view:/algorithms] [view:/migrate] [view:/compliance] [view:/business] [view:/timeline] [view:/library] [view:/playground] [view:/openssl] [view:/threats] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: one line per role naming the control or section on that page that is for them.
+- **A "Try it" question under 19 pages** [view:/report] [view:/assess] [view:/] [view:/algorithms] [view:/compliance] [view:/migrate] [view:/business] [view:/timeline] [view:/library] [view:/playground] [view:/openssl] [view:/threats] [view:/patents] [view:/leaders] [view:/explore] [view:/revisions] [view:/faq] [persona:curious] [persona:grc]: answerable from a control, column or rule the page shows, with a reason.
+- **66 more workshop-step questions** [view:/learn] [persona:developer] [persona:architect] [persona:ops] [persona:researcher] [persona:grc]: every remaining step that takes input, across 32 modules — 116 step questions in all.
+
+### Fixed
+
+- **The KMS key-policy lab starts with valid JSON** [view:/learn/kms-pqc] [persona:developer] [persona:ops]: the starter policy carried a comment line that is not JSON, so "Valid JSON Syntax" stayed red on load and after inserting the solution; the task is stated above the editor instead.
+- **Four tool descriptions now match the tool** [view:/playground/cacp-kmip] [view:/playground/hybrid-certs] [view:/playground/pqc-ssh-sim] [view:/business/tools/risk-register] [persona:developer] [persona:grc]: the KMIP policy rekeys an ECDSA-P256 key to ML-DSA-65 (not ML-DSA-87); the certificate tool compares eight formats (not six); the SSH baseline uses an ECDSA P-256 host key (not Ed25519); the Risk Register has no owner or review-date field, so its lines no longer promise one.
+
 ## [4.106.0] - 2026-09-19
 
 Fourteen role-board options now also list the Learn module that argues their case, so fifteen modules that only the Learn catalogue reached have a second front door.

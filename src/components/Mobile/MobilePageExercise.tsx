@@ -1,40 +1,24 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/** Round 9, wave 2 (2026-09-19) — "Try it" under a Playground tool (src/data/toolExercises.ts). */
+/**
+ * Round 9, wave 2 (2026-09-19) — phone twin of the page "Try it" block (the
+ * Mobile tree may not import desktop components). Same data as the desktop
+ * block (src/data/pageExercises.ts), one question at a time.
+ */
 import { useState } from 'react'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { TOOL_EXERCISES } from '@/data/toolExercises'
-import { BUSINESS_TOOL_EXERCISES } from '@/data/businessToolExercises'
-import { PAGE_EXERCISES } from '@/data/pageExercises'
+import { pageExercisesFor } from '@/data/pageExercises'
 import { cn } from '@/lib/utils'
 
-export function ToolExercise({
-  toolId,
-  family = 'playground',
-  className,
-}: {
-  toolId: string
-  /** 'page' keys src/data/pageExercises.ts by route (round 9, 2026-09-19). */
-  family?: 'playground' | 'business' | 'page'
-  className?: string
-}) {
-  // toolId comes from the registry route (or the router's pathname for 'page'),
-  // matched against our own keys.
-  /* eslint-disable security/detect-object-injection */
-  const list =
-    family === 'business'
-      ? BUSINESS_TOOL_EXERCISES[toolId]
-      : family === 'page'
-        ? PAGE_EXERCISES[toolId]
-        : TOOL_EXERCISES[toolId]
-  /* eslint-enable security/detect-object-injection */
+export function MobilePageExercise({ route }: { route: string }) {
+  const list = pageExercisesFor(route)
   const [picked, setPicked] = useState<Record<number, number>>({})
   if (!list || list.length === 0) return null
   return (
     <section
       aria-label="Try it"
       data-testid="tool-exercise"
-      className={cn('rounded-xl border border-border bg-muted/20 p-4', className)}
+      className="rounded-xl border border-border bg-muted/20 p-4"
     >
       <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         Try it
@@ -46,7 +30,7 @@ export function ToolExercise({
         return (
           <div key={ex.prompt} className={cn(qi > 0 && 'mt-4 border-t border-border pt-4')}>
             <p className="mt-1 text-sm font-medium text-foreground">{ex.prompt}</p>
-            <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Answers">
+            <div className="mt-3 flex flex-col gap-2" role="group" aria-label="Answers">
               {ex.options.map((opt, i) => (
                 <Button
                   key={opt}
@@ -56,7 +40,7 @@ export function ToolExercise({
                   aria-pressed={p === i}
                   onClick={() => setPicked((s) => ({ ...s, [qi]: i }))}
                   className={cn(
-                    'h-auto whitespace-normal text-left',
+                    'h-auto min-h-11 w-full justify-start whitespace-normal text-left',
                     p !== undefined &&
                       i === ex.answer &&
                       'border-status-success bg-status-success/10',

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pki-enrollment-protocols',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-055',
   title: 'PKI Enrollment Protocols (EST & CMP)',
   description:
@@ -29,6 +29,11 @@ const manifest: ModuleManifest = {
     { id: 'composite', label: 'Composite Enrollment (draft)' },
     { id: 'cert-viewer', label: 'Inspect Issued Certificate' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'keygen',
+    text: 'Pick an ML-DSA or ML-KEM parameter set and press Generate keypair: OpenSSL in the browser produces the end-entity key the CMP and EST enrollment steps use next, with the PEM available to inspect.',
+  },
   playgroundTool: 'pki-enrollment',
   // reduced 5-tab set (no Exercises) — matches the original render
   tabs: [

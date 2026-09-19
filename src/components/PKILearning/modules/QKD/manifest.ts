@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'qkd',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-017',
   title: 'Quantum Key Distribution',
   description:
@@ -28,6 +28,11 @@ const manifest: ModuleManifest = {
     { id: 'protocol-integration', label: 'Protocol Integration' },
     { id: 'hsm-derivation', label: 'HSM Key Derivation' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'bb84-simulator',
+    text: "Choose a qubit count, switch Eve on or off, and press Start Protocol: the qubit grid fills with Alice's, Bob's and Eve's bases, and the sifted key and QBER show whether the eavesdropper was detected.",
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

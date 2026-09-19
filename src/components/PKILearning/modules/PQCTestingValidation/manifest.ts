@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-testing-validation',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-014',
   title: 'PQC Network Testing & Validation',
   description:
@@ -32,6 +32,11 @@ const manifest: ModuleManifest = {
     { id: 'test-strategy-builder', label: 'Test Strategy Builder' },
     { id: 'acvp-validator', label: 'NIST ACVP Validation' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'passive-discovery-lab',
+    text: 'Pick a network segment in the Passive Crypto Discovery Lab and classify each captured TLS, SSH or IKEv2 flow as Quantum-Safe, Hybrid PQC, Vulnerable or Unknown, then reveal the answer.',
+  },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
   // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the

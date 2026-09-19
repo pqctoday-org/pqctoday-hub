@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: '5g-security',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-046',
   title: '5G Security',
   description: 'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
@@ -32,6 +32,11 @@ const manifest: ModuleManifest = {
     { id: 'auth', label: '5G-AKA Authentication' },
     { id: 'provisioning', label: 'SIM Key Provisioning' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'suci',
+    text: 'Enter a 15-digit SUPI, pick Profile A, B or C (PQC), then execute the steps one by one: the subscriber identity is concealed into a SUCI and finally decrypted again by the home network.',
+  },
   playgroundTool: 'suci-flow',
   taxonomy: { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['X.509'] },
   embeddable: true,

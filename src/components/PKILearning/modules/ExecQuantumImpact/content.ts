@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'exec-quantum-impact',
   version: '1.0.1',
   lastReviewed: '2026-08-23',
-  lastEdited: '2026-09-18',
+  lastEdited: '2026-09-19',
 
   standards: [
     getStandard('NSA CNSA 2.0'),

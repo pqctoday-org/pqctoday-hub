@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-101',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-001',
   title: 'PQC 101',
   description:
@@ -28,6 +28,11 @@ const manifest: ModuleManifest = {
     { id: 'key-generation', label: 'Key Generation' },
     { id: 'signature-demo', label: 'Signature Demo' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'algorithm-families',
+    text: 'Expand each of the three families in Algorithm Families — lattice, hash and code-based — and play with its visual: add noise to a lattice, watch a hash avalanche, inject bit errors into a code.',
+  },
   taxonomy: { algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.Module1 })),

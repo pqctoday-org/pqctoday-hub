@@ -79,6 +79,7 @@ import { THREAT_CLASS_DEFS, threatMatchesClass, type ThreatClass } from './threa
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileThreatsView } from '@/components/Mobile/screens/MobileThreatsView'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import {
   LENS_PROTOCOLS,
   protocolsForThreat,
@@ -615,6 +616,8 @@ export const ThreatsDashboard: React.FC<{
           description="Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements."
         />
       )}
+
+      {!simEmbed && <PersonaPageNote route="/threats" className="mb-4" />}
 
       <>
         {/* Persona-forward exposure hero — your scoped sector's applicable threats

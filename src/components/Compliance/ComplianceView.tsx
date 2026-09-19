@@ -22,6 +22,7 @@ import {
 import { STABLE_TABS, type StableTab } from '@/data/complianceStableTabs'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileComplianceView } from '@/components/Mobile/screens/MobileComplianceView'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 // TrustTierFilter (the control) is no longer rendered here — see the note at
 // its old render site. The hook and matcher stay: `?tier=` deep links still
 // filter the page, they just have no second on-screen control.
@@ -612,6 +613,8 @@ export const ComplianceView = ({
           description="Which standards, certification schemes and regulations apply to your context — who defines the algorithms, who validates the products, and who mandates adoption by a date. A reference to find what binds you, not a workspace."
         />
       )}
+
+      {!simEmbed && <PersonaPageNote route="/compliance" />}
 
       {/* The learning frame, glossary strip, revisions feed, persona hint,
           control deck and deadline dot-plot used to stack here — five blocks

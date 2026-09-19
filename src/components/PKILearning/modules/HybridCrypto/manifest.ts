@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'hybrid-crypto',
-  contentVersion: 8,
+  contentVersion: 9,
   lm_id: 'LM-006',
   title: 'Hybrid Cryptography',
   description:
@@ -31,6 +31,11 @@ const manifest: ModuleManifest = {
     { id: 'hybrid-signatures', label: 'Hybrid Signatures' },
     { id: 'hpke', label: 'HPKE' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'key-generation',
+    text: 'Choose KEM or Signatures and press Generate All Keys: classical, post-quantum and hybrid key pairs are generated side by side, with a table of key, ciphertext or signature sizes and gen time.',
+  },
   playgroundTool: 'hybrid-certs',
   taxonomy: {
     algorithms: ['ML-KEM', 'X25519', 'ECDH'],

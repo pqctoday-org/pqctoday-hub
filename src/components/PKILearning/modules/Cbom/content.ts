@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'cbom',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-18',
+  lastEdited: '2026-09-19',
 
   standards: [
     getStandard('OWASP-CycloneDX-CBOM-Guide'),

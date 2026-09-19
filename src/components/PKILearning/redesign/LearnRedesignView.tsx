@@ -15,6 +15,7 @@ import { MyPathView } from './MyPathView'
 import { BrowseAllView } from './BrowseAllView'
 import { PERSONA_ORDER, TOTAL_MODULE_COUNT, TRACK_COUNT } from './learnRedesign.helpers'
 import { MobileLearnScreen } from '@/components/Mobile/screens/MobileLearnScreen'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 /** 2026-08-02: 'guided' promoted from a separate `showRouter` toggle button
  *  into a real third mode, so the page offers one row of three peers —
@@ -142,6 +143,8 @@ export const LearnRedesignView = () => {
           }
         />
       )}
+
+      {!isEmbed && <PersonaPageNote route="/learn" />}
 
       {/* Mode toggle — My Path / Browse all / Guided routing.
           The "Viewing as" persona row that used to sit above this was removed

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'vpn-ssh-pqc',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-009',
   title: 'VPN/IPsec & SSH',
   description:
@@ -25,6 +25,11 @@ const manifest: ModuleManifest = {
     { id: 'ssh-key-exchange', label: 'SSH Key Exchange' },
     { id: 'protocol-comparison', label: 'Protocol Comparison' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'ikev2-handshake',
+    text: 'Choose a key exchange mode — Classical, Hybrid or Pure PQC — and an ML-KEM size, then press Start Daemon: a real IKEv2 exchange runs between initiator and responder, phase by phase in the diagram.',
+  },
   playgroundTool: 'vpn-sim',
   taxonomy: { algorithms: ['ML-KEM', 'ECDH'], standards: ['RFC 9442'] },
   embeddable: true,

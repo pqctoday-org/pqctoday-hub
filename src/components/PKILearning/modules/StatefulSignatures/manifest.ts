@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'stateful-signatures',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-026',
   title: 'Stateful Hash Signatures',
   description:
@@ -27,6 +27,11 @@ const manifest: ModuleManifest = {
     { id: 'slh-dsa-live', label: 'SLH-DSA Live Demo' },
     { id: 'threshold-signing', label: 'Threshold Signing' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'lms-keygen',
+    text: 'Pick an LMS parameter set in LMS Key Generation: the Merkle tree structure, key sizes and signing capacity for that tree height are drawn, and with Live WASM mode on you can generate the key and sign.',
+  },
   playgroundTool: 'lms-hss',
   taxonomy: { algorithms: ['LMS/XMSS'], standards: ['NIST SP 800-208'] },
   embeddable: true,

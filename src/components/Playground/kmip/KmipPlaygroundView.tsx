@@ -83,6 +83,7 @@ import {
 import { KeyConfigPanel } from './operate/KeyConfigPanel'
 import { GuidedLifecyclePanel } from './operate/GuidedLifecyclePanel'
 import type { OperateContext } from './operate/types'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 /** Jargon glossary (A-grade review item #8) — hover/focus definitions for the
  * three protocol acronyms a first-time visitor hits in the very first
@@ -1165,6 +1166,7 @@ export function KmipPlaygroundView() {
         }
         preamble={
           <>
+            <PersonaPageNote route="/playground/cacp" className="mb-3" />
             <p className="text-sm text-muted-foreground -mt-1 mb-2">
               A real <Term t="KMIP" /> 3.0 control plane + <Term t="PKCS#11" /> <Term t="HSM" />,
               compiled to WebAssembly and running{' '}

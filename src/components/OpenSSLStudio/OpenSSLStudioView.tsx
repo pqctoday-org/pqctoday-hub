@@ -37,6 +37,7 @@ import { AlgorithmExplorerPanel } from './learn/AlgorithmExplorerPanel'
 import { useOpenSSLStore } from './store'
 import { useOpenSSL } from './hooks/useOpenSSL'
 import type { OpenSSLCategory } from './categories'
+import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 type QuickCmd = { label: string; cmd: OpenSSLCategory; hint: string }
 const DEV_CHEATSHEET: QuickCmd[] = [
@@ -196,6 +197,8 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
             description="Interactive OpenSSL v3.6.3 environment running entirely in your browser via WebAssembly. Educational use only — not a FIPS-validated module; the pending FIPS 140-3 validation submission covers the OpenSSL 3.5.4 provider (Oct 2025), not the 3.6.x line."
           />
         )}
+
+        {!embedded && <PersonaPageNote route="/openssl" className="mb-4" />}
 
         {selectedPersona === 'curious' && <PreviewBanner pageContext="Developer, Architect, Ops" />}
 

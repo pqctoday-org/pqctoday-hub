@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pki-workshop',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-020',
   title: 'PKI',
   description:
@@ -30,6 +30,11 @@ const manifest: ModuleManifest = {
     { id: 'revoke', label: 'Certificate Revocation' },
     { id: 'mtc', label: 'Merkle Tree Certificates' },
   ],
+  // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
+  startHere: {
+    step: 'csr',
+    text: 'Pick a private key source and a CSR profile, fill in the subject attributes, then press Generate CSR: the console shows the OpenSSL run and the resulting PEM request.',
+  },
   playgroundTool: 'pki-workshop',
   taxonomy: { algorithms: ['ML-DSA', 'ECDSA', 'RSA'], standards: ['X.509', 'FIPS 204'] },
   embeddable: true,
