@@ -8,19 +8,21 @@
 import { Link } from 'react-router'
 import { Network, ArrowRight } from 'lucide-react'
 import type { RelatedEntry } from '@/data/toolRelations'
+import { cn } from '@/lib/utils'
 
 interface RelatedContentPanelProps {
   id: string
   entries: RelatedEntry[]
+  className?: string
 }
 
-export function RelatedContentPanel({ id, entries }: RelatedContentPanelProps) {
+export function RelatedContentPanel({ id, entries, className }: RelatedContentPanelProps) {
   if (entries.length === 0) return null
   return (
     <section
       aria-labelledby={`related-content-${id}`}
       data-testid="related-content"
-      className="rounded-xl border border-border bg-card p-4 sm:p-5"
+      className={cn('rounded-xl border border-border bg-card p-4 sm:p-5', className)}
     >
       <div className="mb-3 flex items-center gap-2">
         <Network size={18} className="shrink-0 text-primary" aria-hidden="true" />

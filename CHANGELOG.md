@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.97.0] - 2026-09-19
+
+Reference pages now show what is related to them, Industry Landscape use cases reach the module that teaches their protocol, and Command Center tools list two Learn modules for their phase.
+
+### Added
+
+- **Related content on every reference page** [view:/] [view:/algorithms] [view:/compliance] [view:/migrate] [view:/timeline] [view:/library] [view:/patents] [view:/leaders] [persona:curious] [persona:researcher] [persona:grc]: two to four hand-picked links under each page — the report beside the assessment, the checklist tool beside Compliance, the FIPS documents beside Algorithms — each with one line on what the target is.
+- **Industry Landscape rows reach the module that teaches their protocol** [view:/learn] [view:/algorithms] [persona:architect] [persona:developer] [persona:ops]: a use case whose target protocol is TLS 1.3, IKEv2/IPsec, SSH, PKCS#11, KMIP, X.509, JOSE, S/MIME, DNSSEC or UEFI, or whose mechanism is LMS, XMSS or SLH-DSA, now appears "By protocol" in that module's In the Industry Landscape panel — the sector module was the only link before, and 42 modules had none.
+
+### Changed
+
+- **Command Center tools list up to two Learn modules for their phase** [view:/business] [persona:executive] [persona:grc]: the related-content panel named one; the second is the next-closest module of the same phase, so every phase's modules are reachable from its tools.
+
 ## [4.96.0] - 2026-09-19
 
 Every page, module and tool now ends with a next step, tools show what is related to them, and the Playground and Command Center put a role's own tools first.

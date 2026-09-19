@@ -59,6 +59,7 @@ import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import { useIsBelowLgViewport } from '../../hooks/useIsBelowLgViewport'
 import { useIsMobileShell } from '../../hooks/useIsMobileShell'
 import { RouteNextStep } from './RouteNextStep'
+import { RouteRelated } from './RouteRelated'
 
 // Lazy — same reasoning as RightPanel/VideoOverlay/WorkshopOverlayHost below:
 // MainLayout is mounted on every route, so a static import here would put
@@ -1499,7 +1500,8 @@ export const MainLayout = () => {
                           present (e.g. a deep link); self-skips Assess/Report/Command Center. */}
                       <PhaseContextBanner />
                       <Outlet />
-                      {/* Round 9, wave 1.2 — the declared exit for routed pages. */}
+                      {/* Round 9, wave 1.1 / 1.2 — related content and the declared exit for routed pages. */}
+                      <RouteRelated mobile={isMobileShell} />
                       <RouteNextStep mobile={isMobileShell} />
                     </div>
                   </motion.div>

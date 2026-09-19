@@ -7,6 +7,9 @@
  * the reverse edge from the same CSV column, so a reader who arrived at
  * healthcare-pqc can jump to the Healthcare use cases, their mechanisms and
  * their standards. Nothing renders for a module no landscape row names.
+ * Round 9, wave 1.6 (2026-09-19): rows also reach the module that teaches
+ * their target protocol or mechanism (landscapeProtocolModules), listed after
+ * the sector rows and marked "By protocol".
  */
 import { Link } from 'react-router'
 import { Layers, ArrowRight } from 'lucide-react'
@@ -40,6 +43,7 @@ export function IndustryLandscapePanel({ moduleId }: { moduleId: string }) {
               <span className="min-w-0">
                 <span className="block font-medium text-foreground">{e.industry}</span>
                 <span className="block text-[11px] text-muted-foreground">
+                  {e.edge === 'protocol' ? 'By protocol · ' : ''}
                   {e.useCaseLabels.slice(0, 3).join(' · ')}
                   {e.useCaseLabels.length > 3 ? ` · +${e.useCaseLabels.length - 3} more` : ''}
                 </span>
