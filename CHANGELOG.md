@@ -36,11 +36,13 @@ Every module now offers its quiz before you finish it, disabled buttons say why,
 ### Added
 
 - **"Check your understanding" on every module with a quiz** [view:/learn] [persona:curious] [persona:developer] [persona:grc]: the quiz handoff was shown only after Complete Module; it now sits under the workshop on all 59 modules that have a question set, with the question count and a link, on desktop and phone.
+- **"Try it" under thirteen workshop steps** [view:/learn/pqc-101] [view:/learn/quantum-threats] [view:/learn/cbom] [persona:curious] [persona:developer] [persona:grc]: one question per step, answered from the step you just did, with a reason that names the concept whether you were right or not. PQC 101, Quantum Threats and CBOM carry the first batch; the mechanism is in place for every module.
 - **A visible reason beside seven disabled buttons** [view:/playground/interactive] [view:/learn/hsm-pqc] [view:/learn/kms-pqc] [view:/learn/entropy-randomness] [view:/learn/pki-workshop] [view:/playground/vpn-sim] [view:/playground/pqc-ssh-sim] [persona:developer] [persona:ops]: Run Encapsulate, the HSM simulator's Next, Complete & Next in the envelope demo, the DRBG's Generate and Reseed, Generate CRL, Run algorithm matrix and Run both handshakes explained themselves only in a hover tooltip; the reason is now text under the control.
 
 ### Fixed
 
 - **Small labels inside workshop steps are readable again** [view:/playground/cacp] [view:/migrate] [view:/timeline] [view:/learn/confidential-computing] [view:/learn/automotive-pqc] [view:/learn/digital-id] [view:/learn/web-gateway-pqc] [persona:architect] [persona:ops]: spec-only policy rows, future attestation steps and unselected sensors were dimmed with opacity, which pushed their 9–10 px text below the contrast minimum; they now use a dashed border. Black text on the selected phone Migrate chip, the certificate rotation bar and eight selected buttons uses the foreground token; the HSM engine badge and the "Waiting to start" log lines were lightened to pass.
+
 ## [4.98.0] - 2026-09-19
 
 Sliders, inputs and icon buttons inside workshop steps now say what they are to assistive technology.
