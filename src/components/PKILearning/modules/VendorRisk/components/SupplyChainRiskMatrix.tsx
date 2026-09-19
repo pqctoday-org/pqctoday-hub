@@ -185,7 +185,9 @@ const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap }) => 
       ? 'bg-status-success'
       : 'bg-status-error'
     : getBarColor(count, total)
-  const barWidth = isGap ? (total > 0 ? Math.round((count / total) * 100) : 0) : pct
+  // Clamped: a gap count can exceed the badge's total (several gaps per product),
+  // which drew the fill past its track at any width (round-9 walk, 2026-09-19).
+  const barWidth = Math.min(100, isGap ? (total > 0 ? Math.round((count / total) * 100) : 0) : pct)
 
   return (
     <div className="space-y-1">

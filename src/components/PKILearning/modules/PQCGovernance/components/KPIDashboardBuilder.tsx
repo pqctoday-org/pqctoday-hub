@@ -217,7 +217,7 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
           Readiness and threat-scoped KPIs auto-populate from the catalog, industry threats, and
           your assessment; weights adapt to the selected persona lens.
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex max-w-full flex-wrap items-center gap-2">
           <CompleteStepAction
             recordsArtifact
             saved={wasSaved}
