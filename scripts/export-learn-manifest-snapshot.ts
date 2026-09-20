@@ -427,6 +427,20 @@ function extractComponentText(filePath: string): string {
   }
 
   const visit = (node: ts.Node): void => {
+    // <EstimateNote what="…" basis="…" /> renders "Our estimate — …" beside a
+    // block of the site's own modelled figures (round 9, wave 4). Its props are
+    // not allowlisted attributes, so emit the rendered label here: the accuracy
+    // checker reading this snapshot must see the label next to the figures.
+    if (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) {
+      if (node.tagName.getText() === 'EstimateNote') {
+        const attrs = node.attributes.properties
+          .filter((p): p is ts.JsxAttribute => ts.isJsxAttribute(p))
+          .map((p) =>
+            p.initializer && ts.isStringLiteral(p.initializer) ? p.initializer.text : ''
+          )
+        push('Our estimate — ' + attrs.filter(Boolean).join(' '))
+      }
+    }
     if (ts.isJsxElement(node)) {
       const tag = node.openingElement.tagName.getText().toLowerCase()
       if (tag === 'sup' || tag === 'sub') {
