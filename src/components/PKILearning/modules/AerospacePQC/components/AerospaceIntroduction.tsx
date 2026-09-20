@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { EstimateNote } from '@/components/ui/EstimateNote'
 
 // -- Local CollapsibleSection ------------------------------------------------
 
@@ -410,6 +411,11 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
                 </tr>
               </tbody>
             </table>
+            <EstimateNote
+              className="mt-2"
+              what="the certification cost and duration band per DAL level, and the clean-sheet saving below."
+              basis="Order-of-magnitude figures from public avionics programme experience; no certification authority publishes a tariff."
+            />
           </div>
 
           <p>

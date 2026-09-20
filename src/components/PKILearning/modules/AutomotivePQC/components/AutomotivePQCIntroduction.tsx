@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { EstimateNote } from '@/components/ui/EstimateNote'
 
 // -- Local CollapsibleSection ------------------------------------------------
 
@@ -667,6 +668,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             crypto stack must survive <strong>3&ndash;4 complete algorithm generations</strong>{' '}
             &mdash; a challenge no other consumer product faces.
           </p>
+          <EstimateNote what="the 15–20 year service life of a vehicle sold in 2026 and the 3–4 algorithm generations it implies." />
 
           <p>
             <InlineTooltip term="Crypto Agility">Crypto agility</InlineTooltip> in automotive

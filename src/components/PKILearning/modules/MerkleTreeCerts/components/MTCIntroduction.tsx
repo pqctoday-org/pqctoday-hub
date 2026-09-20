@@ -18,6 +18,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
+import { EstimateNote } from '@/components/ui/EstimateNote'
 
 interface MTCIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -388,6 +389,10 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                 landmark proof at the last landmark (~4.4M). Cosigner overhead is policy-dependent
                 (minimum shown).
               </p>
+              <EstimateNote
+                className="mt-2"
+                what="the handshake byte counts in this table. Signature and key sizes are FIPS 204's; the proof, SCT and metadata sizes come from this module's own tree model (a checkpoint of about 2,500 entries, a landmark of about 4.4 million)."
+              />
             </div>
 
             <div className="bg-warning/5 rounded-lg p-3 border border-warning/20 text-xs text-muted-foreground">

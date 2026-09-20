@@ -76,6 +76,7 @@ import {
   type PqcFamily,
   type RsaAlg,
 } from '@/data/hsmKeyStorageDefaults'
+import { EstimateNote } from '@/components/ui/EstimateNote'
 
 type Workload = 'classical' | 'pqc'
 type Redundancy = 'n+1' | '2n'
@@ -1983,6 +1984,11 @@ export function HsmCapacityCalculator() {
             </Button>
           ))}
         </div>
+        <EstimateNote
+          className="mt-2"
+          what="the aggregate TPS behind each deployment-size preset and use-case profile."
+          basis="Each is worked from stated inputs (users × requests × the resumption ratio, developers × commits × artifacts, connections ÷ key TTL) for a typical small, medium and large estate."
+        />
 
         {/* Redundancy + Distributed topology — hidden in inventory mode (those controls live in the inventory panel above) */}
         {planningMode === 'demand' && (

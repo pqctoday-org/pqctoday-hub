@@ -69,6 +69,7 @@ import {
   CKA_DECRYPT,
   type AttrDef,
 } from '@/wasm/softhsm'
+import { EstimateNote } from '@/components/ui/EstimateNote'
 
 const TEE_LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
@@ -1047,6 +1048,10 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                           <div className="text-xs text-foreground font-medium">
                             {activeStep.dataSize}
                           </div>
+                          <EstimateNote
+                            className="mt-1"
+                            what="the per-step payload sizes, rounded: an ML-KEM-768 ciphertext plus certificate, and a wrapped or unsealed ML-DSA-65 private key."
+                          />
                         </div>
                       </div>
                     </div>
