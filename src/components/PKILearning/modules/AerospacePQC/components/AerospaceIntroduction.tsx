@@ -215,8 +215,8 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
           </p>
 
           <p>
-            Algorithm selection matters enormously: <strong>LMS (H10/W4)</strong> signatures (1,840
-            B) are 44% smaller than ML-DSA-65 (3,309 B). For bandwidth-constrained aviation links,
+            Algorithm selection matters enormously: <strong>LMS (H10/W4)</strong> signatures (2,512
+            B) are 24% smaller than ML-DSA-65 (3,309 B). For bandwidth-constrained aviation links,
             hash-based stateful signatures may be the only viable PQC option &mdash; but they
             require secure monotonic counters to prevent state reuse.
           </p>

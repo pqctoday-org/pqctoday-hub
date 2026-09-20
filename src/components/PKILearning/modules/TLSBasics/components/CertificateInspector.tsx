@@ -259,7 +259,7 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
       classical: 'X25519 key share: 32 B',
     },
     'SLH-DSA': {
-      sigSize: '7,856 – 50,208 B (varies by params)',
+      sigSize: '7,856 – 49,856 B (varies by params)', // FIPS 205 Table 2: SHA2-128s to SHAKE-256f
       pubKeySize: '32 B',
       level: 'NIST L1–L5',
       classical: 'ECDSA sig: ~72 B',

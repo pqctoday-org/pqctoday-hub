@@ -17,10 +17,10 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
       mlkem768Bytes: 1088,
       mldsa65Bytes: 3309,
       mldsa44Bytes: 2420,
-      lmsBytes: 1840,
+      lmsBytes: 2512,
       feasibility: 'infeasible',
       notes:
-        'ML-DSA-65 signature (3,309 B) requires 16 ACARS blocks per signed message. Even LMS (1,840 B) requires 9 blocks. Multi-block fragmentation increases VHF channel occupancy dramatically.',
+        'ML-DSA-65 signature (3,309 B) requires 16 ACARS blocks per signed message. Even LMS (H10/W4, 2,512 B) requires 12 blocks. Multi-block fragmentation increases VHF channel occupancy dramatically.',
     },
   },
   {
@@ -38,7 +38,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
       mlkem768Bytes: 1088,
       mldsa65Bytes: 3309,
       mldsa44Bytes: 2420,
-      lmsBytes: 1840,
+      lmsBytes: 2512,
       feasibility: 'marginal',
       notes:
         'PQC signatures exceed single-message capacity but CPDLC supports multi-part. 20-second latency budget on GEO SATCOM (600 ms RTT) leaves margin for PQC handshake overhead.',
@@ -59,7 +59,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
       mlkem768Bytes: 1088,
       mldsa65Bytes: 3309,
       mldsa44Bytes: 2420,
-      lmsBytes: 1840,
+      lmsBytes: 2512,
       feasibility: 'infeasible',
       notes:
         '112-bit message format cannot carry any PQC signature. Authentication would require a new ICAO Annex 10 standard and receiver hardware upgrades across millions of installations worldwide.',
@@ -80,7 +80,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
       mlkem768Bytes: 1088,
       mldsa65Bytes: 3309,
       mldsa44Bytes: 2420,
-      lmsBytes: 1840,
+      lmsBytes: 2512,
       feasibility: 'infeasible',
       notes:
         '4-byte word size is far too small for any cryptographic overhead. Security must be provided at higher layers or via gateway appliances translating to/from secure channels.',
@@ -101,7 +101,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
       mlkem768Bytes: 1088,
       mldsa65Bytes: 3309,
       mldsa44Bytes: 2420,
-      lmsBytes: 1840,
+      lmsBytes: 2512,
       feasibility: 'fits',
       notes:
         'Ethernet frame capacity and high bandwidth make PQC feasible. ML-KEM-768 ciphertext fits in a single frame. ML-DSA-65 requires fragmentation but is manageable at 100 Mbps.',
@@ -122,7 +122,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
       mlkem768Bytes: 1088,
       mldsa65Bytes: 3309,
       mldsa44Bytes: 2420,
-      lmsBytes: 1840,
+      lmsBytes: 2512,
       feasibility: 'infeasible',
       notes:
         '64-byte maximum message cannot carry PQC payloads. Gateway-mediated approach required: 1553 bus segment terminates at a PQC-capable gateway that bridges to secure Ethernet.',
@@ -143,7 +143,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
       mlkem768Bytes: 1088,
       mldsa65Bytes: 3309,
       mldsa44Bytes: 2420,
-      lmsBytes: 1840,
+      lmsBytes: 2512,
       feasibility: 'infeasible',
       notes:
         '75-byte J-series message cannot fit PQC signatures. Link 16 relies on TRANSEC (transmission security) rather than COMSEC for over-the-air protection. PQC migration targets the key distribution infrastructure, not the data link itself.',
@@ -157,7 +157,8 @@ export const PQC_ALGORITHM_SIZES = {
   'ML-KEM-512': { publicKey: 800, ciphertext: 768, label: 'ML-KEM-512' },
   'ML-DSA-65': { publicKey: 1952, signature: 3309, label: 'ML-DSA-65' },
   'ML-DSA-44': { publicKey: 1312, signature: 2420, label: 'ML-DSA-44' },
-  'LMS-SHA256-H10-W4': { publicKey: 56, signature: 1840, label: 'LMS (H10/W4)' },
+  // RFC 8554: LMOTS_SHA256_N32_W4 (p = 67) signature 4 + 32 + 67·32 = 2,180 B; LMS_SHA256_M32_H10 adds 4 + 4 + 10·32 → 2,508 B; the HSS header (L = 1) makes 2,512 B on the wire.
+  'LMS-SHA256-H10-W4': { publicKey: 56, signature: 2512, label: 'LMS (H10/W4)' },
   'XMSS-SHA2-10-256': { publicKey: 64, signature: 2500, label: 'XMSS (H10)' },
   X25519: { publicKey: 32, ciphertext: 32, label: 'X25519 (classical)' },
   'ECDSA-P256': { publicKey: 64, signature: 64, label: 'ECDSA P-256 (classical)' },

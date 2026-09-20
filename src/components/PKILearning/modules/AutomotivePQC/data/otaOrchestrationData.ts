@@ -130,10 +130,10 @@ export const SIGNATURE_OVERHEADS: SignatureOverhead[] = [
   },
   {
     algorithm: 'LMS (H10/W4)',
-    signatureBytes: 2156,
+    signatureBytes: 2512, // RFC 8554 H10/W4 with the HSS header (was 2156, unsourced)
     publicKeyBytes: 56,
     signaturesPerPackage: 32,
-    totalOverheadKB: 69.8,
+    totalOverheadKB: 80.4,
   },
   {
     algorithm: 'FN-DSA-512',
