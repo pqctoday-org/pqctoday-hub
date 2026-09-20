@@ -876,11 +876,10 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
               <span>50%</span>
             </div>
             <p className="text-[10px] text-muted-foreground mt-1">
-              Default reflects the selected organization size — Cyentia IRIS 2025 anchors: SMB
-              8.7%/yr, average org 9.3%/yr, Fortune-1000-class 12.8%/yr. The tiers sit close
-              together because IRIS 2025's finding is that they have converged: small-firm risk has
-              more than doubled since 2008 while the largest firms' has fallen. Drag the slider to
-              override.
+              Default reflects the selected organization size — Cyentia IRIS 2025 anchors per
+              organization size (Figures 6 and 7 of the report). The tiers sit close together
+              because IRIS 2025's finding is that they have converged: small-firm risk has more than
+              doubled since 2008 while the largest firms' has fallen. Drag the slider to override.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3">

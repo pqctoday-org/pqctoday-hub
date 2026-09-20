@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'data-asset-sensitivity',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-005',
   title: 'Data & Asset Sensitivity',
   description:

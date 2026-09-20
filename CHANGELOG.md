@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.112.0] - 2026-09-20
+
+Nineteen figures that no document we can capture actually states are gone from the pages; the sentences now say what the source reports without quoting numbers we cannot check.
+
+### Changed
+
+- **Unverifiable numbers removed** [view:/learn] [view:/business] [persona:researcher] [persona:grc]: the VIAVI benchmark percentages on the PQC Testing module (the white paper sits behind a registration wall), the Cyentia IRIS breach-probability percentages quoted in the board pitch, ROI and breach tools (the report states them in charts), two CEN standard numbers and the ICAO document number on the Digital Identity module, two aerospace table cells, the UOV signature-size range, the NB-IoT uplink rate, the Solana varint boundaries, the DORA penalty percentage and the KpqC standardisation year. Each sentence keeps its attribution and its meaning; the tools' own default values are unchanged.
+
 ## [4.111.0] - 2026-09-20
 
 The figures on the Learn modules and business tools now say where they come from: sizes are written the way the standards state them, worked examples say they are worked examples, the site's own estimates say so, and eleven more documents joined the Library so that the facts they back can be checked against them.

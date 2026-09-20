@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'digital-id',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-030',
   title: 'Digital ID',
   description:

@@ -373,7 +373,7 @@ const { pubHandle, privHandle } = hsm_generateEdDSAKeyPair(
             value:
               'Header(3B) | compact-u16(nKeys) | Keys(n×32B) | Blockhash(32B) | compact-u16(nInstr) | Instructions',
             description:
-              "Production Solana messages use compact binary, not JSON. compact-u16 is Solana's variable-length encoding: values 0–127 fit in 1 byte; 128–16383 use 2 bytes with a continuation bit. Each instruction is: 1-byte programIdIndex | compact-u16 account count | account indices | compact-u16 data length | raw data. The full serialized message is base58- or base64-encoded for transmission.",
+              "Production Solana messages use compact binary, not JSON. compact-u16 is Solana's variable-length encoding: small values fit in one byte and larger ones in two or three, with a continuation bit. Each instruction is: 1-byte programIdIndex | compact-u16 account count | account indices | compact-u16 data length | raw data. The full serialized message is base58- or base64-encoded for transmission.",
           },
           {
             label: 'Wire Format (Example)',

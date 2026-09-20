@@ -626,7 +626,7 @@ const MultivariateVisual: React.FC = () => (
             textAnchor="middle"
             className="fill-foreground text-[10px] font-bold"
           >
-            σ — 96–838 B
+            σ — smallest of any family
           </text>
         </motion.g>
 

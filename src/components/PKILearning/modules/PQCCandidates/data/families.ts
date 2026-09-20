@@ -73,7 +73,7 @@ export const FAMILIES: Record<FamilyId, MathFamily> = {
     hardness:
       'Inverting a system of multivariate quadratic polynomials with a trapdoor (Oil and Vinegar, introduced 1999). Hardness rests on the MQ problem and the secrecy of the oil/vinegar partition.',
     whyKept:
-      'Potentially smallest signatures of any PQC family (~96–838 B). SNOVA odd-characteristic reparameterisation reaches sub-FN-DSA combined sizes. No attack has broken the underlying UOV construction itself.',
+      'Potentially smallest signatures of any PQC family. SNOVA odd-characteristic reparameterisation reaches sub-FN-DSA combined sizes. No attack has broken the underlying UOV construction itself.',
     openConcerns:
       "The 2025 Ran wedge attack and the Furue–Ikematsu small-field attack each pushed 3 of UOV's 4 parameter sets below their security targets, hit MAYO-2 by ~30 bits, and broke most SNOVA parameter sets. QR-UOV (odd characteristic) survived unscathed.",
     candidateIds: ['uov', 'mayo', 'qr-uov', 'snova'],

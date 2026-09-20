@@ -61,7 +61,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'QES / QTSP',
     badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
     observe:
-      "QES requires SCAL2 because the signing key must be under the sole control of the signatory — the QTSP must ensure no third party (including the QTSP itself) can sign on the user's behalf without their active authorisation. QTSPs that issue qualified certificates follow ETSI EN 319 411, while remote QES signing with SCAL2 is governed by the CEN EN 419 241 series (with the QSCD covered by CEN EN 419 221-5 — the EN 419 xxx series is CEN/TC 224, not ETSI); QTSPs are listed on National Trusted Lists. The CSC API v2 (Cloud Signature Consortium) standardises the remote signing protocol.",
+      "QES requires SCAL2 because the signing key must be under the sole control of the signatory — the QTSP must ensure no third party (including the QTSP itself) can sign on the user's behalf without their active authorisation. QTSPs that issue qualified certificates follow ETSI EN 319 411, while remote QES signing with SCAL2 is governed by the CEN standards for server signing (with the QSCD covered by the CEN protection profile for its cryptographic module — those standards come from CEN/TC 224, not ETSI); QTSPs are listed on National Trusted Lists. The CSC API v2 (Cloud Signature Consortium) standardises the remote signing protocol.",
     stepIndex: 4,
   },
   {
