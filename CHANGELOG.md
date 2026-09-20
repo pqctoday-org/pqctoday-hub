@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.109.0] - 2026-09-19
+
+Every figure on the Learn modules, tools and pages was checked word for word against the standards they cite; three signature-size figures that disagreed with the standard are corrected.
+
+### Fixed
+
+- **LMS signature size now matches RFC 8554 in every module** [view:/learn/aerospace-pqc] [view:/learn/automotive-pqc] [persona:developer] [persona:architect] [persona:ops]: the Aerospace and Automotive modules gave the LMS (H10/W4) signature as 1,840 and 2,156 bytes while IoT and Code Signing gave 2,512; the standard's formula gives 2,512 bytes. The avionics block counts (12 ACARS blocks, not 9), the "24% smaller than ML-DSA-65" comparison and the automotive OTA overhead (80.4 KB per package) follow from the corrected figure.
+- **SLH-DSA signature range in the TLS certificate inspector** [view:/learn/tls-basics] [persona:developer] [persona:curious]: the largest parameter set signs at 49,856 bytes (FIPS 205), not 50,208.
+
+### Data
+
+- **Quiz: the EU PQC roadmap is dated June 2025** [view:/learn/quiz] [persona:grc] [persona:executive]: the CBOM question's explanation now carries the date the document itself bears rather than the day it was posted, so the two no longer disagree.
+
 ## [4.108.1] - 2026-09-19
 
 A "Try it" question under a reference page now tests something worth knowing, or the page has none.

@@ -148,7 +148,7 @@ export const ALGORITHM_THROUGHPUT: AlgorithmThroughput[] = [
     algorithm: 'LMS (H10/W4, pre-computed)',
     signingTimeMs: 0.1,
     verificationTimeMs: 0.05,
-    signatureBytes: 2156,
+    signatureBytes: 2512, // RFC 8554 H10/W4 with the HSS header (was 2156, unsourced)
     publicKeyBytes: 56,
   },
 ]
