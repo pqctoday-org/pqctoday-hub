@@ -262,7 +262,8 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
             />
             {iterations < 100_000 && (
               <p className="text-[10px] text-status-warning">
-                Below NIST SP 800-132 §5.2 minimum (100,000)
+                Below this panel&apos;s 100,000-iteration floor (SP 800-132 §5.2 recommends at least
+                1,000; use more where performance allows)
               </p>
             )}
           </div>

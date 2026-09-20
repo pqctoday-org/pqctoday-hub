@@ -168,14 +168,15 @@ export const CrqcCapabilityStrip: React.FC<{
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
             ~{shorTargetQubits.toLocaleString()} LQ is the low-end ECC-256 estimate
-            (Google/Ethereum, 2026); earlier work ranged to ~2,330+ LQ. The bar to break RSA-2048
-            keeps falling: ~20M physical qubits (2019) → &lt;1M (Gidney 2025) → &lt;100k projected
-            (qLDPC, 2026).
+            (Google/Ethereum, 2026); earlier work ranged to ~2,330+ LQ (Roetteler et al. 2017,
+            arXiv:1706.06752). The bar to break RSA-2048 keeps falling: ~20M physical qubits (2019)
+            → &lt;1M (Gidney 2025) → &lt;100k projected (qLDPC, 2026).
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
-            The <em>logical</em>-qubit count for the same RSA-2048 target has fallen too: ~4,098
-            (2016-era 2n+2 estimate) → ~1,730 (Chevignard–Fouque–Schrottenloher, ePrint 2024/222) →
-            ~1,537 (Gidney 2025) — an algorithmic improvement independent of the
+            The <em>logical</em>-qubit count for the same RSA-2048 target has fallen too: 2n+2,
+            which gives 4,098 (2016-era estimate, arXiv:1611.07995) → ~1,730
+            (Chevignard–Fouque–Schrottenloher, ePrint 2024/222) → ~1,537 (Gidney 2025,
+            arXiv:2505.15917) — an algorithmic improvement independent of the
             physical-qubit-overhead cuts above.
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">

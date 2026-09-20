@@ -116,7 +116,7 @@ export const SMIMECertViewer: React.FC = () => {
               <div>
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-muted-foreground">ML-DSA-65 Certificate</span>
-                  <span className="font-mono text-success">~6,000 bytes</span>
+                  <span className="font-mono text-success">~6,000 bytes (indicative)</span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-3">
                   <div

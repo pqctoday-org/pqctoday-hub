@@ -170,9 +170,10 @@ export function TermsView() {
               <h3 className="font-medium text-foreground mb-1">4.2 License Exception</h3>
               <p>
                 Distribution is authorized under{' '}
-                <strong>License Exception TSU (&sect;740.13 EAR)</strong> for publicly available
-                encryption source code and <strong>License Exception ENC (&sect;740.17 EAR)</strong>{' '}
-                for mass-market encryption software.
+                <strong>License Exception TSU (15 CFR &sect;740.13, EAR)</strong> for publicly
+                available encryption source code and{' '}
+                <strong>License Exception ENC (15 CFR &sect;740.17, EAR)</strong> for mass-market
+                encryption software.
               </p>
             </div>
             <div>

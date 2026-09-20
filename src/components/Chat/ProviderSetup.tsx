@@ -242,7 +242,7 @@ export const ProviderSetup: React.FC = () => {
                       Experimental
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground">100% on-device</p>
+                  <p className="text-xs text-muted-foreground">Fully on-device</p>
                 </div>
               </div>
 
@@ -254,7 +254,7 @@ export const ProviderSetup: React.FC = () => {
                   Accuracy is currently below our bar
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Local AI runs entirely in your browser, but small on-device models (1.7–8B
+                  Local AI runs entirely in your browser, but small on-device models (a few billion
                   parameters) <strong className="text-foreground">routinely fabricate facts</strong>{' '}
                   about specific algorithms, standards, and dates — including inventing non-existent
                   algorithm names or using deprecated terminology.
@@ -310,9 +310,10 @@ export const ProviderSetup: React.FC = () => {
                     This device&apos;s GPU can&apos;t run local AI
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Local AI needs GPU buffers of at least 128MB. Your browser&apos;s WebGPU driver
-                    reports a maximum of {bufferCheck.insufficientMB}MB on this device — a limit
-                    common on lower-end mobile GPUs. Please use Cloud (Gemini) instead.
+                    This app&apos;s local AI needs GPU buffers of at least 128MB. Your
+                    browser&apos;s WebGPU driver reports a maximum of {bufferCheck.insufficientMB}MB
+                    on this device — a limit common on lower-end mobile GPUs. Please use Cloud
+                    (Gemini) instead.
                   </p>
                   <Button
                     variant="outline"

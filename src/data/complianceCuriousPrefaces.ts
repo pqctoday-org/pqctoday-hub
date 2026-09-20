@@ -24,7 +24,7 @@ export const COMPLIANCE_CURIOUS_PREFACES: Record<string, string> = {
   DORA: "The EU's Digital Operational Resilience Act. DORA requires financial firms (banks, insurers, market infrastructure) to manage ICT risk and prove operational resilience — it doesn't name PQC as an explicit mandate, but its Article 9 protection-of-information duties are increasingly read to cover quantum-safe crypto.",
   NIS2: 'The EU\'s second Network and Information Security directive. NIS2 vastly expands which sectors must report cybersecurity incidents within 24 hours and prove "state-of-the-art" crypto — and PQC is on the way to becoming part of "state-of-the-art."',
   'PCI-DSS':
-    'The Payment Card Industry Data Security Standard. Anyone handling credit-card numbers has to meet PCI-DSS. The v4 update (mandatory March 2025) added crypto-agility requirements that explicitly point toward PQC.',
+    'The Payment Card Industry Data Security Standard. Anyone handling credit-card numbers has to meet PCI-DSS. The v4 update (PCI DSS v4.0.1; its future-dated requirements became mandatory on 31 March 2025) added crypto-agility requirements that explicitly point toward PQC.',
   HIPAA:
     "The US Health Insurance Portability and Accountability Act. HIPAA-protected health records have to stay private for decades — which means today's encrypted backups already need to plan for quantum decryption.",
   SOX: 'The US Sarbanes-Oxley Act. SOX makes public-company financial records auditable for 7+ years — so anything encrypted today must still be defensible in a future where quantum decryption is real.',

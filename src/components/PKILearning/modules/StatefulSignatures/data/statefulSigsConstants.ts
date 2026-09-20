@@ -715,7 +715,7 @@ export const USE_CASE_RECOMMENDATIONS: UseCaseRecommendation[] = [
     recommendedParams: 'XMSS^MT-SHA2_40/4_256',
     rationale:
       'Multi-tree structure provides massive signing capacity. Long-term security from hash-based assumptions. Suitable for PKI-integrated workflows.',
-    maxSignaturesNeeded: '~1,000,000+ over organizational lifetime',
+    maxSignaturesNeeded: '~1,000,000+ over organizational lifetime (indicative)',
     stateStorageRequirement: 'Enterprise HSM with transactional state management',
   },
   {

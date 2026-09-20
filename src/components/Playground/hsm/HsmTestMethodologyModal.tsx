@@ -60,7 +60,7 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
             <span className="font-semibold text-foreground">
               OASIS PKCS#11 v3.2, an OASIS Standard since 3 June 2026
             </span>
-            ; the preceding v3.1 (23 July 2023) does not include these PQC mechanisms.
+            ; the preceding PKCS #11 v3.1 (23 July 2023) does not include these PQC mechanisms.
           </p>
 
           {/* Layer 1: ACVP KAT */}
