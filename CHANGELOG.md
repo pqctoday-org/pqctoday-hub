@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.108.1] - 2026-09-19
+
+A "Try it" question under a reference page now tests something worth knowing, or the page has none.
+
+### Fixed
+
+- **Page "Try it" questions ask about post-quantum cryptography, not about the page's own controls** [view:/threats] [view:/openssl] [view:/faq] [view:/business] [view:/compliance] [persona:curious] [persona:grc] [persona:executive] [persona:developer] [persona:architect]: the 4.107.0 set of 19 page questions included 13 that quizzed the page itself ("what does Export Backup download?", "which tab hides the filter?") and taught nothing. Those are removed — the home page, Report, Assess, Explore, Community, Revisions, the Library, Timeline, Algorithms, Migrate and the Playground hubs no longer carry a question. The five that remain each test a concept the page presents: the HNDL versus HNFL threat classes, generating an ML-DSA key with OpenSSL, what a "Partial" FIPS tier means, which board question a RACI chart answers, and why holding a FIPS certificate does not mean it covers post-quantum algorithms. A test now rejects any new page question phrased around chips, tabs, buttons or exports.
+
 ## [4.108.0] - 2026-09-19
 
 Sixty-two Learn workshops now run on a phone; a step-by-step walk of every workshop at phone width found the four that needed a fix, and three stay on the laptop banner until walked by hand.
