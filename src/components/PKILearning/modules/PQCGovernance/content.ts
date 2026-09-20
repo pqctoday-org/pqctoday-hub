@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-governance',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     // Governance documents first, algorithm specifications after. This module's
@@ -38,6 +38,11 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match the
     // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
     getStandard('FIPS-140-3-STANDARD'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('BSI TR-02102-1'), // m-pqc-governance: 1344
+    getStandard('NIST IR 8545'), // bt-policy-generator: HQC-128; m-pqc-governance: HQC-128
+    getStandard('FrodoKEM-key-encapsulation-from-learning-with-errors'), // bt-policy-generator: 1344
+    getStandard('Security-Requirements-for-Cryptographic-Modules'), // bt-kpi-dashboard: FIPS 140-2
   ],
 
   algorithms: [

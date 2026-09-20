@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'digital-assets',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('RFC-8032'),
@@ -42,6 +42,12 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NIST-SP-800-132'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('Solana-Docs-Transactions'), // m-digital-assets: 16383
+    getStandard('Bech32m-format-for-v1-witness-addresses'), // m-digital-assets: BIP-350
+    getStandard('Fee-Structure'), // m-digital-assets: 5,000
+    getStandard('Frame-Transaction'), // m-digital-assets: 8141; m-digital-assets: EIP-8141
+    getStandard('Secondary-Signature-Algorithms'), // m-digital-assets: EIP-7932
   ],
 
   algorithms: [

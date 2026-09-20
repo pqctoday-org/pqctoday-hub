@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'automotive-pqc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 203'),
@@ -42,6 +42,24 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('ISO-IEC-11889-2015-Information-technology-Trusted-Platform-M'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag'), // m-automotive-pqc: 155
+    getStandard('UNECE-R156'), // m-automotive-pqc: 156
+    getStandard('ISO-26262-Road-vehicles-Functional-safety'), // m-automotive-pqc: ISO 26262:2018
+    getStandard('A-Standard-for-the-Transmission-of-IP-Datagrams-over-Etherne'), // m-automotive-pqc: 1,500
+    getStandard('Cards-and-security-devices-for-personal-identification-Conta'), // m-automotive-pqc: ISO 14443
+    getStandard('Cards-and-security-devices-for-personal-identification-Conta-2'), // m-automotive-pqc: ISO 14443-4
+    getStandard('IEEE-Standard-for-Ethernet'), // m-automotive-pqc: IEEE 802.3
+    getStandard('IEEE-Standard-for-Wireless-Access-in-Vehicular-Environments'), // m-automotive-pqc: IEEE 1609.2
+    getStandard('ISO-10681-1-2010-Road-vehicles-Communication-on-FlexRay-Part'), // m-automotive-pqc: ISO 10681:2010
+    getStandard('ISO-11898-1-2024-Road-vehicles-Controller-area-network-CAN-P'), // m-automotive-pqc: ISO 11898-1:2024
+    getStandard('ISO-21448-2022-Road-vehicles-Safety-of-the-intended-function'), // m-automotive-pqc: ISO 21448
+    getStandard('ISO-SAE-21434-2021-Road-vehicles-Cybersecurity-engineering'), // m-automotive-pqc: 21434
+    getStandard('Road-vehicles-Controller-area-network-CAN-Part-1-Data-link-l'), // m-automotive-pqc: ISO 11898-1:2015
+    getStandard('Road-vehicles-Vehicle-to-grid-communication-interface-Part-1'), // m-automotive-pqc: ISO 15118
+    getStandard('Road-vehicles-Vehicle-to-grid-communication-interface-Part-2'), // m-automotive-pqc: ISO 15118-20
+    getStandard('Use-of-FN-DSA-in-TLS-1-3'), // m-automotive-pqc: 666 bytes
+    getStandard('IEEE-Std-802-3bp-2016-1000BASE-T1-PHY'), // m-automotive-pqc: 1000
   ],
 
   algorithms: [

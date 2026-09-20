@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'os-pqc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 203'),
@@ -38,6 +38,10 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('IETF RFC 8709'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'), // TLS 1.3 (RFC 8446 row is retired; 9846 is the current text) — m-os-pqc: 1.3
+    getStandard('November-11-2025-KB5068861-OS-Build-26100-7171'), // m-os-pqc: November 2025
+    getStandard('Ubuntu-24-04-LTS-release-notes'), // m-os-pqc: 24.04
   ],
 
   algorithms: [

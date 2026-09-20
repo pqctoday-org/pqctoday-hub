@@ -12,9 +12,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-grc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Governance, risk and compliance: the transition report, the NSS timeline and the
@@ -33,6 +33,8 @@ export const content: ModuleContent = {
     // active and Final in the library — it was a missing declaration, not a
     // missing document.
     getStandard('NIST SP 800-208'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('ISO-31000-2018-Risk-management-Guidelines'), // m-pqc-grc: ISO 31000
   ],
 
   algorithms: [

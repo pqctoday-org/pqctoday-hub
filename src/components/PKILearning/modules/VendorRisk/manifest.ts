@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'vendor-risk',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-038',
   title: 'Vendor & Supply Chain Risk',
   description:

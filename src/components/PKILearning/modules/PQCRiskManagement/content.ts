@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-risk-management',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     // Subject documents first. The accuracy spot-check samples this list by even
@@ -30,6 +30,8 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match
     // the prose "SP 800-131A" against a row filed as NIST-SP-800-131A-Rev3.
     getStandard('NIST-SP-800-131A-Rev3'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('2025-Cost-of-a-Data-Breach-Report-Navigating-the-AI-rush-wit'), // m-pqc-risk-management: $4.44M
   ],
 
   algorithms: [

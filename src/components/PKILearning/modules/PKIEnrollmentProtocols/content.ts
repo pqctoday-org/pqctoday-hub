@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pki-enrollment-protocols',
-  version: '0.1.0',
+  version: '0.1.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('IETF-RFC-7030-EST'),
@@ -52,6 +52,7 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('RFC-9936'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
   ],
 
   algorithms: [

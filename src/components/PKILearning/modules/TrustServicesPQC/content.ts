@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'trust-services-pqc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('ETSI-TS-119-312-V2-1-1-Electronic-Signatures-and-Trust-Infra'),
@@ -31,6 +31,9 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('RFC-5816-ESSCertIDv2-Update-for-RFC-3161'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('Commission-Implementing-Regulation-EU-2025-2162-of-27-Octobe'), // m-trust-services-pqc: October 2025
+    getStandard('Electronic-Signatures-and-Infrastructures-ESI-Algorithms-and'), // m-trust-services-pqc: ETSI TS 102 176-1
   ],
 
   algorithms: [

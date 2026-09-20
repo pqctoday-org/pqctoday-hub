@@ -15,9 +15,9 @@ export const content: ModuleContent = {
   // keyed on content.ts (learn_snapshot.py, and through it the spot-check rotation)
   // was addressing this module by a name the catalogue does not know.
   moduleId: 'pqc-testing-validation',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 186-5'),
@@ -52,6 +52,9 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('FIPS-197'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('VIAVI-PQC-Migration-WP-2026'), // m-pqc-testing-validation: 1.6M
+    getStandard('EU-NIS-CG-Roadmap-v1.1'), // m-pqc-testing-validation: 11 Jun 2025
   ],
 
   algorithms: [

@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pki-workshop',
-  version: '1.1.0',
+  version: '1.1.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 204'),
@@ -50,6 +50,11 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('RFC-9909'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('Codes-for-the-representation-of-names-of-countries-and-their'), // m-pki-workshop: ISO 3166-1
+    getStandard('Electronic-Signatures-and-Infrastructures-ESI-Certificate-Pr'), // m-pki-workshop: ETSI EN 319 412-2
+    getStandard('Lightweight-Directory-Access-Protocol-v3-UTF-8-String-Repres'), // m-pki-workshop: RFC2253
+    getStandard('Network-Domain-Security-NDS-Authentication-Framework-AF'), // m-pki-workshop: 3GPP TS 33.310
   ],
 
   algorithms: [

@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'iot-ot-pqc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     // RFC 7228 FIRST, ahead of the otherwise-alphabetical list. It defines the
@@ -47,6 +47,8 @@ export const content: ModuleContent = {
     getStandard('ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch'),
     getStandard('NSA CNSA 2.0'),
     getStandard('UNISIG-SUBSET-137-ERTMS-ETCS-On-line-Key-Management-FFFIS'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('49-CFR-Part-236-Subpart-I-Positive-Train-Control-Systems'), // m-iot-ot-pqc: 236
   ],
 
   algorithms: [

@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'ai-security-pqc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 203'),
@@ -41,6 +41,8 @@ export const content: ModuleContent = {
     // active before citing).
     getStandard('NIST-AI-100-1-Artificial-Intelligence-Risk-Management-Framew'),
     getStandard('Content-Credentials-C2PA-Technical-Specification-Version-2-4'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('The-Applied-Quantum-PQC-Migration-Framework-Universal-Versio'), // m-ai-security-pqc: §5.7
   ],
 
   algorithms: [

@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'vpn-ssh-pqc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   // Expanded from a single line 2026-08-23. The one-line form is why the five
   // declarations below first landed in algorithms[] — an applier that looked for the
@@ -36,6 +36,9 @@ export const content: ModuleContent = {
     // archived".
     getStandard('draft-ietf-ipsecme-ikev2-pqc-auth-08'),
     getStandard('draft-ietf-ipsecme-ikev2-mlkem-06'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('OpenSSH-9-9'), // m-vpn-ssh-pqc: September 2024
+    getStandard('Multiple-Authentication-Exchanges-in-the-Internet-Key-Exchan'), // pt-vpn-sim: RFC 4739
   ],
 
   algorithms: [

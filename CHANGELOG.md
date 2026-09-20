@@ -29,6 +29,16 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.110.0] - 2026-09-20
+
+The figures on the Learn modules now point at the documents that state them: 79 documents joined the Library, 40 modules cite them from their References tab, and the site's own estimates say so beside the numbers.
+
+### Added
+
+- **Seventy-nine Library documents behind figures the modules state** [view:/library] [view:/learn] [persona:researcher] [persona:architect] [persona:developer] [persona:grc]: the accuracy check of round 9 found figures with no citing document — standards (ISO 26262, IEEE 1609.2, 3GPP TS 33.310, RFC 894, RFC 8439, ARINC 429, EIP-7932, BIP-350), papers (McEliece 1978, Grover 1996, Bleichenbacher 1998, Micius 2020), and vendor releases (OpenSSH 9.9, AWS KMS ML-DSA, F5 BIG-IP 21.1, Ubuntu 24.04). Fifty-eight were fetched through the evidence door; twenty-one paid standards are recorded as catalogue rows without a copy, as the Library already does.
+- **Citations from 40 modules to those documents** [view:/learn] [persona:researcher] [persona:curious]: each module's References tab lists the documents its figures rest on, with the figure named in the citation.
+- **"Our estimate" beside modelled figures** [view:/learn/merkle-tree-certs] [view:/learn/aerospace-pqc] [view:/learn/automotive-pqc] [view:/learn/confidential-computing] [view:/playground/hsm-capacity] [persona:executive] [persona:ops] [persona:curious]: the handshake size table, the DAL certification cost bands, the vehicle service life, the TEE payload sizes and the HSM capacity presets carry a note saying what the site models and from which inputs.
+
 ## [4.109.0] - 2026-09-19
 
 Every figure on the Learn modules, tools and pages was checked word for word against the standards they cite; three signature-size figures that disagreed with the standard are corrected.

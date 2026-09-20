@@ -9,9 +9,9 @@ import { getAlgorithm } from '@/data/algorithmProperties'
 
 export const content: ModuleContent = {
   moduleId: 'cbom',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('OWASP-CycloneDX-CBOM-Guide'),
@@ -49,6 +49,7 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('RFC-7638'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
   ],
 
   algorithms: [
