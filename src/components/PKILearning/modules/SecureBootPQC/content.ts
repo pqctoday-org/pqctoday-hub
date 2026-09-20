@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'secure-boot-pqc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   // DECLARED 2026-08-22. This module renders <LibRef> links — clickable, reader-facing
   // citations into the library — for eleven documents while declaring three, so eight of
@@ -61,6 +61,8 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('RFC-9909'),
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
+    getStandard('CRYSTALS-Dilithium-Spec-v31'), // m-secure-boot-pqc: wave 4c
   ],
 
   algorithms: [

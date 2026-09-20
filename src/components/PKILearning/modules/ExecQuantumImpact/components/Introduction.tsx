@@ -105,9 +105,10 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
               <span>
-                <strong>Dec 2026:</strong> EO 14412 directs the FAR Council to publish a proposed
-                rule requiring covered federal contractors to meet NIST FIPS standards, including
-                PQC. M-26-15 required agency PQC migration plans at OMB within 120 days of issue
+                <strong>Dec 2026 (180 days after EO 14412):</strong> the order directs the FAR
+                Council to publish a proposed rule requiring covered federal contractors to meet
+                NIST FIPS standards, including PQC. M-26-15 required agency PQC migration plans at
+                OMB within 120 days of issue
               </span>
             </li>
             <li className="flex items-start gap-2">

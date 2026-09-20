@@ -7,9 +7,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-candidates',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     // ORDERED FOR THE SAMPLER, and this module is the clearest case for why.
@@ -57,6 +57,8 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur'),
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
+    getStandard('ISO/IEC 18033-2:2006'), // m-pqc-candidates: wave 4c
   ],
 
   algorithms: [],
@@ -92,7 +94,7 @@ export const content: ModuleContent = {
     validationProcess:
       'A candidate enters a round, gets benchmarked against NIST evaluation criteria (security, performance, implementation characteristics, IP), and is subjected to public cryptanalysis. Attacks like the 2022 SIKE break and the 2025 Ran wedge attack cull candidates or force reparameterisation. NIST publishes a status report (IR series) at the end of each round summarising what advanced and why.',
     worldwideProcess:
-      'KpqC (Korea) concluded its competition in January 2025, selecting SMAUG-T and NTRU+ (KEMs) plus HAETAE and AIMer (signatures), with deployment rolling out through the decade. CACR (China) selected LAC, AIGIS, and others; OSCCA is expected to publish PQC-extended SM-series specifications. ISO/IEC SC 27 adopts NIST PQC outputs as ISO/IEC 14888 and 18033 standards — the gating step for jurisdictions that pin procurement to ISO rather than FIPS. ETSI, IETF, BSI, ANSSI, and CRYPTREC overlay regional or protocol-specific guidance.',
+      'KpqC (Korea) concluded its competition in January 2025, selecting SMAUG-T and NTRU+ (KEMs) plus HAETAE and AIMer (signatures), with deployment rolling out through the decade. CACR (China) selected LAC, AIGIS, and others; OSCCA is expected to publish PQC-extended SM-series specifications. ISO/IEC SC 27 adopts NIST PQC outputs as ISO/IEC 14888 and ISO/IEC 18033 standards — the gating step for jurisdictions that pin procurement to ISO rather than FIPS. ETSI, IETF, BSI, ANSSI, and CRYPTREC overlay regional or protocol-specific guidance.',
     workshopSummary:
       'Six interactive steps: (1) Lifecycle simulator — advance a candidate through rounds and watch real cryptanalysis events fire. (2) Family math — animated visualisers for MPCitH, multivariate, isogeny, lattice. (3) Candidate comparator — sort/filter the 9 by use case. (4) Cryptanalysis timeline — SIKE break, Rainbow break, wedge attack, parameter pivots. (5) Future rounds forecaster — projected KEM diversification and post-2030 review cycles. (6) Worldwide standardisation map — NIST + KpqC + CACR + ISO/IEC + ETSI + IETF + CRYPTREC parallel tracks.',
     relatedStandards:

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'skills-team-structure',
-  contentVersion: 7,
+  contentVersion: 8,
   lm_id: 'LM-059',
   title: 'Skills & Team Structure',
   description:

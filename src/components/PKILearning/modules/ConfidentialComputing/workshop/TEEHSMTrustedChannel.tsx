@@ -221,7 +221,7 @@ function buildProvisioningSteps(
         'The sealing key is derived from the enclave identity (MRENCLAVE/MRSIGNER) and CPU secrets — it only exists inside the enclave and cannot be extracted. This ensures only the exact, unmodified enclave code can access the provisioned key. AES-128 sealing is Grover-halved to 64-bit post-quantum security; next-gen CPUs will require AES-256.',
       crypto: 'AES-256-GCM sealing (hardware-derived key via EGETKEY/ASP/RMM)',
       dataSize: pqcMode
-        ? '~4.0 KB (unsealed ML-DSA private key)'
+        ? '~4.0 KB (4,032-byte ML-DSA-65 private key, FIPS 204)'
         : '~32 bytes (unsealed ECDSA private key)',
     },
   ]
@@ -647,7 +647,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           title: 'Attestation Report Signed (ECDSA)',
           pkcs11Call: `C_MessageSignInit(CKM_ECDSA) + C_SignMessage("${teeReport.slice(0, 35)}…")`,
           detail: `message = "${teeReport.slice(0, 50)}…" · signature ≈ ${sigBytes.length} B`,
-          note: 'Simplified attestation payload — real SGX/TDX tokens use CBOR-encoded COSE_Sign1 structures. ECDSA signature on the attestation report. In PQC mode this uses ML-DSA (~3.3 KB sig vs ~72 B here).',
+          note: 'Simplified attestation payload — real SGX/TDX tokens use CBOR-encoded COSE_Sign1 structures. ECDSA signature on the attestation report. In PQC mode this uses ML-DSA (3,309 B FIPS 204 signature, about 3.3 KB, vs ~72 B here).',
         })
 
         // Step 5: Receiver side — verify signature + unwrap provisioning key

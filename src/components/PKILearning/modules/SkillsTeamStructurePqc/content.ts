@@ -17,7 +17,7 @@ export const content: ModuleContent = {
   moduleId: 'skills-team-structure',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. A staffing module: what the programme must deliver and by when drives it, so the
@@ -74,7 +74,7 @@ export const content: ModuleContent = {
     overview:
       'The Skills & Team Structure module teaches leaders how to staff a PQC migration program. PQC migration requires a combination of skills that rarely coexists in one team: deep cryptographic knowledge, enterprise program management at scale, and domain-specific technical expertise (network, application, OT, cloud). The realistic approach is not to hire a complete team of PQC specialists but to build a small core of cryptographic expertise, supplement it with upskilled existing security and IT staff, and augment with external specialists for capabilities that cannot be developed internally in time.',
     coreRoles:
-      'Seven core roles carry the program: Quantum-Readiness Program Manager (1.0 FTE), Cryptographic Architect (0.5–1.0), Security Engineers (PQC) (2–4), Application Security Lead (1.0), OT Security Specialist (0.5–1.0 if OT in scope), Vendor/Procurement Lead (0.5), and PMO Analyst (0.5–1.0). Each role lists required skills and a recommended source (internal upskilling vs. specialized hire). The QRPM, Cryptographic Architect, and PMO Analyst are dedicated overhead regardless of estate size.',
+      'Seven core roles carry the program (our estimate of a typical team): Quantum-Readiness Program Manager (1.0 FTE), Cryptographic Architect (0.5–1.0), Security Engineers (PQC) (2–4), Application Security Lead (1.0), OT Security Specialist (0.5–1.0 if OT in scope), Vendor/Procurement Lead (0.5), and PMO Analyst (0.5–1.0). Each role lists required skills and a recommended source (internal upskilling vs. specialized hire). The QRPM, Cryptographic Architect, and PMO Analyst are dedicated overhead regardless of estate size.',
     teamSizing:
       'Team size depends on the cryptographic estate complexity more than on revenue or headcount. Sizing heuristic: one dedicated FTE per 500 cryptographic instances in the CBOM for the first two years (discovery, CBOM, risk scoring, pilot), dropping to one per 1,000 during production rollout as tooling matures. Below 1,000 instances, a part-time QRPM with consulting augmentation for the Cryptographic Architect is viable. Above 10,000 instances, plan a dedicated program office of 8–12 FTEs at peak.',
     buildBorrowBuy:

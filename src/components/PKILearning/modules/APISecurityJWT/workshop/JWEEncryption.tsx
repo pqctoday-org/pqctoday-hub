@@ -311,7 +311,7 @@ export const JWEEncryption: React.FC = () => {
           </a>
           ) for key agreement and AES-256-GCM (WebCrypto) for content encryption. All operations run
           real crypto in your browser. This flow follows revision <strong>-05</strong>, which
-          covered JOSE and COSE; revision -06 (July 2026) narrowed the document to COSE only and no
+          covered JOSE and COSE; revision -06 (2026) narrowed the document to COSE only and no
           longer registers JWE algorithms.
         </p>
       </div>

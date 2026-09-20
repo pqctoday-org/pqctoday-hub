@@ -31,7 +31,7 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('RFC-5816-ESSCertIDv2-Update-for-RFC-3161'),
-    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('Commission-Implementing-Regulation-EU-2025-2162-of-27-Octobe'), // m-trust-services-pqc: October 2025
     getStandard('Electronic-Signatures-and-Infrastructures-ESI-Algorithms-and'), // m-trust-services-pqc: ETSI TS 102 176-1
   ],
@@ -60,6 +60,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Signature Longevity Calculator — pick a validity horizon and see which degradation stages apply, and when the existing archive must be re-timestamped. Standards Supersession Explorer — the same ETSI standard before and after PQC, with the superseded edition marked. Hybrid Suite Picker — TS 119 312 V2.1.1 Table 3.3 filtered by use case.',
     relatedStandards:
-      'ETSI TS 119 312 V2.1.1 (June 2026) supersedes V1.5.1 (December 2024): the older edition names only RSA and ECDSA, the newer adds ML-DSA, SLH-DSA, LMS, XMSS and hybrid modes. V2.1.1 also records that ETSI TS 102 176-1 is withdrawn and superseded by TS 119 312. ETSI EN 319 422 V1.1.1 (2016) remains the current published timestamp profile and names no algorithm itself, deferring to TS 119 312; the European Commission concluded in October 2025 that it needs updating, with a replacement targeted for 31 May 2027.',
+      'ETSI TS 119 312 V2.1.1 (June 2026) supersedes V1.5.1 (December 2024): the older edition names only RSA and ECDSA, the newer adds ML-DSA, SLH-DSA, LMS, XMSS and hybrid modes. V2.1.1 also records that ETSI TS 102 176-1 is withdrawn and superseded by TS 119 312. ETSI EN 319 422 V1.1.1 (2016) remains the current published timestamp profile and names no algorithm itself, deferring to TS 119 312; the European Commission concluded in October 2025 that it needs updating, with a replacement expected in 2027.',
   },
 }

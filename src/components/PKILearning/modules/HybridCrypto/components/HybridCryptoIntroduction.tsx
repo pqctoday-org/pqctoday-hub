@@ -170,7 +170,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                   Hash-based signature (SPHINCS+) with no lattice assumptions. OIDs in{' '}
                   <strong>RFC 9909</strong>. <InlineTooltip term="ANSSI">ANSSI</InlineTooltip>{' '}
                   allows standalone SLH-DSA without hybrid &mdash; security relies only on hash
-                  function properties. Larger signatures (~7.9 KB) are the trade-off.
+                  function properties. Larger signatures (7,856 B, about 7.9 KB, for
+                  SLH-DSA-SHA2-128s per FIPS 205) are the trade-off.
                 </p>
               </div>
               {/* Composite */}
@@ -691,15 +692,16 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <p className="text-xs text-muted-foreground">
                 Classical X25519 ClientHello key_share is 32 bytes. X25519MLKEM768 is 1,216 bytes
                 &mdash; a 38&times; increase. This can push the ClientHello beyond a single TCP
-                packet (~1,460 bytes), requiring an extra round trip on some networks.
+                segment (the 1,460-byte MSS assumed by RFC 6928), requiring an extra round trip on
+                some networks.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">Performance</div>
               <p className="text-xs text-muted-foreground">
-                ML-KEM-768 encap/decap adds ~0.1&ndash;0.3 ms per handshake. The dominant cost is
-                the larger key_share payload, not computation. Real-world measurements (Chrome,
-                Cloudflare) show &lt;1% latency increase at the P50.
+                ML-KEM-768 encap/decap adds ~0.1&ndash;0.3 ms per handshake (indicative). The
+                dominant cost is the larger key_share payload, not computation. Real-world
+                measurements (Chrome, Cloudflare) show &lt;1% latency increase at the P50.
               </p>
             </div>
           </div>

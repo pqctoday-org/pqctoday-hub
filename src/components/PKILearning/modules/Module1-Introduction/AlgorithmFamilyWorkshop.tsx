@@ -838,7 +838,8 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
                   <strong>Real systems:</strong> Classic McEliece uses n=3,488 and t=64 errors. The
                   attacker faces C(3488, 64) &gt; 2<sup>400</sup> combinations. No quantum algorithm
                   provides meaningful speedup &mdash; this problem has resisted cryptanalysis since
-                  1978.
+                  McEliece&apos;s 1978 paper, A Public-Key Cryptosystem Based On Algebraic Coding
+                  Theory.
                 </p>
               </div>
             </motion.div>

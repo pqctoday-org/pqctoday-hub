@@ -75,7 +75,7 @@ export const VPNSSHExercises: React.FC<VPNSSHExercisesProps> = ({
       badge: 'PQC',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'The public key grows from 32 bytes to 1,216 bytes (X25519 + ML-KEM concatenated). The total handshake is approximately 3,296 bytes — a 3.3x increase. The combined key material is 64 bytes (the 32-byte X25519 secret concatenated with the 32-byte ML-KEM secret) before being hashed into the final session key.',
+        'The public key grows from 32 bytes to 1,216 bytes (32 + 1,184 = 1,216: X25519 + ML-KEM concatenated). The total handshake is approximately 3,296 bytes — a 3.3x increase. The combined key material is 64 bytes (the 32-byte X25519 secret concatenated with the 32-byte ML-KEM secret) before being hashed into the final session key.',
       config: { step: 1, sshKex: 'mlkem768x25519-sha256' },
     },
     {

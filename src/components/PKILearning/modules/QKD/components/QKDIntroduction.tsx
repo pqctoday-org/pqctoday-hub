@@ -145,9 +145,10 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
           <Zap size={20} /> State of the Art
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          QKD technology has matured significantly since the first demonstration in 1989. Today,
-          commercial systems are deployed by governments and telecom operators worldwide, though
-          significant constraints remain.
+          QKD technology has matured significantly since the first demonstration in 1989 (IBM
+          Research, The early days of experimental quantum cryptography). Today, commercial systems
+          are deployed by governments and telecom operators worldwide, though significant
+          constraints remain.
         </p>
         {/* WS7: horizontally-scrollable table with no focusable content — axe
             `scrollable-region-focusable`. tabIndex makes it keyboard-scrollable. */}
@@ -190,7 +191,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
               </tr>
               <tr className="border-b border-border/50">
                 <td className="p-2 font-medium">Satellite</td>
-                <td className="p-2">&gt;7,000 km</td>
+                <td className="p-2">7,600 km</td>
                 <td className="p-2">~1-10 kbps (LEO passes)</td>
                 <td className="p-2">
                   <span className="text-xs px-2 py-0.5 rounded-full bg-warning/10 text-warning border border-warning/20">
@@ -239,7 +240,10 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>Satellite acts as a moving trusted node between ground stations</li>
               <li>Generates separate keys with each ground station, then relays</li>
-              <li>Demonstrated by Micius (China–Austria, 7,600 km, 2017)</li>
+              <li>
+                Demonstrated by Micius (China–Austria, 7,600 km; Liao et al., Satellite-Relayed
+                Intercontinental Quantum Network)
+              </li>
               <li>Simpler to implement with current technology</li>
               <li>Satellite must be physically secured (compromise exposes keys)</li>
             </ul>

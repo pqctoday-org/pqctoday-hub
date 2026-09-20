@@ -195,7 +195,7 @@ export const BREACH_COST_BASIS_NOTE = {
     'organisation, including detection, response, lost business and fines. ' +
     'Cited but unverified — the per-sector figures are behind a registration wall.',
   netDiligence:
-    'NetDiligence Cyber Claims Study 2025: what cyber-insurance claims actually ' +
+    'NetDiligence Cyber Claims Study - 2025 Report (Figure 2, N=8,936): what cyber-insurance claims actually ' +
     'PAID OUT, from 8,936 SME claims over 2020–2024. Lower than a total-cost ' +
     'figure by construction — claims exclude uninsured loss and are capped by ' +
     'policy limits. Read from the report itself.',
@@ -319,7 +319,8 @@ export const FRAMEWORK_PENALTY_BASELINES: Record<string, FrameworkPenalty> = {
   },
   'EU Cyber Resilience Act': {
     annualPenalty: 15_000_000,
-    source: 'CRA Art. 64: up to EUR 15M or 2.5% global turnover',
+    source:
+      'Cyber Resilience Act, Regulation (EU) 2024/2847, Art. 64: up to EUR 15M or 2.5% of global turnover',
   },
   'eIDAS 2.0': {
     annualPenalty: 5_000_000,
@@ -341,7 +342,8 @@ export const FRAMEWORK_PENALTY_BASELINES: Record<string, FrameworkPenalty> = {
   HIPAA: { annualPenalty: 1_500_000, source: 'HIPAA: up to $1.5M per violation tier per year' },
   'HITECH Act': {
     annualPenalty: 1_900_000,
-    source: 'HITECH increases to $1.9M per category per year',
+    source:
+      'HITECH tier caps, inflation-adjusted under 45 CFR 102.3: up to $2,134,831 per category per year',
   },
   'CNSA 2.0': {
     annualPenalty: 5_000_000,

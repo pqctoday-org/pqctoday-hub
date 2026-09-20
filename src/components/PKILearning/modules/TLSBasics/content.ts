@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'tls-basics',
-  version: '1.1.0',
+  version: '1.1.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 203'),
@@ -44,6 +44,8 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('RFC-9162'),
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
+    getStandard('A-Standard-for-the-Transmission-of-IP-Datagrams-over-Etherne'), // m-tls-basics: wave 4c
   ],
 
   algorithms: [

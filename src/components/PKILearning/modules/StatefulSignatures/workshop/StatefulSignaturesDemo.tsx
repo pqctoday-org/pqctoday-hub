@@ -1223,7 +1223,7 @@ export function StatefulSignaturesDemo() {
                           ],
                           [
                             'Signature size',
-                            '1–8 KB (LMS W8) · 2.5 KB (XMSS-SHA2_10_256)',
+                            '1–8 KB (LMS W8) · 2,500 B (XMSS-SHA2_10_256, RFC 8391)',
                             '8–50 KB depending on parameter set',
                           ],
                           [

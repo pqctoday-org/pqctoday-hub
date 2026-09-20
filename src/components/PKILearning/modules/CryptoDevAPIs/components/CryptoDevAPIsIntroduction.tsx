@@ -35,10 +35,10 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
           <p className="text-muted-foreground">
             Cryptographic APIs have grown organically over decades. Each emerged from a specific
             need:
-            <strong className="text-foreground"> PKCS#11</strong> was created by RSA Labs in 1995 to
-            provide a vendor-neutral interface to hardware security modules.{' '}
-            <strong className="text-foreground">JCA/JCE</strong> debuted in 1997 as Sun Microsystems
-            built cryptography into the Java platform with a pluggable provider model.{' '}
+            <strong className="text-foreground"> PKCS#11</strong> was created by RSA Laboratories in
+            the mid-1990s to provide a vendor-neutral interface to hardware security modules.{' '}
+            <strong className="text-foreground">JCA/JCE</strong> debuted in the late 1990s as Sun
+            Microsystems built cryptography into the Java platform with a pluggable provider model.{' '}
             <strong className="text-foreground">CNG</strong> replaced the legacy CryptoAPI in
             Windows Vista, separating key storage providers from algorithm providers.
             <strong className="text-foreground"> OpenSSL&apos;s EVP API</strong> evolved to abstract
@@ -236,8 +236,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
           </p>
           <p className="text-muted-foreground">
             CNG integrates with the Windows certificate store and is the foundation for Windows FIPS
-            mode. PQC support went GA in November 2025: ML-KEM, ML-DSA, and SLH-DSA APIs are
-            available on Windows 11 24H2+ and Windows Server 2025 (and in .NET 10).
+            mode. PQC support went GA in 2025: ML-KEM, ML-DSA, and SLH-DSA APIs are available on
+            Windows 11 24H2+ and Windows Server 2025 (and in .NET 10).
           </p>
         </LearnSection>
       </div>
@@ -475,7 +475,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 api: 'Bouncy Castle (Java/.NET)',
                 status: 'production',
-                note: 'ML-KEM, ML-DSA, SLH-DSA, FN-DSA, LMS/XMSS all supported since BC 1.78 (Jan 2024)',
+                note: 'ML-KEM, ML-DSA, SLH-DSA, FN-DSA, LMS/XMSS all supported since Bouncy Castle 1.78',
               },
               {
                 api: 'OpenSSL (native)',
@@ -495,7 +495,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 api: 'Windows CNG',
                 status: 'production',
-                note: 'ML-KEM, ML-DSA, SLH-DSA GA since Nov 2025 (Windows 11 24H2+ / Server 2025); Schannel TLS hybrid still preview',
+                note: 'ML-KEM, ML-DSA, SLH-DSA GA since 2025 (Windows 11 24H2+ / Server 2025); Schannel TLS hybrid still preview',
               },
               {
                 api: 'PKCS#11 v3.2',

@@ -371,7 +371,7 @@ const Step3GlobalRegional: React.FC = () => (
             {
               name: 'ISO/IEC JTC 1/SC 27',
               role: 'Information security standards',
-              pqc: 'ISO/IEC 14888-4 (hash-based sigs), IS 20085 (KEM)',
+              pqc: 'ISO/IEC 14888-4 (hash-based sigs), ISO/IEC 18033-2 Amd 2 (ML-KEM)',
               members: '170+ national bodies',
             },
             {

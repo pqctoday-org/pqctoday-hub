@@ -476,7 +476,7 @@ export const QRNGDemo: React.FC = () => {
                 >
                   ID Quantique Quantis QRNG
                 </a>{' '}
-                — Quantis 2.0 (PCIe/USB), 2024 · FIPS 140-2 / AIS 31 certified
+                — Quantis 2.0 (PCIe/USB) · FIPS 140-2 / AIS 31 certified
               </li>
               <li className="text-xs text-muted-foreground">
                 <a
@@ -487,7 +487,7 @@ export const QRNGDemo: React.FC = () => {
                 >
                   Quantinuum Quantum Origin
                 </a>{' '}
-                — Cloud API, 2025 · First software QRNG with NIST SP 800-90B validation (April 2025)
+                — Cloud API · First software QRNG with NIST SP 800-90B validation
               </li>
               <li className="text-xs text-muted-foreground">
                 <a
@@ -498,7 +498,7 @@ export const QRNGDemo: React.FC = () => {
                 >
                   QuintessenceLabs qStream
                 </a>{' '}
-                — qStream 200 (PCIe/Network), 2024 · NIST SP 800-90B compliant
+                — qStream 200 (PCIe/Network) · NIST SP 800-90B compliant
               </li>
             </ul>
           </div>

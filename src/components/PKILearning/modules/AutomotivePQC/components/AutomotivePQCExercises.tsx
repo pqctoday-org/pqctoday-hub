@@ -75,7 +75,7 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'OTA',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'ML-DSA-65 adds ~3.3 KB per signed firmware block (vs 72 bytes for ECDSA). For a 6-ECU campaign with 200 MB total firmware, PQC signature overhead adds <0.01% \u2014 negligible. The critical path is the ADAS ECU (45 min update, A/B partition) which gates all downstream ECUs.',
+        'ML-DSA-65 adds ~3.3 KB (3,309 B, FIPS 204) per signed firmware block (vs 72 bytes for ECDSA). For a 6-ECU campaign with 200 MB total firmware, PQC signature overhead adds <0.01% \u2014 negligible. The critical path is the ADAS ECU (45 min update, A/B partition) which gates all downstream ECUs.',
       config: { step: 3 },
     },
     {

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'aerospace-pqc',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-040',
   title: 'Aerospace PQC',
   description:

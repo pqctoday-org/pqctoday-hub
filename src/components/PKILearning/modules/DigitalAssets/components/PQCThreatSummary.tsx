@@ -47,8 +47,8 @@ export const PQCThreatSummary: React.FC = () => {
                 <td className="p-3 font-medium text-foreground">Bitcoin</td>
                 <td className="p-3 font-mono text-xs">secp256k1 ECDSA</td>
                 <td className="p-3">
-                  Shor's algorithm breaks ECDLP. ~$718B in vulnerable P2PK addresses with exposed
-                  public keys.
+                  Shor's algorithm breaks ECDLP. A large share of early P2PK outputs sits in
+                  addresses with exposed public keys.
                 </td>
                 <td className="p-3 space-y-1">
                   <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-warning/20 text-warning">

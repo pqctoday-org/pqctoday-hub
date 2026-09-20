@@ -23,7 +23,7 @@ const EXERCISES = [
     badge: 'CLM',
     badgeColor: 'bg-accent/20 text-accent border-accent/50',
     scenario:
-      'Your organization has 8,500 public TLS certs. Today, 62% renew via ACME and 38% via a manual ticket flow. The CA/B Forum 47-day cadence lands in March 2029. Sketch the rollout plan.',
+      'Your organization has 8,500 public TLS certs. In this sample estate, 62% renew via ACME and 38% via a manual ticket flow. The CA/B Forum 47-day cadence lands in March 2029. Sketch the rollout plan.',
     hint: 'Use the Inventory Lifecycle Simulator. Design KPIs: cert-expiry-risk (≤30 d), auto-renew %, cert MTTR, shadow-cert count. Treat it as a 3-year program, not a project.',
     step: 1,
   },

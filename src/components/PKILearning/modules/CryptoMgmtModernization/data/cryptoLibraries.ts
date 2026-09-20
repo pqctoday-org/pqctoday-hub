@@ -137,7 +137,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     lastVerified: '2026-04-10',
     posture: 'yellow',
     notes:
-      'PQC APIs available but not inside the validated module boundary; ACVP re-certification after Sept 2025 IG update required.',
+      'PQC APIs available but not inside the validated module boundary; ACVP re-certification after the FIPS 140-3 IG update required.',
   },
   {
     id: 'mbedtls',

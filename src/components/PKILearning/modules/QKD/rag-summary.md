@@ -29,4 +29,4 @@ This module explores Quantum Key Distribution, a method of distributing encrypti
 - NIST SP 800-108 (KDF in Counter Mode)
 - ETSI QKD standards (GS QKD series)
 - EuroQCI initiative (pan-European quantum communication infrastructure)
-- BB84 protocol (Bennett & Brassard, 1984)
+- BB84 protocol (Bennett & Brassard, Quantum cryptography — Public key distribution and coin tossing, 1984)

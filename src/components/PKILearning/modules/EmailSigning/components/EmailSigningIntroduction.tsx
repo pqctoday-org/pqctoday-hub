@@ -393,7 +393,7 @@ const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
             },
             {
               t: 'Message Size Impact',
-              d: 'ML-DSA-65 signatures are ~3.3 KB (vs ~72 bytes DER-encoded for ECDSA). Signed emails with certificate chains can grow by 10-15 KB, impacting mobile clients and constrained networks.',
+              d: 'ML-DSA-65 signatures are ~3.3 KB (3,309 B, FIPS 204; vs ~72 bytes DER-encoded for ECDSA). Signed emails with certificate chains can grow by 10-15 KB, impacting mobile clients and constrained networks.',
             },
             {
               t: 'Archival & Long-Term Validation',

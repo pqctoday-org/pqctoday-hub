@@ -330,9 +330,10 @@ export const InfraModernizationPlanner: React.FC = () => {
           />
           <p className="mt-1 text-[11px] text-muted-foreground">
             Framework vendor notes (activity 6.2): Thales Luna 7.8.0+ introduced initial PQC support
-            (ML-KEM, ML-DSA); Luna 7.9 (June 2025) adds further capabilities. Utimaco Quantum
-            Protect is a new hardware variant — not a firmware upgrade for existing devices, so
-            budget for hardware replacement if running older Utimaco models.
+            (ML-KEM, ML-DSA); the Luna HSM Firmware v7.9 Release: NIST-Approved PQC Algorithms (June
+            2025) adds further capabilities. Utimaco Quantum Protect is a new hardware variant — not
+            a firmware upgrade for existing devices, so budget for hardware replacement if running
+            older Utimaco models.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

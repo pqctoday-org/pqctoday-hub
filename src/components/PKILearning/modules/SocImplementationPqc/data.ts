@@ -345,7 +345,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
     },
     {
       label: 'Algorithm Rotation Drill FP Rate',
-      target: '< 10%',
+      target: '< 10% (target)',
       description:
         'False-positive rate during rotation drills — the SOC must not mistake an authorized rotation for an attack.',
     },

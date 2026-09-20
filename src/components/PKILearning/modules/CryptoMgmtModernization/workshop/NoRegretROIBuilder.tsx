@@ -532,7 +532,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
           </p>
           <MathModel
             formula={`forrester_composite_annual × scale_factor\n= ${fmt$(clmP.forresterCompositeAnnual)} × ${fmtPct(clmP.scaleFactor, 0)}\n= ${fmt$(clm)}/yr`}
-            explanation="Forrester TEI of DigiCert ONE (July 2025) modeled a composite organization realizing $13.3M of benefits over 3 years — $4.43M/year — from CLM automation: $7.9M labor savings, $2.8M reduced security incidents, $2.83M revenue and efficiencies. Scale factor maps composite benefit to your estate (cert volume, current manual effort, automation maturity). This is a vendor-commissioned TEI on a specific product — treat as upper-bound benchmark, not a guaranteed outcome."
+            explanation="Forrester TEI of DigiCert ONE (July 2025) modeled a composite organization realizing $13.3M of benefits over 3 years — $13.3M ÷ 3 ≈ $4.43M/year — from CLM automation: $7.9M labor savings, $2.8M reduced security incidents, $2.8M revenue and efficiencies. Scale factor maps composite benefit to your estate (cert volume, current manual effort, automation maturity). This is a vendor-commissioned TEI on a specific product — treat as upper-bound benchmark, not a guaranteed outcome."
             source={{
               label: 'Forrester TEI of DigiCert ONE (July 2025)',
               href: 'https://www.digicert.com/news/total-economic-report-shows-big-roi-with-digicert-one',

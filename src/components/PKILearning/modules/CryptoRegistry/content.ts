@@ -17,7 +17,7 @@ export const content: ModuleContent = {
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('ANSI X9.62'),
     getStandard('RFC 9881'),
-    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('EU-NIS-CG-Roadmap-v1.1'), // m-crypto-registry: 2026; m-crypto-registry: 23 Jun 2025
   ],
 
@@ -27,7 +27,7 @@ export const content: ModuleContent = {
     {
       label: 'EU cryptographic inventories required',
       year: 2026,
-      source: 'EU PQC Roadmap (23 Jun 2025)',
+      source: 'EU PQC Roadmap (2025)',
     },
   ],
 

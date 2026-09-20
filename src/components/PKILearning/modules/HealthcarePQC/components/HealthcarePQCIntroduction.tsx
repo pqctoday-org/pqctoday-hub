@@ -139,11 +139,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
       >
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Bringing a new drug to market costs an average of <strong>$2.6 billion</strong> and
-            takes 10&ndash;15 years from discovery to FDA approval. Every stage of this pipeline
-            generates data that represents billions of dollars in competitive advantage &mdash; from
-            molecular structures and synthesis routes to clinical trial results and regulatory
-            submissions.
+            Bringing a new drug to market costs <strong>billions of dollars</strong> and takes
+            10&ndash;15 years from discovery to FDA approval. Every stage of this pipeline generates
+            data that represents billions of dollars in competitive advantage &mdash; from molecular
+            structures and synthesis routes to clinical trial results and regulatory submissions.
           </p>
 
           <p>
@@ -460,10 +459,14 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                 </h3>
                 <ul className="text-xs text-muted-foreground space-y-1">
                   <li>
-                    &bull; <strong>465,000+ pacemaker recall (2017)</strong> &mdash; St. Jude
-                    Medical / Abbott recalled nearly half a million pacemakers due to firmware
-                    vulnerabilities that could allow unauthorized access to modify pacing commands,
-                    potentially causing battery depletion or inappropriate pacing.
+                    &bull;{' '}
+                    <strong>
+                      465,000+ pacemaker recall (2017, FDA safety communication and ICS Medical
+                      Advisory ICSMA-17-241-01)
+                    </strong>{' '}
+                    &mdash; St. Jude Medical / Abbott recalled nearly half a million pacemakers due
+                    to firmware vulnerabilities that could allow unauthorized access to modify
+                    pacing commands, potentially causing battery depletion or inappropriate pacing.
                   </li>
                   <li>
                     &bull; <strong>MedJack attacks</strong> &mdash; attackers compromise medical

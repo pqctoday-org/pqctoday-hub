@@ -143,10 +143,11 @@ export const MTCComparison: React.FC<MTCComparisonProps> = ({ onComplete }) => {
           <Info size={16} className="text-primary mt-0.5 shrink-0" />
           <div className="text-xs text-muted-foreground">
             <strong className="text-foreground">How it works:</strong> Instead of each certificate
-            carrying its own CA signature, the MTCA batches ~4.4 million certificates as leaves in a
-            Merkle tree and signs only the root hash. Each certificate then carries a compact
-            inclusion proof (a chain of sibling hashes) that lets any verifier confirm it belongs to
-            the signed batch &mdash; without needing the full chain of individual signatures.
+            carrying its own CA signature, the MTCA batches ~4.4 million certificates (an
+            illustrative batch size) as leaves in a Merkle tree and signs only the root hash. Each
+            certificate then carries a compact inclusion proof (a chain of sibling hashes) that lets
+            any verifier confirm it belongs to the signed batch &mdash; without needing the full
+            chain of individual signatures.
           </div>
         </div>
       </div>

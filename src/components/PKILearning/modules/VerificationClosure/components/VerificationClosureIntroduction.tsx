@@ -134,8 +134,8 @@ export const VerificationClosureIntroduction: FC<Props> = ({ onNavigateToWorksho
           Anchor the generic governance to <strong>ISO/IEC 27001</strong> and the{' '}
           <strong>NIST Risk Management Framework (SP 800-37)</strong> residual-risk-acceptance
           process. Make &ldquo;acquire only PQC-capable products&rdquo; a standing procurement rule
-          — the <strong>CISA product-category list</strong> (Jan 2026) flags the categories where
-          they are already available.
+          — the <strong>CISA product-category list</strong> (2026) flags the categories where they
+          are already available.
         </p>
         <Button
           variant="outline"

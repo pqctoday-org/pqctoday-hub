@@ -439,7 +439,7 @@ export function renderAuditPreview(
   md += `**Overall Readiness: ${totalChecked}/${totalItems} items (${overallPct}%)**\n\n`
   md += `**Maturity Level: ${tier.label}**\n\n`
   md +=
-    '_Maturity scale: Not Started (0-20%) → Foundation (21-40%) → Developing (41-60%) → Established (61-80%) → Optimized (81-100%)_\n'
+    "_Maturity scale — the checklist's own scoring bands — Not Started (0-20%) → Foundation (21-40%) → Developing (41-60%) → Established (61-80%) → Optimized (81-100%)_\n"
 
   return md
 }

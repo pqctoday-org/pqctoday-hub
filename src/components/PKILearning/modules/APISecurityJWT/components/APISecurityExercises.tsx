@@ -38,7 +38,7 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
       badge: 'JWT Inspector',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'The header is the only part that changes between algorithms. The ES256 signature is ~85 base64url characters while the ML-DSA-65 signature is ~4,412 characters.',
+        'The header is the only part that changes between algorithms. The ES256 signature is ~85 base64url characters while the ML-DSA-65 signature is ~4,412 characters (3,309 × 4 ÷ 3 = 4,412 in base64url).',
       config: { step: 0 },
     },
     {

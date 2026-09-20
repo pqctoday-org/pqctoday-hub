@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.111.0] - 2026-09-20
+
+The figures on the Learn modules and business tools now say where they come from: sizes are written the way the standards state them, worked examples say they are worked examples, the site's own estimates say so, and eleven more documents joined the Library so that the facts they back can be checked against them.
+
+### Changed
+
+- **Sizes and dates written the way their documents state them** [view:/learn] [persona:developer] [persona:architect] [persona:researcher]: where a module said "~3.3 KB" for an ML-DSA-65 signature it now also gives the 3,309 bytes FIPS 204 states; LMS, XMSS and hybrid-signature sizes name RFC 8554, RFC 8391 or the arithmetic that produces them; TCP congestion-window and MSS figures name RFC 6928; the EU PQC roadmap dates read "end of 2026, end of 2030, 2035" as the roadmap writes them; EO 14412 deadlines show the day count they are computed from. Forty-one modules and eleven tools are touched.
+- **Worked examples, scenarios and the site's own estimates are labelled** [view:/learn] [view:/business] [persona:curious] [persona:executive]: sentences such as "a GEO satellite launched in 2028 will operate until 2043", sample migration plans, capacity presets and the tools' own scoring bands are now recognisably illustrations or the site's own modelling, and the estimates that were not yet marked ("our estimate", "indicative") now are.
+- **Three figures corrected** [view:/learn] [persona:developer]: the hybrid-signature playground reported an ML-DSA-65 component of 3,293 bytes (the Dilithium round-3 size) — it is 3,309 bytes per FIPS 204; the CRQC survey figures on the Quantum Threats module and the board pitch now quote the Global Risk Institute's 2025 report rather than the 2024 edition; the HIPAA/HITECH penalty cap on the ROI tools is the current 45 CFR 102.3 amount ($2,134,831) rather than the 2022 figure.
+- **Unverifiable numbers softened** [view:/learn] [persona:grc]: a handful of vendor dates and survey percentages that no document in the Library states (a "$718B in vulnerable P2PK addresses" estimate, an "86% of financial-sector organisations" survey, "$11M per outage") are now stated qualitatively with their attribution, or dropped.
+
+### Data
+
+- **Eleven Library documents added** [view:/library] [persona:researcher]: 3GPP TS 35.206 (MILENAGE), ARINC 664 Part 7 (paid catalogue row), 15 CFR 740.17 (License Exception ENC), 45 CFR 102.3 (penalty table), ETSI TS 119 182-1 (JAdES), the Micius intercontinental QKD paper, the Abbott pacemaker ICS medical advisory, the Azure Dedicated HSM retirement notice, the Bouncy Castle download page, and the PSD2 strong-customer-authentication RTS; five more citations point at rows the Library already held (BB84, Shor, Solana transactions, ETSI TS 102 176-1, NIST SP 800-181r1).
+
 ## [4.110.0] - 2026-09-20
 
 The figures on the Learn modules now point at the documents that state them: 79 documents joined the Library, 40 modules cite them from their References tab, and the site's own estimates say so beside the numbers.

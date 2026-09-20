@@ -900,7 +900,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'Because ML-KEM-768 needs one fewer round trip, which cancels out its larger messages',
     ],
     answer: 1,
-    why: 'Over a satellite link, latency is dominated by propagation delay times the number of round trips, and a KEM-based handshake needs the same number of rounds as the classical key exchange. The PQC cost shows up as payload instead: 2,272 bytes per round against 64, which is the 35.5x overhead ratio, and matters most where every handshake is repeated for SEU-driven key refresh.',
+    why: 'Over a satellite link, latency is dominated by propagation delay times the number of round trips, and a KEM-based handshake needs the same number of rounds as the classical key exchange. The PQC cost shows up as payload instead: 1,184 B key + 1,088 B ciphertext = 2,272 bytes per round (FIPS 203) against 64 against 64, which is the 35.5x overhead ratio, and matters most where every handshake is repeated for SEU-driven key refresh.',
   },
   'aerospace-pqc/fleet-interoperability-matrix': {
     prompt:

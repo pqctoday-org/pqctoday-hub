@@ -38,7 +38,7 @@ export const IoTOTExercises: React.FC<IoTOTExercisesProps> = ({
       badge: 'Algorithms',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'ML-KEM-512 requires ~3 KB stack RAM and fits within Class 1 constraints (~3 KB of ~10 KB total RAM). FrodoKEM-640 requires ~180 KB \u2014 impossible for Class 0/1 devices. For signatures, LMS requires only ~0.5 KB RAM with a 56-byte public key, making it ideal for boot-time verification on microcontrollers.',
+        'ML-KEM-512 requires ~3 KB stack RAM and fits within Class 1 constraints (~3 KB of ~10 KB total RAM). FrodoKEM-640 requires ~180 KB \u2014 impossible for Class 0/1 devices. For signatures, LMS requires only ~0.5 KB RAM (indicative) with a 56-byte public key, making it ideal for boot-time verification on microcontrollers.',
       config: { step: 0 },
     },
     {
@@ -49,7 +49,7 @@ export const IoTOTExercises: React.FC<IoTOTExercisesProps> = ({
       badge: 'Firmware',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'LMS produces a 2,512-byte signature with a 56-byte public key \u2014 the most bandwidth-efficient PQC option for firmware updates. On NB-IoT at 62.5 kbps, the signature overhead adds only ~0.3 seconds. Compare this to ML-DSA-65 at 3,309 bytes + 1,952-byte key \u2014 significantly more overhead.',
+        'LMS (RFC 8554, H10/W4) produces a 2,512-byte signature with a 56-byte public key \u2014 the most bandwidth-efficient PQC option for firmware updates. On NB-IoT at 62.5 kbps, the signature overhead adds only ~0.3 seconds. Compare this to ML-DSA-65 at 3,309 bytes + 1,952-byte key \u2014 significantly more overhead.',
       config: { step: 1 },
     },
     {

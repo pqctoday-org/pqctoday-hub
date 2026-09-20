@@ -38,7 +38,7 @@ export const AerospaceExercises: React.FC<ExercisesProps> = ({
       badge: 'Protocol',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'ML-DSA-65 signatures (3,309 bytes) require 16 ACARS blocks per signed message, increasing VHF channel occupancy by 16x. ML-DSA-44 (2,420 bytes) requires 11 blocks. LMS (H10/W4) signatures (2,512 B) require 12 blocks — still heavy but the most practical option.',
+        'ML-DSA-65 signatures (3,309 bytes) require 16 ACARS blocks per signed message, increasing VHF channel occupancy by 16x. ML-DSA-44 (2,420 bytes) requires 11 blocks. LMS (H10/W4) signatures (2,512 B per RFC 8554) require 12 blocks — still heavy but the most practical option.',
       config: { step: 0 },
     },
     {

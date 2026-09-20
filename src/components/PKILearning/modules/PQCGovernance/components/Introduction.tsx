@@ -460,7 +460,7 @@ const Step2ModelsEscalationKpis: React.FC = () => (
             },
             {
               level: 'Tier 2: PQC Program Manager',
-              desc: 'Cross-team dependencies, vendor delivery misses, budget variance over 10%, or policy exception requests escalated to the PQC Program Manager. Timeframe: 10 business days.',
+              desc: 'Template triggers: cross-team dependencies, vendor delivery misses, budget variance over 10%, or policy exception requests escalated to the PQC Program Manager. Timeframe: 10 business days.',
             },
             {
               level: 'Tier 3: CISO',

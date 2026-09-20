@@ -68,7 +68,7 @@ const SCENARIOS: Scenario[] = [
     id: 'pqc-migration-roadmap',
     title: '5. EUDI Wallet PQC Migration Timeline',
     description:
-      "Review the full wallet workflow (all 5 steps). Then map the three-phase EU PQC migration roadmap for digital identity systems: December 2026 (national roadmaps), December 2030 (high-risk migration), December 2035 (full PQC transition). For each of the five workshop actors (Wallet, PID Issuer, University, Bank, QTSP), identify which phase applies and which algorithm they'd migrate first.",
+      "Review the full wallet workflow (all 5 steps). Then map the three-phase EU PQC migration roadmap for digital identity systems: end of 2026 (national strategies), end of 2030 (high-risk use cases), 2035 (transition complete). For each of the five workshop actors (Wallet, PID Issuer, University, Bank, QTSP), identify which phase applies and which algorithm they'd migrate first.",
     badge: 'PQC Roadmap',
     badgeColor: 'bg-success/20 text-success border-success/50',
     observe:

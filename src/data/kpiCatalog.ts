@@ -587,7 +587,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
     id: 'budget-utilization',
     label: 'Budget Utilization',
     description:
-      'Percentage of allocated PQC migration budget spent on plan (healthy range: 70–90%).',
+      'Percentage of allocated PQC migration budget spent on plan (target range: 70–90%).',
     category: 'financial',
     surfaces: ['governance', 'migration'],
     weights: { executive: 0.1, architect: 0.05, ops: 0.05 },

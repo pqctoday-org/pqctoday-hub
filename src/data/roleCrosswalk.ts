@@ -267,7 +267,7 @@ export function sizingSanityCheck(
     if (heuristicFte > hi) {
       return {
         diverges: true,
-        note: `The ratio gives ${heuristicFte.toFixed(1)} FTE, but the same framework section says a >10,000-instance estate should "${SIZING_SANITY_BANDS.largeEstateNote}". Treat the ratio as an upper bound and staff toward the ${lo}-${hi} FTE band unless you can justify the difference.`,
+        note: `The ratio gives ${heuristicFte.toFixed(1)} FTE, but the same section of The Applied Quantum PQC Migration Framework says a >10,000-instance estate should "${SIZING_SANITY_BANDS.largeEstateNote}". Treat the ratio as an upper bound and staff toward the ${lo}-${hi} FTE band unless you can justify the difference.`,
       }
     }
     return null
@@ -275,7 +275,7 @@ export function sizingSanityCheck(
   if (estateInstances < SIZING_SANITY_BANDS.smallEstateInstances) {
     return {
       diverges: false,
-      note: `Below 1,000 instances the framework notes that ${SIZING_SANITY_BANDS.smallEstateNote} — you may not need every role at full time.`,
+      note: `Below 1,000 instances The Applied Quantum PQC Migration Framework notes that ${SIZING_SANITY_BANDS.smallEstateNote} — you may not need every role at full time.`,
     }
   }
   return null

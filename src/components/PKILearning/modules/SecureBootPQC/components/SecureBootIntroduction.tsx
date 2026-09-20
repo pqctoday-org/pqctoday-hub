@@ -235,8 +235,8 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
               <li>&bull; Public key: 1,952 bytes (7.6&times; larger)</li>
               <li>&bull; Signature: 3,309 bytes (12.9&times; larger)</li>
               <li>&bull; Quantum-safe: Yes (NIST Level 3)</li>
-              <li>&bull; Signing speed: ~1.5ms (comparable)</li>
-              <li>&bull; Verification: ~0.6ms (faster than RSA verify)</li>
+              <li>&bull; Signing speed: ~1.5ms (comparable; indicative)</li>
+              <li>&bull; Verification: ~0.6ms (faster than RSA verify; indicative)</li>
             </ul>
           </div>
         </div>
@@ -323,8 +323,8 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             During the transition period, firmware images can carry both an RSA-2048 and ML-DSA-65
             signature. Legacy systems that do not support ML-DSA fall back to RSA verification. New
             systems validate the ML-DSA signature. This dual-signature approach requires careful
-            UEFI variable budget planning — the combined overhead is approximately 3,800 bytes per
-            signed component.
+            UEFI variable budget planning — the combined overhead is approximately 3,800 bytes
+            (3,309 B ML-DSA-65 + 512 B RSA-4096 ≈ 3,800 B) per signed component.
           </p>
         </div>
       </CollapsibleSection>

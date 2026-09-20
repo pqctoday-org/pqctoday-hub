@@ -784,7 +784,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     vendorId: 'utimaco',
     vendorName: 'Utimaco SecurityServer',
     currentFirmware: '4.x',
-    targetFirmware: '5.0+ (Q-safe extension)',
+    targetFirmware: 'Q-safe extension',
     pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS', 'XMSS'],
     upgradeComplexity: 'low',
     estimatedDowntime: '1-3 hours per HSM (firmware + Q-safe extension)',

@@ -234,8 +234,8 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           </div>
           <ul className="text-xs text-muted-foreground space-y-1">
             <li>Dec 2026: National PQC transition roadmaps due</li>
-            <li>Dec 2030: High-risk use cases migrated</li>
-            <li>Dec 2035: Full transition to PQC</li>
+            <li>End of 2030: High-risk use cases migrated</li>
+            <li>2035: Full transition to PQC</li>
           </ul>
         </div>
         <p className="text-xs text-muted-foreground">

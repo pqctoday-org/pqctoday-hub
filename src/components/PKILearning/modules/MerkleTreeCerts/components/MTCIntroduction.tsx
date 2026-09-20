@@ -413,8 +413,8 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
           Merkle Tree Certificates originated as <em>draft-davidben-tls-merkle-tree-certs</em>{' '}
-          (reaching draft-10, January 2026) and have since been adopted by the IETF PLANTS working
-          group as <em>draft-ietf-plants-merkle-tree-certs</em>. The draft has five co-equal authors
+          (reaching draft-10 in 2026) and have since been adopted by the IETF PLANTS working group
+          as <em>draft-ietf-plants-merkle-tree-certs</em>. The draft has five co-equal authors
           across Google, Cloudflare, and Geomys.{' '}
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-warning/20 text-warning border border-warning/40">
             Draft — not yet an RFC
@@ -427,14 +427,14 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               <li>&bull; March 2023: Initial draft published (draft-00)</li>
               <li>&bull; October 2025: Cloudflare + Chrome experiment announced</li>
               <li>
-                &bull; January 2026: <code>draft-davidben-tls-merkle-tree-certs-10</code> submitted;
-                adopted by IETF PLANTS WG as <code>draft-ietf-plants-merkle-tree-certs-00</code>
+                &bull; 2026: <code>draft-davidben-tls-merkle-tree-certs-10</code> submitted; adopted
+                by IETF PLANTS WG as <code>draft-ietf-plants-merkle-tree-certs-00</code>
               </li>
               <li>
                 &bull; February 2026: <code>draft-ietf-plants-merkle-tree-certs-01</code> published
               </li>
               <li>
-                &bull; March 2026: <code>draft-ietf-plants-merkle-tree-certs-02</code> published
+                &bull; 2026: <code>draft-ietf-plants-merkle-tree-certs-02</code> published
               </li>
               <li className="text-warning font-medium pt-1">
                 &bull; Status: Active IETF draft — not yet standardized as an RFC. Not recommended

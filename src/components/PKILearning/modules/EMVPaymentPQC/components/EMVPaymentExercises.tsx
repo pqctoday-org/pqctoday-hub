@@ -39,7 +39,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Architecture',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Visa has 4.6B cards with active PQC research (quantum lab since 2022), while UnionPay has 9.4B cards tied to China\u2019s pending GB/T standards. UnionPay\u2019s scale makes it the single largest quantum-vulnerable payment ecosystem. Note the two card counts are not subsets of the 14.7 billion EMV figure: network totals count every card a network has in circulation, including non-EMV and multi-badged cards, so they cannot be added up against it.',
+        'Visa has billions of cards in circulation with active PQC research (quantum lab since 2022), while UnionPay has 9.4B cards tied to China\u2019s pending GB/T standards. UnionPay\u2019s scale makes it the single largest quantum-vulnerable payment ecosystem. Note the two card counts are not subsets of the 14.7 billion EMV figure: network totals count every card a network has in circulation, including non-EMV and multi-badged cards, so they cannot be added up against it.',
       config: { step: 0 },
     },
     {
@@ -61,7 +61,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Provisioning',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'RSA-2048 chain: ~1.5 KB (4 \u00d7 384 bytes). ML-DSA-44 chain: ~15.3 KB (4 \u00d7 3,832 bytes). FN-DSA-512: ~6.7 KB (4 \u00d7 1,687 bytes). FN-DSA is ~2.3\u00d7 smaller than ML-DSA but 4.4\u00d7 larger than RSA. At 6.7 KB, FN-DSA fits within 32-64 KB card NVM, while ML-DSA at 15.3 KB is tight for 32 KB NVM. FIPS 206 standardization for FN-DSA (Falcon) is still pending, so it is not yet a deployable option.',
+        'RSA-2048 chain: ~1.5 KB (4 \u00d7 384 bytes). ML-DSA-44 chain: ~15.3 KB (4 \u00d7 3,832 bytes, each a 2,420 B signature + 1,312 B key + ~100 B of fields). FN-DSA-512: ~6.7 KB (4 \u00d7 1,687 bytes, each a 666 B signature + 897 B key + ~124 B of fields). FN-DSA is ~2.3\u00d7 smaller than ML-DSA but 4.4\u00d7 larger than RSA. At 6.7 KB, FN-DSA fits within 32-64 KB card NVM, while ML-DSA at 15.3 KB is tight for 32 KB NVM. FIPS 206 standardization for FN-DSA (Falcon) is still pending, so it is not yet a deployable option.',
       config: { step: 2 },
     },
     {

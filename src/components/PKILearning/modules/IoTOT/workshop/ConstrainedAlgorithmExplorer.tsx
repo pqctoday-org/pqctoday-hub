@@ -25,8 +25,9 @@ export const ConstrainedAlgorithmExplorer: React.FC = () => {
     <div className="space-y-6">
       <p className="text-sm text-foreground/80">
         Select a device class to see which PQC algorithms fit within its resource constraints. Green
-        means the algorithm fits comfortably, amber means it&apos;s tight (&gt;50% of available
-        RAM), and red means it exceeds the device&apos;s capabilities.
+        means the algorithm fits comfortably, amber means it&apos;s tight (the legend&apos;s
+        threshold: &gt;50% of available RAM), and red means it exceeds the device&apos;s
+        capabilities.
       </p>
 
       {/* Device Class Selector */}

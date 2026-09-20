@@ -431,7 +431,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <span className="text-muted-foreground">Firmware:</span>{' '}
-                    <span className="font-mono text-foreground">5.0+ (Q-safe extension)</span>
+                    <span className="font-mono text-foreground">Q-safe extension</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
@@ -486,9 +486,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <strong>Key insight:</strong> On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) are
                 in production with firmware-level PQC support. Cloud HSMs currently lag: AWS
                 CloudHSM is ML-DSA preview-only; Azure Dedicated HSM has PQC available via
-                customer-requested firmware upgrade (note: retiring Aug 2025, no new customers); GCP
-                Cloud HSM remains roadmap (Cloud KMS software is in preview for
-                ML-KEM/ML-DSA/SLH-DSA).
+                customer-requested firmware upgrade (note: Azure Dedicated HSM is retiring — no new
+                customer onboardings); GCP Cloud HSM remains roadmap (Cloud KMS software is in
+                preview for ML-KEM/ML-DSA/SLH-DSA).
               </p>
             </div>
           </div>
@@ -554,8 +554,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   Managed HSM (Marvell LS2 backend) has a separate PQC roadmap.
                 </p>
                 <p>
-                  <strong>⚠ Retiring:</strong> No new customers after August 2025; existing
-                  customers supported until August 2028.
+                  <strong>⚠ Retiring:</strong> No new customer onboardings; existing customers
+                  supported until 31 July 2028.
                 </p>
               </div>
             </div>
