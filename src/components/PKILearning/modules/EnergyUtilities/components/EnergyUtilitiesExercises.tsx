@@ -60,7 +60,7 @@ export const EnergyUtilitiesExercises: React.FC<EnergyUtilitiesExercisesProps> =
       badge: 'Metering',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'PLC at 100 kbps: ECDH rotation takes a few hours for 5M meters. ML-KEM-768 rotation takes several days \u2014 a significant increase due to 1088-byte ciphertexts vs 33-byte ECDH shares. On NB-IoT (62.5 kbps), the duration increases further. Staggered zone rotation mitigates this by spreading the load across geographic zones.',
+        'PLC at 100 kbps: ECDH rotation takes a few hours for 5M meters. ML-KEM-768 rotation takes several days \u2014 a significant increase due to 1088-byte ciphertexts vs 33-byte ECDH shares. On the narrower NB-IoT uplink, the duration increases further. Staggered zone rotation mitigates this by spreading the load across geographic zones.',
       config: { step: 2 },
     },
     {

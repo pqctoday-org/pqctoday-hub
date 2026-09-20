@@ -265,8 +265,9 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
           <p className="text-xs text-muted-foreground">
             <span className="font-semibold text-foreground">Production-Scale KPIs:</span> Real-world
             benchmarks reported in VIAVI&apos;s Testing, Measuring and Managing PQC Migration white
-            paper (TeraVM on Dell R6625 hardware — 1.6M emulated users, HAProxy TLS + Strongswan
-            IKEv2). Adjust environment and traffic pattern to model enterprise conditions.
+            paper (TeraVM on Dell R6625 hardware — over a million emulated users, HAProxy TLS +
+            Strongswan IKEv2). Adjust environment and traffic pattern to model enterprise
+            conditions.
           </p>
         </div>
 

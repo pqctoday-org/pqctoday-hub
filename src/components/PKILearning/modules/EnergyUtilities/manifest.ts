@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'energy-utilities-pqc',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-042',
   title: 'Energy & Utilities PQC',
   description:

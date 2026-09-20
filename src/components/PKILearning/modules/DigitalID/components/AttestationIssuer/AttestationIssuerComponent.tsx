@@ -29,7 +29,7 @@ const DIGITAL_ID_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'did-epassport-decap',
     useCase: 'ePassport chip auth (PACE)',
-    standard: 'ICAO Doc 9303 + BSI TR-03116 + FIPS 203 ACVP',
+    standard: 'ICAO MRTD specifications + BSI TR-03116 + FIPS 203 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
     kind: { type: 'mlkem-decap', variant: 768 },

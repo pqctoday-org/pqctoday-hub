@@ -187,7 +187,7 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
                   <td className="py-2 px-3 font-medium text-foreground">
                     <InlineTooltip term="ARINC 653">ARINC 664</InlineTooltip> / AFDX
                   </td>
-                  <td className="text-right py-2 px-3">1,471 B</td>
+                  <td className="text-right py-2 px-3">Ethernet-class frames</td>
                   <td className="text-right py-2 px-3">3,309 B</td>
                   <td className="text-right py-2 px-3">3</td>
                   <td className="py-2 px-3">
@@ -320,7 +320,7 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
                 </tr>
                 <tr className="border-b border-border/50">
                   <td className="py-2 px-3 font-medium text-foreground">BAE RAD5545</td>
-                  <td className="text-right py-2 px-3">466 MHz</td>
+                  <td className="text-right py-2 px-3">sub-GHz, multi-core</td>
                   <td className="text-right py-2 px-3">2 GB</td>
                   <td className="text-right py-2 px-3">100 krad</td>
                   <td className="text-center py-2 px-3 text-status-success">&#10003;</td>

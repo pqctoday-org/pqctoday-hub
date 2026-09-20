@@ -318,8 +318,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             <p className="text-xs mt-2">
               A typical enterprise proxy chain (NGFW → SGW → DLP) means each connection pays the PQC
               handshake cost <strong>three times</strong>. Where VIAVI&apos;s white paper Testing,
-              Measuring and Managing PQC Migration reports a 37% drop in connection rate on a clean
-              path, enterprises with inspection chains may see 60-80% drops (our estimate).
+              Measuring and Managing PQC Migration reports a sharp drop in connection rate on a
+              clean path, enterprises with inspection chains should expect a much larger one (our
+              estimate).
             </p>
           </div>
 
@@ -392,12 +393,13 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
           </p>
           <p className="text-xs">
             VIAVI&apos;s white paper Testing, Measuring and Managing PQC Migration reports testing
-            on Dell R6625 hardware with HAProxy (TLS) and Strongswan (IKEv2) against 1.6 million
-            emulated users: <strong>37% fewer connections/second</strong>,{' '}
-            <strong>32% throughput drop</strong>, <strong>3,523% latency increase</strong> (Client
-            Get Time: 2.72ms → 98.55ms), and <strong>75% reduction in VPN tunnel setup rate</strong>{' '}
-            (17,768 → 4,471 tunnels/s). These numbers represent the floor — enterprise middlebox
-            chains multiply them further.
+            on Dell R6625 hardware with HAProxy (TLS) and Strongswan (IKEv2) against more than a
+            million emulated users: <strong>markedly fewer connections per second</strong>,{' '}
+            <strong>lower throughput</strong>,{' '}
+            <strong>client response times an order of magnitude higher</strong>, and{' '}
+            <strong>VPN tunnel setup rates cut to a fraction</strong>. The paper sits behind a
+            registration wall, so the exact figures are not reproduced here. Those results represent
+            the floor — enterprise middlebox chains multiply them further.
           </p>
         </div>
 

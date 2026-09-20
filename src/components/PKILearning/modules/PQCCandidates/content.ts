@@ -79,11 +79,6 @@ export const content: ModuleContent = {
       year: 2027,
       source: 'NIST IR 8528',
     },
-    {
-      label: 'KpqC target standardisation',
-      year: 2029,
-      source: 'KpqC-Competition-Results',
-    },
   ],
 
   narratives: {

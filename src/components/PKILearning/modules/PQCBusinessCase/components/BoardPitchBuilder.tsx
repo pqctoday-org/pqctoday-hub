@@ -142,7 +142,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
     '## Basis of figures',
     '',
     `- **Breach cost baselines** — IBM Cost of a Data Breach, per-sector averages. Sectors without a dedicated IBM figure use a labelled proxy. ${IBM_BASELINE_UNVERIFIED_NOTE}`,
-    '- **Annual breach probability** — Cyentia Institute, *Information Risk Insights Study (IRIS) 2025*, Figures 6 and 7, read from the report itself: 8.7% (firms under $10M revenue), 9.3% (typical firm), 12.8% ($10B-$100B). The tiers sit close together because IRIS 2025 finds they have converged.',
+    '- **Annual breach probability** — Cyentia Institute, *Information Risk Insights Study (IRIS) 2025*, Figures 6 and 7, read from the report itself for the three organisation-size tiers (the report states them in charts, so they are not reproduced here). The tiers sit close together because IRIS 2025 finds they have converged.',
     '- **CRQC arrival probability** — Global Risk Institute, Quantum Threat Timeline Report 2025: a CRQC is judged ~49% likely within a decade on averaged expert estimates, with half of the 26 experts surveyed putting it at 50% or more (2025 Quantum Threat Timeline Report).',
     '- **Migration cost, delay premium, and staffing** — analyst estimates for this organization, not cited figures.',
     '',
