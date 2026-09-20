@@ -106,10 +106,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <ul className="list-disc list-outside pl-5 space-y-2 text-sm">
             <li>
               <strong>Certificates &amp; PKI</strong> &mdash; the 47-day cadence is mathematically
-              incompatible with manual CLM; cert-related outages cost an average of $11M per
-              incident and 86% of organizations hit one in the last 12 months. The average
-              enterprise manages 114k certificates with 53% still on spreadsheets (Entrust / Ponemon
-              Institute, 2024 Global PKI &amp; PQC Trends Study &mdash; quoted in full below).
+              incompatible with manual CLM; certificate-related outages are common and costly. The
+              average enterprise manages over 114,000 certificates, many still tracked in
+              spreadsheets (Entrust / Ponemon Institute, 2024 Global PKI &amp; PQC Trends Study
+              &mdash; quoted below).
             </li>
             <li>
               <strong>Crypto Libraries</strong> &mdash; the NIST CMVP Modules-in-Process queue runs
@@ -746,8 +746,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-sm font-bold text-status-success">Outage avoidance</div>
               <p className="text-[11px] text-muted-foreground mt-1">
-                ~$11M per cert-expiry event &times; 86% annual incidence (Entrust/Ponemon 2024 PKI
-                &amp; PQC Trends Study).
+                an illustrative assumption of ~$11M per cert-expiry event &times; 86% annual
+                incidence (after Entrust/Ponemon 2024 PKI &amp; PQC Trends Study).
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -778,13 +778,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <Quote cite="Forrester Total Economic Impact of DigiCert ONE (July 2025), commissioned by DigiCert">
             A composite organization modeled on interviewed DigiCert ONE customers realized 312% ROI
             and $10.1M NPV over three years &mdash; with $7.9M in labor savings, $2.8M from reduced
-            security incidents, and $2.83M in revenue and efficiency gains. Treat as upper-bound
+            security incidents, and $2.8M in revenue and efficiency gains. Treat as upper-bound
             benchmark for a specific product, not a guaranteed outcome for any CLM platform.
           </Quote>
           <Quote cite="Entrust / Ponemon Institute, 2024 Global PKI &amp; PQC Trends Study">
-            The average enterprise manages 114,000 publicly-trusted and internal certificates. 86%
-            experienced at least one cert-related outage in the last 12 months. 53% still rely on
-            manual spreadsheets or home-grown tools for PKI management &mdash; an operating model
+            The average enterprise manages over 114,000 certificates. Many still rely on manual
+            spreadsheets or home-grown tools for PKI management &mdash; an operating model
             incompatible with a 47-day maximum validity window.
           </Quote>
 

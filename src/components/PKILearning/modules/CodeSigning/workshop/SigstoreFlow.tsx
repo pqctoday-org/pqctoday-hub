@@ -82,7 +82,7 @@ const STEP_DETAILS: Record<number, { classical: string; pqc: string; detail: str
   },
   5: {
     classical: 'Rekor entry with ECDSA signature (~200 bytes total)',
-    pqc: 'Rekor entry with ML-DSA-65 signature (~3,600 bytes total)',
+    pqc: 'Rekor entry with ML-DSA-65 signature (3,309 B + ~300 B ≈ 3,600 bytes total)',
     detail:
       'The signature, certificate, and artifact hash are recorded in Rekor, an immutable, append-only transparency log. Each entry gets a unique log index and UUID. Once recorded, the entry cannot be modified or deleted.',
   },

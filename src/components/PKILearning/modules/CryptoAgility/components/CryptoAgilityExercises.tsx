@@ -61,7 +61,7 @@ export const CryptoAgilityExercises: React.FC<CryptoAgilityExercisesProps> = ({
       badge: 'CBOM',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'The majority of asymmetric algorithms (RSA, ECDSA, ECDH, Ed25519) are quantum-vulnerable. Symmetric algorithms (AES-256) and hashes (SHA-256) are generally safe. This is typical — most enterprises have 60-70% vulnerable assets.',
+        'The majority of asymmetric algorithms (RSA, ECDSA, ECDH, Ed25519) are quantum-vulnerable. Symmetric algorithms (AES-256) and hashes (SHA-256) are generally safe. This is typical — most enterprises have 60-70% vulnerable assets (our estimate, not a survey figure).',
       config: { step: 1 },
     },
     {

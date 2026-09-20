@@ -112,7 +112,7 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
       badge: 'Hybrid',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Record the handshake bytes and check the "vs #1" column in the Comparison Table — this shows the percentage increase from the ML-KEM key share (~1.2 KB). The Key Exchange badge will show the hybrid group name. Forward secrecy note: because ML-KEM keys are generated fresh per handshake, compromising the server\'s long-term ML-DSA signing key later cannot decrypt past sessions.',
+        'Record the handshake bytes and check the "vs #1" column in the Comparison Table — this shows the percentage increase from the ML-KEM key share (1,184 B, FIPS 203). The Key Exchange badge will show the hybrid group name. Forward secrecy note: because ML-KEM keys are generated fresh per handshake, compromising the server\'s long-term ML-DSA signing key later cannot decrypt past sessions.',
       apply: () => {
         setClientConfig({
           cipherSuites: ['TLS_AES_256_GCM_SHA384'],

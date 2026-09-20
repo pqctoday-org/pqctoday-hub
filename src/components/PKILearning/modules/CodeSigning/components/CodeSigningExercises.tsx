@@ -60,7 +60,7 @@ export const CodeSigningExercises: React.FC<CodeSigningExercisesProps> = ({
       badge: 'Packages',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Hybrid mode produces a signature of ~4,741 bytes (ML-DSA-87 + Ed448 combined), but older RPM tools can still verify using just the Ed448 portion. Dual-signature schemes like this are being explored as a backward-compatible path for Linux package signing.',
+        'Hybrid mode produces a signature of ~4,741 bytes (4,627 B ML-DSA-87 + 114 B Ed448 = 4,741 B), but older RPM tools can still verify using just the Ed448 portion. Dual-signature schemes like this are being explored as a backward-compatible path for Linux package signing.',
       config: { step: 2 },
     },
     {
@@ -82,7 +82,7 @@ export const CodeSigningExercises: React.FC<CodeSigningExercisesProps> = ({
       badge: 'Firmware',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'LMS signatures (2,512 bytes) are smaller than ML-DSA (3,309 bytes), but require a monotonic state counter that must never be reset or cloned. CNSA 2.0 mandates LMS/XMSS for firmware signing in national security systems by 2030, despite the state management burden.',
+        'LMS signatures (2,512 bytes per RFC 8554) are smaller than ML-DSA (3,309 bytes), but require a monotonic state counter that must never be reset or cloned. CNSA 2.0 mandates LMS/XMSS for firmware signing in national security systems by 2030, despite the state management burden.',
       config: { step: 4 },
     },
   ]

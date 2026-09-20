@@ -325,7 +325,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
         indent: 1,
       },
       {
-        text: 'signatureValue      BIT STRING (~3379 bytes) — raw concatenation:',
+        text: 'signatureValue      BIT STRING (~3,379 bytes = 3,309 + 64 + 6) — raw concatenation:',
         color: 'primary',
         indent: 1,
       },

@@ -728,7 +728,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           <p>
             <InlineTooltip term="AUTOSAR">AUTOSAR</InlineTooltip> Adaptive Platform R23-11 includes
             the Crypto Service Manager (ara::crypto) which supports algorithm-agnostic key
-            management. However, AUTOSAR Classic (used in 80% of ECUs) relies on the SHE/SHE 2.0
+            management. However, AUTOSAR Classic (used in most ECUs) relies on the SHE/SHE 2.0
             hardware interface, which has a fixed AES-128 algorithm set with no extensibility for
             PQC. The Classic-to-Adaptive migration is itself a multi-year effort that must be
             coordinated with PQC adoption.
@@ -1168,7 +1168,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 AUTOSAR Classic (SHE-based)
               </h3>
               <p className="text-xs text-muted-foreground">
-                Used in 80% of automotive ECUs. Crypto Stack (CryIf + Csm) is tightly coupled to SHE
+                Used in most automotive ECUs. Crypto Stack (CryIf + Csm) is tightly coupled to SHE
                 hardware: fixed AES-128 + CMAC. No extensibility for asymmetric crypto, let alone
                 PQC. Secure boot uses AES-CMAC chains, not digital signatures. PQC migration
                 requires replacing ECU hardware entirely or adding an external secure element.
@@ -1301,7 +1301,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               <ul className="space-y-1 list-disc list-inside">
                 <li>UNECE WP.29 R155 &mdash; Cybersecurity Management System (CSMS)</li>
                 <li>UNECE WP.29 R156 &mdash; Software Update Management System (SUMS)</li>
-                <li>NSA CNSA 2.0 Suite (March 2022) &mdash; PQC transition deadlines</li>
+                <li>NSA CNSA 2.0 Suite (September 2022) &mdash; PQC transition deadlines</li>
               </ul>
             </div>
             <div className="space-y-1.5">
@@ -1323,8 +1323,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 <li>FIPS 204 (ML-DSA) &mdash; Digital signatures</li>
                 <li>FIPS 205 (SLH-DSA) &mdash; Stateless hash-based signatures</li>
                 <li>
-                  IEEE 1609.2 &mdash; V2X Security Services. The current edition (1609.2-2025)
-                  specifies ECC; there is no IEEE post-quantum amendment project
+                  IEEE 1609.2 &mdash; V2X Security Services. The current (2025) edition of IEEE
+                  1609.2 specifies ECC; there is no IEEE post-quantum amendment project
                 </li>
                 <li>CCC Digital Key 3.0 &mdash; Car Connectivity Consortium</li>
                 <li>ISO 14443 &mdash; NFC proximity card standard (car key transport)</li>

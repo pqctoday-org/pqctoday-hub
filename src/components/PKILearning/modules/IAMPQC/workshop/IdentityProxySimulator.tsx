@@ -41,7 +41,7 @@ export const IdentityProxySimulator: React.FC = () => {
               PQC Enabled
             </span>
             <p className="mt-2 text-muted-foreground text-xs">
-              Signs SAML with ML-DSA-65 (3.3KB signature)
+              Signs SAML with ML-DSA-65 (3,309-byte FIPS 204 signature)
             </p>
           </div>
         </div>

@@ -36,7 +36,7 @@ export const content: ModuleContent = {
     // archived".
     getStandard('draft-ietf-ipsecme-ikev2-pqc-auth-08'),
     getStandard('draft-ietf-ipsecme-ikev2-mlkem-06'),
-    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('OpenSSH-9-9'), // m-vpn-ssh-pqc: September 2024
     getStandard('Multiple-Authentication-Exchanges-in-the-Internet-Key-Exchan'), // pt-vpn-sim: RFC 4739
   ],
@@ -54,10 +54,10 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    ikeClassicalSize: '2,040 bytes',
-    ikeHybridSize: '3,784 bytes',
+    ikeClassicalSize: "2,040 bytes (this workshop's sample handshake)",
+    ikeHybridSize: "3,784 bytes (this workshop's sample handshake)",
     wireGuardIncrease: '22x',
-    sshClassicalSize: '984 bytes',
-    sshHybridSize: '3,296 bytes',
+    sshClassicalSize: "984 bytes (this workshop's sample handshake)",
+    sshHybridSize: "3,296 bytes (this workshop's sample handshake)",
   },
 }

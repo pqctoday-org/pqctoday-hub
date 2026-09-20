@@ -287,12 +287,8 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20">
             <div className="text-sm font-bold text-status-error mb-1">Traditional PQC Chain</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>
-                3 ML-DSA-44 signatures: <strong>7,260 B</strong>
-              </li>
-              <li>
-                3 public keys: <strong>3,936 B</strong>
-              </li>
+              <li>3 ML-DSA-44 signatures — 3 × 2,420 B = 7,260 B</li>
+              <li>3 public keys — 3 × 1,312 B = 3,936 B</li>
               <li>
                 4 CT SCTs: <strong>476 B</strong>
               </li>

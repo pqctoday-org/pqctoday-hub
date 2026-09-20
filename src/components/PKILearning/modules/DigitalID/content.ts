@@ -8,7 +8,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'digital-id',
-  version: '1.0.1',
+  version: '1.0.2',
   lastReviewed: '2026-08-23',
   lastEdited: '2026-09-20',
 
@@ -39,8 +39,10 @@ export const content: ModuleContent = {
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('BSI TR-02102-1'),
     getStandard('FIPS 203'),
-    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('EU-NIS-CG-Roadmap-v1.1'), // m-digital-id: December 2026; m-digital-id: December 2035
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
+    getStandard('Electronic-Signatures-and-Infrastructures-ESI-JAdES-digital'), // m-digital-id: wave 4c
   ],
 
   algorithms: [

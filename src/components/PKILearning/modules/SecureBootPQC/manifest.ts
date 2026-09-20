@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'secure-boot-pqc',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-018',
   title: 'Secure Boot & Firmware PQC',
   description:

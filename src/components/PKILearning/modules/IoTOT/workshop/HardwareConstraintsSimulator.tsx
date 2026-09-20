@@ -179,8 +179,9 @@ export const HardwareConstraintsSimulator: React.FC = () => {
             <h3 className="font-bold text-lg">V2X Intersection Storm</h3>
             <p className="text-sm text-muted-foreground">
               Automotive V2X standards require cars to broadcast Basic Safety Messages (BSMs) 10
-              times per second (10Hz). When switching from ECDSA to ML-DSA, the 2.4KB signatures can
-              quickly overwhelm the 6 Mbps channel capacity at a busy intersection.
+              times per second (10Hz). When switching from ECDSA to ML-DSA, the 2,420-byte (FIPS 204
+              ML-DSA-44) signatures can quickly overwhelm the 6 Mbps channel capacity at a busy
+              intersection.
             </p>
 
             <div className="space-y-4">

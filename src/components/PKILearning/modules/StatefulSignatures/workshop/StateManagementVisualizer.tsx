@@ -783,12 +783,12 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                 value: `W${lmsW} → ${cfg.p} chains/sig · ≤${Math.pow(2, lmsW) - 1} hashes/chain`,
                 body:
                   lmsW === 1
-                    ? 'W1: 265 chains (N32), 1 hash step per chain iteration. Fastest signing — each chain completes in a single hash — but the largest signature (~8.5 KB of chain values). Choose W1 only when sign latency is the bottleneck and bandwidth is plentiful.'
+                    ? 'W1: 265 chains (N32), 1 hash step per chain iteration. Fastest signing — each chain completes in a single hash — but the largest signature (~8.5 KB of chain values per RFC 8554). Choose W1 only when sign latency is the bottleneck and bandwidth is plentiful.'
                     : lmsW === 2
                       ? 'W2: 133 chains (N32), ≤3 hash steps per chain. Halves the chain count vs W1 at only 3× more work per chain. Useful middle ground when moderate size savings are needed without the full cost of W4.'
                       : lmsW === 4
                         ? 'W4: 67 chains (N32), ≤15 hash steps per chain. SP 800-208 recommended default — cuts LMOTS chain values to ~2.1 KB (N32) with a manageable sign cost. Balances bandwidth and performance for most real-world deployments.'
-                        : 'W8: 34 chains (N32), ≤255 hash steps per chain. Smallest LMOTS output (~1.1 KB) at ~8× more sign work than W1. Best for bandwidth-constrained channels (IoT, firmware update protocols) where signing throughput is not critical.',
+                        : 'W8: 34 chains (N32), ≤255 hash steps per chain. Smallest LMOTS output (~1.1 KB per RFC 8554) at ~8× more sign work than W1. Best for bandwidth-constrained channels (IoT, firmware update protocols) where signing throughput is not critical.',
               },
               {
                 label: 'Selected Parameter Set',

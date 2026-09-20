@@ -531,7 +531,8 @@ export const RandomGenerationDemo: React.FC = () => {
                 Recurrence: state = (a × state + c) mod m
               </p>
               <span className="text-[10px] text-muted-foreground italic">
-                Numerical Recipes parameters (Knuth, 1997)
+                Numerical Recipes parameters (Knuth, The Art of Computer Programming, Volume 2 —
+                Seminumerical Algorithms, 3rd ed., 1997)
               </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">

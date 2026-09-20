@@ -517,11 +517,11 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               <strong>digital signatures by December 31, 2031</strong>. The function split is
               deliberate: key establishment carries harvest-now-decrypt-later exposure, so it moves
               first. It further directs a FAR Council proposed rule on contractor FIPS/PQC
-              compliance (due December 19, 2026) and CISA guidance on minimum{' '}
-              <InlineTooltip term="CBOM">CBOM</InlineTooltip> elements (due March 19, 2027). OMB
-              Memorandum M-26-15 (June 24, 2026) is the implementing guidance: a five-phase agency
-              schedule and PQC migration plans filed with OMB. National security systems are out of
-              scope &mdash; they remain under CNSA 2.0.
+              compliance (due 19 December 2026, 180 days after EO 14412) and CISA guidance on
+              minimum <InlineTooltip term="CBOM">CBOM</InlineTooltip> elements (due 19 March 2027,
+              270 days after EO 14412). OMB Memorandum M-26-15 (June 24, 2026) is the implementing
+              guidance: a five-phase agency schedule and PQC migration plans filed with OMB.
+              National security systems are out of scope &mdash; they remain under CNSA 2.0.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -543,9 +543,9 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               A CBOM is your foundational compliance artifact &mdash; you cannot migrate what you
               haven&apos;t inventoried, and in most organizations the inventory does not yet exist
               in any auditable form. EO 14412 puts a date on it: CISA guidance on the minimum
-              elements of a CBOM is due 19 March 2027, to enable automated assessment of
-              cryptographic assets. For the full CBOM framework, including CycloneDX format
-              requirements and vendor contract language, see{' '}
+              elements of a CBOM is due 19 March 2027, 270 days after the order, to enable automated
+              assessment of cryptographic assets. For the full CBOM framework, including CycloneDX
+              format requirements and vendor contract language, see{' '}
               <Link to="/learn/vendor-risk" className="text-primary hover:underline">
                 Vendor &amp; Supply Chain Risk
               </Link>
@@ -556,10 +556,9 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
         <div className="bg-muted/50 rounded-lg p-3 border border-status-warning/20">
           <p className="text-xs text-muted-foreground">
             <AlertTriangle size={12} className="inline text-status-warning mr-1" />
-            <strong className="text-foreground">Industry finding:</strong> 86% of financial sector
-            organisations report being unprepared for post-quantum cybersecurity (2023 survey of 200
-            financial sector leaders, cited by Europol&apos;s Quantum Safe Financial Forum, February
-            2025).
+            <strong className="text-foreground">Industry finding:</strong> most financial-sector
+            organisations report being unprepared for post-quantum cybersecurity (Europol&apos;s
+            Quantum Safe Financial Forum, Call to Action, 2025).
           </p>
         </div>
       </div>

@@ -39,7 +39,7 @@ export const StatefulSigsExercises: React.FC<StatefulSigsExercisesProps> = ({
       badge: 'LMS',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'H5/W8 produces only 32 signatures at ~1.3 KB each. H20/W4 produces over 1 million signatures at ~2.8 KB each. The public key remains 56 bytes regardless of parameters.',
+        'Per RFC 8554, H5/W8 produces only 32 signatures at ~1.3 KB each. H20/W4 produces over 1 million signatures at ~2.8 KB each (RFC 8554 sizes). The public key remains 56 bytes regardless of parameters.',
       config: { step: 0, paramId: 'lms-h5-w8' },
     },
     {

@@ -97,7 +97,7 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     lastVerified: '2026-06-06',
     posture: 'green',
     notes:
-      "First HSM submitted for FIPS 140-3 Level 3 covering all NIST PQC algorithms. FPGA-based QASM core enables in-field firmware upgrades without hardware swap. CAVP A5631 (ML-KEM, ML-DSA, SLH-DSA, LMS) and A4204 (LMS — world's first PQC CAVP cert) validated. QxOS 5 (Jun 2025). Classic McEliece on roadmap. Integrations: EJBCA v9.3+, DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
+      "First HSM submitted for FIPS 140-3 Level 3 covering all NIST PQC algorithms. FPGA-based QASM core enables in-field firmware upgrades without hardware swap. CAVP A5631 (ML-KEM, ML-DSA, SLH-DSA, LMS) and A4204 (LMS — world's first PQC CAVP cert) validated. QxOS 5. Classic McEliece on roadmap. Integrations: EJBCA v9.3+, DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
   },
   {
     id: 'fortanix-dsm',

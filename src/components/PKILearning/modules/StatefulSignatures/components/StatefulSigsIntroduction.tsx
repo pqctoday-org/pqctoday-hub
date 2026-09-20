@@ -263,7 +263,7 @@ const Step2LmsXmss: React.FC = () => (
               <li>&bull; Winternitz parameter: W = 1, 2, 4, 8</li>
               <li>&bull; Max signatures = 2^H (32 to 33M)</li>
               <li>&bull; Small public key: 56 bytes</li>
-              <li>&bull; Signature size: 1.3 &ndash; 9.3 KB depending on H, W</li>
+              <li>&bull; Signature size: 1.3 &ndash; 9.3 KB depending on H, W (RFC 8554)</li>
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">

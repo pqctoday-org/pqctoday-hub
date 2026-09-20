@@ -60,7 +60,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
               },
               {
                 t: 'Bandwidth Limits',
-                d: 'NB-IoT offers only 62.5 kbps uplink. A single ML-KEM-768 ciphertext (1,088 bytes) takes ~0.14 seconds to transmit \u2014 manageable alone, but a full PQC DTLS handshake could take several seconds.',
+                d: 'NB-IoT offers only 62.5 kbps uplink. A single ML-KEM-768 ciphertext (1,088 bytes) takes ~0.14 seconds to transmit (our estimate — 1,088 × 8 ÷ 62,500) \u2014 manageable alone, but a full PQC DTLS handshake could take several seconds.',
               },
               {
                 t: 'Long Lifetimes',
@@ -320,9 +320,9 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
 
           <p>
             <InlineTooltip term="LMS/HSS">LMS/HSS</InlineTooltip> is the leading choice for firmware
-            signing: 56-byte public key, 2,512-byte (2.5 KB) signature, and the fastest PQC verifier
-            on constrained MCUs (~4&times; faster than XMSS on Cortex-M4). Its stateful nature
-            (monotonic counter in TPM) is acceptable for firmware signing servers that sign
+            signing: 56-byte public key, 2,512-byte (2.5 KB) signature per RFC 8554, and the fastest
+            PQC verifier on constrained MCUs (~4&times; faster than XMSS on Cortex-M4). Its stateful
+            nature (monotonic counter in TPM) is acceptable for firmware signing servers that sign
             infrequently. The <InlineTooltip term="SUIT">SUIT manifest</InlineTooltip> (RFC 9019)
             wraps the firmware image with metadata, conditions, and signatures for secure OTA
             delivery.

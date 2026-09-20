@@ -899,7 +899,7 @@ export const TPM_LESSONS: TpmLesson[] = [
     tone: 'warn',
     title: 'An honest TPM — detect fake crypto and spec drift yourself',
     blurb:
-      'A 2026 audit of this very playground found silent-placeholder risks and a compliance suite that could report a false 100%. This lesson turns those checks into things YOU run: placeholder detection, bridge status, and a live spec-vs-engine drift check.',
+      'A 2026 audit of this very playground found silent-placeholder risks and a compliance suite that could report a false 100% score. This lesson turns those checks into things YOU run: placeholder detection, bridge status, and a live spec-vs-engine drift check.',
     setup:
       'This engine’s PQC math runs through a crypto bridge to a real ML-KEM/ML-DSA implementation. If that bridge failed to load, commands would still “work” — returning placeholder bytes. Trust, then verify: the same discipline the CACP playground’s Lesson 9 teaches at the KMS layer.',
     steps: [

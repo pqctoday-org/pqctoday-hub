@@ -394,8 +394,8 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             Gateway vendor PQC readiness varies significantly. F5 BIG-IP carries ML-KEM hybrid key
-            exchange from the 17.5.1 PQC minor, generally available across the product in 21.1 (May
-            2026); Envoy supports hybrid PQC TLS in production. Others (Imperva WAF, Broadcom Avi,
+            exchange from the 17.5.1 PQC minor, generally available across the product in 21.1
+            (2026); Envoy supports hybrid PQC TLS in production. Others (Imperva WAF, Broadcom Avi,
             Zscaler) are still on the roadmap. Understanding each vendor&apos;s status and upgrade
             path is critical for planning &mdash; and version numbers here move quickly, so confirm
             against the vendor&apos;s own release notes before committing to a date.

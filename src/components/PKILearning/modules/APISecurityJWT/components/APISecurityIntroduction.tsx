@@ -197,9 +197,9 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             composite signatures (
             <code className="text-foreground/70">draft-ietf-jose-pq-composite-sigs</code>) round out
             the JOSE PQC stack. Note that the KEM draft moved on: revision{' '}
-            <code className="text-foreground/70">-06</code> (July 2026) was retitled for COSE alone
-            and no longer registers any JWE algorithms, so the JWE construction shown here is the
-            one specified by <code className="text-foreground/70">-05</code>.
+            <code className="text-foreground/70">-06</code> was retitled for COSE alone and no
+            longer registers any JWE algorithms, so the JWE construction shown here is the one
+            specified by <code className="text-foreground/70">-05</code>.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -403,7 +403,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-muted-foreground">ML-DSA-65 JWT (~4,700 bytes)</span>
-                <span className="font-mono text-foreground">~4.7 KB</span>
+                <span className="font-mono text-foreground">~4.7 KB (4,412 + 300 B)</span>
               </div>
               <div className="w-full bg-muted rounded-full h-3">
                 <div
@@ -429,7 +429,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             {[
               {
                 t: 'HTTP Header Limits',
-                d: 'Many servers default to 8 KB header limits. A single ML-DSA-65 JWT in an Authorization header uses ~60% of that budget. With DPoP, two PQC JWTs could exceed the limit.',
+                d: 'Many servers default to 8 KB header limits. A single ML-DSA-65 JWT in an Authorization header uses ~60% of that budget (4.7 ÷ 8 = 0.59). With DPoP, two PQC JWTs could exceed the limit.',
               },
               {
                 t: 'Cookie Storage',

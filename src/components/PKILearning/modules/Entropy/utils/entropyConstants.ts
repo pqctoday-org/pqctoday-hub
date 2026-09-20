@@ -156,7 +156,7 @@ export const RNG_COMPARISON = [
   {
     property: 'Cost',
     trng: 'Included in CPU (no additional cost)',
-    qrng: '$500-5,000+ for hardware; cloud API pricing varies',
+    qrng: '$500-5,000+ for hardware (est.); cloud API pricing varies',
   },
   {
     property: 'Certification',

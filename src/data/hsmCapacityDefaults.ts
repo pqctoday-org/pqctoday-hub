@@ -240,7 +240,7 @@ export const USE_CASES: UseCase[] = [
         'CA/Browser Forum Baseline Requirements v2.0',
       ],
       pqcImpact:
-        "RSA-2048 → ML-DSA-65 (FIPS 204). CA/B Forum is evaluating PQC OIDs for publicly-trusted certificates. ML-DSA-65 grows OCSP responses and CRLs substantially — the signature alone adds ~3.3 KB vs. RSA-2048's 256 bytes, and ~5 KB+ once the responder's ML-DSA public key (1,952 bytes) is also transmitted — bandwidth impact may exceed HSM throughput impact at scale.",
+        "RSA-2048 → ML-DSA-65 (FIPS 204). CA/B Forum is evaluating PQC OIDs for publicly-trusted certificates. ML-DSA-65 grows OCSP responses and CRLs substantially — the signature alone adds ~3.3 KB (3,309 B, FIPS 204) vs. RSA-2048's 256 bytes, and ~5 KB+ once the responder's ML-DSA public key (1,952 bytes) is also transmitted — bandwidth impact may exceed HSM throughput impact at scale.",
     },
   },
   {

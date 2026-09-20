@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
-  version: '1.0.1',
+  version: '1.0.2',
   lastReviewed: '2026-08-10',
   lastEdited: '2026-09-20',
 
@@ -76,10 +76,12 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NIST-SP-800-90A-R1'),
-    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('SEC2-v2'), // m-hybrid-crypto: secp256k1; pt-hybrid-certs: secp256k1; pt-hybrid-sigs: secp256k1
     getStandard('CRYSTALS-Dilithium-Spec-v31'), // m-hybrid-crypto: 3,293B
     getStandard('eprint-2025-2059'), // pt-hybrid-sigs: 2059
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
+    getStandard('RFC-6928'), // m-hybrid-crypto: wave 4c
   ],
 
   algorithms: [
@@ -112,7 +114,7 @@ export const content: ModuleContent = {
       'NIST SP 800-227 recommends hybrid key exchange during the transition period to maintain backward compatibility while adding quantum resistance.',
     certFormatExplain:
       'Eight certificate approaches are covered here — six that carry signatures, plus two that carry KEM (encryption) keys. Signature formats: Pure PQC (ML-DSA, RFC 9881), Pure PQC (SLH-DSA, RFC 9909), Composite (single OID, both-must-verify), Alt-Sig/Catalyst (PQC in X.509 extensions, ITU-T X.509 (2019) §9.8), Related Certificates (paired certs with a binding hash, RFC 9763), and Chameleon (delta extension — an expired individual draft, taught as a design study). KEM formats: Pure PQC KEM (ML-KEM, RFC 9935) and Composite KEM (single OID over ML-KEM plus a classical KEM). Only Alt-Sig, Related Certificates and Chameleon remain verifiable by a validator that does not understand PQC; composite is not backward compatible.',
-    compositeSigSize: '~3,379 bytes',
+    compositeSigSize: '~3,379 bytes (3,309 B ML-DSA-65 + 64 B ECDSA P-256 + 6 B of encoding)',
     altSigSize: '2,017 bytes',
     relatedStandards:
       'FIPS 206 (FN-DSA), cited above as a future pure-PQC signature format, is still a NIST draft as of 2026 — this hub cites the Falcon v1.2 specification it standardises until NIST publishes the final text.',

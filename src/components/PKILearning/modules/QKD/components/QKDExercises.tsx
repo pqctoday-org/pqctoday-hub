@@ -45,7 +45,7 @@ const scenarios: Scenario[] = [
     badge: 'Security',
     badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
     observe:
-      'Notice the ~25% QBER when Eve intercepts every qubit. Compare this with the ~0% QBER in a clean channel.',
+      'Notice the ~25% QBER when Eve intercepts every qubit (a wrong basis half the time, then a wrong bit half of those: 1/2 × 1/2 = 25%). Compare this with the ~0% QBER in the simulated clean channel.',
     config: { part: 0, eveEnabled: true, numQubits: 32 },
     icon: ShieldAlert,
   },
@@ -57,7 +57,7 @@ const scenarios: Scenario[] = [
     badge: 'Protocol',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'QBER is ~0%, confirming no eavesdropper. The sifted key passes through error correction and privacy amplification to produce a usable secret.',
+      'QBER is ~0% in the simulated clean channel, confirming no eavesdropper. The sifted key passes through error correction and privacy amplification to produce a usable secret.',
     config: { part: 0, eveEnabled: false, numQubits: 16 },
     icon: Shield,
   },

@@ -57,7 +57,7 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       badge: 'Benchmarking',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Satellite link results are stark: classical IKEv2 SA setup is 4.8 seconds (already at SLA limit). Hybrid PQC increases this to 7.2 seconds (+50%). Pure PQC with ML-KEM-768 reaches 95 seconds — completely unusable for interactive applications. Recommendation: satellite sites require hybrid PQC only; pure PQC mandate must include WAN latency exemptions.',
+        'Satellite link results are stark: classical IKEv2 SA setup is 4.8 seconds (already at SLA limit). In this scenario, hybrid PQC increases this to 7.2 seconds (+50%). Pure PQC with ML-KEM-768 reaches 95 seconds — completely unusable for interactive applications. Recommendation: satellite sites require hybrid PQC only; pure PQC mandate must include WAN latency exemptions.',
       config: { step: 2 },
     },
     {

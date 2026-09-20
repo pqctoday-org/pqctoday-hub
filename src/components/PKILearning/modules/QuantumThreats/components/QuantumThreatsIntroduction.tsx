@@ -94,7 +94,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
           <InlineTooltip term="ECC">ECC</InlineTooltip>
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          Peter Shor discovered in 1994 that a quantum computer can solve two hard mathematical
+          Peter Shor showed in 1994 (Polynomial-Time Algorithms for Prime Factorization and Discrete
+          Logarithms on a Quantum Computer) that a quantum computer can solve two hard mathematical
           problems <strong>exponentially faster</strong> than any classical computer:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -166,8 +167,9 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
           <InlineTooltip term="AES">AES</InlineTooltip> &amp; SHA
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          Lov Grover discovered in 1996 that a quantum computer can search an unstructured database
-          quadratically faster. This affects symmetric encryption and hash functions:
+          Lov Grover showed in 1996 (A fast quantum mechanical algorithm for database search) that a
+          quantum computer can search an unstructured database quadratically faster. This affects
+          symmetric encryption and hash functions:
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
@@ -262,7 +264,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             },
             {
               org: 'Global Risk Institute',
-              timeline: '~33% chance by 2033, ~50% by 2038',
+              timeline:
+                '~49% within a decade on averaged expert estimates; half of 26 experts put it at 50% or more (2025 Quantum Threat Timeline Report)',
               color: 'warning',
             },
             {

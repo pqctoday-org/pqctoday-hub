@@ -115,7 +115,7 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             <p className="text-xs text-muted-foreground">
               RHEL, Ubuntu, Windows Server, and macOS all have active PQC roadmaps. The migration
               timeline differs significantly — Windows Server 2025 has ML-KEM in a FIPS 140-3
-              validated module today, while Linux distros are targeting 2026-2028 for full PQC FIPS
+              validated module today, while Linux distros are still working towards full PQC FIPS
               module certification.
             </p>
           </div>

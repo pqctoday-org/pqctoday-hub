@@ -456,8 +456,8 @@ export const ManagementToolsAudit: React.FC = () => {
         <div className="text-xs text-muted-foreground border-t border-border pt-3 mt-1">
           <strong className="text-foreground">CSWP.39 §5:</strong> Discovery, assessment,
           configuration, and enforcement tooling must be automated — not manual surveys. Tool-chain
-          completeness below 75% means the Risk Analysis Engine (Step 7) is operating on incomplete
-          data.
+          completeness score below 75% means the Risk Analysis Engine (Step 7) is operating on
+          incomplete data.
         </div>
       </div>
 

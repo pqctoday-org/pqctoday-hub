@@ -43,7 +43,8 @@ const METRICS = [
     label: 'ClientHello Size',
     unit: 'B',
     maxVal: 1600,
-    description: 'TLS ClientHello byte count (>1400B forces TCP fragmentation)',
+    description:
+      'TLS ClientHello byte count (above the 1,460 B Ethernet MSS of RFC 6928 it spans two segments)',
   },
 ] as const
 
@@ -208,7 +209,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
           <div className="p-4 rounded-lg bg-muted border border-border space-y-3">
             <Insight
               label="TCP-to-TLS overhead dominates"
-              text={`The TLS handshake adds ${NETWORK_PROFILE_LABELS[networkProfile].rttMs * 6}ms of RTT overhead on top of ${NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms network RTT — crypto cost is usually <5% of total. PQC's main impact is byte size, not computation.`}
+              text={`The TLS handshake adds ${NETWORK_PROFILE_LABELS[networkProfile].rttMs * 6}ms of RTT overhead on top of ${NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms network RTT — crypto cost is usually <5% of total (our estimate). PQC's main impact is byte size, not computation.`}
             />
             {selectedMetric === 'saSetupMs' && networkProfile === 'wan' && (
               <Insight
@@ -225,12 +226,12 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
             {networkProfile === 'lan' && (
               <Insight
                 label="LAN overhead is negligible"
-                text="On LAN/datacenter, hybrid PQC adds ≤25% overhead vs classical. Pure PQC adds ≤50%. Both are below the perceptible threshold for most workloads — LAN is the safest environment to enable PQC first."
+                text="On LAN/datacenter, hybrid PQC adds ≤25% overhead vs classical (our estimate). Pure PQC adds ≤50%. Both are below the perceptible threshold for most workloads — LAN is the safest environment to enable PQC first."
               />
             )}
             <Insight
               label="Fragmentation adds hidden latency"
-              text={`When ClientHello exceeds ~1400 bytes (TCP MTU), TCP fragmentation adds exactly 1 RTT (${NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms). Pure PQC ClientHellos (1,536B) and composite certificates (17KB) both trigger this. Plan for MTU tuning or QUIC migration.`}
+              text={`When ClientHello exceeds the ~1,460-byte MSS (RFC 6928), TCP fragmentation adds exactly 1 RTT (${NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms). Pure PQC ClientHellos (1,536B) and composite certificates (17KB) both trigger this. Plan for MTU tuning or QUIC migration.`}
             />
           </div>
         )}
@@ -263,8 +264,9 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
           <Activity size={16} className="text-status-warning mt-0.5 shrink-0" />
           <p className="text-xs text-muted-foreground">
             <span className="font-semibold text-foreground">Production-Scale KPIs:</span> Real-world
-            benchmarks from VIAVI TeraVM on Dell R6625 hardware — 1.6M emulated users, HAProxy TLS +
-            Strongswan IKEv2. Adjust environment and traffic pattern to model enterprise conditions.
+            benchmarks reported in VIAVI&apos;s Testing, Measuring and Managing PQC Migration white
+            paper (TeraVM on Dell R6625 hardware — 1.6M emulated users, HAProxy TLS + Strongswan
+            IKEv2). Adjust environment and traffic pattern to model enterprise conditions.
           </p>
         </div>
 

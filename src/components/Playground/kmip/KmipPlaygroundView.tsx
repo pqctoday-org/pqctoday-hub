@@ -903,7 +903,7 @@ export function KmipPlaygroundView() {
           title: 'Pick a dated policy',
           target: '[data-tour="policy-library"]',
           act: () => loadPolicyByFile('pqc-migration-2030.yaml'),
-          body: "The 2030-cutoff policy bans classical signing after a date. Let's let the calendar change the verdict.",
+          body: "The sample 2030-cutoff policy bans classical signing after a date. Let's let the calendar change the verdict.",
         },
         {
           title: 'Open the Timeline',
@@ -916,7 +916,7 @@ export function KmipPlaygroundView() {
           title: 'Cross 2030',
           target: 'input[aria-label="As-of date"]',
           act: () => dragRangeToMax('input[aria-label="As-of date"]'),
-          body: 'Past 2030-01-01 the classical-signing cutoff comes into force — and the List matrix + simulator now evaluate at that date too. That is temporal agility.',
+          body: 'Past the sample cutoff date 2030-01-01 the classical-signing cutoff comes into force — and the List matrix + simulator now evaluate at that date too. That is temporal agility.',
         },
       ],
     },

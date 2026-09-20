@@ -37,7 +37,7 @@ const KEY_ANALYSIS_RESULTS: KeyAnalysisResult[] = [
     keyId: 'db',
     risk: 'high',
     finding:
-      'db certificates use RSA-2048. Forged db signatures could allow unauthorized bootloaders. Note: ML-DSA-65 certificates are ~6 KB vs ~1.2 KB RSA — db storage impact is significant.',
+      'db certificates use RSA-2048. Forged db signatures could allow unauthorized bootloaders. Note: ML-DSA-65 certificates are ~6 KB vs ~1.2 KB RSA (indicative) — db storage impact is significant.',
     pqcAction:
       'Re-issue all db signing certificates with ML-DSA-65. Update UEFI variable storage allocation to accommodate larger PQC certificates. Typical db grows from 8 KB to 40+ KB.',
     effort: 'Medium — certificate re-issuance; db storage may need expansion',

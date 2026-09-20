@@ -37,9 +37,9 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
           protect against quantum threats.
           <span className="text-muted-foreground/80">
             {' '}
-            Target: high-risk use cases (which EUDI Wallets qualify as) migrated by Dec 2030, per
-            the NIS Cooperation Group Coordinated Implementation Roadmap (June 2025) — not ETSI TS
-            119 182-2, which is the unrelated JAdES JSON-signature format spec.
+            Target: high-risk use cases (which EUDI Wallets qualify as) migrated by the end of 2030,
+            per the NIS Cooperation Group Coordinated Implementation Roadmap (2025) — not ETSI TS
+            119 182-1, which is the unrelated JAdES JSON-signature format spec.
           </span>
         </p>
       </div>

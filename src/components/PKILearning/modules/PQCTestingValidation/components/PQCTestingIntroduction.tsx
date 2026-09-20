@@ -87,10 +87,11 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
           <div className="p-4 rounded-lg bg-status-warning/10 border border-status-warning/30">
             <p className="font-semibold text-status-warning mb-1">Performance Cliffs</p>
             <p className="text-xs">
-              IKEv2 SA establishment can jump from 38ms (classical) to 12,626ms with some PQC
-              configurations. A pure PQC certificate CHAIN reaches ~17KB — forcing 2 TCP round-trips
-              instead of 1. (One ML-DSA-65 certificate is ~5-6KB: a 1,952-byte public key plus a
-              3,309-byte signature plus X.509 overhead. It is the chain that breaks the budget.)
+              IKEv2 SA establishment can grow from tens of milliseconds to several seconds with the
+              largest PQC configurations (Classic McEliece key sizes). A pure PQC certificate CHAIN
+              reaches ~17KB — forcing 2 TCP round-trips instead of 1. (One ML-DSA-65 certificate is
+              ~5-6KB: a 1,952-byte public key plus a 3,309-byte signature plus X.509 overhead. It is
+              the chain that breaks the budget.)
             </p>
           </div>
           <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30">
@@ -264,9 +265,10 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
               </p>
               <p className="text-xs text-muted-foreground">
                 A pure ML-DSA-65 certificate chain (~17KB) exceeds the typical TCP initial
-                congestion window of 10 segments (~14.6KB). On high-latency links, this forces extra
-                round-trips. Measure the whole chain your server actually sends, not one leaf
-                certificate, and test against your worst-case latency links.
+                congestion window of 10 segments (10 × 1,460 B = 14,600 B, RFC 6928). On
+                high-latency links, this forces extra round-trips. Measure the whole chain your
+                server actually sends, not one leaf certificate, and test against your worst-case
+                latency links.
               </p>
             </div>
           </div>
@@ -315,9 +317,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             </p>
             <p className="text-xs mt-2">
               A typical enterprise proxy chain (NGFW → SGW → DLP) means each connection pays the PQC
-              handshake cost <strong>three times</strong>. Where VIAVI measured a 37% drop in
-              connection rate on a clean path, enterprises with inspection chains may see 60-80%
-              drops.
+              handshake cost <strong>three times</strong>. Where VIAVI&apos;s white paper Testing,
+              Measuring and Managing PQC Migration reports a 37% drop in connection rate on a clean
+              path, enterprises with inspection chains may see 60-80% drops (our estimate).
             </p>
           </div>
 
@@ -335,8 +337,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             </p>
             <p className="text-xs mt-2">
               Under high connection rates, this can reduce appliance capacity by{' '}
-              <strong>50-90%</strong> compared to hardware-accelerated classical crypto. Vendors
-              acknowledge that many existing deployments will require new hardware for PQC at scale.
+              <strong>50-90%</strong> (our estimate) compared to hardware-accelerated classical
+              crypto. Vendors acknowledge that many existing deployments will require new hardware
+              for PQC at scale.
             </p>
           </div>
 
@@ -388,8 +391,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             VIAVI TeraVM Production-Scale Results
           </p>
           <p className="text-xs">
-            Testing on Dell R6625 hardware with HAProxy (TLS) and Strongswan (IKEv2) against 1.6
-            million emulated users: <strong>37% fewer connections/second</strong>,{' '}
+            VIAVI&apos;s white paper Testing, Measuring and Managing PQC Migration reports testing
+            on Dell R6625 hardware with HAProxy (TLS) and Strongswan (IKEv2) against 1.6 million
+            emulated users: <strong>37% fewer connections/second</strong>,{' '}
             <strong>32% throughput drop</strong>, <strong>3,523% latency increase</strong> (Client
             Get Time: 2.72ms → 98.55ms), and <strong>75% reduction in VPN tunnel setup rate</strong>{' '}
             (17,768 → 4,471 tunnels/s). These numbers represent the floor — enterprise middlebox
@@ -572,7 +576,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
                 {
                   dim: 'TLS handshake bytes on the wire',
                   base: '~0.3–1 KB ClientHello',
-                  pqc: '~1.1 KB+ hybrid — can force a second TCP round-trip',
+                  pqc: '~1.2 KB hybrid (1,184-byte ML-KEM-768 key share, FIPS 203) — can force a second TCP round-trip',
                 },
                 {
                   dim: 'Certificate / chain size',
@@ -615,8 +619,8 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             trustworthy verification signal you have — far stronger than a config flag or an
             inventory record. Instrument your edge to{' '}
             <strong>count negotiated PQC handshakes</strong> as a live migration KPI: the curve
-            climbing toward 100% is your real cutover evidence, and a stalled curve surfaces silent
-            interop failures the inventory can&apos;t see.
+            climbing toward the 100% target is your real cutover evidence, and a stalled curve
+            surfaces silent interop failures the inventory can&apos;t see.
           </p>
         </div>
 

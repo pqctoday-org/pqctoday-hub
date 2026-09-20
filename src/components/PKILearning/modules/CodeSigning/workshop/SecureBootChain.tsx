@@ -84,7 +84,7 @@ const STAGE_DETAILS: Record<
       detail:
         'ML-DSA-65 public key enrolled in UEFI Secure Boot key database. Standard X.509 certificate wrapping with ML-DSA as the signature algorithm.',
       verification:
-        'Bootloader signature verified using ML-DSA lattice reduction. Verification is fast (~0.2 ms) and requires no state management — each verification is independent.',
+        'Bootloader signature verified using ML-DSA lattice reduction. Verification is fast (~0.2 ms, indicative) and requires no state management — each verification is independent.',
     },
   },
   2: {

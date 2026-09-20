@@ -608,10 +608,11 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
                 Why Stateful (LMS) for Firmware?
               </div>
               <p className="text-xs text-muted-foreground">
-                Compact signatures (2.5 KB) and tiny public keys (56 bytes) &mdash; ideal for
-                hardware-constrained boot ROM. Fast verification (~0.1 ms). CNSA 2.0 compliant.
-                Security derives solely from hash functions (minimal cryptographic assumptions).
-                Trade-off: requires a monotonic state counter managed in an HSM or TPM.
+                Compact signatures (2,512 B, about 2.5 KB) and tiny public keys (56 bytes), per RFC
+                8554 &mdash; ideal for hardware-constrained boot ROM. Fast verification (~0.1 ms).
+                CNSA 2.0 compliant. Security derives solely from hash functions (minimal
+                cryptographic assumptions). Trade-off: requires a monotonic state counter managed in
+                an HSM or TPM.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-success/20">
@@ -619,8 +620,9 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
               <p className="text-xs text-muted-foreground">
                 Fully stateless &mdash; no counter, no state management burden. Simpler operations
                 for environments where maintaining state is impractical (distributed build systems,
-                CI/CD pipelines). Trade-off: larger signatures (3.3 KB) and public keys (1.9 KB).
-                Not mandated by CNSA 2.0 for firmware signing.
+                CI/CD pipelines). Trade-off: larger signatures (3,309 B, about 3.3 KB) and public
+                keys (1,952 B, about 1.9 KB) per FIPS 204. Not mandated by CNSA 2.0 for firmware
+                signing.
               </p>
             </div>
           </div>

@@ -192,8 +192,8 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
               PQC (<InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>)
             </div>
             <p className="text-xs text-muted-foreground">
-              ML-KEM-512/768/1024. Quantum-resistant. Larger keys (~1.2 KB for ML-KEM-768) increase
-              handshake size.
+              ML-KEM-512/768/1024. Quantum-resistant. Larger keys (1,184 B for ML-KEM-768, FIPS 203)
+              increase handshake size.
             </p>
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
@@ -328,8 +328,8 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             security rather than lattice problems, providing{' '}
             <strong>cryptographic diversity</strong>— if lattices are broken, SLH-DSA remains
             secure. The trade-off is significantly larger signatures (~7.9 KB (7,856 B) for
-            SLH-DSA-SHA2-128s vs ~2.4 KB for ML-DSA-44). Both are available in the simulator&apos;s
-            signature algorithm options.
+            SLH-DSA-SHA2-128s vs 2,420 B, about 2.4 KB, for ML-DSA-44). Both are available in the
+            simulator&apos;s signature algorithm options.
           </p>
         </div>
         <Button
@@ -360,9 +360,9 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           </h3>
           <p className="text-xs text-muted-foreground">
             Already supported by major browsers, TLS certificate compression can reduce PQC
-            certificate overhead by 30-60%. Certificates are compressed with Zlib or Brotli before
-            transmission and decompressed by the peer. This is a practical short-term mitigation
-            available today while more advanced solutions are being built.
+            certificate overhead by 30-60% (our estimate). Certificates are compressed with Zlib or
+            Brotli before transmission and decompressed by the peer. This is a practical short-term
+            mitigation available today while more advanced solutions are being built.
           </p>
         </div>
 
@@ -392,8 +392,9 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             </div>
             <p className="text-xs text-muted-foreground">
               Traditional TLS uses a chain of X.509 certificates, each containing a public key and a
-              signature from the issuing CA. With PQC signatures (~3.3 KB for ML-DSA-65), a typical
-              2-certificate chain adds ~7 KB+ to the handshake — a substantial bandwidth increase.
+              signature from the issuing CA. With PQC signatures (3,309 B, about 3.3 KB, for
+              ML-DSA-65), a typical 2-certificate chain adds ~7 KB+ to the handshake — a substantial
+              bandwidth increase.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -419,14 +420,18 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-primary font-bold shrink-0">Phase 2 (Q1 2027)</span>
+              <span className="text-primary font-bold shrink-0">
+                Phase 2 (sample plan, Q1 2027)
+              </span>
               <span>
                 Inviting Certificate Transparency log operators to bootstrap public MTC
                 infrastructure
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-warning font-bold shrink-0">Phase 3 (Q3 2027)</span>
+              <span className="text-warning font-bold shrink-0">
+                Phase 3 (sample plan, Q3 2027)
+              </span>
               <span>
                 Establishing Chrome Quantum-resistant Root Store (CQRS) with new requirements for
                 MTC Certificate Authorities

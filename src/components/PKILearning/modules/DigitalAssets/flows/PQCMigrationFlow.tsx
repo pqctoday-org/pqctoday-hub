@@ -503,7 +503,7 @@ const EthereumPQC: React.FC = () => (
       <p className="text-xs text-muted-foreground mt-3">
         EIP-8141 &quot;validation frames&quot; would allow bundling many signatures into a single
         compressed proof, keeping costs manageable. Targeted for the{' '}
-        <strong className="text-foreground">Hegota upgrade (H2 2026)</strong>.
+        <strong className="text-foreground">Hegota upgrade, planned for 2026</strong>.
       </p>
       <div className="flex flex-wrap gap-2 mt-3">
         <a

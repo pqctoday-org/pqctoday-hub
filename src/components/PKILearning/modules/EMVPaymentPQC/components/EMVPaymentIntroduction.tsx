@@ -84,8 +84,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           <strong className="text-foreground">EMVCo</strong>, jointly owned by the six major payment
           networks. With <strong className="text-foreground">14.7 billion</strong> EMV cards in
           circulation at the end of 2024 — EMVCo&rsquo;s own figure, reported at the 2025 EMV User
-          Meeting, and growing about 7% a year — it is the largest deployed PKI ecosystem in the
-          world.
+          Meeting, and still growing — it is the largest deployed PKI ecosystem in the world.
         </p>
 
         <div className="glass-panel p-4">
@@ -728,14 +727,14 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           The payment industry is at an inflection point. EMVCo does not expect quantum computing to
           threaten EMV infrastructure before <strong className="text-foreground">2040</strong> — and
           says it may never — while the G7 Cyber Expert Group points to{' '}
-          <strong className="text-foreground">2030-2032</strong> for the most critical financial
-          systems, against a broader <strong className="text-foreground">2035</strong> horizon. The
-          G7 CEG is explicit that this is not a deadline: the period &ldquo;is reflective of the
-          variety of envisaged approaches taken across G7 jurisdictions&rdquo;, and the statement
-          &ldquo;does not set guidance or regulatory expectations&rdquo;. Among the card networks,{' '}
-          <strong className="text-foreground">Mastercard</strong> is the one that has published a
-          dedicated PQC white paper; the rest engage through the EMVCo study group without public
-          timetables.
+          <strong className="text-foreground">the early 2030s</strong> for the most critical
+          financial systems, against a broader <strong className="text-foreground">2035</strong>{' '}
+          horizon. The G7 CEG is explicit that this is not a deadline: the period &ldquo;is
+          reflective of the variety of envisaged approaches taken across G7 jurisdictions&rdquo;,
+          and the statement &ldquo;does not set guidance or regulatory expectations&rdquo;. Among
+          the card networks, <strong className="text-foreground">Mastercard</strong> is the one that
+          has published a dedicated PQC white paper; the rest engage through the EMVCo study group
+          without public timetables.
         </p>
 
         <div className="glass-panel p-4 space-y-3">
@@ -752,7 +751,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             </li>
             <li>
               <strong className="text-foreground">Card replacement cycle:</strong> 3-5 years per
-              card fleet — cards issued today are in circulation until 2029-2031
+              card fleet — cards issued today are in circulation until 2029-2031 (our estimate)
             </li>
             <li>
               <strong className="text-foreground">HSM dependency:</strong> Payment HSMs must support
@@ -908,7 +907,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <div>
               <div className="text-sm font-medium text-foreground">Migration Timeline</div>
               <div className="text-xs text-muted-foreground">
-                The 2030-2032 targets this module cites
+                The early-2030s targets this module cites
               </div>
             </div>
           </Link>

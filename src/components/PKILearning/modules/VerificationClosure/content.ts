@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'verification-closure',
   lastReviewed: '2026-08-23',
   version: '1.1.0',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   // CORRECTED 2026-08-23. This read that NCSC-UK's 2028/2031/2035 targets and ISO/IEC
   // 27001 "have no ACTIVE library row to cite". Both halves were wrong by the time it was
@@ -74,6 +74,6 @@ export const content: ModuleContent = {
     verification:
       'A system is "migrated" when its behaviour shows it — the handshake negotiates ML-KEM/ML-DSA — not when a change ticket says so. This evidence-by-observed-behaviour standard and the estate-scale sampling approach are the framework author\'s practitioner guidance; the control basis (mapping migration capabilities to risk frameworks) is NIST CSWP 48 (draft) onto CSF 2.0 and SP 800-53.',
     closure:
-      "Close deliberately: define closure criteria in advance, accept residual risk with a named owner and re-evaluation date, and hand the standing capabilities (CBOM, continuous discovery, vendor cadence, SOC content, KRIs, crypto-agility) to permanent owners with an archived evidence dossier. The generic governance hooks are ISO/IEC 27001 and the NIST Risk Management Framework (SP 800-37); ongoing procurement should follow CISA's product-category list for PQC-capable technologies (Jan 2026); the PQC-specific closure detail is practitioner guidance.",
+      "Close deliberately: define closure criteria in advance, accept residual risk with a named owner and re-evaluation date, and hand the standing capabilities (CBOM, continuous discovery, vendor cadence, SOC content, KRIs, crypto-agility) to permanent owners with an archived evidence dossier. The generic governance hooks are ISO/IEC 27001 and the NIST Risk Management Framework (SP 800-37); ongoing procurement should follow CISA's product-category list for PQC-capable technologies (2026); the PQC-specific closure detail is practitioner guidance.",
   },
 }

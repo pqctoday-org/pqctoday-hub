@@ -8,7 +8,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'qkd',
-  version: '1.0.1',
+  version: '1.0.2',
   lastReviewed: '2026-08-10',
   lastEdited: '2026-09-20',
 
@@ -50,10 +50,12 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NIST-SP-800-56C-R2'),
-    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('Quantum-cryptography-Public-key-distribution-and-coin-tossin'), // m-qkd: 1984
     getStandard('Entanglement-based-secure-quantum-cryptography-over-1-120-ki'), // m-qkd: 1,120
     getStandard('The-early-days-of-experimental-quantum-cryptography'), // m-qkd: 1989
+    // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
+    getStandard('Satellite-Relayed-Intercontinental-Quantum-Network'), // m-qkd: wave 4c
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768')],
@@ -68,6 +70,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'BB84 Protocol Simulator: Visual simulation with configurable Eve interception slider and adjustable qubit count; observe basis matching, sifted key generation, and QBER calculation. Post-Processing: Error correction, privacy amplification, and hybrid key derivation from raw QKD output. Global Deployments Explorer: Interactive database of worldwide QKD deployments including satellite and terrestrial networks with adoption trends.',
     relatedStandards:
-      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, Initial Public Draft). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA). NIST SP 800-108 (KDF in Counter Mode). ETSI QKD standards (GS QKD series). EuroQCI initiative (pan-European quantum communication infrastructure). BB84 protocol (Bennett & Brassard, 1984)',
+      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, Initial Public Draft). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA). NIST SP 800-108 (KDF in Counter Mode). ETSI QKD standards (GS QKD series). EuroQCI initiative (pan-European quantum communication infrastructure). BB84 protocol (Bennett & Brassard, Quantum cryptography — Public key distribution and coin tossing, 1984)',
   },
 }
