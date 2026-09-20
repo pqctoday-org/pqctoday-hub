@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: '5g-security',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-046',
   title: '5G Security',
   description: 'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',

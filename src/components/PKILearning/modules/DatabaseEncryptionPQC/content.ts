@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'database-encryption-pqc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 203'),
@@ -38,6 +38,9 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NSM-8'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('Key-Management-Interoperability-Protocol-Specification-Versi'), // m-database-encryption-pqc: KMIP 2.0
+    getStandard('The-Applied-Quantum-PQC-Migration-Framework-Universal-Versio'), // m-database-encryption-pqc: §5.6
   ],
 
   algorithms: [

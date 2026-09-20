@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-registry',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-062',
   title: 'CycloneDX Cryptography Registry',
   description:

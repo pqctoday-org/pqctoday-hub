@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'qkd',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 203'),
@@ -50,6 +50,10 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NIST-SP-800-56C-R2'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('Quantum-cryptography-Public-key-distribution-and-coin-tossin'), // m-qkd: 1984
+    getStandard('Entanglement-based-secure-quantum-cryptography-over-1-120-ki'), // m-qkd: 1,120
+    getStandard('The-early-days-of-experimental-quantum-cryptography'), // m-qkd: 1989
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768')],

@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 203'),
@@ -76,6 +76,10 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NIST-SP-800-90A-R1'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('SEC2-v2'), // m-hybrid-crypto: secp256k1; pt-hybrid-certs: secp256k1; pt-hybrid-sigs: secp256k1
+    getStandard('CRYSTALS-Dilithium-Spec-v31'), // m-hybrid-crypto: 3,293B
+    getStandard('eprint-2025-2059'), // pt-hybrid-sigs: 2059
   ],
 
   algorithms: [

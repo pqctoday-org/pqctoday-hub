@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'vendor-risk',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Five entries, so all are sampled. This module is about supply-chain scoring and
@@ -41,6 +41,8 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match
     // the prose "SP 800-161" against a row filed as NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag.
     getStandard('NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('OpenSSH-Post-Quantum-Cryptography'), // bt-supply-chain-matrix: 9.9
   ],
 
   algorithms: [

@@ -5,9 +5,9 @@ import { getAlgorithm } from '@/data/algorithmProperties'
 
 export const content: ModuleContent = {
   moduleId: 'crypto-registry',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('CycloneDX-Cryptography-Registry'),
@@ -17,6 +17,8 @@ export const content: ModuleContent = {
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('ANSI X9.62'),
     getStandard('RFC 9881'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('EU-NIS-CG-Roadmap-v1.1'), // m-crypto-registry: 2026; m-crypto-registry: 23 Jun 2025
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768'), getAlgorithm('ML-DSA-65'), getAlgorithm('ECDSA P-256')],

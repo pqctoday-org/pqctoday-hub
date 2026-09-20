@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'crypto-agility',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('NIST SP 800-208'),
@@ -38,6 +38,10 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('Advancing-Our-Amazing-Bet-on-Asymmetric-Cryptography'), // m-crypto-agility: April 2024
+    getStandard('Classic-McEliece-Implementation'), // m-crypto-agility: 1,357,824 bytes; m-crypto-agility: 261,120; m-crypto-agility: 8192128
+    getStandard('X25519Kyber768Draft00-hybrid-post-quantum-KEM-for-HPKE'), // m-crypto-agility: 1,216 bytes
   ],
 
   algorithms: [

@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'emv-payment-pqc',
-  version: '2.1.1',
+  version: '2.1.2',
   lastReviewed: '2026-08-23',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 186-5'),
@@ -82,6 +82,11 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match
     // the prose "SP 800-38B" against a row filed as NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope.
     getStandard('NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('2025-in-Numbers'), // m-emv-payment-pqc: 14.7 billion
+    getStandard('ISO-8583-2023-Financial-transaction-card-originated-messages'), // m-emv-payment-pqc: ISO 8583
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'), // TLS 1.3 (RFC 8446 row is retired; 9846 is the current text) — m-emv-payment-pqc: 1.3
+    getStandard('The-Straits-Times-DBS-PayLah-users-can-scan-UnionPay-QR-code'), // m-emv-payment-pqc: 9.4B
   ],
 
   algorithms: [

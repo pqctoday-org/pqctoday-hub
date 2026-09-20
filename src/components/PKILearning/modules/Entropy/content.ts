@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'entropy-randomness',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
   // Added 2026-08-22: relatedStandards asserts a date or version for this document,
   // so nothing could check the claim without it (the prose calls it a draft, which is right — Rev 3 is Initial Public Draft). The list stays short enough
   // that accuracy_spotcheck.py's four-document stride still opens every entry.
@@ -54,6 +54,12 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('IETF RFC 6979'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('SSLkeys'), // m-entropy-randomness: 32,768
+    getStandard('ChaCha20-and-Poly1305-for-IETF-Protocols'), // pt-qrng-demo: ChaCha20
+    getStandard('Quantinuum-s-Quantum-Origin-Becomes-First-Software-Quantum-R'), // pt-qrng-demo: 2025; pt-qrng-demo: April 2025
+    getStandard('qStream-High-speed-Full-Entropy-RNG'), // pt-qrng-demo: 200
+    getStandard('The-Art-of-Computer-Programming-Volume-2-Seminumerical-Algor'), // m-entropy-randomness: 1997
   ],
 
   algorithms: [getAlgorithm('ML-KEM-1024')],

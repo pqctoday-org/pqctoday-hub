@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'ops-quantum-impact',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Five entries, so all are sampled. RFC 4253 leads because SSH host-key
@@ -51,6 +51,8 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('IETF RFC 8555'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('CAB-Forum-SC-081v3'), // m-ops-quantum-impact: March 2026, 2029
   ],
 
   algorithms: [getAlgorithm('ML-DSA-65'), getAlgorithm('ML-KEM-768')],

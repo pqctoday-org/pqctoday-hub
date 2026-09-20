@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'energy-utilities-pqc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 203'),
@@ -35,6 +35,10 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match the
     // prose "SP 800-38D" against a row filed as NIST-SP-800-38D.
     getStandard('NIST-SP-800-38D'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('IEC-62056-5-3-2023-Electricity-metering-data-exchange-The-DL'), // m-energy-utilities-pqc: IEC 62056-5
+    getStandard('IEC-62351-6-2020-Power-systems-management-and-associated-inf'), // m-energy-utilities-pqc: IEC 62351-6
+    getStandard('IEEE-Standard-for-Smart-Energy-Profile-Application-Protocol'), // m-energy-utilities-pqc: IEEE 2030.5
   ],
 
   algorithms: [

@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'code-signing',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     // Added 2026-08-22. This module states "CNSA 2.0 mandates LMS/XMSS for firmware
@@ -42,6 +42,8 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NIST-SP-800-89-Recommendation-for-Obtaining-Assurances-for-D'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('SolarWinds-Corporation-Form-8-K-December-14-2020'), // m-code-signing: 18,000
   ],
 
   algorithms: [

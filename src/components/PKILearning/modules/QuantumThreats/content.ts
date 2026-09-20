@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'quantum-threats',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     // Resource-estimate papers first — every qubit figure in this module comes
@@ -31,6 +31,9 @@ export const content: ModuleContent = {
     getStandard('FIPS 204'),
     getStandard('NSA CNSA 2.0'),
     getStandard('NSM-10'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('A-fast-quantum-mechanical-algorithm-for-database-search'), // m-quantum-threats: 1996
+    getStandard('Factoring-using-2n-2-qubits-with-Toffoli-based-modular-multi'), // m-quantum-threats: 4,098
   ],
 
   algorithms: [

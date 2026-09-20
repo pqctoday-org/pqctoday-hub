@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'kms-pqc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 203'),
@@ -60,6 +60,10 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NIST-SP-800-38F-Recommendation-for-Block-Cipher-Modes-of-Ope'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('NSA CNSA 2.0 FAQ'), // pt-envelope-encrypt: January 1, 2027
+    getStandard('Chosen-Ciphertext-Attacks-Against-Protocols-Based-on-the-RSA'), // m-kms-pqc: 1998; pt-envelope-encrypt: 1998
+    getStandard('Key-encapsulation-mechanisms'), // m-kms-pqc: 1,120 bytes
   ],
 
   algorithms: [

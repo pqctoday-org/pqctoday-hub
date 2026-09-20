@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-business-case',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('NIST IR 8547'),
@@ -30,6 +30,13 @@ export const content: ModuleContent = {
     // now the surviving row; the landing-page row is deprecated with superseded_by.
     getStandard('FIPS-140-3-STANDARD'),
     getStandard('NIST CSWP 39'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('NetDiligence Cyber Claims Study 2025'), // bt-board-pitch: 8,936; bt-breach-simulator: 8,936; bt-cost-of-inaction: 8,936; bt-roi-calculator: 8,936
+    getStandard('GRI-Quantum-Threat-Timeline-2025'), // bt-board-pitch: 70%
+    getStandard('PSD2-Directive-EU-2015-2366'), // bt-cost-of-inaction: EUR 20M
+    getStandard('HIPAA-Administrative-Simplification-Enforcement-Interim-Fina'), // bt-breach-simulator: $1.5M; bt-roi-calculator: $1.5M
+    getStandard('Regulation-EU-2016-679-General-Data-Protection-Regulation'), // bt-board-pitch: EUR 20M; bt-breach-simulator: EUR 20M; bt-roi-calculator: EUR 20M
+    getStandard('Summary-of-the-HIPAA-Privacy-Rule'), // bt-board-pitch: $1.9M; bt-breach-simulator: $1.9M; bt-cost-of-inaction: $1.9M; bt-roi-calculator: $1.9M
   ],
 
   algorithms: [

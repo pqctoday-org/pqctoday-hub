@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'os-pqc',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-024',
   title: 'Operating System & Platform Crypto PQC',
   description:

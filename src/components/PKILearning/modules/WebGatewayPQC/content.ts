@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'web-gateway-pqc',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 203'),
@@ -35,6 +35,9 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match the
     // prose "SP 800-38D" against a row filed as NIST-SP-800-38D.
     getStandard('NIST-SP-800-38D'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('Amazon-CloudFront-launches-TLS-security-policy-with-post-qua'), // m-web-gateway-pqc: 5 September 2025
+    getStandard('F5-BIG-IP-v21-1-is-now-generally-available-bringing-PQC-and'), // m-web-gateway-pqc: May 2026
   ],
 
   algorithms: [

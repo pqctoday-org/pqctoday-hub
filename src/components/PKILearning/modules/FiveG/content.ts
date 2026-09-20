@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: '5g-security',
-  version: '1.0.0',
+  version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('FIPS 203'),
@@ -35,6 +35,10 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NIST-SP-800-56C-R2'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('PQ-SUCI-MLKEM-Profile-C-2025'), // m-5g-security: 617
+    getStandard('Characteristics-of-the-Universal-Subscriber-Identity-Module'), // m-5g-security: 3GPP TS 31.102
+    getStandard('Numbering-addressing-and-identification'), // m-5g-security: 3GPP TS 23.003
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768'), getAlgorithm('X25519')],

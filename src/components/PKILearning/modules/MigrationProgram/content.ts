@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'migration-program',
-  version: '1.1.0',
+  version: '1.1.1',
   lastReviewed: '2026-08-29',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   standards: [
     getStandard('NIST IR 8547'),
@@ -36,6 +36,8 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match
     // the prose "OMB M-23-02" against a row filed as OMB-M-23-02.
     getStandard('OMB-M-23-02'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('Security-Requirements-for-Cryptographic-Modules'), // bt-kpi-tracker: FIPS 140-2
   ],
 
   algorithms: [getAlgorithm('RSA-2048')],

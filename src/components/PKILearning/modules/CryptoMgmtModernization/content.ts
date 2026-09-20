@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'crypto-mgmt-modernization',
-  version: '1.1.0',
+  version: '1.1.1',
   lastReviewed: '2026-08-29',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-20',
 
   // ORDERED FOR A READER. It used to be ordered for the SAMPLER, and that constraint is
   // gone: accuracy_spotcheck.py opened four entries by even stride, so which four a
@@ -120,6 +120,15 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NIST-SP-800-90C'),
+    // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
+    getStandard('NIST-FIPS140-3-IG-PQC'), // bt-crypto-cbom-builder: Sept 2025; m-crypto-mgmt-modernization: 21 Sep 2020
+    getStandard('oqs-provider-OpenSSL-3-provider-containing-post-quantum-algo'), // m-crypto-mgmt-modernization: 3.4
+    getStandard('ANSSI-PG-083-v3-2026'), // bt-mti-negotiator: 083
+    getStandard('NIST-Selects-HQC-as-Fifth-Algorithm-for-Post-Quantum-Encrypt'), // m-crypto-mgmt-modernization: HQC-128
+    getStandard('Trends-in-PKI-Security-A-Global-Study-of-Trends-Challenges-B'), // m-crypto-mgmt-modernization: 114,000
+    getStandard('NIST IR 8545'), // bt-mti-negotiator: HQC-128
+    getStandard('OpenSSL-1-1-1-End-Of-Life-Approaching'), // bt-crypto-cbom-builder: Sep 2023
+    getStandard('The-Total-Economic-Impact-Of-DigiCert-ONE'), // m-crypto-mgmt-modernization: $10.1M; m-crypto-mgmt-modernization: $2.8M; m-crypto-mgmt-modernization: $7.9M
   ],
 
   algorithms: [
