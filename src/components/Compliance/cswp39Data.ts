@@ -356,7 +356,7 @@ export const CSWP39_CROSS_WALK: CSWP39CrossWalkRow[] = [
       },
       {
         label: 'CA/B SC-081v3',
-        hint: '47-day TLS cert cadence by March 2029',
+        hint: '47-day TLS cert cadence by March 2029 (CA/B Forum SC-081v3)',
         searchQuery: 'SC-081',
         targetTab: 'compliance',
       },

@@ -292,7 +292,9 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
               <li>
                 4 CT SCTs: <strong>476 B</strong>
               </li>
-              <li className="font-bold text-foreground">Total: ~12.3 KB per handshake</li>
+              <li className="font-bold text-foreground">
+                Total: 7,260 + 3,936 + 476 B, which gives 11,672 B (~11.7 KB) per handshake
+              </li>
             </ul>
           </div>
           <div className="bg-success/5 rounded-lg p-3 border border-success/20">

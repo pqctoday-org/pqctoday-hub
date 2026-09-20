@@ -122,7 +122,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is a CRQC and when might one exist?',
         answer:
-          "A Cryptographically Relevant Quantum Computer (CRQC) is a quantum computer capable of running Shor's algorithm against production key sizes, requiring on the order of thousands of stable logical qubits. Expert estimates for a CRQC range from the early 2030s to beyond 2040, with a rough consensus of 15 to 20 years from now, though breakthroughs could accelerate this. The Threats dashboard tracks expert timeline estimates and updated forecasts.",
+          "A Cryptographically Relevant Quantum Computer (CRQC) is a quantum computer capable of running Shor's algorithm against production key sizes, requiring on the order of thousands of stable logical qubits. Expert surveys (GRI 2025 Quantum Threat Timeline) put a CRQC most likely in the mid-2030s, though breakthroughs could accelerate this. The Threats dashboard tracks expert timeline estimates and updated forecasts.",
         deepLink: '/threats',
       },
       {
@@ -484,7 +484,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the JWT size problem with PQC?',
         answer:
-          'ML-DSA-65 digital signatures are approximately 3.3KB compared to only ~64 bytes for an ECDSA P-256 signature (256 bytes would be RSA-2048), which causes JWT tokens signed with PQC algorithms to exceed many API gateway and HTTP header size limits. This impacts OAuth 2.0 flows, microservice authentication, and any system that passes signed tokens in HTTP headers. The API Security module explores mitigation strategies including token compression and reference tokens.',
+          'ML-DSA-65 digital signatures are 3,309 bytes (FIPS 204) compared to only ~64 bytes for an ECDSA P-256 signature (256 bytes would be RSA-2048), which causes JWT tokens signed with PQC algorithms to exceed many API gateway and HTTP header size limits. This impacts OAuth 2.0 flows, microservice authentication, and any system that passes signed tokens in HTTP headers. The API Security module explores mitigation strategies including token compression and reference tokens.',
         deepLink: '/learn/api-security-jwt',
       },
       {
@@ -688,7 +688,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How does the PQC Assistant chatbot work?',
         answer:
-          'The PQC Assistant is a RAG-powered (Retrieval-Augmented Generation) AI chatbot that searches over 6,500 content chunks aggregated from all 22 data sources in the application — including modules, standards, compliance frameworks, and enrichment data — to provide verified answers with source references and deep-links. It runs entirely client-side and does not send your questions to any external AI service. Answers include citations to specific modules, library entries, and compliance frameworks.',
+          'The PQC Assistant is a RAG-powered (Retrieval-Augmented Generation) AI chatbot that searches thousands of content chunks aggregated from every data source in the application — including modules, standards, compliance frameworks, and enrichment data — to provide verified answers with source references and deep-links. It runs entirely client-side and does not send your questions to any external AI service. Answers include citations to specific modules, library entries, and compliance frameworks.',
         deepLink: '/about',
       },
       {

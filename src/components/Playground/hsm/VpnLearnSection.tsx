@@ -365,8 +365,8 @@ export function VpnLearnSection() {
               {IKE_AUTH_SK_BYTES['ML-DSA-65'].toLocaleString()} B (vs{' '}
               {IKE_AUTH_SK_BYTES.PSK.toLocaleString()} B for PSK and{' '}
               {IKE_AUTH_SK_BYTES['RSA-3072'].toLocaleString()} B for RSA-3072) — several fragments
-              at a 1,500 B MTU. Fortunately IKE_AUTH is encrypted, so RFC 7383 fragmentation works
-              there.
+              at the 1,500 B Ethernet MTU (RFC 894). Fortunately IKE_AUTH is encrypted, so RFC 7383
+              fragmentation works there.
             </p>
             <p className="italic">
               Try it in the simulator: lower the MTU slider below ~1,300 B and watch IKE_SA_INIT go

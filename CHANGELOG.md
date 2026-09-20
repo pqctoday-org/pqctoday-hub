@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.113.0] - 2026-09-20
+
+The text of every routed page is now checked the way the Learn modules' text has been: the accuracy instrument read the components behind the pages for the first time, and the figures it found there are either backed by a Library document, worked out in the sentence, or gone.
+
+### Changed
+
+- **Page figures name their sources** [view:/threats] [view:/faq] [view:/about] [view:/compliance] [persona:researcher] [persona:executive]: the quantum-resource figures on the Threats page cite the papers that state them (the 2n+2 estimate of Häner, Roetteler and Svore; Roetteler's 2,330-qubit ECC estimate; Google Quantum AI's half-million-physical-qubit ECDLP result; the Caltech 6,100-atom array; the Harvard 448-atom architecture; Microsoft and Atom Computing's 24 logical qubits; IBM's Nighthawk announcement and quantum roadmap); the HQC selection cites NIST IR 8545; the FAQ gives the ML-DSA-65 signature size as 3,309 bytes per FIPS 204 and quotes the GRI 2025 survey for the CRQC timeline; the 47-day certificate schedule names CA/B Forum ballot SC-081v3; the EAR licence exceptions read 15 CFR §740.13 and §740.17; the PCI DSS v4.0.1 date and the PKCS #11 v3.1 date name their documents; the VPN simulator's 1,500-byte MTU names RFC 894.
+- **Three figures corrected** [view:/learn] [view:/playground] [persona:developer]: the PKI workshop's traditional-chain total is 11,672 B (~11.7 KB), the sum of the sizes it lists, not 12.3 KB; the HSM key-derivation panel no longer attributes its 100,000-iteration floor to SP 800-132 (which recommends at least 1,000); the Helios note gives the paper's 7.9 × 10⁻⁴ two-qubit infidelity behind the ~99.92% figure.
+- **Unverifiable numbers removed or labelled** [view:/threats] [view:/faq] [persona:curious]: the AlphaTensor-Quantum "37–47%" T-gate reduction (the paper reports per-circuit counts, not that range), the assistant's "6,500 content chunks" and "22 data sources", the "100% on-device" and "1.7–8B parameters" wording, the "beyond 2040" CRQC range and the "19–34% in 2024" survey figure; the S/MIME certificate size, the LMS lifetime-signature count and the RACI single-accountable rule are marked as indicative or as convention.
+
+### Data
+
+- **Twelve Library documents added, three recaptured** [view:/library] [persona:researcher]: RFC 2315 (PKCS #7), 15 CFR §740.13 (TSU), 3GPP TS 35.240 (SNOW 5G) and TS 35.246 (ZUC-256), Roetteler et al. 2017 and the AlphaTensor-Quantum paper (as PDFs), the Caltech, Harvard and Microsoft/Atom Computing papers, IBM's Nighthawk and Condor announcements and the IBM Quantum roadmap; the TCG TPM 2.0 Library Part 3 Version 185 row now holds the published PDF and is active again (it had been marked as superseded by an errata sheet); the CA/B Forum SC-081v3 row carries its real title.
+
 ## [4.112.0] - 2026-09-20
 
 Nineteen figures that no document we can capture actually states are gone from the pages; the sentences now say what the source reports without quoting numbers we cannot check.

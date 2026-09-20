@@ -227,8 +227,9 @@ export function VpnComparisonPanel({ selectedMode }: Props) {
         </h4>
         <p className="text-[10px] text-muted-foreground leading-relaxed">
           Certificate authentication adds the peer certificate plus the AUTH signature to the
-          encrypted IKE_AUTH payload. ML-DSA pushes IKE_AUTH well past a 1,500 B MTU — this is the
-          message that most needs RFC 7383 fragmentation (IKE_SA_INIT cannot fragment at all).
+          encrypted IKE_AUTH payload. ML-DSA pushes IKE_AUTH well past the 1,500 B Ethernet MTU (RFC
+          894) — this is the message that most needs RFC 7383 fragmentation (IKE_SA_INIT cannot
+          fragment at all).
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-xs border-collapse">

@@ -314,7 +314,7 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
           <div>
             <p className="font-medium text-foreground">Multiple Accountable assignments</p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              RACI methodology requires exactly one &quot;A&quot; per activity. Multiple found:{' '}
+              RACI convention: exactly one &quot;A&quot; per activity. Multiple found:{' '}
               {activitiesMultipleAccountable.join(', ')}.
             </p>
           </div>

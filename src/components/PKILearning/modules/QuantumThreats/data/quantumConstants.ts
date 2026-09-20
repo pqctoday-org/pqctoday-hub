@@ -23,7 +23,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1537,
     status: 'broken',
     notes:
-      "Shor's algorithm factors N in polynomial time. Current best published estimate: Gidney 2025 (Google Quantum AI, arXiv:2505.15917) — 1,409 logical qubits active at peak, 1,537 including idle patches (“fewer than 1600”), factoring RSA-2048 in under a week on fewer than 1M noisy physical qubits. Supersedes Chevignard–Fouque–Schrottenloher (ePrint 2024/222, published at CRYPTO 2025), which reached 1,730 logical qubits but at 2^36 Toffoli gates, and the older 2016-era ~4,098 (2n+2) estimate — matches CRQC_QUBIT_THRESHOLDS.rsa2048.",
+      "Shor's algorithm factors N in polynomial time. Current best published estimate: Gidney 2025 (Google Quantum AI, arXiv:2505.15917) — 1,409 logical qubits active at peak, 1,537 including idle patches (“fewer than 1600”), factoring RSA-2048 in under a week on fewer than 1M noisy physical qubits. Supersedes Chevignard–Fouque–Schrottenloher (ePrint 2024/222, published at CRYPTO 2025), which reached 1,730 logical qubits but at 2^36 Toffoli gates, and the older 2016-era estimate, where 2n+2 gives 4,098 (arXiv:1611.07995) — matches CRQC_QUBIT_THRESHOLDS.rsa2048.",
   },
   {
     name: 'RSA-3072',
@@ -35,7 +35,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 2043,
     status: 'broken',
     notes:
-      "Larger key does not help — Shor's scales polynomially with key size, and the revised circuits scale as n/2 + o(n). Gidney 2025 estimates 2,043 logical qubits for RSA-3072, as reported by Chevignard et al. (EUROCRYPT 2026) — down from the older 2016-era ~6,146 (2n+2) estimate. Note this is BELOW the 2,124 qubits the best space-optimised attack needs for a 256-bit elliptic curve at comparable classical security.",
+      "Larger key does not help — Shor's scales polynomially with key size, and the revised circuits scale as n/2 + o(n). Gidney 2025 estimates 2,043 logical qubits for RSA-3072, as reported by Chevignard et al. (EUROCRYPT 2026) — down from the older 2016-era 2n+2 estimate, which gives 6,146 (arXiv:1611.07995). Note this is BELOW the 2,124 qubits the best space-optimised attack needs for a 256-bit elliptic curve at comparable classical security.",
   },
   {
     name: 'RSA-4096',
@@ -47,7 +47,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 8194,
     status: 'broken',
     notes:
-      'Even 4096-bit RSA provides zero post-quantum security. Still the older 2016-era (2n+2) estimate — no revised resource estimate has been published for this key size, unlike RSA-2048 and RSA-3072. On the n/2 + o(n) scaling of the revised circuits the real figure would be far lower; treat 8,194 as an upper bound, not a target.',
+      'Even 4096-bit RSA provides zero post-quantum security. Still the older 2016-era (2n+2) estimate — no revised resource estimate has been published for this key size, unlike RSA-2048 and RSA-3072. On the n/2 + o(n) scaling of the revised circuits the real figure would be far lower; treat the 2n+2 figure, which gives 8,194 (Häner–Roetteler–Svore 2016, arXiv:1611.07995), as an upper bound, not a target.',
   },
   {
     name: 'ECDSA P-256',
@@ -59,7 +59,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1200,
     status: 'broken',
     notes:
-      "Revised per Google Quantum AI (Mar 2026): improved Shor's circuits break 256-bit ECC with \u22641,200 logical qubits — roughly half prior estimates. Fewer qubits needed than RSA at equivalent security. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
+      "Revised per Google Quantum AI (Mar 2026): improved Shor's circuits break 256-bit ECC with \u22641,200 logical qubits — roughly half prior estimates. Fewer qubits needed than RSA at equivalent security. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits (Roetteler et al. 2017, arXiv:1706.06752).",
   },
   {
     name: 'ECDSA P-384',
@@ -309,7 +309,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     quantumAttack: 'none',
     estimatedQubits: null,
     status: 'safe',
-    notes: 'NIST Level 1. Code-based KEM, selected March 2025.',
+    notes: 'NIST Level 1. Code-based KEM, selected March 2025 (NIST IR 8545).',
   },
 ]
 
@@ -351,7 +351,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     confidence:
       'Architecture-dependent \u2014 year range is THIS dataset\u2019s derived estimate, not asserted by the source',
     notes:
-      'Mar 2026: secp256k1 ECDLP breakable with \u22641,200 logical qubits (1,200\u20131,450 per the two circuit variants) and <500,000 physical qubits \u2014 the most aggressive resource estimate to date, ~20x below prior best estimates. The whitepaper itself makes NO CRQC-arrival-date claim (confirmed 2026-07-16) \u2014 yearLow/yearHigh here are derived by combining its qubit threshold with published hardware roadmaps (e.g. IonQ), not read off the paper. Introduces fast-clock (superconducting/photonic) vs slow-clock (trapped ion/neutral atom) CRQC distinction. Fast-clock CRQCs enable on-spend attacks on public mempools; slow-clock enable at-rest attacks on dormant wallets. 2.3M BTC identified as at-risk.',
+      'Mar 2026: secp256k1 ECDLP breakable with \u22641,200 logical qubits (1,200\u20131,450 per the two circuit variants) and fewer than half a million physical qubits \u2014 the most aggressive resource estimate to date, ~20x below prior best estimates. The whitepaper itself makes NO CRQC-arrival-date claim (confirmed 2026-07-16) \u2014 yearLow/yearHigh here are derived by combining its qubit threshold with published hardware roadmaps (e.g. IonQ), not read off the paper. Introduces fast-clock (superconducting/photonic) vs slow-clock (trapped ion/neutral atom) CRQC distinction. Fast-clock CRQCs enable on-spend attacks on public mempools; slow-clock enable at-rest attacks on dormant wallets. 2.3M BTC identified as at-risk.',
     url: 'https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf',
     lastReviewed: '2026-07-30',
   },
@@ -362,7 +362,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     confidence:
       'quite possible (28-49%) within the next 10 years, likely (51-70%) in the next 15 (GRI 2025 survey, published March 2026)',
     notes:
-      '26-expert survey (March 2026). Significant acceleration: 28-49% probability within 10 years (up from 19-34% in 2024). Majority consider CRQC by 2035 quite likely.',
+      '26-expert survey (March 2026). Significant acceleration: 28-49% probability within 10 years (up from the 2024 survey). Majority consider CRQC by 2035 quite likely.',
     url: 'https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/',
     lastReviewed: '2026-07-30',
   },
@@ -507,7 +507,7 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     estimatedLogicalQubits: 24,
     qubitType: 'Neutral atom',
     notes:
-      'Nov 2024: created and entangled 24 logical qubits (ran computations on 28) using Microsoft’s error-correction protocols on Atom Computing’s neutral-atom array — the actual 2024 state of the art (a prior trajectory-chart value of ~10 for 2024 undercounted this). Follow-on "Magne" system targets 50 logical qubits from ~1,200 atoms in late 2026.',
+      'Nov 2024: created and entangled 24 logical qubits (ran computations on 28) using Microsoft’s error-correction protocols on Atom Computing’s neutral-atom array (arXiv:2411.11822) — the actual 2024 state of the art (a prior trajectory-chart value of ~10 for 2024 undercounted this). Follow-on "Magne" system targets 50 logical qubits from ~1,200 atoms in late 2026.',
   },
   {
     name: 'H2-1',
@@ -527,7 +527,7 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     estimatedLogicalQubits: 0,
     qubitType: 'Superconducting',
     notes:
-      'Nov 2025 flagship NISQ processor: 120 qubits on a square lattice with 218 tunable couplers (4 nearest neighbours). No fault-tolerant logical qubits yet; roadmap targets 1,080 connected qubits via L-couplers by 2028. Launched alongside the experimental Loon chip, which demonstrated the qLDPC (bivariate-bicycle) fault-tolerant components and real-time decoding under 480 ns, anchoring IBM’s path to Starling (200 logical qubits) by 2029.',
+      'Nov 2025 flagship NISQ processor (IBM Quantum Nighthawk and Loon announcement, 12 November 2025): 120 qubits on a square lattice with 218 tunable couplers (4 nearest neighbours). No fault-tolerant logical qubits yet; the IBM Quantum Development Roadmap targets 1,080 connected qubits via L-couplers by 2028. Launched alongside the experimental Loon chip, which demonstrated the qLDPC (bivariate-bicycle) fault-tolerant components and real-time decoding under 480 ns, anchoring IBM’s path to Starling (200 logical qubits) by 2029.',
   },
   {
     name: 'Helios',
@@ -537,7 +537,7 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     estimatedLogicalQubits: 48,
     qubitType: 'Trapped ion',
     notes:
-      'Nov 2025: 98 fully connected ¹³⁷Ba⁺ qubits at ~99.92% two-qubit gate fidelity; produced 48 fully error-corrected logical qubits (2:1 encoding, concatenated Iceberg codes), logical error rates 10–100× below physical. New trapped-ion benchmark.',
+      'Nov 2025: 98 fully connected ¹³⁷Ba⁺ qubits at ~99.92% two-qubit gate fidelity (the Helios paper reports 7.9 × 10⁻⁴ average two-qubit infidelity); produced 48 fully error-corrected logical qubits (2:1 encoding, concatenated Iceberg codes), logical error rates 10–100× below physical. New trapped-ion benchmark.',
   },
   {
     name: 'Neutral-atom FT processor',
@@ -547,7 +547,7 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     estimatedLogicalQubits: 96,
     qubitType: 'Neutral atom',
     notes:
-      'Nov 2025 (Nature): ran algorithms with up to 96 logical qubits on 448 atoms with below-threshold error suppression (Λ=2.14) — the most verified logical qubits of any platform — plus the first logical magic-state distillation. A separate array was run continuously for over 2 hours; Caltech separately demonstrated a 6,100-atom tweezer array (Sep 2025, 99.98% single-qubit accuracy). Demonstrated logical qubits are lower-distance than the ~1,200 fault-tolerant qubits a Shor attack needs.',
+      'Nov 2025 (Nature; arXiv:2506.20661): ran algorithms with up to 96 logical qubits on 448 atoms with below-threshold error suppression (Λ=2.14) — the most verified logical qubits of any platform — plus the first logical magic-state distillation. A separate array was run continuously for over 2 hours; Caltech separately demonstrated a 6,100-atom tweezer array (arXiv:2403.12021, 99.98% single-qubit accuracy). Demonstrated logical qubits are lower-distance than the ~1,200 fault-tolerant qubits a Shor attack needs.',
   },
   {
     name: 'Helios (Iceberg codes)',
@@ -599,7 +599,7 @@ export const CRQC_DRIVERS: CrqcDriver[] = [
     summary:
       'Smarter factoring and discrete-log algorithms keep cutting the qubits an attack needs.',
     evidence:
-      'RSA-2048 physical-qubit cost fell ~20×: ~20M (Gidney+Ekerå 2019) → <1M (Gidney 2025). Logical-qubit counts fell alongside it: RSA-2048 from ~4,098 (2n+2, 2016-era) to 1,730 (Chevignard et al., CRYPTO 2025) to 1,537 (Gidney 2025). For 256-bit ECDLP, 1,200 logical qubits at 90M Toffoli gates (Google Quantum AI + Ethereum Foundation, Mar 2026), or 1,193 at the cost of 2^38.98 Toffolis per run across 22 runs (Chevignard et al., EUROCRYPT 2026) — the space-optimal end of the same trade-off.',
+      'RSA-2048 physical-qubit cost fell ~20×: ~20M (Gidney+Ekerå 2019) → <1M (Gidney 2025). Logical-qubit counts fell alongside it: RSA-2048 from 2n+2, which gives 4,098 (2016-era, arXiv:1611.07995), to 1,730 (Chevignard et al., CRYPTO 2025) to 1,537 (Gidney 2025). For 256-bit ECDLP, 1,200 logical qubits at 90M Toffoli gates (Google Quantum AI + Ethereum Foundation, Mar 2026), or 1,193 at the cost of 2^38.98 Toffolis per run across 22 runs (Chevignard et al., EUROCRYPT 2026) — the space-optimal end of the same trade-off.',
   },
   {
     category: 'Error correction',
@@ -616,7 +616,7 @@ export const CRQC_DRIVERS: CrqcDriver[] = [
     summary:
       'AI speeds the supporting work — decoding, calibration, circuit design — but is not yet the headline driver.',
     evidence:
-      'AlphaQubit neural decoder (Nature 2024); reinforcement-learning control on Willow (3.5× logical stability, 2025); AlphaTensor-Quantum cut T-gate counts 37–47%.',
+      'AlphaQubit neural decoder (Nature 2024); reinforcement-learning control on Willow (3.5× logical stability, 2025); AlphaTensor-Quantum (arXiv:2402.14396) cut T-gate counts on benchmark circuits.',
   },
   {
     category: 'Hardware',
@@ -784,7 +784,7 @@ export const CRQC_DRIVER_MILESTONES: CrqcDriverMilestone[] = [
     year: 2026,
     short: 'ECC 1,193-1,200 LQ',
     label:
-      'Google Quantum AI + Ethereum Foundation (1,200 LQ) and CFS at EUROCRYPT 2026 (1,193) — 256-bit ECDLP',
+      'Google Quantum AI + Ethereum Foundation (1,200 LQ) and CFS at EUROCRYPT 2026 (1,193; ePrint 2026/280) — 256-bit ECDLP',
   },
   {
     axis: 'Error correction',
@@ -820,7 +820,7 @@ export const CRQC_DRIVER_MILESTONES: CrqcDriverMilestone[] = [
     axis: 'AI / ML',
     year: 2025,
     short: 'RL control; AlphaTensor-Q',
-    label: 'RL control on Willow (3.5×); AlphaTensor-Quantum (−37–47% T-gates)',
+    label: 'RL control on Willow (3.5×); AlphaTensor-Quantum (fewer T-gates)',
   },
   {
     axis: 'HPC / architecture',
@@ -866,9 +866,9 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
     vendors: 'QuEra, Atom Computing, Pasqal',
     bestLogical: 96,
     bestPhysical: 6100,
-    note: 'Optical-tweezer arrays with reconfigurable any-to-any connectivity; most demonstrated logical qubits to date, and Caltech has run an array past 6,100 atoms (Sep 2025); atoms operate near room temperature. Slower gate clock than superconducting. QuEra’s Jun 2026 "gigaquop" roadmap targets over 1,000 logical qubits.',
+    note: 'Optical-tweezer arrays with reconfigurable any-to-any connectivity; most demonstrated logical qubits to date, and Caltech has run an array past 6,100 atoms (arXiv:2403.12021); atoms operate near room temperature. Slower gate clock than superconducting. QuEra’s Jun 2026 "gigaquop" roadmap targets over 1,000 logical qubits.',
     recentProgress:
-      'Just ran the most error-corrected qubits of any machine yet (96 “logical” qubits) and separately packed over 6,000 atoms into one array — not yet the same machine, but both records on the same technology.',
+      'Just ran the most error-corrected qubits of any machine yet (96 “logical” qubits) and separately packed over 6,000 atoms into one array (Caltech, arXiv:2403.12021) — not yet the same machine, but both records on the same technology.',
     scaleChallenge:
       'Operations are slow and atoms keep drifting out of their laser traps — both have to improve a lot to reach the millions of qubits an attack needs.',
   },
@@ -888,7 +888,7 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
     vendors: 'IBM, Google',
     bestLogical: 1,
     bestPhysical: 1121,
-    note: 'Fastest gates and the largest physical-qubit chips (IBM Condor, 1,121 physical qubits — but Condor demonstrated zero logical qubits); Google Willow showed the first below-threshold error correction, a single distance-7 logical qubit; IBM’s modular + qLDPC roadmap targets 200 logical qubits (Starling) by 2029, with 1,080 connected qubits via l-couplers planned for 2027. Requires deep cryogenics.',
+    note: 'Fastest gates and the largest physical-qubit chips (IBM Condor, 1,121 physical qubits per the IBM Debuts Next-Generation Quantum Processor announcement — but Condor demonstrated zero logical qubits); Google Willow showed the first below-threshold error correction, a single distance-7 logical qubit; IBM’s modular + qLDPC roadmap targets 200 logical qubits (Starling) by 2029, with 1,080 connected qubits via l-couplers planned for 2027. Requires deep cryogenics.',
     recentProgress:
       'Google proved that making the chip bigger actually lowers errors; IBM shipped new 120-qubit processors and a test chip with the parts for error correction.',
     scaleChallenge:
