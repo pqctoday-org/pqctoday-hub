@@ -86,8 +86,9 @@ test.describe('MLS — Playground tool', () => {
     await expect(page.getByText(/Credential signing key/i)).toBeVisible()
     await expect(page.getByText(/TreeKEM node update/i)).toBeVisible()
     await expect(page.getByText(/Application message encryption/i)).toBeVisible()
-    // TreeKEMVisualizer
-    await expect(page.getByText(/TreeKEM ratchet tree/i)).toBeVisible()
+    // TreeKEMVisualizer — heading role: the persona paragraph (personaBlocks.ts,
+    // round 9) quotes "the TreeKEM ratchet tree" so a text locator is ambiguous.
+    await expect(page.getByRole('heading', { name: /TreeKEM ratchet tree/i })).toBeVisible()
     // ProviderArchitecture
     await expect(page.getByRole('heading', { name: /openmls_pqctoday_crypto/i })).toBeVisible()
     await expect(page.getByText(/Signature key custody/i)).toBeVisible()
@@ -105,7 +106,9 @@ test.describe('MLS — Playground tool', () => {
       .getByRole('link', { name: /MLS Group Messaging/i })
       .first()
       .click()
-    await expect(page.getByText(/TreeKEM ratchet tree/i)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('heading', { name: /TreeKEM ratchet tree/i })).toBeVisible({
+      timeout: 15_000,
+    })
     await expect(page.getByRole('heading', { name: /openmls_pqctoday_crypto/i })).toBeVisible()
     // The matrix link resolves via moduleLink = '/learn/mls-group-messaging?tab=workshop'.
     // Accept either /learn or /playground — both render the same playground component.

@@ -24,7 +24,7 @@ const WorkshopPanel = React.lazy(() =>
 )
 
 export const RightPanel: React.FC = () => {
-  const { isOpen, activeTab, isExpanded, setTab, close, minimize, toggle, toggleExpanded } =
+  const { isOpen, activeTab, isExpanded, setTab, close, minimize, toggleExpanded } =
     useRightPanelStore()
   const workshopMode = useWorkshopStore((s) => s.mode)
   const workshopActive = isWorkshopPinning(workshopMode)
@@ -64,13 +64,12 @@ export const RightPanel: React.FC = () => {
     }
   }, [isOpen])
 
-  // E2E UI Bypass
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // @ts-expect-error E2E test bypass — global injected for Playwright
-      window.__e2e_toggle_panel = toggle
-    }
-  }, [toggle])
+  // The Playwright hook `window.__e2e_toggle_panel` is owned by MainLayout
+  // alone (2026-09-21). It used to be assigned here too — the same store
+  // action, but from a component that only mounts once the panel is already
+  // open, so it could never be the assignment that opens it, and two owners
+  // of one global made the accessibility focus-trap spec depend on effect
+  // order. See MainLayout.tsx.
 
   const panelLabel =
     activeTab === 'chat'

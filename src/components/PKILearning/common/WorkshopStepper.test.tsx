@@ -34,9 +34,44 @@ describe('WorkshopStepper', () => {
     expect(currentBtn).toHaveAttribute('aria-current', 'step')
   })
 
-  it('disables future steps', () => {
+  it('disables every step when no onStepClick handler is given (read-only indicator)', () => {
     render(<WorkshopStepper steps={STEPS} currentStep={0} />)
+    expect(screen.getByRole('button', { name: /key setup/i })).toBeDisabled()
     expect(screen.getByRole('button', { name: /verify/i })).toBeDisabled()
+  })
+
+  // Regression for the 4.95.0 (CC-3) lock: once the icon step rail in ModuleShell
+  // went, these chips were the only stepper and still refused every step ahead of
+  // the current one. A workshop lets the visitor jump to any step.
+  it('enables and navigates to a future step when onStepClick is given', async () => {
+    const user = userEvent.setup()
+    const onStepClick = vi.fn()
+    render(<WorkshopStepper steps={STEPS} currentStep={0} onStepClick={onStepClick} />)
+    const future = screen.getByRole('button', { name: /verify/i })
+    expect(future).toBeEnabled()
+    expect(future).not.toHaveAttribute('aria-current')
+    await user.click(future)
+    expect(onStepClick).toHaveBeenCalledWith(2)
+  })
+
+  it('keeps the completed / current styling contract when forward steps are clickable', () => {
+    render(
+      <WorkshopStepper
+        steps={STEPS}
+        currentStep={1}
+        completedSteps={['step-1']}
+        onStepClick={() => {}}
+      />
+    )
+    expect(screen.getByRole('button', { name: /key setup.*completed/i })).toBeEnabled()
+    expect(screen.getByRole('button', { name: /sign.*current/i })).toHaveAttribute(
+      'aria-current',
+      'step'
+    )
+    // future step: neither completed nor current, but a real control
+    const future = screen.getByRole('button', { name: /^verify$/i })
+    expect(future).toBeEnabled()
+    expect(future).not.toHaveAttribute('aria-current')
   })
 
   it('calls onStepClick when clicking a completed step', async () => {

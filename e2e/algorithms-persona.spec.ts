@@ -88,6 +88,15 @@ test.describe('Algorithms — persona-aware defaults (plan §P0.2 / P1.2)', () =
     await seedPersona(page, 'developer')
     await page.goto('/algorithms')
     await page.waitForLoadState('domcontentloaded')
+    // Route-mounted sentinel (same one the persona-landing tests above use,
+    // 15 s): without it the toHaveCount(0) below passes trivially on the
+    // still-empty lazy route and the 10 s dropdown wait then absorbs the whole
+    // cold load — which it outran under 4 workers on a loaded machine
+    // (2026-09-21: passed at 5.9 s in one full run, failed at 11.5 s + 17 s
+    // retry in the next).
+    await expect(page.locator('[data-workshop-target="tab-transition"]')).toBeVisible({
+      timeout: 15000,
+    })
 
     // The "More filters" toggle is only rendered for binary personas.
     await expect(page.getByRole('button', { name: /More filters/i })).toHaveCount(0)
@@ -101,6 +110,10 @@ test.describe('Algorithms — persona-aware defaults (plan §P0.2 / P1.2)', () =
     await seedPersona(page, 'executive')
     await page.goto('/algorithms')
     await page.waitForLoadState('domcontentloaded')
+    // Route-mounted sentinel — see the developer test above.
+    await expect(page.locator('[data-workshop-target="tab-transition"]')).toBeVisible({
+      timeout: 15000,
+    })
 
     // The dropdown-bar disclosure toggle (renamed "More filters" → "Filters",
     // commit ff3f309a) is rendered and starts collapsed for binary personas.

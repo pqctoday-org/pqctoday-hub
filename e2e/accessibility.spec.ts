@@ -241,9 +241,16 @@ test('RightPanel chat drawer — focus is trapped inside when open', async ({ pa
     fn?.()
   })
 
-  // Panel should be visible
+  // Panel should be visible. RightPanel is a React.lazy chunk that MainLayout
+  // only mounts once the store flips open (`{isPanelOpen && <RightPanel />}`),
+  // so the toggle above is what STARTS the chunk fetch — and under parallel
+  // workers the preview server can be busy serving another spec's wasm for
+  // several seconds. 5 s was thin for that cold path (nightly flake, 2026-09-21:
+  // failed twice in one run while the Changelog a11y test held the server, then
+  // passed alone and under load); 15 s is the budget the rest of this suite
+  // gives every lazy route chunk.
   const panel = page.getByRole('dialog', { name: /pqc assistant/i })
-  await expect(panel).toBeVisible({ timeout: 5000 })
+  await expect(panel).toBeVisible({ timeout: 15_000 })
 
   // Press Tab repeatedly; focus must cycle within the panel, never reach body or nav
   for (let i = 0; i < 6; i++) {

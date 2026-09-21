@@ -89,19 +89,24 @@ async function isNarrowed(page: Page): Promise<boolean> {
 test.describe.configure({ mode: 'serial' })
 
 test.describe('library — persona-overwhelm-p0', () => {
-  // The active corpus SHRINKS over time as documents are marked `deprecated`
-  // (805 on 2026-06-02 → 744 → 687 → ~691 on 2026-07-03), so these bounds
-  // can't be pinned to an exact size. FULL_CORPUS_FLOOR is a catastrophic-loss
-  // floor — researcher must see a substantial, un-narrowed corpus — set well
-  // below the current size so ordinary shrinkage never trips it (was a stale
-  // 800, which broke once the corpus fell under it). NARROWED_CEILING stays at
-  // 800 (its long-standing value): it only needs to be at-or-above the full
-  // corpus so every legitimate narrowing passes; it could be tightened toward
-  // the real corpus size to also catch a narrowing-disabled regression, but
-  // that's left as-is here to avoid destabilising the currently-passing
-  // narrowing tests.
+  // The active corpus moves in BOTH directions over time — it shrank as
+  // documents were marked `deprecated` (805 on 2026-06-02 → 744 → 687 → ~691
+  // on 2026-07-03) and then grew again (1,058 → 1,137 in B+ round 9, wave 4b,
+  // 2026-09-20) — so no bound here can be pinned to an absolute size.
+  // FULL_CORPUS_FLOOR is a catastrophic-loss floor — researcher must see a
+  // substantial, un-narrowed corpus — set well below the current size so
+  // ordinary shrinkage never trips it (was a stale 800, which broke once the
+  // corpus fell under it).
+  //
+  // The narrowing ceiling used to be an absolute NARROWED_CEILING = 800. That
+  // broke the moment the ops persona's narrowed set (a fixed fraction of a
+  // growing corpus) crossed 800 — a stale constant, not a product change. The
+  // ceiling is now DERIVED from the corpus the same browser sees: each
+  // narrowing test first reads the un-narrowed total via the `?prefs=off`
+  // escape hatch (usePersonaDefaults.ts), then asserts the persona's narrowed
+  // count is strictly below it. That is exactly the test's intent — "the
+  // persona filter narrows" — and it holds at any corpus size.
   const FULL_CORPUS_FLOOR = 500
-  const NARROWED_CEILING = 800
 
   test('researcher sees the full corpus and no narrowing chip', async ({ page }) => {
     await seedPersona(page, 'researcher')
@@ -116,7 +121,20 @@ test.describe('library — persona-overwhelm-p0', () => {
   for (const persona of PERSONAS_WITH_NARROWING) {
     test(`persona=${persona} narrows the corpus`, async ({ page }) => {
       await seedPersona(page, persona)
-      // Curious collapses the shell; expand=1 is needed to see the count.
+
+      // 1. The un-narrowed total for THIS persona, read from the page with the
+      //    persona defaults switched off (`?prefs=off`). This is the ceiling.
+      //    Curious collapses the shell; expand=1 is needed to see the count.
+      await page.goto('/library?expand=1&prefs=off')
+      await expect(page.getByRole('heading', { name: 'PQC Library' })).toBeVisible({
+        timeout: 15000,
+      })
+      await expect(page.getByText('Narrowed to your role')).toHaveCount(0, { timeout: 5000 })
+      const fullCount = await readDocumentCount(page)
+      expect(fullCount, 'un-narrowed corpus must be substantial').toBeGreaterThan(FULL_CORPUS_FLOOR)
+
+      // 2. The same persona with its defaults on: the chip is up and the count
+      //    is strictly below the total just measured.
       await page.goto('/library?expand=1')
       await expect(page.getByRole('heading', { name: 'PQC Library' })).toBeVisible({
         timeout: 15000,
@@ -126,8 +144,8 @@ test.describe('library — persona-overwhelm-p0', () => {
       expect(count, 'narrowed count must be > 0').toBeGreaterThan(0)
       expect(
         count,
-        `narrowed count must be < full corpus (using ceiling ${NARROWED_CEILING})`
-      ).toBeLessThan(NARROWED_CEILING)
+        `narrowed count must be < the un-narrowed corpus (${fullCount} documents)`
+      ).toBeLessThan(fullCount)
     })
   }
 

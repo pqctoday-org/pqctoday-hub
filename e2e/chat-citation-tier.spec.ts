@@ -96,6 +96,15 @@ test('citation chip renders with the seeded trustTier on the assistant message',
   // isOpen=false (which is the default — isOpen isn't persisted).
   await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
 
+  // The panel is a React.lazy chunk MainLayout mounts only once the store
+  // flips open, so the click above is what starts its fetch; under parallel
+  // workers that cold path outran a 5 s budget (nightly flake 2026-09-21,
+  // failed twice in one 4-worker run, passed alone in 4.9 s). Wait for the
+  // dialog with the suite's 15 s lazy-chunk budget, then assert content.
+  await expect(page.getByRole('dialog', { name: /pqc assistant/i })).toBeVisible({
+    timeout: 15_000,
+  })
+
   // Assistant message text proves the conversation rehydrated.
   await expect(page.getByText(/ML-KEM is the NIST-standardized/)).toBeVisible({ timeout: 5_000 })
 
