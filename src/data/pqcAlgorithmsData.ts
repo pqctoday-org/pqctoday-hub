@@ -187,7 +187,7 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // key-recovery attack (2026-07-28) — confirmed directly on csrc.nist.gov's
   // round-3-additional-signatures page, which now marks HAWK 'Withdrawn'
   // while the other 8 Round 3 candidates remain active.
-  'NIST Additional Sig Round 3 — Withdrawn (2026-07-29)|||Withdrawn from NIST Additional Digital Signatures standardization (2026-07-29)':
+  'NIST Additional Sig Round 3 — Withdrawn (2026-07-29)|||Withdrawn from NIST Additional Digital Signatures standardization (2026-07-29, per Round 3 Additional Signatures — Post-Quantum Cryptography: Additional Digital Signature Schemes, NIST CSRC)':
     'eliminated', // HAWK-512/1024
   'NIST Additional Sig Round 3 — Candidate|||': 'round2-candidate', // MQOM, QR-UOV, SDitH — new
   // stub rows (2026-07-27), fips_standard genuinely blank (add_row.py leaves it for human
@@ -213,7 +213,7 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI/conservative national security recs; NOT in NIST FIPS':
     'final',
   'Candidate|||KR-PQC Round 1 (KPQC)': 'regional', // SMAUG-T/NTRU+/HAETAE/AIMer (pre-08082026 snapshots)
-  'Candidate|||KpqC competition winner, announced 2025-01-16 — KS national standard TBD (draft expected 2026, final ~2027)':
+  'Candidate|||KpqC competition winner, announced 2025-01-16 (Korean Post-Quantum Cryptography Competition Final Results) — KS national standard TBD (draft expected 2026, final ~2027)':
     'regional', // SMAUG-T/NTRU+/HAETAE/AIMer — corrected 2026-08-08, was mislabeled "Round 1"
   'To Be Checked|||CACR 1st Prize (2020, China) — PKC 2020 (Zhang et al.); NOT an adopted national/international standard':
     'unverified', // Aigis-enc/sig — corrected 2026-08-07 from a mistaken KpqC/Korea tag

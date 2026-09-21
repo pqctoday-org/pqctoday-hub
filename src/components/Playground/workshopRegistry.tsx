@@ -753,7 +753,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tpm-playground',
     pt_id: 'PT-028',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'TPM 2.0 PQC Playground',
     description:
       'Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.',
