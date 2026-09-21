@@ -7,6 +7,12 @@ updates:
     # Batch non-security version bumps monthly and cap open PRs, to keep CI /
     # Actions usage low. Security updates are NOT affected by this schedule.
     open-pull-requests-limit: 3
+    # Branch protection on main is `strict: true` (branch must be current), so
+    # without this dependabot rebased its PR after EVERY main push and CI
+    # re-ran the full job each time — 11 red 30-minute runs on one PR (#624)
+    # that could not pass anyway. A stale dependabot branch is rebased by hand
+    # (`@dependabot rebase`) when someone is actually about to merge it.
+    rebase-strategy: disabled
     groups:
       tailwind:
         patterns:

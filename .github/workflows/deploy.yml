@@ -1,14 +1,24 @@
 name: Deploy to GitHub Pages
 
+# Gated on CI since 2026-09-21 (plan G1): this runs only after the CI workflow
+# has COMPLETED SUCCESSFULLY on main, and publishes the very dist/ that run
+# built and smoke-tested, instead of rebuilding in parallel with a CI run that
+# might be red. workflow_dispatch still works for a manual redeploy — there is
+# no CI artifact to pick up in that case, so it builds from source.
 on:
-  push:
-    branches: ['main']
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
+  # download-artifact from ANOTHER workflow run needs a token that can read
+  # that run's artifacts; the default GITHUB_TOKEN with actions:read is enough.
+  actions: read
 
 concurrency:
   group: 'pages'
@@ -16,34 +26,61 @@ concurrency:
 
 jobs:
   deploy:
+    # A CI run that failed (or was cancelled by a newer push) must not deploy.
+    # On dispatch there is no workflow_run payload, so the condition is on the
+    # event name first.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The exact commit CI built. On dispatch this is empty and falls back
+          # to the ref the workflow was dispatched from.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Set up Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
           cache: 'npm'
 
       - name: Install dependencies
+        # Needed on both paths: `npx tsx` for the retain step below, and the
+        # build on the dispatch path.
+        env:
+          ONNXRUNTIME_NODE_INSTALL: skip # see ci.yml `checks`
         run: npm ci
 
+      - name: Download the build CI produced
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist
+          path: dist
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ---- dispatch-only fallback: no CI artifact, build from source ----------
       - name: Install Playwright Chromium (for prerendering)
+        if: github.event_name == 'workflow_dispatch'
         run: npx playwright install --with-deps chromium
 
       - name: Build
+        if: github.event_name == 'workflow_dispatch'
         env:
           VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
           VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
         run: npm run build
+      # -------------------------------------------------------------------------
 
       # GitHub's edge serves the previous index.html for up to 10 minutes after a
       # deploy; keep the live boot chunks it references so it can still start.
+      # Reads the live sw.js and copies missing chunks into dist/assets/.
       # Fails open — see scripts/ci/retain-live-boot-assets.ts.
       - name: Retain live boot chunks
         run: npx tsx scripts/ci/retain-live-boot-assets.ts
