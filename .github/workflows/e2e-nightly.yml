@@ -6,10 +6,15 @@ name: E2E (nightly full suite)
 # This run is NOT a required/branch-protected check (cron + workflow_dispatch
 # triggers can't attach to a PR's head SHA the way branch protection needs
 # anyway), so a spec that only lives here can regress on `main` for up to 24h
-# before anyone sees it. e2e/acvp-validator.spec.ts is the one exception: it's
-# also in SMOKE_SPECS (playwright.config.ts) as of 2026-08-23, so it still runs
-# here too (redundant coverage, cheap) but a regression in it is now caught
-# per-PR by ci.yml's required `checks` job instead of waiting for this run.
+# before anyone sees it. Two things keep that honest (plan 2026-09-21, Q1):
+#   - the same full suite is part of the LOCAL gate before a release
+#     (`npm run gate:e2e`, inside `gate:release` — see GATES.md);
+#   - the `notify` job below opens ONE issue, "Nightly E2E is red", when this
+#     run fails and closes it when a later run is green. A red nightly used
+#     to be silent: it was red every night from at least 09-14 to 09-21 and
+#     15 browser regressions shipped in the meantime.
+# e2e/acvp-validator.spec.ts is the one spec that also runs in the PR smoke
+# tier (SMOKE_SPECS in playwright.config.ts, since 2026-08-23).
 on:
   schedule:
     - cron: '0 7 * * *' # 07:00 UTC daily
@@ -19,6 +24,9 @@ on:
 concurrency:
   group: e2e-nightly
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   e2e-full:
@@ -30,15 +38,17 @@ jobs:
         shard: [1, 2]
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
           cache: npm
 
       - name: Install dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL: skip # see ci.yml `checks`
         run: npm ci
 
       - name: Install Playwright Chromium
@@ -50,12 +60,172 @@ jobs:
       - name: E2E full suite (shard ${{ matrix.shard }}/2)
         # Generous per-test timeout: the WASM/real-crypto specs (ML-KEM/ML-DSA,
         # softhsm, openssl, SSH/IKE handshakes) legitimately need minutes.
-        run: npx playwright test --project=chromium --timeout=180000 --shard=${{ matrix.shard }}/2
+        # The JSON reporter is added (on top of the config's list + html) so the
+        # notify job can name the failing tests in the issue it files.
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_FILE: playwright-results-shard-${{ matrix.shard }}.json
+        run: >-
+          npx playwright test --project=chromium --timeout=180000
+          --shard=${{ matrix.shard }}/2 --reporter=list,html,json
 
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: playwright-report-nightly-shard-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 14
+
+      - name: Upload JSON results (for the notify job)
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-json-shard-${{ matrix.shard }}
+          path: playwright-results-shard-${{ matrix.shard }}.json
+          retention-days: 14
+          # A shard killed at its timeout never writes the file; the notify job
+          # then reports the run URL without names rather than failing itself.
+          if-no-files-found: ignore
+
+  notify:
+    # ONE issue titled "Nightly E2E is red": opened (or updated with a fresh
+    # comment) when the suite fails, closed when it is green again. Runs even
+    # when a shard was cancelled or timed out — `if: always()` — because a
+    # nightly that could not finish is also red.
+    needs: e2e-full
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+      actions: read # download the shards' artifacts
+    steps:
+      - name: Download JSON results
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: playwright-json-shard-*
+          path: results
+          merge-multiple: true
+
+      - name: Open, update or close the "Nightly E2E is red" issue
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          E2E_RESULT: ${{ needs.e2e-full.result }}
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const TITLE = 'Nightly E2E is red';
+            const result = process.env.E2E_RESULT; // success | failure | cancelled | skipped
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const today = new Date().toISOString().slice(0, 10);
+
+            // ---- collect failing test names from the JSON reporter output ----
+            // Playwright JSON: suites[] (nested) → specs[] { file, title, tests[] { status } }
+            // status ∈ expected | unexpected | flaky | skipped; 'unexpected' = failed.
+            const failing = [];
+            const flaky = [];
+            let shardsWithJson = 0;
+            const dir = 'results';
+            const walk = (suite, file) => {
+              for (const spec of suite.specs ?? []) {
+                const name = `${spec.file ?? file} › ${spec.title}`;
+                const statuses = (spec.tests ?? []).map((t) => t.status);
+                if (statuses.includes('unexpected')) failing.push(name);
+                else if (statuses.includes('flaky')) flaky.push(name);
+              }
+              for (const child of suite.suites ?? []) walk(child, suite.file ?? file);
+            };
+            if (fs.existsSync(dir)) {
+              for (const f of fs.readdirSync(dir).filter((n) => n.endsWith('.json')).sort()) {
+                try {
+                  const report = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+                  shardsWithJson++;
+                  for (const s of report.suites ?? []) walk(s, s.file);
+                } catch (e) {
+                  core.warning(`could not parse ${f}: ${e.message}`);
+                }
+              }
+            }
+            failing.sort();
+            flaky.sort();
+
+            // ---- find the one open issue with this exact title ----
+            const open = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const issue = open.find((i) => !i.pull_request && i.title === TITLE);
+
+            if (result === 'success') {
+              if (issue) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: `Green again on ${today}: ${runUrl}\n\nClosing.`,
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  state: 'closed',
+                  state_reason: 'completed',
+                });
+                core.info(`closed #${issue.number}`);
+              } else {
+                core.info('nightly green, no open issue — nothing to do');
+              }
+              return;
+            }
+
+            // ---- red (failure / cancelled / timed out) ----
+            const lines = [];
+            lines.push(`**Run:** ${runUrl} — result \`${result}\` (${today})`);
+            lines.push('');
+            if (shardsWithJson < 2) {
+              lines.push(`_${2 - shardsWithJson} of 2 shards produced no JSON report (aborted or timed out) — open the run for those._`);
+              lines.push('');
+            }
+            if (failing.length) {
+              lines.push(`**Failing tests (${failing.length}):**`);
+              for (const n of failing) lines.push(`- ${n}`);
+            } else if (shardsWithJson === 2) {
+              lines.push('_No failing test in the JSON reports — the run failed outside a test (build, install, timeout). Open the run._');
+            }
+            if (flaky.length) {
+              lines.push('');
+              lines.push(`<details><summary>Flaky (${flaky.length}, passed on retry)</summary>\n`);
+              for (const n of flaky) lines.push(`- ${n}`);
+              lines.push('\n</details>');
+            }
+            lines.push('');
+            lines.push('Full Playwright HTML reports are attached to the run as `playwright-report-nightly-shard-*`.');
+            lines.push('Reproduce locally against the production build: `npm run gate:e2e` (see GATES.md).');
+            const section = lines.join('\n');
+
+            if (issue) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `The nightly full Playwright suite (.github/workflows/e2e-nightly.yml) is failing. This issue is kept up to date by the workflow's \`notify\` job and closed automatically on the next green run.\n\n### Latest red run\n\n${section}`,
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `Still red on ${today}.\n\n${section}`,
+              });
+              core.info(`updated #${issue.number}`);
+            } else {
+              const created = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: TITLE,
+                body: `The nightly full Playwright suite (.github/workflows/e2e-nightly.yml) is failing. This issue is kept up to date by the workflow's \`notify\` job and closed automatically on the next green run.\n\n### Latest red run\n\n${section}`,
+              });
+              core.info(`opened #${created.data.number}`);
+            }

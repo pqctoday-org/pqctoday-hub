@@ -89,8 +89,9 @@ npm run format       # auto-fix
 ```bash
 npm run test         # unit tests (Vitest)
 npm run test:e2e     # end-to-end tests (Playwright, full suite)
-npm run gate:local   # format + lint + data-integrity gates + unit tests —
-                      # what the pre-push hook runs; closest thing to "will CI pass"
+npm run gate:local   # format + lint + data gates + editorial audits + unit tests —
+                      # what the pre-push hook runs (see GATES.md)
+npm run gate:release # gate:local + full Playwright suite + gate:cacp — before a release
 ```
 
 See [TESTING.md](TESTING.md) for the full test layout, the local-only data-integrity

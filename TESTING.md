@@ -8,11 +8,19 @@ The local gate is the enforcement layer for data integrity — it runs checks
 that are deliberately **not** in CI (new suites stay local-only by policy):
 
 ```bash
-npm run gate:data    # all data gates incl. the unified validate:data
-                     # (~20 check families: proof gates, FK integrity,
-                     # lifecycle/self-containment, enrichment coverage)
-npm run gate:local   # format + lint + gate:data + unit tests
+npm run gate:data     # the data-truth audits + the unified validate:data
+                      # (this is also CI's single "Data gate" step)
+npm run gate:local    # format + lint + data audits + FULL validate:data +
+                      # editorial audits + wasm provenance + unit tests —
+                      # what .husky/pre-push runs
+npm run gate:e2e      # build + the full Playwright suite
+npm run gate:release  # gate:local + gate:e2e + gate:cacp, then the receipt
 ```
+
+The authoritative map of what runs where (pre-commit, pre-push, GitHub,
+nightly, release) is [GATES.md](GATES.md). Since 2026-09-21 the
+GitHub `checks` job runs `gate:data` as one step and the editorial audits run
+only locally.
 
 `npm run validate:data` runs the unified validator on its own
 (`--json` / `--verbose` / `--staleness N` supported). The migrate proof gate
@@ -223,14 +231,13 @@ slow; the smoke tier re-gates a lean, curated subset rather than the whole
 suite).
 
 The required PR check, `.github/workflows/ci.yml`'s `checks` job (the only
-job branch protection requires), runs:
+job branch protection requires), runs — see [GATES.md](GATES.md)
+for the full list and what each step guards:
 
-- ✅ Security audit
-- ✅ Formatting checks
 - ✅ Linting
-- ✅ ~20 data-integrity audits (`npm run audit:*`, `npm run validate:data`, etc.)
-- ✅ Build verification
-- ✅ Unit tests (Vitest)
+- ✅ `npm run gate:data` (one step: the data-truth audits + `validate:data`)
+- ✅ Trust-engine attestation verification
+- ✅ Build verification (its `dist/` is what deploy.yml publishes on main)
 - ✅ **E2E smoke tier** (`npm run test:e2e:ci-smoke` = `playwright test --project=smoke`)
   — the explicit allowlist in `playwright.config.ts`'s `SMOKE_SPECS`: routing/title,
   accessibility, timeline freshness badge, trust-tier filtering, the compliance
@@ -238,10 +245,11 @@ job branch protection requires), runs:
   the only WASM/crypto spec in the allowlist — promoted 2026-08-23 because it
   measured cheap enough to gate every PR rather than wait for nightly).
 
-Two other jobs in the same workflow (`kat-node24`, `gate-cacp`) run targeted
-Vitest suites (cross-impl KATs, the CACP/KMIP playground gate) on their own
-toolchains, but — unlike `checks` — branch protection does not require them
-to pass before merge.
+- ✅ Security audit (last, on purpose)
+
+Two other jobs in the same workflow run in parallel: `test` (the Vitest unit
+suite, sharded ×2) and `gate-cacp` (the CACP/KMIP playground gate against a
+sparse clone of pqctoday-hsm).
 
 The **nightly** tier, `.github/workflows/e2e-nightly.yml` (cron `0 7 * * *`
 UTC + manual `workflow_dispatch`, sharded 2-way), runs the full `chromium`
@@ -250,9 +258,10 @@ heavy WASM/crypto specs (ML-KEM/ML-DSA, softhsm, OpenSSL, SSH/IKE handshakes)
 that would make the per-PR gate flaky or slow at full breadth. **This is not
 a required/branch-protected check** — a failure shows up in the Actions run
 history (and the uploaded Playwright report artifact), not on the PR itself,
-and it cannot block a merge. A regression confined to a nightly-only spec
-(anything except `acvp-validator.spec.ts`, which is now also in smoke) can
-land on `main` and only surface up to 24h later.
+and it cannot block a merge — but its `notify` job opens/updates one issue,
+"Nightly E2E is red", with the failing test names, and closes it on the next
+green run. The same full suite is part of the local release gate
+(`npm run gate:e2e`, inside `gate:release`).
 
 The `local`-only tier (`*.local.spec.ts`) never runs in CI at all — see
 `npm run test:e2e:cacp-visual` / `test:e2e:cacp-local` — and the

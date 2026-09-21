@@ -1,23 +1,14 @@
-# Verify trust-engine artifact signatures before pushing.
-# Runs the public verify-attestations.ts (tracked, no dependency on the
-# private scripts/attestation/* signer). Skips silently when no .sig
-# files exist (early-bootstrap state).
-# Bypass with `git push --no-verify` if you intentionally rotated keys
-# and the new signatures haven't landed yet.
+# pre-push — the LOCAL gate. Everything that is editorial, style-only, or needs
+# this machine (sibling checkouts, evidence caches, the full unit suite) runs
+# here; GitHub's `checks`/`test`/`gate-cacp` jobs carry only what must be
+# proven on a clean runner. The split is written down in GATES.md; a
+# check runs in exactly one of the two places.
+# Bypass with `git push --no-verify` for an intentional WIP push — knowingly,
+# not as a habit.
 set -e
 
-# Skip in CI — CI runs the same verifier as a dedicated workflow step.
+# Skip in CI — the GitHub jobs run their own steps.
 [ -n "$CI" ] && exit 0
-
-# Formatting, the way CI checks it: the WHOLE tree, not just staged files.
-# ADDED 2026-08-14, after `format:check` failed in CI twice in one session
-# while every local gate was green. lint-staged only formats files that are
-# STAGED, so anything reaching the tree another way — a merge, a generated
-# artifact copied in by a build script, a file written by a tool — is never
-# formatted locally and is only caught after a push. On this repo a CI round
-# trip is 20+ minutes; this check takes about forty seconds.
-# Bypass with `git push --no-verify`.
-npm run format:check
 
 # Every file a workflow step will execute must actually be IN the repository.
 # ADDED 2026-08-10, after this failed for the FOURTH time. `.gitignore` has a
@@ -28,82 +19,56 @@ npm run format:check
 # 2026-07-10 (validators), 2026-08-02 (role-board CTAs), 2026-08-09 (role-board
 # coverage), 2026-08-10 (the three B+ remediation gates).
 # Deliberately here and NOT in ci.yml: a CI step that checks whether CI's own
-# files are present can only run once they are. Runs in about a second.
-# Bypass with `git push --no-verify`.
+# files are present can only run once they are. Runs in about a second, so it
+# runs on every push, receipt or not.
 npm run audit:ci-workflow-files
 
+# Trust-engine artifact signatures. Runs the public verify-attestations.ts
+# (tracked, no dependency on the private signer). Skips silently when no .sig
+# files exist (early-bootstrap state). Also a CI step — the one deliberate
+# overlap, because a signature check is cheap here and a security gate there.
+# Bypass with `git push --no-verify` if you intentionally rotated keys and the
+# new signatures haven't landed yet.
 if [ -f public/data/revisions.jsonl.sig ] || [ -f public/data/rag-corpus.json.sig ]; then
   npx tsx scripts/ci/verify-attestations.ts
 fi
 
-# Full data-integrity validator (N1-N24/CM-*/TP-*/MP-*/DS*/GC-*, 142 checks).
-# ADDED 2026-07-13 — this suite (also gate:data's final step) was found to
-# have never run anywhere in CI. Deliberately kept local-only rather than
-# added as a GitHub Actions step: this repo's CI is already a long,
-# multi-step job, and the explicit preference here is to keep GitHub CI
-# runtime light — real data-integrity gating belongs at push time, on the
-# machine that actually has it, not as more GHA minutes.
-# TP-1 and MP-2 verify genuine on-disk presence of files under gitignored
-# pqctoday-priv/local-evidence-cache/ — excluded here for the same reason
-# they're excluded from every other invocation of this suite: they're real
-# and useful after a manual download run, but this hook fires on every
-# push regardless of whether one just happened.
-# Bypass with `git push --no-verify` for an intentional WIP push.
-npm run validate:data -- --exclude-checks TP-1,MP-2
+# Gate receipt. `npm run gate:release` (and this hook, below) write
+# `.gate-ok-<short HEAD sha>` at the repo root ONLY when every step passed. If
+# that receipt exists for the commit being pushed and is newer than the commit
+# itself, the heavy gate already ran on exactly this commit — skip it, so a
+# developer who just ran gate:release does not pay twice. Any new commit (or
+# amend) changes the sha, so a stale receipt can never cover new work.
+# Receipts are gitignored (.gate-ok-*) and harmless to leave around.
+HEAD_SHA=$(git rev-parse --short HEAD)
+RECEIPT=".gate-ok-$HEAD_SHA"
+if [ -f "$RECEIPT" ]; then
+  RECEIPT_TIME=$(stat -f %m "$RECEIPT" 2>/dev/null || stat -c %Y "$RECEIPT")
+  COMMIT_TIME=$(git log -1 --format=%ct HEAD)
+  if [ "$RECEIPT_TIME" -ge "$COMMIT_TIME" ]; then
+    echo "[pre-push] $RECEIPT is newer than HEAD — local gate already passed on this commit, skipping."
+    exit 0
+  fi
+fi
 
-# WASM provenance drift — are the vendored crypto bundles still built from
-# the pqctoday-hsm commit they claim?
-# ADDED 2026-08-02. `sync:wasm:check` already existed as an npm script but was
-# wired into nothing, so drift accumulated silently: an audit that day found 5
-# of 6 bundles stale, the worst by 26 commits, meaning the HSM Workshop, TPM
-# bridge, MLS and SSH simulator all ran a two-week-old engine missing a
-# C_Login TOCTOU fix among others. Nobody had a signal.
-# Local-only on purpose, same reasoning as the validator above: the check is a
-# no-op unless a sibling ../pqctoday-hsm checkout exists, so it can only do
-# real work on a machine that actually has the engine source — which is
-# exactly where a rebuild would be performed.
-# Bypass with `git push --no-verify`.
-npm run sync:wasm:check
+# The local gate: format, lint, the data audits, the FULL unified validator
+# (only TP-1/MP-2 excluded — they verify on-disk proof files that exist only
+# after a manual download run), the editorial audits (revision coverage,
+# role boards, persona lens, changelog tags, content freshness, infographics,
+# tokens, workshop flows), wasm provenance against the sibling pqctoday-hsm
+# checkout, landing counts, CSV copy-forward, and the unit suite. See
+# package.json `gate:local` for the exact chain and GATES.md for what
+# each step guards.
+npm run gate:local
 
 # CACP (crypto-agility control plane) suite — the KMIP policy engine's wasm
-# bridge, visual editor, and policy library. ADDED 2026-08-28 (gaps-
-# remediation plan WS-10), after `gate:cacp` was found to exist in
-# package.json but be wired into nothing: `gate:local`'s bare `npm run test`
-# already covers this tree's CI-visible tests, but the *.local.test.ts
-# drift guards (catalog ↔ Rust-grammar, dual-form policy parity,
-# sim ↔ engine parity) and the narrow cacp-kmip wasm-provenance check ran
-# nowhere at push time. Some of those drift guards are no-ops without a
-# sibling ../pqctoday-hsm checkout (same convention as `sync:wasm:check`
-# above) — see TESTING.md's CACP section. Runs unconditionally, matching
-# every other check in this hook, rather than path-scoped to the CACP
-# directories the plan named: the scoped test run itself is a couple of
-# seconds, and path-scoping would be new machinery this hook doesn't use
-# anywhere else, for a saving that small.
-# Bypass with `git push --no-verify`.
+# bridge, visual editor, and policy library, plus the *.local.test.ts drift
+# guards (catalog ↔ Rust-grammar, dual-form policy parity, sim ↔ engine
+# parity) and the narrow cacp-kmip wasm-provenance check. Some of those guards
+# need a sibling ../pqctoday-hsm checkout — see TESTING.md's CACP section.
+# Also a GitHub job (`gate-cacp`, against a sparse hsm clone); here it runs
+# against the real sibling, which is the only place the full drift guards can.
 npm run gate:cacp
 
-# Landing hero-counter estimates derived from the CSVs (single source of
-# truth) — same contract and same reasoning as the timeline-facts check in
-# ci.yml, kept local-only per this repo's "no new CI jobs" policy (GitHub
-# Actions minutes are capped; local machines are the fast path). `predev`/
-# `prebuild` already regenerate this file unconditionally, so this only
-# matters for the case those two checks exist for elsewhere: a CSV edited
-# and committed without running dev/build locally afterward first.
-# Bypass with `git push --no-verify`.
-npm run gen:landing-counts:check
-
-# Silent row loss between two generations of a dated CSV.
-# ADDED 2026-08-14, after a near-miss that NOTHING else could have caught. Two
-# sessions each wrote a new generation of library_*.csv; because dated
-# generations are different FILENAMES, git merged both with no conflict, and
-# the loader serves only the newest — so two rows present in one and absent
-# from the other simply disappeared. No conflict, no error, no failing test.
-# A human noticed.
-# Local-only, matching the two gates above: it reads src/data/ and
-# src/data/archive/ (the archival gate keeps only 2 live copies, so the
-# previous generation is often archived) and needs no network.
-# A removal that is genuinely intended is recorded in RECORDED_REMOVALS inside
-# the script, with a written reason — that is the escape hatch, not disabling
-# this line.
-# Bypass with `git push --no-verify`.
-npm run audit:csv-copy-forward
+# Everything passed on this exact commit — write the receipt (see above).
+npm run gate:receipt

@@ -737,3 +737,9 @@ src/.!*!.DS_Store
 # --upstream is passed explicitly.
 !scripts/audit-capture-integrity.ts
 !scripts/audit-capture-integrity.local.test.ts
+
+# Local-gate receipts: `.gate-ok-<short sha>` is written by `npm run
+# gate:release` / .husky/pre-push only when every step passed on that commit,
+# and read by the pre-push hook to skip a gate it already ran. Per-machine;
+# never committed. See GATES.md.
+.gate-ok-*
