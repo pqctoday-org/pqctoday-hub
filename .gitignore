@@ -359,7 +359,7 @@ scripts/*
 # the ci.yml or package.json side. Three of the four occurrences shipped.
 # The gate itself was retired 2026-09-21: the About page's SBOM version column
 # is now GENERATED from package.json by this script (runs in predev/prebuild,
-# `--check` in CI), so there is no hand-typed copy left to drift.
+# `--check` in gate:local), so there is no hand-typed copy left to drift.
 !scripts/gen-sbom-versions.mjs
 
 # Role-board content generator — runs in `npm run build` (npm run generate:
