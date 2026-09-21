@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Drift guard — package.json's `validate:data:without-priv` --exclude-checks
- * list matches ci.yml's exactly (dev-tabs-pkcs11-kmip plan G9, W5).
+ * Drift guard — package.json's `validate:data:without-priv` is the single
+ * exclude list, and ci.yml reaches it only through `gate:data`
+ * (originally: the list matched ci.yml's inline copy exactly — G9, W5).
  *
  * `gate:local`/`gate:data` used to call bare `validate:data`, which always
  * fails outside a checkout with `pqctoday-priv` present: TP-1 and MP-2 (plus
@@ -51,30 +52,31 @@ function parseExcludeList(text: string, pattern: RegExp): string[] {
     .sort()
 }
 
-describe('validate:data:without-priv exclude-checks stays in sync with ci.yml', () => {
+describe('validate:data:without-priv is the ONE exclude list CI and gate:data share', () => {
+  // 2026-09-21: ci.yml no longer carries its own `--exclude-checks` list. It
+  // runs `npm run gate:data`, whose last step is `validate:data:without-priv`,
+  // so the two lists cannot drift because there is only one. What CAN drift is
+  // someone re-adding an inline validator call to ci.yml with its own flags —
+  // that is what the guard now refuses.
+  const pkg = () => JSON.parse(read('package.json')) as { scripts: Record<string, string> }
+
   it('package.json script exists and carries a non-empty exclude list', () => {
-    const pkg = JSON.parse(read('package.json')) as { scripts: Record<string, string> }
-    const script = pkg.scripts['validate:data:without-priv']
+    const script = pkg().scripts['validate:data:without-priv']
     expect(script).toBeTruthy()
     const list = parseExcludeList(script, /--exclude-checks\s+([\w,-]+)/)
     expect(list.length).toBeGreaterThan(0)
   })
 
-  it('ci.yml carries a non-empty exclude list for the same validator', () => {
-    const list = parseExcludeList(read('.github/workflows/ci.yml'), /--exclude-checks\s+([\w,-]+)/)
-    expect(list.length).toBeGreaterThan(0)
+  it('gate:data ends with validate:data:without-priv', () => {
+    const gate = pkg().scripts['gate:data']
+    expect(gate).toBeTruthy()
+    expect(gate.trim().endsWith('npm run validate:data:without-priv')).toBe(true)
   })
 
-  it('the two lists name exactly the same checks', () => {
-    const pkg = JSON.parse(read('package.json')) as { scripts: Record<string, string> }
-    const localList = parseExcludeList(
-      pkg.scripts['validate:data:without-priv'],
-      /--exclude-checks\s+([\w,-]+)/
-    )
-    const ciList = parseExcludeList(
-      read('.github/workflows/ci.yml'),
-      /--exclude-checks\s+([\w,-]+)/
-    )
-    expect(localList).toEqual(ciList)
+  it('ci.yml runs the validator only through gate:data — no inline exclude list', () => {
+    const ci = read('.github/workflows/ci.yml')
+    expect(ci).toMatch(/run:\s*npm run gate:data\b/)
+    expect(ci).not.toMatch(/--exclude-checks/)
+    expect(ci).not.toMatch(/npm run validate:data\b/)
   })
 })
