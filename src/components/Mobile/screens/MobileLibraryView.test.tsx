@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, afterEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobileLibraryView } from './MobileLibraryView'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -98,9 +98,16 @@ describe('MobileLibraryView', () => {
     expect(after).toBeLessThan(before)
   })
 
+  // Role queries are scoped to ONE card / the sheet below, not the whole
+  // document: the view renders ~1,160 cards (~2,300 buttons), and an unscoped
+  // getAllByRole computes accessibility (getComputedStyle + accessible name)
+  // for every one of them — 5s per query under jsdom, ~2x slower again on
+  // Vitest 5, which pushed these two tests to 45s in a full parallel run
+  // (budget 30s). Same elements, same assertions, milliseconds instead.
   it('toggles a document bookmark via the real useBookmarkStore', () => {
     renderView()
-    const btn = screen.getAllByRole('button', { name: 'Bookmark this document' })[0]
+    const firstCard = document.querySelector('article')!
+    const btn = within(firstCard).getByRole('button', { name: 'Bookmark this document' })
     fireEvent.click(btn)
     expect(useBookmarkStore.getState().libraryBookmarks.length).toBeGreaterThan(0)
   })
@@ -116,9 +123,10 @@ describe('MobileLibraryView', () => {
     expect(firstTitle).toBeTruthy()
     const titleText = firstTitle!.textContent!
     fireEvent.click(firstTitle!.closest('button')!)
-    expect(screen.getByTestId('library-detail-sheet')).toBeInTheDocument()
+    const sheet = screen.getByTestId('library-detail-sheet')
+    expect(sheet).toBeInTheDocument()
     expect(screen.getAllByText(titleText).length).toBeGreaterThan(0)
-    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    fireEvent.click(within(sheet).getByRole('button', { name: 'Close' }))
     expect(screen.queryByTestId('library-detail-sheet')).not.toBeInTheDocument()
   })
 })
