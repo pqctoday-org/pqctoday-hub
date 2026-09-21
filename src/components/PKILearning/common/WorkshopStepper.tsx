@@ -27,17 +27,21 @@ interface WorkshopStepperProps {
  *
  * Shows dot-only on mobile (label hidden), full pill on ≥ sm.
  *
- * Label-visibility breakpoint — deliberate, and coordinated with the icon-row
- * stepper that always renders directly above this one (ModuleShell.tsx's local
- * `WorkshopStepper`, plus its hand-copies in FiveG / PKIWorkshop / DigitalID /
- * MerkleWorkshopSteps, all reached through `WorkshopStepHeader`). That row now
- * shows a short "Step N" caption at every viewport width and carries the full
- * step title as its `aria-label`, and `WorkshopStepHeader` renders the current
- * step's full title as a heading immediately below. Un-hiding this pill's label
- * below `sm:` would therefore duplicate text that is already on screen twice and
- * reintroduce the crowding an 8-step workshop hits at 390px — so the `sm:` gate
- * stays. Screen-reader parity is unaffected: `aria-label` below carries the full
- * label at every width regardless of the visual breakpoint.
+ * Navigation: when `onStepClick` is supplied every chip is clickable, including
+ * steps ahead of the current one — the workshops let a visitor jump to any step
+ * (that is what the icon step rail ModuleShell rendered until 4.95.0 did, and
+ * what the FiveG / PKIWorkshop / DigitalID / MerkleWorkshopSteps rails still
+ * do). Without a handler the chips are a read-only indicator.
+ *
+ * Label-visibility breakpoint — deliberate. `WorkshopStepHeader` renders the
+ * current step's full title as a heading immediately above this row, and the
+ * hand-copied icon rails in FiveG / PKIWorkshop / DigitalID / MerkleWorkshopSteps
+ * show a short "Step N" caption at every viewport width with the full step title
+ * as their `aria-label`. Un-hiding this pill's label below `sm:` would duplicate
+ * text that is already on screen and reintroduce the crowding an 8-step workshop
+ * hits at 390px — so the `sm:` gate stays. Screen-reader parity is unaffected:
+ * `aria-label` below carries the full label at every width regardless of the
+ * visual breakpoint.
  */
 export const WorkshopStepper: React.FC<WorkshopStepperProps> = ({
   steps,
@@ -56,7 +60,16 @@ export const WorkshopStepper: React.FC<WorkshopStepperProps> = ({
       {steps.map((step, idx) => {
         const isDone = completedSteps.includes(step.id) || idx < currentStep
         const isCurrent = idx === currentStep
-        const clickable = Boolean(onStepClick) && idx <= currentStep
+        // Every chip is a real control when the module passes onStepClick — past,
+        // current and future alike. Release 4.95.0 (CC-3, 2026-09-19) removed the
+        // icon step rail in ModuleShell that let a visitor jump to any step and
+        // left these chips as the only stepper, but they still locked `idx >
+        // currentStep` with no inline reason (ux-standard UX-90). Workshops are
+        // designed for free navigation (the rail had no `disabled`; the FiveG /
+        // PKIWorkshop / DigitalID / Merkle rails still don't), so the chips carry
+        // the same contract. Without a handler the chips stay a read-only
+        // indicator.
+        const clickable = Boolean(onStepClick)
 
         return (
           <React.Fragment key={step.id}>
@@ -79,7 +92,8 @@ export const WorkshopStepper: React.FC<WorkshopStepperProps> = ({
                 ],
                 !isDone &&
                   !isCurrent && [
-                    'bg-muted border border-border text-muted-foreground cursor-default hover:bg-muted',
+                    'bg-muted border border-border text-muted-foreground',
+                    clickable ? 'hover:bg-muted/70' : 'cursor-default hover:bg-muted',
                   ]
               )}
             >

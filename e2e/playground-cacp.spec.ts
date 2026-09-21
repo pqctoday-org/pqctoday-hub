@@ -102,7 +102,9 @@ test('rekey-on-use policy migrates a classical key to PQC on first Sign, and the
   // policy's substitution rule watches for later.
   await page.getByRole('button', { name: /Classical \(the "before"\)/i }).click()
   await page.getByTestId('kmip-algo').getByRole('button').click()
-  await page.getByText('Auto — let the policy decide').click()
+  // Option role: the persona page note (pagePersonaNotes.ts, round 9) quotes
+  // "Auto — let the policy decide" verbatim, so a text locator hits two elements.
+  await page.getByRole('option', { name: 'Auto — let the policy decide' }).click()
   await expect(page.getByTestId('kmip-algo')).toContainText('Auto')
 
   const result = page.getByRole('heading', { name: 'Result' }).locator('..')

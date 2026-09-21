@@ -362,6 +362,13 @@ export const MainLayout = () => {
     if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0
   }, [selectedPersona, location.pathname])
 
+  // Single owner of the Playwright hook (2026-09-21): e2e/accessibility.spec.ts
+  // and e2e/rag-pipeline.spec.ts call `window.__e2e_toggle_panel(tab?)` to open
+  // the RightPanel without the FAB. RightPanel.tsx no longer assigns it — that
+  // component only mounts once the panel is open (lazy, `isPanelOpen &&`), so
+  // its copy could never open anything and two owners of one global made the
+  // spec depend on effect order. `openPanel` is the store's `toggle` action, a
+  // stable reference, so this runs once per mount.
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       // @ts-expect-error - Used only by Playwright
