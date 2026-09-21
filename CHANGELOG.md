@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.113.1] - 2026-09-20
+
+The last six figures the accuracy pass left open on the pages now have their sources or are gone.
+
+### Changed
+
+- **Sources named for the algorithm-status dates** [view:/algorithms] [view:/about] [persona:researcher]: the KpqC winners' announcement date (2025-01-16) cites the competition's final-results notice, and HAWK's withdrawal date (2026-07-29) cites NIST's Round 3 Additional Signatures page, in the algorithms dataset itself.
+- **IBM Condor's 1,121 qubits** [view:/threats] [persona:executive]: the Threats page cites IBM's own "IBM Quantum System Two: the era of quantum utility is here" post, which states the figure; the December 2023 press release does not.
+- **TPM playground errata pointer removed** [view:/playground] [persona:developer]: the NV Certify step no longer cites "Errata §2.7" — TCG's latest errata sheet (1.84 Errata 1) has clauses 2.1 to 2.5 and no NV Certify item.
+
+### Data
+
+- **Two Library rows added, two corrected** [view:/library] [persona:researcher]: NIST's Round 3 Additional Signatures page and IBM's System Two post; the KpqC final-results row carries the notice's own date (2025-01-16, not 2023-12-07); the TCG errata row now holds the 1.84 Errata 1 PDF with its real title and date; the IBM press-release row holds the PDF rendering; the algorithms CSV has a new dated generation with the two citations.
+
 ## [4.113.0] - 2026-09-20
 
 The text of every routed page is now checked the way the Learn modules' text has been: the accuracy instrument read the components behind the pages for the first time, and the figures it found there are either backed by a Library document, worked out in the sentence, or gone.

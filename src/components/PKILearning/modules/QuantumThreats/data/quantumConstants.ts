@@ -888,7 +888,7 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
     vendors: 'IBM, Google',
     bestLogical: 1,
     bestPhysical: 1121,
-    note: 'Fastest gates and the largest physical-qubit chips (IBM Condor, 1,121 physical qubits per the IBM Debuts Next-Generation Quantum Processor announcement — but Condor demonstrated zero logical qubits); Google Willow showed the first below-threshold error correction, a single distance-7 logical qubit; IBM’s modular + qLDPC roadmap targets 200 logical qubits (Starling) by 2029, with 1,080 connected qubits via l-couplers planned for 2027. Requires deep cryogenics.',
+    note: 'Fastest gates and the largest physical-qubit chips (IBM Condor, 1,121 physical qubits per IBM’s post “IBM Quantum System Two: the era of quantum utility is here” — but Condor demonstrated zero logical qubits); Google Willow showed the first below-threshold error correction, a single distance-7 logical qubit; IBM’s modular + qLDPC roadmap targets 200 logical qubits (Starling) by 2029, with 1,080 connected qubits via l-couplers planned for 2027. Requires deep cryogenics.',
     recentProgress:
       'Google proved that making the chip bigger actually lowers errors; IBM shipped new 120-qubit processors and a test chip with the parts for error correction.',
     scaleChallenge:

@@ -243,7 +243,7 @@ export const INITIAL_CHECKS: Omit<CheckEntry, 'status' | 'detail'>[] = [
   {
     id: 'V185-025',
     name: 'TPM2_NV_Certify digest mode (schemeless ML-DSA-65)',
-    section: 'Part 3 §31.9 + Errata v1 §2.7',
+    section: 'Part 3 §31.9',
   },
 ]
 
@@ -1280,7 +1280,7 @@ export function ComplianceRunner() {
         updateCheck('V185-025', { status: 'running' })
         await delay()
         addLine('divider', '')
-        addLine('phase', '[+] Phase 10 — NV Certify  (schemeless ML-DSA-65, Errata §2.7)')
+        addLine('phase', '[+] Phase 10 — NV Certify  (schemeless ML-DSA-65)')
         if (akHandle === 0) {
           markFail('V185-025', 'Skipped — CreatePrimary ML-DSA-65 failed')
         } else {
@@ -1332,7 +1332,7 @@ export function ComplianceRunner() {
               if ((h.rc & 0x3f) === 0x12) {
                 addLine(
                   'recv',
-                  '    ← TPM_RC_SCHEME — the Errata §2.7 Name-algorithm fallback is missing again',
+                  '    ← TPM_RC_SCHEME — the Name-algorithm fallback is missing again',
                   false
                 )
               }
