@@ -30,8 +30,19 @@ test('command palette opens and returns ranked results for "ML-KEM"', async ({ p
 
   // Open via the search button (visible on desktop). On mobile/Webkit it may
   // not exist — use ⌘K keyboard fallback in that case.
+  //
+  // Wait for the trigger rather than counting it once: on a cold GitHub
+  // runner `networkidle` fires before the header has hydrated, `count()`
+  // returned 0, and the ⌘K fallback went to a page that could not hear it
+  // yet — the palette never opened (nightly 2026-09-22, three retries).
+  // 15 s is the suite's budget for lazy chrome, same as the results wait.
   const searchTrigger = page.getByRole('button', { name: /Search \(⌘K\)/ })
-  if (await searchTrigger.count()) {
+  const triggerShown = await searchTrigger
+    .first()
+    .waitFor({ state: 'visible', timeout: 15_000 })
+    .then(() => true)
+    .catch(() => false)
+  if (triggerShown) {
     await searchTrigger.first().click()
   } else {
     await page.keyboard.press('Meta+K')
@@ -39,7 +50,7 @@ test('command palette opens and returns ranked results for "ML-KEM"', async ({ p
 
   // The palette renders an input. Use placeholder/role to find it.
   const input = page.locator('input[placeholder*="Search" i], input[type="search"]').first()
-  await expect(input).toBeVisible({ timeout: 5_000 })
+  await expect(input).toBeVisible({ timeout: 15_000 })
   await input.fill('ML-KEM')
 
   // At least one result row should appear. Result rows have a recognisable
