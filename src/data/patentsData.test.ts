@@ -48,8 +48,13 @@ describe('patentsData — lifecycle (patents_09172026.csv prunes the out-of-scop
   it('loads no deprecated patent and every loaded patent is in the page scope', () => {
     // 1,133 rows outside isPqcPatent() were deprecated on 2026-09-17; the
     // loader drops them on the raw status column, so the "all" scope toggle
-    // and the PQC-only default now show the same population.
-    expect(patentsData.length).toBe(729)
+    // and the PQC-only default now show the same population. 20 more were
+    // deprecated on 2026-09-22, when the re-enrichment through the fixed
+    // reader re-labelled them from the patent's own claims: a "quantum-
+    // resistant SIM card" claiming AES-256 (US12408040), homomorphic-
+    // encryption key delegation (US12316738), QKD (US12200114) — none
+    // claims a PQC algorithm.
+    expect(patentsData.length).toBe(709)
     for (const p of patentsData) {
       const inScope =
         p.pqcAlgorithms.length > 0 ||
