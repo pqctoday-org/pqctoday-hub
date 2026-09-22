@@ -241,6 +241,14 @@ jobs:
           ONNXRUNTIME_NODE_INSTALL: skip # see `checks`
         run: npm ci
 
+      # `npx vitest` bypasses npm lifecycle scripts, so package.json's `pretest`
+      # hook does NOT fire here — that is why a dependabot bump could still fail
+      # SbomSection.test.tsx with a stale generated map even after the hook
+      # landed (#699 → #693 still red). Generate explicitly instead of relying
+      # on an invocation path this job never takes.
+      - name: Generate SBOM versions (the test asserts these match package.json)
+        run: npm run gen:sbom-versions
+
       - name: Unit tests (shard ${{ matrix.shard }}/2)
         run: npx vitest run --shard=${{ matrix.shard }}/2
 
