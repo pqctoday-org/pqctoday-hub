@@ -34,6 +34,7 @@
     "gate:pkcs11": "npm run test -- src/components/Playground/hsm src/components/Playground/tabs src/components/Playground/dev src/components/Playground/learnkit src/components/Playground/HsmPlayground.test.tsx src/wasm/softhsm && npm run test:local -- src/components/Playground/hsm src/components/Playground/dev",
     "gate:cacp": "npm run test -- src/components/Playground/kmip src/wasm/kmip && npm run test:local:cacp && npm run sync:wasm:check:cacp-kmip",
     "preview": "vite preview",
+    "pretest": "npm run gen:sbom-versions",
     "test": "vitest run",
     "test:local": "vitest run --config vitest.local.config.ts",
     "test:local:cacp": "vitest run --config vitest.local.config.ts src/components/Playground/kmip src/wasm/kmip",

@@ -13,6 +13,19 @@ updates:
     # that could not pass anyway. A stale dependabot branch is rebased by hand
     # (`@dependabot rebase`) when someone is actually about to merge it.
     rebase-strategy: disabled
+    # Two majors the plugin ecosystem does not support yet. Both were proposed
+    # 2026-09-22 and could not install at all (npm ERESOLVE), so their PRs
+    # could never go green and were recreated every month:
+    #   typescript 7 — typescript-eslint caps at `<6.1.0` even on its newest
+    #     release (8.70.1), so eslint's TypeScript support breaks entirely.
+    #   eslint 10   — eslint-plugin-jsx-a11y 6.10.2 caps at `^9`.
+    # Remove each entry once its blocker ships support; security updates are
+    # NOT affected by ignore rules.
+    ignore:
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'eslint'
+        update-types: ['version-update:semver-major']
     groups:
       tailwind:
         patterns:
