@@ -152,6 +152,39 @@ function precacheShellAllowlist(): Plugin {
   }
 }
 
+/**
+ * vite-plugin-wasm, made to work under Vitest 5.
+ *
+ * The plugin serves an ESM `.wasm` import two ways: in the browser it emits
+ * `import url from "x.wasm?url"` and fetches it; under SSR or Vitest it inlines
+ * the bytes as a base64 data URL, because Node's fetch cannot load
+ * `/src/wasm/kmip/pqctoday_kmip_wasm_bg.wasm`. It tells the two apart by
+ * looking for a Vite plugin literally named "vitest" — which Vitest 4 had and
+ * Vitest 5 renamed (everything is `vitest:<something>` now). vite-plugin-wasm
+ * 3.6.0 (2026-03) still checks the old name, so under Vitest 5 every
+ * `import * as wasm from './x_bg.wasm'` (the KMIP CACP engine's wasm-bindgen
+ * bundler shim) took the browser path and died with
+ * `TypeError: Failed to parse URL from /src/wasm/kmip/...wasm` (PR #624).
+ *
+ * The plugin's own `load` hook takes the data-URL path whenever `options.ssr`
+ * is set, so this wrapper forces that flag when the config is evaluated by
+ * Vitest (`process.env.VITEST` is set by Vitest before it loads the config).
+ * A `vite build` / `vite dev` never sees VITEST and gets the plugin untouched,
+ * so browser behaviour is unchanged.
+ */
+function wasmVitestAware(): Plugin {
+  const plugin = wasm() as Plugin
+  if (!process.env.VITEST) return plugin
+  const load = plugin.load
+  if (typeof load !== 'function') return plugin
+  return {
+    ...plugin,
+    load(id, options) {
+      return load.call(this, id, { ...options, ssr: true })
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -159,7 +192,7 @@ export default defineConfig({
     precacheShellAllowlist(),
     react(),
     tailwindcss(),
-    wasm(),
+    wasmVitestAware(),
     topLevelAwait(),
     VitePWA({
       strategies: 'injectManifest',

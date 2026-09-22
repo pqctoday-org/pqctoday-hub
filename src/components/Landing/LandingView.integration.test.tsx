@@ -257,8 +257,14 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
 
     // The new mobile shell's bottom nav (MobileBottomBar) is React.lazy —
     // findBy* (async) is required for it to resolve, unlike the legacy
-    // CuriousMobileBoard path other tests in this file exercise.
-    expect(await screen.findByRole('navigation', { name: /main navigation/i })).toBeInTheDocument()
+    // CuriousMobileBoard path other tests in this file exercise. The lazy
+    // chunk is transformed on first import, which under a full parallel
+    // `npm run test` (761 files, no concurrency cap) can take longer than
+    // findBy*'s default 1s (seen on Vitest 5, 2026-09-21: passes alone,
+    // failed once in the full run). 10s is a wait budget, not a slower test.
+    expect(
+      await screen.findByRole('navigation', { name: /main navigation/i }, { timeout: 10_000 })
+    ).toBeInTheDocument()
     expect(screen.queryByLabelText('Curious mobile navigation')).not.toBeInTheDocument()
   })
 

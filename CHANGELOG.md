@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.114.0] - 2026-09-21
+
+Workshop steps can be jumped to again, the About page's software list is always accurate, and the site's own checks now catch problems before they reach you.
+
+### Fixed
+
+- **Workshop step chips work again** [view:/learn] [persona:developer] [persona:architect]: since 4.95.0 the chips above a workshop only let you go back, never forward, so a reader who wanted to skip to step 4 of the JWT or PKI Enrollment workshop had to click through every step. Any step is clickable again, as it was before.
+- **The About page lists the exact versions this site is built from** [view:/about] [persona:researcher] [persona:developer]: the Software Bill of Materials no longer depends on someone updating it by hand. Its versions are read from the project's own dependency list at build time, five entries that had lost their names are back, and three versions that had drifted are correct.
+- **The chat side panel opens reliably** [view:/] [persona:curious]: two parts of the layout were competing to control the panel; one owner now.
+
+### Changed
+
+- **The site's automated checks are trustworthy again** [view:/about] [persona:developer] [persona:ops]: the nightly browser test run had been failing every night for a week with nobody notified while 15 regressions shipped; every test is green again, a failing night now opens an issue, and the live site only deploys after the checks pass. The check run itself is half as long, and the version of the test tools is current.
+
 ## [4.113.1] - 2026-09-20
 
 The last six figures the accuracy pass left open on the pages now have their sources or are gone.

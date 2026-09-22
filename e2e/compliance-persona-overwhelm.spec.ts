@@ -28,11 +28,21 @@ import { test, expect } from '@playwright/test'
  */
 /**
  * Measured against the production build on 2026-08-12, not assumed: exactly one
- * visible band now sits above the tab bar, down from the four the original
+ * visible band then sat above the tab bar, down from the four the original
  * budget of 5 was written for. Raising this number is a product decision (a
  * block came back above the tab bar), never a test fix.
+ *
+ * Raised 1 → 2 on 2026-09-21 by decision (GitHub-workflows remediation plan,
+ * §6): release 4.107.0 (B+ round 9, "the education surface on every item")
+ * deliberately mounts the persona page note — `PersonaPageNote` from
+ * `src/components/shared/PersonaPageNote.tsx`, `data-testid="persona-page-note"`,
+ * one "For your role" line from `src/data/pagePersonaNotes.ts` — directly under
+ * the PageHeader on /compliance (ComplianceView.tsx, right after `<PageHeader>`).
+ * That is the one row this ceiling now admits; the count is pinned to exactly
+ * the measured value again (PageHeader + persona note), and the test also asserts
+ * the persona note is the row that was added, so a third block still fails here.
  */
-const EXPECTED_ROWS_ABOVE_TABS = 1
+const EXPECTED_ROWS_ABOVE_TABS = 2
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -116,4 +126,20 @@ test('returning Finance executive sees ≤ 5 rows above the tab bar', async ({ p
   // which is the regression this test exists to catch.
   expect(aboveTabRowCount).toBeGreaterThan(0)
   expect(aboveTabRowCount).toBeLessThanOrEqual(EXPECTED_ROWS_ABOVE_TABS)
+
+  // The row the 2026-09-21 ceiling admits is the round-9 persona page note and
+  // nothing else: it must be present, above the tab bar, and a direct child of
+  // the same root the count walked (so the +1 is attributable to it).
+  const note = page.getByTestId('persona-page-note')
+  await expect(note).toBeVisible()
+  const noteIsCountedRow = await page.evaluate(() => {
+    const tabBlock = document.getElementById('compliance-tabs')
+    const note = document.querySelector('[data-testid="persona-page-note"]')
+    if (!tabBlock || !note) return false
+    return (
+      note.parentElement === tabBlock.parentElement &&
+      Boolean(note.compareDocumentPosition(tabBlock) & Node.DOCUMENT_POSITION_FOLLOWING)
+    )
+  })
+  expect(noteIsCountedRow).toBe(true)
 })

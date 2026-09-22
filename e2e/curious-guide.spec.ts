@@ -16,6 +16,12 @@ import { test, expect } from '@playwright/test'
  *   - selectedPersona === 'curious'
  *   - curiousGuideDismissed === false
  *
+ * Since 4.94.0 (B+ round 8, 2026-09-19) the tour no longer opens itself: a
+ * one-line offer pill (`data-testid="curious-guide-offer"`, "Take the N-step
+ * tour") sits in the corner and the dialog opens on click. Each test below
+ * accepts the offer first, then asserts the tour. Dismissing the offer's X is
+ * the same permanent dismiss as finishing the tour.
+ *
  * Dismissal (via X, Finish, or any CTA) persists across reloads via
  * usePersonaStore v7 migration field `curiousGuideDismissed`.
  */
@@ -53,11 +59,20 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
+/** Accept the 4.94.0 offer pill so the tour dialog opens. */
+async function acceptTourOffer(page: import('@playwright/test').Page) {
+  const offer = page.getByTestId('curious-guide-offer')
+  // Landing is lazy-loaded; allow 15s for the chunk to compile cold.
+  await expect(offer).toBeVisible({ timeout: 15000 })
+  await offer.getByRole('button', { name: /Take the \d+-step tour/ }).click()
+  await expect(offer).toHaveCount(0)
+}
+
 test('renders the tour and the Finish flow persists dismissal', async ({ page }) => {
   await page.goto('/')
 
+  await acceptTourOffer(page)
   const guide = page.getByTestId('curious-guide')
-  // Landing is lazy-loaded; allow 15s for the chunk to compile cold.
   await expect(guide).toBeVisible({ timeout: 15000 })
 
   // The counter is read for its TOTAL, not asserted against a literal — see the
@@ -97,14 +112,17 @@ test('renders the tour and the Finish flow persists dismissal', async ({ page })
   await finishBtn.click()
   await expect(guide).not.toBeVisible()
 
-  // Reload — dismissal must persist
+  // Reload — dismissal must persist: neither the offer nor the tour comes back.
   await page.reload()
+  await expect(page.getByRole('main')).toBeVisible({ timeout: 15000 })
+  await expect(page.getByTestId('curious-guide-offer')).not.toBeVisible()
   await expect(page.getByTestId('curious-guide')).not.toBeVisible()
 })
 
 test('X-button dismissal persists across reload', async ({ page }) => {
   await page.goto('/')
 
+  await acceptTourOffer(page)
   const guide = page.getByTestId('curious-guide')
   await expect(guide).toBeVisible({ timeout: 15000 })
 
@@ -112,6 +130,25 @@ test('X-button dismissal persists across reload', async ({ page }) => {
   await expect(guide).not.toBeVisible()
 
   await page.reload()
+  await expect(page.getByRole('main')).toBeVisible({ timeout: 15000 })
+  await expect(page.getByTestId('curious-guide-offer')).not.toBeVisible()
+  await expect(page.getByTestId('curious-guide')).not.toBeVisible()
+})
+
+test('dismissing the offer pill persists across reload without opening the tour', async ({
+  page,
+}) => {
+  await page.goto('/')
+
+  const offer = page.getByTestId('curious-guide-offer')
+  await expect(offer).toBeVisible({ timeout: 15000 })
+  await offer.getByRole('button', { name: 'Dismiss tour offer' }).click()
+  await expect(offer).not.toBeVisible()
+  await expect(page.getByTestId('curious-guide')).not.toBeVisible()
+
+  await page.reload()
+  await expect(page.getByRole('main')).toBeVisible({ timeout: 15000 })
+  await expect(page.getByTestId('curious-guide-offer')).not.toBeVisible()
   await expect(page.getByTestId('curious-guide')).not.toBeVisible()
 })
 
@@ -139,5 +176,6 @@ test('does not render for non-curious personas', async ({ page }) => {
   await page.goto('/')
   // Wait for Landing to mount before asserting absence — lazy chunk cold-start.
   await expect(page.getByRole('main')).toBeVisible({ timeout: 15000 })
+  await expect(page.getByTestId('curious-guide-offer')).not.toBeVisible()
   await expect(page.getByTestId('curious-guide')).not.toBeVisible()
 })

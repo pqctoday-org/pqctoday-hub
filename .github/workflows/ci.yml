@@ -1,21 +1,55 @@
 name: CI
 
+# What runs where is written down in GATES.md (repo root). The rule behind this file
+# (plan 2026-09-21, github-workflows-audit-and-remediation-plan-09212026.md):
+# a GitHub job carries only the checks that guard the quality or security of
+# what lands on `main` AND need a clean machine to prove it. Everything
+# editorial, style-only, or machine-dependent runs in the local gate
+# (`npm run gate:local`, enforced by .husky/pre-push) — and a check runs in
+# exactly one of the two places, never both.
+
 on:
-  # Already PR + main-only with concurrency-cancel. Additionally skip the heavy
-  # job for pure docs/non-code changes. NOTE: data/** is deliberately NOT ignored
-  # — data changes must still run the audit gates.
+  # PR + main-only with concurrency-cancel. Skip the job for pure docs/non-code
+  # changes. NOTE: data/** is deliberately NOT ignored — data changes must
+  # still run the data gate.
+  #
+  # The ignore list names files individually rather than `**/*.md`: since
+  # 2026-09-21 deploy.yml runs only after a successful CI run, and CHANGELOG.md
+  # (imported by src/utils/changelogParser.ts) and src/**/*.md (Learn-module
+  # summaries, x509 profile docs — import.meta.glob'd into the bundle) are
+  # build INPUTS. A commit touching only those must still build and deploy.
   push:
     branches: [main]
     paths-ignore:
-      - '**/*.md'
       - 'docs/**'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'CODE_OF_CONDUCT.md'
+      - 'SECURITY.md'
+      - 'TESTING.md'
+      - 'TERMS.md'
+      - 'LICENSES.md'
+      - 'CONTENT-FRESHNESS.md'
+      - 'GATES.md'
+      - 'e2e/**/*.md'
+      - '.github/PULL_REQUEST_TEMPLATE.md'
       - 'LICENSE'
       - '.gitignore'
   pull_request:
     branches: [main]
     paths-ignore:
-      - '**/*.md'
       - 'docs/**'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'CODE_OF_CONDUCT.md'
+      - 'SECURITY.md'
+      - 'TESTING.md'
+      - 'TERMS.md'
+      - 'LICENSES.md'
+      - 'CONTENT-FRESHNESS.md'
+      - 'GATES.md'
+      - 'e2e/**/*.md'
+      - '.github/PULL_REQUEST_TEMPLATE.md'
       - 'LICENSE'
       - '.gitignore'
 
@@ -23,52 +57,34 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# The default GITHUB_TOKEN is read-only and nothing here writes back to the
+# repository, a PR or an issue (the label/comment steps were removed
+# 2026-09-21 — nothing consumed them).
+permissions:
+  contents: read
+
 jobs:
+  # The ONLY job branch protection requires on `main` — keep the name `checks`.
   checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    # Token permissions for downstream steps. GitHub's default GITHUB_TOKEN is
-    # read-only since 2023; these grants are needed for:
-    #   - "Apply WASM label"      uses actions/github-script to add a PR label
-    #                              (`issues:write` covers PR labels — labels live
-    #                              on the issues endpoint).
-    #   - "Post CSV diff comment" posts a sticky review comment on the PR
-    #                              (`pull-requests:write`).
-    permissions:
-      contents: read
-      issues: write
-      pull-requests: write
+    # Measured 2026-09-21 before the rewrite: 28 min of a 30-min cap, of which
+    # the unit suite was 15 (now its own sharded job below). What is left is
+    # ~13–15 min: lint 2.5, build 6, smoke 2, install + audits ~3.
+    timeout-minutes: 25
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # Full history so later steps that diff against origin/main work.
-          # The "Detect WASM backend changes" + "Post CSV diff comment" steps
-          # both run `git diff --name-only origin/main...HEAD`, which fails
-          # with "ambiguous argument" on the default shallow (fetch-depth: 1)
-          # checkout because origin/main is never fetched. Same for
-          # check-tool-version-bump / check-module-version-bump, which also
-          # `git show origin/main:<path>`. So fetch-depth stays 0 — a merge
-          # base must exist.
+          # Full commit graph: check-tool-version-bump / check-module-version-bump
+          # do `git show origin/main:<path>` and need a merge base, which the
+          # default shallow checkout never fetches ("ambiguous argument").
           fetch-depth: 0
-          # ...but do NOT download historical file CONTENTS. A partial clone
-          # fetches the full commit graph (so merge-base and `git show
-          # origin/main:<path>` still resolve) and pulls individual blobs on
-          # demand, which is only the handful those steps actually read.
-          #
-          # Added 2026-08-18 because this job was being killed at its 30-minute
-          # cap INSIDE actions/checkout — every later step reported "never
-          # started". It was never a slow build or slow tests: a successful run
-          # is ~14 min (Test 5.8, Build 2.6, Lint 1.4). The repository is the
-          # problem — .git is 3.8 GB, dominated by regenerated artefacts that
-          # cannot delta-compress: public/data/rag-corpus.json (403 stored
-          # copies) and public/data/embeddings.bin (147 copies, 48 MB each,
-          # rewritten in full on every index refresh) together account for
-          # ~9.4 GB of raw historical content. None of it is ever read by CI.
-          #
-          # This is a mitigation, not the fix. Every RAG refresh still adds
-          # ~48 MB to history permanently — see repo-size-analysis-08182026.md
-          # for the remediation tiers, of which this is Tier 1.
+          # ...but no historical file CONTENTS. A partial clone fetches the whole
+          # commit graph and pulls blobs on demand — only the handful those steps
+          # read. Added 2026-08-18 after this job was killed at its cap INSIDE
+          # checkout: .git is 3.8 GB, dominated by regenerated artefacts
+          # (rag-corpus.json, embeddings.bin) that CI never reads. Mitigation, not
+          # the fix — see repo-size-analysis-08182026.md.
           filter: blob:none
 
       - name: Use Node.js 22
@@ -78,385 +94,98 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        env:
+          # onnxruntime-node (transitive, via @huggingface/transformers — used
+          # only by the local embedding-index script) downloads binaries from
+          # the network in its postinstall; that download timed out and failed
+          # the 4.113.1 merge on main. Its install.js honours this variable
+          # (script/install-utils.js parseInstallFlag: 'skip' → exit 0).
+          ONNXRUNTIME_NODE_INSTALL: skip
         run: npm ci
 
-      - name: Check Formatting
-        run: npm run format:check
-
       - name: Lint
+        # Carries the eslint-plugin-security rules — a security gate, not style.
         run: npm run lint
 
-      - name: Audit protocol matrix refs
-        run: npm run audit:matrix-refs
-
-      - name: Check sandbox scenarios are in sync with the sandbox source
-        # src/data/sandboxScenarios.ts is generated from
-        # pqctoday-sandbox/ui/src/data/scenarios.ts by scripts/sync-sandbox-scenarios.ts.
-        # Fails if someone edited the generated file by hand or forgot to re-run
-        # `npm run sync:sandbox` after the sandbox source changed (the 2026-06-17
-        # drift that shipped vaporware/stale scenarios to the hub).
-        # The script itself no-ops (exit 0) when the sibling sandbox checkout is
-        # absent, so this only fails on genuine drift.
-        run: npm run sync:sandbox:check
-
-      - name: Audit vendor-id referential integrity
-        # Catches wrong VND-* assignments in the product catalog (e.g. a product
-        # pointing to a deprecated vendor, or a VND that resolves to a completely
-        # different company). See scripts/audit-vendor-refs.ts for details.
-        run: npm run audit:vendor-refs
-
-      - name: Audit CSV archival (no more than 2 versions per source)
-        # Every dated-CSV loader eager-globs its whole prefix into the JS
-        # bundle, so un-archived old revisions silently bloat the production
-        # build. Enforces the CSVmaintenance.md convention that manual
-        # discipline alone had let slip to 42 files for one source on
-        # 2026-07-26, breaking the build outright. See
-        # scripts/audit-csv-archival.ts and
-        # pqctoday-priv/maintenance/REVISIONS-INTEGRITY-REMEDIATION-PLAN-07262026.md.
-        run: npm run audit:csv-archival
-
-      - name: Audit merge-all loader coverage (archived files still reachable)
-        # The counterpart to the archival gate above. A handful of loaders merge
-        # EVERY dated file instead of picking the latest, so for them archiving a
-        # file deletes its data from the app unless the loader's glob descends
-        # into archive/. That is not hypothetical: the 2026-07-26 archival sweep
-        # collapsed the CSWP.39 maturity corpus from 189 documents to 1 with no
-        # build error and no failing test, and it shipped that way for 12 days.
-        # This script re-derives each registered loader's real import.meta.glob
-        # patterns and fails if any on-disk file is unreachable by them.
-        # See scripts/audit-merge-all-coverage.ts.
-        run: npm run audit:merge-all-coverage
-
-      - name: Audit module infographic coverage
-        # Verifies every MODULE_CATALOG entry has public/images/infographics/pqcstd_<id>.png.
-        # CuriousSummaryBanner has no fallback chain — a missing PNG renders as a broken image.
-        run: npm run audit:module-infographics
-
-      - name: Audit Learn module / Playground tool revision coverage
-        # A Learn module or Playground tool content edit must carry its own
-        # public/data/revisions.jsonl entry in the same diff (emit_revision.py
-        # --module-edit/--tool-edit writes both together) — otherwise the
-        # "Revision History" panel silently stays empty for real edits, the
-        # gap LEARN-MODULE-REVISION-HISTORY-REMEDIATION-PLAN-07312026.md
-        # fixes. See scripts/audit-content-revision-coverage.ts.
-        run: npm run audit:content-revision-coverage
-
-      - name: Audit timeline aliases
-        run: npm run audit:timeline-aliases
-
-      - name: Audit migration-phase tagging (step filter never silently empties)
-        # Guards the Migrate catalog's migration_phases column against the 7-step
-        # framework: every step reachable, no unknown tokens, empty ratio capped.
-        run: npm run audit:migration-phases
-
-      - name: Audit timeline evidence (every active row resolves to local file)
-        # Verifies that every active row in the latest timeline_*.csv has an
-        # acceptable entry in public/timeline/evidence/manifest.json
-        # (download_status ∈ {ok, paywall, skipped}). Catches regressions
-        # where a CSV row is added without electronic evidence backing.
-        # Audit-only — no network calls, deterministic.
-        run: npm run audit:timeline-evidence
-
-      - name: Audit compliance country tokens
-        run: npm run audit:compliance-countries
-
-      - name: Check compliance-data.json freshness
-        # Fails if public/data/compliance-data.json was last committed more than
-        # 30 days ago. Uses git log (not mtime) so the check is accurate in CI.
-        # To unblock: run ./build-data.sh or npx tsx scripts/scrape-compliance.ts --force
-        # in pqctoday-priv, copy the output here, and commit.
-        run: npm run check:compliance-fresh -- --max-days 30
-
-      - name: Audit data regressions (no silent record/field loss)
-        # Diffs HEAD against the base branch and BLOCKS if compliance-data.json
-        # loses records, or a vendor roadmap entry goes from non-empty PQC
-        # algorithms to empty. Both are silent-data-loss classes that a normal
-        # diff review misses on these large machine-generated files. Intentional
-        # drops are opt-in via scripts/ci/data-regression-allowlist.json.
-        run: npm run audit:data-regressions
-
-      - name: Audit publication dates (document's date, not our ingest date)
-        # library.initial_publication_date, timeline.SourceDate and
-        # vendor-roadmaps.publish_date all mean "the date the SOURCE DOCUMENT was
-        # published". add_row.py used to fill them with datetime.now() and no
-        # enrichment ever revisited the value, so a 2000 ISO standard claimed to
-        # be published on its intake day and scored as the freshest thing in the
-        # catalog. Blocks a future date, and blocks an unexplained cluster of
-        # rows sharing one exact day (the shape an ingest batch makes).
-        run: npm run audit:publication-dates
-
-      - name: Audit semantic tokens (no hardcoded colours)
-        run: npm run audit:tokens
-
-      - name: Audit SBOM versions (About page matches package.json)
-        # The About page states, by hand, which version of ~88 components this
-        # app is built from. Nothing checked it, and on 2026-08-09 eleven were
-        # wrong in BOTH directions — React Router listed as 7.17.0 while the app
-        # shipped 8.3.0, Framer Motion listed AHEAD of what was installed. Being
-        # confidently wrong there is worse than saying nothing, because a reader
-        # cannot tell which entries to trust.
-        #
-        # It belongs in CI rather than the pre-push hook specifically because
-        # the drift is CAUSED by dependabot, whose bumps only ever exist on
-        # GitHub — a local-only gate would never see the thing that breaks it.
-        run: npm run audit:sbom-versions
-
-      - name: Timeline facts derived from the CSV (single source of truth)
-        # Fails if src/data/timelineFacts.generated.ts is stale vs the timeline
-        # CSV — i.e. the CSV was edited without regenerating, or the generated
-        # file was hand-edited. Keeps the sim/pages in sync with the one source.
-        run: npm run gen:timeline-facts:check
-
-      - name: Role board content derived from the CSV (single source of truth)
-        # Same contract as the timeline check above, for the role-home boards:
-        # fails if src/data/generated/roleBoardContent.generated.ts is stale vs
-        # role_board_content_*.csv. Only predev/build regenerate it, so without
-        # this a CSV-only commit ships correct copy in the production bundle
-        # while tests and type checks silently run against the OLD board.
-        run: npm run audit:role-board-drift
-
-      - name: Audit role-board CTAs (registered, resolving, claim in date)
-        # Every role-board CTA href must have a registry row whose written
-        # capability_claim was verified inside the freshness window, and must
-        # resolve to a real route or playground tool id. Added to CI 2026-08-02:
-        # the gate existed and passed locally but ran in NO workflow, and had
-        # additionally gone blind after the CSV migration (it read CTA literals
-        # out of personaConfig.ts, which no longer holds any) — reporting
-        # "0 CTAs, 11 registered" and still exiting 0.
-        run: npm run audit:role-board-ctas
-
-      - name: Audit persona lens (every surface declares how it treats roles)
-        # B+ remediation (2026-08-10). The review found 179 of 288
-        # (surface x persona) cells below grade and traced much of it to one
-        # structural gap: nothing recorded WHICH surfaces adapt to a role, so a
-        # broken lens and an absent lens looked identical, and correct decisions
-        # to withhold a route lived only in code comments -- i.e. read as bugs
-        # on screen. This gate holds src/data/personaLensRegistry.ts honest:
-        # every route declared, every named config key still exported, every
-        # withheld route backed by an on-screen notice, and no board CTA or
-        # milestone bypassing a rail-hidden route's canonical door.
-        run: npm run audit:persona-lens
-
-      - name: Audit changelog persona tags (current release only)
-        # The /changelog "For me" filter is a keyword GUESS for ~1,125 of ~1,150
-        # entries, because only about 25 carry the documented [persona:id] tag.
-        # The 2026-08-10 fix made the control state that honestly; this makes
-        # the ratio improve. Scoped to the release being written - nobody can
-        # honestly retro-tag a 2025 entry, and forcing a guess would manufacture
-        # the false precision the filter fix just removed.
-        run: npm run audit:changelog-personas
-
-      - name: Audit migrate proof freshness
-        # The B+ review said the repo already tracked products with missing or
-        # stale proof. The reader-facing half was true to fix (every row now
-        # shows proof age, or says 'vendor claim'), but the tracking it cited
-        # (reports/products-no-proofurl*.json) did not exist here at all. This
-        # is it. FAILS only on a claim with NO evidence; undated and stale are
-        # reported as backlog, because a gate that failed on staleness would
-        # push someone to re-date documents they had not re-checked.
-        run: npm run audit:migrate-proof
-
-      - name: Audit role-board coverage (every role reaches every section)
-        # The 2026-08-09 expansion to six use cases per role exists so that each
-        # role's home page reaches the whole site. Nothing enforced that
-        # afterwards: repointing the one link carrying a section for a role
-        # leaves every other gate green — the CTA still resolves, the claim is
-        # still fresh, the generated file still matches the CSV — and coverage
-        # would just quietly stop being true. Also fails when a NEW top-level
-        # route appears with no home route and no recorded exemption.
-        run: npm run audit:role-board-coverage
-
-      - name: Audit content freshness (dated claims < 90d)
-        # Non-blocking on first rollout — flags time-sensitive claims (CMVP/FIPS
-        # status, protocol-matrix snapshot, Q-Day anchor) that have aged past the
-        # review window. Remove `continue-on-error` to make it gate once the
-        # first quarterly pass has cleared the backlog (see CONTENT-FRESHNESS.md).
-        run: npm run audit:content-freshness
-        continue-on-error: true
-
-      - name: Validate data integrity (full check suite)
-        # ADDED 2026-08-07 (maintenance-flow audit 2026-08-03, finding A-4).
-        # scripts/validate-data-integrity.ts runs the whole CM-*/N*/QA-*/GC-*
-        # suite — 145 checks — and was the single strongest validator in the
-        # repo with NO automated caller anywhere: not in this workflow, not in
-        # any other. The published OSCAL assessment plan used to claim ERROR
-        # findings blocked merge; on 2026-08-01 that claim was corrected to
-        # say they did not, which was honest but left the gap open.
-        #
-        # --exclude-checks carries the priv-only checks that structurally
-        # cannot pass here: they verify real on-disk files under
-        # pqctoday-priv/local-evidence-cache/, which is gitignored by design
-        # and never checked out in CI. The flag exists for exactly this (see
-        # its 2026-07-13 docblock) — excluding them keeps their full local-dev
-        # value instead of weakening their logic to survive CI.
-        #
-        # continue-on-error on first rollout, per the remediation plan's own
-        # sequencing: the suite exits 0 with 0 errors locally today, but that
-        # was measured WITH priv present. Remove this line after one clean CI
-        # run confirms the excluded set is right — leaving it forever would
-        # make this theatre.
-        run: >-
-          npm run validate:data --
-          --exclude-checks N18-library-local-files,N18-local-resources,N18-products-directory,N22-library,N22-timeline,N22-threats,MP-2,TP-1
-        continue-on-error: true
-
-      - name: Audit leaders proof-gate refs
-        # Leaders is the weakest trust chain in the registry (75% of curated
-        # KeyResourceRefs resolve) and the source where fabricated profiles
-        # have actually been found (2026-06-24 re-audit, 9 of them). This gate
-        # existed and was human-typed-only.
-        run: npm run audit:leaders-refs
-
-      - name: Audit timeline enrichment freshness
-        # Declared as a `verify:` step for library/timeline/threats/
-        # vendor-roadmaps/industry-landscape in the maintenance registry, but
-        # ran nowhere automatically.
-        run: npm run audit:enrichment-freshness
+      - name: Data gate
+        # ONE step for every data-truth check (a visitor sees wrong data if any
+        # of these fail): referential integrity, archival, loader coverage,
+        # regressions, publication dates, evidence, proof gates, freshness and
+        # the 140+-check unified validator (which also carries TP-2/TP-3 — the
+        # inline threats-proof step that used to live here duplicated it).
+        # See package.json `gate:data` for the exact list and GATES.md
+        # for what each guards. The unified validator runs with the checks
+        # that read gitignored pqctoday-priv evidence caches excluded
+        # (validate:data:without-priv) — they cannot pass on a clean checkout.
+        run: npm run gate:data
 
       - name: Verify trust-engine attestations
-        # Verify ML-DSA-65 signatures on committed trust artifacts
-        # (revisions.jsonl, rag-corpus.json, OSCAL exports, CBOM,
-        # community-signals). Hard-fails on any signature mismatch, missing
-        # .sig file, or unknown kid. Closes audit gap P4. See
-        # docs/attestation/key-management.md for the operational policy.
-        #
-        # Runs against the public verifier `scripts/ci/verify-attestations.ts`
-        # (self-contained, no imports from gitignored `scripts/attestation/*`).
-        # The maintainer's signer stays private.
+        # ML-DSA-65 signatures on committed trust artifacts (revisions.jsonl,
+        # rag-corpus.json, OSCAL exports, CBOM, community-signals). Hard-fails
+        # on any signature mismatch, missing .sig or unknown kid. Runs the
+        # public verifier scripts/ci/verify-attestations.ts; the signer stays
+        # private. Security — must run on a clean machine.
         run: npm run verify-attestations
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright Chromium
+        # Needed twice below: `npm run build` prerenders routes with Playwright
+        # (scripts/prerender.ts), and the smoke tier drives the built site.
         run: npx playwright install chromium --with-deps
 
       - name: Build
+        # Proves a clean-checkout build (tsc -b + vite + prerender + precache
+        # and TLA-import budgets). On main the resulting dist/ is what
+        # deploy.yml publishes, so the build carries the same public VITE_*
+        # client identifiers deploy used to inject; a PR from a fork simply
+        # builds without them.
+        env:
+          VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
         run: npm run build
 
-      - name: Validate OSCAL output (optional)
-        run: |
-          if command -v oscal-cli &> /dev/null; then
-            oscal-cli validate public/data/pqctoday-oscal.json --as assessment-results
-          else
-            echo "OSCAL CLI not present — skipping schema validation"
-          fi
-        continue-on-error: true
-
-      - name: Test
-        run: npm run test
-
-      # E2E smoke tier — the critical user journeys, gated on every PR. Runs the
-      # @smoke-tagged specs against the production build (`vite preview`, served
-      # from the dist/ produced by the Build step above) with bounded workers, so
-      # it stays fast and reliable. Most of the heavy/WASM suite runs nightly only
-      # (.github/workflows/e2e-nightly.yml), off the per-PR critical path — the
-      # exception is e2e/acvp-validator.spec.ts (real WASM/liboqs crypto,
-      # promoted into SMOKE_SPECS in playwright.config.ts on 2026-08-23): it
-      # measured ~21s and mostly overlaps idle worker time here, and it's the
-      # only spec asserting zero-fail across the full ACVP results table, so a
-      # crypto-engine regression no longer waits for the nightly run to surface.
-      # (E2E was removed from CI 2026-04-02 for being "too slow"; this re-gates a
-      # lean subset rather than the whole 240-test suite.)
+      # E2E smoke tier — the critical user journeys, against the production
+      # build (`vite preview` on the dist/ from the Build step). The only
+      # browser proof in CI. The full suite runs in the local gate
+      # (`npm run gate:e2e`, part of gate:release) and nightly
+      # (.github/workflows/e2e-nightly.yml) — Q1 of the 2026-09-21 plan.
       - name: E2E smoke (Chromium, against the build)
         run: npm run test:e2e:ci-smoke
 
       - name: Upload Playwright report on failure
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: playwright-report-smoke
           path: playwright-report/
           retention-days: 7
 
-      - name: Validate threats proof rule (TP-2 + TP-3, BLOCKING)
-        # TP-2 (local_file path must live under public/threats/) and TP-3
-        # (trusted_source_id must resolve to the authoritative-sources
-        # catalog id) are stringly-checkable invariants that don't depend
-        # on disk presence.
-        #
-        # TP-1 (on-disk proof file ≥ 5 KB) was DROPPED from CI 2026-05-21
-        # because public/threats/*.pdf and public/threats/*.html are
-        # gitignored (.gitignore:280-281) — a CI gate that asserts files
-        # MUST exist when the gitignore says they MUST NOT be checked in
-        # is a self-contradiction guaranteed to false-positive on every
-        # clean checkout. The threats UI never consumes `local_file` at
-        # runtime (the column is metadata/provenance only — verified by
-        # tracing transformThreat() in src/data/threatsData.ts), so the
-        # invariant gates nothing the user sees. The TP-1 check still
-        # exists in scripts/validators/threats-proof-rule.ts for local
-        # dev use after a manual download run; it just isn't enforced in
-        # CI.
-        run: |
-          npx tsx -e "
-            import { runThreatsProofRule } from './scripts/validators/threats-proof-rule.ts'
-            const results = runThreatsProofRule().filter((r) => r.id !== 'TP-1')
-            let failed = false
-            for (const r of results) {
-              const ok = r.status === 'PASS'
-              console.log((ok ? '✓ ' : '✗ ') + '[' + r.id + '] ' + r.description)
-              if (!ok) {
-                failed = true
-                for (const f of r.findings.slice(0, 20)) {
-                  console.log('    row ' + f.row + ' ' + f.field + '=' + JSON.stringify(f.value) + ' — ' + f.message)
-                }
-                if (r.findings.length > 20) console.log('    … +' + (r.findings.length - 20) + ' more')
-              }
-            }
-            if (failed) process.exit(1)
-          "
-
-      - name: Audit workshop flows
-        # Static audit: every cue in public/workshop/*.json must resolve to a
-        # real route / data-workshop-target slug / fixture key / artifact slug
-        # in current src/. Exits non-zero on any BLOCKER. WARN/INFO advisory.
-        run: npx tsx scripts/audit-workshop-flows.ts
-
-      - name: Extract PR labels
-        if: github.event_name == 'pull_request'
-        id: pr-labels
-        run: |
-          LABELS=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq -r '[.[].name] | join(",")')
-          echo "labels=$LABELS" >> $GITHUB_OUTPUT
-
-      - name: Post CSV diff comment
-        if: github.event_name == 'pull_request'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          PR_LABELS: ${{ steps.pr-labels.outputs.labels }}
-        run: npx tsx scripts/ci/post-csv-diff.ts
-        continue-on-error: true
-
-      - name: Detect WASM backend changes
-        if: github.event_name == 'pull_request'
-        id: wasm-detect
-        run: |
-          CHANGED=$(git diff --name-only origin/main...HEAD)
-          if echo "$CHANGED" | grep -qE '^(public/dist/|src/wasm/)'; then
-            echo "wasm_changed=true" >> $GITHUB_OUTPUT
-          fi
-          if echo "$CHANGED" | grep -q 'package.json'; then
-            if git diff origin/main...HEAD -- package.json | grep -qE '@oqs/liboqs-js|@pqctoday/softhsm-wasm'; then
-              echo "wasm_changed=true" >> $GITHUB_OUTPUT
-            fi
-          fi
-
-      - name: Apply WASM label
-        if: github.event_name == 'pull_request' && steps.wasm-detect.outputs.wasm_changed == 'true'
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      - name: Upload build for deploy
+        # deploy.yml (workflow_run on this workflow, main only) downloads this
+        # instead of rebuilding — so a red CI can no longer deploy, and the
+        # 7-minute second build is gone. After the smoke test on purpose: a
+        # build the smoke tier rejects is never uploaded. PR runs skip it:
+        # nothing consumes it.
+        # Retention is short on purpose: deploy runs minutes later, and a
+        # dispatch of deploy.yml rebuilds from source anyway.
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          script: |
-            github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              labels: ['tool:wasm-backend']
-            })
+          name: dist
+          path: dist/
+          retention-days: 1
+          if-no-files-found: error
+          # dist/ is ~0.5 GB, mostly wasm and hashed chunks that do not
+          # compress; spend the minutes on the deploy, not the zip.
+          compression-level: 1
 
       - name: Check tool version bumps
+        # A Playground tool content edit must bump its version so the revision
+        # record visitors see stays honest. Cheap; diffs against origin/main.
         if: github.event_name == 'pull_request'
         run: npx tsx scripts/ci/check-tool-version-bump.ts
 
       - name: Check module version bumps
+        # Same contract for Learn modules.
         if: github.event_name == 'pull_request'
         run: npx tsx scripts/ci/check-module-version-bump.ts
 
@@ -475,109 +204,64 @@ jobs:
         run: npx tsx scripts/ci/validate-offline-attestation.ts
 
       - name: Security Audit
-        # MOVED TO THE END OF THIS JOB on 2026-08-09. It used to run 5th, right
-        # after `npm ci`, and because a failing step aborts the job, its known-red
-        # status meant the ~20 gates below it NEVER RAN — format, lint, every
-        # audit:*, the build, the unit suite and the e2e smoke were all skipped on
-        # every single PR. CI reported failure while validating essentially
-        # nothing, and two releases the same day had to have that whole list run
-        # by hand instead. Running it last keeps the signal (the job is still red,
-        # merging still needs an override) while letting the gates that can
-        # actually catch a regression do their job.
-        #
-        # WAS KNOWN RED since 2026-08-07 and deliberately not suppressed
-        # (decision 2026-08-09). REVERSED 2026-08-11: the step now runs
-        # `scripts/ci/audit-gate.ts`, which fails on every high/critical
-        # advisory EXCEPT ones listed there with a reason and a recheck date,
-        # and which also fails when an exception expires or goes stale. The
-        # findings below are unchanged and are what the two listed exceptions
-        # cite; what changed is that a permanently red gate stops being read,
-        # and it had begun blocking unrelated work behind admin overrides that
-        # nobody records. Two high advisories in `image-size` — GHSA-w3rx-r6r6-pgpr
-        # (ICNS parser infinite loop) and GHSA-5p2g-fcmc-qvqq (JXL/HEIF parser
-        # infinite loops) — reach us transitively through `pptxgenjs`, which
-        # backs the .pptx export in ExportableArtifact.
-        #
-        # There is NO upstream fix. The advisory covers `*`: forcing
-        # image-size 2.0.2 via an override was tried and still audits dirty,
-        # and pptxgenjs 4.0.1 (latest) still declares `image-size: ^1.2.1`.
-        # `npm audit fix --force` "fixes" it only by downgrading pptxgenjs to
-        # 1.1.5, a 9-year-old jQuery-era API.
-        #
-        # Exposure is believed nil: both CVEs are DoS in raster-image PARSERS,
-        # and our export builds slides from markdown with no user-supplied
-        # ICNS/JXL/HEIF input, so that code path should never execute.
-        #
-        # BEFORE YOU DEBUG A RED BUILD: if this is the ONLY failing step, it is
-        # this. Every other gate in this job is expected green — and since the
-        # move above, they have actually RUN, so "everything else is green" is
-        # now an observation rather than an assumption. If anything above this
-        # step is red, that one is real and this one is not your problem.
-        # Re-check `npm view pptxgenjs dependencies` — the day it stops
-        # depending on a vulnerable image-size, delete this comment, move the
-        # step back wherever you like, and drop the note in CHANGELOG.
+        # LAST on purpose (since 2026-08-09): a failing step aborts the job, and
+        # when this was 5th its known-red status meant every gate below it never
+        # ran. Runs scripts/ci/audit-gate.ts, which fails on every high/critical
+        # advisory EXCEPT ones listed there with a reason and a recheck date, and
+        # also fails when an exception expires. The two standing exceptions are
+        # `image-size` DoS advisories reached through `pptxgenjs` (no upstream
+        # fix; our export path never parses ICNS/JXL/HEIF input). If this is the
+        # ONLY red step, it is that; if anything above is red, that one is real.
         run: npm run audit:deps
 
-  kat-node24:
-    # Cross-impl KATs (mldsa-cross-impl / mlkem-cross-impl): Node's own
-    # OpenSSL backend signs/encapsulates, our public/wasm/openssl.wasm
-    # verifies/decapsulates (and vice versa). This is the strongest
-    # available signal that a WASM rebuild didn't silently break wire
-    # compatibility — but the tests gate on `nodeMajor >= 24` internally
-    # and self-skip otherwise, so they were exercising nothing on the
-    # `checks` job's Node 20. A separate job (rather than a second
-    # setup-node inside `checks`) keeps the main job's toolchain at the
-    # pinned Node 20 everything else in this repo assumes.
+  test:
+    # The unit suite (vitest, ~740 files, 15 min unsharded), split in two so
+    # the wall time halves and `checks` no longer sits at its cap. Same
+    # config as `npm run test` (vitest run); `--shard` is a vitest built-in.
+    # Needs no build output: every fixture the suite reads (public/wasm/*.wasm,
+    # public/pyodide/*, the *.generated.ts files) is tracked.
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: read
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Use Node.js 24
+      - name: Use Node.js 22
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 24
+          node-version: 22
           cache: 'npm'
 
       - name: Install dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL: skip # see `checks`
         run: npm ci
 
-      - name: Cross-impl KATs (src/test/kat/)
-        run: npx vitest run src/test/kat/
+      - name: Unit tests (shard ${{ matrix.shard }}/2)
+        run: npx vitest run --shard=${{ matrix.shard }}/2
 
   gate-cacp:
     # CACP/KMIP playground gate — CI-visible tests (src/components/Playground/kmip,
     # src/wasm/kmip), the local-only suite covering the same paths (booting the
     # real wasm engine is heavier than the default suite budget — project
     # directive 2026-07-01: new suites are local-only), and the wasm-provenance
-    # check (a no-op here: it only compares against a sibling pqctoday-hsm
-    # checkout — see scripts/ci/check-wasm-provenance.ts).
+    # check against a sibling pqctoday-hsm checkout. The only cross-repo drift
+    # guard against pqctoday-hsm; make it a required check alongside `checks`.
     #
     # Most of the *.local.test.ts drift guards under src/components/Playground/kmip
-    # and src/wasm/kmip also compare against a sibling pqctoday-hsm checkout, and
+    # and src/wasm/kmip compare against a sibling pqctoday-hsm checkout, and
     # most of THOSE no-op gracefully when it's absent (existsSync guard). One does
     # not: ruleCatalog.local.test.ts's catalog<->grammar guard deliberately FAILS
     # LOUDLY instead of skipping ("a rule-vocabulary drift check that can silently
     # never run is not a check at all") — so this job needs a real, if minimal,
-    # sibling checkout. Found 2026-08-29: this job's own comment previously
-    # claimed the whole gate was a no-op without one, which was never actually
-    # true for that one guard and had never been exercised against real CI until
-    # this fix (only tested against a real ../pqctoday-hsm sibling on a dev
-    # machine, where it trivially passed). Sparse + shallow: this job only ever
-    # reads kmip/src/policy/rule.rs and kmip/policies/*.yaml.
-    #
-    # Held out of `checks` deliberately, same rationale as kat-node24: a
-    # separate job keeps the main job's run time and toolchain assumptions
-    # unchanged. Verified stable with 100 consecutive local runs (0 failures)
-    # before being wired in — see the serial-number DER-canonicalization fix
-    # this job is meant to guard (certBuilder.ts::generateSerialBytes).
+    # sibling checkout. Found 2026-08-29. Sparse + shallow-ish: this job only
+    # ever reads kmip/src/policy/rule.rs and kmip/policies/*.yaml.
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions:
-      contents: read
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -587,21 +271,15 @@ jobs:
       # exactly where the *.local.test.ts drift guards above look for it.
       # actions/checkout@v7's `path` refuses to place a checkout outside
       # $GITHUB_WORKSPACE ("Repository path ... is not under ...") — found
-      # 2026-08-29, the first version of this fix used `path: ../pqctoday-hsm`
-      # and failed before even running the gate. A plain `git clone` has no
-      # such restriction. Sparse checkout: the *.local.test.ts drift guards
-      # above only ever read kmip/src/policy/rule.rs and kmip/policies/*.yaml.
+      # 2026-08-29. A plain `git clone` has no such restriction.
       #
-      # NOT shallow, though: sync:wasm:check:cacp-kmip (below) also runs
-      # against this same checkout, and it needs real commit ancestry —
-      # `git rev-list --count <recordedCommit>..<baseline>` to detect wasm
-      # drift. A `--depth 1` clone truncates history to just the tip commit,
-      # which made that rev-list miscount (observed 2026-09-04: a shallow
-      # clone reported "1 commit behind" for a range a full clone correctly
-      # resolved as 0, hard-failing the gate on every hsm main commit
-      # regardless of whether kmip/wasm sources actually moved). `--filter=
-      # blob:none` still keeps this cheap — only commit/tree objects are
-      # fetched eagerly, blobs stay lazy.
+      # NOT shallow: sync:wasm:check:cacp-kmip (inside gate:cacp) needs real
+      # commit ancestry — `git rev-list --count <recordedCommit>..<baseline>` to
+      # detect wasm drift. A `--depth 1` clone truncates history to the tip and
+      # made that rev-list miscount (observed 2026-09-04: "1 commit behind" for
+      # a range a full clone resolved as 0, hard-failing the gate on every hsm
+      # main commit). `--filter=blob:none` keeps it cheap — commit/tree objects
+      # eagerly, blobs lazily.
       - name: Checkout sibling pqctoday-hsm (sparse — drift-guard sources only)
         run: |
           git clone --filter=blob:none --sparse \
@@ -615,6 +293,8 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL: skip # see `checks`
         run: npm ci
 
       - name: CACP/KMIP playground gate

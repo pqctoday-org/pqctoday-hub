@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 
 /**
  * Library detail drawer CSWP 39 cluster — verify the auto-derived link from
@@ -32,8 +32,30 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
+/**
+ * Open /library?ref=… and wait for the detail drawer. The library route is
+ * lazy-loaded and then parses the whole corpus (1,137 rows since round 9)
+ * before it can resolve `?ref=` into an open drawer; under parallel workers
+ * that cold path runs past the 7.5 s default expect timeout, which is why
+ * both tests below failed nightly while passing when run alone (2026-09-21
+ * diagnosis: the DOM snapshot at timeout still showed the "Loading the PQC
+ * Library…" skeleton). Same 15 s budget e2e/library.spec.ts gives the route.
+ */
+async function openDrawer(page: Page, ref: string) {
+  await page.goto(`/library?ref=${encodeURIComponent(ref)}`)
+  await expect(page.getByRole('heading', { name: 'PQC Library' })).toBeVisible({
+    timeout: 15_000,
+  })
+  // The drawer is role="dialog" named by the DOCUMENT TITLE, not the ref id
+  // (LibraryDetailDrawer.tsx), so match on role alone — WhatsNew is suppressed
+  // above and the disclaimer is role="alert", so there is no other dialog.
+  const drawer = page.getByRole('dialog')
+  await expect(drawer).toBeVisible({ timeout: 15_000 })
+  return drawer
+}
+
 test('library detail drawer pillar pill jumps to /business zone', async ({ page }) => {
-  await page.goto(`/library?ref=${encodeURIComponent('NIST CSWP 39')}`)
+  await openDrawer(page, 'NIST CSWP 39')
 
   // Any zone pill in the drawer's CSWP-39 requirements section — NIST
   // CSWP 39 spans all 5 pillars, so don't pin to a specific one. The href +
@@ -54,7 +76,7 @@ test('library detail drawer pillar pill jumps to /business zone', async ({ page 
 test('library detail drawer evidence-map link deep-links into the Compliance CSWP 39 explorer', async ({
   page,
 }) => {
-  await page.goto(`/library?ref=${encodeURIComponent('NIST CSWP 39')}`)
+  await openDrawer(page, 'NIST CSWP 39')
 
   const evidenceLink = page.locator('a[href*="/compliance?tab=cswp39&evref="]').first()
   await expect(evidenceLink).toBeVisible()

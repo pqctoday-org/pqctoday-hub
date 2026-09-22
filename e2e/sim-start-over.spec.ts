@@ -100,7 +100,20 @@ test('START OVER clears the assessment and re-locks the sim', async ({ page }) =
     .getByRole('button', { name: /^Start over$/ })
     .click()
 
-  // Re-LOCKED: the assessment gate returns.
-  await expect(page.getByText(/Simulation locked/i)).toBeVisible({ timeout: 15_000 })
+  // Re-LOCKED: the entry screen returns in place of the console. W6.6
+  // (2026-09-07) removed the "Simulation locked" copy on purpose — a sample
+  // path is offered right there, so the old text described a gate that did
+  // not exist (see SimulationView.test.tsx, "renders the require-assessment
+  // gate"). The proof the sim re-locked is the entry <h1> plus its
+  // "Start the assessment" link to /assess, and no End Quarter control.
+  await expect(
+    page.getByRole('heading', {
+      name: /Practise on a sample organization, or run it on your own/i,
+    })
+  ).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByRole('link', { name: /Start the assessment/i })).toHaveAttribute(
+    'href',
+    '/assess'
+  )
   await expect(page.getByRole('button', { name: /End Quarter/i })).toHaveCount(0)
 })

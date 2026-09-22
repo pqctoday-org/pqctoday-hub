@@ -16,6 +16,16 @@ test.describe('PQC SSH Simulator', () => {
       )
     })
     await page.goto('/playground/pqc-ssh-sim')
+    // Readiness: the tool route is lazy-loaded and pulls the softhsmv3 WASM;
+    // under parallel workers the panel's <h2> can land after the 7.5 s default
+    // expect timeout the static tests below rely on (nightly flake 2026-09-21:
+    // "shows host trust", "operator cheat sheet", "run handshakes button" each
+    // failed once at ~8.6 s and passed on retry). Wait for the panel heading
+    // with the 15 s budget the suite gives every lazy route before asserting.
+    // level 2 + exact: the top bar's <h1> is "PQC SSH Simulator — …" as well.
+    await expect(
+      page.getByRole('heading', { name: 'PQC SSH Simulator', level: 2, exact: true })
+    ).toBeVisible({ timeout: 15_000 })
   })
 
   // ── Static UI tests (browser-agnostic) ────────────────────────────────────
@@ -40,8 +50,13 @@ test.describe('PQC SSH Simulator', () => {
 
   test('renders comparison panel placeholders for both legs', async ({ page }) => {
     // Classical baseline was changed to the ECDSA host key (commit 87042141).
-    await expect(page.getByText('Classical (ecdsa-nistp256 + curve25519)')).toBeVisible()
-    await expect(page.getByText(/ML-DSA-65.*ML-KEM-768/i)).toBeVisible()
+    // Role-based: the round-9 "For your role" persona paragraph (personaBlocks.ts,
+    // 4.100.0) quotes both leg titles verbatim, so a text locator resolves to two
+    // elements. The leg cards render their title as an <h4> (SshComparisonPanel).
+    await expect(
+      page.getByRole('heading', { name: 'Classical (ecdsa-nistp256 + curve25519)' })
+    ).toBeVisible()
+    await expect(page.getByRole('heading', { name: /ML-DSA-65.*ML-KEM-768/i })).toBeVisible()
   })
 
   test('comparison panel shows "Not executed" cards in idle state', async ({ page }) => {
@@ -82,7 +97,9 @@ test.describe('PQC SSH Simulator', () => {
   })
 
   test('shows host trust learn section', async ({ page }) => {
-    await expect(page.getByText(/Host Trust/i)).toBeVisible()
+    // The persona paragraph names the "Host Trust & TOFU note" too — target the
+    // SectionToggle button (SshLearnSection) rather than any text on the page.
+    await expect(page.getByRole('button', { name: /Host Trust/i })).toBeVisible()
   })
 
   test('shows operator cheat sheet learn section', async ({ page }) => {
@@ -90,7 +107,9 @@ test.describe('PQC SSH Simulator', () => {
   })
 
   test('shows updated comparison panel title', async ({ page }) => {
-    await expect(page.getByText('SSH authentication — side-by-side telemetry')).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: 'SSH authentication — side-by-side telemetry' })
+    ).toBeVisible()
   })
 
   test('shows expanded spec citations below comparison panel', async ({ page }) => {
