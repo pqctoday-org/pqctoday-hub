@@ -13,50 +13,73 @@ updates:
     # that could not pass anyway. A stale dependabot branch is rebased by hand
     # (`@dependabot rebase`) when someone is actually about to merge it.
     rebase-strategy: disabled
-    # Two majors the plugin ecosystem does not support yet. Both were proposed
-    # 2026-09-22 and could not install at all (npm ERESOLVE), so their PRs
-    # could never go green and were recreated every month:
-    #   typescript 7 — typescript-eslint caps at `<6.1.0` even on its newest
-    #     release (8.70.1), so eslint's TypeScript support breaks entirely.
-    #   eslint 10   — eslint-plugin-jsx-a11y 6.10.2 caps at `^9`.
-    # Remove each entry once its blocker ships support; security updates are
-    # NOT affected by ignore rules.
+    # Majors are never proposed automatically; they are adopted deliberately.
+    #
+    # Why (2026-09-22): three of the last four months' grouped PRs could not
+    # even `npm ci`, and every one was a major:
+    #   typescript 7  — typescript-eslint caps at `<6.1.0` even on 8.70.1
+    #   eslint 10     — eslint-plugin-jsx-a11y 6.10.2 caps at `^9`
+    #   @eslint/js 10 — ships in lockstep with eslint, peer `^10.0.0`, so
+    #                   holding eslint alone just moved the ERESOLVE
+    #   pyodide 314   — upstream moved to CPython-aligned versioning and
+    #                   restructured the package, breaking sync:pyodide-runtime
+    # Nine more majors sat in the same PR untested behind those failures
+    # (vite 8, mermaid 12, framer-motion 13, jsdom 30, ts-morph 28, cborg 6,
+    # entities 8, lint-staged 17, react-ga4 3). Each of those is a real
+    # migration that deserves its own PR, its own CI run and a human reading
+    # the changelog — not a line in a 45-package batch that blocks 44
+    # harmless bumps behind it.
+    #
+    # Minor and patch updates (including every security fix) still flow
+    # automatically via the groups below. Security updates are NOT affected by
+    # ignore rules even for majors. To take a major: bump it by hand, or
+    # temporarily drop this rule.
     ignore:
-      - dependency-name: 'typescript'
+      - dependency-name: '*'
         update-types: ['version-update:semver-major']
-      - dependency-name: 'eslint'
-        update-types: ['version-update:semver-major']
-      # @eslint/js ships in lockstep with eslint and its peer range is an exact
-      # major match (`@eslint/js@10.0.1` requires `eslint@^10.0.0`). Holding
-      # eslint at 9 without holding this too just moves the ERESOLVE rather
-      # than avoiding it — that is what happened on #700.
-      - dependency-name: '@eslint/js'
-        update-types: ['version-update:semver-major']
+    # Every group is minor/patch ONLY. Majors are deliberately left ungrouped
+    # so each arrives as its own PR.
+    #
+    # Why (2026-09-22): the catch-all group batched 45 updates including 14
+    # majors into one PR, so a single breaking major blocked all 45 — #701
+    # died on `pyodide` 0.28 -> 314 (upstream moved to CPython-aligned
+    # versioning and restructured the package, breaking
+    # `sync:pyodide-runtime`), taking 44 harmless minor/patch bumps down with
+    # it. Fixing that one and re-running would just surface the next of the
+    # 14. Splitting means the routine bumps land as one mergeable PR, and each
+    # major is judged on its own — which is the only way a major like
+    # vite 7 -> 8, mermaid 11 -> 12 or framer-motion 12 -> 13 should be taken
+    # anyway.
     groups:
       tailwind:
+        update-types: ['minor', 'patch']
         patterns:
           - 'tailwindcss'
           - '@tailwindcss/*'
           - 'tailwind-merge'
       eslint:
+        update-types: ['minor', 'patch']
         patterns:
           - 'eslint'
           - 'eslint-*'
           - '@eslint/*'
           - 'typescript-eslint'
       testing:
+        update-types: ['minor', 'patch']
         patterns:
           - 'vitest'
           - '@vitest/*'
           - '@testing-library/*'
           - '@playwright/*'
       noble-scure:
+        update-types: ['minor', 'patch']
         patterns:
           - '@noble/*'
           - '@scure/*'
-      # Catch-all so every remaining npm dep batches into ONE grouped PR instead
-      # of a separate PR (and CI run) each — the main Actions-burn reduction.
+      # Catch-all for every remaining dep's minor/patch bumps — ONE PR instead
+      # of one per dependency, which is the main Actions-burn reduction.
       all-other-npm:
+        update-types: ['minor', 'patch']
         patterns:
           - '*'
 
