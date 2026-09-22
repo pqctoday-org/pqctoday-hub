@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.115.0] - 2026-09-22
+
+The in-browser HSM and OpenSSL simulators run today's crypto engine again, including Classic McEliece.
+
+### Fixed
+
+- **The C++ HSM engine's in-browser build was silently broken for Classic McEliece.** [view:/playground] [persona:developer] [persona:researcher] A source change had left eleven "not applicable to this algorithm" stub methods (signing, verification, encryption) inside a compile-time block that only exists when a separate library is linked in — and the browser build deliberately doesn't link that library. The stubs never touch anything from that library, so they now compile in every configuration, matching what they were always meant to do.
+- **The Rust and OpenSSL engines that power the PKCS#11 and OpenSSL Studio playgrounds are rebuilt from current source** [view:/playground] [persona:developer] [persona:researcher], closing three weeks of drift and bringing Classic McEliece (all 10 parameter sets) into both the Rust HSM engine and the in-browser OpenSSL provider, alongside the C++ engine fix above.
+
 ## [4.114.0] - 2026-09-21
 
 Workshop steps can be jumped to again, the About page's software list is always accurate, and the site's own checks now catch problems before they reach you.
