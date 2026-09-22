@@ -26,6 +26,12 @@ updates:
         update-types: ['version-update:semver-major']
       - dependency-name: 'eslint'
         update-types: ['version-update:semver-major']
+      # @eslint/js ships in lockstep with eslint and its peer range is an exact
+      # major match (`@eslint/js@10.0.1` requires `eslint@^10.0.0`). Holding
+      # eslint at 9 without holding this too just moves the ERESOLVE rather
+      # than avoiding it — that is what happened on #700.
+      - dependency-name: '@eslint/js'
+        update-types: ['version-update:semver-major']
     groups:
       tailwind:
         patterns:
