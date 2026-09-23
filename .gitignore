@@ -16,6 +16,21 @@ public/dist/
 # predev/prebuild) — regenerated from node_modules/monaco-editor on every
 # install, not source.
 public/monaco/
+# Pyodide's self-hosted runtime (npm run sync:pyodide-runtime, wired into
+# predev/prebuild exactly like the two above) — a straight copy of 7 files,
+# 12 MB, out of node_modules/pyodide, which package-lock.json already pins.
+#
+# It used to be committed, which made it the odd one out among these three and
+# cost real CI time: `pyodideRuntimeSync.driftguard.test.ts` asserted the
+# committed copy was byte-identical to the installed package, so EVERY
+# dependabot pyodide bump failed 6 of 7 assertions by construction — dependabot
+# can bump the package but cannot run a `cp` or commit 12 MB of binaries
+# (2026-09-22, PR #709). Not committing it is what makes that drift impossible;
+# see pyodideRuntimeSync.notcommitted.test.ts, which keeps it that way.
+#
+# NOTE: public/pyodide-shims/ stays tracked — those are copies of OUR OWN
+# source (src/services/python/pyodide/shims/**/*.py), not a vendored package.
+public/pyodide/
 
 # Generated NotebookLM package (run: npm run notebooklm)
 notebooklm/
