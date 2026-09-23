@@ -78,6 +78,30 @@ updates:
         update-types: ['version-update:semver-minor']
       - dependency-name: 'eslint-plugin-react-refresh'
         update-types: ['version-update:semver-minor']
+      # eslint-plugin-react-hooks 7.1.1 leaks — measured, not suspected.
+      #
+      # #706 bumped five eslint packages and Lint died with exit 134. The first
+      # response was to raise the ceiling (#708, NODE_OPTIONS
+      # --max-old-space-size=8192). It did not help, and the way it failed is
+      # the whole story: at Node's ~4 GB default it died at 4,005 MB; at 8 GB
+      # it died at 8,028 MB. It consumes whatever it is given, which is a leak,
+      # not a large workload.
+      #
+      # Bisected locally on a 48 GB machine (peak RSS, `npm run lint`):
+      #   main as-is                            1.03 GB   pass
+      #   + typescript-eslint 8.70.0 (14 minors!) 1.12 GB  pass — and FASTER
+      #   all five bumps                        4.24 GB   exit 134
+      #   all five minus react-hooks (7.0.1)    1.97 GB   pass
+      # So typescript-eslint — the obvious suspect, and the biggest jump — is
+      # innocent, and 7.0.1 -> 7.1.1 alone is worth more than 2 GB. 7.x runs
+      # the React Compiler for its memoization rules; that is where it goes.
+      #
+      # Held at 7.0.1 minors until upstream fixes it. Patches still flow, and a
+      # security release would come through regardless of this rule. Re-measure
+      # with the four numbers above before lifting it — the lint step is a
+      # security gate (eslint-plugin-security), so it has to actually run.
+      - dependency-name: 'eslint-plugin-react-hooks'
+        update-types: ['version-update:semver-minor']
       - dependency-name: 'micro-eth-signer'
         update-types: ['version-update:semver-minor']
       - dependency-name: 'pyodide'
