@@ -3,24 +3,10 @@
 export type PipelineStageName = 'source' | 'build' | 'sign' | 'registry' | 'deploy' | 'runtime'
 
 export type CryptoAssetType =
-  | 'signing-key'
-  | 'tls-session'
-  | 'certificate'
-  | 'token'
-  | 'secret'
-  | 'hash'
+  'signing-key' | 'tls-session' | 'certificate' | 'token' | 'secret' | 'hash'
 
 export type AlgorithmFamily =
-  | 'ecdsa'
-  | 'rsa'
-  | 'hmac'
-  | 'ecdh'
-  | 'ed25519'
-  | 'aes'
-  | 'sha'
-  | 'ml-dsa'
-  | 'ml-kem'
-  | 'slh-dsa'
+  'ecdsa' | 'rsa' | 'hmac' | 'ecdh' | 'ed25519' | 'aes' | 'sha' | 'ml-dsa' | 'ml-kem' | 'slh-dsa'
 
 export type HNDLExposure = 'high' | 'medium' | 'low' | 'none'
 

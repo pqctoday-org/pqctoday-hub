@@ -43,15 +43,7 @@ import { CMSSigningService, type CmsAlg } from '../services/CMSSigningService'
 import { smimeEnvelopeSigned } from '../services/smimeMultipart'
 
 type Stage =
-  | 'idle'
-  | 'pq-key'
-  | 'cl-key'
-  | 'pq-cert'
-  | 'cl-cert'
-  | 'sign'
-  | 'verify'
-  | 'done'
-  | 'error'
+  'idle' | 'pq-key' | 'cl-key' | 'pq-cert' | 'cl-cert' | 'sign' | 'verify' | 'done' | 'error'
 
 interface StageResult {
   pqKeyPem?: string

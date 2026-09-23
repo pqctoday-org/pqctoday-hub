@@ -89,13 +89,7 @@ export type ParamKind =
 
 /** What a step leaves behind for later steps to bind to. */
 export type OutputKind =
-  | 'none'
-  | 'keypair'
-  | 'secretKey'
-  | 'bytes'
-  | 'ciphertext'
-  | 'signature'
-  | 'bool'
+  'none' | 'keypair' | 'secretKey' | 'bytes' | 'ciphertext' | 'signature' | 'bool'
 
 /**
  * Parameter sets carry their CKP_ name explicitly rather than being reverse-looked-up

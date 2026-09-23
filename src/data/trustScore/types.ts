@@ -13,13 +13,7 @@ export type TrustDimension =
 
 /** Resource types that receive trust scores */
 export type ScoredResourceType =
-  | 'library'
-  | 'timeline'
-  | 'compliance'
-  | 'migrate'
-  | 'threats'
-  | 'leaders'
-  | 'algorithm'
+  'library' | 'timeline' | 'compliance' | 'migrate' | 'threats' | 'leaders' | 'algorithm'
 
 /** Score for a single dimension (0-100 raw, before weighting) */
 export interface DimensionScore {

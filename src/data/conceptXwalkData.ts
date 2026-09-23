@@ -2,11 +2,7 @@
 import { loadLatestCSV } from './csvUtils'
 
 export type XwalkRelationshipType =
-  | 'subset_of'
-  | 'superset_of'
-  | 'equivalent'
-  | 'intersects_with'
-  | 'not_related'
+  'subset_of' | 'superset_of' | 'equivalent' | 'intersects_with' | 'not_related'
 
 /**
  * Closed set per NIST IR 8477 §3.2 (trust-engine-explainability.md).

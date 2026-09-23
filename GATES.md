@@ -28,7 +28,7 @@ run on this exact commit is not paid twice):
 - `format:check` — prettier over the whole tree (lint-staged only sees staged files).
 - `lint` — eslint incl. `eslint-plugin-security`.
 - `gate:data:audits` — the data-truth audits (see the GitHub section; same script, run here so the FULL validator below is not run twice).
-- `validate:data:local` — the unified validator (N*/CM-*/TP-_/MP-_/DS*/GC-*/LN-\*), excluding only TP-1/MP-2 (on-disk proof files that exist only after a manual download run). Includes the N18/N22 checks that read `pqctoday-priv` evidence caches — they cannot run on a clean runner.
+- `validate:data:local` — the unified validator (N*/CM-_/TP-*/MP-*/DS_/GC-*/LN-\*), excluding only TP-1/MP-2 (on-disk proof files that exist only after a manual download run). Includes the N18/N22 checks that read `pqctoday-priv` evidence caches — they cannot run on a clean runner.
 - `gate:editorial` — policy checks that never break the product for a visitor:
   - `audit:content-revision-coverage` — a Learn/Playground content edit carries its `revisions.jsonl` entry.
   - `audit:role-board-drift` — `roleBoardContent.generated.ts` matches `role_board_content_*.csv`.

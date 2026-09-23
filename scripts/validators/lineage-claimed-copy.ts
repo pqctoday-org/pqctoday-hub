@@ -217,8 +217,7 @@ function readManifestRecords(relPath: string, entriesKey: string): ManifestRecor
   if (!fs.existsSync(abs)) return null
   try {
     const m = JSON.parse(fs.readFileSync(abs, 'utf-8')) as
-      | Record<string, unknown>
-      | ManifestRecord[]
+      Record<string, unknown> | ManifestRecord[]
     if (Array.isArray(m)) return m as ManifestRecord[]
     const list = m[entriesKey]
     return Array.isArray(list) ? (list as ManifestRecord[]) : null

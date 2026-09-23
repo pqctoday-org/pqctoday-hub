@@ -53,14 +53,7 @@ export interface BB84SimulationState {
 }
 
 export type BB84Phase =
-  | 'idle'
-  | 'prepare'
-  | 'transmit'
-  | 'measure'
-  | 'reconcile'
-  | 'sift'
-  | 'detect'
-  | 'complete'
+  'idle' | 'prepare' | 'transmit' | 'measure' | 'reconcile' | 'sift' | 'detect' | 'complete'
 
 export const BB84_PHASES: BB84Phase[] = [
   'prepare',

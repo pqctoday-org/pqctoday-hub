@@ -3,10 +3,7 @@
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type OrgType =
-  | 'standards-body'
-  | 'certification-body'
-  | 'compliance-framework'
-  | 'regulatory-agency'
+  'standards-body' | 'certification-body' | 'compliance-framework' | 'regulatory-agency'
 
 export type OrgScope = 'global' | 'regional'
 export type OrgAuthority = 'governmental' | 'non-governmental'
@@ -597,10 +594,7 @@ export interface CoverageCell {
 
 export type RegionKey = 'global' | 'us' | 'eu' | 'uk' | 'asia-pacific'
 export type OrgTypeKey =
-  | 'standards-body'
-  | 'certification-body'
-  | 'compliance-framework'
-  | 'regulatory-agency'
+  'standards-body' | 'certification-body' | 'compliance-framework' | 'regulatory-agency'
 
 export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> = {
   global: {

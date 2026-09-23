@@ -58,8 +58,7 @@ type ConstructionId = 'concatenation' | 'nesting' | 'silithium'
 
 /** HSM or noble key pair, carrying the backend tag for dispatch. */
 type KeyState =
-  | { backend: 'hsm'; pair: HsmHybridKeyPair }
-  | { backend: 'noble'; pair: HybridSigKeyPair }
+  { backend: 'hsm'; pair: HsmHybridKeyPair } | { backend: 'noble'; pair: HybridSigKeyPair }
 
 interface ConstructionState {
   keys: KeyState | null

@@ -4,11 +4,7 @@
 
 export type SensitivityTier = 'low' | 'medium' | 'high' | 'critical'
 export type AssetType =
-  | 'data-store'
-  | 'key-material'
-  | 'communication'
-  | 'credential'
-  | 'code-artifact'
+  'data-store' | 'key-material' | 'communication' | 'credential' | 'code-artifact'
 export type RetentionPeriod = 'under-1y' | '1-5y' | '5-10y' | '10-25y' | '25-plus' | 'indefinite'
 export type MigrationEffort = 'low' | 'medium' | 'high'
 
@@ -671,10 +667,7 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
 // ── Conflict Resolver Data ────────────────────────────────────────────────────
 
 export type ConflictResolutionRule =
-  | 'most-restrictive'
-  | 'jurisdiction-priority'
-  | 'data-subject-location'
-  | 'asset-type-override'
+  'most-restrictive' | 'jurisdiction-priority' | 'data-subject-location' | 'asset-type-override'
 
 export interface ConflictingRequirement {
   framework: string

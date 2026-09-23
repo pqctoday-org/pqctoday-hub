@@ -58,8 +58,7 @@ export const EntropyModule: FC = () => (
     workshopParts={PARTS}
     renderWorkshopStep={(index, configKey, config) => {
       const c = config as
-        | { sampleType?: 'good' | 'bad-zeros' | 'bad-pattern' | 'bad-increment' }
-        | undefined
+        { sampleType?: 'good' | 'bad-zeros' | 'bad-pattern' | 'bad-increment' } | undefined
       switch (index) {
         case 0:
           return <RandomGenerationDemo key={`rng-${configKey}`} />

@@ -100,8 +100,7 @@ export const getSoftHSMCppModule = async (): Promise<SoftHSMModule> => {
     cppModulePromise = (async () => {
       await ensureCppScriptLoaded(_WASM_VERSION)
       const createFn = (globalThis as Record<string, unknown>)['createSoftHSMModule'] as
-        | ((arg?: Record<string, unknown>) => Promise<SoftHSMModule>)
-        | undefined
+        ((arg?: Record<string, unknown>) => Promise<SoftHSMModule>) | undefined
       if (!createFn) throw new Error('createSoftHSMModule not available after script load')
       return createFn({
         locateFile: (path: string) =>

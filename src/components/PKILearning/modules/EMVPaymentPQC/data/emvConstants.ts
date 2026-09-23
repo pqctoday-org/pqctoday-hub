@@ -46,20 +46,10 @@ export interface PaymentNetwork {
 // ---------------------------------------------------------------------------
 
 export type TransactionMode =
-  | 'online'
-  | 'offline-dda'
-  | 'offline-cda'
-  | 'contactless'
-  | 'mobile-pay'
+  'online' | 'offline-dda' | 'offline-cda' | 'contactless' | 'mobile-pay'
 
 export type FlowActor =
-  | 'card'
-  | 'terminal'
-  | 'acquirer'
-  | 'network'
-  | 'issuer'
-  | 'tsp'
-  | 'mobile-wallet'
+  'card' | 'terminal' | 'acquirer' | 'network' | 'issuer' | 'tsp' | 'mobile-wallet'
 
 export type FlowStepType = 'init' | 'authenticate' | 'authorize' | 'crypto' | 'response'
 
@@ -116,11 +106,7 @@ export interface CardAuthSpec {
 // ---------------------------------------------------------------------------
 
 export type ProvisioningPhase =
-  | 'chip-os'
-  | 'pre-perso'
-  | 'personalization'
-  | 'key-injection'
-  | 'activation'
+  'chip-os' | 'pre-perso' | 'personalization' | 'key-injection' | 'activation'
 
 export interface ProvisioningStep {
   id: string

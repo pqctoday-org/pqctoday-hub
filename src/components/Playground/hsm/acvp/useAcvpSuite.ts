@@ -204,13 +204,7 @@ export const EVIDENCE_TIER_META: Record<EvidenceTier, { icon: typeof ShieldCheck
  * guard is entered — the section bodies themselves are unmodified.
  */
 export type CategoryId =
-  | 'symmetric'
-  | 'hashing_mac'
-  | 'kdf'
-  | 'classical'
-  | 'ml_dsa'
-  | 'slh_stateful'
-  | 'ml_kem'
+  'symmetric' | 'hashing_mac' | 'kdf' | 'classical' | 'ml_dsa' | 'slh_stateful' | 'ml_kem'
 
 export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'symmetric', label: 'Symmetric / AEAD', groups: 6 },

@@ -64,12 +64,7 @@ const CKF_SERIAL_SESSION = 0x00000004
 const CKR_FUNCTION_NOT_SUPPORTED = 0x00000054
 
 export type ProfileClaim =
-  | 'baseline'
-  | 'extended'
-  | 'authentication'
-  | 'certificates'
-  | 'complete'
-  | 'hkdf_tls'
+  'baseline' | 'extended' | 'authentication' | 'certificates' | 'complete' | 'hkdf_tls'
 
 export interface ProbeContext {
   M: SoftHSMModule

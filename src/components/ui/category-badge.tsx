@@ -2,13 +2,7 @@
 import { cn } from '@/lib/utils'
 
 type BadgeCategory =
-  | 'americas'
-  | 'emea'
-  | 'apac'
-  | 'global'
-  | 'beginner'
-  | 'intermediate'
-  | 'advanced'
+  'americas' | 'emea' | 'apac' | 'global' | 'beginner' | 'intermediate' | 'advanced'
 
 interface CategoryBadgeProps {
   category: BadgeCategory

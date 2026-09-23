@@ -37,10 +37,7 @@ import { FRAMEWORK_PHASES, type PhaseId } from '../../data/frameworkPhases'
 export interface QRAHeatmapCell {
   /** Domain key (reuses the category-score axes the engine already produces). */
   domain:
-    | 'quantumExposure'
-    | 'migrationComplexity'
-    | 'regulatoryPressure'
-    | 'organizationalReadiness'
+    'quantumExposure' | 'migrationComplexity' | 'regulatoryPressure' | 'organizationalReadiness'
   label: string
   /** 0–100. For exposure/complexity/pressure higher = worse; for readiness
    *  higher = better. `severity` normalises this so the UI can colour uniformly. */
