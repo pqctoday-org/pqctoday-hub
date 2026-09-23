@@ -121,7 +121,7 @@ var createSoftHSMModule = (() => {
       SOCKFS.root = FS.mount(SOCKFS, {}, null)
       if (!Module['noFSInit'] && !FS.initialized) FS.init()
       TTY.init()
-      wasmExports['I']()
+      wasmExports['L']()
       FS.ignorePermissions = false
     }
     function postRun() {
@@ -638,8 +638,14 @@ var createSoftHSMModule = (() => {
         },
       },
     }
+    var HEAPU8
+    var zeroMemory = (ptr, size) => HEAPU8.fill(0, ptr, ptr + size)
+    var alignMemory = (size, alignment) => Math.ceil(size / alignment) * alignment
     var mmapAlloc = (size) => {
-      abort()
+      size = alignMemory(size, 65536)
+      var ptr = _emscripten_builtin_memalign(65536, size)
+      if (ptr) zeroMemory(ptr, size)
+      return ptr
     }
     var MEMFS = {
       ops_table: null,
@@ -3196,7 +3202,6 @@ var createSoftHSMModule = (() => {
         return -e.errno
       }
     }
-    var HEAPU8
     var UTF8ToString = (ptr, maxBytesToRead, ignoreNul) =>
       ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead, ignoreNul) : ''
     var HEAP64
@@ -3653,6 +3658,32 @@ var createSoftHSMModule = (() => {
       HEAP32[(tmPtr + 28) >> 2] = yday
       return 0
     }
+    function __mmap_js(len, prot, flags, fd, offset, allocated, addr) {
+      offset = bigintToI53Checked(offset)
+      try {
+        var stream = SYSCALLS.getStreamFromFD(fd)
+        var res = FS.mmap(stream, len, offset, prot, flags)
+        var ptr = res.ptr
+        HEAP32[allocated >> 2] = res.allocated
+        HEAPU32[addr >> 2] = ptr
+        return 0
+      } catch (e) {
+        if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e
+        return -e.errno
+      }
+    }
+    function __munmap_js(addr, len, prot, flags, fd, offset) {
+      offset = bigintToI53Checked(offset)
+      try {
+        var stream = SYSCALLS.getStreamFromFD(fd)
+        if (prot & 2) {
+          SYSCALLS.doMsync(addr, stream, len, flags, offset)
+        }
+      } catch (e) {
+        if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e
+        return -e.errno
+      }
+    }
     var __tzset_js = (timezone, daylight, std_name, dst_name) => {
       var currentYear = new Date().getFullYear()
       var winter = new Date(currentYear, 0, 1)
@@ -3701,7 +3732,6 @@ var createSoftHSMModule = (() => {
       return 0
     }
     var getHeapMax = () => 536870912
-    var alignMemory = (size, alignment) => Math.ceil(size / alignment) * alignment
     var growMemory = (size) => {
       var oldHeapSize = wasmMemory.buffer.byteLength
       var pages = ((size - oldHeapSize + 65535) / 65536) | 0
@@ -4064,155 +4094,160 @@ var createSoftHSMModule = (() => {
       _malloc,
       _free,
       _htons,
+      _emscripten_builtin_memalign,
       _ntohs,
       memory,
       __indirect_function_table,
       wasmMemory
     function assignWasmExports(wasmExports) {
-      _C_Initialize = Module['_C_Initialize'] = wasmExports['J']
-      _C_Finalize = Module['_C_Finalize'] = wasmExports['K']
-      _C_GetInfo = Module['_C_GetInfo'] = wasmExports['L']
-      _C_GetFunctionList = Module['_C_GetFunctionList'] = wasmExports['M']
-      _C_GetSlotList = Module['_C_GetSlotList'] = wasmExports['N']
-      _C_GetSlotInfo = Module['_C_GetSlotInfo'] = wasmExports['O']
-      _C_GetTokenInfo = Module['_C_GetTokenInfo'] = wasmExports['P']
-      _C_GetMechanismList = Module['_C_GetMechanismList'] = wasmExports['Q']
-      _C_GetMechanismInfo = Module['_C_GetMechanismInfo'] = wasmExports['R']
-      _C_InitToken = Module['_C_InitToken'] = wasmExports['S']
-      _C_InitPIN = Module['_C_InitPIN'] = wasmExports['T']
-      _C_SetPIN = Module['_C_SetPIN'] = wasmExports['U']
-      _C_OpenSession = Module['_C_OpenSession'] = wasmExports['V']
-      _C_CloseSession = Module['_C_CloseSession'] = wasmExports['W']
-      _C_CloseAllSessions = Module['_C_CloseAllSessions'] = wasmExports['X']
-      _C_GetSessionInfo = Module['_C_GetSessionInfo'] = wasmExports['Y']
-      _C_GetOperationState = Module['_C_GetOperationState'] = wasmExports['Z']
-      _C_SetOperationState = Module['_C_SetOperationState'] = wasmExports['_']
-      _C_Login = Module['_C_Login'] = wasmExports['$']
-      _C_Logout = Module['_C_Logout'] = wasmExports['aa']
-      _C_CreateObject = Module['_C_CreateObject'] = wasmExports['ba']
-      _C_CopyObject = Module['_C_CopyObject'] = wasmExports['ca']
-      _C_DestroyObject = Module['_C_DestroyObject'] = wasmExports['da']
-      _C_GetObjectSize = Module['_C_GetObjectSize'] = wasmExports['ea']
-      _C_GetAttributeValue = Module['_C_GetAttributeValue'] = wasmExports['fa']
-      _C_SetAttributeValue = Module['_C_SetAttributeValue'] = wasmExports['ga']
-      _C_FindObjectsInit = Module['_C_FindObjectsInit'] = wasmExports['ha']
-      _C_FindObjects = Module['_C_FindObjects'] = wasmExports['ia']
-      _C_FindObjectsFinal = Module['_C_FindObjectsFinal'] = wasmExports['ja']
-      _C_EncryptInit = Module['_C_EncryptInit'] = wasmExports['ka']
-      _C_Encrypt = Module['_C_Encrypt'] = wasmExports['la']
-      _C_EncryptUpdate = Module['_C_EncryptUpdate'] = wasmExports['ma']
-      _C_EncryptFinal = Module['_C_EncryptFinal'] = wasmExports['na']
-      _C_DecryptInit = Module['_C_DecryptInit'] = wasmExports['oa']
-      _C_Decrypt = Module['_C_Decrypt'] = wasmExports['pa']
-      _C_DecryptUpdate = Module['_C_DecryptUpdate'] = wasmExports['qa']
-      _C_DecryptFinal = Module['_C_DecryptFinal'] = wasmExports['ra']
-      _C_DigestInit = Module['_C_DigestInit'] = wasmExports['sa']
-      _C_Digest = Module['_C_Digest'] = wasmExports['ta']
-      _C_DigestUpdate = Module['_C_DigestUpdate'] = wasmExports['ua']
-      _C_DigestKey = Module['_C_DigestKey'] = wasmExports['va']
-      _C_DigestFinal = Module['_C_DigestFinal'] = wasmExports['wa']
-      _C_SignInit = Module['_C_SignInit'] = wasmExports['xa']
-      _C_Sign = Module['_C_Sign'] = wasmExports['ya']
-      _C_SignUpdate = Module['_C_SignUpdate'] = wasmExports['za']
-      _C_SignFinal = Module['_C_SignFinal'] = wasmExports['Aa']
-      _C_SignRecoverInit = Module['_C_SignRecoverInit'] = wasmExports['Ba']
-      _C_SignRecover = Module['_C_SignRecover'] = wasmExports['Ca']
-      _C_VerifyInit = Module['_C_VerifyInit'] = wasmExports['Da']
-      _C_Verify = Module['_C_Verify'] = wasmExports['Ea']
-      _C_VerifyUpdate = Module['_C_VerifyUpdate'] = wasmExports['Fa']
-      _C_VerifyFinal = Module['_C_VerifyFinal'] = wasmExports['Ga']
-      _C_VerifyRecoverInit = Module['_C_VerifyRecoverInit'] = wasmExports['Ha']
-      _C_VerifyRecover = Module['_C_VerifyRecover'] = wasmExports['Ia']
-      _C_DigestEncryptUpdate = Module['_C_DigestEncryptUpdate'] = wasmExports['Ja']
-      _C_DecryptDigestUpdate = Module['_C_DecryptDigestUpdate'] = wasmExports['Ka']
-      _C_SignEncryptUpdate = Module['_C_SignEncryptUpdate'] = wasmExports['La']
-      _C_DecryptVerifyUpdate = Module['_C_DecryptVerifyUpdate'] = wasmExports['Ma']
-      _C_GenerateKey = Module['_C_GenerateKey'] = wasmExports['Na']
-      _C_GenerateKeyPair = Module['_C_GenerateKeyPair'] = wasmExports['Oa']
-      _C_WrapKey = Module['_C_WrapKey'] = wasmExports['Pa']
-      _C_UnwrapKey = Module['_C_UnwrapKey'] = wasmExports['Qa']
-      _C_DeriveKey = Module['_C_DeriveKey'] = wasmExports['Ra']
-      _C_SeedRandom = Module['_C_SeedRandom'] = wasmExports['Sa']
-      _C_GenerateRandom = Module['_C_GenerateRandom'] = wasmExports['Ta']
-      _C_GetFunctionStatus = Module['_C_GetFunctionStatus'] = wasmExports['Ua']
-      _C_CancelFunction = Module['_C_CancelFunction'] = wasmExports['Va']
-      _C_WaitForSlotEvent = Module['_C_WaitForSlotEvent'] = wasmExports['Wa']
-      _C_LoginUser = Module['_C_LoginUser'] = wasmExports['Xa']
-      _C_SessionCancel = Module['_C_SessionCancel'] = wasmExports['Ya']
-      _C_MessageEncryptInit = Module['_C_MessageEncryptInit'] = wasmExports['Za']
-      _C_EncryptMessage = Module['_C_EncryptMessage'] = wasmExports['_a']
-      _C_EncryptMessageBegin = Module['_C_EncryptMessageBegin'] = wasmExports['$a']
-      _C_EncryptMessageNext = Module['_C_EncryptMessageNext'] = wasmExports['ab']
-      _C_MessageEncryptFinal = Module['_C_MessageEncryptFinal'] = wasmExports['bb']
-      _C_MessageDecryptInit = Module['_C_MessageDecryptInit'] = wasmExports['cb']
-      _C_DecryptMessage = Module['_C_DecryptMessage'] = wasmExports['db']
-      _C_DecryptMessageBegin = Module['_C_DecryptMessageBegin'] = wasmExports['eb']
-      _C_DecryptMessageNext = Module['_C_DecryptMessageNext'] = wasmExports['fb']
-      _C_MessageDecryptFinal = Module['_C_MessageDecryptFinal'] = wasmExports['gb']
-      _C_MessageSignInit = Module['_C_MessageSignInit'] = wasmExports['hb']
-      _C_SignMessage = Module['_C_SignMessage'] = wasmExports['ib']
-      _C_SignMessageBegin = Module['_C_SignMessageBegin'] = wasmExports['jb']
-      _C_SignMessageNext = Module['_C_SignMessageNext'] = wasmExports['kb']
-      _C_MessageSignFinal = Module['_C_MessageSignFinal'] = wasmExports['lb']
-      _C_MessageVerifyInit = Module['_C_MessageVerifyInit'] = wasmExports['mb']
-      _C_VerifyMessage = Module['_C_VerifyMessage'] = wasmExports['nb']
-      _C_VerifyMessageBegin = Module['_C_VerifyMessageBegin'] = wasmExports['ob']
-      _C_VerifyMessageNext = Module['_C_VerifyMessageNext'] = wasmExports['pb']
-      _C_MessageVerifyFinal = Module['_C_MessageVerifyFinal'] = wasmExports['qb']
-      _C_EncapsulateKey = Module['_C_EncapsulateKey'] = wasmExports['rb']
-      _C_DecapsulateKey = Module['_C_DecapsulateKey'] = wasmExports['sb']
-      _C_VerifySignatureInit = Module['_C_VerifySignatureInit'] = wasmExports['tb']
-      _C_VerifySignature = Module['_C_VerifySignature'] = wasmExports['ub']
-      _C_VerifySignatureUpdate = Module['_C_VerifySignatureUpdate'] = wasmExports['vb']
-      _C_VerifySignatureFinal = Module['_C_VerifySignatureFinal'] = wasmExports['wb']
-      _C_GetSessionValidationFlags = Module['_C_GetSessionValidationFlags'] = wasmExports['xb']
-      _C_AsyncComplete = Module['_C_AsyncComplete'] = wasmExports['yb']
-      _C_AsyncGetID = Module['_C_AsyncGetID'] = wasmExports['zb']
-      _C_AsyncJoin = Module['_C_AsyncJoin'] = wasmExports['Ab']
-      _C_WrapKeyAuthenticated = Module['_C_WrapKeyAuthenticated'] = wasmExports['Bb']
-      _C_UnwrapKeyAuthenticated = Module['_C_UnwrapKeyAuthenticated'] = wasmExports['Cb']
-      _C_GetInterfaceList = Module['_C_GetInterfaceList'] = wasmExports['Db']
-      _C_GetInterface = Module['_C_GetInterface'] = wasmExports['Eb']
-      _malloc = Module['_malloc'] = wasmExports['Fb']
-      _free = Module['_free'] = wasmExports['Gb']
-      _htons = wasmExports['Hb']
-      _ntohs = wasmExports['Ib']
-      memory = wasmMemory = wasmExports['H']
+      _C_Initialize = Module['_C_Initialize'] = wasmExports['M']
+      _C_Finalize = Module['_C_Finalize'] = wasmExports['N']
+      _C_GetInfo = Module['_C_GetInfo'] = wasmExports['O']
+      _C_GetFunctionList = Module['_C_GetFunctionList'] = wasmExports['P']
+      _C_GetSlotList = Module['_C_GetSlotList'] = wasmExports['Q']
+      _C_GetSlotInfo = Module['_C_GetSlotInfo'] = wasmExports['R']
+      _C_GetTokenInfo = Module['_C_GetTokenInfo'] = wasmExports['S']
+      _C_GetMechanismList = Module['_C_GetMechanismList'] = wasmExports['T']
+      _C_GetMechanismInfo = Module['_C_GetMechanismInfo'] = wasmExports['U']
+      _C_InitToken = Module['_C_InitToken'] = wasmExports['V']
+      _C_InitPIN = Module['_C_InitPIN'] = wasmExports['W']
+      _C_SetPIN = Module['_C_SetPIN'] = wasmExports['X']
+      _C_OpenSession = Module['_C_OpenSession'] = wasmExports['Y']
+      _C_CloseSession = Module['_C_CloseSession'] = wasmExports['Z']
+      _C_CloseAllSessions = Module['_C_CloseAllSessions'] = wasmExports['_']
+      _C_GetSessionInfo = Module['_C_GetSessionInfo'] = wasmExports['$']
+      _C_GetOperationState = Module['_C_GetOperationState'] = wasmExports['aa']
+      _C_SetOperationState = Module['_C_SetOperationState'] = wasmExports['ba']
+      _C_Login = Module['_C_Login'] = wasmExports['ca']
+      _C_Logout = Module['_C_Logout'] = wasmExports['da']
+      _C_CreateObject = Module['_C_CreateObject'] = wasmExports['ea']
+      _C_CopyObject = Module['_C_CopyObject'] = wasmExports['fa']
+      _C_DestroyObject = Module['_C_DestroyObject'] = wasmExports['ga']
+      _C_GetObjectSize = Module['_C_GetObjectSize'] = wasmExports['ha']
+      _C_GetAttributeValue = Module['_C_GetAttributeValue'] = wasmExports['ia']
+      _C_SetAttributeValue = Module['_C_SetAttributeValue'] = wasmExports['ja']
+      _C_FindObjectsInit = Module['_C_FindObjectsInit'] = wasmExports['ka']
+      _C_FindObjects = Module['_C_FindObjects'] = wasmExports['la']
+      _C_FindObjectsFinal = Module['_C_FindObjectsFinal'] = wasmExports['ma']
+      _C_EncryptInit = Module['_C_EncryptInit'] = wasmExports['na']
+      _C_Encrypt = Module['_C_Encrypt'] = wasmExports['oa']
+      _C_EncryptUpdate = Module['_C_EncryptUpdate'] = wasmExports['pa']
+      _C_EncryptFinal = Module['_C_EncryptFinal'] = wasmExports['qa']
+      _C_DecryptInit = Module['_C_DecryptInit'] = wasmExports['ra']
+      _C_Decrypt = Module['_C_Decrypt'] = wasmExports['sa']
+      _C_DecryptUpdate = Module['_C_DecryptUpdate'] = wasmExports['ta']
+      _C_DecryptFinal = Module['_C_DecryptFinal'] = wasmExports['ua']
+      _C_DigestInit = Module['_C_DigestInit'] = wasmExports['va']
+      _C_Digest = Module['_C_Digest'] = wasmExports['wa']
+      _C_DigestUpdate = Module['_C_DigestUpdate'] = wasmExports['xa']
+      _C_DigestKey = Module['_C_DigestKey'] = wasmExports['ya']
+      _C_DigestFinal = Module['_C_DigestFinal'] = wasmExports['za']
+      _C_SignInit = Module['_C_SignInit'] = wasmExports['Aa']
+      _C_Sign = Module['_C_Sign'] = wasmExports['Ba']
+      _C_SignUpdate = Module['_C_SignUpdate'] = wasmExports['Ca']
+      _C_SignFinal = Module['_C_SignFinal'] = wasmExports['Da']
+      _C_SignRecoverInit = Module['_C_SignRecoverInit'] = wasmExports['Ea']
+      _C_SignRecover = Module['_C_SignRecover'] = wasmExports['Fa']
+      _C_VerifyInit = Module['_C_VerifyInit'] = wasmExports['Ga']
+      _C_Verify = Module['_C_Verify'] = wasmExports['Ha']
+      _C_VerifyUpdate = Module['_C_VerifyUpdate'] = wasmExports['Ia']
+      _C_VerifyFinal = Module['_C_VerifyFinal'] = wasmExports['Ja']
+      _C_VerifyRecoverInit = Module['_C_VerifyRecoverInit'] = wasmExports['Ka']
+      _C_VerifyRecover = Module['_C_VerifyRecover'] = wasmExports['La']
+      _C_DigestEncryptUpdate = Module['_C_DigestEncryptUpdate'] = wasmExports['Ma']
+      _C_DecryptDigestUpdate = Module['_C_DecryptDigestUpdate'] = wasmExports['Na']
+      _C_SignEncryptUpdate = Module['_C_SignEncryptUpdate'] = wasmExports['Oa']
+      _C_DecryptVerifyUpdate = Module['_C_DecryptVerifyUpdate'] = wasmExports['Pa']
+      _C_GenerateKey = Module['_C_GenerateKey'] = wasmExports['Qa']
+      _C_GenerateKeyPair = Module['_C_GenerateKeyPair'] = wasmExports['Ra']
+      _C_WrapKey = Module['_C_WrapKey'] = wasmExports['Sa']
+      _C_UnwrapKey = Module['_C_UnwrapKey'] = wasmExports['Ta']
+      _C_DeriveKey = Module['_C_DeriveKey'] = wasmExports['Ua']
+      _C_SeedRandom = Module['_C_SeedRandom'] = wasmExports['Va']
+      _C_GenerateRandom = Module['_C_GenerateRandom'] = wasmExports['Wa']
+      _C_GetFunctionStatus = Module['_C_GetFunctionStatus'] = wasmExports['Xa']
+      _C_CancelFunction = Module['_C_CancelFunction'] = wasmExports['Ya']
+      _C_WaitForSlotEvent = Module['_C_WaitForSlotEvent'] = wasmExports['Za']
+      _C_LoginUser = Module['_C_LoginUser'] = wasmExports['_a']
+      _C_SessionCancel = Module['_C_SessionCancel'] = wasmExports['$a']
+      _C_MessageEncryptInit = Module['_C_MessageEncryptInit'] = wasmExports['ab']
+      _C_EncryptMessage = Module['_C_EncryptMessage'] = wasmExports['bb']
+      _C_EncryptMessageBegin = Module['_C_EncryptMessageBegin'] = wasmExports['cb']
+      _C_EncryptMessageNext = Module['_C_EncryptMessageNext'] = wasmExports['db']
+      _C_MessageEncryptFinal = Module['_C_MessageEncryptFinal'] = wasmExports['eb']
+      _C_MessageDecryptInit = Module['_C_MessageDecryptInit'] = wasmExports['fb']
+      _C_DecryptMessage = Module['_C_DecryptMessage'] = wasmExports['gb']
+      _C_DecryptMessageBegin = Module['_C_DecryptMessageBegin'] = wasmExports['hb']
+      _C_DecryptMessageNext = Module['_C_DecryptMessageNext'] = wasmExports['ib']
+      _C_MessageDecryptFinal = Module['_C_MessageDecryptFinal'] = wasmExports['jb']
+      _C_MessageSignInit = Module['_C_MessageSignInit'] = wasmExports['kb']
+      _C_SignMessage = Module['_C_SignMessage'] = wasmExports['lb']
+      _C_SignMessageBegin = Module['_C_SignMessageBegin'] = wasmExports['mb']
+      _C_SignMessageNext = Module['_C_SignMessageNext'] = wasmExports['nb']
+      _C_MessageSignFinal = Module['_C_MessageSignFinal'] = wasmExports['ob']
+      _C_MessageVerifyInit = Module['_C_MessageVerifyInit'] = wasmExports['pb']
+      _C_VerifyMessage = Module['_C_VerifyMessage'] = wasmExports['qb']
+      _C_VerifyMessageBegin = Module['_C_VerifyMessageBegin'] = wasmExports['rb']
+      _C_VerifyMessageNext = Module['_C_VerifyMessageNext'] = wasmExports['sb']
+      _C_MessageVerifyFinal = Module['_C_MessageVerifyFinal'] = wasmExports['tb']
+      _C_EncapsulateKey = Module['_C_EncapsulateKey'] = wasmExports['ub']
+      _C_DecapsulateKey = Module['_C_DecapsulateKey'] = wasmExports['vb']
+      _C_VerifySignatureInit = Module['_C_VerifySignatureInit'] = wasmExports['wb']
+      _C_VerifySignature = Module['_C_VerifySignature'] = wasmExports['xb']
+      _C_VerifySignatureUpdate = Module['_C_VerifySignatureUpdate'] = wasmExports['yb']
+      _C_VerifySignatureFinal = Module['_C_VerifySignatureFinal'] = wasmExports['zb']
+      _C_GetSessionValidationFlags = Module['_C_GetSessionValidationFlags'] = wasmExports['Ab']
+      _C_AsyncComplete = Module['_C_AsyncComplete'] = wasmExports['Bb']
+      _C_AsyncGetID = Module['_C_AsyncGetID'] = wasmExports['Cb']
+      _C_AsyncJoin = Module['_C_AsyncJoin'] = wasmExports['Db']
+      _C_WrapKeyAuthenticated = Module['_C_WrapKeyAuthenticated'] = wasmExports['Eb']
+      _C_UnwrapKeyAuthenticated = Module['_C_UnwrapKeyAuthenticated'] = wasmExports['Fb']
+      _C_GetInterfaceList = Module['_C_GetInterfaceList'] = wasmExports['Gb']
+      _C_GetInterface = Module['_C_GetInterface'] = wasmExports['Hb']
+      _malloc = Module['_malloc'] = wasmExports['Ib']
+      _free = Module['_free'] = wasmExports['Jb']
+      _htons = wasmExports['Kb']
+      _emscripten_builtin_memalign = wasmExports['Lb']
+      _ntohs = wasmExports['Mb']
+      memory = wasmMemory = wasmExports['K']
       __indirect_function_table = wasmExports['__indirect_function_table']
     }
     var wasmImports = {
       c: ___cxa_throw,
-      p: ___syscall_connect,
-      m: ___syscall_faccessat,
+      r: ___syscall_connect,
+      o: ___syscall_faccessat,
       a: ___syscall_fcntl64,
-      G: ___syscall_fstat64,
-      C: ___syscall_ftruncate64,
-      s: ___syscall_getdents64,
-      B: ___syscall_getegid32,
-      y: ___syscall_geteuid32,
-      x: ___syscall_getgid32,
-      j: ___syscall_getuid32,
+      J: ___syscall_fstat64,
+      F: ___syscall_ftruncate64,
+      t: ___syscall_getdents64,
+      E: ___syscall_getegid32,
+      B: ___syscall_geteuid32,
+      A: ___syscall_getgid32,
+      l: ___syscall_getuid32,
       d: ___syscall_ioctl,
-      D: ___syscall_lstat64,
-      v: ___syscall_mkdirat,
-      E: ___syscall_newfstatat,
-      k: ___syscall_openat,
+      G: ___syscall_lstat64,
+      y: ___syscall_mkdirat,
+      H: ___syscall_newfstatat,
+      m: ___syscall_openat,
       i: ___syscall_rmdir,
-      o: ___syscall_sendto,
+      q: ___syscall_sendto,
       h: ___syscall_socket,
-      F: ___syscall_stat64,
-      r: ___syscall_unlinkat,
-      n: __abort_js,
-      t: __gmtime_js,
-      u: __tzset_js,
-      l: _clock_time_get,
+      I: ___syscall_stat64,
+      j: ___syscall_unlinkat,
+      p: __abort_js,
+      w: __gmtime_js,
+      u: __mmap_js,
+      v: __munmap_js,
+      x: __tzset_js,
+      n: _clock_time_get,
       e: _emscripten_date_now,
-      q: _emscripten_resize_heap,
-      z: _environ_get,
-      A: _environ_sizes_get,
+      k: _emscripten_get_now,
+      s: _emscripten_resize_heap,
+      C: _environ_get,
+      D: _environ_sizes_get,
       b: _fd_close,
       g: _fd_read,
-      w: _fd_seek,
+      z: _fd_seek,
       f: _fd_write,
     }
     async function run() {
