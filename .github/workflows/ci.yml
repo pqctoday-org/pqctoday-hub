@@ -105,6 +105,17 @@ jobs:
 
       - name: Lint
         # Carries the eslint-plugin-security rules — a security gate, not style.
+        #
+        # NODE_OPTIONS raises Node's old-space heap above its ~4 GB default.
+        # This tree already lints close to that ceiling, and the 2026-09-22
+        # eslint-plugin minor bumps (#706) pushed it over: the run died with
+        # "FATAL ERROR: Ineffective mark-compacts near heap limit — JavaScript
+        # heap out of memory" and exit 134, after ~156 s of mark-compact
+        # thrashing at 4,005 MB. The runner has 16 GB, so the ceiling was
+        # Node's, not the machine's. Not a lint failure and not a plugin
+        # defect — a resource limit we were already brushing against.
+        env:
+          NODE_OPTIONS: '--max-old-space-size=8192'
         run: npm run lint
 
       - name: Data gate
