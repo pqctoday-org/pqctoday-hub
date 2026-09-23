@@ -27,6 +27,7 @@
 import { execSync } from 'node:child_process'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
+import Papa from 'papaparse'
 
 const ROOT = process.cwd()
 const COMPLIANCE = 'public/data/compliance-data.json'
@@ -73,9 +74,15 @@ function lsBase(dir: string): string[] {
  * fails, and the waiver expires instead of becoming permanent.
  */
 type DropWaiver = { expectedDrop: number; reason: string; until: string }
+type EmptiedWaiver = { expectedEmptied: number; reason: string; until: string }
 type Allowlist = {
   complianceRecordDropOk?: boolean | DropWaiver
   vendorAlgoEmptyOk?: string[]
+  // one dated waiver per column with the exact expected count (Check 3)
+  patentsEmptiedOk?: Record<string, EmptiedWaiver>
+  // same shape, keyed by source id (library, timeline, threats, compliance,
+  // migrate-catalog, industry-landscape)
+  emptiedOk?: Record<string, Record<string, EmptiedWaiver>>
 }
 const allow: Allowlist = existsSync(join(ROOT, ALLOWLIST))
   ? JSON.parse(readFileSync(join(ROOT, ALLOWLIST), 'utf8'))
@@ -272,6 +279,117 @@ function buildAlgoMap(read: (file: string) => string, files: string[]): Map<stri
     } else {
       console.log(`✓ vendor roadmap: no vendor regressed non-empty → empty algorithms`)
     }
+  }
+}
+
+// ── Check 3: a source's column must not go populated → empty across its page ─
+// Compares the newest <prefix>_MMDDYYYY[_rN].csv on HEAD with the newest on the
+// base ref, row by row over the rows both files show (status ≠ deprecated). A
+// single row emptied is a correction; a column emptied on more than EMPTIED_MAX
+// of those rows is a reader that lost its input. Empty means '', '[]' or the
+// enricher's own "uncertain" fallback 'none' (enrich_patents.py returns 'none'
+// or an empty list when it cannot tell), so a wipe cannot hide behind the
+// fallback value.
+//
+// Added 2026-09-22. The 09-18 patents re-read that wrote `[]` into
+// claim_dependencies for 607 of 729 rows passed every truth check because
+// nothing measured coverage; library, timeline, threats, compliance, the
+// migrate catalog and industry-landscape had no such guard at all, so a re-run
+// of any of them that writes LESS passes on truth alone (extraction-audit-
+// 09212026 §5). Same rule, one table.
+const EMPTIED_DATA_DIR = 'src/data'
+const EMPTIED_MAX = 0.05
+type EmptiedSource = { id: string; prefix: string; idColumn: string; skip: string[] }
+const EMPTIED_SOURCES: EmptiedSource[] = [
+  { id: 'patents', prefix: 'patents', idColumn: 'patent_number', skip: ['title'] },
+  { id: 'library', prefix: 'library', idColumn: 'reference_id', skip: ['document_title'] },
+  { id: 'timeline', prefix: 'timeline', idColumn: 'event_id', skip: [] },
+  { id: 'threats', prefix: 'quantum_threats_hsm_industries', idColumn: 'threat_id', skip: [] },
+  { id: 'compliance', prefix: 'compliance', idColumn: 'id', skip: ['label'] },
+  {
+    id: 'migrate-catalog',
+    prefix: 'pqc_product_catalog',
+    idColumn: 'product_id',
+    skip: ['software_name'],
+  },
+  { id: 'industry-landscape', prefix: 'industry_landscape', idColumn: 'use_case_id', skip: [] },
+]
+// never scored: the row's identity and the self-containment status columns
+const EMPTIED_ALWAYS_SKIP = new Set(['status', 'deprecated_at', 'deprecated_reason'])
+
+function latestDated(files: string[], prefix: string): string | null {
+  const re = new RegExp(`^${prefix}_(\\d{2})(\\d{2})(\\d{4})(?:_r(\\d+))?\\.csv$`)
+  const dated = files
+    .map((f) => ({ f, m: f.match(re) }))
+    .filter((x): x is { f: string; m: RegExpMatchArray } => x.m !== null)
+    .map(({ f, m }) => ({ f, key: `${m[3]}${m[1]}${m[2]}`, r: Number(m[4] ?? 0) }))
+    .sort((a, b) => (a.key === b.key ? a.r - b.r : a.key < b.key ? -1 : 1))
+  return dated.length ? dated[dated.length - 1].f : null
+}
+function shownRows(raw: string, idColumn: string): Map<string, Record<string, string>> {
+  const parsed = Papa.parse<Record<string, string>>(raw, { header: true, skipEmptyLines: true })
+  const out = new Map<string, Record<string, string>>()
+  for (const row of parsed.data) {
+    if ((row.status ?? '').trim() === 'deprecated') continue
+    const id = (row[idColumn] ?? '').trim()
+    if (id) out.set(id, row)
+  }
+  return out
+}
+const isEmptyValue = (v: string | undefined): boolean => {
+  const t = (v ?? '').trim()
+  return t === '' || t === '[]' || t === 'none'
+}
+for (const src of EMPTIED_SOURCES) {
+  // patents keeps its original allowlist key; every other source uses emptiedOk.<id>
+  const waivers: Record<string, EmptiedWaiver> =
+    src.id === 'patents' ? (allow.patentsEmptiedOk ?? {}) : (allow.emptiedOk?.[src.id] ?? {})
+  const waiverKey = src.id === 'patents' ? 'patentsEmptiedOk' : `emptiedOk.${src.id}`
+  const baseFile = latestDated(lsBase(EMPTIED_DATA_DIR), src.prefix)
+  const headFile = existsSync(join(ROOT, EMPTIED_DATA_DIR))
+    ? latestDated(readdirSync(join(ROOT, EMPTIED_DATA_DIR)), src.prefix)
+    : null
+  if (!baseFile || !headFile) {
+    console.warn(
+      `⚠  no ${src.prefix}_*.csv on ${baseRef} or HEAD — skipping ${src.id} emptied-column check`
+    )
+    continue
+  }
+  if (baseFile === headFile) {
+    console.log(`✓ ${src.id}: ${headFile} unchanged vs ${baseRef}`)
+    continue
+  }
+  const base = shownRows(showFromBase(`${EMPTIED_DATA_DIR}/${baseFile}`) ?? '', src.idColumn)
+  const head = shownRows(readFileSync(join(ROOT, EMPTIED_DATA_DIR, headFile), 'utf8'), src.idColumn)
+  const shared = [...base.keys()].filter((id) => head.has(id))
+  const skip = new Set([...EMPTIED_ALWAYS_SKIP, src.idColumn, ...src.skip])
+  const columns = Object.keys(head.values().next().value ?? {}).filter((c) => !skip.has(c))
+  const today = new Date().toISOString().slice(0, 10)
+  const wiped: string[] = []
+  for (const col of columns) {
+    let emptied = 0
+    for (const id of shared) {
+      if (!isEmptyValue(base.get(id)![col]) && isEmptyValue(head.get(id)![col])) emptied++
+    }
+    if (emptied === 0 || emptied <= Math.max(5, Math.floor(shared.length * EMPTIED_MAX))) continue
+    const waiver = waivers[col]
+    if (waiver && waiver.expectedEmptied === emptied && waiver.until >= today) {
+      console.log(
+        `✓ ${src.id}: ${col} emptied on ${emptied} rows — waived until ${waiver.until} (${waiver.reason})`
+      )
+      continue
+    }
+    wiped.push(`${col}: populated → empty on ${emptied} of ${shared.length} shown rows`)
+  }
+  if (wiped.length > 0) {
+    failures.push(
+      `${src.id}: ${headFile} vs ${baseFile} (${baseRef}) empties whole columns:\n     ` +
+        wiped.join('\n     ') +
+        `\n     → a re-read whose reader lost its input looks exactly like this; if intentional, add a dated` +
+        ` waiver per column to "${waiverKey}" in ${ALLOWLIST} with the exact count`
+    )
+  } else {
+    console.log(`✓ ${src.id}: ${headFile} vs ${baseFile}: no column emptied across the shown rows`)
   }
 }
 
