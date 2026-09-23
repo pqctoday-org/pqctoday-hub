@@ -300,10 +300,7 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     })
   } else if (algoName.startsWith('ECDSA') || algoName === 'secp256k1') {
     const curve = (algoName === 'secp256k1' ? 'secp256k1' : algoName.replace('ECDSA ', '')) as
-      | 'P-256'
-      | 'P-384'
-      | 'P-521'
-      | 'secp256k1'
+      'P-256' | 'P-384' | 'P-521' | 'secp256k1'
     let ecdsaResult: ReturnType<typeof softhsm.hsm_generateECKeyPair>
     keyGenMs = timeMs(() => {
       ecdsaResult = softhsm.hsm_generateECKeyPair(mod, hSession, curve, true)

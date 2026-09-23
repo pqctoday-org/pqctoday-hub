@@ -17,12 +17,7 @@ import { loadLatestCSV } from './csvUtils'
  * columns whose values reference `concept_id` from this registry.
  */
 export type ConceptSourceType =
-  | 'framework'
-  | 'guidance'
-  | 'standard'
-  | 'algorithm'
-  | 'timeline'
-  | 'concept_only'
+  'framework' | 'guidance' | 'standard' | 'algorithm' | 'timeline' | 'concept_only'
 
 export interface ConceptRegistryRow {
   conceptId: string

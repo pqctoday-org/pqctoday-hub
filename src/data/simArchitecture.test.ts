@@ -73,7 +73,10 @@ describe('simArchitecture', () => {
     expect(edgeState(a, find('OIDC'))).toBe('vendor')
     expect(edgeState(a, find('IKEv2'))).toBe('migratable')
     expect(
-      edgeState(ARCHITECTURES.mid, ARCHITECTURES.mid.edges.find((e) => e.protocol === 'Kerberos')!)
+      edgeState(
+        ARCHITECTURES.mid,
+        ARCHITECTURES.mid.edges.find((e) => e.protocol === 'Kerberos')!
+      )
     ).toBe('monitor')
   })
 

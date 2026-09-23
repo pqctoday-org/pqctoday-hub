@@ -1287,20 +1287,16 @@ function openP11Session(M: OpenSSLModule): { session: P11Session | null; detail:
   const ext = M as OpenSSLModule & Record<string, unknown>
   const fn_Initialize = ext._C_Initialize as ((p: number) => number) | undefined
   const fn_GetSlotList = ext._C_GetSlotList as
-    | ((tp: number, p: number, pc: number) => number)
-    | undefined
+    ((tp: number, p: number, pc: number) => number) | undefined
   const fn_OpenSession = ext._C_OpenSession as
-    | ((slot: number, flags: number, app: number, notify: number, ph: number) => number)
-    | undefined
+    ((slot: number, flags: number, app: number, notify: number, ph: number) => number) | undefined
   const fn_Login = ext._C_Login as
-    | ((s: number, ut: number, pp: number, pl: number) => number)
-    | undefined
+    ((s: number, ut: number, pp: number, pl: number) => number) | undefined
   const fn_malloc = ext._malloc as ((n: number) => number) | undefined
   const fn_setValue = ext.setValue as ((p: number, v: number, t: string) => void) | undefined
   const fn_getValue = ext.getValue as ((p: number, t: string) => number) | undefined
   const fn_stringToUTF8 = ext.stringToUTF8 as
-    | ((s: string, p: number, n: number) => void)
-    | undefined
+    ((s: string, p: number, n: number) => void) | undefined
   if (
     !fn_Initialize ||
     !fn_GetSlotList ||
@@ -1367,11 +1363,9 @@ function closeP11Session(M: OpenSSLModule, sess: P11Session): void {
 function findPrivKeyHandle(M: OpenSSLModule, hSession: number, label: string): number {
   const ext = M as OpenSSLModule & Record<string, unknown>
   const fn_FindInit = ext._C_FindObjectsInit as
-    | ((s: number, tpl: number, n: number) => number)
-    | undefined
+    ((s: number, tpl: number, n: number) => number) | undefined
   const fn_Find = ext._C_FindObjects as
-    | ((s: number, hOut: number, ulMax: number, pCount: number) => number)
-    | undefined
+    ((s: number, hOut: number, ulMax: number, pCount: number) => number) | undefined
   const fn_FindFinal = ext._C_FindObjectsFinal as ((s: number) => number) | undefined
   const fn_malloc = ext._malloc as ((n: number) => number) | undefined
   const fn_free = ext._free as ((p: number) => void) | undefined
@@ -1437,8 +1431,7 @@ function p11SignMldsaWithCtx(
 ): Uint8Array {
   const ext = M as OpenSSLModule & Record<string, unknown>
   const fn_MsgSignInit = ext._C_MessageSignInit as
-    | ((s: number, m: number, k: number) => number)
-    | undefined
+    ((s: number, m: number, k: number) => number) | undefined
   const fn_SignMessage = ext._C_SignMessage as
     | ((
         s: number,
@@ -1527,8 +1520,7 @@ function p11SignSingleShot(
   const ext = M as OpenSSLModule & Record<string, unknown>
   const fn_SignInit = ext._C_SignInit as ((s: number, m: number, k: number) => number) | undefined
   const fn_Sign = ext._C_Sign as
-    | ((s: number, msg: number, msgLen: number, sig: number, sigLenP: number) => number)
-    | undefined
+    ((s: number, msg: number, msgLen: number, sig: number, sigLenP: number) => number) | undefined
   const fn_malloc = ext._malloc as ((n: number) => number) | undefined
   const fn_free = ext._free as ((p: number) => void) | undefined
   const fn_setValue = ext.setValue as ((p: number, v: number, t: string) => void) | undefined

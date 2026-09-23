@@ -26,14 +26,7 @@ import type React from 'react'
 import type { WorkshopTool } from './workshopRegistry'
 
 export type VerbId =
-  | 'sign'
-  | 'encrypt'
-  | 'exchange'
-  | 'keys'
-  | 'certs'
-  | 'simulate'
-  | 'benchmark'
-  | 'discover'
+  'sign' | 'encrypt' | 'exchange' | 'keys' | 'certs' | 'simulate' | 'benchmark' | 'discover'
 
 export interface Verb {
   id: VerbId

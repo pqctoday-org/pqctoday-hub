@@ -50,17 +50,7 @@ import type { JurisdictionRule, HybridStance, EndState } from './jurisdiction'
  * sector-specific milestones (TIMELINE_COUNTRY_MILESTONES) may be absent.
  */
 export type SimArchetype =
-  | 'US'
-  | 'DE'
-  | 'FR'
-  | 'UK'
-  | 'AU'
-  | 'CA'
-  | 'JP'
-  | 'KR'
-  | 'SG'
-  | 'IN'
-  | 'EU'
+  'US' | 'DE' | 'FR' | 'UK' | 'AU' | 'CA' | 'JP' | 'KR' | 'SG' | 'IN' | 'EU'
 
 /**
  * Region keys for all entries in the jurisdiction registry.

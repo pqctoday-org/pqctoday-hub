@@ -34,12 +34,7 @@ export interface V2p7EkSpec {
   policyB: Uint8Array
   /** OpenSSL EVP keytype name (for cert SPKI parsing). */
   opensslKeytype:
-    | 'ML-KEM-512'
-    | 'ML-KEM-768'
-    | 'ML-KEM-1024'
-    | 'ML-DSA-44'
-    | 'ML-DSA-65'
-    | 'ML-DSA-87'
+    'ML-KEM-512' | 'ML-KEM-768' | 'ML-KEM-1024' | 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'
   /** NIST CSOR OID body bytes (post tag/length, X.690 §8.19). */
   nistCsorOid: Uint8Array
   /** Dotted OID notation for human display. */

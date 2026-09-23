@@ -32,13 +32,7 @@ export type KmipOp =
 export type KmipParamKind = 'uid' | 'pubUid' | 'privUid' | 'text' | 'ciphertextHex'
 
 export type KmipOutputKind =
-  | 'none'
-  | 'keypairUids'
-  | 'uid'
-  | 'signatureHex'
-  | 'ciphertextAndUid'
-  | 'bool'
-  | 'keyMaterialHex'
+  'none' | 'keypairUids' | 'uid' | 'signatureHex' | 'ciphertextAndUid' | 'bool' | 'keyMaterialHex'
 
 export interface KmipOpSpec {
   requires: Partial<Record<string, KmipParamKind>>

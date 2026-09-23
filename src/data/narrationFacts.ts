@@ -26,13 +26,7 @@ import type { Freshness } from './contentFreshness'
 
 /** Sector vocabulary for sector-aware narration (aliased as DemoSector in demoDocs). */
 export type NarrationSector =
-  | 'financial'
-  | 'healthcare'
-  | 'government'
-  | 'energy'
-  | 'telecom'
-  | 'retail'
-  | 'general'
+  'financial' | 'healthcare' | 'government' | 'energy' | 'telecom' | 'retail' | 'general'
 
 /**
  * The sim program's Q1 anchor year (the sim clock starts here; scenarioConfig

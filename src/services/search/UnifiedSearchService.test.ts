@@ -96,8 +96,7 @@ describe('UnifiedSearchService — convergence', () => {
     expect(candidates.length).toBeGreaterThan(0)
     const sample = candidates[0]
     const refId = (sample.metadata as Record<string, unknown> | undefined)?.refId as
-      | string
-      | undefined
+      string | undefined
     expect(refId).toBeTruthy()
     const ids = unified.entityIndex.get(refId!.toLowerCase())
     expect(ids).toBeDefined()

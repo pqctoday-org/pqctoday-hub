@@ -62,13 +62,7 @@ export const MATURITY_LEVELS: MaturityLevel[] = [
 
 /** The seven assessment domains. */
 export type DomainId =
-  | 'inventory'
-  | 'governance'
-  | 'pilots'
-  | 'vendor'
-  | 'compliance'
-  | 'agility'
-  | 'risk'
+  'inventory' | 'governance' | 'pilots' | 'vendor' | 'compliance' | 'agility' | 'risk'
 
 /**
  * Per-domain level descriptors. Level 0 is always "not started", so only the

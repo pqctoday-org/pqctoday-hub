@@ -15,12 +15,7 @@
 import { loadLatestCSV } from './csvUtils'
 
 export type CounterClaimRecordType =
-  | 'compliance'
-  | 'library'
-  | 'timeline'
-  | 'migrate'
-  | 'threats'
-  | 'algorithm'
+  'compliance' | 'library' | 'timeline' | 'migrate' | 'threats' | 'algorithm'
 
 export interface CounterClaim {
   claimId: string

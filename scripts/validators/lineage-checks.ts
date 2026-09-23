@@ -465,8 +465,7 @@ function readManifests(): Array<{ source: string; entries: ManifestEntryLite[] }
     if (!fs.existsSync(p)) continue
     try {
       const m = JSON.parse(fs.readFileSync(p, 'utf-8')) as
-        | { entries?: ManifestEntryLite[] }
-        | ManifestEntryLite[]
+        { entries?: ManifestEntryLite[] } | ManifestEntryLite[]
       const entries = Array.isArray(m) ? m : Array.isArray(m.entries) ? m.entries : null
       if (entries) out.push({ source: dir, entries })
     } catch {

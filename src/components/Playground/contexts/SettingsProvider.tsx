@@ -94,13 +94,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const valid = ['data', 'kem_ops', 'sign_verify', 'keystore', 'logs', 'symmetric', 'hashing']
     if (tab && valid.includes(tab))
       return tab as
-        | 'data'
-        | 'kem_ops'
-        | 'sign_verify'
-        | 'keystore'
-        | 'logs'
-        | 'symmetric'
-        | 'hashing'
+        'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'symmetric' | 'hashing'
     return 'keystore'
   })
   const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>('RSA-2048')

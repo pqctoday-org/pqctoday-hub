@@ -5,11 +5,7 @@
  */
 
 export type EventKind =
-  | 'milestone'
-  | 'selection'
-  | 'cryptanalysis'
-  | 'reparameterisation'
-  | 'standardisation'
+  'milestone' | 'selection' | 'cryptanalysis' | 'reparameterisation' | 'standardisation'
 
 export interface LifecycleEvent {
   id: string

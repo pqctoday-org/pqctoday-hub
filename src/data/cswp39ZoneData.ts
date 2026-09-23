@@ -14,12 +14,7 @@
 import type { PillarId } from '@/types/MaturityTypes'
 
 export type ZoneId =
-  | 'governance'
-  | 'assets'
-  | 'management-tools'
-  | 'risk-management'
-  | 'mitigation'
-  | 'migration'
+  'governance' | 'assets' | 'management-tools' | 'risk-management' | 'mitigation' | 'migration'
 
 export interface CSWP39ZoneDetail {
   /** Human-readable zone title used in headers and detail panels. */

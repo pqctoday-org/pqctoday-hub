@@ -5,12 +5,7 @@
 export type AIPipelineType = 'llm-training' | 'fine-tuning' | 'rag' | 'inference-only'
 
 export type PipelineStage =
-  | 'ingestion'
-  | 'preprocessing'
-  | 'storage'
-  | 'training'
-  | 'inference'
-  | 'output'
+  'ingestion' | 'preprocessing' | 'storage' | 'training' | 'inference' | 'output'
 
 export type CryptoOperation = 'encrypt' | 'sign' | 'hash' | 'key-wrap' | 'key-exchange' | 'attest'
 
@@ -82,17 +77,10 @@ export type ModelSizeCategory = '1B' | '7B' | '13B' | '70B' | '405B'
 export type EncryptionAtRest = 'aes-256-gcm' | 'chacha20-poly1305'
 
 export type KeyWrappingAlgorithm =
-  | 'rsa-2048'
-  | 'ml-kem-768'
-  | 'ml-kem-1024'
-  | 'hybrid-ml-kem-x25519'
+  'rsa-2048' | 'ml-kem-768' | 'ml-kem-1024' | 'hybrid-ml-kem-x25519'
 
 export type ModelSigningAlgorithm =
-  | 'rsa-2048'
-  | 'ecdsa-p256'
-  | 'ml-dsa-44'
-  | 'ml-dsa-65'
-  | 'slh-dsa-sha2-128s'
+  'rsa-2048' | 'ecdsa-p256' | 'ml-dsa-44' | 'ml-dsa-65' | 'slh-dsa-sha2-128s'
 
 export type DeploymentMode = 'cloud-tee' | 'on-prem-hsm' | 'edge-device' | 'federated'
 
@@ -145,18 +133,10 @@ export interface DelegationChainLink {
 // ── Agentic Commerce Types ────────────────────────────────────────────────
 
 export type CommerceScenario =
-  | 'simple-purchase'
-  | 'multi-agent-negotiation'
-  | 'supply-chain'
-  | 'subscription'
+  'simple-purchase' | 'multi-agent-negotiation' | 'supply-chain' | 'subscription'
 
 export type CommerceActor =
-  | 'user'
-  | 'buyer-agent'
-  | 'seller-agent'
-  | 'arbiter'
-  | 'payment-service'
-  | 'registry'
+  'user' | 'buyer-agent' | 'seller-agent' | 'arbiter' | 'payment-service' | 'registry'
 
 export interface CommerceFlowStep {
   id: string

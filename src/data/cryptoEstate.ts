@@ -16,13 +16,7 @@ export type LoopStage = 'discover' | 'classify' | 'score' | 'remediate' | 'attes
 export type DiscoveryLayer = 'source' | 'binary' | 'network' | 'infra' | 'cloud'
 export type KeyMgmt = 'software' | 'hsm' | 'kms'
 export type ToolId =
-  | 'vuln-scanner'
-  | 'clm'
-  | 'sbom'
-  | 'cspm'
-  | 'cbomkit-source'
-  | 'cbomkit-theia'
-  | 'hsm-query'
+  'vuln-scanner' | 'clm' | 'sbom' | 'cspm' | 'cbomkit-source' | 'cbomkit-theia' | 'hsm-query'
 
 export interface DiscoveryTool {
   id: ToolId

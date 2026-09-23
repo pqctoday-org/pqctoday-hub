@@ -42,16 +42,7 @@ export const FRAMEWORK_URL = 'https://pqcframework.com'
 
 /** The Applied Quantum migration phases. `foundations` is the spanning base band. */
 export type PhaseId =
-  | 'p0'
-  | 'p1'
-  | 'p2'
-  | 'p3'
-  | 'p4'
-  | 'p5'
-  | 'p6'
-  | 'p7'
-  | 'verify-close'
-  | 'foundations'
+  'p0' | 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'p6' | 'p7' | 'verify-close' | 'foundations'
 
 /** How a phase progresses relative to its neighbours (drives the rail layout). */
 export type Cadence = 'sequential' | 'parallel' | 'iterative' | 'continuous' | 'spanning'
@@ -64,13 +55,7 @@ export type { Cswp39StepId }
 
 /** Page routes that participate in the cross-page phase journey. */
 export type Route =
-  | '/assess'
-  | '/report'
-  | '/business'
-  | '/migrate'
-  | '/timeline'
-  | '/compliance'
-  | '/learn'
+  '/assess' | '/report' | '/business' | '/migrate' | '/timeline' | '/compliance' | '/learn'
 
 /**
  * A pointer from a phase to a concrete surface on a page, tagged with whether

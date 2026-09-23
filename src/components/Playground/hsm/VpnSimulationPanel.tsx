@@ -3130,8 +3130,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       }
 
       type Combo =
-        | { label: string; kind: 'rsa' }
-        | { label: string; kind: 'mldsa'; variant: 44 | 65 | 87 }
+        { label: string; kind: 'rsa' } | { label: string; kind: 'mldsa'; variant: 44 | 65 | 87 }
       const combos: Combo[] = [
         { label: 'RSA-3072', kind: 'rsa' },
         { label: 'ML-DSA-44', kind: 'mldsa', variant: 44 },
