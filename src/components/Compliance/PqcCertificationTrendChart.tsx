@@ -131,7 +131,15 @@ export function PqcCertificationTrendChart({ data, asOf }: PqcCertificationTrend
               fontSize: 12,
             }}
             labelStyle={{ color: 'var(--color-foreground)', fontWeight: 600 }}
-            labelFormatter={(ym) => formatMonthLong(ym)}
+            // recharts 3.10 retyped labelFormatter's first parameter from the
+            // axis value to ReactNode (a MINOR bump — caught by CI's Build
+            // step as TS2345 on 2026-09-22, PR #709). With a categorical
+            // XAxis on `month` it is that row's 'YYYY-MM' string at runtime,
+            // so narrow rather than coerce: String(non-string) would feed
+            // formatMonthLong a value it splits into NaN and render the words
+            // "Invalid Date" into the tooltip, which looks like real data.
+            // Falling back to the raw label instead keeps the failure visible.
+            labelFormatter={(ym) => (typeof ym === 'string' ? formatMonthLong(ym) : ym)}
             formatter={(value, name) => [
               `${value}`,
               name === 'acvp' ? 'ACVP' : name === 'fips' ? 'FIPS' : 'CC',

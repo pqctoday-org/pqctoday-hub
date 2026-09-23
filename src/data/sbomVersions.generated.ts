@@ -58,7 +58,7 @@ export const SBOM_PACKAGE_VERSIONS: Readonly<Record<string, string>> = {
   recharts: '3.8.1',
   'reflect-metadata': '0.2.2',
   'remark-gfm': '4.0.1',
-  'tailwind-merge': '3.6.0',
+  'tailwind-merge': '3.7.0',
   tailwindcss: '4.3.0',
   tsx: '4.22.4',
   typescript: '5.9.3',

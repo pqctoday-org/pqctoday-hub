@@ -30,6 +30,7 @@ const basePatent: PatentItem = {
   cryptoAgilityMode: 'hybrid',
   migrationStrategy: 'hybrid',
   quantumRelevance: 'core_invention',
+  quantumSafeBasis: 'pqc_algorithm',
   quantumNotes: '',
   protocols: [],
   classicalAlgorithms: [],
