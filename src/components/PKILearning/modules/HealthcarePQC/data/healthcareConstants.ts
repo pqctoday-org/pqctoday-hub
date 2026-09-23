@@ -3,12 +3,7 @@
 // ── Biometric Data Types ─────────────────────────────────────────────────
 
 export type BiometricType =
-  | 'fingerprint'
-  | 'iris'
-  | 'facial-geometry'
-  | 'voiceprint'
-  | 'dna-snp'
-  | 'retinal'
+  'fingerprint' | 'iris' | 'facial-geometry' | 'voiceprint' | 'dna-snp' | 'retinal'
 
 export type RevocabilityLevel = 'irreplaceable' | 'replaceable-with-cost' | 'easily-replaceable'
 
@@ -178,13 +173,7 @@ export const REVOCABILITY_MATRIX: RevocabilityItem[] = [
 // ── Pharmaceutical IP Types ──────────────────────────────────────────────
 
 export type DrugPhase =
-  | 'discovery'
-  | 'preclinical'
-  | 'phase-1'
-  | 'phase-2'
-  | 'phase-3'
-  | 'fda-review'
-  | 'post-market'
+  'discovery' | 'preclinical' | 'phase-1' | 'phase-2' | 'phase-3' | 'fda-review' | 'post-market'
 
 export interface PharmaPhaseConfig {
   id: DrugPhase
@@ -465,12 +454,7 @@ export const HEALTHCARE_DATA_PROFILES: HealthcareDataProfile[] = [
 export type DeviceClass = 'I' | 'II' | 'III'
 
 export type CommunicationProtocol =
-  | 'bluetooth-le'
-  | 'wifi'
-  | 'zigbee'
-  | 'wired-ethernet'
-  | 'proprietary-rf'
-  | 'nfc'
+  'bluetooth-le' | 'wifi' | 'zigbee' | 'wired-ethernet' | 'proprietary-rf' | 'nfc'
 
 export type AttackVector =
   | 'firmware-forgery'

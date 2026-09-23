@@ -15,10 +15,7 @@ import { FileText, KeyRound, Building2, CalendarClock } from 'lucide-react'
 import type { RACIOutput, PolicyOutput } from '../types'
 
 export type PolicyType =
-  | 'crypto-algorithm'
-  | 'key-management'
-  | 'vendor-requirements'
-  | 'migration-timeline'
+  'crypto-algorithm' | 'key-management' | 'vendor-requirements' | 'migration-timeline'
 
 interface PolicyTypeOption {
   id: PolicyType

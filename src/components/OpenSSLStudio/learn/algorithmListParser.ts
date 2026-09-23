@@ -25,12 +25,7 @@
 // real captured output before this parser was written.
 
 export type AlgorithmFamily =
-  | 'pqc'
-  | 'classical-asymmetric'
-  | 'symmetric'
-  | 'hash-hmac'
-  | 'kdf'
-  | 'other'
+  'pqc' | 'classical-asymmetric' | 'symmetric' | 'hash-hmac' | 'kdf' | 'other'
 
 export interface AlgorithmEntry {
   /** Primary display name — the `Name:` label if present, else the first ID/alias. */

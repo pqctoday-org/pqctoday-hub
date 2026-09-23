@@ -4,12 +4,7 @@
 // Regenerate with: npm run sync:sandbox
 
 export type SandboxTrackId =
-  | 'protocol-simulation'
-  | 'infrastructure'
-  | 'supply-chain'
-  | 'secrets-kms'
-  | 'web'
-  | 'applications'
+  'protocol-simulation' | 'infrastructure' | 'supply-chain' | 'secrets-kms' | 'web' | 'applications'
 export type SandboxDifficulty = 'beginner' | 'intermediate' | 'advanced'
 
 export interface SandboxScenario {

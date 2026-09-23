@@ -7,13 +7,7 @@ import { FAQ_DATA } from '@/components/FAQ/faqData'
 const FAQ_QUESTION_COUNT = FAQ_DATA.reduce((sum, cat) => sum + cat.items.length, 0)
 
 export type MobilePageActionId =
-  | 'assistant'
-  | 'journey'
-  | 'faq'
-  | 'sources'
-  | 'glossary'
-  | 'whatsNew'
-  | 'about'
+  'assistant' | 'journey' | 'faq' | 'sources' | 'glossary' | 'whatsNew' | 'about'
 
 export interface MobilePageAction {
   id: MobilePageActionId

@@ -123,10 +123,7 @@ export type KeyIdentityInput = string | Pick<HsmKey, 'wasmContext' | 'slotId' | 
  * whole inventory at the start of a fresh run) — never a default.
  */
 export type ClearKeysScope =
-  | { slotId: number }
-  | { sessionHandle: number }
-  | { wasmContext: HsmKey['wasmContext'] }
-  | 'all'
+  { slotId: number } | { sessionHandle: number } | { wasmContext: HsmKey['wasmContext'] } | 'all'
 
 export interface HsmContextValue {
   // ── WASM handles ──────────────────────────────────────────────────────────

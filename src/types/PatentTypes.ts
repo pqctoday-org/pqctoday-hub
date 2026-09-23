@@ -10,10 +10,7 @@ export type MigrationStrategy =
   | 'in_place_upgrade'
   | 'none'
 export type QuantumRelevance =
-  | 'core_invention'
-  | 'dependent_claim_only'
-  | 'background_only'
-  | 'none'
+  'core_invention' | 'dependent_claim_only' | 'background_only' | 'none'
 /** WHY a patent is quantum-safe. `pqcAlgorithms` only ever holds NIST PQC
  *  names, so a patent that is quantum-safe by AES-256, by a lattice FHE
  *  scheme or by QKD had no way to say so and read as purely classical. */

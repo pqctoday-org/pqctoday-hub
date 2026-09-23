@@ -35,12 +35,7 @@ import { renderMermaidToPngDataUrl } from '@/components/Simulation/mermaidRender
 import { useThemeStore } from '@/store/useThemeStore'
 
 type ComponentKind =
-  | 'application'
-  | 'library'
-  | 'hsm'
-  | 'protocol'
-  | 'key-store'
-  | 'certificate-authority'
+  'application' | 'library' | 'hsm' | 'protocol' | 'key-store' | 'certificate-authority'
 
 interface ArchComponent {
   id: string

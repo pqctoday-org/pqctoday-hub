@@ -95,8 +95,7 @@ describe('composite profile picker', () => {
       // 5th argument is the profile. THIS is the assertion the stale closure
       // defeated — everything rendered was already correct.
       const profileArg = generateCompositeCert.mock.calls[0][4] as
-        | { compositeOid: string }
-        | undefined
+        { compositeOid: string } | undefined
       expect(profileArg?.compositeOid, `${label}: wrong profile reached the service`).toBe(oid)
     }
   )

@@ -30,13 +30,7 @@ import { compareResponses, setCurrentTestName } from './compare'
 import { classifyByName, classifyByOps, operationsUsed } from './classify'
 
 export type TestStatus =
-  | 'PASS'
-  | 'FAIL'
-  | 'ERROR'
-  | 'SKIP_OP'
-  | 'SKIP_PARSE'
-  | 'SKIP_DEPRECATED'
-  | 'SKIP_TRANSPORT'
+  'PASS' | 'FAIL' | 'ERROR' | 'SKIP_OP' | 'SKIP_PARSE' | 'SKIP_DEPRECATED' | 'SKIP_TRANSPORT'
 
 export interface TestResult {
   name: string

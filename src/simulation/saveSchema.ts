@@ -42,8 +42,7 @@ const YEAR_MIN = 2020
 const YEAR_MAX = 2100
 
 export type ValidationResult =
-  | { ok: true; data: SimulationData; version: number }
-  | { ok: false; errors: string[] }
+  { ok: true; data: SimulationData; version: number } | { ok: false; errors: string[] }
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v)

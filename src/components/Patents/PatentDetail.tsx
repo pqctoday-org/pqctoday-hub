@@ -31,14 +31,7 @@ interface Props {
 
 // ─── Color tokens ────────────────────────────────────────────────────────────
 type TagVariant =
-  | 'pqc'
-  | 'classical'
-  | 'quantum'
-  | 'protocol'
-  | 'info'
-  | 'warning'
-  | 'threat'
-  | 'default'
+  'pqc' | 'classical' | 'quantum' | 'protocol' | 'info' | 'warning' | 'threat' | 'default'
 
 const TAG_CLASSES: Record<TagVariant, string> = {
   pqc: 'border-success/40 text-success bg-success/10',

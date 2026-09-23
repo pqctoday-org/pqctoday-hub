@@ -43,15 +43,7 @@ import {
 import { smimeEnvelopeEncrypted } from '../services/smimeMultipart'
 
 type Stage =
-  | 'idle'
-  | 'ca-key'
-  | 'ca-cert'
-  | 'genkey'
-  | 'mkcert'
-  | 'encrypt'
-  | 'decrypt'
-  | 'done'
-  | 'error'
+  'idle' | 'ca-key' | 'ca-cert' | 'genkey' | 'mkcert' | 'encrypt' | 'decrypt' | 'done' | 'error'
 
 interface StageResult {
   caKeyPem?: string
