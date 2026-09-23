@@ -44,6 +44,7 @@ const samplePatent = (
     cryptoAgilityMode: 'Mixed',
     migrationStrategy: 'Hybrid',
     quantumRelevance: 'High',
+    quantumSafeBasis: 'pqc_algorithm',
     quantumNotes: '',
     protocols: [],
     classicalAlgorithms: [],

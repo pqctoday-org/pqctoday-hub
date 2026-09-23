@@ -8,6 +8,7 @@ const p = (over: Partial<PatentItem>): PatentItem =>
   ({
     impactLevel: 'Low',
     quantumRelevance: 'none',
+    quantumSafeBasis: 'pqc_algorithm',
     nistRoundStatus: [],
     assignee: '',
     ...over,

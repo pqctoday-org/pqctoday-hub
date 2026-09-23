@@ -10,11 +10,21 @@ import { Button } from '@/components/ui/button'
 interface PatentsScopeControlProps {
   pqcOnly: boolean
   onChange: (pqcOnly: boolean) => void
+  /** How many patents outside the PQC scope still claim quantum safety on
+   *  another basis (symmetric strength, lattice FHE, QKD). Named here
+   *  because "PQC & hybrid" silently hides them otherwise: pqcAlgorithms
+   *  only ever holds NIST PQC names, and AES-256 is quantum-safe without
+   *  being one. 0 hides the sentence. */
+  quantumSafeOutsideScope?: number
 }
 
 const SEG_BASE = 'h-auto gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-bold transition-colors'
 
-export function PatentsScopeControl({ pqcOnly, onChange }: PatentsScopeControlProps) {
+export function PatentsScopeControl({
+  pqcOnly,
+  onChange,
+  quantumSafeOutsideScope = 0,
+}: PatentsScopeControlProps) {
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
       <span className="shrink-0 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
@@ -54,7 +64,11 @@ export function PatentsScopeControl({ pqcOnly, onChange }: PatentsScopeControlPr
       </div>
       <span className="text-[12px] text-muted-foreground">
         {pqcOnly
-          ? 'Showing patents that use post-quantum or hybrid cryptography.'
+          ? `Showing patents that use post-quantum or hybrid cryptography.${
+              quantumSafeOutsideScope > 0
+                ? ` ${quantumSafeOutsideScope} more are quantum-safe without a PQC algorithm — AES-256, SHA-2/3 or QKD — and appear under “All crypto”.`
+                : ''
+            }`
           : 'Showing the full corpus, including classical-only patents.'}
       </span>
     </div>
