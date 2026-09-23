@@ -12,13 +12,23 @@
  *      populated (e.g. main's re-enrichment erased Citrix's PQC algorithms —
  *      non-empty -> empty — with zero signal).
  *
+ *   3. A patents re-read blanks a column across the in-scope rows: the
+ *      2026-09-18 re-read (patents_09182026.csv) wrote `[]` into
+ *      claim_dependencies for 607 of the 729 rows the Patents page shows —
+ *      its reader had no claims text to read — and the page's Claim
+ *      Structure section vanished. The commit's own validation checked
+ *      that what was written was TRUE, not that what was there survived.
+ *
  * This check diffs HEAD against the base branch (origin/main on a PR) and
  * BLOCKS on either class. Intentional drops are opt-in via the allowlist at
  * scripts/ci/data-regression-allowlist.json:
  *
  *   {
  *     "complianceRecordDropOk": false,
- *     "vendorAlgoEmptyOk": ["VND-999"]   // vendor ids allowed to go empty
+ *     "vendorAlgoEmptyOk": ["VND-999"],  // vendor ids allowed to go empty
+ *     "patentsEmptiedOk": {              // one dated waiver per column
+ *       "quantum_notes": { "expectedEmptied": 54, "reason": "...", "until": "2026-10-01" }
+ *     }
  *   }
  *
  * No network. Deterministic. Skips gracefully (exit 0 + warning) if the base
@@ -27,6 +37,7 @@
 import { execSync } from 'node:child_process'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
+import Papa from 'papaparse'
 
 const ROOT = process.cwd()
 const COMPLIANCE = 'public/data/compliance-data.json'
@@ -73,9 +84,11 @@ function lsBase(dir: string): string[] {
  * fails, and the waiver expires instead of becoming permanent.
  */
 type DropWaiver = { expectedDrop: number; reason: string; until: string }
+type EmptiedWaiver = { expectedEmptied: number; reason: string; until: string }
 type Allowlist = {
   complianceRecordDropOk?: boolean | DropWaiver
   vendorAlgoEmptyOk?: string[]
+  patentsEmptiedOk?: Record<string, EmptiedWaiver>
 }
 const allow: Allowlist = existsSync(join(ROOT, ALLOWLIST))
   ? JSON.parse(readFileSync(join(ROOT, ALLOWLIST), 'utf8'))
@@ -271,6 +284,94 @@ function buildAlgoMap(read: (file: string) => string, files: string[]): Map<stri
       )
     } else {
       console.log(`✓ vendor roadmap: no vendor regressed non-empty → empty algorithms`)
+    }
+  }
+}
+
+// ── Check 3: a patents column must not go populated → empty across the page ─
+// Compares the newest patents_*.csv on HEAD with the newest on the base ref,
+// row by row over the rows both files show (status ≠ deprecated). A single
+// row emptied is a correction; a column emptied on more than PATENTS_EMPTIED_MAX
+// of those rows is a reader that lost its input. Empty means '', '[]' or the
+// enricher's own "uncertain" fallback 'none' (enrich_patents.py returns
+// 'none' or an empty list when it cannot tell), so a wipe cannot hide behind
+// the fallback value.
+const PATENTS_DIR = 'src/data'
+const PATENTS_FILE = /^patents_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+const PATENTS_EMPTIED_MAX = 0.05
+const PATENTS_SKIP = new Set([
+  'patent_number',
+  'title',
+  'status',
+  'deprecated_at',
+  'deprecated_reason',
+])
+const patentsEmptiedOk = allow.patentsEmptiedOk ?? {}
+
+function latestPatents(files: string[]): string | null {
+  const dated = files
+    .map((f) => ({ f, m: f.match(PATENTS_FILE) }))
+    .filter((x): x is { f: string; m: RegExpMatchArray } => x.m !== null)
+    .map(({ f, m }) => ({ f, key: `${m[3]}${m[1]}${m[2]}`, r: Number(m[4] ?? 0) }))
+    .sort((a, b) => (a.key === b.key ? a.r - b.r : a.key < b.key ? -1 : 1))
+  return dated.length ? dated[dated.length - 1].f : null
+}
+function patentsRows(raw: string): Map<string, Record<string, string>> {
+  const parsed = Papa.parse<Record<string, string>>(raw, { header: true, skipEmptyLines: true })
+  const out = new Map<string, Record<string, string>>()
+  for (const row of parsed.data) {
+    if ((row.status ?? '').trim() === 'deprecated') continue
+    if (row.patent_number) out.set(row.patent_number, row)
+  }
+  return out
+}
+const isEmptyValue = (v: string | undefined): boolean => {
+  const t = (v ?? '').trim()
+  return t === '' || t === '[]' || t === 'none'
+}
+{
+  const baseFile = latestPatents(lsBase(PATENTS_DIR))
+  const headFile = existsSync(join(ROOT, PATENTS_DIR))
+    ? latestPatents(readdirSync(join(ROOT, PATENTS_DIR)))
+    : null
+  if (!baseFile || !headFile) {
+    console.warn(`⚠  no patents CSV on ${baseRef} or HEAD — skipping patents emptied-column check`)
+  } else if (baseFile === headFile) {
+    console.log(`✓ patents: ${headFile} unchanged vs ${baseRef}`)
+  } else {
+    const base = patentsRows(showFromBase(`${PATENTS_DIR}/${baseFile}`) ?? '')
+    const head = patentsRows(readFileSync(join(ROOT, PATENTS_DIR, headFile), 'utf8'))
+    const shared = [...base.keys()].filter((id) => head.has(id))
+    const columns = Object.keys(head.values().next().value ?? {}).filter(
+      (c) => !PATENTS_SKIP.has(c)
+    )
+    const today = new Date().toISOString().slice(0, 10)
+    const wiped: string[] = []
+    for (const col of columns) {
+      let emptied = 0
+      for (const id of shared) {
+        if (!isEmptyValue(base.get(id)![col]) && isEmptyValue(head.get(id)![col])) emptied++
+      }
+      if (emptied === 0 || emptied <= Math.max(5, Math.floor(shared.length * PATENTS_EMPTIED_MAX)))
+        continue
+      const waiver = patentsEmptiedOk[col]
+      if (waiver && waiver.expectedEmptied === emptied && waiver.until >= today) {
+        console.log(
+          `✓ patents: ${col} emptied on ${emptied} rows — waived until ${waiver.until} (${waiver.reason})`
+        )
+        continue
+      }
+      wiped.push(`${col}: populated → empty on ${emptied} of ${shared.length} shown rows`)
+    }
+    if (wiped.length > 0) {
+      failures.push(
+        `patents: ${headFile} vs ${baseFile} (${baseRef}) empties whole columns:\n     ` +
+          wiped.join('\n     ') +
+          `\n     → a re-read whose reader lost its input looks exactly like this; if intentional, add a dated` +
+          ` waiver per column to "patentsEmptiedOk" in ${ALLOWLIST} with the exact count`
+      )
+    } else {
+      console.log(`✓ patents: ${headFile} vs ${baseFile}: no column emptied across the shown rows`)
     }
   }
 }

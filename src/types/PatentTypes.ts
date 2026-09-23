@@ -14,6 +14,10 @@ export type QuantumRelevance =
   | 'dependent_claim_only'
   | 'background_only'
   | 'none'
+/** WHY a patent is quantum-safe. `pqcAlgorithms` only ever holds NIST PQC
+ *  names, so a patent that is quantum-safe by AES-256, by a lattice FHE
+ *  scheme or by QKD had no way to say so and read as purely classical. */
+export type QuantumSafeBasis = 'pqc_algorithm' | 'symmetric_strength' | 'lattice_fhe' | 'qkd' | ''
 export type NistStatusValue =
   | 'fips_203'
   | 'fips_204'
@@ -42,6 +46,7 @@ export interface InsightsFilter {
   impact?: string
   quantumTech?: string
   quantumRelevance?: string
+  quantum_safe_basis?: string
   region?: string
   protocol?: string
   classicalAlgorithm?: string
@@ -81,6 +86,15 @@ export interface PatentItem {
   migrationStrategy: MigrationStrategy
   quantumRelevance: QuantumRelevance
   quantumNotes: string
+  /** WHY this patent is quantum-safe, when it is not by naming a NIST PQC
+   *  algorithm. `pqc_algorithm` names one; `symmetric_strength` relies on
+   *  256-bit symmetric / SHA-2+ strength (AES-256 gives ~128-bit security
+   *  against Grover, which NIST treats as post-quantum adequate);
+   *  `lattice_fhe` is homomorphic encryption on lattice assumptions; `qkd`
+   *  is quantum key distribution. Empty when the patent claims no quantum
+   *  safety. Added 2026-09-22: pqcAlgorithms only ever holds NIST PQC names,
+   *  so a patent quantum-safe by AES-256 read as purely classical. */
+  quantumSafeBasis: QuantumSafeBasis
   protocols: string[]
   classicalAlgorithms: string[]
   pqcAlgorithms: string[]
