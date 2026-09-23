@@ -79,8 +79,21 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderLayout('/')
     expect(await screen.findByText("Who's asking?")).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Home/ })).toBeInTheDocument()
+    // findBy*, not getBy*: the header and bottom bar are React.lazy() (see the
+    // comment above the previous test), and they resolve as SEPARATE chunks
+    // from the picker awaited on the line above — so awaiting the picker says
+    // nothing about whether these two have mounted yet.
+    //
+    // This is the defect behind the "flaky MainLayout.mobileShell" reports
+    // (2026-09-21/22, fixed 2026-09-22). Under no load every chunk lands in
+    // the same microtask flush and the synchronous lookups happened to find
+    // them; in a full-suite run (7.5k tests, ~2600 s of import time) they land
+    // at different times and the lookup ran before the header existed. That is
+    // also why running this file alone "proved" it passed — isolation removes
+    // the very condition that triggers it, so an isolation run is not evidence
+    // here.
+    expect(await screen.findByRole('button', { name: 'Search' })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Home/ })).toBeInTheDocument()
   })
 
   it('flag on, personalization explicitly skipped: shows the normal mobile chrome, not the picker again', async () => {

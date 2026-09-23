@@ -37,6 +37,91 @@ updates:
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
+      # The same policy, applied correctly to 0.x packages.
+      #
+      # Semver gives `0.y.z` no major to bump: per spec §4 "anything MAY change
+      # at any time", and by universal convention it is `y` that carries the
+      # breaking change. So the rule above — "majors are adopted deliberately"
+      # — simply does not reach a 0.x package, and every 0.x minor arrived
+      # automatically as if it were routine. It is not.
+      #
+      # Proven on 2026-09-22 by PR #709: 39 updates, ZERO majors by
+      # dependabot's reckoning, and it still failed CI twice —
+      #   pyodide 0.28.3 -> 0.29.5 broke the public/pyodide snapshot
+      #     (6 of 7 driftguard assertions), and the earlier 0.28 -> 314 jump
+      #     broke sync:pyodide-runtime outright
+      # — while `three`, `sharp` and `micro-eth-signer` rode along in the same
+      # PR on the identical channel. Holding `y` on these is not extra caution;
+      # it is the major rule finally covering the packages it always meant to.
+      #
+      # Patch updates still flow automatically, and per GitHub's docs SECURITY
+      # updates ignore these rules entirely — so nothing here delays a CVE fix.
+      # To take a 0.x minor: bump it by hand in its own PR, with its changelog
+      # read and (for pyodide) `npm run sync:pyodide-runtime` committed.
+      - dependency-name: '@mlc-ai/web-llm'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: '@noble/post-quantum'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: '@oqs/liboqs-js'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: '@react-oauth/google'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: '@types/dagre'
+        update-types: ['version-update:semver-minor']
+      # @types/three tracks three's minor line, so the two must be held
+      # together or npm resolves types that describe a different library.
+      - dependency-name: '@types/three'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'class-variance-authority'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'dagre'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'eslint-plugin-react-refresh'
+        update-types: ['version-update:semver-minor']
+      # eslint-plugin-react-hooks 7.1.1 leaks — measured, not suspected.
+      #
+      # #706 bumped five eslint packages and Lint died with exit 134. The first
+      # response was to raise the ceiling (#708, NODE_OPTIONS
+      # --max-old-space-size=8192). It did not help, and the way it failed is
+      # the whole story: at Node's ~4 GB default it died at 4,005 MB; at 8 GB
+      # it died at 8,028 MB. It consumes whatever it is given, which is a leak,
+      # not a large workload.
+      #
+      # Bisected locally on a 48 GB machine (peak RSS, `npm run lint`):
+      #   main as-is                            1.03 GB   pass
+      #   + typescript-eslint 8.70.0 (14 minors!) 1.12 GB  pass — and FASTER
+      #   all five bumps                        4.24 GB   exit 134
+      #   all five minus react-hooks (7.0.1)    1.97 GB   pass
+      # So typescript-eslint — the obvious suspect, and the biggest jump — is
+      # innocent, and 7.0.1 -> 7.1.1 alone is worth more than 2 GB. 7.x runs
+      # the React Compiler for its memoization rules; that is where it goes.
+      #
+      # Held at 7.0.1 minors until upstream fixes it. Patches still flow, and a
+      # security release would come through regardless of this rule. Re-measure
+      # with the four numbers above before lifting it — the lint step is a
+      # security gate (eslint-plugin-security), so it has to actually run.
+      - dependency-name: 'eslint-plugin-react-hooks'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'micro-eth-signer'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'pyodide'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'reflect-metadata'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'three'
+        update-types: ['version-update:semver-minor']
+      # Not 0.x itself, but its minors carry other people's breaking changes:
+      # onnxruntime-node, onnxruntime-web and sharp are TRANSITIVE deps of this
+      # package, not ours, so dependabot cannot group, pin or ignore them on
+      # their own — they move only when this parent moves. #709's single
+      # 4.2 -> 4.3 minor dragged onnxruntime-node across SIX minors
+      # (1.24.3 -> 1.30.0), moved onnxruntime-web to a different dated
+      # prerelease build (1.26.0-dev.20260416 -> 1.31.0-dev.20260914) and took
+      # sharp 0.34 -> 0.35 — all on the i.MX 95 NPU / behaviour-model path.
+      # That surface is too large to adopt as a routine bump, and the only
+      # control we have over it is this line.
+      - dependency-name: '@huggingface/transformers'
+        update-types: ['version-update:semver-minor']
     # Every group is minor/patch ONLY. Majors are deliberately left ungrouped
     # so each arrives as its own PR.
     #
