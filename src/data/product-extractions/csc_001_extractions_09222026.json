@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "CipherLinq",
+    "category": "Cryptographic Libraries",
+    "product_name": "CipherLinq",
+    "product_brief": "A comprehensive suite of FIPS Approved algorithms implemented in pure Java for use by US Federal agencies and other markets.",
+    "pqc_support": "Partial — HSS and LMS signature schemes (RFC 8708) are listed as non-approved algorithms not allowed in approved mode.",
+    "pqc_capability_description": "The module lists HSS (RFC 8708) and LMS (RFC 8708) signature schemes in Table 6 as \"Non-Approved Algorithms Not Allowed in the Approved Mode of Operation.\" This indicates the software contains implementations of these stateful hash-based signature algorithms, but they are explicitly excluded from the FIPS 140-3 approved mode of operation. No other PQC algorithms (e.g., ML-KEM, ML-DSA) are mentioned.",
+    "pqc_migration_priority": "Low",
+    "crypto_primitives": "AES (ECB, CBC, CFB, CTR, GCM, CCM, CMAC, KW, KWP, FF1), SHA-1, SHA-2 (224, 256, 384, 512, 512/224, 512/256), SHA-3 (224, 256, 384, 512), SHAKE-128, SHAKE-256, cSHAKE-128, cSHAKE-256, KMAC-128, KMAC-256, TupleHash-128, TupleHash-256, ParallelHash-128, ParallelHash-256, DSA, ECDSA, RSA, HMAC, PBKDF, KDF (SP800-108, SP800-135, SP800-56C), KAS (ECC, FFC, IFC), KTS-IFC, DRBG (Counter, Hash, HMAC).",
+    "key_management_model": "Software-based key generation and management within a Java Archive (JAR) file; supports approved and non-approved modes.",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Software Library (Pure Java)",
+    "infrastructure_layer": "Libraries",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "2.0.0",
+    "release_date": "2026-03-31",
+    "fips_validated": "FIPS 140-3 Level 1 (Certificate #5062, Active)",
+    "primary_platforms": "Android 16, VMware Photon OS 4.0/5.0, Java SE Runtime Environment v8/v11/v17/v21, Dell PowerEdge R650, Google Pixel 9 Pro XL, Samsung Galaxy S24",
+    "target_industries": "Government, Enterprise",
+    "regulatory_status": "FIPS 140-3 Validated",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "DSA, ECDSA, RSA (PSS and PKCS1.5), HSS (non-approved), LMS (non-approved)",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "CAVP tested (Certificates A4399, A8025), FIPS 140-3 Validation (Acumen Security Lab)",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Uses DRBG (Counter, Hash, HMAC) compliant with SP 800-90A; supports external RNG.",
+    "constrained_device_&_iot_suitability": "Tested on Android devices (Google Pixel 9 Pro XL, Samsung Galaxy S24).",
+    "supply_chain_&_vendor_risk": "Vendor is Higher Ground LLC; module is a single JAR file (bc-fips-2.0.0.jar).",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.8-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-09-22"
+    }
+  }
+]
