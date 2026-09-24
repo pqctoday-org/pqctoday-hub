@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * UX-13: on the live site a /threats?id=… dialog was seen to open, close and
- * reopen on every fresh load. That cycle is NOT produced by this component —
- * it is a full page reload (index.html's cross-origin-isolation guard reloads
- * once when the PWA service worker first takes control; reproduced against
- * the production build served without COOP/COEP headers). This pins the
- * React side: for a given ?id the dialog mounts exactly once and is never
+ * reopen on every fresh load. That cycle was not produced by this component —
+ * it was a full page reload (index.html's cross-origin-isolation guard
+ * reloaded every route once the PWA service worker took control; now scoped
+ * to the routes that need it, src/utils/crossOriginIsolation.ts). This pins
+ * the React side: for a given ?id the dialog mounts exactly once and is never
  * torn down while the page settles, including across a same-route URL update.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
