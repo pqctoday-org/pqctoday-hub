@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_09182026.csv
+ * Source: src/data/role_board_content_09242026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -107,7 +107,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'CNSA 2.0 exclusive use (web, cloud, OS)', value: '2033' },
-            { label: 'CRQC consensus', value: '2035 (2030–2041)' },
+            { label: 'CRQC expert forecast', value: '2035 (2030–2041)' },
             { label: 'Your migration takes', value: '5 yrs' },
             { label: 'All national-security systems', value: '2035' },
           ],
@@ -2485,7 +2485,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
-          title: 'The CRQC consensus',
+          title: 'The CRQC expert forecast',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
@@ -2863,7 +2863,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'The maths breaking', value: 'settled' },
-            { label: 'The year it breaks', value: 'a range, 2030–2036' },
+            { label: 'The year it breaks', value: '2035 (2030–2041)' },
             { label: 'The replacement', value: 'published and final' },
           ],
           punchline: 'Uncertain timing is not the same as uncertain outcome.',

@@ -1,6 +1,6 @@
 {
- "csv": "quantum_threats_hsm_industries_09232026_r3.csv",
- "generatedAt": "2026-09-24T07:28:40+00:00",
+ "csv": "quantum_threats_hsm_industries_09242026_r1.csv",
+ "generatedAt": "2026-09-24T23:01:31+00:00",
  "note": "Claim-ledger verdicts on each row's cited document, only where the verdict was reached on the file cited today. Verdict words only; no document text.",
  "rows": {
   "AERO-002": {
@@ -130,7 +130,7 @@
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "a496b941bce32f5a"
+   "evidenceSha256": "4099d86d1b3ce2e0"
   },
   "AUS-TEL-001": {
    "claims": {
@@ -235,7 +235,7 @@
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "f7d6f6583f882b73"
+   "evidenceSha256": "6d665e181c863264"
   },
   "CI-003": {
    "claims": {
@@ -310,7 +310,7 @@
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "81749d20a5534231"
+   "evidenceSha256": "27fdec9bc2daa912"
   },
   "CLOUD-003": {
    "claims": {
@@ -386,14 +386,14 @@
     },
     "threat_description": {
      "decidedAt": "2026-09-24",
-     "verdict": "supported"
+     "verdict": "undeterminable"
     },
     "vetting_body": {
      "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "99c010440384444e"
+   "evidenceSha256": "4bd13ec99c8aa44f"
   },
   "CRIT-002": {
    "claims": {
@@ -610,7 +610,7 @@
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "b47bb3a4b591aad7"
+   "evidenceSha256": "0a04dee6c23f966c"
   },
   "CROS-008": {
    "claims": {
@@ -678,14 +678,14 @@
     },
     "threat_description": {
      "decidedAt": "2026-09-24",
-     "verdict": "supported"
+     "verdict": "contradicted"
     },
     "vetting_body": {
      "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "64e2ef47275b7512"
+   "evidenceSha256": "6cbc6aac1139c2bd"
   },
   "CROSS-002": {
    "claims": {
@@ -827,16 +827,22 @@
   "CROSS-009": {
    "claims": {
     "crypto_at_risk": {
+     "basis": "second-source",
      "decidedAt": "2026-09-24",
-     "verdict": "undeterminable"
+     "primaryVerdict": "undeterminable",
+     "secondSource": "RFC 6605",
+     "verdict": "supported"
     },
     "main_source": {
      "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
+     "basis": "second-source",
      "decidedAt": "2026-09-24",
-     "verdict": "undeterminable"
+     "primaryVerdict": "undeterminable",
+     "secondSource": "draft-fregly-research-agenda-for-pqc-dnssec-00",
+     "verdict": "supported"
     },
     "related_standards": {
      "decidedAt": "2026-09-24",
@@ -853,7 +859,7 @@
    "claims": {
     "crypto_at_risk": {
      "decidedAt": "2026-09-24",
-     "verdict": "supported"
+     "verdict": "undeterminable"
     },
     "main_source": {
      "decidedAt": "2026-09-24",
@@ -868,11 +874,14 @@
      "verdict": "PARTIAL"
     },
     "threat_description": {
+     "basis": "second-source",
      "decidedAt": "2026-09-24",
-     "verdict": "undeterminable"
+     "primaryVerdict": "supported",
+     "secondSource": "RFC 7935",
+     "verdict": "supported"
     }
    },
-   "evidenceSha256": "b4ec7dcdbcacca53"
+   "evidenceSha256": "9dd50ead252322dc"
   },
   "CROSS-011": {
    "claims": {
@@ -935,7 +944,7 @@
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "0f1c3943541a3a7a"
+   "evidenceSha256": "9d4f92cf6e3ee093"
   },
   "CROSS-014": {
    "claims": {
@@ -1166,15 +1175,6 @@
    },
    "evidenceSha256": "fc8a093ed69e8464"
   },
-  "EDU-002": {
-   "claims": {
-    "main_source": {
-     "decidedAt": "2026-09-11",
-     "verdict": "MATCH"
-    }
-   },
-   "evidenceSha256": "1a771d36117f80a4"
-  },
   "EDU-003": {
    "claims": {
     "crypto_at_risk": {
@@ -1244,7 +1244,7 @@
      "verdict": "undeterminable"
     }
    },
-   "evidenceSha256": "eb456fe022a040b2"
+   "evidenceSha256": "1b64163dc218f3f2"
   },
   "ENER-001": {
    "claims": {
@@ -1493,19 +1493,6 @@
    },
    "evidenceSha256": "9e65246094de6dd2"
   },
-  "FINA-004": {
-   "claims": {
-    "main_source": {
-     "decidedAt": "2026-09-11",
-     "verdict": "MATCH"
-    },
-    "vetting_body": {
-     "decidedAt": "2026-09-11",
-     "verdict": "PARTIAL"
-    }
-   },
-   "evidenceSha256": "c011bee9d10ac625"
-  },
   "FINA-005": {
    "claims": {
     "crypto_at_risk": {
@@ -1621,7 +1608,7 @@
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "8ed6f27d2f333533"
+   "evidenceSha256": "e8f4f260340865a9"
   },
   "FINA-010": {
    "claims": {
@@ -1725,7 +1712,7 @@
      "verdict": "undeterminable"
     }
    },
-   "evidenceSha256": "e83cdaf49a573c5b"
+   "evidenceSha256": "363049cf9240c45b"
   },
   "GOV-005": {
    "claims": {
@@ -1796,7 +1783,7 @@
      "verdict": "undeterminable"
     }
    },
-   "evidenceSha256": "b997385afc728e37"
+   "evidenceSha256": "182bd0a12b1b2819"
   },
   "HLTH-002": {
    "claims": {
@@ -1821,7 +1808,7 @@
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "6129643c6a6a6f5f"
+   "evidenceSha256": "777f2e43986e2936"
   },
   "HLTH-003": {
    "claims": {
@@ -1843,52 +1830,6 @@
     }
    },
    "evidenceSha256": "d046fa836048933e"
-  },
-  "HLTH-004": {
-   "claims": {
-    "crypto_at_risk": {
-     "decidedAt": "2026-09-24",
-     "verdict": "undeterminable"
-    },
-    "main_source": {
-     "decidedAt": "2026-09-24",
-     "verdict": "MATCH"
-    },
-    "pqc_replacement": {
-     "decidedAt": "2026-09-24",
-     "verdict": "undeterminable"
-    },
-    "threat_description": {
-     "decidedAt": "2026-09-24",
-     "verdict": "undeterminable"
-    },
-    "vetting_body": {
-     "decidedAt": "2026-09-24",
-     "verdict": "FOUND"
-    }
-   },
-   "evidenceSha256": "fe5c46a6121758e1"
-  },
-  "HLTH-005": {
-   "claims": {
-    "crypto_at_risk": {
-     "decidedAt": "2026-09-24",
-     "verdict": "undeterminable"
-    },
-    "main_source": {
-     "decidedAt": "2026-09-24",
-     "verdict": "MATCH"
-    },
-    "pqc_replacement": {
-     "decidedAt": "2026-09-24",
-     "verdict": "undeterminable"
-    },
-    "threat_description": {
-     "decidedAt": "2026-09-24",
-     "verdict": "undeterminable"
-    }
-   },
-   "evidenceSha256": "fe5c46a6121758e1"
   },
   "HSM-001": {
    "claims": {
@@ -1917,7 +1858,7 @@
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "32de23bcde7b2582"
+   "evidenceSha256": "15ebdd396a31129f"
   },
   "HSM-002": {
    "claims": {
@@ -2452,7 +2393,7 @@
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "6303878d24e41bd8"
+   "evidenceSha256": "431278e253b12bd0"
   },
   "RETAIL-001": {
    "claims": {
@@ -2794,7 +2735,7 @@
      "verdict": "FOUND"
     }
    },
-   "evidenceSha256": "ae5a3a8f85dc2976"
+   "evidenceSha256": "a9ddb77919762cb4"
   }
  },
  "source": "threats",

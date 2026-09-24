@@ -216,7 +216,7 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
       "stampedAt": "2026-09-17T12:59:20.385346+00:00"
@@ -3211,7 +3211,7 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
       "stampedAt": "2026-09-17T13:00:48.636612+00:00"
@@ -14453,10 +14453,11 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:06:48.156174+00:00"
+      "stampedAt": "2026-09-17T13:06:48.156174+00:00",
+      "superseded_file": "_superseded-20260924/threats/FIN-004.pdf"
     },
     {
       "refId": "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023",
@@ -20556,7 +20557,7 @@
       "sha256": "9ac6bee3da878e883874847b40f80d2265d6268385d8201f866581437533465f",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-17T12:59:20.385346+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
@@ -23180,7 +23181,7 @@
       "sha256": "62153d8bf9cf8d1900f1e4d938f391c169ceed138f1d42512ba89e6b0f8d71fd",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-17T13:00:48.636612+00:00",
       "admittedBy": "admit.py --stamp-existing"
     },
@@ -33227,9 +33228,10 @@
       "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
       "artefact": "SOURCE",
       "identity": "UNCONFIRMED",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-17T13:06:48.156174+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedBy": "admit.py --stamp-existing",
+      "superseded_file": "_superseded-20260924/threats/FIN-004.pdf"
     },
     {
       "refId": "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023",

@@ -3020,7 +3020,7 @@
       "verifiedAt": "2026-09-07",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-07",
       "admittedBy": "admit.py --stamp-existing",
       "stampedAt": "2026-09-17T13:14:52.306843+00:00"
