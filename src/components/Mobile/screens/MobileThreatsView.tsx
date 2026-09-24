@@ -25,7 +25,14 @@ import {
   NOT_YET_SPECIFIED,
   retiredThreatMessage,
 } from '@/data/threatRowRules'
-import { formatSourceCaveat, getSourceCaveat, secondSourceLines } from '@/data/threatClaimStatus'
+import {
+  claimsCheckedText,
+  formatSourceCaveat,
+  getSourceCaveat,
+  getThreatLineage,
+  secondSourceLines,
+  sourceIdentityText,
+} from '@/data/threatClaimStatus'
 import { MobileSheet } from '../primitives/Sheet'
 import {
   matchesThreatQuery,
@@ -177,6 +184,8 @@ export function MobileThreatsView() {
     ? getSourceCaveat(selected.threatId, selected.secondarySources)
     : null
   const selectedSecondSources = selected ? secondSourceLines(selected.secondarySources) : []
+  const selectedLineage = selected ? getThreatLineage(selected.threatId) : null
+  const selectedClaimsLine = selectedLineage ? claimsCheckedText(selectedLineage) : null
   const setSelected = (t: ThreatItem | null) => setParam({ id: t?.threatId ?? null, threat: null })
 
   const hndlDeadline = crqcYear - DATA_LIFETIME - MIGRATION_TIME
@@ -465,14 +474,29 @@ export function MobileThreatsView() {
                   className="mt-0.5 flex items-center gap-1 text-[11.5px] font-semibold text-primary"
                 >
                   {selected.mainSource}
+                  {selected.sourceMirrorOf && (
+                    <span className="font-normal text-muted-foreground">
+                      (mirror of {selected.sourceMirrorOf})
+                    </span>
+                  )}
                   <ExternalLink size={11} aria-hidden="true" />
                 </a>
               ) : (
                 <p className="mt-0.5 text-[11.5px] text-foreground">{selected.mainSource}</p>
               )}
+              {/* Lineage, not scores (ruling R2) — the same lines the desktop
+                  Evidence panel shows. */}
+              {selectedLineage && (
+                <p className="mt-1 text-[10.5px] text-muted-foreground">
+                  {sourceIdentityText(selectedLineage)}
+                </p>
+              )}
+              {selectedClaimsLine && (
+                <p className="mt-0.5 text-[10.5px] text-muted-foreground">{selectedClaimsLine}</p>
+              )}
               {selected.lastVerified && (
                 <p className="mt-0.5 text-[10.5px] text-muted-foreground">
-                  Verified {selected.lastVerified}
+                  Last verified {selected.lastVerified}
                 </p>
               )}
               {selectedCaveat && (

@@ -9,7 +9,8 @@ import { SOC_LEARN_MODULE_HREF, SOC_LEARN_MODULE_ID } from '@/data/socQuantumPla
 import { ThreatDetailDialog } from './ThreatDetailDialog'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
-// Claim-ledger fixture: CAV-UND undeterminable, CAV-CON contradicted, CAV-SUP supported.
+// Claim-ledger fixture: CAV-UND undeterminable, CAV-CON contradicted, CAV-SUP supported;
+// LIN-1 a confirmed source with 2 of 3 claims supported.
 vi.mock('@/data/threatClaimStatus', async () => {
   const actual = await vi.importActual<typeof import('@/data/threatClaimStatus')>(
     '@/data/threatClaimStatus'
@@ -25,9 +26,21 @@ vi.mock('@/data/threatClaimStatus', async () => {
       'CAV-SUP': {
         claims: { threat_description: { verdict: 'supported', decidedAt: '2026-09-16' } },
       },
+      'LIN-1': {
+        claims: {
+          main_source: { verdict: 'MATCH' },
+          threat_description: { verdict: 'supported' },
+          crypto_at_risk: { verdict: 'supported' },
+          pqc_replacement: { verdict: 'undeterminable' },
+        },
+      },
     },
   }
-  return { ...actual, getSourceCaveat: (id: string) => actual.sourceCaveatFor(id, fixture) }
+  return {
+    ...actual,
+    getSourceCaveat: (id: string) => actual.sourceCaveatFor(id, fixture),
+    getThreatLineage: (id: string) => actual.lineageFor(id, fixture),
+  }
 })
 
 vi.mock('@/utils/endorsement', async () => {
@@ -150,8 +163,8 @@ describe('ThreatDetailDialog — blank fields and internal notes (UX-5 / UX-6 / 
     expect(screen.queryByText(/Data quality notes/)).not.toBeInTheDocument()
     expect(screen.queryByText(/add_row\.py/)).not.toBeInTheDocument()
     expect(screen.queryByText(/qwen/)).not.toBeInTheDocument()
-    // The rest of the provenance block still renders.
-    expect(screen.getByText('Data Provenance')).toBeInTheDocument()
+    // The rest of the evidence panel still renders.
+    expect(screen.getByText('Evidence')).toBeInTheDocument()
   })
 })
 
@@ -190,5 +203,50 @@ describe('ThreatDetailDialog — source caveat (claim ledger)', () => {
   it('no caveat for a row absent from the ledger', () => {
     renderDialog(threat({ threatId: 'NOT-IN-LEDGER', sourceUrl: 'https://example.org' }))
     expect(screen.queryByText(/those are our analysis/)).not.toBeInTheDocument()
+  })
+})
+
+describe('ThreatDetailDialog — Evidence panel shows lineage, not scores (ruling R2 / UX-4)', () => {
+  it('shows source identity and the claims checked — never confidence or accuracy', () => {
+    renderDialog(
+      threat({
+        threatId: 'LIN-1',
+        sourceUrl: 'https://example.org',
+        confidenceScore: 87,
+        accuracyPct: 92,
+        lastVerified: '2026-09-20',
+      })
+    )
+    expect(
+      screen.getByText('Source document: confirmed to be the cited document')
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Claims checked against the cited document: 2 supported · 1 could not be confirmed'
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByText('Last verified 2026-09-20')).toBeInTheDocument()
+    expect(screen.queryByText(/confidence score|accuracy/i)).not.toBeInTheDocument()
+    expect(screen.queryByText('92%')).not.toBeInTheDocument()
+    expect(screen.queryByText('87')).not.toBeInTheDocument()
+  })
+
+  it('says "not yet confirmed" for a row the ledger has not matched, and omits last verified when absent', () => {
+    renderDialog(threat({ threatId: 'NOT-IN-LEDGER', sourceUrl: 'https://example.org' }))
+    expect(screen.getByText('Source document: not yet confirmed')).toBeInTheDocument()
+    expect(screen.queryByText(/Claims checked/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Last verified/)).not.toBeInTheDocument()
+  })
+
+  it('labels a mirror copy with the original publisher', () => {
+    renderDialog(
+      threat({
+        mainSource: 'PCI DSS v4.0.1',
+        sourceUrl: 'https://mirror.example.org/pci.pdf',
+        sourceMirrorOf: 'PCI Security Standards Council',
+      })
+    )
+    const link = screen.getByRole('link', { name: /PCI DSS v4\.0\.1/ })
+    expect(link).toHaveTextContent('(mirror of PCI Security Standards Council)')
   })
 })

@@ -2,7 +2,7 @@
 import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronUp, ChevronDown, ShieldAlert, BookmarkCheck, Bookmark } from 'lucide-react'
-import { evidenceStrength } from '../../data/threatsData'
+import { claimsCheckedText, getThreatLineage, sourceIdentityText } from '@/data/threatClaimStatus'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
@@ -117,7 +117,7 @@ export const ThreatsTable = ({
                 <th
                   className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
                   onClick={() => onSort('evidence')}
-                  title="Peer review, a trusted-source id, extraction confidence and stated accuracy, combined. Sorting by this puts the best-evidenced records first, not the newest."
+                  title="Whether the cited document is confirmed and how many of the row's claims it states. Sorting by this puts the best-evidenced records first, not the newest."
                 >
                   <div className="flex items-center justify-center gap-1 md:justify-start">
                     <span>Evidence</span>
@@ -236,13 +236,35 @@ export const ThreatsTable = ({
                             </div>
                           </td>
                           {showEvidence && (
-                            <td className="p-4 text-center text-xs font-mono">
-                              <span
-                                className="text-muted-foreground"
-                                title={`Peer-reviewed: ${item.peerReviewed ?? 'unknown'} · trusted source: ${item.trustedSourceId ?? 'none recorded'} · confidence: ${item.confidenceScore ?? '—'} · stated accuracy: ${item.accuracyPct ?? '—'}%`}
-                              >
-                                {evidenceStrength(item)}
-                              </span>
+                            <td className="p-4 text-xs">
+                              {/* Lineage, not a score (ruling R2): whether the
+                              cited document is confirmed, and how many of the
+                              row's claims it states. No confidence/accuracy. */}
+                              {(() => {
+                                const lineage = getThreatLineage(item.threatId)
+                                const checked = lineage.supported + lineage.unconfirmed
+                                return (
+                                  <span
+                                    className="text-muted-foreground"
+                                    title={[
+                                      sourceIdentityText(lineage),
+                                      claimsCheckedText(lineage) ??
+                                        'Claims not yet checked against the cited document',
+                                    ].join(' · ')}
+                                  >
+                                    <span className="block">
+                                      {lineage.sourceConfirmed
+                                        ? 'Source confirmed'
+                                        : 'Source unconfirmed'}
+                                    </span>
+                                    {checked > 0 && (
+                                      <span className="block">
+                                        {lineage.supported} of {checked} claims
+                                      </span>
+                                    )}
+                                  </span>
+                                )
+                              })()}
                             </td>
                           )}
                           <td className="p-4 text-xs font-mono overflow-hidden">

@@ -15,6 +15,10 @@ import {
   ShieldCheck,
   ClipboardCheck,
   ArrowRight,
+  CalendarCheck,
+  CheckCircle2,
+  CircleDashed,
+  ListChecks,
 } from 'lucide-react'
 import { Link } from 'react-router'
 import type { ThreatItem } from '../../data/threatsData'
@@ -34,7 +38,14 @@ import { getSocUseCases, getIrPlaybooks, getShorTier, SHOR_TIER_DEFS } from './t
 import { formatSocCite, SOC_CTI_SECTION, SOC_LEARN_MODULE_HREF } from '@/data/socQuantumPlaybook'
 import { getAttackProfiles } from '@/data/implementationAttackProfiles'
 import { NOT_YET_SPECIFIED, UNRATED_CRITICALITY } from '@/data/threatRowRules'
-import { formatSourceCaveat, getSourceCaveat, secondSourceLines } from '@/data/threatClaimStatus'
+import {
+  claimsCheckedText,
+  formatSourceCaveat,
+  getSourceCaveat,
+  getThreatLineage,
+  secondSourceLines,
+  sourceIdentityText,
+} from '@/data/threatClaimStatus'
 
 /** An at-risk / PQC field, or an honest "not yet specified" when blank. */
 const SpecifiedOrNot = ({ value }: { value: string }) =>
@@ -65,6 +76,8 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
     () => secondSourceLines(threat.secondarySources),
     [threat.secondarySources]
   )
+  const lineage = useMemo(() => getThreatLineage(threat.threatId), [threat.threatId])
+  const claimsLine = claimsCheckedText(lineage)
 
   // Set when the CTI pointer closes the dialog to scroll to the Horizon
   // section: focus must not return to (and scroll back to) the trigger row.
@@ -208,79 +221,87 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               </div>
             </div>
 
-            {/* Data provenance — surfaces fields the loader already parses
-              (accuracy_pct, peer_reviewed, vetting_body, confidence_score)
-              but that were previously thrown away at render time. Shown
-              honestly: unfavorable provenance (peer_reviewed=no, low
-              confidence) renders the same way as favorable, not hidden.
-              data_quality_notes is NOT rendered: it is the maintenance log
-              ("Added via intake queue…", "merged inline via qwen…", pipeline
-              bug notes), written for maintainers, not readers. */}
-            {(threat.peerReviewed !== undefined ||
-              threat.confidenceScore !== undefined ||
-              threat.accuracyPct !== undefined ||
-              (threat.vettingBody && threat.vettingBody.length > 0) ||
-              threat.lastVerified) && (
-              <div className="pt-4 border-t border-border">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
-                  <ShieldCheck size={14} className="text-primary" /> Data Provenance
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
-                  <div>
-                    <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                      Peer reviewed
-                    </span>
-                    <span
-                      className={`inline-flex items-center mt-0.5 px-1.5 py-0.5 rounded text-[11px] font-semibold border ${
-                        threat.peerReviewed === 'yes'
-                          ? 'bg-status-success/10 text-status-success border-status-success/20'
-                          : threat.peerReviewed === 'partial'
-                            ? 'bg-status-warning/10 text-status-warning border-status-warning/20'
-                            : threat.peerReviewed === 'no'
-                              ? 'bg-muted/40 text-muted-foreground border-border'
-                              : 'bg-muted/40 text-muted-foreground border-border'
-                      }`}
-                    >
-                      {threat.peerReviewed
-                        ? threat.peerReviewed.charAt(0).toUpperCase() + threat.peerReviewed.slice(1)
-                        : 'Unknown'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                      Confidence score
-                    </span>
-                    <span className="text-foreground font-mono">
-                      {threat.confidenceScore != null ? `${threat.confidenceScore}` : '—'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                      Accuracy
-                    </span>
-                    <span className="text-foreground font-mono">
-                      {threat.accuracyPct != null ? `${threat.accuracyPct}%` : '—'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                      Vetting body
-                    </span>
-                    <span className="text-foreground">
-                      {threat.vettingBody && threat.vettingBody.length > 0
-                        ? threat.vettingBody.join(', ')
-                        : '—'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                      Last verified
-                    </span>
-                    <span className="text-foreground font-mono">{threat.lastVerified || '—'}</span>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Evidence — lineage, not scores (ruling R2 / UX-4). What the
+              reader can check: is the cited document the one this row names,
+              how many of the row's claims it was found to state, which
+              approved second sources state the rest, and when the row was
+              last verified. No extraction-confidence or "accuracy"
+              percentages: those were scores about the extraction, not
+              evidence about the claim. data_quality_notes is NOT rendered —
+              it is the maintenance log, written for maintainers. */}
+            <div className="pt-4 border-t border-border">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+                <ShieldCheck size={14} className="text-primary" /> Evidence
+              </h3>
+              {threat.sourceUrl ? (
+                <a
+                  href={threat.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-start gap-2 text-primary hover:underline text-sm break-words"
+                >
+                  <ExternalLink size={14} className="mt-0.5 shrink-0" />
+                  <span>
+                    {threat.mainSource || 'View Source'}
+                    {threat.sourceMirrorOf && (
+                      <span className="text-muted-foreground">
+                        {' '}
+                        (mirror of {threat.sourceMirrorOf})
+                      </span>
+                    )}
+                  </span>
+                </a>
+              ) : (
+                threat.mainSource && <p className="text-sm text-foreground">{threat.mainSource}</p>
+              )}
+              <ul className="mt-2 space-y-1 text-xs text-muted-foreground leading-relaxed">
+                <li className="flex items-start gap-1.5">
+                  {lineage.sourceConfirmed ? (
+                    <CheckCircle2
+                      size={12}
+                      className="mt-0.5 shrink-0 text-status-success"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <CircleDashed size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+                  )}
+                  <span>{sourceIdentityText(lineage)}</span>
+                </li>
+                {claimsLine && (
+                  <li className="flex items-start gap-1.5">
+                    <ListChecks size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+                    <span>{claimsLine}</span>
+                  </li>
+                )}
+                {threat.lastVerified && (
+                  <li className="flex items-start gap-1.5">
+                    <CalendarCheck size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+                    <span>Last verified {threat.lastVerified}</span>
+                  </li>
+                )}
+              </ul>
+              {/* Reader caveat from the claim ledger: the cited document
+                  does not itself state this entry's quantum-specific
+                  points. Never "the source disagrees" — see
+                  threatClaimStatus.ts. */}
+              {sourceCaveat && (
+                <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                  {formatSourceCaveat(sourceCaveat)}
+                </p>
+              )}
+              {/* Approved second sources: an independent document checked
+                  word for word to state these claims (review queue). */}
+              {secondSources.map((s) => (
+                <p key={s.ref} className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                  <Link
+                    to={`/library?ref=${encodeURIComponent(s.ref)}`}
+                    className="text-primary hover:underline"
+                  >
+                    {s.text}
+                  </Link>
+                </p>
+              ))}
+            </div>
 
             {/* Detection / SOC + Incident-Response — Threats #3 / #6 */}
             <div className="pt-4 border-t border-border mt-4">
@@ -478,46 +499,6 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                 </div>
               )
             })()}
-
-            {(threat.sourceUrl || sourceCaveat || secondSources.length > 0) && (
-              <div className="pt-4 border-t border-border mt-4">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                  Reference Source
-                </h3>
-                {threat.sourceUrl && (
-                  <a
-                    href={threat.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-primary hover:underline text-sm truncate"
-                  >
-                    <ExternalLink size={14} />
-                    {threat.mainSource || 'View Source'}
-                  </a>
-                )}
-                {/* Reader caveat from the claim ledger: the cited document
-                    does not itself state this entry's quantum-specific
-                    points. Never "the source disagrees" — see
-                    threatClaimStatus.ts. */}
-                {sourceCaveat && (
-                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    {formatSourceCaveat(sourceCaveat)}
-                  </p>
-                )}
-                {/* Approved second sources: an independent document checked
-                    word for word to state these claims (review queue). */}
-                {secondSources.map((s) => (
-                  <p key={s.ref} className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    <Link
-                      to={`/library?ref=${encodeURIComponent(s.ref)}`}
-                      className="text-primary hover:underline"
-                    >
-                      {s.text}
-                    </Link>
-                  </p>
-                ))}
-              </div>
-            )}
 
             {threat.relatedModules && threat.relatedModules.length > 0 && (
               <div className="pt-4 border-t border-border mt-4">

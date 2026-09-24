@@ -5,11 +5,14 @@
  * row, whether the document it cites TODAY states each claim. Verdict words
  * only — no document text, and none of the internal data_quality_notes.
  *
- * The page uses exactly one thing from it: when the cited document does not
- * itself state the row's quantum-specific description, the detail view says
- * so in one muted line. Loaded the way trustScoreData loads the evidence
- * manifests (eager import.meta.glob), so a missing file means "no caveat",
- * never a crash.
+ * The page uses it for two things: the lineage lines of the detail view's
+ * Evidence panel (ruling R2, 2026-09-24 — whether the cited document was
+ * confirmed to be the document the row names, and how many of the row's
+ * claims it was found to state), and the one-line reader caveat when the
+ * cited document does not itself state the row's quantum-specific
+ * description. Loaded the way trustScoreData loads the evidence manifests
+ * (eager import.meta.glob), so a missing file means "not yet confirmed" and
+ * "no caveat", never a crash.
  */
 
 import type { SecondarySource } from './threatsData'
@@ -64,6 +67,66 @@ export function sourceCaveatFor(
   const verdict = entry?.verdict?.trim().toLowerCase()
   if (verdict !== 'undeterminable' && verdict !== 'contradicted') return null
   return { text: SOURCE_CAVEAT_TEXT, checkedAt: entry?.decidedAt?.trim() || undefined }
+}
+
+/** The claim columns the Evidence panel counts — the three a reader sees. */
+export const CHECKED_CLAIM_COLUMNS = [
+  'threat_description',
+  'crypto_at_risk',
+  'pqc_replacement',
+] as const
+
+/**
+ * What the claim ledger says about a row's source, in the Evidence panel's
+ * terms (ruling R2): lineage, never a score. `sourceConfirmed` is true only
+ * for a `main_source` verdict of MATCH. `unconfirmed` counts "undeterminable"
+ * AND "contradicted" together — the same rule the caveat follows, since these
+ * are AI verdicts and the page must never claim the source disagrees.
+ */
+export interface ThreatLineage {
+  sourceConfirmed: boolean
+  /** When the source identity was checked (YYYY-MM-DD), if recorded. */
+  sourceCheckedAt?: string
+  supported: number
+  unconfirmed: number
+}
+
+export function lineageFor(threatId: string, status: ThreatClaimStatusFile | null): ThreatLineage {
+  const claims = status?.rows?.[threatId]?.claims
+  const main = claims?.main_source
+  let supported = 0
+  let unconfirmed = 0
+  for (const col of CHECKED_CLAIM_COLUMNS) {
+    // eslint-disable-next-line security/detect-object-injection -- col is from the fixed list above
+    const verdict = claims?.[col]?.verdict?.trim().toLowerCase()
+    if (verdict === 'supported') supported += 1
+    else if (verdict === 'undeterminable' || verdict === 'contradicted') unconfirmed += 1
+  }
+  return {
+    sourceConfirmed: main?.verdict?.trim().toUpperCase() === 'MATCH',
+    sourceCheckedAt: main?.decidedAt?.trim() || undefined,
+    supported,
+    unconfirmed,
+  }
+}
+
+/** `lineageFor` against the bundled file. */
+export function getThreatLineage(threatId: string): ThreatLineage {
+  return lineageFor(threatId, THREAT_CLAIM_STATUS)
+}
+
+/** "Source document: confirmed to be the cited document" / "…: not yet confirmed". */
+export function sourceIdentityText(lineage: ThreatLineage): string {
+  return lineage.sourceConfirmed
+    ? 'Source document: confirmed to be the cited document'
+    : 'Source document: not yet confirmed'
+}
+
+/** "Claims checked against the cited document: 2 supported · 1 could not be
+ *  confirmed", or null when no claim has been checked yet. */
+export function claimsCheckedText(lineage: ThreatLineage): string | null {
+  if (lineage.supported + lineage.unconfirmed === 0) return null
+  return `Claims checked against the cited document: ${lineage.supported} supported · ${lineage.unconfirmed} could not be confirmed`
 }
 
 /** `sourceCaveatFor` against the bundled file. */

@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import {
+  claimsCheckedText,
   formatSourceCaveat,
   getSourceCaveat,
+  lineageFor,
   secondSourceLines,
   SOURCE_CAVEAT_TEXT,
   sourceCaveatFor,
+  sourceIdentityText,
   type ThreatClaimStatusFile,
 } from './threatClaimStatus'
 
@@ -79,5 +82,58 @@ describe('approved second sources', () => {
       },
     ])
     expect(secondSourceLines(undefined)).toEqual([])
+  })
+})
+
+describe('threat lineage — the Evidence panel (ruling R2)', () => {
+  const LEDGER: ThreatClaimStatusFile = {
+    rows: {
+      'L-1': {
+        claims: {
+          main_source: { verdict: 'MATCH', decidedAt: '2026-09-24' },
+          threat_description: { verdict: 'supported' },
+          crypto_at_risk: { verdict: 'undeterminable' },
+          pqc_replacement: { verdict: 'contradicted' },
+          vetting_body: { verdict: 'FOUND' },
+        },
+      },
+      'L-2': { claims: { main_source: { verdict: 'WEAK' } } },
+    },
+  }
+
+  it('confirms the source only on MATCH, and counts the three reader-facing claims', () => {
+    const l = lineageFor('L-1', LEDGER)
+    expect(l).toEqual({
+      sourceConfirmed: true,
+      sourceCheckedAt: '2026-09-24',
+      supported: 1,
+      unconfirmed: 2,
+    })
+    expect(sourceIdentityText(l)).toBe('Source document: confirmed to be the cited document')
+    expect(claimsCheckedText(l)).toBe(
+      'Claims checked against the cited document: 1 supported · 2 could not be confirmed'
+    )
+  })
+
+  it('"contradicted" counts as could-not-be-confirmed — never as a disagreement', () => {
+    expect(claimsCheckedText(lineageFor('L-1', LEDGER))).not.toMatch(/contradict|disagree/i)
+  })
+
+  it('WEAK, an absent row, or an absent file → not yet confirmed, no claims line', () => {
+    for (const l of [
+      lineageFor('L-2', LEDGER),
+      lineageFor('NOPE', LEDGER),
+      lineageFor('L-1', null),
+    ]) {
+      expect(sourceIdentityText(l)).toBe('Source document: not yet confirmed')
+      expect(claimsCheckedText(l)).toBeNull()
+    }
+  })
+
+  it('no text it produces carries a percentage or a confidence number', () => {
+    const l = lineageFor('L-1', LEDGER)
+    for (const t of [sourceIdentityText(l), claimsCheckedText(l) ?? '']) {
+      expect(t).not.toMatch(/%|confidence|accuracy/i)
+    }
   })
 })

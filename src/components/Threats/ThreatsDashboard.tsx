@@ -54,10 +54,9 @@ import { Button } from '../ui/button'
 import { CollapsibleSection } from '../ui/CollapsibleSection'
 
 // B+ remediation 4.3 (2026-08-10): 'evidence' added. "The researcher corpus
-// sorts by recency rather than evidence strength" — and every field the sort
-// needs was already on the row (confidenceScore on 114/114, peerReviewed on
-// 114/114, a trusted-source id on 107/114, accuracyPct on 93/114). This is a
-// new ORDERING over existing data, not new data.
+// sorts by recency rather than evidence strength". Since ruling R2
+// (2026-09-24) the ordering is lineage only — source confirmed, claims the
+// cited document states, trusted-source id (see `evidenceStrength`).
 type SortField = 'industry' | 'threatId' | 'criticality' | 'evidence'
 type SortDirection = 'asc' | 'desc'
 
