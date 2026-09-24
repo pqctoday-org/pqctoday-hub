@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 export type ComplianceSource =
-  | 'NIST'
-  | 'Common Criteria'
-  | 'BSI Germany'
-  | 'ANSSI'
-  | 'ENISA'
-  | 'Other'
+  'NIST' | 'Common Criteria' | 'BSI Germany' | 'ANSSI' | 'ENISA' | 'Other'
 export type ComplianceType = 'FIPS 140-3' | 'ACVP' | 'Common Criteria' | 'EUCC'
 export type ComplianceStatus = 'Active' | 'Historical' | 'Pending' | 'In Process' | 'Revoked'
 

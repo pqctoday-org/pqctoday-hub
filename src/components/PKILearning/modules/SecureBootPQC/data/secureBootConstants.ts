@@ -2,14 +2,7 @@
 
 export type UEFIKeyType = 'PK' | 'KEK' | 'db' | 'dbx' | 'MOK'
 export type FirmwareVendor =
-  | 'AMI'
-  | 'Insyde'
-  | 'Phoenix'
-  | 'Tianocore'
-  | 'Dell'
-  | 'HPE'
-  | 'Lenovo'
-  | 'Intel'
+  'AMI' | 'Insyde' | 'Phoenix' | 'Tianocore' | 'Dell' | 'HPE' | 'Lenovo' | 'Intel'
 export type TPMVersion = '1.2' | '2.0'
 export type AttestationType = 'measured-boot' | 'tpm-quote' | 'dice' | 'fido-onboard' | 'remote-tls'
 export type SecureBootState = 'disabled' | 'setup' | 'enabled' | 'deployed'

@@ -27,16 +27,7 @@ import type { PersonaId } from './learningPersonas'
 
 /** "Replace what you run" assets — a concrete crypto function a user operates. */
 export type ReplaceAssetId =
-  | 'tls'
-  | 'vpn'
-  | 'ssh'
-  | 'email'
-  | 'msg'
-  | 'codesign'
-  | 'certs'
-  | 'hsm'
-  | 'kms'
-  | 'atrest'
+  'tls' | 'vpn' | 'ssh' | 'email' | 'msg' | 'codesign' | 'certs' | 'hsm' | 'kms' | 'atrest'
 
 /**
  * Foundation / cross-cutting buckets. These catch the ~70% of the catalog that

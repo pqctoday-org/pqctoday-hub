@@ -27,6 +27,7 @@ interface RawPatentRow {
   migration_strategy: string
   quantum_relevance: string
   quantum_notes: string
+  quantum_safe_basis?: string
   protocols: string
   classical_algorithms: string
   pqc_algorithms: string
@@ -130,6 +131,7 @@ export function transformRow(row: RawPatentRow): PatentItem | null {
     migrationStrategy: (row.migration_strategy?.trim() as MigrationStrategy) || 'none',
     quantumRelevance: (row.quantum_relevance?.trim() as QuantumRelevance) || 'none',
     quantumNotes: row.quantum_notes?.trim() ?? '',
+    quantumSafeBasis: (row.quantum_safe_basis?.trim() ?? '') as PatentItem['quantumSafeBasis'],
     protocols: splitSemicolon(row.protocols),
     classicalAlgorithms: splitSemicolon(row.classical_algorithms),
     pqcAlgorithms: splitSemicolon(row.pqc_algorithms),

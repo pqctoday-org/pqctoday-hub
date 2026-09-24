@@ -12,13 +12,28 @@
  *      populated (e.g. main's re-enrichment erased Citrix's PQC algorithms —
  *      non-empty -> empty — with zero signal).
  *
+ *   3. A re-read blanks a column across the rows a page shows: the
+ *      2026-09-18 patents re-read (patents_09182026.csv) wrote `[]` into
+ *      claim_dependencies for 607 of the 729 rows the Patents page shows —
+ *      its reader had no claims text to read — and the page's Claim
+ *      Structure section vanished. The commit's own validation checked
+ *      that what was written was TRUE, not that what was there survived.
+ *      Checked for seven sources (patents, library, timeline, threats,
+ *      compliance, migrate-catalog, industry-landscape) — see EMPTIED_SOURCES.
+ *
  * This check diffs HEAD against the base branch (origin/main on a PR) and
- * BLOCKS on either class. Intentional drops are opt-in via the allowlist at
+ * BLOCKS on any class. Intentional drops are opt-in via the allowlist at
  * scripts/ci/data-regression-allowlist.json:
  *
  *   {
  *     "complianceRecordDropOk": false,
- *     "vendorAlgoEmptyOk": ["VND-999"]   // vendor ids allowed to go empty
+ *     "vendorAlgoEmptyOk": ["VND-999"],  // vendor ids allowed to go empty
+ *     "patentsEmptiedOk": {              // one dated waiver per column
+ *       "quantum_notes": { "expectedEmptied": 54, "reason": "...", "until": "2026-10-01" }
+ *     },
+ *     "emptiedOk": {                     // same shape, per other source id
+ *       "library": { "<column>": { "expectedEmptied": 0, "reason": "...", "until": "..." } }
+ *     }
  *   }
  *
  * No network. Deterministic. Skips gracefully (exit 0 + warning) if the base

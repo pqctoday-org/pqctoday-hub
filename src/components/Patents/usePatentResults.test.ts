@@ -16,6 +16,7 @@ function patent(overrides: Partial<PatentItem>): PatentItem {
     impactLevel: 'Low',
     quantumTechnology: [],
     quantumRelevance: 'core_invention',
+    quantumSafeBasis: 'pqc_algorithm',
     protocols: [],
     classicalAlgorithms: [],
     hardwareComponents: [],

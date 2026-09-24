@@ -2,13 +2,7 @@
 import { loadLatestCSV } from './csvUtils'
 
 export type XrefResourceType =
-  | 'library'
-  | 'threats'
-  | 'timeline'
-  | 'leaders'
-  | 'migrate'
-  | 'compliance'
-  | 'algorithm'
+  'library' | 'threats' | 'timeline' | 'leaders' | 'migrate' | 'compliance' | 'algorithm'
 
 export type XrefMatchMethod = 'exact' | 'direct' | 'mapped' | 'inferred' | 'category-inferred'
 

@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "SSLyze",
+    "category": "Cryptographic Protocol Analyzers",
+    "product_name": "SSLyze",
+    "product_brief": "A Python-based TLS/SSL scanner and analyzer for checking server configurations, certificates, and protocol support.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention any post-quantum cryptography algorithms, support, or migration plans.",
+    "pqc_migration_priority": "Low",
+    "crypto_primitives": "RSA, ECDSA, Brainpool curves",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Software tool / CLI / Python API",
+    "infrastructure_layer": "Network",
+    "license_type": "Open Source",
+    "license": "Unknown",
+    "latest_version": "6.3.1",
+    "release_date": "2024-03-29",
+    "fips_validated": "No",
+    "primary_platforms": "Linux (aarch64, x86_64), macOS (Apple Silicon), Windows",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "RSA, ECDSA",
+    "authoritative_source_url": "https://github.com/users/nabla-c0d3/projects/12",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Checks for TLS configuration compliance, elliptic curves support, certificate chain validation, and deprecated protocol handling (e.g., SSL v2.0).",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.8-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-09-22"
+    }
+  }
+]

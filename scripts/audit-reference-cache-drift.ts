@@ -141,11 +141,7 @@ interface DriftFinding {
   /** Present only when --stealth-retry attempted a second-pass fetch on this
    * finding (see module docstring). Absent entirely when the flag isn't set. */
   stealthOutcome?:
-    | 'recovered-ok'
-    | 'recovered-drift'
-    | 'confirmed-drift'
-    | 'still-blocked'
-    | 'still-failing'
+    'recovered-ok' | 'recovered-drift' | 'confirmed-drift' | 'still-blocked' | 'still-failing'
   stealthTier?: string
 }
 

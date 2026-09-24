@@ -1,3 +1,15 @@
 {
-  "vendorAlgoEmptyOk": ["VND-027"]
+  "vendorAlgoEmptyOk": ["VND-027"],
+  "patentsEmptiedOk": {
+    "performance_claims": {
+      "expectedEmptied": 41,
+      "reason": "2026-09-22 re-enrichment: 6 of 8 sampled not-in-excerpt values appear nowhere in the patent; 2 are real coverage gaps (20240356736 'latency', 20250086321 'computation; bandwidth')",
+      "until": "2026-10-06"
+    },
+    "authentication_factors": {
+      "expectedEmptied": 37,
+      "reason": "2026-09-22 re-enrichment through the fixed reader; same class as protocols/entropy_source above",
+      "until": "2026-10-06"
+    }
+  }
 }

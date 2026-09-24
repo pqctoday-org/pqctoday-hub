@@ -29,6 +29,25 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.116.0] - 2026-09-23
+
+The in-browser crypto engines carry the latest upstream security fixes, the About page's software list is accurate again, and a compliance chart stops risking a misleading tooltip.
+
+### Fixed
+
+- **A compliance chart could have printed "Invalid Date" into its tooltip where a month should be.** [view:/compliance] [persona:grc] [persona:executive] The monthly PQC-certification chart formats each tooltip's heading from the row's month. A charting-library update changed the type of the value handed to that formatter, and the old code would have fed an unexpected value straight into date formatting — producing text that reads like real data. It now checks the value first and falls back to showing the label as-is, so a surprise can never masquerade as a date.
+
+### Changed
+
+- **The in-browser HSM and OpenSSL engines were rebuilt from current source, picking up upstream crypto-library fixes.** [view:/playground] [view:/openssl] [persona:developer] [persona:researcher] The Rust HSM engine, the C++ HSM engine and the in-browser OpenSSL provider all compile cryptography libraries that moved upstream — including a TLS library patch and a cipher update. The shipped engines now match their sources again rather than trailing them, verified by comparing every exported function before and after so nothing was silently lost.
+- **The About page's software list matches what the site actually ships.** [view:/about] [persona:developer] [persona:grc] Thirty-eight dependency updates landed, and the generated version list is regenerated against them, so the page no longer understates versions.
+
+### Data
+
+- **Anne Dames (IBM) joins the PQC Community roster.** [view:/leaders] [persona:executive] [persona:curious]
+- **Ten timeline documents, six compliance-landscape documents and twenty-one named threat rows gained enriched detail.** [view:/timeline] [view:/compliance] [view:/threats] [persona:grc] [persona:researcher] Each was re-read through the corrected reader, so the entries carry fuller sourced content rather than partial extractions.
+- **CSWP.39 pillar tagging was re-derived through the fixed reader.** [view:/compliance] [persona:grc] Framework pillars are re-tagged from the source document rather than from an earlier pass that read it incompletely.
+
 ## [4.115.0] - 2026-09-22
 
 The in-browser HSM and OpenSSL simulators run today's crypto engine again, including Classic McEliece.

@@ -20,10 +20,7 @@ import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type TargetState =
-  | 'hybrid-traditional+PQC'
-  | 'hybrid-PQC+PQC'
-  | 'pure-PQC'
-  | 'crypto-gateway'
+  'hybrid-traditional+PQC' | 'hybrid-PQC+PQC' | 'pure-PQC' | 'crypto-gateway'
 
 export interface TransitionInputs {
   protocol: string

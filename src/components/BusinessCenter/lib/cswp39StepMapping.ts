@@ -9,12 +9,7 @@ import { BUSINESS_TOOLS, ARTIFACT_TYPE_TO_TOOL_ID } from '../businessToolsRegist
  *  green/cyan/purple) on each artifact card. Single source of truth: the
  *  PILLAR_FOR_TYPE table below. */
 export type PillarKey =
-  | 'risk'
-  | 'compliance'
-  | 'governance'
-  | 'vendor'
-  | 'inventory'
-  | 'architecture'
+  'risk' | 'compliance' | 'governance' | 'vendor' | 'inventory' | 'architecture'
 
 /** Artifact types surfaced under each CSWP.39 step on the Command Center.
  *  Note: `trackedFrameworks` (registry) is implicitly Govern; framework deadline

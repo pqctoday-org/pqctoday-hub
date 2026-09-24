@@ -165,6 +165,15 @@ export function PatentsViewRedesign() {
     [params, setParams]
   )
 
+  // Patents that are quantum-safe on a basis other than a NIST PQC algorithm
+  // — AES-256 or SHA-2/3 strength, lattice FHE, QKD — and therefore fall
+  // outside `isPqcPatent`. Counted so the scope control can say they exist
+  // instead of hiding them silently.
+  const quantumSafeOutsideScope = useMemo(
+    () => patentsData.filter((p) => !isPqcPatent(p) && p.quantumSafeBasis !== '').length,
+    []
+  )
+
   const displayPatents = useMemo(
     () => (pqcOnly ? patentsData.filter(isPqcPatent) : patentsData),
     [pqcOnly]
@@ -410,7 +419,11 @@ export function PatentsViewRedesign() {
 
       {/* Control deck */}
       <div className="glass-panel space-y-3 rounded-2xl p-3 sm:p-4">
-        <PatentsScopeControl pqcOnly={pqcOnly} onChange={handlePqcOnlyChange} />
+        <PatentsScopeControl
+          pqcOnly={pqcOnly}
+          onChange={handlePqcOnlyChange}
+          quantumSafeOutsideScope={quantumSafeOutsideScope}
+        />
         <PatentsKpiStrip kpis={kpis} onDrill={handleKpiDrill} />
       </div>
 

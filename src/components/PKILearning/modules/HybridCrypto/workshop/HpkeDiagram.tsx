@@ -2,14 +2,7 @@
 import React from 'react'
 
 export type HpkeDiagramStage =
-  | 'idle'
-  | 'recipient-keygen'
-  | 'sender-keygen'
-  | 'encap'
-  | 'seal'
-  | 'decap'
-  | 'open'
-  | 'done'
+  'idle' | 'recipient-keygen' | 'sender-keygen' | 'encap' | 'seal' | 'decap' | 'open' | 'done'
 
 interface HpkeDiagramProps {
   stage: HpkeDiagramStage

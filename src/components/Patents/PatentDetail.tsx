@@ -31,14 +31,7 @@ interface Props {
 
 // ─── Color tokens ────────────────────────────────────────────────────────────
 type TagVariant =
-  | 'pqc'
-  | 'classical'
-  | 'quantum'
-  | 'protocol'
-  | 'info'
-  | 'warning'
-  | 'threat'
-  | 'default'
+  'pqc' | 'classical' | 'quantum' | 'protocol' | 'info' | 'warning' | 'threat' | 'default'
 
 const TAG_CLASSES: Record<TagVariant, string> = {
   pqc: 'border-success/40 text-success bg-success/10',
@@ -75,6 +68,14 @@ const QUANTUM_RELEVANCE_COLOR: Record<string, string> = {
   dependent_claim_only: 'bg-status-warning/10 text-status-warning border-status-warning/30',
   background_only: 'bg-muted text-muted-foreground border-border',
   none: 'bg-muted text-muted-foreground border-border',
+}
+
+const QUANTUM_SAFE_BASIS_LABEL: Record<string, string> = {
+  symmetric_strength:
+    'Quantum-safe by symmetric strength — 256-bit symmetric or SHA-2/3 primitives. Grover’s algorithm costs a square root, so AES-256 retains ~128-bit security; NIST treats 256-bit symmetric as post-quantum adequate. Not a NIST PQC algorithm.',
+  lattice_fhe:
+    'Quantum-safe by lattice assumption — homomorphic encryption (CKKS, BFV, BGV) rests on LWE/RLWE hardness, believed quantum-resistant, but is not a NIST PQC standard.',
+  qkd: 'Quantum key distribution — security from physics rather than computational hardness. Not post-quantum cryptography, which is classical algorithms believed safe against quantum computers.',
 }
 
 const IMPACT_COLOR: Record<string, string> = {
@@ -378,6 +379,21 @@ export function PatentDetail({
             </div>
             <p className="text-sm text-foreground leading-relaxed">
               {patent.primaryInventiveClaim}
+            </p>
+          </div>
+        )}
+
+        {/* Quantum-safety basis — why this patent is quantum-safe when it
+            names no NIST PQC algorithm. AES-256 gives ~128-bit security
+            against Grover, which NIST treats as post-quantum adequate, and
+            `pqcAlgorithms` has no way to say so. */}
+        {patent.quantumSafeBasis && patent.quantumSafeBasis !== 'pqc_algorithm' && (
+          <div className="space-y-1">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              Quantum-safe basis
+            </div>
+            <p className="text-sm text-foreground leading-relaxed">
+              {QUANTUM_SAFE_BASIS_LABEL[patent.quantumSafeBasis]}
             </p>
           </div>
         )}

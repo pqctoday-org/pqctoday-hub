@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-11T16:02:27.207590+00:00",
+  "generated": "2026-09-23T00:57:19.355345+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -3116,8 +3116,8 @@
   "blocked": {
     "UN-ECE-WP29": {
       "reason": "status=err, tier=crawl4ai",
-      "blocked_at": "2026-09-02T15:59:33.864660+00:00",
-      "attempts": 7
+      "blocked_at": "2026-09-23T00:34:39.676694+00:00",
+      "attempts": 8
     },
     "IEC-62443": {
       "reason": "hard-blocked: rejected at all 3 fetch_resilient tiers",
@@ -3130,7 +3130,7 @@
       "attempts": 7
     },
     "KCMVP": {
-      "reason": "unusable content: only 13 chars of visible text (floor 200) — a shell, not a document",
+      "reason": "unusable content: only 13 chars of visible text (floor 200) \u2014 a shell, not a document",
       "blocked_at": "2026-07-31T22:02:59.774776+00:00",
       "attempts": 6
     },
@@ -3155,9 +3155,24 @@
       "attempts": 2
     },
     "BRAZIL-BACEN-4893": {
-      "reason": "unusable content: only 23 chars of visible text (floor 200) — a shell, not a document",
-      "blocked_at": "2026-09-02T15:59:33.864660+00:00",
-      "attempts": 2
+      "reason": "unusable content: only 23 chars of visible text (floor 200) \u2014 a shell, not a document",
+      "blocked_at": "2026-09-23T00:34:39.676694+00:00",
+      "attempts": 3
+    },
+    "ISO-27001": {
+      "reason": "refused at the door: artefact PAYWALL: a price (chf 155) beside 'add to cart' \u2014 paid or registration-gated evidence is excluded by policy",
+      "blocked_at": "2026-09-23T00:34:39.676694+00:00",
+      "attempts": 1
+    },
+    "ISO-SAE-21434": {
+      "reason": "refused at the door: artefact PAYWALL: a price (chf 227) beside 'add to cart' \u2014 paid or registration-gated evidence is excluded by policy",
+      "blocked_at": "2026-09-23T00:34:39.676694+00:00",
+      "attempts": 1
+    },
+    "ISO-19790": {
+      "reason": "refused at the door: artefact PAYWALL: a price (chf 0) beside 'add to cart' \u2014 paid or registration-gated evidence is excluded by policy",
+      "blocked_at": "2026-09-23T00:34:39.676694+00:00",
+      "attempts": 1
     }
   }
 }

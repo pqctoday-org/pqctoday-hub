@@ -183,8 +183,7 @@ export const useMigrationWorkflowStore = create<MigrationWorkflowState>()(
         if (version < 2) {
           // Additive Phase 0–7 journey fields.
           const persistedStatus = state.phaseStatus as
-            | Partial<Record<PhaseId, PhaseStatus>>
-            | undefined
+            Partial<Record<PhaseId, PhaseStatus>> | undefined
           const base = buildInitialPhaseStatus()
           state.phaseStatus =
             persistedStatus && typeof persistedStatus === 'object'
@@ -201,8 +200,7 @@ export const useMigrationWorkflowStore = create<MigrationWorkflowState>()(
           // phaseStatus always covers the full PHASE_ORDER — otherwise a new rail
           // node reads an undefined status and crashes.
           const persistedStatus = state.phaseStatus as
-            | Partial<Record<PhaseId, PhaseStatus>>
-            | undefined
+            Partial<Record<PhaseId, PhaseStatus>> | undefined
           state.phaseStatus = { ...buildInitialPhaseStatus(), ...(persistedStatus ?? {}) }
         }
         return state as unknown as MigrationWorkflowState

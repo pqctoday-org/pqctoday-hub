@@ -54,12 +54,7 @@ export interface UserProfile {
 }
 
 export type ApplicabilityTier =
-  | 'mandatory'
-  | 'recognized'
-  | 'cross-border'
-  | 'advisory'
-  | 'derived'
-  | 'informational'
+  'mandatory' | 'recognized' | 'cross-border' | 'advisory' | 'derived' | 'informational'
 
 /** A single trust-path hop from a directly-matched standard to a derived one. */
 export interface TrustPath {

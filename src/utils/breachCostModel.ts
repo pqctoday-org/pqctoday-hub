@@ -45,11 +45,7 @@ export type { CrqcScenario }
  * this as an assumption where no authoritative source exists.
  */
 export type DataSensitivityClass =
-  | 'payment-card'
-  | 'general-pii'
-  | 'health-record'
-  | 'ip-trade-secret'
-  | 'state-secret'
+  'payment-card' | 'general-pii' | 'health-record' | 'ip-trade-secret' | 'state-secret'
 
 export const DATA_SHELF_LIFE_YEARS: Record<DataSensitivityClass, number> = {
   'payment-card': 3, // card reissuance / tokenization lifecycle — assumption, no single authoritative source
