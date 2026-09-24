@@ -36,6 +36,7 @@ function renderLayout(initialEntry = '/') {
         <Route element={<MainLayout />}>
           <Route path="/" element={<div>Home Page</div>} />
           <Route path="/timeline" element={<div>Timeline Page</div>} />
+          <Route path="/threats" element={<div>Threats Page</div>} />
         </Route>
       </Routes>
     </MemoryRouter>
@@ -94,6 +95,22 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     // here.
     expect(await screen.findByRole('button', { name: 'Search' })).toBeInTheDocument()
     expect(await screen.findByRole('button', { name: /Home/ })).toBeInTheDocument()
+  })
+
+  // UX-9: a shared threat link used to land a first-time phone visitor on the
+  // role picker instead of the threat they were sent.
+  it('flag on, no persona chosen: a /threats deep link shows the page, not the first-run picker', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderLayout('/threats?id=FIN-001')
+    expect(await screen.findByText('Threats Page')).toBeInTheDocument()
+    expect(screen.queryByText("Who's asking?")).not.toBeInTheDocument()
+  })
+
+  it('flag on, no persona chosen: plain /threats (no deep link) still shows the first-run picker', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderLayout('/threats')
+    expect(await screen.findByText("Who's asking?")).toBeInTheDocument()
+    expect(screen.queryByText('Threats Page')).not.toBeInTheDocument()
   })
 
   it('flag on, personalization explicitly skipped: shows the normal mobile chrome, not the picker again', async () => {

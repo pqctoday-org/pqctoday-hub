@@ -342,7 +342,7 @@ export const ThreatsTable = ({
                                     `**Industry:** ${item.industry}`,
                                     `**Criticality:** ${item.criticality}`,
                                   ].join('\n'),
-                                  pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+                                  pageUrl: `/threats?id=${encodeURIComponent(item.threatId)}`,
                                 })}
                                 flagUrl={buildFlagUrl({
                                   category: 'threat-endorsement',
@@ -354,7 +354,7 @@ export const ThreatsTable = ({
                                     `**Industry:** ${item.industry}`,
                                     `**Criticality:** ${item.criticality}`,
                                   ].join('\n'),
-                                  pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+                                  pageUrl: `/threats?id=${encodeURIComponent(item.threatId)}`,
                                 })}
                                 resourceLabel={item.threatId}
                                 resourceType="Threat"

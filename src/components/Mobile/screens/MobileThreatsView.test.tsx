@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, afterEach } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
+import { MemoryRouter, useLocation } from 'react-router'
 import { MobileThreatsView } from './MobileThreatsView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { threatsData } from '@/data/threatsData'
+import { retiredThreats, threatsData } from '@/data/threatsData'
+import { getThreatClass } from '@/components/Threats/threatClassification'
 import {
   getCrqcConsensus,
   CRQC_ESTIMATES,
@@ -14,8 +16,18 @@ import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/d
 // Real data throughout — threatsData is parsed synchronously from a bundled
 // CSV at module load. Assertions are structural (derived counts, not
 // hardcoded), since the underlying CSV changes over time.
-function renderView() {
-  return render(<MobileThreatsView />)
+// Renders the router's current query string so a test can read the URL.
+function LocationProbe() {
+  return <output data-testid="location-search">{useLocation().search}</output>
+}
+
+function renderView(url = '/threats') {
+  return render(
+    <MemoryRouter initialEntries={[url]}>
+      <MobileThreatsView />
+      <LocationProbe />
+    </MemoryRouter>
+  )
 }
 
 describe('MobileThreatsView', () => {
@@ -155,5 +167,63 @@ describe('MobileThreatsView', () => {
     }
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(screen.queryByTestId('threat-detail-sheet')).not.toBeInTheDocument()
+  })
+
+  // UX-9: phones used to ignore every URL parameter, so a shared link opened
+  // the unfiltered list. Same parsing as desktop (threatsUrlParams).
+  describe('deep links', () => {
+    it('?id= opens that threat’s detail sheet', () => {
+      const t = threatsData[3]
+      renderView(`/threats?id=${encodeURIComponent(t.threatId)}`)
+      const sheet = screen.getByTestId('threat-detail-sheet')
+      expect(within(sheet).getAllByText(t.description)[0]).toBeInTheDocument()
+    })
+
+    it('the legacy ?threat= alias opens it too, and closing drops both from the URL', () => {
+      const t = threatsData[1]
+      renderView(`/threats?threat=${encodeURIComponent(t.threatId)}`)
+      expect(screen.getByTestId('threat-detail-sheet')).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+      expect(screen.queryByTestId('threat-detail-sheet')).not.toBeInTheDocument()
+      expect(screen.getByTestId('location-search').textContent).not.toMatch(/id=|threat=/)
+    })
+
+    it('?industry= scopes the list to that industry and says so', () => {
+      const industry = threatsData[0].industry
+      renderView(`/threats?industry=${encodeURIComponent(industry)}`)
+      expect(screen.getByText('From your link:')).toBeInTheDocument()
+      const other = threatsData.find((t) => t.industry !== industry)!
+      expect(screen.queryByText(other.threatId)).not.toBeInTheDocument()
+      for (const t of threatsData.filter((x) => x.industry === industry).slice(0, 3)) {
+        expect(screen.getByText(t.threatId)).toBeInTheDocument()
+      }
+      fireEvent.click(screen.getByRole('button', { name: 'Show all' }))
+      expect(screen.getByText(other.threatId)).toBeInTheDocument()
+    })
+
+    it('?q= filters with the desktop search', () => {
+      const t = threatsData[0]
+      renderView(`/threats?q=${encodeURIComponent(t.threatId)}`)
+      expect(screen.getByText(t.threatId)).toBeInTheDocument()
+      expect(screen.queryByText(threatsData[1].threatId)).not.toBeInTheDocument()
+    })
+
+    it('?class= preselects the class chip and filters to it', () => {
+      renderView('/threats?class=hnfl')
+      const group = screen.getByRole('group', { name: 'Filter by threat class' })
+      const chip = within(group).getByRole('button', { name: /HNFL \/ TNFL/ })
+      expect(chip).toHaveAttribute('aria-pressed', 'true')
+      const notHnfl = threatsData.find((t) => getThreatClass(t) !== 'hnfl')
+      if (notHnfl) expect(screen.queryByText(notHnfl.threatId)).not.toBeInTheDocument()
+    })
+
+    it('a link to a retired threat says it was retired', () => {
+      const [id, retired] = [...retiredThreats][0]
+      renderView(`/threats?id=${encodeURIComponent(id)}`)
+      expect(screen.getByText(/This entry was retired/)).toBeInTheDocument()
+      if (retired.deprecatedAt)
+        expect(screen.getByText(new RegExp(retired.deprecatedAt))).toBeInTheDocument()
+      expect(screen.queryByTestId('threat-detail-sheet')).not.toBeInTheDocument()
+    })
   })
 })

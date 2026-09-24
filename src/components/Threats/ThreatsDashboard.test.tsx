@@ -8,6 +8,7 @@ import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
 import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import * as endorsement from '@/utils/endorsement'
 
 vi.mock('@/services/search/useSemanticSearch', async () => {
   const actual = await vi.importActual<typeof useSemanticSearchModule>(
@@ -129,6 +130,16 @@ vi.mock('../common/FilterDropdown', () => ({
     )
   },
 }))
+
+// Pass-through spies: lets a test read every Endorse/Flag pageUrl the page builds.
+vi.mock('@/utils/endorsement', async () => {
+  const actual = await vi.importActual<typeof import('@/utils/endorsement')>('@/utils/endorsement')
+  return {
+    ...actual,
+    buildEndorsementUrl: vi.fn(actual.buildEndorsementUrl),
+    buildFlagUrl: vi.fn(actual.buildFlagUrl),
+  }
+})
 
 // Mock Analytics
 vi.mock('../../utils/analytics', () => ({
@@ -321,6 +332,76 @@ describe('ThreatsDashboard', () => {
         screen.getByText(/This entry was retired on 2026-07-16: Removed in consolidation/)
       ).toBeInTheDocument()
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('deep links (UX-3)', () => {
+    it('?id= opens the threat dialog', async () => {
+      render(
+        <MemoryRouter initialEntries={['/threats?id=THR-002']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const dialog = await screen.findByRole('dialog')
+      expect(within(dialog).getByText('THR-002')).toBeInTheDocument()
+    })
+
+    it('accepts the legacy ?threat= alias that old Endorse/Flag links carry', async () => {
+      render(
+        <MemoryRouter initialEntries={['/threats?threat=THR-002']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const dialog = await screen.findByRole('dialog')
+      expect(within(dialog).getByText('THR-002')).toBeInTheDocument()
+    })
+
+    // jsdom has no scrollIntoView; install a recording stub per test.
+    function stubScrollIntoView() {
+      const original = Element.prototype.scrollIntoView
+      const scrolled: string[] = []
+      Element.prototype.scrollIntoView = function (this: Element) {
+        scrolled.push(this.id)
+      }
+      return { scrolled, restore: () => (Element.prototype.scrollIntoView = original) }
+    }
+
+    it('?view=horizon scrolls to the CRQC Threat Horizon section', () => {
+      const stub = stubScrollIntoView()
+      render(
+        <MemoryRouter initialEntries={['/threats?view=horizon']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      expect(stub.scrolled).toContain('crqc-threat-horizon')
+      stub.restore()
+    })
+
+    it('every per-threat Endorse/Flag link (table rows and cards) uses ?id=, never ?threat=', () => {
+      render(
+        <MemoryRouter>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const perThreat = [
+        ...vi.mocked(endorsement.buildEndorsementUrl).mock.calls,
+        ...vi.mocked(endorsement.buildFlagUrl).mock.calls,
+      ]
+        .map(([opts]) => opts.pageUrl)
+        .filter((u): u is string => !!u && u !== '/threats')
+      expect(perThreat.length).toBeGreaterThan(0)
+      for (const url of perThreat) expect(url).toMatch(/^\/threats\?id=/)
+    })
+
+    it('does not scroll to the Horizon without ?view=horizon', () => {
+      const stub = stubScrollIntoView()
+      render(
+        <MemoryRouter initialEntries={['/threats']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      expect(stub.scrolled).not.toContain('crqc-threat-horizon')
+      stub.restore()
     })
   })
 

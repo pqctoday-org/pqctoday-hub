@@ -7,6 +7,16 @@ import type { ThreatItem } from '@/data/threatsData'
 import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 import { SOC_LEARN_MODULE_HREF, SOC_LEARN_MODULE_ID } from '@/data/socQuantumPlaybook'
 import { ThreatDetailDialog } from './ThreatDetailDialog'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+
+vi.mock('@/utils/endorsement', async () => {
+  const actual = await vi.importActual<typeof import('@/utils/endorsement')>('@/utils/endorsement')
+  return {
+    ...actual,
+    buildEndorsementUrl: vi.fn(actual.buildEndorsementUrl),
+    buildFlagUrl: vi.fn(actual.buildFlagUrl),
+  }
+})
 
 function threat(partial: Partial<ThreatItem>): ThreatItem {
   return {
@@ -117,5 +127,17 @@ describe('ThreatDetailDialog — blank fields and internal notes (UX-5 / UX-6 / 
     expect(screen.queryByText(/qwen/)).not.toBeInTheDocument()
     // The rest of the provenance block still renders.
     expect(screen.getByText('Data Provenance')).toBeInTheDocument()
+  })
+})
+
+describe('ThreatDetailDialog — shareable links (UX-3)', () => {
+  it('Endorse and Flag link back with ?id=, the parameter the page reads', () => {
+    renderDialog(threat({ threatId: 'FIN-007' }))
+    const pageUrls = [
+      ...vi.mocked(buildEndorsementUrl).mock.calls,
+      ...vi.mocked(buildFlagUrl).mock.calls,
+    ].map(([opts]) => opts.pageUrl)
+    expect(pageUrls.length).toBeGreaterThanOrEqual(2)
+    for (const url of pageUrls) expect(url).toBe('/threats?id=FIN-007')
   })
 })

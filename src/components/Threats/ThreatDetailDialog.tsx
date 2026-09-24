@@ -572,7 +572,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                   `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
                   `**PQC Mitigation:** ${threat.pqcReplacement}`,
                 ].join('\n'),
-                pageUrl: `/threats?threat=${encodeURIComponent(threat.threatId)}`,
+                pageUrl: `/threats?id=${encodeURIComponent(threat.threatId)}`,
               })}
               resourceLabel={threat.threatId}
               resourceType="Threat"
@@ -591,7 +591,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                   `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
                   `**PQC Mitigation:** ${threat.pqcReplacement}`,
                 ].join('\n'),
-                pageUrl: `/threats?threat=${encodeURIComponent(threat.threatId)}`,
+                pageUrl: `/threats?id=${encodeURIComponent(threat.threatId)}`,
               })}
               resourceLabel={threat.threatId}
               resourceType="Threat"

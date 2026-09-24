@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
-import { Minus, Plus, Bookmark, BookmarkCheck, ExternalLink } from 'lucide-react'
+import { useCallback, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router'
+import { Minus, Plus, Bookmark, BookmarkCheck, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { threatsData, type ThreatItem } from '@/data/threatsData'
+import { retiredThreats, threatsData, type ThreatItem } from '@/data/threatsData'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -18,8 +19,18 @@ import {
   type ThreatClass,
 } from '@/components/Threats/threatClassification'
 import { cn } from '@/lib/utils'
-import { criticalityLevelsPresent, NOT_YET_SPECIFIED } from '@/data/threatRowRules'
+import {
+  criticalityLevelsPresent,
+  NOT_YET_SPECIFIED,
+  retiredThreatMessage,
+} from '@/data/threatRowRules'
 import { MobileSheet } from '../primitives/Sheet'
+import {
+  matchesThreatQuery,
+  resolveIndustryParam,
+  threatClassParam,
+  threatIdParam,
+} from '@/components/Threats/threatsUrlParams'
 
 const CURRENT_YEAR = new Date().getFullYear()
 // Same fixed defaults ThreatEconomicsHeader.tsx's own mini-calculator starts
@@ -121,9 +132,45 @@ export function MobileThreatsView() {
 
   const consensus = useMemo(() => getCrqcConsensus(), [])
   const [crqcYear, setCrqcYear] = useState(consensus.zEstimate)
-  const [criticality, setCriticality] = useState<string | null>(null)
-  const [classFilter, setClassFilter] = useState<ThreatClass | null>(null)
-  const [selected, setSelected] = useState<ThreatItem | null>(null)
+
+  // Filters and the open threat live in the URL, parsed exactly as the desktop
+  // page parses them (threatsUrlParams), so a shared /threats?id=… or
+  // ?industry=…&class=… link opens the same thing on a phone. The URL is the
+  // single source of truth — no mirrored state to fall out of step with it.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const setParam = useCallback(
+    (updates: Record<string, string | null>) =>
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          for (const [k, v] of Object.entries(updates)) {
+            if (v) next.set(k, v)
+            else next.delete(k)
+          }
+          return next
+        },
+        { replace: true }
+      ),
+    [setSearchParams]
+  )
+  const criticalityParam = searchParams.get('criticality')
+  const criticality =
+    criticalityParam && CRITICALITY_LEVELS.includes(criticalityParam) ? criticalityParam : null
+  const setCriticality = (level: string | null) => setParam({ criticality: level })
+  const classFilter = threatClassParam(searchParams)
+  const setClassFilter = (cls: ThreatClass | null) => setParam({ class: cls })
+  const urlIndustries = useMemo(
+    () => resolveIndustryParam(searchParams.get('industry'), threatsData),
+    [searchParams]
+  )
+  const urlQuery = searchParams.get('q')?.trim() ?? ''
+  const linkedId = threatIdParam(searchParams)
+  const selected = useMemo(
+    () => (linkedId ? (threatsData.find((t) => t.threatId === linkedId) ?? null) : null),
+    [linkedId]
+  )
+  const retiredLinked = linkedId && !selected ? retiredThreats.get(linkedId) : undefined
+  const setSelected = (t: ThreatItem | null) => setParam({ id: t?.threatId ?? null, threat: null })
 
   const hndlDeadline = crqcYear - DATA_LIFETIME - MIGRATION_TIME
   const hnflDeadline = crqcYear - CREDENTIAL_VALIDITY - MIGRATION_TIME
@@ -139,20 +186,24 @@ export function MobileThreatsView() {
     return industries.length > 0 ? industries : null
   }, [selectedPersona])
 
+  // An explicit ?industry= wins over the persona default, as on desktop.
   const scopedData = useMemo(
     () =>
-      personaIndustries
-        ? threatsData.filter((t) => personaIndustries.includes(t.industry))
-        : threatsData,
-    [personaIndustries]
+      urlIndustries.length > 0
+        ? threatsData.filter((t) => urlIndustries.includes(t.industry))
+        : personaIndustries
+          ? threatsData.filter((t) => personaIndustries.includes(t.industry))
+          : threatsData,
+    [urlIndustries, personaIndustries]
   )
 
   const filteredData = useMemo(() => {
     let data = scopedData
+    if (urlQuery) data = data.filter((t) => matchesThreatQuery(t, urlQuery))
     if (criticality) data = data.filter((t) => t.criticality === criticality)
     if (classFilter) data = data.filter((t) => getThreatClass(t) === classFilter)
     return data
-  }, [scopedData, criticality, classFilter])
+  }, [scopedData, urlQuery, criticality, classFilter])
 
   const urgencyStyle = URGENCY_CONFIG[urgency]
 
@@ -165,9 +216,49 @@ export function MobileThreatsView() {
         <h1 className="sr-only">Threats</h1>
         <p className="text-[11.5px] text-muted-foreground">
           {threatsData.length} tracked
-          {personaIndustries && ` · ${scopedData.length} in your focus areas`}
+          {urlIndustries.length === 0 &&
+            personaIndustries &&
+            ` · ${scopedData.length} in your focus areas`}
         </p>
       </div>
+
+      {retiredLinked && (
+        <div
+          role="status"
+          className="mb-4 flex items-start gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2 text-[12px] leading-relaxed text-foreground"
+        >
+          <p className="flex-1">{retiredThreatMessage(retiredLinked)}</p>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setParam({ id: null, threat: null })}
+            aria-label="Dismiss retired-entry notice"
+            className="h-7 w-7 shrink-0 rounded-full p-0 text-muted-foreground"
+          >
+            <X size={14} aria-hidden="true" />
+          </Button>
+        </div>
+      )}
+
+      {/* A shared link's industry / search scope — there is no picker or
+          search box for these on this screen, so say what is applied and
+          offer the way out. */}
+      {(urlIndustries.length > 0 || urlQuery) && (
+        <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-[11.5px] text-foreground">
+          <span className="font-semibold">From your link:</span>
+          <span className="flex-1">
+            {[...urlIndustries, ...(urlQuery ? [`“${urlQuery}”`] : [])].join(' · ')}
+          </span>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setParam({ industry: null, q: null })}
+            className="h-7 rounded-full border border-border px-2.5 text-[11px] font-semibold"
+          >
+            Show all
+          </Button>
+        </div>
+      )}
 
       <section className={cn('mb-4 rounded-xl border p-4', urgencyStyle.bg)}>
         <div className="mb-1.5 flex items-center gap-2">
@@ -249,7 +340,7 @@ export function MobileThreatsView() {
             type="button"
             variant="ghost"
             key={level}
-            onClick={() => setCriticality((c) => (c === level ? null : level))}
+            onClick={() => setCriticality(criticality === level ? null : level)}
             aria-pressed={criticality === level}
             className={cn(
               'h-8 rounded-full border px-3 text-[11px] font-semibold',
@@ -283,7 +374,7 @@ export function MobileThreatsView() {
             type="button"
             variant="ghost"
             key={c.id}
-            onClick={() => setClassFilter((cur) => (cur === c.id ? null : c.id))}
+            onClick={() => setClassFilter(classFilter === c.id ? null : c.id)}
             aria-pressed={classFilter === c.id}
             className={cn(
               'h-8 rounded-full border px-3 text-[11px] font-semibold',

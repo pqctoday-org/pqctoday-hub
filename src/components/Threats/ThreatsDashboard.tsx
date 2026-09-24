@@ -87,6 +87,12 @@ import { CrqcCapabilityStrip } from './CrqcCapabilityStrip'
 import { CrqcTrajectoryChart } from './CrqcTrajectoryChart'
 import { SectorExposureHero } from './SectorExposureHero'
 import { RetiredThreatNotice } from './RetiredThreatNotice'
+import {
+  matchesThreatQuery,
+  resolveIndustryParam,
+  threatIdParam,
+  wantsHorizonView,
+} from './threatsUrlParams'
 import { THREAT_CLASS_DEFS, threatMatchesClass, type ThreatClass } from './threatClassification'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
@@ -139,25 +145,23 @@ export const ThreatsDashboard: React.FC<{
   // click to discover). `initialTab` is kept only so existing embed call sites
   // (ThreatsEmbed / SimulationView's CRQC-horizon step) can still ask the page
   // to open scrolled to the Horizon section instead of at the top.
+  // The standalone page reads the same request from `?view=horizon` — the link
+  // the simulation's CRQC-horizon steps (and their navigate-away links) use,
+  // which the page used to ignore.
+  const horizonRequested = initialTab === 'horizon' || (!simEmbed && wantsHorizonView(searchParams))
   useEffect(() => {
-    if (initialTab !== 'horizon') return
+    if (!horizonRequested) return
     document.getElementById('crqc-threat-horizon')?.scrollIntoView({ block: 'start' })
-    // Intentionally runs once on mount only — this is an initial scroll position,
-    // not a state to keep syncing.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    // Runs when the request appears (mount, or a same-route link adding
+    // ?view=horizon) — an initial scroll position, not a state to keep syncing.
+  }, [horizonRequested])
 
   const { selectedIndustries: storeIndustries, selectedPersona } = usePersonaStore()
 
   const initialIndustries = useMemo(() => {
     const param = searchParams.get('industry')
     // URL param takes precedence — supports comma-separated multi-industry
-    if (param) {
-      return param.split(',').flatMap((p) => {
-        const match = threatsData.find((d) => d.industry.toLowerCase() === p.trim().toLowerCase())
-        return match ? [match.industry] : []
-      })
-    }
+    if (param) return resolveIndustryParam(param, threatsData)
     // Map all home-page selected industries through the threats name mapping
     return (
       storeIndustries
@@ -184,7 +188,7 @@ export const ThreatsDashboard: React.FC<{
     () => (searchParams.get('dir') as SortDirection | null) ?? 'asc'
   )
   const [selectedThreat, setSelectedThreat] = useState<ThreatItem | null>(() => {
-    const idParam = searchParams.get('id')
+    const idParam = threatIdParam(searchParams)
     if (idParam) {
       return threatsData.find((t) => t.threatId === idParam) ?? null
     }
@@ -216,7 +220,7 @@ export const ThreatsDashboard: React.FC<{
   // Functional setters prevent infinite loops when syncFiltersToUrl triggers a searchParams update.
   useEffect(() => {
     const indParam = searchParams.get('industry')
-    const idParam = searchParams.get('id')
+    const idParam = threatIdParam(searchParams)
     const nextCrit = searchParams.get('criticality') ?? 'All'
     const nextClass = searchParams.get('class') ?? 'All'
     const nextQ = searchParams.get('q') ?? ''
@@ -227,14 +231,13 @@ export const ThreatsDashboard: React.FC<{
       modeParam === 'cards' || modeParam === 'table' ? modeParam : 'table'
 
     if (indParam) {
-      const matches = indParam.split(',').flatMap((p) => {
-        const m = threatsData.find((d) => d.industry.toLowerCase() === p.trim().toLowerCase())
-        return m ? [m.industry] : []
-      })
-      if (matches.length > 0)
+      const matches = resolveIndustryParam(indParam, threatsData)
+      if (matches.length > 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- same-route URL→state sync; the functional setter is a no-op when unchanged
         setSelectedIndustries((prev) =>
           JSON.stringify(prev) !== JSON.stringify(matches) ? matches : prev
         )
+      }
     }
     if (idParam) {
       const found = threatsData.find((t) => t.threatId === idParam)
@@ -287,6 +290,8 @@ export const ThreatsDashboard: React.FC<{
           else next.delete('dir')
           if (id) next.set('id', id)
           else next.delete('id')
+          // Legacy alias (old Endorse/Flag links) — `id` is the one we write.
+          next.delete('threat')
           if (mode !== 'table') next.set('mode', mode)
           else next.delete('mode')
           return next
@@ -452,13 +457,7 @@ export const ThreatsDashboard: React.FC<{
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       data = data.filter((item) => {
-        const lexicalMatch =
-          item.threatId.toLowerCase().includes(query) ||
-          item.description.toLowerCase().includes(query) ||
-          item.industry.toLowerCase().includes(query) ||
-          item.cryptoAtRisk.toLowerCase().includes(query) ||
-          item.pqcReplacement.toLowerCase().includes(query)
-        if (lexicalMatch) return true
+        if (matchesThreatQuery(item, query)) return true
         if (semanticIdSet && semanticIdSet.has(item.threatId.toLowerCase())) return true
         return false
       })
@@ -605,7 +604,7 @@ export const ThreatsDashboard: React.FC<{
 
   // An old link to a threat that has since been retired: say so, rather than
   // opening nothing.
-  const linkedId = searchParams.get('id')
+  const linkedId = threatIdParam(searchParams)
   const retiredLinked =
     linkedId && !threatsData.some((t) => t.threatId === linkedId)
       ? retiredThreats.get(linkedId)

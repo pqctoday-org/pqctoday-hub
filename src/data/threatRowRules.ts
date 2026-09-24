@@ -52,6 +52,18 @@ export const THREAT_INDUSTRY_ALIASES: Readonly<Record<string, string>> = {
 export function canonicalThreatIndustry(raw: string): string {
   return THREAT_INDUSTRY_ALIASES[raw] ?? raw
 }
+/** "<id> is no longer in the catalog. This entry was retired on <date>: <reason>"
+ *  — what a reader following an old link to a retired row is told. */
+export function retiredThreatMessage(retired: {
+  threatId: string
+  deprecatedAt?: string
+  deprecatedReason?: string
+}): string {
+  const when = retired.deprecatedAt ? ` on ${retired.deprecatedAt}` : ''
+  const why = retired.deprecatedReason ? `: ${retired.deprecatedReason}` : '.'
+  return `${retired.threatId} is no longer in the catalog. This entry was retired${when}${why}`
+}
+
 /** Shown when a row's criticality cell is blank — never guessed as "Medium". */
 export const UNRATED_CRITICALITY = 'Unrated'
 
