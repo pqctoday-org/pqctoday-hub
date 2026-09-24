@@ -72,7 +72,8 @@ const Chips = ({
           key={i}
           title={c}
           className={clsx(
-            'whitespace-nowrap rounded-sm border px-1.5 py-0.5 max-md:inline-block max-md:max-w-[22ch] max-md:truncate',
+            // UX-14: chips wrap inside the card instead of being clipped.
+            'max-w-full break-words rounded-sm border px-1.5 py-0.5',
             tone === 'risk'
               ? 'border-status-error/25 bg-status-error/5 text-status-error/90'
               : 'border-status-success/25 bg-status-success/5 text-status-success/90'
@@ -136,8 +137,8 @@ export const ThreatCard = ({
           </span>
           <span className="font-mono text-[11px] text-muted-foreground">{item.threatId}</span>
           {item.status && <StatusBadge status={item.status} size="sm" />}
-          <div className="ml-auto flex items-center gap-1.5">
-            <ThreatClassBadge threat={item} />
+          <div className="ml-auto flex flex-wrap items-center gap-1.5">
+            <ThreatClassBadge threat={item} className="whitespace-normal" />
             <TrustScoreBadge resourceType="threats" resourceId={item.threatId} size="sm" />
             <ThreatActionsMenu
               endorseUrl={buildEndorsementUrl({
@@ -200,7 +201,7 @@ export const ThreatCard = ({
             {/* Shor tier describes the urgency of breaking this specific crypto, so
             it lives alongside the at-risk chips rather than as a co-equal pill
             next to Criticality. */}
-            <ShorTierBadge threat={item} />
+            <ShorTierBadge threat={item} className="whitespace-normal text-left" />
             <Chips values={item.cryptoAtRisk} tone="risk" />
             <ArrowRight
               size={12}
