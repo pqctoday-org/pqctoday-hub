@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import {
   ShieldAlert,
   X,
@@ -30,7 +30,15 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Radar, Siren } from 'lucide-react'
 import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
-import { getSocUseCases, getIrPlaybook, getShorTier, SHOR_TIER_DEFS } from './threatClassification'
+import {
+  getSocUseCases,
+  getIrPlaybooks,
+  getShorTier,
+  getThreatClass,
+  SHOR_TIER_DEFS,
+  SOC_UNCLASSIFIED_NOTE,
+} from './threatClassification'
+import { formatSocCite, SOC_CTI_SECTION, SOC_LEARN_MODULE_HREF } from '@/data/socQuantumPlaybook'
 import { getAttackProfiles } from '@/data/implementationAttackProfiles'
 
 interface ThreatDetailDialogProps {
@@ -46,6 +54,10 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
     [threat.pqcReplacement]
   )
 
+  // Set when the CTI pointer closes the dialog to scroll to the Horizon
+  // section: focus must not return to (and scroll back to) the trigger row.
+  const jumpingToHorizon = useRef(false)
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -57,7 +69,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
   if (!threat) return null
 
   return (
-    <FocusLock returnFocus>
+    <FocusLock returnFocus={() => (jumpingToHorizon.current ? { preventScroll: true } : true)}>
       <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4">
         {/* Isolated backdrop */}
         <div
@@ -281,9 +293,14 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
 
                 <TabsContent value="detection">
                   <p className="text-xs text-muted-foreground mb-3">
-                    SOC detection use cases mapped to this threat (Applied Quantum SOC chapter,
-                    UC1–UC5).
+                    SOC detection use cases that apply to this threat&apos;s class, from the Applied
+                    Quantum PQC Migration Framework v3.0 &ldquo;SOC Implementation&rdquo; section.
                   </p>
+                  {getThreatClass(threat) === 'unclassified' && (
+                    <p className="text-xs text-muted-foreground mb-3 rounded-lg border border-border/50 bg-muted/20 p-2">
+                      {SOC_UNCLASSIFIED_NOTE}
+                    </p>
+                  )}
                   <ul className="space-y-2.5">
                     {getSocUseCases(threat).map((uc) => (
                       <li
@@ -292,39 +309,76 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                       >
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
-                            {uc.id}
+                            {uc.code}
                           </span>
                           <span className="text-xs font-semibold text-foreground">{uc.title}</span>
                         </div>
-                        <p className="text-xs text-muted-foreground">{uc.detection}</p>
+                        <p className="text-xs text-muted-foreground">{uc.summary}</p>
                         <p className="text-[11px] text-muted-foreground mt-1">
-                          <span className="uppercase tracking-wide">Signal:</span> {uc.signal}
+                          Source: {formatSocCite(uc.source)}
+                          {uc.sourceHeading !== uc.title && (
+                            <> (titled &ldquo;{uc.sourceHeading}&rdquo; in v3.0)</>
+                          )}
                         </p>
                       </li>
                     ))}
                   </ul>
+                  <p className="text-[11px] text-muted-foreground mt-3">
+                    Tracking progress toward a CRQC is threat intelligence, not a detection use case
+                    ({SOC_CTI_SECTION.title}, {formatSocCite(SOC_CTI_SECTION.source)}) — see the{' '}
+                    <a
+                      href="#crqc-threat-horizon"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        jumpingToHorizon.current = true
+                        onClose()
+                        document
+                          .getElementById('crqc-threat-horizon')
+                          ?.scrollIntoView({ block: 'start' })
+                      }}
+                      className="text-primary hover:underline"
+                    >
+                      CRQC Threat Horizon
+                    </a>{' '}
+                    on this page.
+                  </p>
                 </TabsContent>
 
                 <TabsContent value="response">
-                  {(() => {
-                    const pb = getIrPlaybook(threat)
-                    return (
-                      <div className="bg-muted/30 rounded-lg border border-border/50 p-3">
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Incident-response playbooks from the same source that apply to this
+                    threat&apos;s class.
+                  </p>
+                  <ul className="space-y-2.5">
+                    {getIrPlaybooks(threat).map((pb) => (
+                      <li
+                        key={pb.id}
+                        className="bg-muted/30 rounded-lg border border-border/50 p-3"
+                      >
                         <div className="flex items-center gap-2 mb-1">
                           <Siren size={14} className="text-status-error shrink-0" />
-                          <span className="text-sm font-semibold text-foreground">{pb.title}</span>
+                          <span className="text-sm font-semibold text-foreground">
+                            Playbook {pb.number}: {pb.title}
+                          </span>
                         </div>
-                        <p className="text-xs text-muted-foreground mb-3">{pb.summary}</p>
-                        <Link
-                          to={pb.href}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors"
-                        >
-                          Open IR Playbook
-                          <ArrowRight size={12} />
-                        </Link>
-                      </div>
-                    )
-                  })()}
+                        <p className="text-xs text-muted-foreground mb-1">
+                          <span className="font-semibold text-foreground/80">Trigger:</span>{' '}
+                          {pb.trigger}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{pb.summary}</p>
+                        <p className="text-[11px] text-muted-foreground mt-1">
+                          Source: {formatSocCite(pb.source)}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    to={SOC_LEARN_MODULE_HREF}
+                    className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors"
+                  >
+                    Learn: SOC Implementation for PQC
+                    <ArrowRight size={12} />
+                  </Link>
                 </TabsContent>
               </Tabs>
             </div>
