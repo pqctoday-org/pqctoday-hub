@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseThreatsCSV, retiredThreats, threatsData } from './threatsData'
+import { parseSecondarySources, parseThreatsCSV, retiredThreats, threatsData } from './threatsData'
 
 describe('threatsData', () => {
   it('loads without error', () => {
@@ -70,5 +70,41 @@ describe('parseThreatsCSV — blank criticality and retired lookup', () => {
       expect(threatsData.some((t) => t.threatId === id)).toBe(false)
     }
     expect(retiredThreats.size).toBeGreaterThan(0)
+  })
+})
+
+describe('second-source columns', () => {
+  it('one source: plain column names belong to it', () => {
+    expect(parseSecondarySources('RFC 7935', 'threat_description')).toEqual([
+      { ref: 'RFC 7935', claims: ['threat_description'] },
+    ])
+  })
+
+  it('several sources: column@ref pairs are split by source; an unknown ref is dropped', () => {
+    expect(
+      parseSecondarySources(
+        'RFC 6605;draft-x-00',
+        'crypto_at_risk@RFC 6605;pqc_replacement@draft-x-00;threat_description@RFC 9999'
+      )
+    ).toEqual([
+      { ref: 'RFC 6605', claims: ['crypto_at_risk'] },
+      { ref: 'draft-x-00', claims: ['pqc_replacement'] },
+    ])
+  })
+
+  it('no ref, no sources', () => {
+    expect(parseSecondarySources('', 'threat_description')).toEqual([])
+    expect(parseSecondarySources(undefined, undefined)).toEqual([])
+  })
+
+  it('the bundled data carries the approved second sources', () => {
+    const byId = new Map(threatsData.map((t) => [t.threatId, t]))
+    expect(byId.get('CROSS-010')?.secondarySources).toEqual([
+      { ref: 'RFC 7935', claims: ['threat_description'] },
+    ])
+    expect(byId.get('CROSS-009')?.secondarySources?.map((s) => s.ref)).toEqual([
+      'RFC 6605',
+      'draft-fregly-research-agenda-for-pqc-dnssec-00',
+    ])
   })
 })

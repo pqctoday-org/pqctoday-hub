@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { Minus, Plus, Bookmark, BookmarkCheck, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { retiredThreats, threatsData, type ThreatItem } from '@/data/threatsData'
@@ -24,7 +24,7 @@ import {
   NOT_YET_SPECIFIED,
   retiredThreatMessage,
 } from '@/data/threatRowRules'
-import { formatSourceCaveat, getSourceCaveat } from '@/data/threatClaimStatus'
+import { formatSourceCaveat, getSourceCaveat, secondSourceLines } from '@/data/threatClaimStatus'
 import { MobileSheet } from '../primitives/Sheet'
 import {
   matchesThreatQuery,
@@ -171,7 +171,10 @@ export function MobileThreatsView() {
     [linkedId]
   )
   const retiredLinked = linkedId && !selected ? retiredThreats.get(linkedId) : undefined
-  const selectedCaveat = selected ? getSourceCaveat(selected.threatId) : null
+  const selectedCaveat = selected
+    ? getSourceCaveat(selected.threatId, selected.secondarySources)
+    : null
+  const selectedSecondSources = selected ? secondSourceLines(selected.secondarySources) : []
   const setSelected = (t: ThreatItem | null) => setParam({ id: t?.threatId ?? null, threat: null })
 
   const hndlDeadline = crqcYear - DATA_LIFETIME - MIGRATION_TIME
@@ -475,6 +478,16 @@ export function MobileThreatsView() {
                   {formatSourceCaveat(selectedCaveat)}
                 </p>
               )}
+              {selectedSecondSources.map((s) => (
+                <p key={s.ref} className="mt-1 text-[10.5px] leading-relaxed">
+                  <Link
+                    to={`/library?ref=${encodeURIComponent(s.ref)}`}
+                    className="text-primary hover:underline"
+                  >
+                    {s.text}
+                  </Link>
+                </p>
+              ))}
             </div>
           </div>
         )}

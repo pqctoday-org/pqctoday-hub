@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest'
 import {
   formatSourceCaveat,
   getSourceCaveat,
+  secondSourceLines,
   SOURCE_CAVEAT_TEXT,
   sourceCaveatFor,
   type ThreatClaimStatusFile,
@@ -49,5 +50,34 @@ describe('threat source caveat', () => {
 
   it('the bundled lookup never throws, whether or not the file is present', () => {
     expect(getSourceCaveat('NO-SUCH-THREAT')).toBeNull()
+  })
+})
+
+describe('approved second sources', () => {
+  it('a second source stating the description replaces the caveat', () => {
+    const second = [{ ref: 'RFC 7935', claims: ['threat_description'] }]
+    expect(sourceCaveatFor('T-UND', FILE, second)).toBeNull()
+  })
+
+  it('a second source for other claims leaves the description caveat in place', () => {
+    const second = [{ ref: 'RFC 6605', claims: ['crypto_at_risk'] }]
+    expect(sourceCaveatFor('T-UND', FILE, second)?.text).toBe(SOURCE_CAVEAT_TEXT)
+  })
+
+  it('names exactly the claims each source was checked to state', () => {
+    expect(
+      secondSourceLines([
+        { ref: 'RFC 6605', claims: ['crypto_at_risk'] },
+        { ref: 'draft-x-00', claims: ['crypto_at_risk', 'pqc_replacement', 'threat_description'] },
+        { ref: 'RFC 1', claims: ['not_a_claim'] },
+      ])
+    ).toEqual([
+      { ref: 'RFC 6605', text: 'Also stated in RFC 6605: the cryptography at risk.' },
+      {
+        ref: 'draft-x-00',
+        text: 'Also stated in draft-x-00: the cryptography at risk, the replacement and the threat description.',
+      },
+    ])
+    expect(secondSourceLines(undefined)).toEqual([])
   })
 })

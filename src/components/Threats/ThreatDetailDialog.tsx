@@ -41,7 +41,7 @@ import {
 import { formatSocCite, SOC_CTI_SECTION, SOC_LEARN_MODULE_HREF } from '@/data/socQuantumPlaybook'
 import { getAttackProfiles } from '@/data/implementationAttackProfiles'
 import { NOT_YET_SPECIFIED, UNRATED_CRITICALITY } from '@/data/threatRowRules'
-import { formatSourceCaveat, getSourceCaveat } from '@/data/threatClaimStatus'
+import { formatSourceCaveat, getSourceCaveat, secondSourceLines } from '@/data/threatClaimStatus'
 
 /** An at-risk / PQC field, or an honest "not yet specified" when blank. */
 const SpecifiedOrNot = ({ value }: { value: string }) =>
@@ -64,7 +64,14 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
     [threat.pqcReplacement]
   )
 
-  const sourceCaveat = useMemo(() => getSourceCaveat(threat.threatId), [threat.threatId])
+  const sourceCaveat = useMemo(
+    () => getSourceCaveat(threat.threatId, threat.secondarySources),
+    [threat.threatId, threat.secondarySources]
+  )
+  const secondSources = useMemo(
+    () => secondSourceLines(threat.secondarySources),
+    [threat.secondarySources]
+  )
 
   // Set when the CTI pointer closes the dialog to scroll to the Horizon
   // section: focus must not return to (and scroll back to) the trigger row.
@@ -484,7 +491,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               )
             })()}
 
-            {(threat.sourceUrl || sourceCaveat) && (
+            {(threat.sourceUrl || sourceCaveat || secondSources.length > 0) && (
               <div className="pt-4 border-t border-border mt-4">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                   Reference Source
@@ -509,6 +516,18 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                     {formatSourceCaveat(sourceCaveat)}
                   </p>
                 )}
+                {/* Approved second sources: an independent document checked
+                    word for word to state these claims (review queue). */}
+                {secondSources.map((s) => (
+                  <p key={s.ref} className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    <Link
+                      to={`/library?ref=${encodeURIComponent(s.ref)}`}
+                      className="text-primary hover:underline"
+                    >
+                      {s.text}
+                    </Link>
+                  </p>
+                ))}
               </div>
             )}
 

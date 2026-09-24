@@ -12,6 +12,8 @@
  * never a crash.
  */
 
+import type { SecondarySource } from './threatsData'
+
 export type ClaimVerdict = 'supported' | 'undeterminable' | 'contradicted'
 
 interface ClaimEntry {
@@ -52,8 +54,12 @@ export interface SourceCaveat {
  */
 export function sourceCaveatFor(
   threatId: string,
-  status: ThreatClaimStatusFile | null
+  status: ThreatClaimStatusFile | null,
+  secondarySources?: SecondarySource[]
 ): SourceCaveat | null {
+  // An approved second source states the description: the caveat's "our
+  // analysis" is no longer true, and the second-source line says who does.
+  if (secondarySources?.some((s) => s.claims.includes('threat_description'))) return null
   const entry = status?.rows?.[threatId]?.claims?.threat_description
   const verdict = entry?.verdict?.trim().toLowerCase()
   if (verdict !== 'undeterminable' && verdict !== 'contradicted') return null
@@ -61,8 +67,34 @@ export function sourceCaveatFor(
 }
 
 /** `sourceCaveatFor` against the bundled file. */
-export function getSourceCaveat(threatId: string): SourceCaveat | null {
-  return sourceCaveatFor(threatId, THREAT_CLAIM_STATUS)
+export function getSourceCaveat(
+  threatId: string,
+  secondarySources?: SecondarySource[]
+): SourceCaveat | null {
+  return sourceCaveatFor(threatId, THREAT_CLAIM_STATUS, secondarySources)
+}
+
+const CLAIM_WORDS: Record<string, string> = {
+  threat_description: 'the threat description',
+  crypto_at_risk: 'the cryptography at risk',
+  pqc_replacement: 'the replacement',
+}
+
+/**
+ * "Also stated in RFC 7935: the threat description." — one line per approved
+ * second source, naming only the claims it was checked to state. A source
+ * with no recognised claim gets no line.
+ */
+export function secondSourceLines(
+  sources: SecondarySource[] | undefined
+): { ref: string; text: string }[] {
+  return (sources ?? []).flatMap((s) => {
+    const words = s.claims.map((c) => CLAIM_WORDS[c]).filter(Boolean)
+    if (words.length === 0) return []
+    const list =
+      words.length > 1 ? `${words.slice(0, -1).join(', ')} and ${words.at(-1)}` : words[0]
+    return [{ ref: s.ref, text: `Also stated in ${s.ref}: ${list}.` }]
+  })
 }
 
 /** The caveat as one line: the text plus "(checked <date>)" when dated. */

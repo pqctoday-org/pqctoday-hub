@@ -20334,6 +20334,51 @@
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
       "admittedAt": "2026-09-21T00:20:26.054657+00:00"
+    },
+    {
+      "refId": "RFC 6605",
+      "title": "Elliptic Curve Digital Signature Algorithm (DSA) for DNSSEC",
+      "url": "https://datatracker.ietf.org/doc/html/rfc6605",
+      "status": "downloaded",
+      "filename": "RFC_6605.html",
+      "sizeBytes": 62071,
+      "contentType": "text/html",
+      "sha256": "45271958d40d146101383333bf5e4232605a8af207c450828f407479c7015ff1",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-24T22:28:56.452322+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "draft-fregly-research-agenda-for-pqc-dnssec-00",
+      "title": "Research Agenda for a Post-Quantum DNSSEC",
+      "url": "https://datatracker.ietf.org/doc/html/draft-fregly-research-agenda-for-pqc-dnssec-00",
+      "status": "downloaded",
+      "filename": "draft-fregly-research-agenda-for-pqc-dnssec-00.html",
+      "sizeBytes": 83741,
+      "contentType": "text/html",
+      "sha256": "41a04572bdf3d3807b0c83c46431e439c75038900ea7ce1c3c8444f276ff5f95",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-24T22:29:05.279747+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "RFC 7935",
+      "title": "The Profile for Algorithms and Key Sizes for Use in the Resource Public Key Infrastructure",
+      "url": "https://datatracker.ietf.org/doc/html/rfc7935",
+      "status": "downloaded",
+      "filename": "RFC_7935.html",
+      "sizeBytes": 74601,
+      "contentType": "text/html",
+      "sha256": "741a244af9ea33d9c023b84a5f2d61b0a8fdb36f70123b4f577866e4b81fd373",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-24T22:29:09.557363+00:00",
+      "admittedBy": "admit.py"
     }
   ],
   "archivedEntries": [

@@ -35,6 +35,46 @@ export interface ThreatData {
   applicableIndustriesNormalized?: string[]
   lastVerified?: string
   status?: 'New' | 'Updated'
+  /** Approved second sources (library referenceIds) and the claim columns
+   *  each one states — from `secondary_source_ref` + `secondary_claims`,
+   *  written only by an approved second-source review item (2026-09-24). */
+  secondarySources?: SecondarySource[]
+}
+
+export interface SecondarySource {
+  /** Library referenceId, e.g. "RFC 7935". */
+  ref: string
+  /** Claim columns it states: threat_description | crypto_at_risk | pqc_replacement. */
+  claims: string[]
+}
+
+/**
+ * `secondary_claims` is either plain columns ("threat_description") when the
+ * row has one second source, or `column@ref` pairs when claims rest on
+ * different documents ("crypto_at_risk@RFC 6605;pqc_replacement@draft-x-00").
+ * Both are ';'-separated. A pair naming a ref the row does not list is kept
+ * out rather than guessed onto another source.
+ */
+export function parseSecondarySources(refCell?: string, claimsCell?: string): SecondarySource[] {
+  const refs = (refCell ?? '')
+    .split(';')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  if (refs.length === 0) return []
+  const parts = (claimsCell ?? '')
+    .split(';')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  const byRef = new Map<string, string[]>(refs.map((r) => [r, []]))
+  for (const part of parts) {
+    const at = part.indexOf('@')
+    if (at < 0) {
+      if (refs.length === 1) byRef.get(refs[0])?.push(part)
+      continue
+    }
+    byRef.get(part.slice(at + 1).trim())?.push(part.slice(0, at).trim())
+  }
+  return refs.map((ref) => ({ ref, claims: byRef.get(ref) ?? [] }))
 }
 
 export type ThreatItem = ThreatData
@@ -63,6 +103,8 @@ interface RawThreatRow {
   status?: string
   deprecated_at?: string
   deprecated_reason?: string
+  secondary_source_ref?: string
+  secondary_claims?: string
 }
 
 const THREATS_FILE_RE = /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
@@ -102,6 +144,10 @@ function transformThreat(row: RawThreatRow): ThreatData | null {
     dataQualityNotes: row.data_quality_notes || undefined,
     confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
     lastVerified: row.last_verified || undefined,
+    secondarySources: (() => {
+      const found = parseSecondarySources(row.secondary_source_ref, row.secondary_claims)
+      return found.length ? found : undefined
+    })(),
     applicableIndustriesNormalized: row.applicable_industries_normalized
       ? row.applicable_industries_normalized
           .split(';')
