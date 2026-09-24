@@ -31,6 +31,7 @@ import {
   CRQC_ESTIMATES,
 } from '../src/data/regulatoryTimelines'
 import { FRAMEWORK_MAX_FINE_USD_MILLIONS } from '../src/data/frameworkFines'
+import { isPublishedThreatStatus } from '../src/data/threatRowRules'
 // NOTE: workshopRegistry.tsx uses `@/*`-aliased imports internally, so this
 // script must be invoked with TSX_TSCONFIG_PATH=tsconfig.app.json (see
 // refresh-index.sh and scripts/ci/check-index-freshness.ts) for tsx to
@@ -266,6 +267,19 @@ function isInactiveRow(rows: string[][], i: number): boolean {
   if (!row) return false
   const v = (row[statusIdx] ?? '').trim().toLowerCase()
   return v === 'deprecated' || v === 'obsolete'
+}
+
+/**
+ * Threats rows the page does not show — deprecated/obsolete AND draft (a
+ * not-yet-filled stub from the private add-row tool). The same predicate the
+ * page's loader (src/data/threatsData.ts) applies, so the corpus can never
+ * cite a threat the page will not open. Deliberately threats-only: other
+ * sources' `status` columns do not use 'draft' this way.
+ */
+function isUnpublishedThreatRow(rows: string[][], i: number): boolean {
+  const statusIdx = rows[0]?.indexOf('status') ?? -1
+  if (statusIdx === -1) return false
+  return !isPublishedThreatStatus(rows[i]?.[statusIdx])
 }
 
 function isInactiveRecord(rec: Record<string, string>): boolean {
@@ -1006,7 +1020,7 @@ function processThreats(): RAGChunk[] {
   const chunks: RAGChunk[] = []
 
   for (let i = 1; i < rows.length; i++) {
-    if (isInactiveRow(rows, i)) continue
+    if (isUnpublishedThreatRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 7) continue
 

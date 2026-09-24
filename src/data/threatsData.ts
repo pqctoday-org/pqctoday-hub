@@ -2,6 +2,7 @@
 import Papa from 'papaparse'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitPipe, parseIntSafe } from './csvUtils'
+import { canonicalThreatIndustry, isPublishedThreatStatus } from './threatRowRules'
 
 export interface ThreatData {
   industry: string
@@ -64,30 +65,13 @@ const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
   eager: true,
 })
 
-/**
- * Collapses near-duplicate raw `industry` labels that describe the same
- * sector under different CSV wording — verified against the corpus's own
- * `applicable_industries_normalized` tags, which tag both "Critical
- * Infrastructure" and "Energy / Critical Infrastructure" rows with the same
- * `critical-infrastructure` tag (Threats #5). Extend this map, driven by that
- * same tag evidence, if a future CSV snapshot introduces another wording
- * variant of an already-covered sector.
- */
-const INDUSTRY_ALIASES: Record<string, string> = {
-  'Critical Infrastructure': 'Critical Infrastructure / Energy',
-  'Energy / Critical Infrastructure': 'Critical Infrastructure / Energy',
-  'Critical Infrastructure / Energy': 'Critical Infrastructure / Energy',
-}
-
-function canonicalIndustry(raw: string): string {
-  return INDUSTRY_ALIASES[raw] ?? raw
-}
-
 function transformThreat(row: RawThreatRow): ThreatData | null {
-  if (row.status === 'deprecated' || row.status === 'obsolete') return null
+  // Retired (deprecated/obsolete) and not-yet-filled (draft) rows never reach
+  // the page — one predicate shared with the RAG corpus generator.
+  if (!isPublishedThreatStatus(row.status)) return null
   const pct = parseIntSafe(row.accuracy_pct)
   return {
-    industry: canonicalIndustry(row.industry || ''),
+    industry: canonicalThreatIndustry(row.industry || ''),
     threatId: row.threat_id || '',
     description: row.threat_description || '',
     criticality: (row.criticality as ThreatData['criticality']) || 'Medium',
