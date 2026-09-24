@@ -9,6 +9,7 @@ import { retiredThreats, threatsData } from '@/data/threatsData'
 import { getThreatClass, threatMatchesClass } from '@/components/Threats/threatClassification'
 import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 
 // Claim-ledger fixture keyed to a real row id, so the sheet can be tested
 // whether or not public/threats/claim-status.json is on this branch.
@@ -157,6 +158,17 @@ describe('MobileThreatsView', () => {
     expect(useBookmarkStore.getState().myThreats).toContain(first.threatId)
   })
 
+  it('bookmark, filter chips and stepper are at least 44px tap targets (UX-17)', () => {
+    renderView()
+    const targets = [
+      screen.getAllByRole('button', { name: 'Add to My Threats' })[0],
+      screen.getByRole('button', { name: 'Critical' }),
+      screen.getByRole('button', { name: 'All classes' }),
+      screen.getByRole('button', { name: 'Later CRQC year' }),
+    ]
+    for (const el of targets) expect(el.className).toMatch(/\bh-11\b/)
+  })
+
   it('states what was cut rather than silently dropping it', () => {
     renderView()
     expect(
@@ -169,9 +181,13 @@ describe('MobileThreatsView', () => {
     const first = threatsData[0]
     fireEvent.click(screen.getAllByText(first.description)[0].closest('button')!)
     expect(screen.getByTestId('threat-detail-sheet')).toBeInTheDocument()
-    if (first.relatedModules.length > 0) {
-      expect(screen.getByText(first.relatedModules.join(', '))).toBeInTheDocument()
+    const sheet = screen.getByTestId('threat-detail-sheet')
+    // Related modules are links named after the module, never raw ids (UX-17).
+    for (const id of first.relatedModules.filter((m) => MODULE_CATALOG[m])) {
+      const link = within(sheet).getByRole('link', { name: MODULE_CATALOG[id].title })
+      expect(link).toHaveAttribute('href', `/learn/${id}`)
     }
+    expect(within(sheet).queryByText(first.relatedModules.join(', '))).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(screen.queryByTestId('threat-detail-sheet')).not.toBeInTheDocument()
   })

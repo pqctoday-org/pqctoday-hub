@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { Minus, Plus, Bookmark, BookmarkCheck, ExternalLink, X } from 'lucide-react'
+import { Minus, Plus, Bookmark, BookmarkCheck, BookOpen, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { retiredThreats, threatsData, type ThreatItem } from '@/data/threatsData'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
@@ -31,6 +31,7 @@ import {
   sourceIdentityText,
 } from '@/data/threatClaimStatus'
 import { MobileSheet } from '../primitives/Sheet'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import {
   matchesThreatQuery,
   resolveIndustryParam,
@@ -243,7 +244,7 @@ export function MobileThreatsView() {
             variant="ghost"
             onClick={() => setParam({ id: null, threat: null })}
             aria-label="Dismiss retired-entry notice"
-            className="h-7 w-7 shrink-0 rounded-full p-0 text-muted-foreground"
+            className="h-11 w-11 shrink-0 rounded-full p-0 text-muted-foreground"
           >
             <X size={14} aria-hidden="true" />
           </Button>
@@ -263,7 +264,7 @@ export function MobileThreatsView() {
             type="button"
             variant="ghost"
             onClick={() => setParam({ industry: null, q: null })}
-            className="h-7 rounded-full border border-border px-2.5 text-[11px] font-semibold"
+            className="h-11 rounded-full border border-border px-3 text-[11px] font-semibold"
           >
             Show all
           </Button>
@@ -298,7 +299,7 @@ export function MobileThreatsView() {
             disabled={crqcYear <= forecast.low}
             onClick={() => setCrqcYear((y) => Math.max(forecast.low, y - 1))}
             aria-label="Earlier CRQC year"
-            className="h-9 w-9 rounded-full"
+            className="h-11 w-11 rounded-full"
           >
             <Minus size={14} aria-hidden="true" />
           </Button>
@@ -312,7 +313,7 @@ export function MobileThreatsView() {
             disabled={crqcYear >= forecast.high}
             onClick={() => setCrqcYear((y) => Math.min(forecast.high, y + 1))}
             aria-label="Later CRQC year"
-            className="h-9 w-9 rounded-full"
+            className="h-11 w-11 rounded-full"
           >
             <Plus size={14} aria-hidden="true" />
           </Button>
@@ -334,7 +335,7 @@ export function MobileThreatsView() {
           onClick={() => setCriticality(null)}
           aria-pressed={criticality === null}
           className={cn(
-            'h-8 rounded-full border px-3 text-[11px] font-semibold',
+            'h-11 rounded-full border px-3 text-[11px] font-semibold',
             criticality === null
               ? 'border-primary bg-primary text-primary-foreground'
               : 'border-border bg-card text-foreground'
@@ -350,7 +351,7 @@ export function MobileThreatsView() {
             onClick={() => setCriticality(criticality === level ? null : level)}
             aria-pressed={criticality === level}
             className={cn(
-              'h-8 rounded-full border px-3 text-[11px] font-semibold',
+              'h-11 rounded-full border px-3 text-[11px] font-semibold',
               criticality === level
                 ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border bg-card text-foreground'
@@ -368,7 +369,7 @@ export function MobileThreatsView() {
           onClick={() => setClassFilter(null)}
           aria-pressed={classFilter === null}
           className={cn(
-            'h-8 rounded-full border px-3 text-[11px] font-semibold',
+            'h-11 rounded-full border px-3 text-[11px] font-semibold',
             classFilter === null
               ? 'border-primary bg-primary text-primary-foreground'
               : 'border-border bg-card text-foreground'
@@ -384,7 +385,7 @@ export function MobileThreatsView() {
             onClick={() => setClassFilter(classFilter === c.id ? null : c.id)}
             aria-pressed={classFilter === c.id}
             className={cn(
-              'h-8 rounded-full border px-3 text-[11px] font-semibold',
+              'h-11 rounded-full border px-3 text-[11px] font-semibold',
               classFilter === c.id
                 ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border bg-card text-foreground'
@@ -448,9 +449,27 @@ export function MobileThreatsView() {
                 <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   Related modules
                 </p>
-                <p className="mt-0.5 text-[11.5px] text-foreground">
-                  {selected.relatedModules.join(', ')}
-                </p>
+                {/* Module names linking to the modules, not raw ids like
+                    "kms-pqc" (UX-17). An id the registry doesn't know is
+                    left out rather than shown raw. */}
+                <ul className="mt-1 flex flex-wrap gap-1.5">
+                  {selected.relatedModules.map((id) => {
+                    // eslint-disable-next-line security/detect-object-injection -- id is a module id from the CSV; MODULE_CATALOG is a static registry
+                    const mod = MODULE_CATALOG[id]
+                    if (!mod) return null
+                    return (
+                      <li key={id}>
+                        <Link
+                          to={`/learn/${id}`}
+                          className="inline-flex min-h-11 items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 text-[11.5px] font-medium text-primary"
+                        >
+                          <BookOpen size={12} aria-hidden="true" />
+                          {mod.title}
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ul>
               </div>
             )}
             <div className="border-t border-border pt-3">
@@ -577,7 +596,7 @@ function ThreatCardMobile({
           }}
           aria-label={bookmarked ? 'Remove from My Threats' : 'Add to My Threats'}
           className={cn(
-            'ml-auto h-auto shrink-0 rounded p-1',
+            'ml-auto h-11 w-11 shrink-0 rounded p-0',
             bookmarked ? 'text-warning' : 'text-muted-foreground/50'
           )}
         >

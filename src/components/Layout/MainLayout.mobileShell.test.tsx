@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { MainLayout } from './MainLayout'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { useDisclaimerStore } from '../../store/useDisclaimerStore'
 
 vi.mock('../../vite-env.d.ts', () => ({
   __BUILD_TIMESTAMP__: 'Dec 6, 2024, 5:00 PM CST',
@@ -70,6 +71,18 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     expect(await screen.findByRole('button', { name: 'Search' })).toBeInTheDocument()
     expect(await screen.findByRole('button', { name: /Home/ })).toBeInTheDocument()
     expect(await screen.findByRole('button', { name: /Learn/ })).toBeInTheDocument()
+  })
+
+  it('flag on, first run: the disclaimer sits in flow below the role picker, not fixed over it (UX-17)', async () => {
+    useDisclaimerStore.getState().resetForTesting()
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderLayout('/')
+    const picker = await screen.findByText("Who's asking?")
+    const banner = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
+    expect(banner.className).not.toMatch(/\bfixed\b/)
+    // Document order: the picker comes first, the disclaimer after it.
+    expect(picker.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.getAllByRole('alert', { name: 'Welcome to PQC Today' })).toHaveLength(1)
   })
 
   it('flag on, no persona chosen and not skipped: shows the first-run role picker WITH the header and bottom nav still visible', async () => {

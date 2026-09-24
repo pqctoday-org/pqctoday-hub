@@ -1443,6 +1443,9 @@ export const MainLayout = () => {
               <React.Suspense fallback={null}>
                 <MobileRoleSelection variant="firstRun" />
               </React.Suspense>
+              {/* The disclaimer sits BELOW the role choices here, in flow — the
+                  fixed bottom banner covered them on a phone (UX-17). */}
+              <DisclaimerModal placement="inline" />
             </div>
           ) : (
             <>
@@ -1574,8 +1577,10 @@ export const MainLayout = () => {
             <WhatsNewModal />
           </React.Suspense>
 
-          {/* First-visit disclaimer — must acknowledge before using the app */}
-          <DisclaimerModal />
+          {/* First-visit disclaimer — must acknowledge before using the app.
+              On the phone's first-run role picker it renders inline instead
+              (above), below the role choices. */}
+          {!(isMobileShell && isMobileFirstRun) && <DisclaimerModal />}
 
           {/* Toast notifications — role="status" so screen readers announce them.
               A plain <div>'s implicit role is "generic", which prohibits aria-label

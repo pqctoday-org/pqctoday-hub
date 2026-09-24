@@ -75,4 +75,16 @@ describe('DisclaimerModal', () => {
 
     expect(useDisclaimerStore.getState().hasAcknowledgedCurrentMajor()).toBe(true)
   })
+
+  it('inline placement (mobile first-run picker) renders in flow, not fixed over the page (UX-17)', () => {
+    render(
+      <BrowserRouter>
+        <DisclaimerModal placement="inline" />
+      </BrowserRouter>
+    )
+    const banner = screen.getByRole('alert')
+    expect(banner.className).not.toMatch(/\bfixed\b/)
+    expect(banner.className).not.toMatch(/\bz-disclaimer\b/)
+    expect(screen.getByRole('button', { name: 'I Understand' })).toBeInTheDocument()
+  })
 })
