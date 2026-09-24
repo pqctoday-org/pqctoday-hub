@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router'
 import { MobileThreatsView } from './MobileThreatsView'
@@ -12,6 +12,26 @@ import {
   CRQC_ESTIMATES,
 } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
+
+// Claim-ledger fixture keyed to a real row id, so the sheet can be tested
+// whether or not public/threats/claim-status.json is on this branch.
+const CAVEAT_ROW = vi.hoisted(() => ({ id: '' }))
+vi.mock('@/data/threatClaimStatus', async () => {
+  const actual = await vi.importActual<typeof import('@/data/threatClaimStatus')>(
+    '@/data/threatClaimStatus'
+  )
+  return {
+    ...actual,
+    getSourceCaveat: (id: string) =>
+      actual.sourceCaveatFor(id, {
+        rows: {
+          [CAVEAT_ROW.id]: {
+            claims: { threat_description: { verdict: 'contradicted', decidedAt: '2026-09-16' } },
+          },
+        },
+      }),
+  }
+})
 
 // Real data throughout — threatsData is parsed synchronously from a bundled
 // CSV at module load. Assertions are structural (derived counts, not
@@ -225,5 +245,19 @@ describe('MobileThreatsView', () => {
         expect(screen.getByText(new RegExp(retired.deprecatedAt))).toBeInTheDocument()
       expect(screen.queryByTestId('threat-detail-sheet')).not.toBeInTheDocument()
     })
+  })
+
+  it('the detail sheet shows the source caveat for a ledger-flagged row, and not for others', () => {
+    CAVEAT_ROW.id = threatsData[2].threatId
+    renderView(`/threats?id=${encodeURIComponent(threatsData[2].threatId)}`)
+    const sheet = screen.getByTestId('threat-detail-sheet')
+    expect(
+      within(sheet).getByText(/those are our analysis\. \(checked 2026-09-16\)/)
+    ).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    fireEvent.click(screen.getAllByText(threatsData[3].description)[0].closest('button')!)
+    expect(
+      within(screen.getByTestId('threat-detail-sheet')).queryByText(/those are our analysis/)
+    ).not.toBeInTheDocument()
   })
 })

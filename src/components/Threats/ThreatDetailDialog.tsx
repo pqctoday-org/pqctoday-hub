@@ -41,6 +41,7 @@ import {
 import { formatSocCite, SOC_CTI_SECTION, SOC_LEARN_MODULE_HREF } from '@/data/socQuantumPlaybook'
 import { getAttackProfiles } from '@/data/implementationAttackProfiles'
 import { NOT_YET_SPECIFIED, UNRATED_CRITICALITY } from '@/data/threatRowRules'
+import { formatSourceCaveat, getSourceCaveat } from '@/data/threatClaimStatus'
 
 /** An at-risk / PQC field, or an honest "not yet specified" when blank. */
 const SpecifiedOrNot = ({ value }: { value: string }) =>
@@ -62,6 +63,8 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
     () => getAttackProfiles(threat.pqcReplacement),
     [threat.pqcReplacement]
   )
+
+  const sourceCaveat = useMemo(() => getSourceCaveat(threat.threatId), [threat.threatId])
 
   // Set when the CTI pointer closes the dialog to scroll to the Horizon
   // section: focus must not return to (and scroll back to) the trigger row.
@@ -481,20 +484,31 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               )
             })()}
 
-            {threat.sourceUrl && (
+            {(threat.sourceUrl || sourceCaveat) && (
               <div className="pt-4 border-t border-border mt-4">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                   Reference Source
                 </h3>
-                <a
-                  href={threat.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-primary hover:underline text-sm truncate"
-                >
-                  <ExternalLink size={14} />
-                  {threat.mainSource || 'View Source'}
-                </a>
+                {threat.sourceUrl && (
+                  <a
+                    href={threat.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-primary hover:underline text-sm truncate"
+                  >
+                    <ExternalLink size={14} />
+                    {threat.mainSource || 'View Source'}
+                  </a>
+                )}
+                {/* Reader caveat from the claim ledger: the cited document
+                    does not itself state this entry's quantum-specific
+                    points. Never "the source disagrees" — see
+                    threatClaimStatus.ts. */}
+                {sourceCaveat && (
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    {formatSourceCaveat(sourceCaveat)}
+                  </p>
+                )}
               </div>
             )}
 

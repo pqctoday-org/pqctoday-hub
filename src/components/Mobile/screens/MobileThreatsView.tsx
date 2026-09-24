@@ -24,6 +24,7 @@ import {
   NOT_YET_SPECIFIED,
   retiredThreatMessage,
 } from '@/data/threatRowRules'
+import { formatSourceCaveat, getSourceCaveat } from '@/data/threatClaimStatus'
 import { MobileSheet } from '../primitives/Sheet'
 import {
   matchesThreatQuery,
@@ -170,6 +171,7 @@ export function MobileThreatsView() {
     [linkedId]
   )
   const retiredLinked = linkedId && !selected ? retiredThreats.get(linkedId) : undefined
+  const selectedCaveat = selected ? getSourceCaveat(selected.threatId) : null
   const setSelected = (t: ThreatItem | null) => setParam({ id: t?.threatId ?? null, threat: null })
 
   const hndlDeadline = crqcYear - DATA_LIFETIME - MIGRATION_TIME
@@ -466,6 +468,11 @@ export function MobileThreatsView() {
               {selected.lastVerified && (
                 <p className="mt-0.5 text-[10.5px] text-muted-foreground">
                   Verified {selected.lastVerified}
+                </p>
+              )}
+              {selectedCaveat && (
+                <p className="mt-1 text-[10.5px] leading-relaxed text-muted-foreground">
+                  {formatSourceCaveat(selectedCaveat)}
                 </p>
               )}
             </div>

@@ -9,6 +9,27 @@ import { SOC_LEARN_MODULE_HREF, SOC_LEARN_MODULE_ID } from '@/data/socQuantumPla
 import { ThreatDetailDialog } from './ThreatDetailDialog'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
+// Claim-ledger fixture: CAV-UND undeterminable, CAV-CON contradicted, CAV-SUP supported.
+vi.mock('@/data/threatClaimStatus', async () => {
+  const actual = await vi.importActual<typeof import('@/data/threatClaimStatus')>(
+    '@/data/threatClaimStatus'
+  )
+  const fixture = {
+    rows: {
+      'CAV-UND': {
+        claims: { threat_description: { verdict: 'undeterminable', decidedAt: '2026-09-16' } },
+      },
+      'CAV-CON': {
+        claims: { threat_description: { verdict: 'contradicted', decidedAt: '2026-09-16' } },
+      },
+      'CAV-SUP': {
+        claims: { threat_description: { verdict: 'supported', decidedAt: '2026-09-16' } },
+      },
+    },
+  }
+  return { ...actual, getSourceCaveat: (id: string) => actual.sourceCaveatFor(id, fixture) }
+})
+
 vi.mock('@/utils/endorsement', async () => {
   const actual = await vi.importActual<typeof import('@/utils/endorsement')>('@/utils/endorsement')
   return {
@@ -139,5 +160,31 @@ describe('ThreatDetailDialog — shareable links (UX-3)', () => {
     ].map(([opts]) => opts.pageUrl)
     expect(pageUrls.length).toBeGreaterThanOrEqual(2)
     for (const url of pageUrls) expect(url).toBe('/threats?id=FIN-007')
+  })
+})
+
+describe('ThreatDetailDialog — source caveat (claim ledger)', () => {
+  const caveat =
+    /doesn't itself state the quantum-specific points above — those are our analysis\. \(checked 2026-09-16\)/
+
+  it('shows the caveat with its date when the description verdict is undeterminable', () => {
+    renderDialog(threat({ threatId: 'CAV-UND', sourceUrl: 'https://example.org' }))
+    expect(screen.getByText(caveat)).toBeInTheDocument()
+  })
+
+  it('shows the same caveat for "contradicted" — never that the source disagrees', () => {
+    renderDialog(threat({ threatId: 'CAV-CON', sourceUrl: 'https://example.org' }))
+    expect(screen.getByText(caveat)).toBeInTheDocument()
+    expect(screen.queryByText(/contradict|disagree/i)).not.toBeInTheDocument()
+  })
+
+  it('no caveat when supported, or when the row has no verdict', () => {
+    renderDialog(threat({ threatId: 'CAV-SUP', sourceUrl: 'https://example.org' }))
+    expect(screen.queryByText(/those are our analysis/)).not.toBeInTheDocument()
+  })
+
+  it('no caveat for a row absent from the ledger', () => {
+    renderDialog(threat({ threatId: 'NOT-IN-LEDGER', sourceUrl: 'https://example.org' }))
+    expect(screen.queryByText(/those are our analysis/)).not.toBeInTheDocument()
   })
 })
