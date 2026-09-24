@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import {
+  isShortThreatQuery,
   isThreatsDeepLink,
   matchesThreatQuery,
   resolveIndustryParam,
@@ -81,6 +82,40 @@ describe('threatsUrlParams', () => {
     expect(matchesThreatQuery(t, 'ml-kem')).toBe(true)
     expect(matchesThreatQuery(t, 'healthcare')).toBe(false)
     expect(matchesThreatQuery(t, '  ')).toBe(true)
+  })
+
+  it('matches short queries (≤4 chars) at word starts only — "PCI" no longer finds "EPCIS" (UX-16)', () => {
+    const base = {
+      industry: 'Healthcare / Pharmaceutical',
+      criticality: 'High' as const,
+      cryptoAtRisk: '',
+      pqcReplacement: '',
+      mainSource: '',
+      sourceUrl: '',
+      relatedModules: [],
+    }
+    const epcis: ThreatItem = {
+      ...base,
+      threatId: 'HLTH-005',
+      description: 'Drug supply-chain traceability via EPCIS event signatures.',
+    }
+    const pci: ThreatItem = {
+      ...base,
+      industry: 'Payment Card Industry',
+      threatId: 'PCI-002',
+      description: 'PCI DSS cardholder-data encryption.',
+    }
+    expect(matchesThreatQuery(epcis, 'PCI')).toBe(false)
+    expect(matchesThreatQuery(pci, 'PCI')).toBe(true)
+    expect(matchesThreatQuery(pci, 'pci-0')).toBe(true) // word start, hyphen inside the query
+    // Word-start, not whole-word: an acronym still finds its plural.
+    expect(matchesThreatQuery({ ...pci, description: 'HSMs at issuers' }, 'HSM')).toBe(true)
+    // Longer queries keep plain substring matching.
+    expect(matchesThreatQuery(epcis, 'epcis')).toBe(true)
+    expect(matchesThreatQuery(epcis, 'raceab')).toBe(true)
+    expect(isShortThreatQuery('PCI')).toBe(true)
+    expect(isShortThreatQuery('EPCIS')).toBe(false)
+    expect(isShortThreatQuery('  ')).toBe(false)
   })
 
   it('reads ?view=horizon', () => {

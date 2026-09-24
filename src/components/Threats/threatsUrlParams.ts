@@ -69,17 +69,39 @@ export function threatClassParam(params: URLSearchParams): ThreatClass | null {
   return (CLASS_PARAM_VALUES as readonly string[]).includes(v ?? '') ? (v as ThreatClass) : null
 }
 
-/** The page's lexical search: id, description, industry, at-risk crypto, PQC. */
+/** Queries this short are matched at word starts, not anywhere (UX-16). */
+export const SHORT_QUERY_MAX_LENGTH = 4
+
+/** Is this a short (≤4-character) query — an acronym like "PCI" or "HSM"? */
+export function isShortThreatQuery(query: string): boolean {
+  const q = query.trim()
+  return q.length > 0 && q.length <= SHORT_QUERY_MAX_LENGTH
+}
+
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+/**
+ * The page's lexical search: id, description, industry, at-risk crypto, PQC.
+ * A short query (≤4 characters) must start a word — "PCI" finds "PCI DSS" and
+ * "PCI-002" but not the "pci" inside "EPCIS" (UX-16); "HSM" still finds
+ * "HSMs". Longer queries keep plain substring matching.
+ */
 export function matchesThreatQuery(item: ThreatItem, query: string): boolean {
   const q = query.trim().toLowerCase()
   if (!q) return true
-  return (
-    item.threatId.toLowerCase().includes(q) ||
-    item.description.toLowerCase().includes(q) ||
-    item.industry.toLowerCase().includes(q) ||
-    item.cryptoAtRisk.toLowerCase().includes(q) ||
-    item.pqcReplacement.toLowerCase().includes(q)
-  )
+  const fields = [
+    item.threatId,
+    item.description,
+    item.industry,
+    item.cryptoAtRisk,
+    item.pqcReplacement,
+  ].map((f) => f.toLowerCase())
+  if (isShortThreatQuery(q)) {
+    // eslint-disable-next-line security/detect-non-literal-regexp -- the query is escaped
+    const wordStart = new RegExp(`(?<![a-z0-9])${escapeRegExp(q)}`)
+    return fields.some((f) => wordStart.test(f))
+  }
+  return fields.some((f) => f.includes(q))
 }
 
 /** `?view=horizon` — open scrolled to the CRQC Threat Horizon section. */

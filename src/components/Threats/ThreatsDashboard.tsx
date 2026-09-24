@@ -87,6 +87,7 @@ import { CrqcTrajectoryChart } from './CrqcTrajectoryChart'
 import { SectorExposureHero } from './SectorExposureHero'
 import { RetiredThreatNotice } from './RetiredThreatNotice'
 import {
+  isShortThreatQuery,
   matchesThreatQuery,
   resolveIndustryParam,
   threatIdParam,
@@ -375,7 +376,13 @@ export const ThreatsDashboard: React.FC<{
 
   // Phase 3 — semantic supplement. Queries like "email tampering risk"
   // surface relevant threats regardless of source vocabulary.
-  const semantic = useSemanticSearch('threats', searchQuery, { limit: 30 })
+  // A short acronym query ("PCI", "HSM") is matched lexically at word starts
+  // only (UX-16); the semantic supplement would bring back the near-misses
+  // the word-start rule exists to exclude.
+  const semantic = useSemanticSearch('threats', searchQuery, {
+    limit: 30,
+    disabled: isShortThreatQuery(searchQuery),
+  })
   const semanticIdSet = useMemo(
     () =>
       semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
