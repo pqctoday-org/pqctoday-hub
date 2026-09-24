@@ -276,34 +276,53 @@ const TIER_RANK: Record<ShorTier, number> = {
 }
 
 /**
- * Grade a whole threat by the *most urgent* algorithm it puts at risk. We scan
- * the free-text `cryptoAtRisk` (and fall back to the broader corpus) for known
- * algorithm tokens and take the max tier. Heuristic tokens cover the common
- * free-text spellings the CSV uses ("ECDSA P-256", "RSA", "AES", "ECC").
+ * Family-level patterns for the loose free-text the CSV uses. Classical
+ * tokens match only where they are not the tail of a hyphenated name, so the
+ * "dsa" in ML-DSA / SLH-DSA / FN-DSA is never read as classical DSA. First
+ * match wins, in urgency order.
+ */
+const FAMILY_TIERS: [RegExp, ShorTier][] = [
+  [/(?<![\w-])(ecdsa|ecdh|ecc|p-?256|secp256|x25519|ed25519|curve25519)\b/, 'imminent'],
+  [/(?<![\w-])(p-?521|rsa-?4096)\b/, 'near'],
+  [/(?<![\w-])(rsa|dsa|dh|diffie|p-?384)\b/, 'imminent'],
+  [/(?<![\w-])(aes|sha-?\d|sha3|hmac|symmetric)\b/, 'grover'],
+  [/\b(ml-kem|ml-dsa|slh-dsa|fn-dsa|kyber|dilithium|sphincs|falcon|hqc)\b/, 'safe'],
+]
+
+/**
+ * Grade a whole threat by the *most urgent* algorithm it puts at risk, read
+ * from `cryptoAtRisk` ONLY. The description is deliberately excluded — it
+ * usually describes the PQC *fix* ("migrate to ML-KEM"), and reading it
+ * graded 22 active rows, Critical ones included, as "PQC-safe" (same bug
+ * class `corpus()` above already fixed for the threat class). A row whose
+ * at-risk text names no algorithm (e.g. "all public-key cryptography in NC3
+ * systems") is `unknown` — Unscored — never `safe`: the generic word "PQC" is
+ * not an algorithm.
+ *
+ * Canonical-table hits are taken first (max tier). If they found nothing, or
+ * only PQC parameter sets, the family-level patterns for the loose free-text
+ * the CSV uses ("RSA", "ECC", "AES") get a say, so a row naming both a
+ * classical family and a PQC set grades by the classical one.
  */
 export function getShorTier(threat: ThreatItem): ShorTier {
-  const haystack = `${threat.cryptoAtRisk} ${threat.description}`.toLowerCase()
+  const text = threat.cryptoAtRisk.toLowerCase()
 
   // Direct token hits against the canonical table.
   let best: ShorTier = 'unknown'
   for (const { key } of ALGO_INDEX) {
-    if (haystack.includes(key)) {
+    if (text.includes(key)) {
       const tier = tierForAlgo(key)
       // eslint-disable-next-line security/detect-object-injection
       if (tier && TIER_RANK[tier] > TIER_RANK[best]) best = tier
     }
   }
-  if (best !== 'unknown') return best
+  if (best !== 'unknown' && best !== 'safe') return best
 
   // Family-level fallbacks for the loose free-text the CSV often uses.
-  if (/\b(ecdsa|ecdh|ecc|p-?256|secp256|x25519|ed25519|curve25519)\b/.test(haystack))
-    return 'imminent'
-  if (/\b(p-?521|rsa-?4096)\b/.test(haystack)) return 'near'
-  if (/\b(rsa|dsa|dh|diffie|p-?384)\b/.test(haystack)) return 'imminent'
-  if (/\b(aes|sha-?\d|sha3|hmac|symmetric)\b/.test(haystack)) return 'grover'
-  if (/\b(ml-kem|ml-dsa|slh-dsa|kyber|dilithium|sphincs|falcon|hqc|pqc)\b/.test(haystack))
-    return 'safe'
-  return 'unknown'
+  const family = FAMILY_TIERS.find(([re]) => re.test(text))?.[1]
+  // eslint-disable-next-line security/detect-object-injection
+  if (family && TIER_RANK[family] > TIER_RANK[best]) return family
+  return best
 }
 
 // ---------------------------------------------------------------------------

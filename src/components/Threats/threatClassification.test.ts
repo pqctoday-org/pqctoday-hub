@@ -112,6 +112,54 @@ describe('getShorTier (Threats #4)', () => {
   it('returns unknown when no algorithm token is present', () => {
     expect(getShorTier(threat({ cryptoAtRisk: 'unspecified legacy crypto' }))).toBe('unknown')
   })
+
+  it('ignores the description — a description naming the PQC fix does not make the row PQC-safe', () => {
+    // CLOUD-004 / CROSS-007 / GOV-005 shape: no algorithm in cryptoAtRisk, the
+    // PQC replacement named in the description.
+    const t = threat({
+      cryptoAtRisk: 'All public-key cryptography in NC3 systems',
+      description: 'Migrate to ML-KEM-1024 and ML-DSA-87 per CNSA 2.0; PQC mandated.',
+    })
+    expect(getShorTier(t)).toBe('unknown')
+  })
+
+  it('never grades the generic word "PQC" as safe', () => {
+    expect(getShorTier(threat({ cryptoAtRisk: 'systems not yet migrated to PQC' }))).toBe('unknown')
+  })
+
+  it('does not read the "dsa" in ML-DSA / SLH-DSA as classical DSA', () => {
+    expect(getShorTier(threat({ cryptoAtRisk: 'ML-DSA and SLH-DSA signing keys' }))).toBe('safe')
+  })
+
+  it('grades by the classical family when a row names both it and a PQC set', () => {
+    expect(getShorTier(threat({ cryptoAtRisk: 'RSA key transport alongside ML-KEM-768' }))).toBe(
+      'imminent'
+    )
+  })
+})
+
+// Real data: after grading from cryptoAtRisk only, no High/Critical row shows
+// "PQC-safe" unless the crypto it lists is PQC and nothing else.
+const CLASSICAL_TOKEN =
+  /(?<![\w-])(rsa|dsa|ecdsa|ecdh|ecc|dh|diffie|x25519|ed25519|p-?\d{3}|aes|3des|des|sha-?\d|sha3|md5|hmac|ripemd)\b/i
+const PQC_TOKEN = /\b(ml-kem|ml-dsa|slh-dsa|fn-dsa|kyber|dilithium|sphincs|falcon|hqc)\b/i
+
+describe('getShorTier over the real threats CSV', () => {
+  it('no active High/Critical row is PQC-safe unless its at-risk crypto names only PQC algorithms', () => {
+    const safeHighRows = threatsData.filter(
+      (t) => (t.criticality === 'High' || t.criticality === 'Critical') && getShorTier(t) === 'safe'
+    )
+    for (const t of safeHighRows) {
+      expect({ id: t.threatId, pqc: PQC_TOKEN.test(t.cryptoAtRisk) }).toEqual({
+        id: t.threatId,
+        pqc: true,
+      })
+      expect({ id: t.threatId, classical: CLASSICAL_TOKEN.test(t.cryptoAtRisk) }).toEqual({
+        id: t.threatId,
+        classical: false,
+      })
+    }
+  })
 })
 
 const byClass: Record<Exclude<ThreatClass, 'unclassified'>, string> = {
