@@ -644,7 +644,7 @@ export const ThreatsDashboard: React.FC<{
 
       <>
         {/* Persona-forward exposure hero — your scoped sector's applicable threats
-        AND the CRQC consensus window + your per-sector Mosca deadline, together,
+        AND the CRQC expert forecast window + your per-sector Mosca deadline, together,
         always, above the fold. Splitting these across two tabs used to leave the
         single most decision-forcing number on the page (your migration deadline)
         undiscovered behind a click most users never made. Section itself defaults

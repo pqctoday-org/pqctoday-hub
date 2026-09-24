@@ -6,7 +6,7 @@ import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats
 
 /**
  * Persona-forward exposure hero for /threats. Leads the page with the user's own
- * exposure — how many threats apply to their scoped sector(s), the CRQC consensus
+ * exposure — how many threats apply to their scoped sector(s), the CRQC forecast
  * window, and a per-sector Mosca migration deadline — so the answer to "what hits
  * MY sector and when must I act?" is above the fold, before the detail panels.
  *
