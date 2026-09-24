@@ -1,0 +1,2408 @@
+{
+ "csv": "quantum_threats_hsm_industries_09232026_r1.csv",
+ "generatedAt": "2026-09-24T03:27:40+00:00",
+ "note": "Claim-ledger verdicts on each row's cited document, only where the verdict was reached on the file cited today. Verdict words only; no document text.",
+ "rows": {
+  "AERO-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-16",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-16",
+     "verdict": "contradicted"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-16",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-16",
+     "verdict": "contradicted"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-16",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "5abe0a74a66d146b"
+  },
+  "AERO-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-16",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-16",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "96f4ae2e305299e0"
+  },
+  "AUS-FIN-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-18",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-18",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "ddcef7b1f5780c26"
+  },
+  "AUS-FIN-002": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "ceb92bcc2bf4e758"
+  },
+  "AUS-GOV-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "a496b941bce32f5a"
+  },
+  "AUS-TEL-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    }
+   },
+   "evidenceSha256": "e0b7ea6b0c7b9ba5"
+  },
+  "AUTO-001": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "NOT-FOUND"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "fcf28063bbfad129"
+  },
+  "AUTO-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-16",
+     "verdict": "WEAK"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "7706e00dabda1302"
+  },
+  "AUTO-004": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "NOT-FOUND"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "fcf28063bbfad129"
+  },
+  "CI-001": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "PARTIAL"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "f7d6f6583f882b73"
+  },
+  "CI-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "611a70018a677d95"
+  },
+  "CLOUD-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-16",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-16",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "e9ac6aa530c8c5ed"
+  },
+  "CLOUD-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-16",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-16",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-16",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-16",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-16",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "81749d20a5534231"
+  },
+  "CLOUD-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-18",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-18",
+     "verdict": "PARTIAL"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-18",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "6b551b4ff9858a19"
+  },
+  "CLOUD-004": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-18",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-18",
+     "verdict": "PARTIAL"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-18",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "147271600180dfd0"
+  },
+  "CRIT-001": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "99c010440384444e"
+  },
+  "CRIT-002": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    }
+   },
+   "evidenceSha256": "9bad2cd46e74ca53"
+  },
+  "CRIT-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "41f76a58bb802346"
+  },
+  "CROS-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "af5079f06124542c"
+  },
+  "CROS-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "dba4051cf19460d8"
+  },
+  "CROS-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-16",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "6ae7ef892d8697d1"
+  },
+  "CROS-004": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "f601cdf25c000b43"
+  },
+  "CROS-005": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "1baf13e8ae81bd47"
+  },
+  "CROS-006": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "49dd74e588ded9b4"
+  },
+  "CROS-007": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    }
+   },
+   "evidenceSha256": "b47bb3a4b591aad7"
+  },
+  "CROS-008": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-16",
+     "verdict": "WEAK"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-16",
+     "verdict": "supported"
+    }
+   },
+   "evidenceSha256": "6ed12447abf9b0a3"
+  },
+  "CROSS-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-18",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-18",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-18",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "6b551b4ff9858a19"
+  },
+  "CROSS-004": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-10",
+     "verdict": "MATCH"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-10",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "d995ec99296bc13d"
+  },
+  "CROSS-006": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-18",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-18",
+     "verdict": "NOT-FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-18",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "6b551b4ff9858a19"
+  },
+  "CROSS-007": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-18",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "e76b0ea3abe5606e"
+  },
+  "CROSS-008": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-18",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-18",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-18",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-18",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "41e427a461c1ae0c"
+  },
+  "CROSS-009": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "NOT-FOUND"
+    }
+   },
+   "evidenceSha256": "8e45c4909b2eb481"
+  },
+  "CROSS-010": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "PARTIAL"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "b4ec7dcdbcacca53"
+  },
+  "CROSS-011": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "483c8097e5f0760d"
+  },
+  "CROSS-012": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MISMATCH"
+    }
+   },
+   "evidenceSha256": "3a060b675e7294be"
+  },
+  "CROSS-013": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "0f1c3943541a3a7a"
+  },
+  "CROSS-014": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "6b551b4ff9858a19"
+  },
+  "CROSS-015": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "PARTIAL"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "cc32391022c1382a"
+  },
+  "CROSS-016": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "d58e3dac4aaa5971"
+  },
+  "CROSS-017": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "15ebdd396a31129f"
+  },
+  "CROSS-018": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "NOT-FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "ba91afac81e3bccb"
+  },
+  "CRYPTO-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-18",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "e8c9b064ca103559"
+  },
+  "CRYPTO-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-18",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "e8c9b064ca103559"
+  },
+  "EDU-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "fc8a093ed69e8464"
+  },
+  "EDU-002": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    }
+   },
+   "evidenceSha256": "1a771d36117f80a4"
+  },
+  "EDU-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "a9196a3d0b660135"
+  },
+  "EDU-004": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "PARTIAL"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "3e4631df8b5d61f4"
+  },
+  "EDU-005": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-10",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-10",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-10",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-10",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "eb456fe022a040b2"
+  },
+  "ENER-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "PARTIAL"
+    }
+   },
+   "evidenceSha256": "7366767bd44a0c3f"
+  },
+  "ENERGY-001": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "NOT-FOUND"
+    }
+   },
+   "evidenceSha256": "6ae150250e02f574"
+  },
+  "ENERGY-004": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-16",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-16",
+     "verdict": "NOT-FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "06c9d5e440eaf2fe"
+  },
+  "FIN-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-18",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "e8c9b064ca103559"
+  },
+  "FIN-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-18",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-18",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "7662ed9e1a117303"
+  },
+  "FIN-005": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-16",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-16",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "ffade61cadf72cdf"
+  },
+  "FINA-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "3a4c18893d54c215"
+  },
+  "FINA-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "d38bca6b63b84d8a"
+  },
+  "FINA-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "9e65246094de6dd2"
+  },
+  "FINA-004": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "PARTIAL"
+    }
+   },
+   "evidenceSha256": "c011bee9d10ac625"
+  },
+  "FINA-005": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "42fcd4328fbdabf4"
+  },
+  "FINA-006": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "820631b855f7ed03"
+  },
+  "FINA-007": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-16",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-16",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "07ec39dcfa220fe7"
+  },
+  "GOV-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "contradicted"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "contradicted"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "5abe0a74a66d146b"
+  },
+  "GOV-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-24",
+     "verdict": "PARTIAL"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "5abe0a74a66d146b"
+  },
+  "GOV-004": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "e83cdaf49a573c5b"
+  },
+  "GOV-005": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "5abe0a74a66d146b"
+  },
+  "HEAL-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "PARTIAL"
+    }
+   },
+   "evidenceSha256": "d2ca3890adefea10"
+  },
+  "HLTH-001": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MISMATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "b997385afc728e37"
+  },
+  "HLTH-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "6129643c6a6a6f5f"
+  },
+  "HLTH-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "d046fa836048933e"
+  },
+  "HLTH-004": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "fe5c46a6121758e1"
+  },
+  "HLTH-005": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "fe5c46a6121758e1"
+  },
+  "HSM-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "32de23bcde7b2582"
+  },
+  "HSM-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "NOT-FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "PARTIAL"
+    }
+   },
+   "evidenceSha256": "0ef7e14bc9b8c915"
+  },
+  "INSU-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "152028af9fd8f61a"
+  },
+  "INTE-001": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "a1df6f8dc4918705"
+  },
+  "IOT-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-16",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-16",
+     "verdict": "NOT-FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-16",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "9d0d194775278122"
+  },
+  "IOT-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "PARTIAL"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "c841af39dd2164e0"
+  },
+  "IOT-005": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "PARTIAL"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "8f90d1fc02a34364"
+  },
+  "IT-001": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    }
+   },
+   "evidenceSha256": "09bfd7b81332cb83"
+  },
+  "IT-004": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    }
+   },
+   "evidenceSha256": "0534af68137bb9aa"
+  },
+  "IT-006": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    }
+   },
+   "evidenceSha256": "11871a3fbce3d9a5"
+  },
+  "LEG-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "df74e5d5f79f21fb"
+  },
+  "LEG-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "15f26715a4e48c58"
+  },
+  "LEG-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    }
+   },
+   "evidenceSha256": "b8dce6e415c90687"
+  },
+  "MEDIA-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "70b509fc00ba82ae"
+  },
+  "MEDIA-002": {
+   "claims": {
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    }
+   },
+   "evidenceSha256": "b8f4455f8ce13005"
+  },
+  "MEDIA-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "d8a4c6590d72f55a"
+  },
+  "PAYM-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "1144cffc4ee871f5"
+  },
+  "PCI-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "5e6b9093b84007b9"
+  },
+  "PCI-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "efb109b980b10ca7"
+  },
+  "RAIL-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "aa8871417f3b8ee4"
+  },
+  "RAIL-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "a976832b02827c53"
+  },
+  "RAIL-004": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "6303878d24e41bd8"
+  },
+  "RETAIL-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "5e6b9093b84007b9"
+  },
+  "SUPPLY-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "28e350371138921e"
+  },
+  "SUPPLY-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "100d60c0c3bafdae"
+  },
+  "TELCO-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "13b67e85fa816ac6"
+  },
+  "TELCO-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "13b67e85fa816ac6"
+  },
+  "TELCO-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "35a1c4b948f5d8df"
+  },
+  "TELCO-004": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "c325410ed8f2f9b5"
+  },
+  "TELCO-005": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "87543ef079c822f1"
+  },
+  "TELE-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "a2985867e8e10162"
+  },
+  "WATE-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "NOT-FOUND"
+    }
+   },
+   "evidenceSha256": "f01c037047d7baaf"
+  },
+  "WATER-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-10",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-10",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-11",
+     "verdict": "NOT-FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-10",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "NOT-FOUND"
+    }
+   },
+   "evidenceSha256": "7f14acd9b18e1f73"
+  },
+  "WATER-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "a2e9460d901436eb"
+  },
+  "WATER-004": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "87538d72ba40a028"
+  },
+  "WATER-005": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-11",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-11",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-11",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "ae5a3a8f85dc2976"
+  }
+ },
+ "source": "threats",
+ "version": 1
+}
