@@ -95,3 +95,58 @@ export function criticalityLevelsPresent(rows: readonly { criticality: string }[
 
 /** Shown in place of a blank at-risk / PQC-replacement field. */
 export const NOT_YET_SPECIFIED = 'Not yet specified'
+
+/**
+ * The slugs `applicable_industries_normalized` uses (`;`-separated,
+ * lowercase-hyphenated, e.g. `financial-services;banking`). Nothing in the hub
+ * produces or reads this column beyond parsing it, and the private pipeline
+ * records it as hand-derived (`derived_by: hand`), so there is no canonical
+ * list to import: this is the vocabulary the data itself uses consistently —
+ * every slug in quantum_threats_hsm_industries_09162026_r1.csv except
+ * `water-wastewater`, a one-row variant (WATE-001) of the `water;wastewater`
+ * pair every other Water / Wastewater row carries. Validator CM-G flags any
+ * slug outside this set; add a slug here when a genuinely new sector arrives.
+ */
+export const THREAT_INDUSTRY_SLUGS: ReadonlySet<string> = new Set([
+  'aerospace',
+  'automotive',
+  'aviation',
+  'banking',
+  'blockchain',
+  'cloud',
+  'connected-vehicles',
+  'critical-infrastructure',
+  'cross-industry',
+  'cryptocurrency',
+  'data-centers',
+  'defense',
+  'drm',
+  'e-commerce',
+  'education',
+  'energy',
+  'entertainment',
+  'esignature',
+  'financial-services',
+  'government',
+  'healthcare',
+  'hsm',
+  'insurance',
+  'iot',
+  'it',
+  'legal',
+  'logistics',
+  'media',
+  'notary',
+  'operational-technology',
+  'payment-card-industry',
+  'pharmaceutical',
+  'rail',
+  'research',
+  'retail',
+  'software',
+  'supply-chain',
+  'telecommunications',
+  'transit',
+  'wastewater',
+  'water',
+])
