@@ -2,10 +2,7 @@
 import { Radar, Clock, ShieldAlert } from 'lucide-react'
 import type { ThreatData } from '@/data/threatsData'
 import { getThreatClass } from './threatClassification'
-import {
-  CRQC_ESTIMATES,
-  getCrqcConsensus,
-} from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
 /**
  * Persona-forward exposure hero for /threats. Leads the page with the user's own
@@ -82,10 +79,12 @@ export const SectorExposureHero = ({
     if (c === 'hnfl' || c === 'both') hnfl++
   }
 
-  // CRQC consensus — single-sourced via getCrqcConsensus() so this figure always
-  // agrees with CrqcCapabilityStrip, CrqcTrajectoryChart, and the economics
-  // calculator's default (Threats #1).
-  const { earliest, latest, zEstimate: z } = getCrqcConsensus()
+  // The one CRQC window (ruling R5) — getCrqcForecast(), the same value the
+  // capability strip, trajectory chart and mobile screen state. The Mosca card
+  // needs a single Z: the forecast's planning year (its midpoint, rounded down
+  // — see CrqcForecast.planningYear), the economics calculator's default too.
+  const forecast = getCrqcForecast()
+  const z = forecast.planningYear
 
   // Per-sector Mosca — most urgent across the scoped sectors (longest data life wins).
   const driver =
@@ -172,17 +171,15 @@ export const SectorExposureHero = ({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
-              <div className="text-2xl font-extrabold text-status-warning tabular-nums">~{z}</div>
-              <div className="text-[10px] text-muted-foreground">
-                Z consensus · window {earliest}–{latest} · {CRQC_ESTIMATES.length} sources
+              <div className="text-2xl font-extrabold text-status-warning tabular-nums">
+                {forecast.low}–{forecast.high}
               </div>
+              <div className="text-[10px] text-muted-foreground">{forecast.label}</div>
             </div>
             <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
-              <div className="text-2xl font-extrabold text-status-error tabular-nums">
-                {earliest}
-              </div>
+              <div className="text-2xl font-extrabold text-status-error tabular-nums">{z}</div>
               <div className="text-[10px] text-muted-foreground">
-                earliest credible · {Math.max(0, earliest - NOW_YEAR)}y at the low end
+                planning year (Z) — the forecast&apos;s midpoint, used for your deadline
               </div>
             </div>
           </div>

@@ -18,10 +18,7 @@ import { MIGRATION_KEYS } from '../components/Playground/kmip/migration/migratio
 import { TRACK_INFO } from '../components/Assess/redesign/assessFlowModel'
 import { getLandscapeIndustries } from './industryLandscapeData'
 import { isCrossIndustry } from './industryMatch'
-import {
-  getCrqcConsensus,
-  CRQC_ESTIMATES,
-} from '../components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import { getCrqcForecast } from '../components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import { CNSA_2_0 } from './regulatoryTimelines'
 
 /**
@@ -1850,13 +1847,13 @@ export function mlDsaSignatureBytes(paramSet: string): string {
  * conclusion is now computed from the premises.
  *
  * The CRQC year is no longer a literal either. It comes from
- * `getCrqcConsensus()` — the single place the Threats page reduces its six
- * sourced `CRQC_ESTIMATES` rows to headline numbers, which every Q-Day figure
- * on that page already calls so they agree by construction. Its current output
- * (zEstimate 2033, consensus window 2030–2036) does not match the card's old
- * hand-typed "2032 ±4" either, and the old footnote's "median across 4
- * published expert surveys ... interquartile range" misdescribed both the
- * source count and the derivation.
+ * `getCrqcForecast()` — since ruling R5 (2026-09-24) the ONE CRQC window the
+ * site shows, derived only from genuine arrival forecasts (today the Global
+ * Risk Institute 2025 survey, 2030–2041); migration deadlines are no longer
+ * blended in. The card needs a single Z, so it uses the forecast's
+ * `planningYear` (the window's midpoint, rounded down — the earlier year is the
+ * safer planning assumption), the same Z the Threats page's Mosca card and
+ * economics calculator default to.
  *
  * The punchline is expressed as a START-BY YEAR rather than a countdown from
  * "now" deliberately: a `Date.now()`-dependent string would make the generated
@@ -1891,24 +1888,24 @@ export const EXEC_EXPOSURE = {
   migrationYears: 5,
 } as const
 
-const CRQC = getCrqcConsensus()
+const CRQC = getCrqcForecast()
 
-/** e.g. "2033 (2030–2036)" — consensus estimate with its data-derived window. */
-export const EXEC_CRQC_ESTIMATE_ROW = `${CRQC.zEstimate} (${CRQC.qdayLow}–${CRQC.qdayHigh})`
+/** e.g. "2035 (2030–2041)" — the forecast's planning year with its window. */
+export const EXEC_CRQC_ESTIMATE_ROW = `${CRQC.planningYear} (${CRQC.low}–${CRQC.high})`
 
 /** e.g. "12 yrs" / "5 yrs". */
 export const EXEC_SECRECY_ROW = `${EXEC_EXPOSURE.secrecyYears} yrs`
 export const EXEC_MIGRATION_ROW = `${EXEC_EXPOSURE.migrationYears} yrs`
 
 /**
- * e.g. "2030–2036" — the consensus window alone, no midpoint. Added
+ * e.g. "2030–2041" — the forecast window alone, no midpoint. Added
  * 2026-09-03 for the one CRQC figure the 2026-08-23 literal-drift pass left
  * untokenised (curious/howbad's "a range, 2030-2036"): its sibling row on
  * curious/break was tokenised the same day via `EXEC_CRQC_ESTIMATE_ROW`, but
  * that string carries the midpoint too ("2033 (2030-2036)"), which this
  * board's copy does not want.
  */
-export const CRQC_WINDOW_ROW = `${CRQC.qdayLow}–${CRQC.qdayHigh}`
+export const CRQC_WINDOW_ROW = `${CRQC.low}–${CRQC.high}`
 
 /**
  * A CNSA 2.0 milestone year, by field name on `CNSA_2_0`
@@ -1972,10 +1969,10 @@ export const INDUSTRY_LANDSCAPE_SECTOR_COUNT = getLandscapeIndustries().filter(
  * the machine arrives.
  */
 export const EXEC_MOSCA_START_BY_YEAR =
-  CRQC.zEstimate - EXEC_EXPOSURE.secrecyYears - EXEC_EXPOSURE.migrationYears
+  CRQC.planningYear - EXEC_EXPOSURE.secrecyYears - EXEC_EXPOSURE.migrationYears
 
 /** The year migration had to be finished by — `z - x`. */
-export const EXEC_MOSCA_COMPLETE_BY_YEAR = CRQC.zEstimate - EXEC_EXPOSURE.secrecyYears
+export const EXEC_MOSCA_COMPLETE_BY_YEAR = CRQC.planningYear - EXEC_EXPOSURE.secrecyYears
 
 /**
  * Declared reference year for "is that deadline behind us". Not `Date.now()`:
@@ -1997,7 +1994,7 @@ export const EXEC_MOSCA_PUNCHLINE =
     : `Start by ${EXEC_MOSCA_START_BY_YEAR} to keep ${EXEC_MOSCA_COMPLETE_BY_YEAR} data safe.`
 
 /** Footnote describing the derivation, with the real source count. */
-export const EXEC_MOSCA_FOOTNOTE = `Mosca's inequality: Z ${CRQC.zEstimate} − X ${EXEC_EXPOSURE.secrecyYears} yrs − Y ${EXEC_EXPOSURE.migrationYears} yrs = ${EXEC_MOSCA_START_BY_YEAR}. A ${EXEC_EXPOSURE.migrationYears}-year migration had to finish by ${EXEC_MOSCA_COMPLETE_BY_YEAR}, because ${EXEC_EXPOSURE.secrecyYears}-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. The ${CRQC.zEstimate} estimate is the median across ${CRQC_ESTIMATES.length} tracked sources; ${CRQC.qdayLow}–${CRQC.qdayHigh} is the consensus window, not a forecast.`
+export const EXEC_MOSCA_FOOTNOTE = `Mosca's inequality: Z ${CRQC.planningYear} − X ${EXEC_EXPOSURE.secrecyYears} yrs − Y ${EXEC_EXPOSURE.migrationYears} yrs = ${EXEC_MOSCA_START_BY_YEAR}. A ${EXEC_EXPOSURE.migrationYears}-year migration had to finish by ${EXEC_MOSCA_COMPLETE_BY_YEAR}, because ${EXEC_EXPOSURE.secrecyYears}-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. Z ${CRQC.planningYear} is the midpoint, rounded down, of the published CRQC expert forecast, ${CRQC.low}–${CRQC.high} (${CRQC.sourceCountLabel}); migration deadlines set by regulators are not forecasts and are not part of it.`
 
 /**
  * ops sideCard's "150 ops/s · ~133× slower than ECDSA" — both figures already

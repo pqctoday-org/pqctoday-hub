@@ -7,10 +7,7 @@ import { retiredThreats, threatsData, type ThreatItem } from '@/data/threatsData
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import {
-  getCrqcConsensus,
-  CRQC_ESTIMATES,
-} from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import {
   getShorTier,
   getThreatClass,
@@ -114,14 +111,11 @@ const CLASS_FILTERS: { id: ThreatClass; label: string }[] = [
  * §18 spec, confirmed against real code before building:
  * - Mosca urgency band, one combined deadline (the more urgent of HNDL/HNFL)
  *   rather than desktop's two separate rows — a real simplification, stated.
- * - CRQC year as a *working* control, bounded to the live
- *   `getCrqcConsensus()` window (currently 2030-2036) and "median of N
- *   tracked sources" from `CRQC_ESTIMATES.length` (2026-08-24 audit R3.1 —
- *   both were hardcoded literals that would have silently disagreed with
- *   this same screen's own live consensus caption on the next CSV update;
- *   `getCrqcConsensus()` is the exact function every desktop Threats
- *   component reads for its Q-Day figure), re-scoring the urgency band and
- *   both deadlines live.
+ * - CRQC year as a *working* control, bounded to the one CRQC expert
+ *   forecast window and captioned with its one wording — both from
+ *   `getCrqcForecast()` (ruling R5), the exact function every desktop
+ *   Threats component reads — starting at the forecast's planning year and
+ *   re-scoring the urgency band and both deadlines live.
  * - HNDL vs HNFL in one line — new distillation chrome matching the design's
  *   own compressed phrasing, since desktop's real paragraph-length framing
  *   (ThreatEconomicsHeader's atRiskPhrase sentences) assumes the full
@@ -140,8 +134,8 @@ export function MobileThreatsView() {
   const myThreats = useBookmarkStore((s) => s.myThreats)
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
 
-  const consensus = useMemo(() => getCrqcConsensus(), [])
-  const [crqcYear, setCrqcYear] = useState(consensus.zEstimate)
+  const forecast = useMemo(() => getCrqcForecast(), [])
+  const [crqcYear, setCrqcYear] = useState(forecast.planningYear)
 
   // Filters and the open threat live in the URL, parsed exactly as the desktop
   // page parses them (threatsUrlParams), so a shared /threats?id=… or
@@ -301,8 +295,8 @@ export function MobileThreatsView() {
             type="button"
             variant="outline"
             size="icon"
-            disabled={crqcYear <= consensus.qdayLow}
-            onClick={() => setCrqcYear((y) => Math.max(consensus.qdayLow, y - 1))}
+            disabled={crqcYear <= forecast.low}
+            onClick={() => setCrqcYear((y) => Math.max(forecast.low, y - 1))}
             aria-label="Earlier CRQC year"
             className="h-9 w-9 rounded-full"
           >
@@ -315,18 +309,15 @@ export function MobileThreatsView() {
             type="button"
             variant="outline"
             size="icon"
-            disabled={crqcYear >= consensus.qdayHigh}
-            onClick={() => setCrqcYear((y) => Math.min(consensus.qdayHigh, y + 1))}
+            disabled={crqcYear >= forecast.high}
+            onClick={() => setCrqcYear((y) => Math.min(forecast.high, y + 1))}
             aria-label="Later CRQC year"
             className="h-9 w-9 rounded-full"
           >
             <Plus size={14} aria-hidden="true" />
           </Button>
         </div>
-        <p className="mt-2 text-center text-[10.5px] text-muted-foreground">
-          consensus {consensus.qdayLow}–{consensus.qdayHigh} · median of {CRQC_ESTIMATES.length}{' '}
-          tracked sources
-        </p>
+        <p className="mt-2 text-center text-[10.5px] text-muted-foreground">{forecast.label}</p>
       </section>
 
       <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">
