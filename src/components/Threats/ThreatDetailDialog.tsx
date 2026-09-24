@@ -30,14 +30,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Radar, Siren } from 'lucide-react'
 import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
-import {
-  getSocUseCases,
-  getIrPlaybooks,
-  getShorTier,
-  getThreatClass,
-  SHOR_TIER_DEFS,
-  SOC_UNCLASSIFIED_NOTE,
-} from './threatClassification'
+import { getSocUseCases, getIrPlaybooks, getShorTier, SHOR_TIER_DEFS } from './threatClassification'
 import { formatSocCite, SOC_CTI_SECTION, SOC_LEARN_MODULE_HREF } from '@/data/socQuantumPlaybook'
 import { getAttackProfiles } from '@/data/implementationAttackProfiles'
 import { NOT_YET_SPECIFIED, UNRATED_CRITICALITY } from '@/data/threatRowRules'
@@ -309,11 +302,6 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                     SOC detection use cases that apply to this threat&apos;s class, from the Applied
                     Quantum PQC Migration Framework v3.0 &ldquo;SOC Implementation&rdquo; section.
                   </p>
-                  {getThreatClass(threat) === 'unclassified' && (
-                    <p className="text-xs text-muted-foreground mb-3 rounded-lg border border-border/50 bg-muted/20 p-2">
-                      {SOC_UNCLASSIFIED_NOTE}
-                    </p>
-                  )}
                   <ul className="space-y-2.5">
                     {getSocUseCases(threat).map((uc) => (
                       <li

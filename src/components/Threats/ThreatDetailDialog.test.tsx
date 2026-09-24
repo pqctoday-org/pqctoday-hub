@@ -50,6 +50,7 @@ function threat(partial: Partial<ThreatItem>): ThreatItem {
     mainSource: 'Test Source',
     sourceUrl: '',
     relatedModules: [],
+    threatClass: 'hndl',
     ...partial,
   }
 }
@@ -87,10 +88,11 @@ describe('ThreatDetailDialog — Detection & Response (UX-1 / UX-2)', () => {
     expect(onClose).toHaveBeenCalled()
   })
 
-  it('says the class could not be determined for an unclassified threat, and shows drift only', () => {
-    renderDialog(threat({ cryptoAtRisk: 'unspecified legacy systems' }))
-    expect(screen.getByText(/class could not be determined/)).toBeInTheDocument()
-    expect(screen.getByText('Cryptographic Drift Monitoring')).toBeInTheDocument()
+  it('follows the reviewed class — never "could not be determined" (ruling R1)', () => {
+    // Encryption keywords, reviewed forge-later: the forge-later use cases show.
+    renderDialog(threat({ threatClass: 'hnfl' }))
+    expect(screen.queryByText(/could not be determined/)).not.toBeInTheDocument()
+    expect(screen.getByText('Certificate Lifecycle Anomalies')).toBeInTheDocument()
     expect(screen.queryByText('Hybrid Downgrade Detection')).not.toBeInTheDocument()
   })
 
@@ -110,7 +112,9 @@ describe('ThreatDetailDialog — Detection & Response (UX-1 / UX-2)', () => {
   })
 
   it('omits the hybrid-downgrade playbook for a forge-later threat', () => {
-    renderDialog(threat({ cryptoAtRisk: 'ECDSA firmware signing certificate' }))
+    renderDialog(
+      threat({ cryptoAtRisk: 'ECDSA firmware signing certificate', threatClass: 'hnfl' })
+    )
     fireEvent.click(screen.getByRole('tab', { name: /Incident Response/ }))
     expect(screen.queryByText(/Confirmed Hybrid Downgrade Attack/)).not.toBeInTheDocument()
     expect(screen.getByText(/Emergency Algorithm Rotation/)).toBeInTheDocument()

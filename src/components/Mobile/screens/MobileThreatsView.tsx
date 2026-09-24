@@ -16,6 +16,7 @@ import {
   getThreatClass,
   SHOR_TIER_DEFS,
   THREAT_CLASS_DEFS,
+  threatMatchesClass,
   type ThreatClass,
 } from '@/components/Threats/threatClassification'
 import { cn } from '@/lib/utils'
@@ -86,10 +87,11 @@ const URGENCY_CONFIG: Record<Urgency, { label: string; color: string; bg: string
 
 // Only the levels some row has — same rule as the desktop filter.
 const CRITICALITY_LEVELS = criticalityLevelsPresent(threatsData)
+// The same two class filters as desktop, with the same meaning (UX-15):
+// HNDL shows hndl + both, HNFL shows hnfl + both (threatMatchesClass).
 const CLASS_FILTERS: { id: ThreatClass; label: string }[] = [
   { id: 'hndl', label: THREAT_CLASS_DEFS.hndl.label },
   { id: 'hnfl', label: THREAT_CLASS_DEFS.hnfl.label },
-  { id: 'both', label: THREAT_CLASS_DEFS.both.label },
 ]
 
 /**
@@ -206,7 +208,7 @@ export function MobileThreatsView() {
     let data = scopedData
     if (urlQuery) data = data.filter((t) => matchesThreatQuery(t, urlQuery))
     if (criticality) data = data.filter((t) => t.criticality === criticality)
-    if (classFilter) data = data.filter((t) => getThreatClass(t) === classFilter)
+    if (classFilter) data = data.filter((t) => threatMatchesClass(t, classFilter))
     return data
   }, [scopedData, urlQuery, criticality, classFilter])
 

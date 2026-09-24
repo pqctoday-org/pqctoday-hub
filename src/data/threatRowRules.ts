@@ -64,6 +64,21 @@ export function retiredThreatMessage(retired: {
   return `${retired.threatId} is no longer in the catalog. This entry was retired${when}${why}`
 }
 
+/**
+ * The reviewed `threat_class` values (ruling R1, 2026-09-24): hndl
+ * (decrypt-later), hnfl (forge-later) or both. Every published row carries one
+ * — validator TP-4 fails a published row without it — so the page reads this
+ * column and never guesses a class from keywords.
+ */
+export const THREAT_CLASSES = ['hndl', 'hnfl', 'both'] as const
+export type ReviewedThreatClass = (typeof THREAT_CLASSES)[number]
+
+/** A `threat_class` cell → its reviewed value, or undefined when blank/unknown. */
+export function parseThreatClass(raw: string | null | undefined): ReviewedThreatClass | undefined {
+  const v = (raw ?? '').trim().toLowerCase()
+  return (THREAT_CLASSES as readonly string[]).includes(v) ? (v as ReviewedThreatClass) : undefined
+}
+
 /** Shown when a row's criticality cell is blank — never guessed as "Medium". */
 export const UNRATED_CRITICALITY = 'Unrated'
 

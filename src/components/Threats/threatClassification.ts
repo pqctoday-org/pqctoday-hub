@@ -4,20 +4,21 @@
  * #2–#6). One pure, side-effect-free derivation layer that the Threats UI reads
  * to surface five additive dimensions over the existing `ThreatData` corpus:
  *
- *   #2 threat_class      — HNDL (decrypt-later) vs HNFL/TNFL (forge-later)
+ *   #2 threat_class      — HNDL (decrypt-later) vs HNFL/TNFL (forge-later),
+ *                           read from the row's reviewed `threat_class` column
  *   #3 detection / SOC   — map a threat to its SOC use cases (UC-1–UC-5)
  *   #4 Shor-resource tier — grade `cryptoAtRisk` by quantum-resource urgency
  *                           (ECC-256 == RSA-2048 urgency, per §3 / Google 2026)
  *   #6 IR playbooks       — map a threat to the source's IR playbooks
  *
- * Everything here is *derived* from fields already present in the threats CSV
- * (`cryptoAtRisk`, `pqcReplacement`, `description`), reusing the canonical
- * `ALGORITHM_SECURITY_DATA` Shor/Grover qubit estimates already maintained in
- * the QuantumThreats module. No CSV column is added; if a threat doesn't match
- * a rule it falls back to a neutral default so the page behaves as today.
+ * The class is reviewed data (ruling R1, 2026-09-24); the other dimensions are
+ * derived from fields already in the threats CSV (`cryptoAtRisk`), reusing the
+ * canonical `ALGORITHM_SECURITY_DATA` Shor/Grover qubit estimates maintained in
+ * the QuantumThreats module.
  */
 import { ALGORITHM_SECURITY_DATA } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import type { ThreatItem } from '@/data/threatsData'
+import type { ReviewedThreatClass } from '@/data/threatRowRules'
 import {
   SOC_IR_PLAYBOOKS,
   SOC_USE_CASES,
@@ -33,7 +34,15 @@ export type { SocIrPlaybook, SocUseCase } from '@/data/socQuantumPlaybook'
 // #2 — Threat class: HNDL (confidentiality) vs HNFL/TNFL (authenticity)
 // ---------------------------------------------------------------------------
 
-export type ThreatClass = 'hndl' | 'hnfl' | 'both' | 'unclassified'
+/**
+ * A threat's class is the row's REVIEWED `threat_class` (ruling R1,
+ * 2026-09-24) — hndl, hnfl or both. There is no "unclassified" state on the
+ * page any more: every published row carries a reviewed value (validator
+ * TP-4). The keyword rules further down survive only as `guessThreatClass`, a
+ * checker a unit test runs against the reviewed values; readers never see a
+ * guessed class.
+ */
+export type ThreatClass = ReviewedThreatClass
 
 export interface ThreatClassDef {
   id: ThreatClass
@@ -44,7 +53,7 @@ export interface ThreatClassDef {
   /** What the attacker's clock is. */
   clock: string
   /** Security property at stake. */
-  property: 'Confidentiality' | 'Authenticity' | 'Both' | 'Unknown'
+  property: 'Confidentiality' | 'Authenticity' | 'Both'
 }
 
 export const THREAT_CLASS_DEFS: Record<ThreatClass, ThreatClassDef> = {
@@ -68,13 +77,6 @@ export const THREAT_CLASS_DEFS: Record<ThreatClass, ThreatClassDef> = {
     full: 'Both decrypt-later and forge-later exposure',
     clock: 'whichever expires first',
     property: 'Both',
-  },
-  unclassified: {
-    id: 'unclassified',
-    label: 'Unclassified',
-    full: 'No clear HNDL/HNFL signal in the at-risk cryptography',
-    clock: 'unknown — review manually',
-    property: 'Unknown',
   },
 }
 
@@ -153,28 +155,42 @@ function anyHit(haystack: string, needles: string[]): boolean {
 }
 
 /**
- * Derive a threat's economic class from its at-risk cryptography. A threat
- * exposing both encryption and signing crypto (e.g. a full-PKI estate) is
- * `both`; otherwise it leans to whichever signal is present. Threats whose
- * `cryptoAtRisk` text doesn't clearly match either signal render as
- * `unclassified` rather than being silently defaulted to `hndl` — an honest
- * "needs manual review" state instead of a guess.
+ * The keyword guess at a threat's class from its at-risk cryptography — kept
+ * ONLY as a checker. `threatClassification.test.ts` runs it over the live
+ * rows and reports where it disagrees with the reviewed `threat_class`, as a
+ * prompt for a second look at either the row or the rules; nothing on the page
+ * reads it. `null` = no signal either way.
  */
-export function getThreatClass(threat: ThreatItem): ThreatClass {
+export function guessThreatClass(threat: ThreatItem): ThreatClass | null {
   const text = corpus(threat)
   const sig = anyHit(text, SIGNATURE_HINTS)
   const enc = anyHit(text, ENCRYPTION_HINTS)
   if (sig && enc) return 'both'
   if (sig) return 'hnfl'
   if (enc) return 'hndl'
-  return 'unclassified'
+  return null
 }
 
-/** Does a threat match a selected class filter? `both` matches either lens. */
+/**
+ * A threat's class: the row's reviewed `threat_class`. A row without one can
+ * only be a hand-built fixture or a future row validator TP-4 would already
+ * fail; it is shown as `both` — exposed on both clocks, counted in both
+ * totals and given every use case — rather than hidden or guessed.
+ */
+export function getThreatClass(threat: ThreatItem): ThreatClass {
+  return threat.threatClass ?? 'both'
+}
+
+/**
+ * Does a threat match a class filter? Selecting HNDL shows hndl + both;
+ * selecting HNFL shows hnfl + both — the same on desktop and mobile (UX-15).
+ * `both` itself (only reachable from an old `?class=both` link) shows just the
+ * rows classed both.
+ */
 export function threatMatchesClass(threat: ThreatItem, filter: ThreatClass): boolean {
   const cls = getThreatClass(threat)
-  if (cls === 'both') return true
-  return cls === filter
+  if (filter === 'both') return cls === 'both'
+  return cls === filter || cls === 'both'
 }
 
 // ---------------------------------------------------------------------------
@@ -334,8 +350,7 @@ export function getShorTier(threat: ThreatItem): ShorTier {
  * class. Drift monitoring (UC2) watches every migrated system, so it applies
  * to every threat; decrypt-later exposure adds downgrade detection (UC1) and
  * horizon-weighted exfiltration detection (UC5); forge-later exposure adds
- * certificate-lifecycle (UC3) and signature-integrity (UC4) monitoring. An
- * unclassified threat gets UC2 only — see `SOC_UNCLASSIFIED_NOTE`.
+ * certificate-lifecycle (UC3) and signature-integrity (UC4) monitoring.
  */
 const CLASS_USE_CASES: Record<ThreatClass, SocUseCaseId[]> = {
   hndl: ['hybrid-downgrade', 'hndl-indicator'],
@@ -346,11 +361,7 @@ const CLASS_USE_CASES: Record<ThreatClass, SocUseCaseId[]> = {
     'tnfl-signature-integrity',
     'hndl-indicator',
   ],
-  unclassified: [],
 }
-
-export const SOC_UNCLASSIFIED_NOTE =
-  "This threat's class could not be determined from its at-risk cryptography, so only drift monitoring is shown. Review the at-risk cryptography to decide whether the decrypt-later (UC-1, UC-5) or forge-later (UC-3, UC-4) use cases apply."
 
 export function getSocUseCases(threat: ThreatItem): SocUseCase[] {
   const ids = new Set<SocUseCaseId>(['crypto-drift', ...CLASS_USE_CASES[getThreatClass(threat)]])

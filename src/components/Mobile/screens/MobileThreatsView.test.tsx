@@ -6,7 +6,7 @@ import { MobileThreatsView } from './MobileThreatsView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { retiredThreats, threatsData } from '@/data/threatsData'
-import { getThreatClass } from '@/components/Threats/threatClassification'
+import { getThreatClass, threatMatchesClass } from '@/components/Threats/threatClassification'
 import {
   getCrqcConsensus,
   CRQC_ESTIMATES,
@@ -233,8 +233,19 @@ describe('MobileThreatsView', () => {
       const group = screen.getByRole('group', { name: 'Filter by threat class' })
       const chip = within(group).getByRole('button', { name: /HNFL \/ TNFL/ })
       expect(chip).toHaveAttribute('aria-pressed', 'true')
-      const notHnfl = threatsData.find((t) => getThreatClass(t) !== 'hnfl')
-      if (notHnfl) expect(screen.queryByText(notHnfl.threatId)).not.toBeInTheDocument()
+      const hndlOnly = threatsData.find((t) => getThreatClass(t) === 'hndl')
+      if (hndlOnly) expect(screen.queryByText(hndlOnly.threatId)).not.toBeInTheDocument()
+    })
+
+    it('HNFL shows hnfl + both rows — the same meaning as desktop (UX-15)', () => {
+      renderView('/threats?class=hnfl')
+      const both = threatsData.find((t) => getThreatClass(t) === 'both')!
+      expect(screen.getByText(both.threatId)).toBeInTheDocument()
+      const shown = threatsData.filter((t) => threatMatchesClass(t, 'hnfl'))
+      expect(shown.every((t) => getThreatClass(t) !== 'hndl')).toBe(true)
+      // Only the two class chips desktop offers, plus "All classes".
+      const group = screen.getByRole('group', { name: 'Filter by threat class' })
+      expect(within(group).getAllByRole('button')).toHaveLength(3)
     })
 
     it('a link to a retired threat says it was retired', () => {

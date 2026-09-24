@@ -5,6 +5,7 @@ import { SOC_IR_PLAYBOOKS, SOC_USE_CASES } from '@/data/socQuantumPlaybook'
 import { DETECTION_USE_CASES } from '@/components/PKILearning/modules/SocImplementationPqc/detectionUseCases'
 import {
   getThreatClass,
+  guessThreatClass,
   threatMatchesClass,
   getShorTier,
   getSocUseCases,
@@ -27,71 +28,127 @@ function threat(partial: Partial<ThreatItem>): ThreatItem {
   }
 }
 
-describe('getThreatClass (Threats #2)', () => {
-  it('classifies signature/PKI crypto as forge-later (HNFL)', () => {
-    expect(getThreatClass(threat({ cryptoAtRisk: 'ECDSA firmware signing certificate' }))).toBe(
+describe('getThreatClass (ruling R1) — the reviewed threat_class, never a guess', () => {
+  it('returns the row’s reviewed class even when the keywords would say otherwise', () => {
+    // Encryption keywords, reviewed as forge-later: the reviewed value wins.
+    expect(getThreatClass(threat({ cryptoAtRisk: 'TLS key wrapping', threatClass: 'hnfl' }))).toBe(
       'hnfl'
     )
-  })
-
-  it('classifies key-wrapping / TLS encryption as decrypt-later (HNDL)', () => {
-    expect(getThreatClass(threat({ cryptoAtRisk: 'TLS key wrapping for backup encryption' }))).toBe(
+    expect(getThreatClass(threat({ cryptoAtRisk: 'ECDSA signing', threatClass: 'hndl' }))).toBe(
       'hndl'
     )
   })
 
-  it('classifies a mixed PKI+encryption estate as both', () => {
+  it('has no "unclassified" state — a row without a reviewed class shows as both', () => {
+    expect(getThreatClass(threat({ cryptoAtRisk: 'something unrecognised' }))).toBe('both')
+  })
+})
+
+describe('threatMatchesClass (UX-15) — one meaning on desktop and mobile', () => {
+  const hndl = threat({ threatClass: 'hndl' })
+  const hnfl = threat({ threatClass: 'hnfl' })
+  const both = threat({ threatClass: 'both' })
+
+  it('HNDL shows hndl + both', () => {
+    expect([hndl, hnfl, both].map((t) => threatMatchesClass(t, 'hndl'))).toEqual([
+      true,
+      false,
+      true,
+    ])
+  })
+
+  it('HNFL shows hnfl + both', () => {
+    expect([hndl, hnfl, both].map((t) => threatMatchesClass(t, 'hnfl'))).toEqual([
+      false,
+      true,
+      true,
+    ])
+  })
+
+  it('an old ?class=both link shows only the rows classed both', () => {
+    expect([hndl, hnfl, both].map((t) => threatMatchesClass(t, 'both'))).toEqual([
+      false,
+      false,
+      true,
+    ])
+  })
+})
+
+describe('guessThreatClass — the keyword checker (never shown to readers)', () => {
+  it('guesses signature/PKI crypto as forge-later (HNFL)', () => {
+    expect(guessThreatClass(threat({ cryptoAtRisk: 'ECDSA firmware signing certificate' }))).toBe(
+      'hnfl'
+    )
+  })
+
+  it('guesses key-wrapping / TLS encryption as decrypt-later (HNDL)', () => {
     expect(
-      getThreatClass(threat({ cryptoAtRisk: 'RSA key management and ECDSA code signing' }))
+      guessThreatClass(threat({ cryptoAtRisk: 'TLS key wrapping for backup encryption' }))
+    ).toBe('hndl')
+  })
+
+  it('guesses a mixed PKI+encryption estate as both', () => {
+    expect(
+      guessThreatClass(threat({ cryptoAtRisk: 'RSA key management and ECDSA code signing' }))
     ).toBe('both')
   })
 
-  it('renders as unclassified — not silently HNDL — when no signal fires', () => {
-    expect(getThreatClass(threat({ cryptoAtRisk: 'something unrecognised' }))).toBe('unclassified')
-  })
-
-  it('a "both" threat matches either class filter', () => {
-    const t = threat({ cryptoAtRisk: 'RSA key management and ECDSA signing' })
-    expect(threatMatchesClass(t, 'hndl')).toBe(true)
-    expect(threatMatchesClass(t, 'hnfl')).toBe(true)
+  it('returns null — no guess — when no signal fires', () => {
+    expect(guessThreatClass(threat({ cryptoAtRisk: 'something unrecognised' }))).toBeNull()
   })
 
   it('does not match "dsa"/"kem" substrings inside the pqcReplacement algorithm name', () => {
-    // cryptoAtRisk has no signature/encryption signal of its own; pqcReplacement
-    // names ML-DSA / ML-KEM, which used to leak into the match via the old
-    // combined-corpus lookup ("dsa" inside "ML-DSA", "kem" inside "ML-KEM").
     const t = threat({
       cryptoAtRisk: 'something unrecognised',
       pqcReplacement: 'ML-DSA-65, ML-KEM-768',
       description: 'Recommend migrating to ML-KEM and ML-DSA per FIPS 203/204.',
     })
-    expect(getThreatClass(t)).toBe('unclassified')
+    expect(guessThreatClass(t)).toBeNull()
   })
 
   it('does not read "unencrypted" as encryption (AERO-003: ADS-B is sent in the clear)', () => {
     expect(
-      getThreatClass(threat({ cryptoAtRisk: 'ADS-B (unencrypted), Mode S, ATC data links' }))
-    ).toBe('unclassified')
-    // …while a real "encrypted" still counts as decrypt-later exposure.
-    expect(getThreatClass(threat({ cryptoAtRisk: 'encrypted archives' }))).toBe('hndl')
+      guessThreatClass(threat({ cryptoAtRisk: 'ADS-B (unencrypted), Mode S, ATC data links' }))
+    ).toBeNull()
+    expect(guessThreatClass(threat({ cryptoAtRisk: 'encrypted archives' }))).toBe('hndl')
   })
 
   it('does not read symmetric MACs (KMAC, AES-CMAC) as forge-later signature crypto', () => {
-    expect(getThreatClass(threat({ cryptoAtRisk: 'KMAC, AES-CMAC session keys' }))).toBe(
-      'unclassified'
-    )
+    expect(guessThreatClass(threat({ cryptoAtRisk: 'KMAC, AES-CMAC session keys' }))).toBeNull()
   })
 
-  it('still classifies correctly when cryptoAtRisk genuinely contains PQC algorithm names', () => {
-    // A threat ABOUT the PQC replacement itself (e.g. an implementation attack)
-    // legitimately has ML-KEM/ML-DSA in cryptoAtRisk — that is real signal, not
-    // pollution, since cryptoAtRisk is the one field the classifier reads.
-    expect(getThreatClass(threat({ cryptoAtRisk: 'ML-KEM private key generation in HSMs' }))).toBe(
-      'hndl'
-    )
-    expect(getThreatClass(threat({ cryptoAtRisk: 'ML-DSA private key during signing' }))).toBe(
+  it('reads PQC algorithm names in cryptoAtRisk as real signal', () => {
+    expect(
+      guessThreatClass(threat({ cryptoAtRisk: 'ML-KEM private key generation in HSMs' }))
+    ).toBe('hndl')
+    expect(guessThreatClass(threat({ cryptoAtRisk: 'ML-DSA private key during signing' }))).toBe(
       'hnfl'
     )
+  })
+})
+
+// Live data: every published row carries a reviewed class, and the keyword
+// checker's disagreements with it are REPORTED (in the test name), not
+// asserted — a disagreement is a prompt to look again at the row or the rules,
+// and the reviewed value is what the page shows either way.
+const liveDisagreements = threatsData.filter((t) => {
+  const guess = guessThreatClass(t)
+  return guess !== null && guess !== t.threatClass
+})
+const liveNoGuess = threatsData.filter((t) => guessThreatClass(t) === null)
+
+describe('reviewed threat_class over the real threats CSV', () => {
+  it(`every published row has a reviewed class (keyword checker disagrees on ${liveDisagreements.length}, has no guess for ${liveNoGuess.length}, of ${threatsData.length})`, () => {
+    expect(threatsData.length).toBeGreaterThan(0)
+    const missing = threatsData.filter((t) => !t.threatClass).map((t) => t.threatId)
+    expect(missing).toEqual([])
+    if (liveDisagreements.length > 0) {
+      console.warn(
+        `[threat_class checker] keyword guess differs from the reviewed class on: ${liveDisagreements
+          .map((t) => `${t.threatId} (reviewed ${t.threatClass}, guessed ${guessThreatClass(t)})`)
+          .join(', ')}`
+      )
+    }
   })
 })
 
@@ -162,17 +219,14 @@ describe('getShorTier over the real threats CSV', () => {
   })
 })
 
-const byClass: Record<Exclude<ThreatClass, 'unclassified'>, string> = {
-  hndl: 'TLS key wrapping for backup encryption',
-  hnfl: 'ECDSA firmware signing certificate',
-  both: 'RSA key management and ECDSA code signing',
-}
+const CLASSES: ThreatClass[] = ['hndl', 'hnfl', 'both']
+const ofClass = (threatClass: ThreatClass) => threat({ threatClass })
 
 describe('getSocUseCases (Threats #3) — the Applied Quantum v3.0 use cases', () => {
   it('uses the shared SOC module’s titles — the same ones the SOC Learn module renders', () => {
     const titles = new Set(SOC_USE_CASES.map((u) => u.title))
-    for (const crypto of Object.values(byClass)) {
-      for (const uc of getSocUseCases(threat({ cryptoAtRisk: crypto }))) {
+    for (const cls of CLASSES) {
+      for (const uc of getSocUseCases(ofClass(cls))) {
         expect(titles.has(uc.title)).toBe(true)
       }
     }
@@ -180,23 +234,15 @@ describe('getSocUseCases (Threats #3) — the Applied Quantum v3.0 use cases', (
   })
 
   it('maps decrypt-later to drift + hybrid downgrade + horizon-weighted exfiltration (UC-2, UC-1, UC-5)', () => {
-    expect(getSocUseCases(threat({ cryptoAtRisk: byClass.hndl })).map((u) => u.code)).toEqual([
-      'UC-1',
-      'UC-2',
-      'UC-5',
-    ])
+    expect(getSocUseCases(ofClass('hndl')).map((u) => u.code)).toEqual(['UC-1', 'UC-2', 'UC-5'])
   })
 
   it('maps forge-later to drift + certificate lifecycle + signature integrity (UC-2, UC-3, UC-4)', () => {
-    expect(getSocUseCases(threat({ cryptoAtRisk: byClass.hnfl })).map((u) => u.code)).toEqual([
-      'UC-2',
-      'UC-3',
-      'UC-4',
-    ])
+    expect(getSocUseCases(ofClass('hnfl')).map((u) => u.code)).toEqual(['UC-2', 'UC-3', 'UC-4'])
   })
 
   it('maps "both" to the union — all five use cases', () => {
-    expect(getSocUseCases(threat({ cryptoAtRisk: byClass.both })).map((u) => u.code)).toEqual([
+    expect(getSocUseCases(ofClass('both')).map((u) => u.code)).toEqual([
       'UC-1',
       'UC-2',
       'UC-3',
@@ -205,10 +251,13 @@ describe('getSocUseCases (Threats #3) — the Applied Quantum v3.0 use cases', (
     ])
   })
 
-  it('gives an unclassified threat drift monitoring only', () => {
+  it('follows the reviewed class, not the at-risk keywords', () => {
+    // Signing keywords, reviewed decrypt-later → the decrypt-later use cases.
     expect(
-      getSocUseCases(threat({ cryptoAtRisk: 'something unrecognised' })).map((u) => u.code)
-    ).toEqual(['UC-2'])
+      getSocUseCases(threat({ cryptoAtRisk: 'ECDSA firmware signing', threatClass: 'hndl' })).map(
+        (u) => u.code
+      )
+    ).toEqual(['UC-1', 'UC-2', 'UC-5'])
   })
 
   it('never offers CRQC tracking (threat intelligence) as a use case', () => {
@@ -226,39 +275,30 @@ describe('getSocUseCases (Threats #3) — the Applied Quantum v3.0 use cases', (
   })
 })
 
-// Live data: every active row of the real latest threats CSV either gets at
-// least one class-specific use case or is honestly unclassified. The
-// unclassified count is reported, not asserted — deciding a stored class
-// column is a pending data decision, and until then an unclassified row is a
-// review signal, not a test failure.
-const liveUnclassified = threatsData.filter((t) => getThreatClass(t) === 'unclassified')
-
+// Live data: every published row gets drift monitoring plus at least one
+// class-specific use case — there is no unclassified row left to get UC-2 only.
 describe('getSocUseCases over the real threats CSV', () => {
-  it(`every active row gets ≥1 class-specific use case or is unclassified (${liveUnclassified.length} of ${threatsData.length} unclassified)`, () => {
+  it('every published row gets UC-2 and ≥1 class-specific use case', () => {
     expect(threatsData.length).toBeGreaterThan(0)
     for (const t of threatsData) {
       const codes = getSocUseCases(t).map((u) => u.code)
       expect(codes).toContain('UC-2')
-      const classSpecific = codes.filter((c) => c !== 'UC-2')
-      if (getThreatClass(t) === 'unclassified') expect(classSpecific).toEqual([])
-      else expect(classSpecific.length).toBeGreaterThan(0)
+      expect(codes.filter((c) => c !== 'UC-2').length).toBeGreaterThan(0)
     }
   })
 })
 
 describe('getIrPlaybooks (Threats #6) — the four v3.0 playbooks', () => {
   it('offers Confirmed Hybrid Downgrade only to decrypt-later exposure', () => {
-    const ids = (crypto: string) =>
-      getIrPlaybooks(threat({ cryptoAtRisk: crypto })).map((p) => p.id)
-    expect(ids(byClass.hndl)).toContain('confirmed-hybrid-downgrade')
-    expect(ids(byClass.both)).toContain('confirmed-hybrid-downgrade')
-    expect(ids(byClass.hnfl)).not.toContain('confirmed-hybrid-downgrade')
-    expect(ids('something unrecognised')).not.toContain('confirmed-hybrid-downgrade')
+    const ids = (cls: ThreatClass) => getIrPlaybooks(ofClass(cls)).map((p) => p.id)
+    expect(ids('hndl')).toContain('confirmed-hybrid-downgrade')
+    expect(ids('both')).toContain('confirmed-hybrid-downgrade')
+    expect(ids('hnfl')).not.toContain('confirmed-hybrid-downgrade')
   })
 
   it('always offers vulnerability disclosure, CRQC announcement and emergency rotation', () => {
-    for (const crypto of [...Object.values(byClass), 'something unrecognised']) {
-      const ids = getIrPlaybooks(threat({ cryptoAtRisk: crypto })).map((p) => p.id)
+    for (const cls of CLASSES) {
+      const ids = getIrPlaybooks(ofClass(cls)).map((p) => p.id)
       expect(ids).toEqual(
         expect.arrayContaining([
           'pqc-vulnerability-disclosure',
@@ -276,7 +316,7 @@ describe('getIrPlaybooks (Threats #6) — the four v3.0 playbooks', () => {
       [3, 'Credible CRQC Announcement', 227],
       [4, 'Emergency Algorithm Rotation', 227],
     ])
-    const titles = getIrPlaybooks(threat({ cryptoAtRisk: byClass.both })).map((p) => p.title)
+    const titles = getIrPlaybooks(ofClass('both')).map((p) => p.title)
     for (const invented of ['Decrypt-Later', 'Signature-Forgery', 'Combined', 'Manual Triage']) {
       expect(titles.some((t) => t.includes(invented))).toBe(false)
     }

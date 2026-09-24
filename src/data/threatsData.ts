@@ -6,7 +6,9 @@ import {
   canonicalThreatIndustry,
   isPublishedThreatStatus,
   isRetiredThreatStatus,
+  parseThreatClass,
   UNRATED_CRITICALITY,
+  type ReviewedThreatClass,
 } from './threatRowRules'
 
 export interface ThreatData {
@@ -39,6 +41,12 @@ export interface ThreatData {
    *  each one states — from `secondary_source_ref` + `secondary_claims`,
    *  written only by an approved second-source review item (2026-09-24). */
   secondarySources?: SecondarySource[]
+  /** The reviewed threat class from `threat_class` (ruling R1, 2026-09-24).
+   *  Every published row carries one (validator TP-4). */
+  threatClass?: ReviewedThreatClass
+  /** Publisher of the original document when `source_url` points at a mirror
+   *  copy (e.g. "PCI Security Standards Council") — the link says so. */
+  sourceMirrorOf?: string
 }
 
 export interface SecondarySource {
@@ -105,6 +113,8 @@ interface RawThreatRow {
   deprecated_reason?: string
   secondary_source_ref?: string
   secondary_claims?: string
+  threat_class?: string
+  source_mirror_of?: string
 }
 
 const THREATS_FILE_RE = /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
@@ -144,6 +154,8 @@ function transformThreat(row: RawThreatRow): ThreatData | null {
     dataQualityNotes: row.data_quality_notes || undefined,
     confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
     lastVerified: row.last_verified || undefined,
+    threatClass: parseThreatClass(row.threat_class),
+    sourceMirrorOf: row.source_mirror_of?.trim() || undefined,
     secondarySources: (() => {
       const found = parseSecondarySources(row.secondary_source_ref, row.secondary_claims)
       return found.length ? found : undefined
