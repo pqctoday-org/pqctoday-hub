@@ -730,17 +730,19 @@ export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
     'Internet of Things (IoT)',
     'Media / Entertainment / DRM',
     'Supply Chain / Logistics',
-    'Hardware Security Modules',
+    // The two "Hardware Security Modules" rows are "Cross-Industry" since
+    // ruling R3 (2026-09-24); Cross-Industry reaches Technology readers via
+    // 'Cross-cutting & Other' in their persona defaults.
   ],
   'Energy & Utilities': [
-    // "Critical Infrastructure" and "Energy / Critical Infrastructure" are
-    // canonicalized to one sector in threatsData.ts (Threats #5) — reference
-    // the single post-canonicalization label here.
-    'Critical Infrastructure / Energy',
+    // The Threats page's label since ruling R3 (2026-09-24) — formerly
+    // "Critical Infrastructure" / "Energy / Critical Infrastructure", which
+    // THREAT_INDUSTRY_ALIASES (threatRowRules.ts) still resolves.
+    'Critical Infrastructure / OT',
     'Water / Wastewater',
   ],
   Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
-  Aerospace: ['Aerospace / Aviation'],
+  Aerospace: ['Aerospace / Aviation / Space'],
   'Retail & E-Commerce': ['Retail & E-Commerce'],
   'Cross-cutting & Other': ['Cross-Industry', 'Education / Research'],
   Other: [],

@@ -51,9 +51,8 @@ export function publishedThreatIds(rows: CsvRows): Set<string> {
 
 /**
  * Deep link for one threat. `&industry=` carries the label the page shows —
- * "Critical Infrastructure" and "Energy / Critical Infrastructure" are merged
- * into "Critical Infrastructure / Energy" there, so the raw label would not
- * select anything.
+ * an old label (e.g. "Energy / Critical Infrastructure", now "Critical
+ * Infrastructure / OT" — ruling R3) is written as the page's current one.
  */
 export function threatDeepLink(threatId: string, rawIndustry?: string): string {
   const id = `/threats?id=${encodeURIComponent(threatId.trim())}`

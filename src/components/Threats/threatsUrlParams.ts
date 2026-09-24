@@ -12,7 +12,11 @@
  */
 import type { ThreatClass } from './threatClassification'
 import type { ThreatItem } from '@/data/threatsData'
-import { canonicalThreatIndustry } from '@/data/threatRowRules'
+import {
+  canonicalThreatIndustry,
+  THREAT_INDUSTRY_ALIASES,
+  threatIndustrySlug,
+} from '@/data/threatRowRules'
 
 /** The threat id a URL asks to open: `?id=`, else the legacy `?threat=` alias
  *  that Endorse/Flag links carried until 2026-09-23 (links already shared
@@ -21,11 +25,18 @@ export function threatIdParam(params: URLSearchParams): string | null {
   return params.get('id') || params.get('threat') || null
 }
 
+/** Old-label slug → current label, e.g. `energy-critical-infrastructure` →
+ *  "Critical Infrastructure / OT" (ruling R3 aliases, as slugs). */
+const ALIAS_SLUGS = new Map(
+  Object.entries(THREAT_INDUSTRY_ALIASES).map(([old, label]) => [threatIndustrySlug(old), label])
+)
+
 /**
- * `?industry=` (comma-separated) → the page's industry labels, matched
- * case-insensitively. A raw CSV label the page merges (e.g. "Critical
- * Infrastructure") resolves to the merged label, so links built from the CSV
- * still land. Unknown values are dropped.
+ * `?industry=` (comma-separated) → the page's industry labels. Each value may
+ * be a label (matched case-insensitively), an OLD label the page has renamed
+ * (e.g. "Energy / Critical Infrastructure", "Aerospace / Aviation" — ruling
+ * R3), or the slug of either (`critical-infrastructure-ot`,
+ * `aerospace-aviation`). Unknown values are dropped.
  */
 export function resolveIndustryParam(
   param: string | null,
@@ -33,12 +44,18 @@ export function resolveIndustryParam(
 ): string[] {
   if (!param) return []
   const labels = new Map(rows.map((r) => [r.industry.toLowerCase(), r.industry]))
+  const slugs = new Map(rows.map((r) => [threatIndustrySlug(r.industry), r.industry]))
   const out: string[] = []
   for (const part of param.split(',')) {
     const raw = part.trim()
     if (!raw) continue
+    const slug = threatIndustrySlug(raw)
+    const aliased = ALIAS_SLUGS.get(slug)
     const hit =
-      labels.get(raw.toLowerCase()) ?? labels.get(canonicalThreatIndustry(raw).toLowerCase())
+      labels.get(raw.toLowerCase()) ??
+      labels.get(canonicalThreatIndustry(raw).toLowerCase()) ??
+      slugs.get(slug) ??
+      (aliased ? labels.get(aliased.toLowerCase()) : undefined)
     if (hit && !out.includes(hit)) out.push(hit)
   }
   return out

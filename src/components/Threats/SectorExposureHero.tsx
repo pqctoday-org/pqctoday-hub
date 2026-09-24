@@ -35,7 +35,9 @@ function sectorDataLifetime(industry: string): number {
   if (/gov|defen|military|national|intelligence/.test(s)) return 25
   if (/aero|space|satellite|avionic/.test(s)) return 25
   if (/health|pharma|medical|hospital|life scien/.test(s)) return 25
-  if (/energ|utilit|grid|nuclear|oil|gas/.test(s)) return 20
+  // "infrastructure": "Critical Infrastructure / OT" (ruling R3) no longer
+  // says "energy", but is the same sector its predecessor label was.
+  if (/energ|utilit|grid|nuclear|oil|gas|infrastructure/.test(s)) return 20
   if (/auto|vehicle/.test(s)) return 12
   if (/financ|bank|payment|insur|capital market/.test(s)) return 10
   if (/cloud|saas|hosting|datacenter|data center/.test(s)) return 7

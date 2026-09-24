@@ -20,20 +20,46 @@ describe('threatsUrlParams', () => {
     expect(threatIdParam(p(''))).toBeNull()
   })
 
-  it('resolves ?industry= case-insensitively, through the page’s merged labels, dropping unknowns', () => {
+  it('resolves ?industry= case-insensitively, through old labels and slugs, dropping unknowns', () => {
     const rows = [
       { industry: 'Finance & Banking' },
-      { industry: 'Critical Infrastructure / Energy' },
+      { industry: 'Critical Infrastructure / OT' },
+      { industry: 'Aerospace / Aviation / Space' },
+      { industry: 'Cross-Industry' },
     ]
     expect(resolveIndustryParam('finance & banking', rows)).toEqual(['Finance & Banking'])
-    // A raw CSV label the page merges still lands on the merged label.
-    expect(resolveIndustryParam('Critical Infrastructure', rows)).toEqual([
+    // Old labels the page renamed (ruling R3) still land on the new label.
+    for (const old of [
+      'Critical Infrastructure',
+      'Energy / Critical Infrastructure',
       'Critical Infrastructure / Energy',
+    ]) {
+      expect(resolveIndustryParam(old, rows)).toEqual(['Critical Infrastructure / OT'])
+    }
+    expect(resolveIndustryParam('Aerospace / Aviation', rows)).toEqual([
+      'Aerospace / Aviation / Space',
     ])
+    expect(resolveIndustryParam('Hardware Security Modules', rows)).toEqual(['Cross-Industry'])
     expect(resolveIndustryParam('Energy / Critical Infrastructure,Nope', rows)).toEqual([
-      'Critical Infrastructure / Energy',
+      'Critical Infrastructure / OT',
     ])
     expect(resolveIndustryParam(null, rows)).toEqual([])
+  })
+
+  it('resolves new and old label slugs in ?industry=', () => {
+    const rows = [
+      { industry: 'Critical Infrastructure / OT' },
+      { industry: 'Aerospace / Aviation / Space' },
+    ]
+    expect(resolveIndustryParam('critical-infrastructure-ot', rows)).toEqual([
+      'Critical Infrastructure / OT',
+    ])
+    expect(resolveIndustryParam('energy-critical-infrastructure', rows)).toEqual([
+      'Critical Infrastructure / OT',
+    ])
+    expect(resolveIndustryParam('aerospace-aviation-space,aerospace-aviation', rows)).toEqual([
+      'Aerospace / Aviation / Space',
+    ])
   })
 
   it('accepts only real threat classes for ?class=', () => {

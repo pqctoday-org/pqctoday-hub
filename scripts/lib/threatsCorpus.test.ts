@@ -42,12 +42,12 @@ describe('threats corpus rules', () => {
     ).toEqual(new Set(['A-1']))
   })
 
-  it('links &industry= with the page’s merged label, not the raw CSV label', () => {
+  it('links &industry= with the page’s label, not an old raw CSV label', () => {
     expect(threatDeepLink('CI-001', 'Critical Infrastructure')).toBe(
-      '/threats?id=CI-001&industry=Critical%20Infrastructure%20%2F%20Energy'
+      '/threats?id=CI-001&industry=Critical%20Infrastructure%20%2F%20OT'
     )
     expect(threatDeepLink('EN-001', 'Energy / Critical Infrastructure')).toBe(
-      '/threats?id=EN-001&industry=Critical%20Infrastructure%20%2F%20Energy'
+      '/threats?id=EN-001&industry=Critical%20Infrastructure%20%2F%20OT'
     )
     expect(threatDeepLink('FIN-001', 'Finance & Banking')).toBe(
       '/threats?id=FIN-001&industry=Finance%20%26%20Banking'
@@ -59,7 +59,7 @@ describe('threats corpus rules', () => {
     const guide = buildThreatsPageGuide(publishedThreatRecords(rows))
     // 4 published rows; the two critical-infrastructure labels merge → 3 industries.
     expect(guide).toContain('lists 4 quantum threat scenarios across 3 industries')
-    expect(guide).toContain('Critical Infrastructure / Energy, Finance & Banking, Insurance')
+    expect(guide).toContain('Critical Infrastructure / OT, Finance & Banking, Insurance')
     expect(guide).not.toContain('Aerospace') // deprecated row
     expect(guide).toContain('Criticality levels in use: Critical, High, Medium, Unrated')
     expect(guide).not.toContain('Medium-High')
