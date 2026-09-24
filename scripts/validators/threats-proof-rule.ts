@@ -31,6 +31,7 @@ import path from 'path'
 import Papa from 'papaparse'
 
 import type { CheckResult, Finding } from './types.js'
+import { datedCsvCompare } from '../lib/latestDatedCsv'
 
 const MIN_PROOF_BYTES = 5_000
 // Resolved lazily so callers (and unit tests) can change cwd before invoking.
@@ -101,7 +102,31 @@ function loadCatalogIds(): Set<string> | null {
   // null and TP-3 will skip (rather than fail the build during the
   // migration window).
   if (!rows.length || !('id' in rows[0]) || !rows[0].id) return null
-  return new Set(rows.map((r) => (r.id || '').trim()).filter(Boolean))
+  const ids = new Set(rows.map((r) => (r.id || '').trim()).filter(Boolean))
+  // UNION with trusted_sources_*.csv (2026-09-23). A trusted_source_id may name
+  // either registry — the app resolves getTrustedSource first, then
+  // getAuthoritativeSource, and trust-engine-checks.ts loadKnownSourceIds()
+  // already checks the union for compliance/timeline. TP-3 read the
+  // authoritative file alone, so a row citing a trusted-sources-only id
+  // (CROS-008 -> incd-israel, a registered tier-2 government source) failed
+  // an ERROR check the page itself resolves without trouble.
+  for (const id of loadTrustedSourceIds()) ids.add(id)
+  return ids
+}
+
+function loadTrustedSourceIds(): string[] {
+  if (!fs.existsSync(dataDir())) return []
+  const files = fs
+    .readdirSync(dataDir())
+    .filter((f) => /^trusted_sources_\d{8}(?:_r\d+)?\.csv$/.test(f))
+    .sort(datedCsvCompare)
+  const latest = files.at(-1)
+  if (!latest) return []
+  const rows = Papa.parse<{ source_id?: string }>(
+    fs.readFileSync(path.join(dataDir(), latest), 'utf-8'),
+    { header: true, skipEmptyLines: true }
+  ).data
+  return rows.map((r) => (r.source_id || '').trim()).filter(Boolean)
 }
 
 export function runThreatsProofRule(): CheckResult[] {
@@ -239,7 +264,7 @@ export function runThreatsProofRule(): CheckResult[] {
       id: 'TP-3',
       category: 'cross-reference',
       description:
-        'Every active threat trusted_source_id resolves to the authoritative-sources catalog id',
+        'Every active threat trusted_source_id resolves to a trusted-sources or authoritative-sources id',
       sourceA: csvName,
       sourceB: catalogName,
       severity: 'ERROR',
@@ -251,7 +276,7 @@ export function runThreatsProofRule(): CheckResult[] {
       id: 'TP-3',
       category: 'cross-reference',
       description:
-        'Every active threat trusted_source_id resolves to the authoritative-sources catalog id',
+        'Every active threat trusted_source_id resolves to a trusted-sources or authoritative-sources id',
       sourceA: csvName,
       sourceB: 'pqc_authoritative_sources_reference_*.csv',
       severity: 'ERROR',
