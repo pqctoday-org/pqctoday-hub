@@ -70,7 +70,7 @@ const PERSONA_SHORT_LABELS: Record<PersonaId, string> = {
   curious: 'Curious',
 }
 
-import { getIndustryIcon } from './threatsHelper'
+import { getIndustryIcon, threatCountLabel } from './threatsHelper'
 import { ThreatsViewToggle, type ThreatsViewMode } from './ThreatsViewToggle'
 import { LeftNavTOC } from '@/components/common/LeftNavTOC'
 import { ThreatsCardGrid } from './ThreatsCardGrid'
@@ -1023,7 +1023,10 @@ export const ThreatsDashboard: React.FC<{
                             {
                               id: t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
                               label: t.industry,
-                              hint: `${filteredAndSortedData.filter((x) => x.industry === t.industry).length} threats`,
+                              hint: threatCountLabel(
+                                filteredAndSortedData.filter((x) => x.industry === t.industry)
+                                  .length
+                              ),
                             },
                           ])
                         ).values()

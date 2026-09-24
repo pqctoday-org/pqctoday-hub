@@ -6,7 +6,12 @@ import { MobileThreatsView } from './MobileThreatsView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { retiredThreats, threatsData } from '@/data/threatsData'
-import { getThreatClass, threatMatchesClass } from '@/components/Threats/threatClassification'
+import {
+  getShorTier,
+  getThreatClass,
+  SHOR_TIER_DEFS,
+  threatMatchesClass,
+} from '@/components/Threats/threatClassification'
 import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
@@ -167,6 +172,19 @@ describe('MobileThreatsView', () => {
       screen.getByRole('button', { name: 'Later CRQC year' }),
     ]
     for (const el of targets) expect(el.className).toMatch(/\bh-11\b/)
+  })
+
+  it('tier chips show the compact name, keeping the full tier label accessible (UX-19)', () => {
+    renderView()
+    const first = threatsData[0]
+    const card = screen.getByText(first.threatId).closest('article')!
+    const def = SHOR_TIER_DEFS[getShorTier(first)]
+    expect(within(card).getAllByText(def.short).length).toBeGreaterThan(0)
+    expect(
+      within(card)
+        .getAllByText(def.label)
+        .some((el) => el.classList.contains('sr-only'))
+    ).toBe(true)
   })
 
   it('states what was cut rather than silently dropping it', () => {

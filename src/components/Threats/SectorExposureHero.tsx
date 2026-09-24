@@ -159,6 +159,11 @@ export const SectorExposureHero = ({
               <span className="font-semibold text-foreground">{hnfl}</span> forge-later
             </span>
           </div>
+          {/* UX-19: the two totals overlap by design — say so, so they are
+              never read as adding up to the sector total. */}
+          <p className="mt-1 text-[10px] leading-snug text-muted-foreground">
+            Threats classed both (HNDL + HNFL) count in both totals.
+          </p>
         </Card>
       )}
 

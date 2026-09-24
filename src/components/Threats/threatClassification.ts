@@ -202,6 +202,9 @@ export type ShorTier = 'imminent' | 'near' | 'grover' | 'safe' | 'unknown'
 export interface ShorTierDef {
   id: ShorTier
   label: string
+  /** Compact label for dense rows (the mobile card) — the full `label` stays
+   *  available as the badge's accessible name. */
+  short: string
   /** Tailwind text colour token. */
   color: string
   /** Tailwind bg/border token. */
@@ -213,6 +216,7 @@ export const SHOR_TIER_DEFS: Record<ShorTier, ShorTierDef> = {
   imminent: {
     id: 'imminent',
     label: 'Tier 1 — Imminent',
+    short: 'Imminent',
     color: 'text-destructive',
     bg: 'bg-destructive/10 border-destructive/20',
     blurb:
@@ -221,6 +225,7 @@ export const SHOR_TIER_DEFS: Record<ShorTier, ShorTierDef> = {
   near: {
     id: 'near',
     label: 'Tier 2 — Near-term',
+    short: 'Near-term',
     color: 'text-warning',
     bg: 'bg-warning/10 border-warning/20',
     blurb:
@@ -229,6 +234,7 @@ export const SHOR_TIER_DEFS: Record<ShorTier, ShorTierDef> = {
   grover: {
     id: 'grover',
     label: 'Tier 3 — Grover-weakened',
+    short: 'Grover-weakened',
     color: 'text-primary',
     bg: 'bg-primary/10 border-primary/20',
     blurb:
@@ -237,6 +243,7 @@ export const SHOR_TIER_DEFS: Record<ShorTier, ShorTierDef> = {
   safe: {
     id: 'safe',
     label: 'PQC-safe',
+    short: 'PQC-safe',
     color: 'text-success',
     bg: 'bg-success/10 border-success/20',
     blurb: 'Already a NIST PQC parameter set — no quantum-resource exposure.',
@@ -244,6 +251,7 @@ export const SHOR_TIER_DEFS: Record<ShorTier, ShorTierDef> = {
   unknown: {
     id: 'unknown',
     label: 'Unscored',
+    short: 'Unscored',
     color: 'text-muted-foreground',
     bg: 'bg-muted/30 border-border',
     blurb: 'No recognised algorithm token to grade; review manually.',

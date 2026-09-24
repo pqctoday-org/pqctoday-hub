@@ -123,3 +123,29 @@ describe('SectorExposureHero — one CRQC window (ruling R5)', () => {
     expect(screen.queryByText(/consensus|sources/i)).not.toBeInTheDocument()
   })
 })
+
+describe('SectorExposureHero — HNDL/HNFL totals (UX-19)', () => {
+  it('says that threats classed "both" count in both totals', () => {
+    mockGetCrqcForecast.mockReturnValue(forecast(2030, 2041, 2035))
+    const t = (threatClass: 'hndl' | 'hnfl' | 'both', id: string): ThreatData => ({
+      industry: 'Insurance',
+      threatId: id,
+      description: '',
+      criticality: 'High',
+      cryptoAtRisk: '',
+      pqcReplacement: '',
+      mainSource: '',
+      sourceUrl: '',
+      relatedModules: [],
+      threatClass,
+    })
+    render(
+      <SectorExposureHero
+        applicable={[t('hndl', 'A'), t('both', 'B')]}
+        scopedIndustries={[]}
+        variant="exposure"
+      />
+    )
+    expect(screen.getByText(/classed both .*count in both totals/i)).toBeInTheDocument()
+  })
+})

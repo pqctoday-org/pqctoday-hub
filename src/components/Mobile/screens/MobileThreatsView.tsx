@@ -568,14 +568,19 @@ function ThreatCardMobile({
     <article className="glass-panel flex flex-col gap-2 p-3.5">
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-[10.5px] text-muted-foreground">{threat.threatId}</span>
+        {/* Compact tier chip (UX-19): the short name in sentence case, the
+            full "Tier 1 — Imminent" as its accessible name; the tier blurb
+            below the description explains it. */}
         <span
           className={cn(
-            'rounded border px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide',
+            'rounded border px-1.5 py-px text-sim-chip font-semibold',
             tierDef.bg,
             tierDef.color
           )}
+          title={tierDef.label}
         >
-          {tierDef.label}
+          <span aria-hidden="true">{tierDef.short}</span>
+          <span className="sr-only">{tierDef.label}</span>
         </span>
         <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
           {clsDef.label}

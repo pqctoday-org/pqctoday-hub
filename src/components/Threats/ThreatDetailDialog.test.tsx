@@ -250,3 +250,22 @@ describe('ThreatDetailDialog — Evidence panel shows lineage, not scores (rulin
     expect(link).toHaveTextContent('(mirror of PCI Security Standards Council)')
   })
 })
+
+describe('ThreatDetailDialog — footer and CTA (UX-19)', () => {
+  it('Endorse, Flag and Ask Assistant carry visible text labels, not icons alone', () => {
+    renderDialog(threat({}))
+    for (const label of ['Endorse', 'Flag', 'Ask Assistant']) {
+      expect(screen.getByRole('button', { name: new RegExp(label) })).toHaveTextContent(label)
+    }
+  })
+
+  it('Run Assessment is one link inside the scrolling content, not a block pinned over it', () => {
+    renderDialog(threat({}))
+    const links = screen.getAllByRole('link', { name: /Run Assessment/ })
+    expect(links).toHaveLength(1)
+    expect(links[0]).toHaveAttribute('href', '/assess')
+    // It scrolls with the dialog body — the element that holds the Description.
+    const body = screen.getByText('Description').closest('div.overflow-y-auto')
+    expect(body).toContainElement(links[0])
+  })
+})
