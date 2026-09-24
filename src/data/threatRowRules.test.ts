@@ -2,6 +2,8 @@
 import { describe, it, expect } from 'vitest'
 import {
   canonicalThreatIndustry,
+  criticalityLevelsPresent,
+  criticalityRank,
   isPublishedThreatStatus,
   isRetiredThreatStatus,
 } from './threatRowRules'
@@ -34,5 +36,22 @@ describe('threat row status rules', () => {
       'Critical Infrastructure / Energy'
     )
     expect(canonicalThreatIndustry('Insurance')).toBe('Insurance')
+  })
+})
+
+describe('criticality rules', () => {
+  it('ranks Unrated below Low', () => {
+    expect(criticalityRank('Unrated')).toBeLessThan(criticalityRank('Low'))
+    expect(criticalityRank('Critical')).toBeGreaterThan(criticalityRank('High'))
+  })
+
+  it('lists only the levels present, in severity order', () => {
+    expect(
+      criticalityLevelsPresent([
+        { criticality: 'Low' },
+        { criticality: 'Unrated' },
+        { criticality: 'Critical' },
+      ])
+    ).toEqual(['Critical', 'Low', 'Unrated'])
   })
 })

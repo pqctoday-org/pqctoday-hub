@@ -17,9 +17,20 @@ import {
   Clock,
   List,
   ChevronDown,
+  HelpCircle,
 } from 'lucide-react'
 import { useSearchParams } from 'react-router'
-import { evidenceStrength, threatsData, threatsMetadata } from '../../data/threatsData'
+import {
+  evidenceStrength,
+  retiredThreats,
+  threatsData,
+  threatsMetadata,
+} from '../../data/threatsData'
+import {
+  criticalityLevelsPresent,
+  criticalityRank,
+  UNRATED_CRITICALITY,
+} from '../../data/threatRowRules'
 import type { ThreatItem } from '../../data/threatsData'
 import { AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -75,6 +86,7 @@ import { ThreatEconomicsHeader } from './ThreatEconomicsHeader'
 import { CrqcCapabilityStrip } from './CrqcCapabilityStrip'
 import { CrqcTrajectoryChart } from './CrqcTrajectoryChart'
 import { SectorExposureHero } from './SectorExposureHero'
+import { RetiredThreatNotice } from './RetiredThreatNotice'
 import { THREAT_CLASS_DEFS, threatMatchesClass, type ThreatClass } from './threatClassification'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
@@ -305,27 +317,26 @@ export const ThreatsDashboard: React.FC<{
       })
   }, [])
 
-  // Criticality items
+  // Criticality items — only the levels some row actually has, so the filter
+  // never offers a level that matches nothing (it used to offer Medium-High,
+  // which no row carries). 'Unrated' appears only while a blank-criticality
+  // row is live.
   const criticalityItems = useMemo(() => {
+    const icons: Record<string, React.ReactNode> = {
+      Critical: <AlertOctagon size={16} className="text-status-error" />,
+      High: <AlertTriangle size={16} className="text-status-error" />,
+      'Medium-High': <AlertCircle size={16} className="text-status-warning" />,
+      Medium: <Info size={16} className="text-primary" />,
+      Low: <CheckCircle size={16} className="text-status-success" />,
+      [UNRATED_CRITICALITY]: <HelpCircle size={16} className="text-muted-foreground" />,
+    }
     return [
       { id: 'All', label: 'All Levels', icon: null },
-      {
-        id: 'Critical',
-        label: 'Critical',
-        icon: <AlertOctagon size={16} className="text-status-error" />,
-      },
-      {
-        id: 'High',
-        label: 'High',
-        icon: <AlertTriangle size={16} className="text-status-error" />,
-      },
-      {
-        id: 'Medium-High',
-        label: 'Medium-High',
-        icon: <AlertCircle size={16} className="text-status-warning" />,
-      },
-      { id: 'Medium', label: 'Medium', icon: <Info size={16} className="text-primary" /> },
-      { id: 'Low', label: 'Low', icon: <CheckCircle size={16} className="text-status-success" /> },
+      ...criticalityLevelsPresent(threatsData).map((level) => ({
+        id: level,
+        label: level,
+        icon: icons[level] ?? null, // eslint-disable-line security/detect-object-injection
+      })),
     ]
   }, [])
 
@@ -455,16 +466,8 @@ export const ThreatsDashboard: React.FC<{
 
     // Sort
     data.sort((a, b) => {
-      // Helper for criticality value
-      const criticalityOrder: Record<string, number> = {
-        Critical: 3,
-        High: 2,
-        'Medium-High': 1.5,
-        Medium: 1,
-        Low: 0,
-      }
-      // eslint-disable-next-line security/detect-object-injection
-      const getCriticalityVal = (c: string) => criticalityOrder[c] ?? 0
+      // Unrated sorts below Low — "we don't know" never outranks "we checked".
+      const getCriticalityVal = criticalityRank
 
       if (sortField === 'industry') {
         if (a.industry !== b.industry) {
@@ -600,6 +603,14 @@ export const ThreatsDashboard: React.FC<{
     return () => clearPageActions()
   }, [simEmbed])
 
+  // An old link to a threat that has since been retired: say so, rather than
+  // opening nothing.
+  const linkedId = searchParams.get('id')
+  const retiredLinked =
+    linkedId && !threatsData.some((t) => t.threatId === linkedId)
+      ? retiredThreats.get(linkedId)
+      : undefined
+
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before the desktop JSX — a pure early return
   // with zero risk to the flag-off/simEmbed path (Rule 1).
@@ -618,6 +629,13 @@ export const ThreatsDashboard: React.FC<{
       )}
 
       {!simEmbed && <PersonaPageNote route="/threats" className="mb-4" />}
+
+      {retiredLinked && (
+        <RetiredThreatNotice
+          retired={retiredLinked}
+          onDismiss={() => syncFiltersToUrl({ id: null })}
+        />
+      )}
 
       <>
         {/* Persona-forward exposure hero — your scoped sector's applicable threats

@@ -96,3 +96,26 @@ describe('ThreatDetailDialog — Detection & Response (UX-1 / UX-2)', () => {
     expect(routable).toContain(link.getAttribute('href'))
   })
 })
+
+describe('ThreatDetailDialog — blank fields and internal notes (UX-5 / UX-6 / UX-12)', () => {
+  it('shows "Not yet specified" for blank at-risk and PQC fields, and Unrated criticality', () => {
+    renderDialog(threat({ criticality: 'Unrated', cryptoAtRisk: '', pqcReplacement: '' }))
+    expect(screen.getAllByText('Not yet specified')).toHaveLength(2)
+    expect(screen.getByText('Unrated')).toBeInTheDocument()
+  })
+
+  it('never renders the internal data_quality_notes maintenance log', () => {
+    renderDialog(
+      threat({
+        peerReviewed: 'yes',
+        dataQualityNotes:
+          'Added via intake queue Phase 2 (add_row.py). LLM rewrite merged inline via qwen3.6:27b.',
+      })
+    )
+    expect(screen.queryByText(/Data quality notes/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/add_row\.py/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/qwen/)).not.toBeInTheDocument()
+    // The rest of the provenance block still renders.
+    expect(screen.getByText('Data Provenance')).toBeInTheDocument()
+  })
+})

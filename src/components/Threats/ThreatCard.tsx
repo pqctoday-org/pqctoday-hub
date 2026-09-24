@@ -10,6 +10,7 @@ import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
 import { ThreatActionsMenu } from './ThreatActionsMenu'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { NOT_YET_SPECIFIED } from '@/data/threatRowRules'
 
 interface ThreatCardProps {
   item: ThreatItem
@@ -58,6 +59,10 @@ const Chips = ({
     .split(',')
     .map((v) => v.trim())
     .filter(Boolean)
+  // A blank field (a not-yet-filled row) says so, instead of an empty gap
+  // beside the arrow.
+  if (list.length === 0)
+    return <span className="font-sans italic text-muted-foreground">{NOT_YET_SPECIFIED}</span>
   const shown = list.slice(0, max)
   const extra = list.length - shown.length
   return (

@@ -18,6 +18,7 @@ import {
   type ThreatClass,
 } from '@/components/Threats/threatClassification'
 import { cn } from '@/lib/utils'
+import { criticalityLevelsPresent, NOT_YET_SPECIFIED } from '@/data/threatRowRules'
 import { MobileSheet } from '../primitives/Sheet'
 
 const CURRENT_YEAR = new Date().getFullYear()
@@ -71,7 +72,8 @@ const URGENCY_CONFIG: Record<Urgency, { label: string; color: string; bg: string
   planning: { label: 'PLANNING', color: 'text-success', bg: 'bg-success/10 border-success/20' },
 }
 
-const CRITICALITY_LEVELS = ['Critical', 'High', 'Medium-High', 'Medium', 'Low']
+// Only the levels some row has — same rule as the desktop filter.
+const CRITICALITY_LEVELS = criticalityLevelsPresent(threatsData)
 const CLASS_FILTERS: { id: ThreatClass; label: string }[] = [
   { id: 'hndl', label: THREAT_CLASS_DEFS.hndl.label },
   { id: 'hnfl', label: THREAT_CLASS_DEFS.hnfl.label },
@@ -338,10 +340,7 @@ export function MobileThreatsView() {
               </p>
             </div>
             <div className="border-t border-border pt-3 text-[12px] text-muted-foreground">
-              <span className="font-semibold text-foreground/80">At risk:</span>{' '}
-              {selected.cryptoAtRisk}
-              {' → '}
-              <span className="font-semibold text-foreground/80">{selected.pqcReplacement}</span>
+              <AtRiskLine threat={selected} />
             </div>
             <p className="text-[11.5px] leading-relaxed text-muted-foreground">
               {SHOR_TIER_DEFS[getShorTier(selected)].blurb}
@@ -383,6 +382,22 @@ export function MobileThreatsView() {
         )}
       </MobileSheet>
     </div>
+  )
+}
+
+/** "At risk: X → Y", or an honest "not yet specified" for a blank field. */
+function AtRiskLine({ threat }: { threat: ThreatItem }) {
+  const risk = threat.cryptoAtRisk.trim()
+  const pqc = threat.pqcReplacement.trim()
+  return (
+    <>
+      <span className="font-semibold text-foreground/80">At risk:</span>{' '}
+      {risk || <span className="italic">{NOT_YET_SPECIFIED}</span>}
+      {' → '}
+      <span className="font-semibold text-foreground/80">
+        {pqc || <span className="font-normal italic">{NOT_YET_SPECIFIED}</span>}
+      </span>
+    </>
   )
 }
 
@@ -464,9 +479,7 @@ function ThreatCardMobile({
         <p className="text-[10.5px] leading-relaxed text-muted-foreground">{tierDef.blurb}</p>
 
         <p className="text-[11px] text-muted-foreground">
-          <span className="font-semibold text-foreground/80">At risk:</span> {threat.cryptoAtRisk}
-          {' → '}
-          <span className="font-semibold text-foreground/80">{threat.pqcReplacement}</span>
+          <AtRiskLine threat={threat} />
         </p>
       </Button>
     </article>

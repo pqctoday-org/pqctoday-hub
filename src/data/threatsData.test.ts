@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseThreatsCSV, threatsData } from './threatsData'
+import { parseThreatsCSV, retiredThreats, threatsData } from './threatsData'
 
 describe('threatsData', () => {
   it('loads without error', () => {
@@ -52,5 +52,23 @@ describe('parseThreatsCSV — row status', () => {
     const ids = new Set(threatsData.map((t) => t.threatId))
     expect(ids.has('T-DRAFT')).toBe(false)
     expect(threatsData.length).toBe(ids.size)
+  })
+})
+
+describe('parseThreatsCSV — blank criticality and retired lookup', () => {
+  const header =
+    'industry,threat_id,threat_description,criticality,crypto_at_risk,pqc_replacement,main_source,source_url,status,deprecated_at,deprecated_reason'
+
+  it('reads a blank criticality as Unrated, never Medium', () => {
+    const csv = `${header}\nInsurance,T-1,Stub,,,,Src,https://example.org,active,,`
+    expect(parseThreatsCSV(csv)[0].criticality).toBe('Unrated')
+  })
+
+  it('keeps a lookup of every retired id in the live snapshot, with its date', () => {
+    for (const [id, r] of retiredThreats) {
+      expect(r.threatId).toBe(id)
+      expect(threatsData.some((t) => t.threatId === id)).toBe(false)
+    }
+    expect(retiredThreats.size).toBeGreaterThan(0)
   })
 })

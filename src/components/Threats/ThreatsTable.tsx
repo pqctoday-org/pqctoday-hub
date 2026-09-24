@@ -14,6 +14,12 @@ import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
 import { EmptyState } from '../ui/empty-state'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
+import { NOT_YET_SPECIFIED, UNRATED_CRITICALITY } from '@/data/threatRowRules'
+
+/** A blank at-risk / PQC field on a not-yet-filled row. */
+const NotYetSpecified = () => (
+  <span className="font-sans italic text-muted-foreground">{NOT_YET_SPECIFIED}</span>
+)
 
 // B+ remediation 4.3 (2026-08-10): 'evidence' — see ThreatsDashboard's own
 // SortField and `evidenceStrength`. The header for it is rendered only for
@@ -217,7 +223,9 @@ export const ThreatsTable = ({
                                 item.criticality.toLowerCase() === 'critical' ||
                                   item.criticality.toLowerCase() === 'high'
                                   ? 'bg-status-error text-status-error border-status-error'
-                                  : 'bg-primary/10 text-primary border-primary/20'
+                                  : item.criticality === UNRATED_CRITICALITY
+                                    ? 'bg-muted/40 text-muted-foreground border-border'
+                                    : 'bg-primary/10 text-primary border-primary/20'
                               )}
                             >
                               {item.criticality}
@@ -245,6 +253,7 @@ export const ThreatsTable = ({
                               <ShorTierBadge threat={item} />
                               {(() => {
                                 const { visible, hiddenCount } = capChips(item.cryptoAtRisk)
+                                if (visible.length === 0) return <NotYetSpecified />
                                 return (
                                   <>
                                     {visible.map((c, i) => (
@@ -272,6 +281,7 @@ export const ThreatsTable = ({
                             <div className="flex flex-wrap gap-1">
                               {(() => {
                                 const { visible, hiddenCount } = capChips(item.pqcReplacement)
+                                if (visible.length === 0) return <NotYetSpecified />
                                 return (
                                   <>
                                     {visible.map((c, i) => (

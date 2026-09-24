@@ -52,3 +52,34 @@ export const THREAT_INDUSTRY_ALIASES: Readonly<Record<string, string>> = {
 export function canonicalThreatIndustry(raw: string): string {
   return THREAT_INDUSTRY_ALIASES[raw] ?? raw
 }
+/** Shown when a row's criticality cell is blank — never guessed as "Medium". */
+export const UNRATED_CRITICALITY = 'Unrated'
+
+/**
+ * Every criticality the page can show, most severe first. `Unrated` sorts
+ * below `Low`: "we don't know" must never outrank "we checked".
+ */
+export const CRITICALITY_ORDER = [
+  'Critical',
+  'High',
+  'Medium-High',
+  'Medium',
+  'Low',
+  UNRATED_CRITICALITY,
+] as const
+
+/** Sort weight for a criticality (higher = more severe). */
+export function criticalityRank(criticality: string): number {
+  const i = (CRITICALITY_ORDER as readonly string[]).indexOf(criticality)
+  return i === -1 ? -1 : CRITICALITY_ORDER.length - i
+}
+
+/** The criticality levels that actually occur in `rows`, in severity order —
+ *  so a filter never offers a level no row has. */
+export function criticalityLevelsPresent(rows: readonly { criticality: string }[]): string[] {
+  const present = new Set(rows.map((r) => r.criticality))
+  return CRITICALITY_ORDER.filter((c) => present.has(c))
+}
+
+/** Shown in place of a blank at-risk / PQC-replacement field. */
+export const NOT_YET_SPECIFIED = 'Not yet specified'

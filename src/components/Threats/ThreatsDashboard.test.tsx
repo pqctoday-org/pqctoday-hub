@@ -49,7 +49,27 @@ vi.mock('../../data/threatsData', () => ({
       pqcReplacement: 'ML-DSA',
       mainSource: 'Auto-ISAC',
     },
+    {
+      // A live stub with a blank criticality / crypto / PQC (the CROS-008 shape).
+      industry: 'Insurance',
+      threatId: 'THR-004',
+      description: 'Underwriting archive exposure',
+      criticality: 'Unrated',
+      cryptoAtRisk: '',
+      pqcReplacement: '',
+      mainSource: 'Stub Source',
+    },
   ] as ThreatData[],
+  retiredThreats: new Map([
+    [
+      'OLD-001',
+      {
+        threatId: 'OLD-001',
+        deprecatedAt: '2026-07-16',
+        deprecatedReason: 'Removed in consolidation',
+      },
+    ],
+  ]),
   threatsMetadata: {
     filename: 'test_file.csv',
     lastUpdate: new Date('2025-01-01'),
@@ -263,6 +283,45 @@ describe('ThreatsDashboard', () => {
     // jsdom simultaneously since CSS breakpoints aren't applied here.
     expect(screen.getAllByText('No threats found').length).toBeGreaterThan(0)
     expect(screen.getAllByText('No threats match the constraints.').length).toBeGreaterThan(0)
+  })
+
+  describe('criticality and blank fields (UX-5 / UX-6)', () => {
+    it('offers only the criticality levels some row has — no Medium-High — plus Unrated', () => {
+      render(
+        <MemoryRouter>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const deck = screen.getByTestId('threats-control-deck')
+      expect(within(deck).queryByRole('button', { name: 'Medium-High' })).not.toBeInTheDocument()
+      expect(within(deck).getByRole('button', { name: 'Unrated' })).toBeInTheDocument()
+      expect(within(deck).getByRole('button', { name: 'Critical' })).toBeInTheDocument()
+    })
+
+    it('?criticality=Unrated filters to the blank-criticality row', () => {
+      render(
+        <MemoryRouter initialEntries={['/threats?criticality=Unrated']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const table = screen.getByRole('table')
+      expect(within(table).getByText('THR-004')).toBeInTheDocument()
+      expect(within(table).queryByText('THR-001')).not.toBeInTheDocument()
+      // Blank at-risk / PQC cells say so instead of rendering empty.
+      expect(within(table).getAllByText('Not yet specified')).toHaveLength(2)
+    })
+
+    it('a link to a retired threat says it was retired, with date and reason', () => {
+      render(
+        <MemoryRouter initialEntries={['/threats?id=OLD-001']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      expect(
+        screen.getByText(/This entry was retired on 2026-07-16: Removed in consolidation/)
+      ).toBeInTheDocument()
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
   })
 
   describe('Phase 3 — semantic search supplement', () => {

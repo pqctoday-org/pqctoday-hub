@@ -44,6 +44,7 @@ const criticalityConfig: Record<ThreatData['criticality'], { label: string; clas
   'Medium-High': { label: 'Med-High', className: 'bg-warning/5 text-warning' },
   Medium: { label: 'Medium', className: 'bg-muted text-muted-foreground' },
   Low: { label: 'Low', className: 'bg-success/10 text-success' },
+  Unrated: { label: 'Unrated', className: 'bg-muted/40 text-muted-foreground' },
 }
 
 const ThreatRow: React.FC<{

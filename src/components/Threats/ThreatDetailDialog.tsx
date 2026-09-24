@@ -40,6 +40,15 @@ import {
 } from './threatClassification'
 import { formatSocCite, SOC_CTI_SECTION, SOC_LEARN_MODULE_HREF } from '@/data/socQuantumPlaybook'
 import { getAttackProfiles } from '@/data/implementationAttackProfiles'
+import { NOT_YET_SPECIFIED, UNRATED_CRITICALITY } from '@/data/threatRowRules'
+
+/** An at-risk / PQC field, or an honest "not yet specified" when blank. */
+const SpecifiedOrNot = ({ value }: { value: string }) =>
+  value.trim() ? (
+    <p className="text-sm font-mono text-foreground/80 break-words">{value}</p>
+  ) : (
+    <p className="text-sm italic text-muted-foreground">{NOT_YET_SPECIFIED}</p>
+  )
 
 interface ThreatDetailDialogProps {
   threat: ThreatItem
@@ -119,18 +128,14 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                 <h3 className="text-sm font-semibold text-status-error mb-2 flex items-center gap-2">
                   <Lock size={14} /> At-Risk Cryptography
                 </h3>
-                <p className="text-sm font-mono text-foreground/80 break-words">
-                  {threat.cryptoAtRisk}
-                </p>
+                <SpecifiedOrNot value={threat.cryptoAtRisk} />
               </div>
 
               <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
                 <h3 className="text-sm font-semibold text-primary mb-2 flex items-center gap-2">
                   <Cpu size={14} /> PQC Mitigation
                 </h3>
-                <p className="text-sm font-mono text-foreground/80 break-words">
-                  {threat.pqcReplacement}
-                </p>
+                <SpecifiedOrNot value={threat.pqcReplacement} />
               </div>
             </div>
 
@@ -182,7 +187,9 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                         ? 'bg-status-error text-status-error border border-status-error'
                         : threat.criticality.toLowerCase() === 'high'
                           ? 'bg-status-error text-status-error border border-status-error'
-                          : 'bg-status-warning text-status-warning border border-status-warning'
+                          : threat.criticality === UNRATED_CRITICALITY
+                            ? 'bg-muted/40 text-muted-foreground border border-border'
+                            : 'bg-status-warning text-status-warning border border-status-warning'
                     }`}
                   >
                     {threat.criticality}
@@ -199,16 +206,18 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
             </div>
 
             {/* Data provenance — surfaces fields the loader already parses
-              (accuracy_pct, peer_reviewed, vetting_body, confidence_score,
-              data_quality_notes) but that were previously thrown away at render
-              time. Shown honestly: unfavorable provenance (peer_reviewed=no,
-              low confidence) renders the same way as favorable, not hidden. */}
+              (accuracy_pct, peer_reviewed, vetting_body, confidence_score)
+              but that were previously thrown away at render time. Shown
+              honestly: unfavorable provenance (peer_reviewed=no, low
+              confidence) renders the same way as favorable, not hidden.
+              data_quality_notes is NOT rendered: it is the maintenance log
+              ("Added via intake queue…", "merged inline via qwen…", pipeline
+              bug notes), written for maintainers, not readers. */}
             {(threat.peerReviewed !== undefined ||
               threat.confidenceScore !== undefined ||
               threat.accuracyPct !== undefined ||
               (threat.vettingBody && threat.vettingBody.length > 0) ||
-              threat.lastVerified ||
-              threat.dataQualityNotes) && (
+              threat.lastVerified) && (
               <div className="pt-4 border-t border-border">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
                   <ShieldCheck size={14} className="text-primary" /> Data Provenance
@@ -267,12 +276,6 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                     <span className="text-foreground font-mono">{threat.lastVerified || '—'}</span>
                   </div>
                 </div>
-                {threat.dataQualityNotes && (
-                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    <span className="font-semibold text-foreground">Data quality notes: </span>
-                    {threat.dataQualityNotes}
-                  </p>
-                )}
               </div>
             )}
 

@@ -2,13 +2,19 @@
 import Papa from 'papaparse'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitPipe, parseIntSafe } from './csvUtils'
-import { canonicalThreatIndustry, isPublishedThreatStatus } from './threatRowRules'
+import {
+  canonicalThreatIndustry,
+  isPublishedThreatStatus,
+  isRetiredThreatStatus,
+  UNRATED_CRITICALITY,
+} from './threatRowRules'
 
 export interface ThreatData {
   industry: string
   threatId: string
   description: string
-  criticality: 'Critical' | 'High' | 'Medium' | 'Medium-High' | 'Low'
+  /** 'Unrated' when the CSV cell is blank — shown as such, never guessed. */
+  criticality: 'Critical' | 'High' | 'Medium' | 'Medium-High' | 'Low' | 'Unrated'
   cryptoAtRisk: string
   pqcReplacement: string
   mainSource: string
@@ -59,6 +65,8 @@ interface RawThreatRow {
   deprecated_reason?: string
 }
 
+const THREATS_FILE_RE = /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+
 const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
   query: '?raw',
   import: 'default',
@@ -74,7 +82,7 @@ function transformThreat(row: RawThreatRow): ThreatData | null {
     industry: canonicalThreatIndustry(row.industry || ''),
     threatId: row.threat_id || '',
     description: row.threat_description || '',
-    criticality: (row.criticality as ThreatData['criticality']) || 'Medium',
+    criticality: (row.criticality?.trim() as ThreatData['criticality']) || UNRATED_CRITICALITY,
     cryptoAtRisk: row.crypto_at_risk || '',
     pqcReplacement: row.pqc_replacement || '',
     mainSource: row.main_source || '',
@@ -109,7 +117,7 @@ const {
   metadata,
 } = loadLatestCSV<RawThreatRow, ThreatData>(
   modules,
-  /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+  THREATS_FILE_RE,
   transformThreat,
   true // withPrevious for status badges
 )
@@ -126,6 +134,31 @@ export const threatsData: ThreatData[] = currentItems.map((item) => ({
 }))
 
 export const threatsMetadata = metadata
+
+/** A retired (deprecated/obsolete) threat: just enough to tell a reader who
+ *  follows an old link what happened to it. */
+export interface RetiredThreat {
+  threatId: string
+  deprecatedAt?: string
+  deprecatedReason?: string
+}
+
+function transformRetired(row: RawThreatRow): RetiredThreat | null {
+  if (!isRetiredThreatStatus(row.status) || !row.threat_id) return null
+  return {
+    threatId: row.threat_id,
+    deprecatedAt: row.deprecated_at?.trim() || undefined,
+    deprecatedReason: row.deprecated_reason?.trim() || undefined,
+  }
+}
+
+/** Retired rows of the latest snapshot, by id — so `/threats?id=<retired>`
+ *  can say the entry was retired instead of silently showing nothing. */
+export const retiredThreats: ReadonlyMap<string, RetiredThreat> = new Map(
+  loadLatestCSV<RawThreatRow, RetiredThreat>(modules, THREATS_FILE_RE, transformRetired).data.map(
+    (r) => [r.threatId, r]
+  )
+)
 
 export const THREATS_COUNT = threatsData.length
 
