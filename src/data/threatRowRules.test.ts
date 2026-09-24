@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
+import { threatsData } from './threatsData'
+import { INDUSTRY_TO_THREATS_MAP } from './personaConfig'
+import { ASSESS_TO_THREATS_INDUSTRY } from '@/components/Report/ReportThreatsAppendix'
 import {
   canonicalThreatIndustry,
+  THREAT_INDUSTRY_ALIASES,
+  threatIndustrySlug,
   criticalityLevelsPresent,
   criticalityRank,
   isPublishedThreatStatus,
@@ -28,14 +33,46 @@ describe('threat row status rules', () => {
     expect(isRetiredThreatStatus('active')).toBe(false)
   })
 
-  it('merges the two critical-infrastructure wordings into the page label', () => {
-    expect(canonicalThreatIndustry('Critical Infrastructure')).toBe(
-      'Critical Infrastructure / Energy'
-    )
-    expect(canonicalThreatIndustry('Energy / Critical Infrastructure')).toBe(
-      'Critical Infrastructure / Energy'
-    )
+  it('maps every old industry label to the Threats page label (ruling R3)', () => {
+    for (const old of [
+      'Critical Infrastructure',
+      'Energy / Critical Infrastructure',
+      'Critical Infrastructure / Energy',
+    ]) {
+      expect(canonicalThreatIndustry(old)).toBe('Critical Infrastructure / OT')
+    }
+    expect(canonicalThreatIndustry('Hardware Security Modules')).toBe('Cross-Industry')
+    expect(canonicalThreatIndustry('Aerospace / Aviation')).toBe('Aerospace / Aviation / Space')
     expect(canonicalThreatIndustry('Insurance')).toBe('Insurance')
+  })
+
+  it('slugs a label the way the page’s section anchors do', () => {
+    expect(threatIndustrySlug('Critical Infrastructure / OT')).toBe('critical-infrastructure-ot')
+    expect(threatIndustrySlug('Aerospace / Aviation / Space')).toBe('aerospace-aviation-space')
+    expect(threatIndustrySlug('Internet of Things (IoT)')).toBe('internet-of-things-iot')
+  })
+})
+
+describe('the Threats page industry vocabulary against the live CSV', () => {
+  const live = new Set(threatsData.map((t) => t.industry))
+
+  it('no live row carries an old (aliased) label', () => {
+    for (const old of Object.keys(THREAT_INDUSTRY_ALIASES)) expect(live.has(old)).toBe(false)
+  })
+
+  it('every alias target, persona map and report map value is a live Threats label', () => {
+    const targets = [
+      ...Object.values(THREAT_INDUSTRY_ALIASES),
+      ...Object.values(INDUSTRY_TO_THREATS_MAP).flat(),
+      ...Object.values(ASSESS_TO_THREATS_INDUSTRY).flat(),
+    ]
+    for (const label of targets) expect(live, `"${label}"`).toContain(label)
+  })
+
+  it('HSM-001 and HSM-002 sit under Cross-Industry', () => {
+    for (const id of ['HSM-001', 'HSM-002']) {
+      expect(threatsData.find((t) => t.threatId === id)?.industry).toBe('Cross-Industry')
+    }
   })
 })
 

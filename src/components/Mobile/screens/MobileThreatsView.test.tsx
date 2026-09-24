@@ -6,12 +6,15 @@ import { MobileThreatsView } from './MobileThreatsView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { retiredThreats, threatsData } from '@/data/threatsData'
-import { getThreatClass } from '@/components/Threats/threatClassification'
 import {
-  getCrqcConsensus,
-  CRQC_ESTIMATES,
-} from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+  getShorTier,
+  getThreatClass,
+  SHOR_TIER_DEFS,
+  threatMatchesClass,
+} from '@/components/Threats/threatClassification'
+import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 
 // Claim-ledger fixture keyed to a real row id, so the sheet can be tested
 // whether or not public/threats/claim-status.json is on this branch.
@@ -75,13 +78,12 @@ describe('MobileThreatsView', () => {
     ).toBeInTheDocument()
   })
 
-  it('the CRQC year stepper starts at the real consensus estimate and shows the real consensus window', () => {
+  it('the CRQC year stepper starts at the forecast planning year and states the one forecast window (R5)', () => {
     renderView()
-    const consensus = getCrqcConsensus()
-    expect(screen.getByText(String(consensus.zEstimate))).toBeInTheDocument()
-    expect(
-      screen.getByText(`consensus ${consensus.qdayLow}–${consensus.qdayHigh}`, { exact: false })
-    ).toBeInTheDocument()
+    const forecast = getCrqcForecast()
+    expect(screen.getByText(String(forecast.planningYear))).toBeInTheDocument()
+    expect(screen.getByText(forecast.label)).toBeInTheDocument()
+    expect(screen.queryByText(/consensus|median of/i)).not.toBeInTheDocument()
   })
 
   it('stepping the CRQC year up and down live-recomputes the urgency band', () => {
@@ -92,29 +94,20 @@ describe('MobileThreatsView', () => {
     expect(after).not.toBe(before)
   })
 
-  // 2026-08-24 audit R3.1: bounds derive from the live getCrqcConsensus()
-  // window, not a hand-typed 2030/2036 — a hardcoded pair here would keep
-  // passing after a CSV update shifted the real consensus, silently
-  // certifying stale bounds as correct.
-  it('the stepper cannot go below or above the live consensus window', () => {
+  // Bounds derive from the live getCrqcForecast() window, not hand-typed
+  // years — a hardcoded pair would keep passing after the forecast changed.
+  it('the stepper cannot go below or above the forecast window', () => {
     renderView()
-    const { qdayLow, qdayHigh } = getCrqcConsensus()
+    const { low: qdayLow, high: qdayHigh } = getCrqcForecast()
     const earlier = screen.getByRole('button', { name: 'Earlier CRQC year' })
-    for (let i = 0; i < 15; i++) fireEvent.click(earlier)
+    for (let i = 0; i < 20; i++) fireEvent.click(earlier)
     expect(screen.getByText(String(qdayLow))).toBeInTheDocument()
     expect(earlier).toBeDisabled()
 
     const later = screen.getByRole('button', { name: 'Later CRQC year' })
-    for (let i = 0; i < 15; i++) fireEvent.click(later)
+    for (let i = 0; i < 20; i++) fireEvent.click(later)
     expect(screen.getByText(String(qdayHigh))).toBeInTheDocument()
     expect(later).toBeDisabled()
-  })
-
-  it('"median of N tracked sources" derives from the real CRQC_ESTIMATES length', () => {
-    renderView()
-    expect(
-      screen.getByText(`median of ${CRQC_ESTIMATES.length} tracked sources`, { exact: false })
-    ).toBeInTheDocument()
   })
 
   it('a criticality filter chip narrows the list to exactly that criticality', () => {
@@ -170,6 +163,30 @@ describe('MobileThreatsView', () => {
     expect(useBookmarkStore.getState().myThreats).toContain(first.threatId)
   })
 
+  it('bookmark, filter chips and stepper are at least 44px tap targets (UX-17)', () => {
+    renderView()
+    const targets = [
+      screen.getAllByRole('button', { name: 'Add to My Threats' })[0],
+      screen.getByRole('button', { name: 'Critical' }),
+      screen.getByRole('button', { name: 'All classes' }),
+      screen.getByRole('button', { name: 'Later CRQC year' }),
+    ]
+    for (const el of targets) expect(el.className).toMatch(/\bh-11\b/)
+  })
+
+  it('tier chips show the compact name, keeping the full tier label accessible (UX-19)', () => {
+    renderView()
+    const first = threatsData[0]
+    const card = screen.getByText(first.threatId).closest('article')!
+    const def = SHOR_TIER_DEFS[getShorTier(first)]
+    expect(within(card).getAllByText(def.short).length).toBeGreaterThan(0)
+    expect(
+      within(card)
+        .getAllByText(def.label)
+        .some((el) => el.classList.contains('sr-only'))
+    ).toBe(true)
+  })
+
   it('states what was cut rather than silently dropping it', () => {
     renderView()
     expect(
@@ -182,9 +199,13 @@ describe('MobileThreatsView', () => {
     const first = threatsData[0]
     fireEvent.click(screen.getAllByText(first.description)[0].closest('button')!)
     expect(screen.getByTestId('threat-detail-sheet')).toBeInTheDocument()
-    if (first.relatedModules.length > 0) {
-      expect(screen.getByText(first.relatedModules.join(', '))).toBeInTheDocument()
+    const sheet = screen.getByTestId('threat-detail-sheet')
+    // Related modules are links named after the module, never raw ids (UX-17).
+    for (const id of first.relatedModules.filter((m) => MODULE_CATALOG[m])) {
+      const link = within(sheet).getByRole('link', { name: MODULE_CATALOG[id].title })
+      expect(link).toHaveAttribute('href', `/learn/${id}`)
     }
+    expect(within(sheet).queryByText(first.relatedModules.join(', '))).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(screen.queryByTestId('threat-detail-sheet')).not.toBeInTheDocument()
   })
@@ -233,8 +254,19 @@ describe('MobileThreatsView', () => {
       const group = screen.getByRole('group', { name: 'Filter by threat class' })
       const chip = within(group).getByRole('button', { name: /HNFL \/ TNFL/ })
       expect(chip).toHaveAttribute('aria-pressed', 'true')
-      const notHnfl = threatsData.find((t) => getThreatClass(t) !== 'hnfl')
-      if (notHnfl) expect(screen.queryByText(notHnfl.threatId)).not.toBeInTheDocument()
+      const hndlOnly = threatsData.find((t) => getThreatClass(t) === 'hndl')
+      if (hndlOnly) expect(screen.queryByText(hndlOnly.threatId)).not.toBeInTheDocument()
+    })
+
+    it('HNFL shows hnfl + both rows — the same meaning as desktop (UX-15)', () => {
+      renderView('/threats?class=hnfl')
+      const both = threatsData.find((t) => getThreatClass(t) === 'both')!
+      expect(screen.getByText(both.threatId)).toBeInTheDocument()
+      const shown = threatsData.filter((t) => threatMatchesClass(t, 'hnfl'))
+      expect(shown.every((t) => getThreatClass(t) !== 'hndl')).toBe(true)
+      // Only the two class chips desktop offers, plus "All classes".
+      const group = screen.getByRole('group', { name: 'Filter by threat class' })
+      expect(within(group).getAllByRole('button')).toHaveLength(3)
     })
 
     it('a link to a retired threat says it was retired', () => {

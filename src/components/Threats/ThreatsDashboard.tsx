@@ -54,10 +54,9 @@ import { Button } from '../ui/button'
 import { CollapsibleSection } from '../ui/CollapsibleSection'
 
 // B+ remediation 4.3 (2026-08-10): 'evidence' added. "The researcher corpus
-// sorts by recency rather than evidence strength" — and every field the sort
-// needs was already on the row (confidenceScore on 114/114, peerReviewed on
-// 114/114, a trusted-source id on 107/114, accuracyPct on 93/114). This is a
-// new ORDERING over existing data, not new data.
+// sorts by recency rather than evidence strength". Since ruling R2
+// (2026-09-24) the ordering is lineage only — source confirmed, claims the
+// cited document states, trusted-source id (see `evidenceStrength`).
 type SortField = 'industry' | 'threatId' | 'criticality' | 'evidence'
 type SortDirection = 'asc' | 'desc'
 
@@ -71,7 +70,7 @@ const PERSONA_SHORT_LABELS: Record<PersonaId, string> = {
   curious: 'Curious',
 }
 
-import { getIndustryIcon } from './threatsHelper'
+import { getIndustryIcon, threatCountLabel } from './threatsHelper'
 import { ThreatsViewToggle, type ThreatsViewMode } from './ThreatsViewToggle'
 import { LeftNavTOC } from '@/components/common/LeftNavTOC'
 import { ThreatsCardGrid } from './ThreatsCardGrid'
@@ -88,6 +87,7 @@ import { CrqcTrajectoryChart } from './CrqcTrajectoryChart'
 import { SectorExposureHero } from './SectorExposureHero'
 import { RetiredThreatNotice } from './RetiredThreatNotice'
 import {
+  isShortThreatQuery,
   matchesThreatQuery,
   resolveIndustryParam,
   threatIdParam,
@@ -376,7 +376,13 @@ export const ThreatsDashboard: React.FC<{
 
   // Phase 3 — semantic supplement. Queries like "email tampering risk"
   // surface relevant threats regardless of source vocabulary.
-  const semantic = useSemanticSearch('threats', searchQuery, { limit: 30 })
+  // A short acronym query ("PCI", "HSM") is matched lexically at word starts
+  // only (UX-16); the semantic supplement would bring back the near-misses
+  // the word-start rule exists to exclude.
+  const semantic = useSemanticSearch('threats', searchQuery, {
+    limit: 30,
+    disabled: isShortThreatQuery(searchQuery),
+  })
   const semanticIdSet = useMemo(
     () =>
       semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
@@ -638,7 +644,7 @@ export const ThreatsDashboard: React.FC<{
 
       <>
         {/* Persona-forward exposure hero — your scoped sector's applicable threats
-        AND the CRQC consensus window + your per-sector Mosca deadline, together,
+        AND the CRQC expert forecast window + your per-sector Mosca deadline, together,
         always, above the fold. Splitting these across two tabs used to leave the
         single most decision-forcing number on the page (your migration deadline)
         undiscovered behind a click most users never made. Section itself defaults
@@ -1017,7 +1023,10 @@ export const ThreatsDashboard: React.FC<{
                             {
                               id: t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
                               label: t.industry,
-                              hint: `${filteredAndSortedData.filter((x) => x.industry === t.industry).length} threats`,
+                              hint: threatCountLabel(
+                                filteredAndSortedData.filter((x) => x.industry === t.industry)
+                                  .length
+                              ),
                             },
                           ])
                         ).values()

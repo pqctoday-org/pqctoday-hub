@@ -8,6 +8,7 @@ import {
   getShorTier,
   THREAT_CLASS_DEFS,
   SHOR_TIER_DEFS,
+  type ThreatClass,
 } from './threatClassification'
 
 /**
@@ -22,11 +23,10 @@ import {
  * (the trigger stops the click from bubbling to the row).
  */
 
-const CLASS_BADGE_STYLE: Record<string, string> = {
+const CLASS_BADGE_STYLE: Record<ThreatClass, string> = {
   hndl: 'bg-secondary/10 text-secondary border-secondary/20',
   hnfl: 'bg-warning/10 text-warning border-warning/20',
   both: 'bg-destructive/10 text-destructive border-destructive/20',
-  unclassified: 'bg-muted/40 text-muted-foreground border-border',
 }
 
 const DefinitionBadge: React.FC<{

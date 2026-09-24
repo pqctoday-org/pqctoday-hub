@@ -33,6 +33,7 @@ import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
 import { WORKSHOP_TOOLS } from '../components/Playground/workshopRegistry'
 import { resolveToNaicsSet } from './sectorVocabularyData'
 import { isCrossIndustry } from './industryMatch'
+import { resolveIndustryParam } from '../components/Threats/threatsUrlParams'
 
 const { useCases, standards, marketSizes } = loadIndustryLandscape()
 const rowByIdForTargets = new Map(PROTOCOL_MATRIX.map((r) => [r.id, r]))
@@ -75,17 +76,22 @@ describe('industry-landscape driftguards', () => {
     expect(marketSizes.length).toBeGreaterThan(15)
   })
 
-  it('every industry exists in the threats-source vocabulary', () => {
-    const threatIndustries = new Set(threatsData.map((t) => t.industry))
-    // 'Cross-Industry' aside (threats keeps it too), each landscape industry
-    // must match a canonical threats label so /threats deep links resolve.
-    // 'Cross-Industry / X' sub-labels are exempt the same way: they're not
-    // real industries in the threats taxonomy either, and every row carrying
-    // one today has a populated source_library_ref, so it never falls through
-    // to the /threats?industry= link this guard is protecting.
+  it('every industry resolves to a Threats-page industry (/threats?industry= deep links)', () => {
+    // The landscape keeps the site-wide vocabulary ("Critical Infrastructure /
+    // Energy", "Aerospace / Aviation", "Hardware Security Modules"); the
+    // Threats page renamed its own labels in ruling R3 (2026-09-24). What must
+    // hold is that the landscape's /threats?industry=<its label> link still
+    // lands — through the same resolver the page uses, aliases included.
+    // 'Cross-Industry' aside (threats keeps it too), 'Cross-Industry / X'
+    // sub-labels are exempt: they're not real industries in the threats
+    // taxonomy, and every row carrying one today has a populated
+    // source_library_ref, so it never falls through to the link.
     for (const ind of getLandscapeIndustries()) {
       if (isCrossIndustry(ind)) continue
-      expect(threatIndustries, `industry "${ind}" missing from threats vocabulary`).toContain(ind)
+      expect(
+        resolveIndustryParam(ind, threatsData),
+        `industry "${ind}" does not resolve to a threats-page industry`
+      ).toHaveLength(1)
     }
   })
 

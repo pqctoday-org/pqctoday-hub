@@ -1,21 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { Minus, Plus, Bookmark, BookmarkCheck, ExternalLink, X } from 'lucide-react'
+import { Minus, Plus, Bookmark, BookmarkCheck, BookOpen, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { retiredThreats, threatsData, type ThreatItem } from '@/data/threatsData'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import {
-  getCrqcConsensus,
-  CRQC_ESTIMATES,
-} from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import {
   getShorTier,
   getThreatClass,
   SHOR_TIER_DEFS,
   THREAT_CLASS_DEFS,
+  threatMatchesClass,
   type ThreatClass,
 } from '@/components/Threats/threatClassification'
 import { cn } from '@/lib/utils'
@@ -24,8 +22,16 @@ import {
   NOT_YET_SPECIFIED,
   retiredThreatMessage,
 } from '@/data/threatRowRules'
-import { formatSourceCaveat, getSourceCaveat, secondSourceLines } from '@/data/threatClaimStatus'
+import {
+  claimsCheckedText,
+  formatSourceCaveat,
+  getSourceCaveat,
+  getThreatLineage,
+  secondSourceLines,
+  sourceIdentityText,
+} from '@/data/threatClaimStatus'
 import { MobileSheet } from '../primitives/Sheet'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import {
   matchesThreatQuery,
   resolveIndustryParam,
@@ -86,10 +92,11 @@ const URGENCY_CONFIG: Record<Urgency, { label: string; color: string; bg: string
 
 // Only the levels some row has — same rule as the desktop filter.
 const CRITICALITY_LEVELS = criticalityLevelsPresent(threatsData)
+// The same two class filters as desktop, with the same meaning (UX-15):
+// HNDL shows hndl + both, HNFL shows hnfl + both (threatMatchesClass).
 const CLASS_FILTERS: { id: ThreatClass; label: string }[] = [
   { id: 'hndl', label: THREAT_CLASS_DEFS.hndl.label },
   { id: 'hnfl', label: THREAT_CLASS_DEFS.hnfl.label },
-  { id: 'both', label: THREAT_CLASS_DEFS.both.label },
 ]
 
 /**
@@ -105,14 +112,11 @@ const CLASS_FILTERS: { id: ThreatClass; label: string }[] = [
  * §18 spec, confirmed against real code before building:
  * - Mosca urgency band, one combined deadline (the more urgent of HNDL/HNFL)
  *   rather than desktop's two separate rows — a real simplification, stated.
- * - CRQC year as a *working* control, bounded to the live
- *   `getCrqcConsensus()` window (currently 2030-2036) and "median of N
- *   tracked sources" from `CRQC_ESTIMATES.length` (2026-08-24 audit R3.1 —
- *   both were hardcoded literals that would have silently disagreed with
- *   this same screen's own live consensus caption on the next CSV update;
- *   `getCrqcConsensus()` is the exact function every desktop Threats
- *   component reads for its Q-Day figure), re-scoring the urgency band and
- *   both deadlines live.
+ * - CRQC year as a *working* control, bounded to the one CRQC expert
+ *   forecast window and captioned with its one wording — both from
+ *   `getCrqcForecast()` (ruling R5), the exact function every desktop
+ *   Threats component reads — starting at the forecast's planning year and
+ *   re-scoring the urgency band and both deadlines live.
  * - HNDL vs HNFL in one line — new distillation chrome matching the design's
  *   own compressed phrasing, since desktop's real paragraph-length framing
  *   (ThreatEconomicsHeader's atRiskPhrase sentences) assumes the full
@@ -131,8 +135,8 @@ export function MobileThreatsView() {
   const myThreats = useBookmarkStore((s) => s.myThreats)
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
 
-  const consensus = useMemo(() => getCrqcConsensus(), [])
-  const [crqcYear, setCrqcYear] = useState(consensus.zEstimate)
+  const forecast = useMemo(() => getCrqcForecast(), [])
+  const [crqcYear, setCrqcYear] = useState(forecast.planningYear)
 
   // Filters and the open threat live in the URL, parsed exactly as the desktop
   // page parses them (threatsUrlParams), so a shared /threats?id=… or
@@ -175,6 +179,8 @@ export function MobileThreatsView() {
     ? getSourceCaveat(selected.threatId, selected.secondarySources)
     : null
   const selectedSecondSources = selected ? secondSourceLines(selected.secondarySources) : []
+  const selectedLineage = selected ? getThreatLineage(selected.threatId) : null
+  const selectedClaimsLine = selectedLineage ? claimsCheckedText(selectedLineage) : null
   const setSelected = (t: ThreatItem | null) => setParam({ id: t?.threatId ?? null, threat: null })
 
   const hndlDeadline = crqcYear - DATA_LIFETIME - MIGRATION_TIME
@@ -206,7 +212,7 @@ export function MobileThreatsView() {
     let data = scopedData
     if (urlQuery) data = data.filter((t) => matchesThreatQuery(t, urlQuery))
     if (criticality) data = data.filter((t) => t.criticality === criticality)
-    if (classFilter) data = data.filter((t) => getThreatClass(t) === classFilter)
+    if (classFilter) data = data.filter((t) => threatMatchesClass(t, classFilter))
     return data
   }, [scopedData, urlQuery, criticality, classFilter])
 
@@ -238,7 +244,7 @@ export function MobileThreatsView() {
             variant="ghost"
             onClick={() => setParam({ id: null, threat: null })}
             aria-label="Dismiss retired-entry notice"
-            className="h-7 w-7 shrink-0 rounded-full p-0 text-muted-foreground"
+            className="h-11 w-11 shrink-0 rounded-full p-0 text-muted-foreground"
           >
             <X size={14} aria-hidden="true" />
           </Button>
@@ -258,7 +264,7 @@ export function MobileThreatsView() {
             type="button"
             variant="ghost"
             onClick={() => setParam({ industry: null, q: null })}
-            className="h-7 rounded-full border border-border px-2.5 text-[11px] font-semibold"
+            className="h-11 rounded-full border border-border px-3 text-[11px] font-semibold"
           >
             Show all
           </Button>
@@ -290,10 +296,10 @@ export function MobileThreatsView() {
             type="button"
             variant="outline"
             size="icon"
-            disabled={crqcYear <= consensus.qdayLow}
-            onClick={() => setCrqcYear((y) => Math.max(consensus.qdayLow, y - 1))}
+            disabled={crqcYear <= forecast.low}
+            onClick={() => setCrqcYear((y) => Math.max(forecast.low, y - 1))}
             aria-label="Earlier CRQC year"
-            className="h-9 w-9 rounded-full"
+            className="h-11 w-11 rounded-full"
           >
             <Minus size={14} aria-hidden="true" />
           </Button>
@@ -304,18 +310,15 @@ export function MobileThreatsView() {
             type="button"
             variant="outline"
             size="icon"
-            disabled={crqcYear >= consensus.qdayHigh}
-            onClick={() => setCrqcYear((y) => Math.min(consensus.qdayHigh, y + 1))}
+            disabled={crqcYear >= forecast.high}
+            onClick={() => setCrqcYear((y) => Math.min(forecast.high, y + 1))}
             aria-label="Later CRQC year"
-            className="h-9 w-9 rounded-full"
+            className="h-11 w-11 rounded-full"
           >
             <Plus size={14} aria-hidden="true" />
           </Button>
         </div>
-        <p className="mt-2 text-center text-[10.5px] text-muted-foreground">
-          consensus {consensus.qdayLow}–{consensus.qdayHigh} · median of {CRQC_ESTIMATES.length}{' '}
-          tracked sources
-        </p>
+        <p className="mt-2 text-center text-[10.5px] text-muted-foreground">{forecast.label}</p>
       </section>
 
       <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">
@@ -332,7 +335,7 @@ export function MobileThreatsView() {
           onClick={() => setCriticality(null)}
           aria-pressed={criticality === null}
           className={cn(
-            'h-8 rounded-full border px-3 text-[11px] font-semibold',
+            'h-11 rounded-full border px-3 text-[11px] font-semibold',
             criticality === null
               ? 'border-primary bg-primary text-primary-foreground'
               : 'border-border bg-card text-foreground'
@@ -348,7 +351,7 @@ export function MobileThreatsView() {
             onClick={() => setCriticality(criticality === level ? null : level)}
             aria-pressed={criticality === level}
             className={cn(
-              'h-8 rounded-full border px-3 text-[11px] font-semibold',
+              'h-11 rounded-full border px-3 text-[11px] font-semibold',
               criticality === level
                 ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border bg-card text-foreground'
@@ -366,7 +369,7 @@ export function MobileThreatsView() {
           onClick={() => setClassFilter(null)}
           aria-pressed={classFilter === null}
           className={cn(
-            'h-8 rounded-full border px-3 text-[11px] font-semibold',
+            'h-11 rounded-full border px-3 text-[11px] font-semibold',
             classFilter === null
               ? 'border-primary bg-primary text-primary-foreground'
               : 'border-border bg-card text-foreground'
@@ -382,7 +385,7 @@ export function MobileThreatsView() {
             onClick={() => setClassFilter(classFilter === c.id ? null : c.id)}
             aria-pressed={classFilter === c.id}
             className={cn(
-              'h-8 rounded-full border px-3 text-[11px] font-semibold',
+              'h-11 rounded-full border px-3 text-[11px] font-semibold',
               classFilter === c.id
                 ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border bg-card text-foreground'
@@ -446,9 +449,27 @@ export function MobileThreatsView() {
                 <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   Related modules
                 </p>
-                <p className="mt-0.5 text-[11.5px] text-foreground">
-                  {selected.relatedModules.join(', ')}
-                </p>
+                {/* Module names linking to the modules, not raw ids like
+                    "kms-pqc" (UX-17). An id the registry doesn't know is
+                    left out rather than shown raw. */}
+                <ul className="mt-1 flex flex-wrap gap-1.5">
+                  {selected.relatedModules.map((id) => {
+                    // eslint-disable-next-line security/detect-object-injection -- id is a module id from the CSV; MODULE_CATALOG is a static registry
+                    const mod = MODULE_CATALOG[id]
+                    if (!mod) return null
+                    return (
+                      <li key={id}>
+                        <Link
+                          to={`/learn/${id}`}
+                          className="inline-flex min-h-11 items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 text-[11.5px] font-medium text-primary"
+                        >
+                          <BookOpen size={12} aria-hidden="true" />
+                          {mod.title}
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ul>
               </div>
             )}
             <div className="border-t border-border pt-3">
@@ -463,14 +484,29 @@ export function MobileThreatsView() {
                   className="mt-0.5 flex items-center gap-1 text-[11.5px] font-semibold text-primary"
                 >
                   {selected.mainSource}
+                  {selected.sourceMirrorOf && (
+                    <span className="font-normal text-muted-foreground">
+                      (mirror of {selected.sourceMirrorOf})
+                    </span>
+                  )}
                   <ExternalLink size={11} aria-hidden="true" />
                 </a>
               ) : (
                 <p className="mt-0.5 text-[11.5px] text-foreground">{selected.mainSource}</p>
               )}
+              {/* Lineage, not scores (ruling R2) — the same lines the desktop
+                  Evidence panel shows. */}
+              {selectedLineage && (
+                <p className="mt-1 text-[10.5px] text-muted-foreground">
+                  {sourceIdentityText(selectedLineage)}
+                </p>
+              )}
+              {selectedClaimsLine && (
+                <p className="mt-0.5 text-[10.5px] text-muted-foreground">{selectedClaimsLine}</p>
+              )}
               {selected.lastVerified && (
                 <p className="mt-0.5 text-[10.5px] text-muted-foreground">
-                  Verified {selected.lastVerified}
+                  Last verified {selected.lastVerified}
                 </p>
               )}
               {selectedCaveat && (
@@ -532,14 +568,19 @@ function ThreatCardMobile({
     <article className="glass-panel flex flex-col gap-2 p-3.5">
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-[10.5px] text-muted-foreground">{threat.threatId}</span>
+        {/* Compact tier chip (UX-19): the short name in sentence case, the
+            full "Tier 1 — Imminent" as its accessible name; the tier blurb
+            below the description explains it. */}
         <span
           className={cn(
-            'rounded border px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide',
+            'rounded border px-1.5 py-px text-sim-chip font-semibold',
             tierDef.bg,
             tierDef.color
           )}
+          title={tierDef.label}
         >
-          {tierDef.label}
+          <span aria-hidden="true">{tierDef.short}</span>
+          <span className="sr-only">{tierDef.label}</span>
         </span>
         <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
           {clsDef.label}
@@ -560,7 +601,7 @@ function ThreatCardMobile({
           }}
           aria-label={bookmarked ? 'Remove from My Threats' : 'Add to My Threats'}
           className={cn(
-            'ml-auto h-auto shrink-0 rounded p-1',
+            'ml-auto h-11 w-11 shrink-0 rounded p-0',
             bookmarked ? 'text-warning' : 'text-muted-foreground/50'
           )}
         >

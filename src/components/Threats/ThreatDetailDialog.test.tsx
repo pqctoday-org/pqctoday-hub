@@ -9,7 +9,8 @@ import { SOC_LEARN_MODULE_HREF, SOC_LEARN_MODULE_ID } from '@/data/socQuantumPla
 import { ThreatDetailDialog } from './ThreatDetailDialog'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
-// Claim-ledger fixture: CAV-UND undeterminable, CAV-CON contradicted, CAV-SUP supported.
+// Claim-ledger fixture: CAV-UND undeterminable, CAV-CON contradicted, CAV-SUP supported;
+// LIN-1 a confirmed source with 2 of 3 claims supported.
 vi.mock('@/data/threatClaimStatus', async () => {
   const actual = await vi.importActual<typeof import('@/data/threatClaimStatus')>(
     '@/data/threatClaimStatus'
@@ -25,9 +26,21 @@ vi.mock('@/data/threatClaimStatus', async () => {
       'CAV-SUP': {
         claims: { threat_description: { verdict: 'supported', decidedAt: '2026-09-16' } },
       },
+      'LIN-1': {
+        claims: {
+          main_source: { verdict: 'MATCH' },
+          threat_description: { verdict: 'supported' },
+          crypto_at_risk: { verdict: 'supported' },
+          pqc_replacement: { verdict: 'undeterminable' },
+        },
+      },
     },
   }
-  return { ...actual, getSourceCaveat: (id: string) => actual.sourceCaveatFor(id, fixture) }
+  return {
+    ...actual,
+    getSourceCaveat: (id: string) => actual.sourceCaveatFor(id, fixture),
+    getThreatLineage: (id: string) => actual.lineageFor(id, fixture),
+  }
 })
 
 vi.mock('@/utils/endorsement', async () => {
@@ -50,6 +63,7 @@ function threat(partial: Partial<ThreatItem>): ThreatItem {
     mainSource: 'Test Source',
     sourceUrl: '',
     relatedModules: [],
+    threatClass: 'hndl',
     ...partial,
   }
 }
@@ -87,10 +101,11 @@ describe('ThreatDetailDialog — Detection & Response (UX-1 / UX-2)', () => {
     expect(onClose).toHaveBeenCalled()
   })
 
-  it('says the class could not be determined for an unclassified threat, and shows drift only', () => {
-    renderDialog(threat({ cryptoAtRisk: 'unspecified legacy systems' }))
-    expect(screen.getByText(/class could not be determined/)).toBeInTheDocument()
-    expect(screen.getByText('Cryptographic Drift Monitoring')).toBeInTheDocument()
+  it('follows the reviewed class — never "could not be determined" (ruling R1)', () => {
+    // Encryption keywords, reviewed forge-later: the forge-later use cases show.
+    renderDialog(threat({ threatClass: 'hnfl' }))
+    expect(screen.queryByText(/could not be determined/)).not.toBeInTheDocument()
+    expect(screen.getByText('Certificate Lifecycle Anomalies')).toBeInTheDocument()
     expect(screen.queryByText('Hybrid Downgrade Detection')).not.toBeInTheDocument()
   })
 
@@ -110,7 +125,9 @@ describe('ThreatDetailDialog — Detection & Response (UX-1 / UX-2)', () => {
   })
 
   it('omits the hybrid-downgrade playbook for a forge-later threat', () => {
-    renderDialog(threat({ cryptoAtRisk: 'ECDSA firmware signing certificate' }))
+    renderDialog(
+      threat({ cryptoAtRisk: 'ECDSA firmware signing certificate', threatClass: 'hnfl' })
+    )
     fireEvent.click(screen.getByRole('tab', { name: /Incident Response/ }))
     expect(screen.queryByText(/Confirmed Hybrid Downgrade Attack/)).not.toBeInTheDocument()
     expect(screen.getByText(/Emergency Algorithm Rotation/)).toBeInTheDocument()
@@ -146,8 +163,8 @@ describe('ThreatDetailDialog — blank fields and internal notes (UX-5 / UX-6 / 
     expect(screen.queryByText(/Data quality notes/)).not.toBeInTheDocument()
     expect(screen.queryByText(/add_row\.py/)).not.toBeInTheDocument()
     expect(screen.queryByText(/qwen/)).not.toBeInTheDocument()
-    // The rest of the provenance block still renders.
-    expect(screen.getByText('Data Provenance')).toBeInTheDocument()
+    // The rest of the evidence panel still renders.
+    expect(screen.getByText('Evidence')).toBeInTheDocument()
   })
 })
 
@@ -186,5 +203,69 @@ describe('ThreatDetailDialog — source caveat (claim ledger)', () => {
   it('no caveat for a row absent from the ledger', () => {
     renderDialog(threat({ threatId: 'NOT-IN-LEDGER', sourceUrl: 'https://example.org' }))
     expect(screen.queryByText(/those are our analysis/)).not.toBeInTheDocument()
+  })
+})
+
+describe('ThreatDetailDialog — Evidence panel shows lineage, not scores (ruling R2 / UX-4)', () => {
+  it('shows source identity and the claims checked — never confidence or accuracy', () => {
+    renderDialog(
+      threat({
+        threatId: 'LIN-1',
+        sourceUrl: 'https://example.org',
+        confidenceScore: 87,
+        accuracyPct: 92,
+        lastVerified: '2026-09-20',
+      })
+    )
+    expect(
+      screen.getByText('Source document: confirmed to be the cited document')
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Claims checked against the cited document: 2 supported · 1 could not be confirmed'
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByText('Last verified 2026-09-20')).toBeInTheDocument()
+    expect(screen.queryByText(/confidence score|accuracy/i)).not.toBeInTheDocument()
+    expect(screen.queryByText('92%')).not.toBeInTheDocument()
+    expect(screen.queryByText('87')).not.toBeInTheDocument()
+  })
+
+  it('says "not yet confirmed" for a row the ledger has not matched, and omits last verified when absent', () => {
+    renderDialog(threat({ threatId: 'NOT-IN-LEDGER', sourceUrl: 'https://example.org' }))
+    expect(screen.getByText('Source document: not yet confirmed')).toBeInTheDocument()
+    expect(screen.queryByText(/Claims checked/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Last verified/)).not.toBeInTheDocument()
+  })
+
+  it('labels a mirror copy with the original publisher', () => {
+    renderDialog(
+      threat({
+        mainSource: 'PCI DSS v4.0.1',
+        sourceUrl: 'https://mirror.example.org/pci.pdf',
+        sourceMirrorOf: 'PCI Security Standards Council',
+      })
+    )
+    const link = screen.getByRole('link', { name: /PCI DSS v4\.0\.1/ })
+    expect(link).toHaveTextContent('(mirror of PCI Security Standards Council)')
+  })
+})
+
+describe('ThreatDetailDialog — footer and CTA (UX-19)', () => {
+  it('Endorse, Flag and Ask Assistant carry visible text labels, not icons alone', () => {
+    renderDialog(threat({}))
+    for (const label of ['Endorse', 'Flag', 'Ask Assistant']) {
+      expect(screen.getByRole('button', { name: new RegExp(label) })).toHaveTextContent(label)
+    }
+  })
+
+  it('Run Assessment is one link inside the scrolling content, not a block pinned over it', () => {
+    renderDialog(threat({}))
+    const links = screen.getAllByRole('link', { name: /Run Assessment/ })
+    expect(links).toHaveLength(1)
+    expect(links[0]).toHaveAttribute('href', '/assess')
+    // It scrolls with the dialog body — the element that holds the Description.
+    const body = screen.getByText('Description').closest('div.overflow-y-auto')
+    expect(body).toContainElement(links[0])
   })
 })

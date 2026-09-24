@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react'
 import { ChevronDown, Calculator, Clock, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
-import { getCrqcConsensus } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
 /**
  * Threat-Economics header for the Threats page (PER-PAGE-CHANGES Threats #1).
@@ -26,10 +26,11 @@ const THREAT_ECONOMICS_PHASE_DEF = FRAMEWORK_PHASES[THREAT_ECONOMICS_PHASE]
 
 const CURRENT_YEAR = new Date().getFullYear()
 
-// Default Z — single-sourced from CRQC_ESTIMATES via getCrqcConsensus() (Threats #1),
-// the same median-of-midpoints figure the hero and capability strip show, rather than
-// an independently-set year. The slider remains fully user-adjustable from this default.
-const DEFAULT_CRQC_YEAR = getCrqcConsensus().zEstimate
+// Default Z — the planning year of the one CRQC expert forecast (getCrqcForecast(),
+// ruling R5): the forecast window's midpoint rounded down, the same Z the exposure
+// hero's Mosca card uses. A calculator needs one year; the slider stays fully
+// adjustable across the forecast and beyond.
+const DEFAULT_CRQC_YEAR = getCrqcForecast().planningYear
 
 type Urgency = 'overdue' | 'critical' | 'urgent' | 'planning'
 

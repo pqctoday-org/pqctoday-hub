@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import {
+  isShortThreatQuery,
   isThreatsDeepLink,
   matchesThreatQuery,
   resolveIndustryParam,
@@ -20,20 +21,46 @@ describe('threatsUrlParams', () => {
     expect(threatIdParam(p(''))).toBeNull()
   })
 
-  it('resolves ?industry= case-insensitively, through the page’s merged labels, dropping unknowns', () => {
+  it('resolves ?industry= case-insensitively, through old labels and slugs, dropping unknowns', () => {
     const rows = [
       { industry: 'Finance & Banking' },
-      { industry: 'Critical Infrastructure / Energy' },
+      { industry: 'Critical Infrastructure / OT' },
+      { industry: 'Aerospace / Aviation / Space' },
+      { industry: 'Cross-Industry' },
     ]
     expect(resolveIndustryParam('finance & banking', rows)).toEqual(['Finance & Banking'])
-    // A raw CSV label the page merges still lands on the merged label.
-    expect(resolveIndustryParam('Critical Infrastructure', rows)).toEqual([
+    // Old labels the page renamed (ruling R3) still land on the new label.
+    for (const old of [
+      'Critical Infrastructure',
+      'Energy / Critical Infrastructure',
       'Critical Infrastructure / Energy',
+    ]) {
+      expect(resolveIndustryParam(old, rows)).toEqual(['Critical Infrastructure / OT'])
+    }
+    expect(resolveIndustryParam('Aerospace / Aviation', rows)).toEqual([
+      'Aerospace / Aviation / Space',
     ])
+    expect(resolveIndustryParam('Hardware Security Modules', rows)).toEqual(['Cross-Industry'])
     expect(resolveIndustryParam('Energy / Critical Infrastructure,Nope', rows)).toEqual([
-      'Critical Infrastructure / Energy',
+      'Critical Infrastructure / OT',
     ])
     expect(resolveIndustryParam(null, rows)).toEqual([])
+  })
+
+  it('resolves new and old label slugs in ?industry=', () => {
+    const rows = [
+      { industry: 'Critical Infrastructure / OT' },
+      { industry: 'Aerospace / Aviation / Space' },
+    ]
+    expect(resolveIndustryParam('critical-infrastructure-ot', rows)).toEqual([
+      'Critical Infrastructure / OT',
+    ])
+    expect(resolveIndustryParam('energy-critical-infrastructure', rows)).toEqual([
+      'Critical Infrastructure / OT',
+    ])
+    expect(resolveIndustryParam('aerospace-aviation-space,aerospace-aviation', rows)).toEqual([
+      'Aerospace / Aviation / Space',
+    ])
   })
 
   it('accepts only real threat classes for ?class=', () => {
@@ -55,6 +82,40 @@ describe('threatsUrlParams', () => {
     expect(matchesThreatQuery(t, 'ml-kem')).toBe(true)
     expect(matchesThreatQuery(t, 'healthcare')).toBe(false)
     expect(matchesThreatQuery(t, '  ')).toBe(true)
+  })
+
+  it('matches short queries (≤4 chars) at word starts only — "PCI" no longer finds "EPCIS" (UX-16)', () => {
+    const base = {
+      industry: 'Healthcare / Pharmaceutical',
+      criticality: 'High' as const,
+      cryptoAtRisk: '',
+      pqcReplacement: '',
+      mainSource: '',
+      sourceUrl: '',
+      relatedModules: [],
+    }
+    const epcis: ThreatItem = {
+      ...base,
+      threatId: 'HLTH-005',
+      description: 'Drug supply-chain traceability via EPCIS event signatures.',
+    }
+    const pci: ThreatItem = {
+      ...base,
+      industry: 'Payment Card Industry',
+      threatId: 'PCI-002',
+      description: 'PCI DSS cardholder-data encryption.',
+    }
+    expect(matchesThreatQuery(epcis, 'PCI')).toBe(false)
+    expect(matchesThreatQuery(pci, 'PCI')).toBe(true)
+    expect(matchesThreatQuery(pci, 'pci-0')).toBe(true) // word start, hyphen inside the query
+    // Word-start, not whole-word: an acronym still finds its plural.
+    expect(matchesThreatQuery({ ...pci, description: 'HSMs at issuers' }, 'HSM')).toBe(true)
+    // Longer queries keep plain substring matching.
+    expect(matchesThreatQuery(epcis, 'epcis')).toBe(true)
+    expect(matchesThreatQuery(epcis, 'raceab')).toBe(true)
+    expect(isShortThreatQuery('PCI')).toBe(true)
+    expect(isShortThreatQuery('EPCIS')).toBe(false)
+    expect(isShortThreatQuery('  ')).toBe(false)
   })
 
   it('reads ?view=horizon', () => {

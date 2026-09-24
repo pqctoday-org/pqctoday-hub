@@ -34,24 +34,45 @@ export function isRetiredThreatStatus(status: string | null | undefined): boolea
 }
 
 /**
- * Collapses near-duplicate raw `industry` labels that describe the same
- * sector under different CSV wording — verified against the corpus's own
- * `applicable_industries_normalized` tags, which tag both "Critical
- * Infrastructure" and "Energy / Critical Infrastructure" rows with the same
- * `critical-infrastructure` tag (Threats #5). Extend this map, driven by that
- * same tag evidence, if a future CSV snapshot introduces another wording
- * variant of an already-covered sector.
+ * The Threats page's own industry vocabulary (ruling R3, 2026-09-24):
+ * "Critical Infrastructure" and "Energy / Critical Infrastructure" (and the
+ * earlier merged label "Critical Infrastructure / Energy") became
+ * "Critical Infrastructure / OT"; the two "Hardware Security Modules" rows
+ * (HSM-001, HSM-002) moved to "Cross-Industry"; "Aerospace / Aviation" became
+ * "Aerospace / Aviation / Space". The CSV carries the new labels from
+ * quantum_threats_hsm_industries_09242026_r2.csv on; these aliases keep every
+ * OLD label working — in `?industry=` deep links, persona maps and anything
+ * built from an older snapshot. Other modules (Learn, industry landscape,
+ * assessment) keep their own site-wide vocabulary; this map is the bridge
+ * from theirs into the Threats page's, never a rename of theirs.
  */
 export const THREAT_INDUSTRY_ALIASES: Readonly<Record<string, string>> = {
-  'Critical Infrastructure': 'Critical Infrastructure / Energy',
-  'Energy / Critical Infrastructure': 'Critical Infrastructure / Energy',
-  'Critical Infrastructure / Energy': 'Critical Infrastructure / Energy',
+  'Critical Infrastructure': 'Critical Infrastructure / OT',
+  'Energy / Critical Infrastructure': 'Critical Infrastructure / OT',
+  'Critical Infrastructure / Energy': 'Critical Infrastructure / OT',
+  'Hardware Security Modules': 'Cross-Industry',
+  'Aerospace / Aviation': 'Aerospace / Aviation / Space',
 }
 
 /** The industry label the Threats page shows (and filters on) for a raw CSV label. */
 export function canonicalThreatIndustry(raw: string): string {
   return THREAT_INDUSTRY_ALIASES[raw] ?? raw
 }
+
+/**
+ * A label's URL/anchor slug — the same derivation the page uses for its
+ * `industry-<slug>` section anchors: "Critical Infrastructure / OT" →
+ * `critical-infrastructure-ot`, "Aerospace / Aviation / Space" →
+ * `aerospace-aviation-space`. `?industry=` accepts these (and the slugs of the
+ * old labels above) as well as the labels themselves.
+ */
+export function threatIndustrySlug(label: string): string {
+  return label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
 /** "<id> is no longer in the catalog. This entry was retired on <date>: <reason>"
  *  — what a reader following an old link to a retired row is told. */
 export function retiredThreatMessage(retired: {
@@ -62,6 +83,21 @@ export function retiredThreatMessage(retired: {
   const when = retired.deprecatedAt ? ` on ${retired.deprecatedAt}` : ''
   const why = retired.deprecatedReason ? `: ${retired.deprecatedReason}` : '.'
   return `${retired.threatId} is no longer in the catalog. This entry was retired${when}${why}`
+}
+
+/**
+ * The reviewed `threat_class` values (ruling R1, 2026-09-24): hndl
+ * (decrypt-later), hnfl (forge-later) or both. Every published row carries one
+ * — validator TP-4 fails a published row without it — so the page reads this
+ * column and never guesses a class from keywords.
+ */
+export const THREAT_CLASSES = ['hndl', 'hnfl', 'both'] as const
+export type ReviewedThreatClass = (typeof THREAT_CLASSES)[number]
+
+/** A `threat_class` cell → its reviewed value, or undefined when blank/unknown. */
+export function parseThreatClass(raw: string | null | undefined): ReviewedThreatClass | undefined {
+  const v = (raw ?? '').trim().toLowerCase()
+  return (THREAT_CLASSES as readonly string[]).includes(v) ? (v as ReviewedThreatClass) : undefined
 }
 
 /** Shown when a row's criticality cell is blank — never guessed as "Medium". */
@@ -106,6 +142,9 @@ export const NOT_YET_SPECIFIED = 'Not yet specified'
  * `water-wastewater`, a one-row variant (WATE-001) of the `water;wastewater`
  * pair every other Water / Wastewater row carries. Validator CM-G flags any
  * slug outside this set; add a slug here when a genuinely new sector arrives.
+ * `space` arrived with "Aerospace / Aviation / Space" (ruling R3,
+ * 2026-09-24); "Critical Infrastructure / OT" rows carry the existing
+ * `critical-infrastructure;operational-technology` pair.
  */
 export const THREAT_INDUSTRY_SLUGS: ReadonlySet<string> = new Set([
   'aerospace',
@@ -144,6 +183,7 @@ export const THREAT_INDUSTRY_SLUGS: ReadonlySet<string> = new Set([
   'research',
   'retail',
   'software',
+  'space',
   'supply-chain',
   'telecommunications',
   'transit',

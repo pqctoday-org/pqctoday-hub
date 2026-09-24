@@ -51,9 +51,8 @@ export function publishedThreatIds(rows: CsvRows): Set<string> {
 
 /**
  * Deep link for one threat. `&industry=` carries the label the page shows —
- * "Critical Infrastructure" and "Energy / Critical Infrastructure" are merged
- * into "Critical Infrastructure / Energy" there, so the raw label would not
- * select anything.
+ * an old label (e.g. "Energy / Critical Infrastructure", now "Critical
+ * Infrastructure / OT" — ruling R3) is written as the page's current one.
  */
 export function threatDeepLink(threatId: string, rawIndustry?: string): string {
   const id = `/threats?id=${encodeURIComponent(threatId.trim())}`
@@ -88,17 +87,17 @@ export function buildThreatsPageGuide(records: readonly Record<string, string>[]
     'Key concepts:',
     '- HNDL (Harvest Now, Decrypt Later): adversaries capture encrypted data today to decrypt once a cryptographically relevant quantum computer (CRQC) exists — a confidentiality threat.',
     '- HNFL / TNFL (Harvest/Tamper Now, Forge Later): adversaries plan to forge signatures (code signing, certificates, legal documents) once ECDSA/RSA fall — an authenticity threat.',
-    '- Each threat is classed HNDL, HNFL/TNFL, both, or unclassified from its at-risk cryptography, and given a Shor-resource tier (Imminent, Near-term, Grover-weakened, PQC-safe, or Unscored when no algorithm is named).',
+    '- Each threat carries a reviewed class — HNDL, HNFL/TNFL, or both — and a Shor-resource tier graded from its at-risk cryptography (Imminent, Near-term, Grover-weakened, PQC-safe, or Unscored when no algorithm is named).',
     '',
-    'Each threat entry shows: threat ID, industry, description, criticality, cryptography at risk, recommended PQC replacement, source, data provenance (peer review, confidence, accuracy, vetting body, last verified), trust score, the SOC detection use cases and incident-response playbooks that apply to its class (Applied Quantum PQC Migration Framework v3.0), and related learning modules. The page also carries the CRQC Threat Horizon (consensus Q-day window and per-sector migration deadlines).',
+    'Each threat entry shows: threat ID, industry, description, criticality, cryptography at risk, recommended PQC replacement, source with its evidence (whether the cited document is confirmed to be the one named, how many of the entry’s claims it states, approved second sources, last verified), trust score, the SOC detection use cases and incident-response playbooks that apply to its class (Applied Quantum PQC Migration Framework v3.0), and related learning modules. The page also carries the CRQC Threat Horizon (the published CRQC expert forecast window, regulators’ migration deadlines shown separately as deadlines, and per-sector Mosca deadlines).',
     '',
     'URL parameters (all combinable):',
     `- ?id=<threatId> — open one threat's detail (e.g. /threats?id=${exampleId}); a retired id shows when and why it was retired`,
     `- ?industry=<name> — industry filter, comma-separated for several (e.g. /threats?industry=${encodeURIComponent(exampleIndustry)})`,
     `- ?criticality=<level> — ${levels.join(' | ')}`,
-    '- ?class=<hndl|hnfl> — threat class (a threat classed "both" matches either)',
+    '- ?class=<hndl|hnfl> — threat class; hndl shows threats classed HNDL or both, hnfl shows HNFL/TNFL or both',
     '- ?q=<text> — search threat IDs, descriptions, industries, cryptography at risk and PQC replacements',
-    '- ?sort=<industry|threatId|criticality|evidence> — sort field (default industry; evidence = evidence strength)',
+    '- ?sort=<industry|threatId|criticality|evidence> — sort field (default industry; evidence = best-evidenced first: source confirmed, claims the cited document states)',
     '- ?dir=<asc|desc> — sort direction (default asc)',
     '- ?mode=<table|cards> — layout (default table)',
     '- ?tier=<Authoritative|High|Moderate|Low> — trust-tier filter, repeatable',

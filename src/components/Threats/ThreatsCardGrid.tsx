@@ -54,7 +54,10 @@ export const ThreatsCardGrid = ({
             <h3 className="text-sm font-semibold text-foreground">{industry}</h3>
             <span className="text-xs text-muted-foreground">({groupItems.length})</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {/* UX-14: at 1440px the content column is ~876px, so four (or three)
+              cards per row left each ~200px wide and clipped their chips. Two
+              per row until 2xl gives the chips room to wrap. */}
+          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
             <AnimatePresence mode="popLayout">
               {groupItems.map((item, i) => (
                 <ThreatCard

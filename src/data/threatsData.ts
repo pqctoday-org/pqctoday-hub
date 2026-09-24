@@ -2,11 +2,14 @@
 import Papa from 'papaparse'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitPipe, parseIntSafe } from './csvUtils'
+import { getThreatLineage } from './threatClaimStatus'
 import {
   canonicalThreatIndustry,
   isPublishedThreatStatus,
   isRetiredThreatStatus,
+  parseThreatClass,
   UNRATED_CRITICALITY,
+  type ReviewedThreatClass,
 } from './threatRowRules'
 
 export interface ThreatData {
@@ -39,6 +42,12 @@ export interface ThreatData {
    *  each one states — from `secondary_source_ref` + `secondary_claims`,
    *  written only by an approved second-source review item (2026-09-24). */
   secondarySources?: SecondarySource[]
+  /** The reviewed threat class from `threat_class` (ruling R1, 2026-09-24).
+   *  Every published row carries one (validator TP-4). */
+  threatClass?: ReviewedThreatClass
+  /** Publisher of the original document when `source_url` points at a mirror
+   *  copy (e.g. "PCI Security Standards Council") — the link says so. */
+  sourceMirrorOf?: string
 }
 
 export interface SecondarySource {
@@ -105,6 +114,8 @@ interface RawThreatRow {
   deprecated_reason?: string
   secondary_source_ref?: string
   secondary_claims?: string
+  threat_class?: string
+  source_mirror_of?: string
 }
 
 const THREATS_FILE_RE = /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
@@ -144,6 +155,8 @@ function transformThreat(row: RawThreatRow): ThreatData | null {
     dataQualityNotes: row.data_quality_notes || undefined,
     confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
     lastVerified: row.last_verified || undefined,
+    threatClass: parseThreatClass(row.threat_class),
+    sourceMirrorOf: row.source_mirror_of?.trim() || undefined,
     secondarySources: (() => {
       const found = parseSecondarySources(row.secondary_source_ref, row.secondary_claims)
       return found.length ? found : undefined
@@ -219,19 +232,20 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
 }
 
 /**
- * How well-evidenced a threat record is, 0–100 — B+ remediation 4.3
- * (2026-08-10). Composed only of fields the corpus actually carries, and
- * weighted the way the rest of the site weights evidence: who says it and
- * whether it was reviewed outrank how confident the extraction was.
- *
- * A record missing a field scores zero for that component rather than being
- * excluded or imputed — "we don't know" must sort below "we checked", never
- * above it.
+ * Sort key for "best-evidenced first" (the researcher's evidence sort) —
+ * LINEAGE ONLY since ruling R2 (2026-09-24): whether the cited document was
+ * confirmed to be the one the row names, how many of the row's three claims it
+ * was found to state, and whether a trusted-source id backs the row. The old
+ * extraction-confidence and "stated accuracy" components are gone: they were
+ * scores about the extraction, not evidence about the claim. A record the
+ * ledger has not checked scores zero on those parts — "we don't know" sorts
+ * below "we checked", never above it. Used for ordering only; never shown as
+ * a number.
  */
 export function evidenceStrength(threat: ThreatItem): number {
-  const peer = threat.peerReviewed === 'yes' ? 40 : threat.peerReviewed === 'partial' ? 20 : 0
-  const sourced = threat.trustedSourceId?.trim() ? 25 : 0
-  const confidence = Math.min(20, ((threat.confidenceScore ?? 0) / 100) * 20)
-  const accuracy = Math.min(15, ((threat.accuracyPct ?? 0) / 100) * 15)
-  return Math.round(peer + sourced + confidence + accuracy)
+  const lineage = getThreatLineage(threat.threatId)
+  const source = lineage.sourceConfirmed ? 40 : 0
+  const claims = lineage.supported * 15
+  const sourced = threat.trustedSourceId?.trim() ? 15 : 0
+  return source + claims + sourced
 }
