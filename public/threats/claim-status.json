@@ -1,32 +1,32 @@
 {
- "csv": "quantum_threats_hsm_industries_09232026_r1.csv",
- "generatedAt": "2026-09-24T03:27:40+00:00",
+ "csv": "quantum_threats_hsm_industries_09232026_r3.csv",
+ "generatedAt": "2026-09-24T07:28:40+00:00",
  "note": "Claim-ledger verdicts on each row's cited document, only where the verdict was reached on the file cited today. Verdict words only; no document text.",
  "rows": {
   "AERO-002": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-16",
-     "verdict": "contradicted"
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
     },
     "related_standards": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-16",
-     "verdict": "contradicted"
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -35,23 +35,23 @@
   "AERO-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -60,23 +60,23 @@
   "AUS-FIN-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -84,12 +84,24 @@
   },
   "AUS-FIN-002": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -123,19 +135,19 @@
   "AUS-TEL-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     }
    },
@@ -161,19 +173,19 @@
   "AUTO-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "WEAK"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -198,16 +210,28 @@
   },
   "CI-001": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "PARTIAL"
     },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -216,23 +240,23 @@
   "CI-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -241,23 +265,23 @@
   "CLOUD-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -266,23 +290,23 @@
   "CLOUD-002": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "main_source": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "threat_description": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -291,27 +315,27 @@
   "CLOUD-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "PARTIAL"
     },
     "threat_description": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -320,27 +344,27 @@
   "CLOUD-004": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "PARTIAL"
     },
     "threat_description": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -348,12 +372,24 @@
   },
   "CRIT-001": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -361,9 +397,21 @@
   },
   "CRIT-002": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
     }
    },
    "evidenceSha256": "9bad2cd46e74ca53"
@@ -371,23 +419,23 @@
   "CRIT-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -396,23 +444,23 @@
   "CROS-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -421,23 +469,23 @@
   "CROS-002": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -446,19 +494,19 @@
   "CROS-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -467,23 +515,23 @@
   "CROS-004": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -492,23 +540,23 @@
   "CROS-005": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -517,23 +565,23 @@
   "CROS-006": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -541,50 +589,128 @@
   },
   "CROS-007": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
     }
    },
    "evidenceSha256": "b47bb3a4b591aad7"
   },
   "CROS-008": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
     "main_source": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "WEAK"
     },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "contradicted"
+    },
     "threat_description": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "PARTIAL"
     }
    },
    "evidenceSha256": "6ed12447abf9b0a3"
   },
-  "CROSS-002": {
+  "CROS-009": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
-    "related_standards": {
-     "decidedAt": "2026-09-18",
-     "verdict": "FOUND"
-    },
     "threat_description": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "b650ceef5a3d56bd"
+  },
+  "CROS-010": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "64e2ef47275b7512"
+  },
+  "CROSS-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -592,13 +718,29 @@
   },
   "CROSS-004": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "main_source": {
-     "decidedAt": "2026-09-10",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-24",
+     "verdict": "NOT-FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "vetting_body": {
-     "decidedAt": "2026-09-10",
-     "verdict": "FOUND"
+     "decidedAt": "2026-09-24",
+     "verdict": "PARTIAL"
     }
    },
    "evidenceSha256": "d995ec99296bc13d"
@@ -606,27 +748,27 @@
   "CROSS-006": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "NOT-FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -635,19 +777,19 @@
   "CROSS-007": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -656,27 +798,27 @@
   "CROSS-008": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -685,20 +827,24 @@
   "CROSS-009": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "NOT-FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
     }
    },
    "evidenceSha256": "8e45c4909b2eb481"
@@ -706,23 +852,23 @@
   "CROSS-010": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "PARTIAL"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -730,12 +876,24 @@
   },
   "CROSS-011": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -753,27 +911,27 @@
   "CROSS-013": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -782,27 +940,27 @@
   "CROSS-014": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -811,27 +969,27 @@
   "CROSS-015": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "PARTIAL"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -840,27 +998,27 @@
   "CROSS-016": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -869,27 +1027,27 @@
   "CROSS-017": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -898,27 +1056,27 @@
   "CROSS-018": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "NOT-FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -927,40 +1085,61 @@
   "CRYPTO-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
    "evidenceSha256": "e8c9b064ca103559"
   },
-  "CRYPTO-003": {
+  "CRYPTO-002": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "e3438bbcd4a90002"
+  },
+  "CRYPTO-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -969,19 +1148,19 @@
   "EDU-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -999,19 +1178,19 @@
   "EDU-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1020,27 +1199,27 @@
   "EDU-004": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "PARTIAL"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1049,19 +1228,19 @@
   "EDU-005": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-10",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-10",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-10",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-10",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1070,24 +1249,24 @@
   "ENER-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
-     "verdict": "PARTIAL"
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
     }
    },
    "evidenceSha256": "7366767bd44a0c3f"
@@ -1105,47 +1284,93 @@
    },
    "evidenceSha256": "6ae150250e02f574"
   },
-  "ENERGY-004": {
+  "ENERGY-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "NOT-FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "1bf355bcca74556b"
+  },
+  "ENERGY-004": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-24",
+     "verdict": "NOT-FOUND"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
    "evidenceSha256": "06c9d5e440eaf2fe"
   },
-  "FIN-002": {
+  "FIN-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "86ae1261da72c5fd"
+  },
+  "FIN-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1154,19 +1379,19 @@
   "FIN-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-18",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1175,19 +1400,19 @@
   "FIN-005": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "main_source": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1196,23 +1421,23 @@
   "FINA-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1221,23 +1446,23 @@
   "FINA-002": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1246,23 +1471,23 @@
   "FINA-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1284,15 +1509,15 @@
   "FINA-005": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1301,23 +1526,23 @@
   "FINA-006": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1326,27 +1551,102 @@
   "FINA-007": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
    "evidenceSha256": "07ec39dcfa220fe7"
+  },
+  "FINA-008": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "d4a71a4aec61915c"
+  },
+  "FINA-009": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "8ed6f27d2f333533"
+  },
+  "FINA-010": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "44cb39d17d6972b6"
   },
   "GOV-001": {
    "claims": {
@@ -1459,24 +1759,24 @@
   "HEAL-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
-     "verdict": "PARTIAL"
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
     }
    },
    "evidenceSha256": "d2ca3890adefea10"
@@ -1572,19 +1872,19 @@
   "HLTH-005": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1593,27 +1893,27 @@
   "HSM-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1622,27 +1922,27 @@
   "HSM-002": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "NOT-FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "PARTIAL"
     }
    },
@@ -1651,19 +1951,19 @@
   "INSU-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1671,20 +1971,24 @@
   },
   "INTE-001": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1693,23 +1997,23 @@
   "IOT-002": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "NOT-FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-16",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1718,23 +2022,23 @@
   "IOT-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "PARTIAL"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1743,27 +2047,27 @@
   "IOT-005": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "PARTIAL"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1771,12 +2075,74 @@
   },
   "IT-001": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
     }
    },
    "evidenceSha256": "09bfd7b81332cb83"
+  },
+  "IT-002": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    }
+   },
+   "evidenceSha256": "80f878e72c4090e7"
+  },
+  "IT-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "main_source": {
+     "decidedAt": "2026-09-24",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
+    "related_standards": {
+     "decidedAt": "2026-09-24",
+     "verdict": "PARTIAL"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "decidedAt": "2026-09-24",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "b98b60db14db876e"
   },
   "IT-004": {
    "claims": {
@@ -1789,9 +2155,21 @@
   },
   "IT-006": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
     }
    },
    "evidenceSha256": "11871a3fbce3d9a5"
@@ -1799,19 +2177,19 @@
   "LEG-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1820,19 +2198,19 @@
   "LEG-002": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1841,23 +2219,23 @@
   "LEG-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "related_standards": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     }
    },
@@ -1866,23 +2244,23 @@
   "MEDIA-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1890,9 +2268,21 @@
   },
   "MEDIA-002": {
    "claims": {
+    "crypto_at_risk": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
     }
    },
    "evidenceSha256": "b8f4455f8ce13005"
@@ -1900,19 +2290,19 @@
   "MEDIA-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -1921,23 +2311,23 @@
   "PAYM-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1946,23 +2336,23 @@
   "PCI-002": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1971,23 +2361,23 @@
   "PCI-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -1996,23 +2386,23 @@
   "RAIL-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -2021,19 +2411,19 @@
   "RAIL-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -2042,23 +2432,23 @@
   "RAIL-004": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -2067,23 +2457,23 @@
   "RETAIL-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -2092,19 +2482,19 @@
   "SUPPLY-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -2113,15 +2503,19 @@
   "SUPPLY-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
+     "verdict": "undeterminable"
+    },
+    "threat_description": {
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -2130,23 +2524,23 @@
   "TELCO-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -2155,23 +2549,23 @@
   "TELCO-002": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -2180,23 +2574,23 @@
   "TELCO-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -2205,19 +2599,19 @@
   "TELCO-004": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     }
    },
@@ -2226,23 +2620,23 @@
   "TELCO-005": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -2251,23 +2645,23 @@
   "TELE-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "supported"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -2276,23 +2670,23 @@
   "WATE-001": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "NOT-FOUND"
     }
    },
@@ -2330,23 +2724,23 @@
   "WATER-003": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -2355,23 +2749,23 @@
   "WATER-004": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
@@ -2380,23 +2774,23 @@
   "WATER-005": {
    "claims": {
     "crypto_at_risk": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "main_source": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "MATCH"
     },
     "pqc_replacement": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "threat_description": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "undeterminable"
     },
     "vetting_body": {
-     "decidedAt": "2026-09-11",
+     "decidedAt": "2026-09-24",
      "verdict": "FOUND"
     }
    },
