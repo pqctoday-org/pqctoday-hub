@@ -336,13 +336,19 @@ describe('ThreatsDashboard', () => {
   })
 
   describe('deep links (UX-3)', () => {
+    // The dialog is React.lazy() and pulls in the implementation-attack and
+    // enrichment data; in a loaded full-suite run its first import can take
+    // well over findBy*'s 1s default (seen at ~1.1s), so wait longer. This is
+    // a wait, not a masked assertion.
+    const LAZY_DIALOG = { timeout: 15_000 }
+
     it('?id= opens the threat dialog', async () => {
       render(
         <MemoryRouter initialEntries={['/threats?id=THR-002']}>
           <ThreatsDashboard />
         </MemoryRouter>
       )
-      const dialog = await screen.findByRole('dialog')
+      const dialog = await screen.findByRole('dialog', {}, LAZY_DIALOG)
       expect(within(dialog).getByText('THR-002')).toBeInTheDocument()
     })
 
@@ -352,7 +358,7 @@ describe('ThreatsDashboard', () => {
           <ThreatsDashboard />
         </MemoryRouter>
       )
-      const dialog = await screen.findByRole('dialog')
+      const dialog = await screen.findByRole('dialog', {}, LAZY_DIALOG)
       expect(within(dialog).getByText('THR-002')).toBeInTheDocument()
     })
 

@@ -55,7 +55,7 @@ describe('ThreatsDashboard — ?id= opens the dialog once', () => {
         <NavigateProbe />
       </MemoryRouter>
     )
-    expect(await screen.findByRole('dialog')).toHaveTextContent(id)
+    expect(await screen.findByRole('dialog', {}, { timeout: 15_000 })).toHaveTextContent(id)
     // Let every pending effect / lazy resolution settle.
     await act(() => new Promise((resolve) => setTimeout(resolve, 20)))
     expect(lifecycle.mounts).toEqual([id])
