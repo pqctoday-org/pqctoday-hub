@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import {
   ShieldAlert,
   X,
@@ -30,8 +30,26 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Radar, Siren } from 'lucide-react'
 import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
-import { getSocUseCases, getIrPlaybook, getShorTier, SHOR_TIER_DEFS } from './threatClassification'
+import {
+  getSocUseCases,
+  getIrPlaybooks,
+  getShorTier,
+  getThreatClass,
+  SHOR_TIER_DEFS,
+  SOC_UNCLASSIFIED_NOTE,
+} from './threatClassification'
+import { formatSocCite, SOC_CTI_SECTION, SOC_LEARN_MODULE_HREF } from '@/data/socQuantumPlaybook'
 import { getAttackProfiles } from '@/data/implementationAttackProfiles'
+import { NOT_YET_SPECIFIED, UNRATED_CRITICALITY } from '@/data/threatRowRules'
+import { formatSourceCaveat, getSourceCaveat } from '@/data/threatClaimStatus'
+
+/** An at-risk / PQC field, or an honest "not yet specified" when blank. */
+const SpecifiedOrNot = ({ value }: { value: string }) =>
+  value.trim() ? (
+    <p className="text-sm font-mono text-foreground/80 break-words">{value}</p>
+  ) : (
+    <p className="text-sm italic text-muted-foreground">{NOT_YET_SPECIFIED}</p>
+  )
 
 interface ThreatDetailDialogProps {
   threat: ThreatItem
@@ -46,6 +64,12 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
     [threat.pqcReplacement]
   )
 
+  const sourceCaveat = useMemo(() => getSourceCaveat(threat.threatId), [threat.threatId])
+
+  // Set when the CTI pointer closes the dialog to scroll to the Horizon
+  // section: focus must not return to (and scroll back to) the trigger row.
+  const jumpingToHorizon = useRef(false)
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -57,7 +81,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
   if (!threat) return null
 
   return (
-    <FocusLock returnFocus>
+    <FocusLock returnFocus={() => (jumpingToHorizon.current ? { preventScroll: true } : true)}>
       <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4">
         {/* Isolated backdrop */}
         <div
@@ -107,18 +131,14 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                 <h3 className="text-sm font-semibold text-status-error mb-2 flex items-center gap-2">
                   <Lock size={14} /> At-Risk Cryptography
                 </h3>
-                <p className="text-sm font-mono text-foreground/80 break-words">
-                  {threat.cryptoAtRisk}
-                </p>
+                <SpecifiedOrNot value={threat.cryptoAtRisk} />
               </div>
 
               <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
                 <h3 className="text-sm font-semibold text-primary mb-2 flex items-center gap-2">
                   <Cpu size={14} /> PQC Mitigation
                 </h3>
-                <p className="text-sm font-mono text-foreground/80 break-words">
-                  {threat.pqcReplacement}
-                </p>
+                <SpecifiedOrNot value={threat.pqcReplacement} />
               </div>
             </div>
 
@@ -170,7 +190,9 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                         ? 'bg-status-error text-status-error border border-status-error'
                         : threat.criticality.toLowerCase() === 'high'
                           ? 'bg-status-error text-status-error border border-status-error'
-                          : 'bg-status-warning text-status-warning border border-status-warning'
+                          : threat.criticality === UNRATED_CRITICALITY
+                            ? 'bg-muted/40 text-muted-foreground border border-border'
+                            : 'bg-status-warning text-status-warning border border-status-warning'
                     }`}
                   >
                     {threat.criticality}
@@ -187,16 +209,18 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
             </div>
 
             {/* Data provenance — surfaces fields the loader already parses
-              (accuracy_pct, peer_reviewed, vetting_body, confidence_score,
-              data_quality_notes) but that were previously thrown away at render
-              time. Shown honestly: unfavorable provenance (peer_reviewed=no,
-              low confidence) renders the same way as favorable, not hidden. */}
+              (accuracy_pct, peer_reviewed, vetting_body, confidence_score)
+              but that were previously thrown away at render time. Shown
+              honestly: unfavorable provenance (peer_reviewed=no, low
+              confidence) renders the same way as favorable, not hidden.
+              data_quality_notes is NOT rendered: it is the maintenance log
+              ("Added via intake queue…", "merged inline via qwen…", pipeline
+              bug notes), written for maintainers, not readers. */}
             {(threat.peerReviewed !== undefined ||
               threat.confidenceScore !== undefined ||
               threat.accuracyPct !== undefined ||
               (threat.vettingBody && threat.vettingBody.length > 0) ||
-              threat.lastVerified ||
-              threat.dataQualityNotes) && (
+              threat.lastVerified) && (
               <div className="pt-4 border-t border-border">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
                   <ShieldCheck size={14} className="text-primary" /> Data Provenance
@@ -255,12 +279,6 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                     <span className="text-foreground font-mono">{threat.lastVerified || '—'}</span>
                   </div>
                 </div>
-                {threat.dataQualityNotes && (
-                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    <span className="font-semibold text-foreground">Data quality notes: </span>
-                    {threat.dataQualityNotes}
-                  </p>
-                )}
               </div>
             )}
 
@@ -281,9 +299,14 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
 
                 <TabsContent value="detection">
                   <p className="text-xs text-muted-foreground mb-3">
-                    SOC detection use cases mapped to this threat (Applied Quantum SOC chapter,
-                    UC1–UC5).
+                    SOC detection use cases that apply to this threat&apos;s class, from the Applied
+                    Quantum PQC Migration Framework v3.0 &ldquo;SOC Implementation&rdquo; section.
                   </p>
+                  {getThreatClass(threat) === 'unclassified' && (
+                    <p className="text-xs text-muted-foreground mb-3 rounded-lg border border-border/50 bg-muted/20 p-2">
+                      {SOC_UNCLASSIFIED_NOTE}
+                    </p>
+                  )}
                   <ul className="space-y-2.5">
                     {getSocUseCases(threat).map((uc) => (
                       <li
@@ -292,39 +315,76 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                       >
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
-                            {uc.id}
+                            {uc.code}
                           </span>
                           <span className="text-xs font-semibold text-foreground">{uc.title}</span>
                         </div>
-                        <p className="text-xs text-muted-foreground">{uc.detection}</p>
+                        <p className="text-xs text-muted-foreground">{uc.summary}</p>
                         <p className="text-[11px] text-muted-foreground mt-1">
-                          <span className="uppercase tracking-wide">Signal:</span> {uc.signal}
+                          Source: {formatSocCite(uc.source)}
+                          {uc.sourceHeading !== uc.title && (
+                            <> (titled &ldquo;{uc.sourceHeading}&rdquo; in v3.0)</>
+                          )}
                         </p>
                       </li>
                     ))}
                   </ul>
+                  <p className="text-[11px] text-muted-foreground mt-3">
+                    Tracking progress toward a CRQC is threat intelligence, not a detection use case
+                    ({SOC_CTI_SECTION.title}, {formatSocCite(SOC_CTI_SECTION.source)}) — see the{' '}
+                    <a
+                      href="#crqc-threat-horizon"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        jumpingToHorizon.current = true
+                        onClose()
+                        document
+                          .getElementById('crqc-threat-horizon')
+                          ?.scrollIntoView({ block: 'start' })
+                      }}
+                      className="text-primary hover:underline"
+                    >
+                      CRQC Threat Horizon
+                    </a>{' '}
+                    on this page.
+                  </p>
                 </TabsContent>
 
                 <TabsContent value="response">
-                  {(() => {
-                    const pb = getIrPlaybook(threat)
-                    return (
-                      <div className="bg-muted/30 rounded-lg border border-border/50 p-3">
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Incident-response playbooks from the same source that apply to this
+                    threat&apos;s class.
+                  </p>
+                  <ul className="space-y-2.5">
+                    {getIrPlaybooks(threat).map((pb) => (
+                      <li
+                        key={pb.id}
+                        className="bg-muted/30 rounded-lg border border-border/50 p-3"
+                      >
                         <div className="flex items-center gap-2 mb-1">
                           <Siren size={14} className="text-status-error shrink-0" />
-                          <span className="text-sm font-semibold text-foreground">{pb.title}</span>
+                          <span className="text-sm font-semibold text-foreground">
+                            Playbook {pb.number}: {pb.title}
+                          </span>
                         </div>
-                        <p className="text-xs text-muted-foreground mb-3">{pb.summary}</p>
-                        <Link
-                          to={pb.href}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors"
-                        >
-                          Open IR Playbook
-                          <ArrowRight size={12} />
-                        </Link>
-                      </div>
-                    )
-                  })()}
+                        <p className="text-xs text-muted-foreground mb-1">
+                          <span className="font-semibold text-foreground/80">Trigger:</span>{' '}
+                          {pb.trigger}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{pb.summary}</p>
+                        <p className="text-[11px] text-muted-foreground mt-1">
+                          Source: {formatSocCite(pb.source)}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    to={SOC_LEARN_MODULE_HREF}
+                    className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors"
+                  >
+                    Learn: SOC Implementation for PQC
+                    <ArrowRight size={12} />
+                  </Link>
                 </TabsContent>
               </Tabs>
             </div>
@@ -424,20 +484,31 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               )
             })()}
 
-            {threat.sourceUrl && (
+            {(threat.sourceUrl || sourceCaveat) && (
               <div className="pt-4 border-t border-border mt-4">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                   Reference Source
                 </h3>
-                <a
-                  href={threat.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-primary hover:underline text-sm truncate"
-                >
-                  <ExternalLink size={14} />
-                  {threat.mainSource || 'View Source'}
-                </a>
+                {threat.sourceUrl && (
+                  <a
+                    href={threat.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-primary hover:underline text-sm truncate"
+                  >
+                    <ExternalLink size={14} />
+                    {threat.mainSource || 'View Source'}
+                  </a>
+                )}
+                {/* Reader caveat from the claim ledger: the cited document
+                    does not itself state this entry's quantum-specific
+                    points. Never "the source disagrees" — see
+                    threatClaimStatus.ts. */}
+                {sourceCaveat && (
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    {formatSourceCaveat(sourceCaveat)}
+                  </p>
+                )}
               </div>
             )}
 
@@ -515,7 +586,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                   `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
                   `**PQC Mitigation:** ${threat.pqcReplacement}`,
                 ].join('\n'),
-                pageUrl: `/threats?threat=${encodeURIComponent(threat.threatId)}`,
+                pageUrl: `/threats?id=${encodeURIComponent(threat.threatId)}`,
               })}
               resourceLabel={threat.threatId}
               resourceType="Threat"
@@ -534,7 +605,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                   `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
                   `**PQC Mitigation:** ${threat.pqcReplacement}`,
                 ].join('\n'),
-                pageUrl: `/threats?threat=${encodeURIComponent(threat.threatId)}`,
+                pageUrl: `/threats?id=${encodeURIComponent(threat.threatId)}`,
               })}
               resourceLabel={threat.threatId}
               resourceType="Threat"

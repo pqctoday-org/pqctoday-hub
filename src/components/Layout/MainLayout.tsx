@@ -61,6 +61,7 @@ import { useIsMobileShell } from '../../hooks/useIsMobileShell'
 import { RouteNextStep } from './RouteNextStep'
 import { RoutePageExercise } from './RoutePageExercise'
 import { RouteRelated } from './RouteRelated'
+import { isThreatsDeepLink } from '../Threats/threatsUrlParams'
 
 // Lazy — same reasoning as RightPanel/VideoOverlay/WorkshopOverlayHost below:
 // MainLayout is mounted on every route, so a static import here would put
@@ -469,7 +470,19 @@ export const MainLayout = () => {
   // Same condition LandingView.tsx already uses for the identical no-persona
   // state (Rule 2 — one source of truth for "has this user chosen or
   // explicitly skipped personalization yet").
-  const isMobileFirstRun = !selectedPersona && !hasSkippedPersonalization
+  //
+  // A visit that ARRIVED on a deep link into Threats content (a shared
+  // /threats?id=…) is not blocked behind the picker: the reader asked for that
+  // threat, not for a role quiz. The bypass holds for /threats for the rest of
+  // the visit — closing the threat (which drops ?id) must not swap the page
+  // for the picker — and the picker still shows on any other page.
+  const [enteredOnThreatsDeepLink] = React.useState(() =>
+    isThreatsDeepLink(location.pathname, location.search)
+  )
+  const threatsDeepLinkBypass =
+    isThreatsDeepLink(location.pathname, location.search) ||
+    (enteredOnThreatsDeepLink && location.pathname.replace(/\/+$/, '') === '/threats')
+  const isMobileFirstRun = !selectedPersona && !hasSkippedPersonalization && !threatsDeepLinkBypass
 
   // Close the More menu / mobile page-actions sheet on route changes (e.g., browser back button)
   React.useEffect(() => {

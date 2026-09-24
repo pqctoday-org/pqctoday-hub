@@ -2,12 +2,19 @@
 import Papa from 'papaparse'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitPipe, parseIntSafe } from './csvUtils'
+import {
+  canonicalThreatIndustry,
+  isPublishedThreatStatus,
+  isRetiredThreatStatus,
+  UNRATED_CRITICALITY,
+} from './threatRowRules'
 
 export interface ThreatData {
   industry: string
   threatId: string
   description: string
-  criticality: 'Critical' | 'High' | 'Medium' | 'Medium-High' | 'Low'
+  /** 'Unrated' when the CSV cell is blank — shown as such, never guessed. */
+  criticality: 'Critical' | 'High' | 'Medium' | 'Medium-High' | 'Low' | 'Unrated'
   cryptoAtRisk: string
   pqcReplacement: string
   mainSource: string
@@ -58,39 +65,24 @@ interface RawThreatRow {
   deprecated_reason?: string
 }
 
+const THREATS_FILE_RE = /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+
 const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
   query: '?raw',
   import: 'default',
   eager: true,
 })
 
-/**
- * Collapses near-duplicate raw `industry` labels that describe the same
- * sector under different CSV wording — verified against the corpus's own
- * `applicable_industries_normalized` tags, which tag both "Critical
- * Infrastructure" and "Energy / Critical Infrastructure" rows with the same
- * `critical-infrastructure` tag (Threats #5). Extend this map, driven by that
- * same tag evidence, if a future CSV snapshot introduces another wording
- * variant of an already-covered sector.
- */
-const INDUSTRY_ALIASES: Record<string, string> = {
-  'Critical Infrastructure': 'Critical Infrastructure / Energy',
-  'Energy / Critical Infrastructure': 'Critical Infrastructure / Energy',
-  'Critical Infrastructure / Energy': 'Critical Infrastructure / Energy',
-}
-
-function canonicalIndustry(raw: string): string {
-  return INDUSTRY_ALIASES[raw] ?? raw
-}
-
 function transformThreat(row: RawThreatRow): ThreatData | null {
-  if (row.status === 'deprecated' || row.status === 'obsolete') return null
+  // Retired (deprecated/obsolete) and not-yet-filled (draft) rows never reach
+  // the page — one predicate shared with the RAG corpus generator.
+  if (!isPublishedThreatStatus(row.status)) return null
   const pct = parseIntSafe(row.accuracy_pct)
   return {
-    industry: canonicalIndustry(row.industry || ''),
+    industry: canonicalThreatIndustry(row.industry || ''),
     threatId: row.threat_id || '',
     description: row.threat_description || '',
-    criticality: (row.criticality as ThreatData['criticality']) || 'Medium',
+    criticality: (row.criticality?.trim() as ThreatData['criticality']) || UNRATED_CRITICALITY,
     cryptoAtRisk: row.crypto_at_risk || '',
     pqcReplacement: row.pqc_replacement || '',
     mainSource: row.main_source || '',
@@ -125,7 +117,7 @@ const {
   metadata,
 } = loadLatestCSV<RawThreatRow, ThreatData>(
   modules,
-  /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+  THREATS_FILE_RE,
   transformThreat,
   true // withPrevious for status badges
 )
@@ -142,6 +134,31 @@ export const threatsData: ThreatData[] = currentItems.map((item) => ({
 }))
 
 export const threatsMetadata = metadata
+
+/** A retired (deprecated/obsolete) threat: just enough to tell a reader who
+ *  follows an old link what happened to it. */
+export interface RetiredThreat {
+  threatId: string
+  deprecatedAt?: string
+  deprecatedReason?: string
+}
+
+function transformRetired(row: RawThreatRow): RetiredThreat | null {
+  if (!isRetiredThreatStatus(row.status) || !row.threat_id) return null
+  return {
+    threatId: row.threat_id,
+    deprecatedAt: row.deprecated_at?.trim() || undefined,
+    deprecatedReason: row.deprecated_reason?.trim() || undefined,
+  }
+}
+
+/** Retired rows of the latest snapshot, by id — so `/threats?id=<retired>`
+ *  can say the entry was retired instead of silently showing nothing. */
+export const retiredThreats: ReadonlyMap<string, RetiredThreat> = new Map(
+  loadLatestCSV<RawThreatRow, RetiredThreat>(modules, THREATS_FILE_RE, transformRetired).data.map(
+    (r) => [r.threatId, r]
+  )
+)
 
 export const THREATS_COUNT = threatsData.length
 

@@ -17,9 +17,20 @@ import {
   Clock,
   List,
   ChevronDown,
+  HelpCircle,
 } from 'lucide-react'
 import { useSearchParams } from 'react-router'
-import { evidenceStrength, threatsData, threatsMetadata } from '../../data/threatsData'
+import {
+  evidenceStrength,
+  retiredThreats,
+  threatsData,
+  threatsMetadata,
+} from '../../data/threatsData'
+import {
+  criticalityLevelsPresent,
+  criticalityRank,
+  UNRATED_CRITICALITY,
+} from '../../data/threatRowRules'
 import type { ThreatItem } from '../../data/threatsData'
 import { AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -75,6 +86,13 @@ import { ThreatEconomicsHeader } from './ThreatEconomicsHeader'
 import { CrqcCapabilityStrip } from './CrqcCapabilityStrip'
 import { CrqcTrajectoryChart } from './CrqcTrajectoryChart'
 import { SectorExposureHero } from './SectorExposureHero'
+import { RetiredThreatNotice } from './RetiredThreatNotice'
+import {
+  matchesThreatQuery,
+  resolveIndustryParam,
+  threatIdParam,
+  wantsHorizonView,
+} from './threatsUrlParams'
 import { THREAT_CLASS_DEFS, threatMatchesClass, type ThreatClass } from './threatClassification'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
@@ -127,25 +145,23 @@ export const ThreatsDashboard: React.FC<{
   // click to discover). `initialTab` is kept only so existing embed call sites
   // (ThreatsEmbed / SimulationView's CRQC-horizon step) can still ask the page
   // to open scrolled to the Horizon section instead of at the top.
+  // The standalone page reads the same request from `?view=horizon` — the link
+  // the simulation's CRQC-horizon steps (and their navigate-away links) use,
+  // which the page used to ignore.
+  const horizonRequested = initialTab === 'horizon' || (!simEmbed && wantsHorizonView(searchParams))
   useEffect(() => {
-    if (initialTab !== 'horizon') return
+    if (!horizonRequested) return
     document.getElementById('crqc-threat-horizon')?.scrollIntoView({ block: 'start' })
-    // Intentionally runs once on mount only — this is an initial scroll position,
-    // not a state to keep syncing.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    // Runs when the request appears (mount, or a same-route link adding
+    // ?view=horizon) — an initial scroll position, not a state to keep syncing.
+  }, [horizonRequested])
 
   const { selectedIndustries: storeIndustries, selectedPersona } = usePersonaStore()
 
   const initialIndustries = useMemo(() => {
     const param = searchParams.get('industry')
     // URL param takes precedence — supports comma-separated multi-industry
-    if (param) {
-      return param.split(',').flatMap((p) => {
-        const match = threatsData.find((d) => d.industry.toLowerCase() === p.trim().toLowerCase())
-        return match ? [match.industry] : []
-      })
-    }
+    if (param) return resolveIndustryParam(param, threatsData)
     // Map all home-page selected industries through the threats name mapping
     return (
       storeIndustries
@@ -172,7 +188,7 @@ export const ThreatsDashboard: React.FC<{
     () => (searchParams.get('dir') as SortDirection | null) ?? 'asc'
   )
   const [selectedThreat, setSelectedThreat] = useState<ThreatItem | null>(() => {
-    const idParam = searchParams.get('id')
+    const idParam = threatIdParam(searchParams)
     if (idParam) {
       return threatsData.find((t) => t.threatId === idParam) ?? null
     }
@@ -204,7 +220,7 @@ export const ThreatsDashboard: React.FC<{
   // Functional setters prevent infinite loops when syncFiltersToUrl triggers a searchParams update.
   useEffect(() => {
     const indParam = searchParams.get('industry')
-    const idParam = searchParams.get('id')
+    const idParam = threatIdParam(searchParams)
     const nextCrit = searchParams.get('criticality') ?? 'All'
     const nextClass = searchParams.get('class') ?? 'All'
     const nextQ = searchParams.get('q') ?? ''
@@ -215,14 +231,13 @@ export const ThreatsDashboard: React.FC<{
       modeParam === 'cards' || modeParam === 'table' ? modeParam : 'table'
 
     if (indParam) {
-      const matches = indParam.split(',').flatMap((p) => {
-        const m = threatsData.find((d) => d.industry.toLowerCase() === p.trim().toLowerCase())
-        return m ? [m.industry] : []
-      })
-      if (matches.length > 0)
+      const matches = resolveIndustryParam(indParam, threatsData)
+      if (matches.length > 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- same-route URL→state sync; the functional setter is a no-op when unchanged
         setSelectedIndustries((prev) =>
           JSON.stringify(prev) !== JSON.stringify(matches) ? matches : prev
         )
+      }
     }
     if (idParam) {
       const found = threatsData.find((t) => t.threatId === idParam)
@@ -275,6 +290,8 @@ export const ThreatsDashboard: React.FC<{
           else next.delete('dir')
           if (id) next.set('id', id)
           else next.delete('id')
+          // Legacy alias (old Endorse/Flag links) — `id` is the one we write.
+          next.delete('threat')
           if (mode !== 'table') next.set('mode', mode)
           else next.delete('mode')
           return next
@@ -305,27 +322,26 @@ export const ThreatsDashboard: React.FC<{
       })
   }, [])
 
-  // Criticality items
+  // Criticality items — only the levels some row actually has, so the filter
+  // never offers a level that matches nothing (it used to offer Medium-High,
+  // which no row carries). 'Unrated' appears only while a blank-criticality
+  // row is live.
   const criticalityItems = useMemo(() => {
+    const icons: Record<string, React.ReactNode> = {
+      Critical: <AlertOctagon size={16} className="text-status-error" />,
+      High: <AlertTriangle size={16} className="text-status-error" />,
+      'Medium-High': <AlertCircle size={16} className="text-status-warning" />,
+      Medium: <Info size={16} className="text-primary" />,
+      Low: <CheckCircle size={16} className="text-status-success" />,
+      [UNRATED_CRITICALITY]: <HelpCircle size={16} className="text-muted-foreground" />,
+    }
     return [
       { id: 'All', label: 'All Levels', icon: null },
-      {
-        id: 'Critical',
-        label: 'Critical',
-        icon: <AlertOctagon size={16} className="text-status-error" />,
-      },
-      {
-        id: 'High',
-        label: 'High',
-        icon: <AlertTriangle size={16} className="text-status-error" />,
-      },
-      {
-        id: 'Medium-High',
-        label: 'Medium-High',
-        icon: <AlertCircle size={16} className="text-status-warning" />,
-      },
-      { id: 'Medium', label: 'Medium', icon: <Info size={16} className="text-primary" /> },
-      { id: 'Low', label: 'Low', icon: <CheckCircle size={16} className="text-status-success" /> },
+      ...criticalityLevelsPresent(threatsData).map((level) => ({
+        id: level,
+        label: level,
+        icon: icons[level] ?? null, // eslint-disable-line security/detect-object-injection
+      })),
     ]
   }, [])
 
@@ -441,13 +457,7 @@ export const ThreatsDashboard: React.FC<{
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       data = data.filter((item) => {
-        const lexicalMatch =
-          item.threatId.toLowerCase().includes(query) ||
-          item.description.toLowerCase().includes(query) ||
-          item.industry.toLowerCase().includes(query) ||
-          item.cryptoAtRisk.toLowerCase().includes(query) ||
-          item.pqcReplacement.toLowerCase().includes(query)
-        if (lexicalMatch) return true
+        if (matchesThreatQuery(item, query)) return true
         if (semanticIdSet && semanticIdSet.has(item.threatId.toLowerCase())) return true
         return false
       })
@@ -455,16 +465,8 @@ export const ThreatsDashboard: React.FC<{
 
     // Sort
     data.sort((a, b) => {
-      // Helper for criticality value
-      const criticalityOrder: Record<string, number> = {
-        Critical: 3,
-        High: 2,
-        'Medium-High': 1.5,
-        Medium: 1,
-        Low: 0,
-      }
-      // eslint-disable-next-line security/detect-object-injection
-      const getCriticalityVal = (c: string) => criticalityOrder[c] ?? 0
+      // Unrated sorts below Low — "we don't know" never outranks "we checked".
+      const getCriticalityVal = criticalityRank
 
       if (sortField === 'industry') {
         if (a.industry !== b.industry) {
@@ -600,6 +602,14 @@ export const ThreatsDashboard: React.FC<{
     return () => clearPageActions()
   }, [simEmbed])
 
+  // An old link to a threat that has since been retired: say so, rather than
+  // opening nothing.
+  const linkedId = threatIdParam(searchParams)
+  const retiredLinked =
+    linkedId && !threatsData.some((t) => t.threatId === linkedId)
+      ? retiredThreats.get(linkedId)
+      : undefined
+
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before the desktop JSX — a pure early return
   // with zero risk to the flag-off/simEmbed path (Rule 1).
@@ -618,6 +628,13 @@ export const ThreatsDashboard: React.FC<{
       )}
 
       {!simEmbed && <PersonaPageNote route="/threats" className="mb-4" />}
+
+      {retiredLinked && (
+        <RetiredThreatNotice
+          retired={retiredLinked}
+          onDismiss={() => syncFiltersToUrl({ id: null })}
+        />
+      )}
 
       <>
         {/* Persona-forward exposure hero — your scoped sector's applicable threats

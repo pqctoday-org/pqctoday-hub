@@ -5,10 +5,10 @@
  * to surface five additive dimensions over the existing `ThreatData` corpus:
  *
  *   #2 threat_class      — HNDL (decrypt-later) vs HNFL/TNFL (forge-later)
- *   #3 detection / SOC   — map a threat to its SOC use case (UC1–UC5)
+ *   #3 detection / SOC   — map a threat to its SOC use cases (UC-1–UC-5)
  *   #4 Shor-resource tier — grade `cryptoAtRisk` by quantum-resource urgency
  *                           (ECC-256 == RSA-2048 urgency, per §3 / Google 2026)
- *   #6 IR playbook        — map a threat to its incident-response playbook
+ *   #6 IR playbooks       — map a threat to the source's IR playbooks
  *
  * Everything here is *derived* from fields already present in the threats CSV
  * (`cryptoAtRisk`, `pqcReplacement`, `description`), reusing the canonical
@@ -18,6 +18,16 @@
  */
 import { ALGORITHM_SECURITY_DATA } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import type { ThreatItem } from '@/data/threatsData'
+import {
+  SOC_IR_PLAYBOOKS,
+  SOC_USE_CASES,
+  type SocIrPlaybook,
+  type SocIrPlaybookId,
+  type SocUseCase,
+  type SocUseCaseId,
+} from '@/data/socQuantumPlaybook'
+
+export type { SocIrPlaybook, SocUseCase } from '@/data/socQuantumPlaybook'
 
 // ---------------------------------------------------------------------------
 // #2 — Threat class: HNDL (confidentiality) vs HNFL/TNFL (authenticity)
@@ -84,7 +94,9 @@ const SIGNATURE_HINTS = [
   'firmware',
   'dsa',
   'authentication',
-  'mac',
+  // No bare 'mac': as a substring it hit KMAC / AES-CMAC — symmetric MACs,
+  // which Shor does not forge — and pulled rows like RAIL-001 into
+  // forge-later on the strength of their symmetric crypto.
 ]
 
 /** Key-exchange / encryption crypto → decrypt-later (HNDL). */
@@ -102,6 +114,8 @@ const ENCRYPTION_HINTS = [
   'x25519',
   'tls',
   'encryption',
+  // 'encrypted' is matched on a word boundary (see WORD_BOUNDARY_HINTS) so
+  // "ADS-B (unencrypted)" — the absence of encryption — is not read as HNDL.
   'encrypted',
   'confidential',
   'kms',
@@ -125,8 +139,17 @@ function corpus(threat: ThreatItem): string {
   return threat.cryptoAtRisk.toLowerCase()
 }
 
+/** Hints that must match as a whole word rather than a substring. */
+const WORD_BOUNDARY_HINTS = new Set(['encrypted'])
+
+function hintMatches(haystack: string, needle: string): boolean {
+  if (!WORD_BOUNDARY_HINTS.has(needle)) return haystack.includes(needle)
+  // eslint-disable-next-line security/detect-non-literal-regexp -- needle is from the fixed hint list above
+  return new RegExp(`\\b${needle}\\b`).test(haystack)
+}
+
 function anyHit(haystack: string, needles: string[]): boolean {
-  return needles.some((n) => haystack.includes(n))
+  return needles.some((n) => hintMatches(haystack, n))
 }
 
 /**
@@ -253,147 +276,101 @@ const TIER_RANK: Record<ShorTier, number> = {
 }
 
 /**
- * Grade a whole threat by the *most urgent* algorithm it puts at risk. We scan
- * the free-text `cryptoAtRisk` (and fall back to the broader corpus) for known
- * algorithm tokens and take the max tier. Heuristic tokens cover the common
- * free-text spellings the CSV uses ("ECDSA P-256", "RSA", "AES", "ECC").
+ * Family-level patterns for the loose free-text the CSV uses. Classical
+ * tokens match only where they are not the tail of a hyphenated name, so the
+ * "dsa" in ML-DSA / SLH-DSA / FN-DSA is never read as classical DSA. First
+ * match wins, in urgency order.
+ */
+const FAMILY_TIERS: [RegExp, ShorTier][] = [
+  [/(?<![\w-])(ecdsa|ecdh|ecc|p-?256|secp256|x25519|ed25519|curve25519)\b/, 'imminent'],
+  [/(?<![\w-])(p-?521|rsa-?4096)\b/, 'near'],
+  [/(?<![\w-])(rsa|dsa|dh|diffie|p-?384)\b/, 'imminent'],
+  [/(?<![\w-])(aes|sha-?\d|sha3|hmac|symmetric)\b/, 'grover'],
+  [/\b(ml-kem|ml-dsa|slh-dsa|fn-dsa|kyber|dilithium|sphincs|falcon|hqc)\b/, 'safe'],
+]
+
+/**
+ * Grade a whole threat by the *most urgent* algorithm it puts at risk, read
+ * from `cryptoAtRisk` ONLY. The description is deliberately excluded — it
+ * usually describes the PQC *fix* ("migrate to ML-KEM"), and reading it
+ * graded 22 active rows, Critical ones included, as "PQC-safe" (same bug
+ * class `corpus()` above already fixed for the threat class). A row whose
+ * at-risk text names no algorithm (e.g. "all public-key cryptography in NC3
+ * systems") is `unknown` — Unscored — never `safe`: the generic word "PQC" is
+ * not an algorithm.
+ *
+ * Canonical-table hits are taken first (max tier). If they found nothing, or
+ * only PQC parameter sets, the family-level patterns for the loose free-text
+ * the CSV uses ("RSA", "ECC", "AES") get a say, so a row naming both a
+ * classical family and a PQC set grades by the classical one.
  */
 export function getShorTier(threat: ThreatItem): ShorTier {
-  const haystack = `${threat.cryptoAtRisk} ${threat.description}`.toLowerCase()
+  const text = threat.cryptoAtRisk.toLowerCase()
 
   // Direct token hits against the canonical table.
   let best: ShorTier = 'unknown'
   for (const { key } of ALGO_INDEX) {
-    if (haystack.includes(key)) {
+    if (text.includes(key)) {
       const tier = tierForAlgo(key)
       // eslint-disable-next-line security/detect-object-injection
       if (tier && TIER_RANK[tier] > TIER_RANK[best]) best = tier
     }
   }
-  if (best !== 'unknown') return best
+  if (best !== 'unknown' && best !== 'safe') return best
 
   // Family-level fallbacks for the loose free-text the CSV often uses.
-  if (/\b(ecdsa|ecdh|ecc|p-?256|secp256|x25519|ed25519|curve25519)\b/.test(haystack))
-    return 'imminent'
-  if (/\b(p-?521|rsa-?4096)\b/.test(haystack)) return 'near'
-  if (/\b(rsa|dsa|dh|diffie|p-?384)\b/.test(haystack)) return 'imminent'
-  if (/\b(aes|sha-?\d|sha3|hmac|symmetric)\b/.test(haystack)) return 'grover'
-  if (/\b(ml-kem|ml-dsa|slh-dsa|kyber|dilithium|sphincs|falcon|hqc|pqc)\b/.test(haystack))
-    return 'safe'
-  return 'unknown'
+  const family = FAMILY_TIERS.find(([re]) => re.test(text))?.[1]
+  // eslint-disable-next-line security/detect-object-injection
+  if (family && TIER_RANK[family] > TIER_RANK[best]) return family
+  return best
 }
 
 // ---------------------------------------------------------------------------
-// #3 — Detection / SOC use case (SOC UC1–UC5, p.165–170)
+// #3 / #6 — Detection use cases and IR playbooks (Applied Quantum SOC section)
 // ---------------------------------------------------------------------------
 
-export interface SocUseCase {
-  /** Use-case id from the SOC chapter (UC1–UC5). */
-  id: string
-  title: string
-  /** What the SOC is watching for. */
-  detection: string
-  /** Telemetry / signal source. */
-  signal: string
+/**
+ * Which of the source's five detection use cases apply to a threat, from its
+ * class. Drift monitoring (UC2) watches every migrated system, so it applies
+ * to every threat; decrypt-later exposure adds downgrade detection (UC1) and
+ * horizon-weighted exfiltration detection (UC5); forge-later exposure adds
+ * certificate-lifecycle (UC3) and signature-integrity (UC4) monitoring. An
+ * unclassified threat gets UC2 only — see `SOC_UNCLASSIFIED_NOTE`.
+ */
+const CLASS_USE_CASES: Record<ThreatClass, SocUseCaseId[]> = {
+  hndl: ['hybrid-downgrade', 'hndl-indicator'],
+  hnfl: ['cert-lifecycle-anomalies', 'tnfl-signature-integrity'],
+  both: [
+    'hybrid-downgrade',
+    'cert-lifecycle-anomalies',
+    'tnfl-signature-integrity',
+    'hndl-indicator',
+  ],
+  unclassified: [],
 }
 
-export const SOC_USE_CASES: Record<string, SocUseCase> = {
-  UC1: {
-    id: 'UC1',
-    title: 'Quantum-vulnerable handshake detection',
-    detection:
-      'Flag TLS/SSH/VPN handshakes still negotiating classical-only key exchange (RSA, ECDH) on internet-facing services.',
-    signal: 'TLS inspection, JA3/JA4 fingerprints, network metadata',
-  },
-  UC2: {
-    id: 'UC2',
-    title: 'Harvest-Now-Decrypt-Later exfiltration',
-    detection:
-      'Detect bulk capture or exfiltration of long-lived encrypted data — the precursor to a future decrypt-later attack.',
-    signal: 'DLP, egress volume anomalies, packet-capture at boundaries',
-  },
-  UC3: {
-    id: 'UC3',
-    title: 'Signature-forgery / certificate abuse',
-    detection:
-      'Monitor for anomalous use of signing keys, unexpected certificate issuance, or code/firmware signed outside change windows.',
-    signal: 'CA/CT logs, code-signing telemetry, PKI audit trail',
-  },
-  UC4: {
-    id: 'UC4',
-    title: 'Crypto-agility / config drift',
-    detection:
-      'Alert when deployed crypto config drifts below policy (downgrade to vulnerable suites, expired PQC pilots reverting).',
-    signal: 'CBOM diffing, config-management state, scanner output',
-  },
-  UC5: {
-    id: 'UC5',
-    title: 'CTI — CRQC capability tracking',
-    detection:
-      'Track external CRQC progress signals and adversary PQC-tooling so detection thresholds move with the threat.',
-    signal: 'Threat-intel feeds, vendor disclosures, CRQC estimate updates',
-  },
+export const SOC_UNCLASSIFIED_NOTE =
+  "This threat's class could not be determined from its at-risk cryptography, so only drift monitoring is shown. Review the at-risk cryptography to decide whether the decrypt-later (UC-1, UC-5) or forge-later (UC-3, UC-4) use cases apply."
+
+export function getSocUseCases(threat: ThreatItem): SocUseCase[] {
+  const ids = new Set<SocUseCaseId>(['crypto-drift', ...CLASS_USE_CASES[getThreatClass(threat)]])
+  return SOC_USE_CASES.filter((uc) => ids.has(uc.id))
 }
 
 /**
- * Map a threat to its primary SOC use case. Forge-later threats route to the
- * signature-forgery use case (UC3); decrypt-later to HNDL exfiltration (UC2);
- * everything classical-handshake-shaped gets the handshake detector (UC1).
- * Always returns at least UC1 + UC5 so every threat shows actionable detection.
+ * Which of the source's four IR playbooks are relevant to a threat. Algorithm
+ * vulnerability disclosure, a credible CRQC announcement and emergency
+ * rotation can reach any quantum-vulnerable system; a confirmed hybrid
+ * downgrade is a key-exchange event, so it applies only to decrypt-later
+ * exposure.
  */
-export function getSocUseCases(threat: ThreatItem): SocUseCase[] {
+export function getIrPlaybooks(threat: ThreatItem): SocIrPlaybook[] {
   const cls = getThreatClass(threat)
-  const out: SocUseCase[] = [SOC_USE_CASES.UC1]
-  if (cls === 'hndl' || cls === 'both') out.push(SOC_USE_CASES.UC2)
-  if (cls === 'hnfl' || cls === 'both') out.push(SOC_USE_CASES.UC3)
-  out.push(SOC_USE_CASES.UC4)
-  out.push(SOC_USE_CASES.UC5)
-  return out
-}
-
-// ---------------------------------------------------------------------------
-// #6 — Incident-response playbook link (SOC p.171–173)
-// ---------------------------------------------------------------------------
-
-export interface IrPlaybook {
-  id: string
-  title: string
-  summary: string
-  /** Anchor on the Command Center IR-playbook generator. */
-  href: string
-}
-
-export const IR_PLAYBOOKS: Record<ThreatClass, IrPlaybook> = {
-  hndl: {
-    id: 'pb-hndl',
-    title: 'Decrypt-Later Exposure Response',
-    summary:
-      'Scope harvested-data blast radius, rotate long-lived keys, re-encrypt at-rest data with PQC, and notify per data-breach obligations.',
-    href: '/business?tool=ir-playbook&scenario=hndl',
-  },
-  hnfl: {
-    id: 'pb-hnfl',
-    title: 'Signature-Forgery / Key-Compromise Response',
-    summary:
-      'Revoke and re-issue affected certificates, invalidate forged artifacts, rebuild trust chains on PQC signatures, and audit downstream verifiers.',
-    href: '/business?tool=ir-playbook&scenario=hnfl',
-  },
-  both: {
-    id: 'pb-both',
-    title: 'Combined Crypto-Compromise Response',
-    summary:
-      'Run both the decrypt-later and forge-later playbooks: contain harvested data and revoke/re-issue credentials in parallel.',
-    href: '/business?tool=ir-playbook&scenario=combined',
-  },
-  unclassified: {
-    id: 'pb-unclassified',
-    title: 'Manual Triage Required',
-    summary:
-      "This threat's at-risk cryptography didn't clearly match a known HNDL or HNFL signal — review manually to determine whether it threatens confidentiality (decrypt-later), authenticity (forge-later), or both before assigning a response playbook.",
-    href: '/business?tool=ir-playbook&scenario=unclassified',
-  },
-}
-
-export function getIrPlaybook(threat: ThreatItem): IrPlaybook {
-  return IR_PLAYBOOKS[getThreatClass(threat)]
+  const ids = new Set<SocIrPlaybookId>([
+    'pqc-vulnerability-disclosure',
+    'credible-crqc-announcement',
+    'emergency-algorithm-rotation',
+  ])
+  if (cls === 'hndl' || cls === 'both') ids.add('confirmed-hybrid-downgrade')
+  return SOC_IR_PLAYBOOKS.filter((pb) => ids.has(pb.id))
 }
