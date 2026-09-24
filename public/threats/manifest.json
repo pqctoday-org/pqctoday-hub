@@ -242,11 +242,12 @@
       "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:42.582337+00:00"
+      "stampedAt": "2026-09-17T13:12:42.582337+00:00",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-18)"
     },
     {
       "threatId": "CROSS-008",
@@ -261,11 +262,12 @@
       "sha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614",
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T12:58:00.384868+00:00"
+      "stampedAt": "2026-09-17T12:58:00.384868+00:00",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-18)"
     },
     {
       "threatId": "CRYPTO-001",
@@ -280,11 +282,12 @@
       "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:43.011158+00:00"
+      "stampedAt": "2026-09-17T13:12:43.011158+00:00",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-18)"
     },
     {
       "threatId": "CRYPTO-002",
@@ -319,11 +322,12 @@
       "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:43.462963+00:00"
+      "stampedAt": "2026-09-17T13:12:43.462963+00:00",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-18)"
     },
     {
       "threatId": "ENERGY-001",
@@ -434,11 +438,12 @@
       "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:44.414177+00:00"
+      "stampedAt": "2026-09-17T13:12:44.414177+00:00",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-18)"
     },
     {
       "threatId": "FIN-003",
@@ -453,11 +458,12 @@
       "sha256": "7662ed9e1a1173031085cac9323a35507e32d0a85b64ca80795377fa71a7d3f6",
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:44.966589+00:00"
+      "stampedAt": "2026-09-17T13:12:44.966589+00:00",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-18)"
     },
     {
       "threatId": "FIN-004",
@@ -492,11 +498,12 @@
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
       "superseded_file": null,
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-12T11:12:39.681156+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:46.824834+00:00"
+      "stampedAt": "2026-09-17T13:12:46.824834+00:00",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-16)"
     },
     {
       "threatId": "AUS-FIN-001",
@@ -567,10 +574,11 @@
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "converted",
       "admittedAt": "2026-09-18T03:14:34.769635+00:00",
-      "admittedBy": "admit.py"
+      "admittedBy": "admit.py",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-24)"
     },
     {
       "threatId": "GOV-003",
@@ -601,11 +609,12 @@
       "sha256": "e83cdaf49a573c5b4df9dd2d6aae28763087054258dbba464362c900cfc9184d",
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T12:58:07.824635+00:00"
+      "stampedAt": "2026-09-17T12:58:07.824635+00:00",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-24)"
     },
     {
       "threatId": "GOV-005",
@@ -752,11 +761,12 @@
       "sha256": "9d0d1947752781220fc4498885aea100f39cd18841ff375fdff80b2d0b650866",
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:49.290455+00:00"
+      "stampedAt": "2026-09-17T13:12:49.290455+00:00",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-16)"
     },
     {
       "threatId": "IOT-003",
@@ -1836,11 +1846,12 @@
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
       "superseded_file": null,
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-12T11:12:40.222825+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:13:47.190107+00:00"
+      "stampedAt": "2026-09-17T13:13:47.190107+00:00",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-16)"
     },
     {
       "threatId": "INTE-001",
@@ -2101,11 +2112,12 @@
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
       "superseded_file": null,
       "artefact": "SOURCE",
-      "identity": "UNCONFIRMED",
+      "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-12T11:12:41.132793+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:13:55.939739+00:00"
+      "stampedAt": "2026-09-17T13:13:55.939739+00:00",
+      "identityBasis": "claim ledger: main_source MATCH on this file (deterministic title overlap, 2026-09-16)"
     },
     {
       "threatId": "CRIT-002",
