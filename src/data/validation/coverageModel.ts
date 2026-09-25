@@ -215,8 +215,17 @@ export interface RegisteredCase {
   exercises: CaseExercise[]
   /** Runtime result-row id, `{engine}` = C++ | Rust. */
   rowId?: string
+  /** katRunner cases: the KatKind that executes this case — the join key the
+   *  Algorithms KAT view and Learn panels use to find their evidence record. */
+  katKind?: KatKindRef
+  /** Local cases whose expected values come from a document outside the vector
+   *  manifest (e.g. 3GPP TS 33.501 Annex C.4): what the case was checked against. */
+  source?: { citation: string; url?: string }
   note?: string
 }
+
+/** A katRunner KatKind as plain data (the registry does not import the runner). */
+export type KatKindRef = { type: string } & Record<string, string | number | undefined>
 
 export type RunnerId =
   'useAcvpSuite' | 'katRunner' | 'mechanismCoverageProbes' | 'profileConditions' | 'oasisProfileXml'
