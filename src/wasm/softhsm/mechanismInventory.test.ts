@@ -17,8 +17,11 @@ import {
   sha256Hex,
   unknownFlagBits,
   captureRawMechanisms,
+  diffInventories,
+  type GeneratedMechanismInventoryFile,
   type RawMechanismRecord,
 } from './mechanismInventory'
+import generated from '@/data/validation/mechanism-inventory.generated.json'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 
 const CKF_SIGN = 0x800
@@ -246,5 +249,53 @@ describe('captureRawMechanisms against a fake ABI', () => {
   it('throws (never returns []) on a failed or empty list', () => {
     expect(() => captureRawMechanisms(fakeModule(0x3), 0)).toThrow(/0x00000003/)
     expect(() => captureRawMechanisms(fakeModule(0, []), 0)).toThrow(/empty list/)
+  })
+})
+
+describe('diffInventories', () => {
+  it('lists one-sided mechanisms and only the info fields that differ', async () => {
+    const cpp = await buildMechanismInventory(SYNTHETIC)
+    const rust = await buildMechanismInventory([
+      ...SYNTHETIC.filter((r) => r.type !== 0x1081).map((r) =>
+        r.type === 0x1040 ? { ...r, ulMinKeySize: 384 } : r
+      ),
+      { type: 0x80000010, infoRv: 0, ulMinKeySize: 0, ulMaxKeySize: 0, flags: 0x400 },
+    ])
+    expect(diffInventories(cpp, rust)).toEqual({
+      onlyCpp: [{ typeHex: '0x00001081', name: 'CKM_AES_ECB' }],
+      onlyRust: [{ typeHex: '0x80000010', name: 'CKM_KECCAK_256' }],
+      sameTypeDifferentInfo: [
+        {
+          typeHex: '0x00001040',
+          name: 'CKM_EC_KEY_PAIR_GEN',
+          cpp: { ulMinKeySize: 256 },
+          rust: { ulMinKeySize: 384 },
+        },
+      ],
+    })
+  })
+})
+
+describe('committed mechanism-inventory.generated.json is self-consistent', () => {
+  // KAT over the committed artifact: recomputing each engine's hash from the
+  // raw fields it records must reproduce the recorded inventorySha256, and the
+  // derived fields must match what this module derives today. (Whether the
+  // record still matches the SHIPPED engines is checked by
+  // `npm run gen:mechanism-inventory:check` and mechanismInventory.local.test.ts.)
+  it.each(['cpp', 'rust'] as const)('%s: recorded hash + derived fields reproduce', async (e) => {
+    const rec = (generated as unknown as GeneratedMechanismInventoryFile).engines[e]
+    const raw: RawMechanismRecord[] = rec.inventory.mechanisms.map((m) => ({
+      type: m.type,
+      infoRv: m.infoRv,
+      ulMinKeySize: m.ulMinKeySize,
+      ulMaxKeySize: m.ulMaxKeySize,
+      flags: m.flags,
+    }))
+    const rebuilt = await buildMechanismInventory(raw)
+    expect(rebuilt.inventorySha256).toBe(rec.inventory.inventorySha256)
+    expect(rebuilt.mechanismCount).toBe(rec.inventory.mechanismCount)
+    expect(rebuilt.mechanisms).toEqual(rec.inventory.mechanisms)
+    expect(rec.inventory.mechanismCount).toBeGreaterThan(50) // not vacuous
+    expect(rec.identity.artifacts.every((a) => /^[0-9a-f]{64}$/.test(a.sha256))).toBe(true)
   })
 })

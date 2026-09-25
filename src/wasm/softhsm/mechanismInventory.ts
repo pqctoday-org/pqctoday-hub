@@ -451,11 +451,68 @@ export interface GeneratedEngineInventory {
   inventory: MechanismInventory
 }
 
+export interface InventoryInfoDifference {
+  typeHex: string
+  name: string | null
+  /** Only the fields that differ, per engine. */
+  cpp: Partial<Pick<MechanismInventoryEntry, 'ulMinKeySize' | 'ulMaxKeySize' | 'flagNames'>>
+  rust: Partial<Pick<MechanismInventoryEntry, 'ulMinKeySize' | 'ulMaxKeySize' | 'flagNames'>>
+}
+
+/**
+ * Advertisement-level disagreement between the two engines (plan G-9 treats a
+ * disagreement as a finding). Informational: which engine is "right" is a
+ * per-mechanism question for the PKCS#11 spec, not for this diff.
+ */
+export interface CrossEngineAdvertisementDiff {
+  onlyCpp: { typeHex: string; name: string | null }[]
+  onlyRust: { typeHex: string; name: string | null }[]
+  sameTypeDifferentInfo: InventoryInfoDifference[]
+}
+
+export const diffInventories = (
+  cpp: MechanismInventory,
+  rust: MechanismInventory
+): CrossEngineAdvertisementDiff => {
+  const byType = (inv: MechanismInventory) => new Map(inv.mechanisms.map((m) => [m.type, m]))
+  const c = byType(cpp)
+  const r = byType(rust)
+  const label = (m: MechanismInventoryEntry) => ({ typeHex: m.typeHex, name: m.name })
+  const sameTypeDifferentInfo: InventoryInfoDifference[] = []
+  for (const [type, cm] of c) {
+    const rm = r.get(type)
+    if (!rm) continue
+    const cd: InventoryInfoDifference['cpp'] = {}
+    const rd: InventoryInfoDifference['rust'] = {}
+    if (cm.ulMinKeySize !== rm.ulMinKeySize) {
+      cd.ulMinKeySize = cm.ulMinKeySize
+      rd.ulMinKeySize = rm.ulMinKeySize
+    }
+    if (cm.ulMaxKeySize !== rm.ulMaxKeySize) {
+      cd.ulMaxKeySize = cm.ulMaxKeySize
+      rd.ulMaxKeySize = rm.ulMaxKeySize
+    }
+    if (cm.flags !== rm.flags) {
+      cd.flagNames = cm.flagNames
+      rd.flagNames = rm.flagNames
+    }
+    if (Object.keys(cd).length > 0) {
+      sameTypeDifferentInfo.push({ ...label(cm), cpp: cd, rust: rd })
+    }
+  }
+  return {
+    onlyCpp: cpp.mechanisms.filter((m) => !r.has(m.type)).map(label),
+    onlyRust: rust.mechanisms.filter((m) => !c.has(m.type)).map(label),
+    sameTypeDifferentInfo,
+  }
+}
+
 export interface GeneratedMechanismInventoryFile {
   _comment: string
   schema: string
   generator: string
   engines: Record<EngineId, GeneratedEngineInventory>
+  crossEngine: CrossEngineAdvertisementDiff
 }
 
 /**
