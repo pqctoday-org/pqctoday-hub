@@ -399,6 +399,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'web-gateway-pqc',
       '5g-security',
       'pqc-testing-validation',
+      'acvp-lab-workflow',
       'hybrid-crypto',
       'crypto-agility',
       'pki-workshop',
@@ -449,6 +450,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'web-gateway-pqc' },
       { type: 'module', moduleId: '5g-security' },
       { type: 'module', moduleId: 'pqc-testing-validation' },
+      { type: 'module', moduleId: 'acvp-lab-workflow' },
       {
         type: 'checkpoint',
         id: 'dev-cp-2',
@@ -532,7 +534,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1850,
+    estimatedMinutes: 1940,
     essentials: [
       'pqc-101',
       'dev-quantum-impact',
@@ -827,6 +829,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'web-gateway-pqc',
       'network-security-pqc',
       'pqc-testing-validation',
+      'acvp-lab-workflow',
       'pki-workshop',
       'pki-enrollment-protocols',
       'kms-pqc',
@@ -908,6 +911,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'web-gateway-pqc' },
       { type: 'module', moduleId: 'network-security-pqc' },
       { type: 'module', moduleId: 'pqc-testing-validation' },
+      { type: 'module', moduleId: 'acvp-lab-workflow' },
       {
         type: 'checkpoint',
         id: 'res-cp-3',
@@ -1018,11 +1022,11 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'quiz' },
     ],
     // Corrected 2026-09-01: this is the sum of researcher's OWN recommendedPath
-    // (51 modules + quiz below), not a whole-catalogue sum — the previous
+    // (52 modules + quiz below; +acvp-lab-workflow 2026-09-24), not a whole-catalogue sum — the previous
     // comment's claim was wrong (the persona test only sums a persona's own
     // path). The true current whole-catalogue sum is ~3285 min (excl. quiz);
     // researcher's path omits 13 real modules not part of its curriculum.
-    estimatedMinutes: 2805,
+    estimatedMinutes: 2895,
     essentials: [
       'pqc-101',
       'research-quantum-impact',

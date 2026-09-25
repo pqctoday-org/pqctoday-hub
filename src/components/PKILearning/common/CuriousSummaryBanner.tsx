@@ -78,6 +78,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   MigrationProgram: 'migration-program',
   PQCRiskManagement: 'pqc-risk-management',
   PQCTestingValidation: 'pqc-testing-validation',
+  AcvpLabWorkflow: 'acvp-lab-workflow',
   PQCBusinessCase: 'pqc-business-case',
   PQCGovernance: 'pqc-governance',
   CodeSigning: 'code-signing',

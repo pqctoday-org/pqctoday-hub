@@ -898,6 +898,18 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/pqc-testing-validation`,
   },
 
+  '/learn/acvp-lab-workflow': {
+    title: 'ACVP Lab Workflow — From Vector Set to Evidence (Draft) | PQC Today',
+    description:
+      'How algorithm validation testing runs: CAVP vs CMVP, ACVP registration and vector sets, test types, PKCS#11 adapter limits, negative testing, and stating results at the evidence level reached. Draft awaiting lab-practitioner review.',
+    canonical: `${BASE_URL}/learn/acvp-lab-workflow`,
+    structuredData: buildModuleSchema(
+      'ACVP Lab Workflow: From Vector Set to Evidence',
+      'PT90M',
+      'Advanced'
+    ),
+  },
+
   '/explore': {
     title: 'Explore | PQC Today',
     description:
