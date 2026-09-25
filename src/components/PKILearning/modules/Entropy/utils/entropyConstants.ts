@@ -7,16 +7,16 @@
  * Bad sample data for educational exercises.
  */
 
-/** Reference quantum random bytes (64 bytes) — generated via crypto.randomBytes()
- * to represent a QRNG-quality sample for educational comparison. */
+/** Stand-in for QRNG output (64 bytes). Classical bytes from crypto.randomBytes(),
+ * NOT from a quantum source; used only to show the data flow. */
 export const QRNG_SAMPLE_64: Uint8Array = new Uint8Array([
   181, 246, 163, 78, 5, 146, 4, 25, 72, 205, 103, 32, 107, 64, 139, 252, 80, 1, 101, 233, 39, 245,
   81, 209, 30, 155, 85, 24, 117, 107, 76, 86, 147, 97, 138, 196, 102, 79, 43, 95, 135, 106, 240, 39,
   102, 54, 196, 198, 212, 207, 48, 119, 114, 156, 170, 143, 12, 128, 84, 57, 159, 186, 78, 248,
 ])
 
-/** Reference quantum random bytes (128 bytes) — generated via crypto.randomBytes()
- * to represent a QRNG-quality sample for educational comparison. */
+/** Stand-in for QRNG output (128 bytes). Classical bytes from crypto.randomBytes(),
+ * NOT from a quantum source; used only to show the data flow. */
 export const QRNG_SAMPLE_128: Uint8Array = new Uint8Array([
   47, 197, 177, 153, 212, 75, 203, 109, 228, 85, 22, 109, 226, 59, 216, 230, 246, 246, 51, 124, 253,
   4, 8, 183, 2, 141, 208, 60, 105, 76, 228, 79, 95, 57, 162, 91, 198, 46, 138, 139, 26, 188, 14, 63,
@@ -85,82 +85,81 @@ export const ESV_STEPS = [
   },
 ] as const
 
-/** DRBG mechanism descriptions for Learn tab */
+/**
+ * SP 800-90A Rev. 1 DRBG mechanisms, for the Learn tab.
+ * Rev. 1 (June 2015) is the current final version and specifies exactly these
+ * three mechanisms (§10.1.1, §10.1.2, §10.2.1). Do not add a SHAKE/XOF-based
+ * entry here: see SP800_90A_REV2_STATUS — no draft of such a mechanism exists.
+ */
 export const DRBG_MECHANISMS = [
   {
     name: 'CTR_DRBG',
-    basis: 'AES (block cipher)',
-    description:
-      'Most widely deployed. Default in OpenSSL and Linux kernel. Uses AES in counter mode.',
+    section: 'SP 800-90A Rev. 1 §10.2.1',
+    basis: 'Block cipher (AES; Rev. 1 also allows TDEA)',
+    description: 'Uses an approved block cipher in counter mode for state update and output.',
     strengths:
-      'Fast on hardware with AES-NI. Well-studied. FIPS-validated implementations widely available.',
+      'Engineering note: fast where the platform has AES hardware support; widely implemented.',
   },
   {
     name: 'Hash_DRBG',
-    basis: 'SHA-256 / SHA-512',
-    description:
-      'Uses hash functions for state update and output. Simpler construction with larger internal state.',
-    strengths:
-      'No block cipher dependency. Larger state resists state compromise. Good for resource-constrained devices.',
+    section: 'SP 800-90A Rev. 1 §10.1.1',
+    basis: 'Approved hash function (e.g. SHA-256, SHA-512)',
+    description: 'Uses an approved hash function for state update and output.',
+    strengths: 'Engineering note: no block-cipher dependency.',
   },
   {
     name: 'HMAC_DRBG',
-    basis: 'HMAC-SHA-256 / HMAC-SHA-384',
+    section: 'SP 800-90A Rev. 1 §10.1.2',
+    basis: 'HMAC with an approved hash function',
     description:
-      'Used in deterministic signatures (RFC 6979). Strongest security proof of the three mechanisms.',
-    strengths:
-      'Provable security reduction to HMAC. Used for deterministic ECDSA. Clean extract-then-expand design.',
-  },
-  {
-    name: 'XOF_DRBG',
-    basis: 'SHAKE128 / SHAKE256',
-    description:
-      'Added in SP 800-90A Rev 2. Uses extendable-output functions (XOFs) for state update and output.',
-    strengths:
-      'Ideal synergy with PQC algorithms (like ML-KEM and ML-DSA) that heavily utilize SHAKE. Highly parallelizable.',
+      'Uses HMAC for state update and output. RFC 6979 deterministic (EC)DSA derives its per-signature k from HMAC_DRBG.',
+    strengths: 'Engineering note: simple construction built only on HMAC.',
   },
 ] as const
 
-/** TRNG vs QRNG comparison data */
+/**
+ * Status of SP 800-90A Rev. 2, checked 2026-09-24 against
+ * https://csrc.nist.gov/pubs/sp/800/90/a/r2/iprd — an announced intention,
+ * not a draft and not a standard.
+ */
+export const SP800_90A_REV2_STATUS = {
+  url: 'https://csrc.nist.gov/pubs/sp/800/90/a/r2/iprd',
+  checkedOn: '2026-09-24',
+  stage: 'Pre-draft call for comments',
+  published: '2025-09-04',
+  commentsClosed: '2025-11-04',
+  note: 'NIST has announced that the revision will introduce a DRBG construction based on the SHAKE extendable-output functions of FIPS 202. No draft text has been published, so no such mechanism is specified or approved yet.',
+} as const
+
+/**
+ * TRNG vs QRNG, for the Learn tab. Both kinds are noise sources judged by the
+ * same SP 800-90B criteria; the certificate numbers below were checked on the
+ * CMVP entropy-validation search on 2026-09-24.
+ */
 export const RNG_COMPARISON = [
   {
-    property: 'Physical Source',
-    trng: 'Thermal noise, shot noise, clock jitter',
-    qrng: 'Photon detection, vacuum fluctuations, beam splitting',
+    property: 'Noise source',
+    trng: 'A classical physical or non-physical process, e.g. thermal noise, clock or CPU-timing jitter',
+    qrng: 'A quantum process, e.g. photon detection or quantum tunnelling',
   },
   {
-    property: 'Randomness Basis',
-    trng: 'Classical physics (chaotic/unpredictable processes)',
-    qrng: 'Quantum mechanics (Born rule, measurement uncertainty)',
+    property: 'Validation criteria (FIPS 140-3)',
+    trng: 'SP 800-90B: noise-source model, entropy estimate from raw data, health tests',
+    qrng: 'The same SP 800-90B requirements — no separate track for quantum sources',
   },
   {
-    property: 'Common Hardware',
-    trng: 'Intel RDRAND/RDSEED, ARM RNDR, TPM RNG',
-    qrng: 'ID Quantique Quantis, Toshiba QRNG, ANU vacuum source',
+    property: 'Example Entropy Validation Certificates',
+    trng: 'E19 SUSE Kernel CPU Time Jitter RNG; E280 AWS-LC CPU Jitter RNG Entropy Source',
+    qrng: 'E63 IDQ Quantis IID QRNG (QRNG chips); E145 QuintessenceLabs qStream 100',
   },
   {
-    property: 'Throughput',
-    trng: '~1-3 Gbps (Intel RDRAND)',
-    qrng: '~1-4 Gbps (commercial devices)',
+    property: 'What security rests on',
+    trng: 'The noise source really delivering its assessed min-entropy, checked in operation by health tests',
+    qrng: 'The same. Quantum physics describes the ideal process; a real device can still fail or degrade, which is what health tests are for',
   },
   {
-    property: 'Quantum-Safe',
-    trng: 'Yes — not based on computational assumptions',
-    qrng: 'Yes — guaranteed by quantum physics',
-  },
-  {
-    property: 'Availability',
-    trng: 'Built into most modern CPUs and security chips',
-    qrng: 'Standalone devices or cloud API services',
-  },
-  {
-    property: 'Cost',
-    trng: 'Included in CPU (no additional cost)',
-    qrng: '$500-5,000+ for hardware (est.); cloud API pricing varies',
-  },
-  {
-    property: 'Certification',
-    trng: 'NIST ESV, FIPS 140-3, Common Criteria',
-    qrng: 'NIST ESV (emerging), BSI AIS 31, proprietary certification',
+    property: 'What output statistics show',
+    trng: 'Passing statistical tests on output is not an entropy estimate; SP 800-90B estimates come from raw noise-source data',
+    qrng: 'Same — a working CSPRNG passes the same tests, so passing cannot tell the two apart',
   },
 ] as const
