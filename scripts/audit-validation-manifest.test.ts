@@ -96,6 +96,20 @@ describe('audit-validation-manifest — sabotage (temp copy only)', () => {
     expect(codes()).toEqual(expect.arrayContaining(['SCHEMA', 'UNKNOWN_CLASS']))
   })
 
+  it('fails when a file is relabelled to a class its source evidence does not support', () => {
+    const m = readManifest()
+    m.files.find((f) => f.id === 'aesgcm_test')!.evidenceClass = 'published-standard-kat'
+    m.files.find((f) => f.id === 'hkdf_test')!.source.verification = undefined
+    writeManifest(m)
+    const found = auditManifest({ root: tmp, scanRoots: [] }).findings.filter(
+      (f) => f.code === 'CLASS_SOURCE_MISMATCH'
+    )
+    expect(found.map((f) => f.file).sort()).toEqual([
+      'src/data/acvp/aesgcm_test.json',
+      'src/data/acvp/hkdf_test.json',
+    ])
+  })
+
   it('fails when a NIST record loses its upstream SHA-256', () => {
     const m = readManifest()
     const f = m.files.find((x) => x.evidenceClass === 'nist-acvp-reference-sample')!

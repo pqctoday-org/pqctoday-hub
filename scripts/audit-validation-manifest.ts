@@ -11,7 +11,9 @@
  *     reviewed manifest update in the same commit);
  *   - a NIST-class record lacks commit / upstream path / retrieval date / upstream
  *     SHA-256, or disagrees with the vector file's own `_provenance` block;
- *   - an `unverified` record is not quarantined;
+ *   - an `unverified` record is not quarantined, or a class is not backed by the
+ *     matching source kind (a published-standard KAT needs a recorded byte
+ *     verification against the document);
  *   - a test case exists in a file but is not registered (or vice versa);
  *   - a lineage reference dangles;
  *   - the vector file's own `_provenance.producer` implies a different class and
@@ -387,6 +389,30 @@ export function auditManifest(opts: AuditOptions): {
     for (const c of e.cases)
       if (c.evidenceClass === UNVERIFIED && c.status !== 'quarantined')
         err('UNVERIFIED_ACTIVE', `unverified case ${c.caseId} must be quarantined`, e.path)
+
+    // 3b. the class must be backed by the matching kind of source evidence
+    const kind = e.source?.kind
+    const verdict = e.source?.verification?.result
+    const classSourceProblem =
+      e.evidenceClass === 'published-standard-kat'
+        ? kind !== 'published-document'
+          ? `needs source.kind published-document (has ${kind})`
+          : !verdict || verdict === 'mismatch'
+            ? 'needs a recorded source.verification whose result is match/partial'
+            : undefined
+        : e.evidenceClass === 'independent-oracle' && kind !== 'oracle-generated'
+          ? `needs source.kind oracle-generated (has ${kind})`
+          : e.evidenceClass === 'functional-round-trip' &&
+              kind !== 'self-pinned-snapshot' &&
+              kind !== 'oracle-generated'
+            ? `needs a self-pinned or oracle-generated source (has ${kind})`
+            : (e.evidenceClass === 'nist-acvp-reference-sample' ||
+                  e.evidenceClass === 'published-standard-kat') &&
+                verdict === 'mismatch'
+              ? 'source verification recorded a mismatch'
+              : undefined
+    if (classSourceProblem)
+      err('CLASS_SOURCE_MISMATCH', `${e.evidenceClass} ${classSourceProblem}`, e.path)
 
     // 4. NIST provenance completeness + agreement with the in-file block
     const usesNist =
