@@ -806,35 +806,46 @@ export function evaluateDod(d: DodInputs): DodItem[] {
 
   // 7 — frozen hashes + reproducible bundles for every demonstrated target
   {
-    const latest = d.xplat[d.xplat.length - 1]
-    const notReady = latest
-      ? latest.m.targets.filter((t) => !(t.declaredStatus === 'run' && t.publishable === true))
-      : []
+    // Each target is judged by its most recent frozen run in which it was
+    // actually run (runs are sorted oldest → newest). A later run that merely
+    // declares a target "not run" (e.g. a board-only run) must not erase an
+    // earlier real run's frozen, hash-addressed evidence; a later real run
+    // replaces an earlier one, publishable or not.
+    type RunTarget = (typeof d.xplat)[number]['m']['targets'][number]
+    const byTarget = new Map<string, { dir: string; runId: string; t: RunTarget }>()
+    for (const run of d.xplat)
+      for (const t of run.m.targets) {
+        if (!byTarget.has(t.id) || t.declaredStatus === 'run')
+          byTarget.set(t.id, { dir: run.dir, runId: run.m.runId, t })
+      }
+    const judged = [...byTarget.values()]
+    const notReady = judged.filter(
+      ({ t }) => !(t.declaredStatus === 'run' && t.publishable === true)
+    )
     const freezes = listDir(d.root, IN.freeze, (n) => n.endsWith('.freeze.json'))
     const problems: string[] = []
-    if (!latest) problems.push('no frozen cross-target evidence run')
+    if (d.xplat.length === 0) problems.push('no frozen cross-target evidence run')
     if (notReady.length)
       problems.push(
-        `${notReady.length} plan §11 Q3 target(s) in run ${latest!.m.runId} have no publishable frozen evidence: ${notReady
+        `${notReady.length} plan §11 Q3 target(s) have no publishable frozen evidence in any run: ${notReady
           .map(
-            (t) =>
-              `${t.id} (${t.declaredStatus}${t.declaredStatus === 'run' ? ', non-publishable' : ''})`
+            ({ t, runId }) =>
+              `${t.id} (${t.declaredStatus}${t.declaredStatus === 'run' ? `, non-publishable in ${runId}` : ''})`
           )
           .join(', ')}`
       )
     if (freezes.length === 0)
       problems.push(`no release freeze manifest in ${IN.freeze}/ (plan J-4: freeze by 19 October)`)
-    const ready = latest
-      ? latest.m.targets
-          .filter((t) => t.declaredStatus === 'run' && t.publishable === true)
-          .map((t) => t.id)
-      : []
+    const ready = judged
+      .filter(({ t }) => t.declaredStatus === 'run' && t.publishable === true)
+      .map(({ t, runId }) => `${t.id} (${runId})`)
+    const contributing = [...new Set(judged.map(({ dir }) => dir))]
     out.push({
       n: 7,
       item: 'All demonstrated artifacts and targets have frozen hashes and reproducible evidence bundles',
       status: problems.length === 0 ? 'PASS' : 'FAIL',
       evidence: [
-        ...(latest ? [`${latest.dir}/matrix.json`, `${latest.dir}/targets.json`] : []),
+        ...contributing.flatMap((dir) => [`${dir}/matrix.json`, `${dir}/targets.json`]),
         `${IN.freeze}/`,
       ],
       basis:

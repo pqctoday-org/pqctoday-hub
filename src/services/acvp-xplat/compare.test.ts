@@ -67,7 +67,7 @@ const byName = (fixtures: FixtureRef[], name: string) => fixtures.find((f) => f.
 const target = (inputs: TargetInput[], id: string) => inputs.find((i) => i.target.id === id)!
 
 describe('acvp-xplat comparator (WS-H)', () => {
-  it.each(['2026-09-24', '2026-09-24b'])(
+  it.each(['2026-09-24', '2026-09-24b', '2026-09-25-boards'])(
     'frozen run %s: the committed matrix and divergence set are exactly what its evidence produces',
     async (runId) => {
       const dir = path.join(repo, 'evidence/acvp-xplat', runId)

@@ -1,0 +1,67 @@
+{
+  "runId": "2026-09-25-boards",
+  "note": "Board-only run of the frozen 2026-09-24b fixture bundles (identical manifests: ML-DSA 966ec2fa…, ML-KEM d2ea5cd4…) on the two lab boards' CURRENT images (plan acvp-gap-closure-plan-09252026 D4). 'not run' is a status, never a pass; a target whose execution-environment.json misses identity is run but NOT publishable (see matrix.md). The board engines come from different hsm commits than the WASM bundles (i.MX95 44e72072, KV260 7f12c48d vs WASM C++ 7795799b / Rust 417c47a2); the comparator's per-operation policy decides comparability.",
+  "targets": [
+    {
+      "id": "wasm-cpp",
+      "status": "not run",
+      "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded."
+    },
+    {
+      "id": "wasm-rust",
+      "status": "not run",
+      "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded."
+    },
+    {
+      "id": "macos-arm64-cpp",
+      "status": "not run",
+      "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded."
+    },
+    {
+      "id": "macos-arm64-rust",
+      "status": "not run",
+      "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded."
+    },
+    {
+      "id": "linux-x86_64-cpp",
+      "status": "not run",
+      "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded."
+    },
+    {
+      "id": "linux-x86_64-rust",
+      "status": "not run",
+      "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded."
+    },
+    {
+      "id": "linux-arm64-cpp",
+      "status": "not run",
+      "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded."
+    },
+    {
+      "id": "linux-arm64-rust",
+      "status": "not run",
+      "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded."
+    },
+    {
+      "id": "imx95-cpp",
+      "status": "run",
+      "reason": "FRDM-IMX95 on its CURRENT image (build 20260920213212, card 0x232), the image's own /usr/lib/softhsm/libsofthsmv3.so, hsm 44e72072 (build-time SBOM + package version; on-board SHA-256 = the .wic's file). Not rebuilt, not reflashed."
+    },
+    {
+      "id": "imx95-rust",
+      "status": "run",
+      "reason": "FRDM-IMX95 on its CURRENT image (build 20260920213212, card 0x232), the image's own /usr/lib/softhsm/libsofthsmrustv3.so, hsm 44e72072 (build-time SBOM + package version; on-board SHA-256 = the .wic's file). Not rebuilt, not reflashed."
+    },
+    {
+      "id": "kv260-cpp",
+      "status": "run",
+      "reason": "KV260 on its CURRENT image (build 20260925131032, card 0x231, FPGA profile hashsig), the image's own /usr/lib/softhsm/libsofthsmv3.so, hsm 7f12c48d (build-time SBOM + package version; on-board SHA-256 = the .wic's file). Acceleration recorded as unknown (decision D4), so NOT publishable by design."
+    },
+    {
+      "id": "kv260-rust",
+      "status": "run",
+      "reason": "KV260 on its CURRENT image (build 20260925131032, card 0x231, FPGA profile hashsig), the image's own /usr/lib/softhsm/libsofthsmrustv3.so (hw-accel build), hsm 7f12c48d (build-time SBOM + package version; on-board SHA-256 = the .wic's file). Acceleration recorded as unknown (decision D4), so NOT publishable by design."
+    }
+  ],
+  "comparatorPolicyVersion": "pqctoday.acvp-comparator-policy/2"
+}

@@ -8,6 +8,8 @@
     "evidence/acvp-xplat/2026-09-24/targets.json": "68d23bd0090e0a104fd365f60175ccb11b85c53d2eb7aca2f45d103fe69ec775",
     "evidence/acvp-xplat/2026-09-24b/matrix.json": "b3370d4bf4518c7c4519244e921977eeae4a0f07223869397185f1112f3baba8",
     "evidence/acvp-xplat/2026-09-24b/targets.json": "6413cac2139288ae126c4e31035f0110b8b72dc1c0a97e80722841a992715ccd",
+    "evidence/acvp-xplat/2026-09-25-boards/matrix.json": "856379d11fb511974797f2866b281521e41793de29431eea2986c582be4bca81",
+    "evidence/acvp-xplat/2026-09-25-boards/targets.json": "86eba22321773866ab48d3f24f3ccadecdad8e36e72a025eab5b98b27ec65f45",
     "public/data/validation/coverage-matrix.json": "de63e3e33ee410272046fc51cb998d5b460398148d0c3cc2825025016c262b15",
     "src/data/validation/coverage-waivers.json": "abd4e8d218862bd023721caeb2ce09edcb6217941d4fbf5af06c4238306c8b8c",
     "src/data/validation/native-conformance.generated.json": "3c54c9aeeb3c6900ae98a3efe11bc3632ec30c52d0b2f6bf08f9ea070b467281",
@@ -3128,7 +3130,7 @@
   ],
   "crossTarget": {
     "source": "evidence/acvp-xplat",
-    "latestRun": "2026-09-24b",
+    "latestRun": "2026-09-25-boards",
     "runs": [
       {
         "runId": "2026-09-24",
@@ -3653,6 +3655,270 @@
               "fail": 0,
               "unsupported": 0,
               "not run": 345,
+              "not comparable": 0
+            }
+          }
+        ]
+      },
+      {
+        "runId": "2026-09-25-boards",
+        "dir": "evidence/acvp-xplat/2026-09-25-boards",
+        "matrixSha256": "856379d11fb511974797f2866b281521e41793de29431eea2986c582be4bca81",
+        "comparatorPolicyVersion": "pqctoday.acvp-comparator-policy/2",
+        "baselineTarget": "wasm-cpp",
+        "fixtures": [
+          {
+            "name": "ML-KEM-encapDecap-FIPS203",
+            "vsId": 42,
+            "bundleManifestSha256": "d2ea5cd41c49bb156a0301ce033c09a12ccf61837a8edbecd1f9fcdbf8f702fd",
+            "cases": 165
+          },
+          {
+            "name": "ML-DSA-sigVer-FIPS204",
+            "vsId": 42,
+            "bundleManifestSha256": "966ec2faeba6d85fe862b3bead4f0aebf47b784cecd472c2e5fb3a30905f444f",
+            "cases": 180
+          }
+        ],
+        "divergences": 0,
+        "targets": [
+          {
+            "id": "wasm-cpp",
+            "label": "WebAssembly (Node 22, host V8) — C++ engine",
+            "class": "wasm",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "wasm-rust",
+            "label": "WebAssembly (Node 22, host V8) — Rust engine",
+            "class": "wasm",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "macos-arm64-cpp",
+            "label": "Native macOS arm64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "macos-arm64-rust",
+            "label": "Native macOS arm64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-x86_64-cpp",
+            "label": "Native Linux x86-64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-x86_64-rust",
+            "label": "Native Linux x86-64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-arm64-cpp",
+            "label": "Native Linux Arm64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-arm64-rust",
+            "label": "Native Linux Arm64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this board-only run (plan 09-25 §3 P4, decision D4). Same bundles as run 2026-09-24b, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "imx95-cpp",
+            "label": "NXP i.MX95 (CACP Yocto) — C++ engine",
+            "class": "board",
+            "engine": "cpp",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "FRDM-IMX95 on its CURRENT image (build 20260920213212, card 0x232), the image's own /usr/lib/softhsm/libsofthsmv3.so, hsm 44e72072 (build-time SBOM + package version; on-board SHA-256 = the .wic's file). Not rebuilt, not reflashed.",
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "7829da1a43058bf9cc403ac1c161edb5e41add9a7ebda15c3220542618ee3dd8",
+            "sourceCommit": "44e7207229f875bb3bb6e57a70e812886eac0435",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "imx95-rust",
+            "label": "NXP i.MX95 (CACP Yocto) — Rust engine",
+            "class": "board",
+            "engine": "rust",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "FRDM-IMX95 on its CURRENT image (build 20260920213212, card 0x232), the image's own /usr/lib/softhsm/libsofthsmrustv3.so, hsm 44e72072 (build-time SBOM + package version; on-board SHA-256 = the .wic's file). Not rebuilt, not reflashed.",
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "7d57ad56e8d06d9c4332e56b1197de7c2e1f45402395dbac3e3676a967d6ecb0",
+            "sourceCommit": "44e7207229f875bb3bb6e57a70e812886eac0435",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "kv260-cpp",
+            "label": "AMD KV260 (CACP Yocto) — C++ engine",
+            "class": "board",
+            "engine": "cpp",
+            "declaredStatus": "run",
+            "publishable": false,
+            "reason": "KV260 on its CURRENT image (build 20260925131032, card 0x231, FPGA profile hashsig), the image's own /usr/lib/softhsm/libsofthsmv3.so, hsm 7f12c48d (build-time SBOM + package version; on-board SHA-256 = the .wic's file). Acceleration recorded as unknown (decision D4), so NOT publishable by design.",
+            "unmetIdentity": ["acceleration.state"],
+            "emulated": false,
+            "artifactSha256": "d4eb794a0520b894e76dbd26b0d36a1c6cf0a09fcb5c8b94a05aa1e71743e458",
+            "sourceCommit": "7f12c48d5e406c075076b5ea2eaf2d2de63c879b",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "kv260-rust",
+            "label": "AMD KV260 (CACP Yocto) — Rust engine",
+            "class": "board",
+            "engine": "rust",
+            "declaredStatus": "run",
+            "publishable": false,
+            "reason": "KV260 on its CURRENT image (build 20260925131032, card 0x231, FPGA profile hashsig), the image's own /usr/lib/softhsm/libsofthsmrustv3.so (hw-accel build), hsm 7f12c48d (build-time SBOM + package version; on-board SHA-256 = the .wic's file). Acceleration recorded as unknown (decision D4), so NOT publishable by design.",
+            "unmetIdentity": ["acceleration.state"],
+            "emulated": false,
+            "artifactSha256": "3b75af8a0380d417d20d657ff01f6fc8d82b51f99f22705058929ccc97a563a0",
+            "sourceCommit": "7f12c48d5e406c075076b5ea2eaf2d2de63c879b",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
               "not comparable": 0
             }
           }
@@ -4798,9 +5064,13 @@
       "evidence": [
         "evidence/acvp-xplat/2026-09-24b/matrix.json",
         "evidence/acvp-xplat/2026-09-24b/targets.json",
+        "evidence/acvp-xplat/2026-09-24/matrix.json",
+        "evidence/acvp-xplat/2026-09-24/targets.json",
+        "evidence/acvp-xplat/2026-09-25-boards/matrix.json",
+        "evidence/acvp-xplat/2026-09-25-boards/targets.json",
         "evidence/release-freeze/"
       ],
-      "basis": "Frozen and publishable: wasm-cpp, wasm-rust, linux-arm64-cpp, linux-arm64-rust. 8 plan §11 Q3 target(s) in run 2026-09-24b have no publishable frozen evidence: macos-arm64-cpp (not run), macos-arm64-rust (not run), linux-x86_64-cpp (run, non-publishable), linux-x86_64-rust (run, non-publishable), imx95-cpp (not run), imx95-rust (not run), kv260-cpp (not run), kv260-rust (not run); no release freeze manifest in evidence/release-freeze/ (plan J-4: freeze by 19 October)."
+      "basis": "Frozen and publishable: wasm-cpp (2026-09-24b), wasm-rust (2026-09-24b), linux-arm64-cpp (2026-09-24b), linux-arm64-rust (2026-09-24b), imx95-cpp (2026-09-25-boards), imx95-rust (2026-09-25-boards). 6 plan §11 Q3 target(s) have no publishable frozen evidence in any run: macos-arm64-cpp (not run), macos-arm64-rust (not run), linux-x86_64-cpp (run, non-publishable in 2026-09-24b), linux-x86_64-rust (run, non-publishable in 2026-09-24b), kv260-cpp (run, non-publishable in 2026-09-25-boards), kv260-rust (run, non-publishable in 2026-09-25-boards); no release freeze manifest in evidence/release-freeze/ (plan J-4: freeze by 19 October)."
     },
     {
       "n": 8,

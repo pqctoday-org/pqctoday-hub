@@ -1,0 +1,104 @@
+{
+  "envVersion": "pqctoday.execution-environment/1",
+  "recordedAt": "2026-09-25T15:34:57.506Z",
+  "target": {
+    "id": "kv260-rust",
+    "label": "AMD KV260 (CACP Yocto) — Rust engine",
+    "class": "board"
+  },
+  "os": {
+    "name": "AMD Embedded Development Framework Linux distribution 26.06+release-cb75a4c061568fe7fecd552a60b17af9c9e64cf1 (scarthgap)",
+    "version": "26.06-release-cb75a4c061568fe7fecd552a60b17af9c9e64cf1",
+    "kernel": "Linux 6.18.10-xilinx-g4f7afe14f724",
+    "image": {
+      "name": "CACP pqc-cacp-image k26-smk-kv-sdt-multidomain build 20260925131032 (AMD EDF 26.06 scarthgap)",
+      "id": "wic.zst sha256:7cdec7d5c632e875c628959b58a657a168beda3a2d4362d631e5b0cdaf9d4810"
+    }
+  },
+  "arch": {
+    "machine": "aarch64",
+    "pointerBits": 64,
+    "endianness": "little"
+  },
+  "cpu": {
+    "model": "ARMv8 CPU implementer 0x41 (Arm) part 0xd03",
+    "board": "AMD Kria KV260 Vision AI Starter Kit, device-tree model ZynqMP KV260 revB, K26 SOM (Zynq UltraScale+ silicon id 0x04724093)",
+    "features": "fp asimd aes pmull sha1 sha2 crc32 cpuid"
+  },
+  "emulation": {
+    "emulated": false,
+    "mechanism": null,
+    "hostMachine": "bare metal (no hypervisor or container)",
+    "detection": "/proc/self/maps rosetta mapping: absent; cpuinfo vendor_id: None"
+  },
+  "engine": {
+    "id": "rust",
+    "implementation": "pqctoday-hsm softhsmrustv3 (Rust), native cdylib libsofthsmrustv3.so as installed by the CACP Yocto image (meta-pqc-hsm/recipes-crypto/softhsmrustv3/softhsmrustv3_git.bb), built with --features hw-accel",
+    "artifactKind": "shared-library",
+    "artifactPath": "/usr/lib/softhsm/libsofthsmrustv3.so",
+    "artifactSha256": "3b75af8a0380d417d20d657ff01f6fc8d82b51f99f22705058929ccc97a563a0",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": "7f12c48d5e406c075076b5ea2eaf2d2de63c879b",
+    "sourceCommitEvidence": "Not built for this run: the engine is the one installed by the board's current CACP Yocto image, run as found. Source commit from the image's BUILD-TIME records (pqctoday-cacp/out/k26/20260925131032/): SBOM pqc-cacp-image-k26-smk-kv-sdt-multidomain.rootfs-20260925131032.spdx.tar.zst (recipe-softhsmv3.spdx.json, recipe-softhsmrustv3.spdx.json) downloadLocation git+https://github.com/pqctoday-org/pqctoday-hsm.git@7f12c48d5e406c075076b5ea2eaf2d2de63c879b; image package manifest `softhsmrustv3 cortexa72_cortexa53 0.17.0+git0+7f12c48d5e`; recipe SRCREV = PQCTODAY_HSM_SRCREV (meta-pqc-hsm/conf/pqctoday-hsm-src.inc = 7f12c48d5e406c075076b5ea2eaf2d2de63c879b at cacp 520d7861, the clean revision stamped in build-metadata.json). The commit is an ancestor of pqctoday-hsm origin/main. On-board SHA-256 of /usr/lib/softhsm/libsofthsmrustv3.so (3b75af8a0380d417d20d657ff01f6fc8d82b51f99f22705058929ccc97a563a0) equals the same file extracted read-only (debugfs) from that bundle's .wic rootfs. The board runs that image: its root is SD card serial 0x00000231 and the kernel command line's root=PARTUUID=beb82b10-e9a3-49fd-b4e8-443a425f0198 equals the .wic's rootfs partition UUID.",
+    "builtAt": null
+  },
+  "build": {
+    "buildSystem": "cargo via Yocto cargo.bbclass (meta-lts-mixins-rust), CARGO_SRC_DIR=rust, crates pinned by the recipe's crates.inc",
+    "compiler": "rustc 1.96.1 (image testdata.json RUSTVERSION / PREFERRED_VERSION_rust 1.96.1%; the installed .so is stripped, no ELF .comment)",
+    "flags": "CARGO_PROFILE_RELEASE_OPT_LEVEL=3 (recipe at cacp 520d7861); CARGO_BUILD_FLAGS += --features hw-accel (k26 machine); RUSTFLAGS from Yocto cargo.bbclass",
+    "profile": "release (rust/Cargo.toml @ 7f12c48d [profile.release] lto=true; opt-level overridden to 3 by the recipe)",
+    "features": "default = [\"awslc-pq\"] at 7f12c48d, plus hw-accel (pqc-hw UIO/DMA transport + fips204/hw-accel); no acvp; awslc-pq-mlkem-seeded not enabled",
+    "location": "Yocto cross-build (pqctoday-cacp tools/amd-build.sh), image build 20260925131032"
+  },
+  "dependencies": {
+    "openssl": {
+      "linked": false,
+      "version": null,
+      "source": "no libcrypto mapped into the runner process after loading /usr/lib/softhsm/libsofthsmrustv3.so (/proc/self/maps)"
+    },
+    "cryptoBackend": {
+      "name": "AWS-LC mldsa-native / mlkem-native via aws-lc-sys (rust/src/crypto/awslc_pq.rs: ML-KEM decapsulation, ML-DSA pure and external-mu verification) with RustCrypto fips204 (patched) for HashML-DSA and as the fallback, and ml-kem (patched) as the ML-KEM fallback",
+      "version": "aws-lc-sys 0.44.0, fips204 0.4.6, ml-kem 0.2.3 (rust/Cargo.lock @ 7f12c48d)"
+    },
+    "runtime": [
+      {
+        "name": "python",
+        "version": "3.12.12"
+      },
+      {
+        "name": "libc",
+        "version": "glibc 2.39"
+      }
+    ]
+  },
+  "acceleration": {
+    "state": "unknown",
+    "detail": "unknown per plan decision D4 (no per-operation attestation). FPGA profile hashsig loaded (bitstream sha256 619571de6fc69f8febaaec8cf4cb92c8b95fab03693022fc0b4773ba34c44fde, SLH-DSA-SHAKE engine + behaviour TCN); Rust engine built with --features hw-accel; whether any tested operation used the fabric is not proven"
+  },
+  "entropy": {
+    "source": "getrandom crate → getrandom(2)",
+    "exercisedByTestedOperations": false
+  },
+  "runner": {
+    "name": "pqctoday acvp-native (Python/ctypes)",
+    "version": "2.0.0",
+    "language": "python",
+    "languageVersion": "3.12.12"
+  },
+  "fixtureBundle": {
+    "manifestSha256": "d2ea5cd41c49bb156a0301ce033c09a12ccf61837a8edbecd1f9fcdbf8f702fd",
+    "schemaId": "ML-KEM/encapDecap/FIPS203",
+    "vsId": 42
+  },
+  "notes": [
+    "Board: AMD Kria KV260 Vision AI Starter Kit, device-tree model 'ZynqMP KV260 revB' (compatible xlnx,zynqmp-sk-kv260-revB), K26 SOM, Zynq UltraScale+ silicon id 0x04724093 (/sys/devices/soc0/revision), 4× Cortex-A53 (CPU part 0xd03). The SOM/carrier FRU EEPROM was not read (needs root; not required).",
+    "Image: CACP pqc-cacp-image for k26-smk-kv-sdt-multidomain, build id 20260925131032 (bundle pqctoday-cacp/out/k26/20260925131032/build-metadata.json), compressed WIC SHA-256 7cdec7d5c632e875c628959b58a657a168beda3a2d4362d631e5b0cdaf9d4810, cacp revision 520d78610019c1d2fe83c0d736d16cec1b518bcf, AMD EDF 2026.1. The board itself carries no build-identity file (/etc/version and /etc/timestamp are the reproducible-build constant 20180309123456), so the build id comes from the cacp records tied above.",
+    "FPGA at run time (read from the board, unchanged): fpga_manager state 'operating'; /run/pqc/fpga-profile.state active=hashsig result=ok, bitstream_sha256 619571de6fc69f8febaaec8cf4cb92c8b95fab03693022fc0b4773ba34c44fde ('SLH-DSA-SHAKE s-set engine, 4 Keccak lanes, 240 MHz (engine v12b, no SHA-2) + behaviour TCN'), equal to build-metadata.json fpga_profiles.hashsig; UIO devices hashsig@a0100000 and behaviour@a0060000.",
+    "Reached over the lab LAN: 192.168.4.53 on the Mac's en0 (192.168.4.0/22), MAC 00:0a:35:2b:9d:f4 (Xilinx OUI), SSH admin with the operator key. Read-only: runner and bundle staged in a private mktemp dir under /tmp (tmpfs) and removed afterwards; engine-side persistence/logging env vars (SOFTHSMRUST_STATE_FILE, PQC_BEHAVIOUR_RING, PQC_BEHAVIOUR_SRC, PQC_AUTH_LOG, SOFTHSM3_OP_LOG) explicitly unset, so the run used a private in-memory/tmp token and did not touch the appliance's token store or behaviour ring; PQC_HW_DISABLE / PQC_AWSLC_PQ_DISABLE not set (engine defaults). Board clock NTP-synchronised at run time.",
+    "Routing per the coverage matrix in rust/src/crypto/awslc_pq.rs @ 7f12c48d (source reading, not an observed per-case trace): awslc_pq returns None for inputs whose length is not the exact FIPS length or that AWS-LC rejects, and those go to the pure-Rust crates.",
+    "Acceleration recorded as 'unknown' per plan decision D4: hw-accel is compiled in and the hashsig bitstream is loaded, but no per-operation attestation shows whether any tested operation (ML-KEM decapsulation, ML-DSA verification) touched the fabric. Per the cacp hashsig plan, the fabric engine covers SLH-DSA sign/keygen and verification stays on the ARM cores — stated as design intent, not as proof.",
+    "builtAt left null: the image build id 20260925131032 is the bitbake start stamp, and the engine file mtime is clamped to SOURCE_DATE_EPOCH.",
+    "C_GetInfo: cryptoki 3.2, manufacturer 'SoftHSMv3 Rust WASM', library 'PQC PKCS#11 v3.2 Rust WASM' 3.0"
+  ],
+  "envId": "7bfbf634aca1b4a5d38ce2d0b6b943fb42eff175f887e36ee0e5f80cf5bf3332"
+}

@@ -127,6 +127,43 @@ describe('release evidence — committed report', () => {
     expect(report.definitionOfDone[8].status).toBe('HUMAN-REQUIRED')
   })
 
+  it('#7 judges each target by its latest run in which it actually ran', () => {
+    const target = (id: string, declaredStatus: string, publishable: boolean | null) => ({
+      id,
+      declaredStatus,
+      publishable,
+    })
+    const dod = evaluateDod({
+      root: REPO,
+      counts: readRepo(IN.counts),
+      manifest: readRepo(IN.manifest),
+      matrix: readRepo(IN.publicMatrix),
+      runs: [],
+      reviewItems: [],
+      xplat: [
+        {
+          dir: 'evidence/acvp-xplat/r1',
+          m: {
+            runId: 'r1',
+            targets: [target('wasm-cpp', 'run', true), target('board', 'not run', null)],
+          },
+        },
+        // A later board-only run declares wasm-cpp "not run": that must not
+        // erase r1's frozen, publishable evidence for it.
+        {
+          dir: 'evidence/acvp-xplat/r2',
+          m: {
+            runId: 'r2',
+            targets: [target('wasm-cpp', 'not run', null), target('board', 'run', false)],
+          },
+        },
+      ],
+    } as unknown as Parameters<typeof evaluateDod>[0])
+    expect(dod[6].basis).toMatch(/Frozen and publishable: wasm-cpp \(r1\)/)
+    expect(dod[6].basis).toMatch(/board \(run, non-publishable in r2\)/)
+    expect(dod[6].status).toBe('FAIL')
+  })
+
   it('every disclaimer surface named by #4 exists', () => {
     for (const f of DISCLAIMER_SURFACES) expect(fs.existsSync(path.join(REPO, f)), f).toBe(true)
   })
