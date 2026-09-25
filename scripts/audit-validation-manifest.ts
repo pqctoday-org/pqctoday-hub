@@ -59,6 +59,9 @@ const SKIP_DIRS = new Set([
   'playwright-report',
   'test-results',
   '.claude',
+  // sibling-repo (--cross-repo) build output and nested checkouts
+  'target',
+  '.worktrees',
 ])
 // Code, fixtures and snapshots. CSV catalogs and Markdown enrichment dumps
 // (~870 MB, mostly gitignored archives) are excluded: they hold catalog prose,
