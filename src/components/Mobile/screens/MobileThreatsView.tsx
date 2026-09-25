@@ -28,6 +28,7 @@ import {
   getSourceCaveat,
   getThreatLineage,
   secondSourceLines,
+  sourceFactLines,
   sourceIdentityText,
 } from '@/data/threatClaimStatus'
 import { MobileSheet } from '../primitives/Sheet'
@@ -504,6 +505,11 @@ export function MobileThreatsView() {
               {selectedClaimsLine && (
                 <p className="mt-0.5 text-[10.5px] text-muted-foreground">{selectedClaimsLine}</p>
               )}
+              {sourceFactLines(selected).map((f) => (
+                <p key={f.key} className="mt-0.5 text-[10.5px] text-muted-foreground">
+                  {f.text}
+                </p>
+              ))}
               {selected.lastVerified && (
                 <p className="mt-0.5 text-[10.5px] text-muted-foreground">
                   Last verified {selected.lastVerified}

@@ -279,6 +279,17 @@ describe('MobileThreatsView', () => {
     })
   })
 
+  it('the detail sheet states peer review and vetting body when the row has them', () => {
+    const t = threatsData.find((x) => x.peerReviewed && x.vettingBody?.length)!
+    renderView(`/threats?id=${encodeURIComponent(t.threatId)}`)
+    const sheet = screen.getByTestId('threat-detail-sheet')
+    expect(within(sheet).getByText(`Peer reviewed: ${t.peerReviewed}`)).toBeInTheDocument()
+    expect(
+      within(sheet).getByText(`Vetting body: ${t.vettingBody!.join('; ')}`)
+    ).toBeInTheDocument()
+    expect(within(sheet).queryByText(/Confidence score|Accuracy:/)).not.toBeInTheDocument()
+  })
+
   it('the detail sheet shows the source caveat for a ledger-flagged row, and not for others', () => {
     CAVEAT_ROW.id = threatsData[2].threatId
     renderView(`/threats?id=${encodeURIComponent(threatsData[2].threatId)}`)

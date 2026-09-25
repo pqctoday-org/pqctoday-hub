@@ -238,6 +238,25 @@ describe('ThreatDetailDialog — Evidence panel shows lineage, not scores (rulin
     expect(screen.queryByText(/Last verified/)).not.toBeInTheDocument()
   })
 
+  it('shows peer review and vetting body as plain facts, only when present', () => {
+    renderDialog(
+      threat({
+        threatId: 'LIN-1',
+        sourceUrl: 'https://example.org',
+        peerReviewed: 'yes',
+        vettingBody: ['IETF', 'NIST'],
+      })
+    )
+    expect(screen.getByText('Peer reviewed: yes')).toBeInTheDocument()
+    expect(screen.getByText('Vetting body: IETF; NIST')).toBeInTheDocument()
+  })
+
+  it('omits peer review and vetting body when the row has none', () => {
+    renderDialog(threat({ threatId: 'LIN-1', sourceUrl: 'https://example.org' }))
+    expect(screen.queryByText(/Peer reviewed:/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Vetting body:/)).not.toBeInTheDocument()
+  })
+
   it('labels a mirror copy with the original publisher', () => {
     renderDialog(
       threat({
