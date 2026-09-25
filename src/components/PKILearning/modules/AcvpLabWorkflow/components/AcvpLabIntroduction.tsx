@@ -616,8 +616,9 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
                 <Cite s="fips204" at="Alg. 7, line 6" />
               </Td>
               <Td>
-                Product-specific: run in the Playground suite only where an engine advertises it,
-                shown as a skip otherwise; not executed by the ACVP-format prototype
+                Product-specific: executed (Playground suite and ACVP-format prototype) only where
+                an engine advertises 0x403c, and labelled vendor-defined in evidence.json; shown as
+                a skip otherwise
               </Td>
             </tr>
             <tr>

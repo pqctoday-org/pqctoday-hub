@@ -37,7 +37,7 @@ describe('groupOutcomes (vector-set anatomy answers)', () => {
     }
   })
 
-  it('ML-DSA: external pure groups execute, preHash groups are partly executable, internal groups unsupported', async () => {
+  it('ML-DSA: external pure and internal external-mu groups execute, preHash groups are partly executable, internal raw-M′ groups unsupported', async () => {
     const p = await preparePrompt(await PUBLIC_FIXTURES['ML-DSA-sigVer-FIPS204'].loadPrompt())
     if (!p.ok) throw new Error('fixture rejected')
     const o = groupOutcomes(p.plan.items)
@@ -45,7 +45,9 @@ describe('groupOutcomes (vector-set anatomy answers)', () => {
       const props = g.properties
       const expected =
         props.signatureInterface !== 'external'
-          ? 'unsupported'
+          ? props.externalMu === true
+            ? 'executes'
+            : 'unsupported'
           : props.preHash === 'preHash'
             ? 'partly'
             : 'executes'
