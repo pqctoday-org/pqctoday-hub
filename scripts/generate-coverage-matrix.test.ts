@@ -57,12 +57,26 @@ describe('generate-coverage-matrix (committed inputs)', () => {
     expect(files[`${PUBLIC_DIR_REL}/coverage-matrix.html`]).not.toMatch(/<script/i)
   })
 
-  it('the recorded C++ ECDSA P-521 failure is an open gap, never a pass', () => {
+  it('the ECDSA P-521 NIST sample passes on both engines since the hub DER fix (was a recorded C++ fail)', () => {
     const r = matrix.rows.find((x) => x.key === 'CKM_ECDSA_SHA512|verify|P-521|*')!
-    expect(r.engines.cpp.run).toEqual({ pass: 0, fail: 1 })
-    expect(r.engines.rust.run).toEqual({ pass: 1, fail: 0 })
-    expect(r.parity.positive).toBe('divergent')
-    expect(matrix.openGaps.some((g) => g.id.startsWith('recorded-fail:acvp.33#'))).toBe(true)
+    expect(r.engines.cpp.run).toEqual({ pass: 1, fail: 0 })
+    // Rust: the workbench case and the Algorithms (katRunner) case, both passing.
+    expect(r.engines.rust.run).toEqual({ pass: 2, fail: 0 })
+    expect(r.parity.positive).toBe('parity')
+    expect(matrix.openGaps.some((g) => g.id.startsWith('recorded-fail:acvp.33#'))).toBe(false)
+  })
+
+  it('every recorded fail is a documented engine defect and becomes an open gap', () => {
+    const fails = (inputs.runResults ?? []).filter((r) => r.status === 'fail')
+    expect(fails.length).toBeGreaterThan(0)
+    for (const f of fails) {
+      expect(f.registryCase, f.registryCase).toMatch(
+        /^acvp\.(07b\.keycheck|09c\.(sigver|siggen-det))#/
+      )
+      expect(
+        matrix.openGaps.some((g) => g.id === `recorded-fail:${f.registryCase}:${f.engine}`)
+      ).toBe(true)
+    }
   })
 
   it('native and hardware are never counted as pass', () => {
