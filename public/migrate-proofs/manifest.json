@@ -22363,6 +22363,24 @@
       "replacedAt": "2026-09-25T15:17:13.446045+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "migrate r2: previous evidence was a VCF blog; Horizon 8 2606 release notes are the product's own current crypto document"
+    },
+    {
+      "product_id": "oracle-key-vault",
+      "refId": "oracle-key-vault",
+      "file": "oracle-key-vault-d83ccd8d.html",
+      "sizeBytes": 56389,
+      "content_type": "text/html",
+      "url": "https://www.oracle.com/security/database-security/key-vault/",
+      "sha256": "7ccf66ddcd1e7a5ef7228a1ae34c316e8d5a3277f643629bd42c221c11b01658",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-25T15:50:04.210463+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "replacedAt": "2026-09-25T15:50:04.053999+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "proof was the Oracle Database crypto roadmap (another product); the Key Vault product page is the row's evidence (migrate r2 closure review)",
+      "superseded_file": "_superseded-09252026/products/oracle-key-vault-d83ccd8d.html"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
