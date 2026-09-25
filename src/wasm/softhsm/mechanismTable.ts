@@ -675,6 +675,11 @@ export const MECH_TABLE: Record<number, MechEntry> = {
     description: 'HMAC with RIPEMD-160 (historical)',
     family: 'hash',
   },
+  0x00000242: {
+    name: 'CKM_RIPEMD160_HMAC_GENERAL',
+    description: 'HMAC with RIPEMD-160, truncated output length (historical)',
+    family: 'hash',
+  },
   0x00000252: {
     name: 'CKM_SHA256_HMAC_GENERAL',
     description: 'HMAC-SHA-256 with truncated output length',

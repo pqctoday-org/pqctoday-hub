@@ -67,6 +67,8 @@ then `npm run gate:cacp` (see GitHub `gate-cacp`; here it runs against the real 
   - `audit:migrate-proof` — no product claim without evidence.
   - `audit:enrichment-freshness` — enrichment `verify:` steps ran within their window.
   - `gen:timeline-facts:check` — `timelineFacts.generated.ts` matches the CSV.
+  - `audit:validation-manifest` — every `src/data/acvp` vector file is registered in `src/data/validation/vector-manifest.json` with a matching SHA-256, a known evidence class, NIST upstream commit/path/date/hash, registered cases and lineage, and every in-hub copy of a vector (templates, snapshots, `kat/`) is declared and still equal. Local only: `--cross-repo ../pqctoday-hsm` reports sibling-repo copies.
+  - `gen:validation-counts:check` — `validation-counts.generated.json` (the numbers the deck and UI quote) matches the manifest.
   <!-- claims-lint-allow: this entry quotes the phrases the gate bans -->
   - `audit:validation-claims` — no banned validation claims ("ACVP validated", "complete ACVP", "all mechanisms covered", "NIST validated", suite-level "NIST ACVP Known Answer Tests", "Run NIST KAT", self-applied FIPS/CMVP certification) in UI copy, Learn content or the root validation docs; negated uses pass, legitimate ones go in `scripts/audit-validation-claims.allowlist.json`. Pass a path to also lint the conference deck and check its NIST ACVP-Server count (`npm run audit:validation-claims -- ../presentations/fipsandchips2026`; not in CI — the deck is not in this repo).
   - `validate:data:without-priv` — the unified validator minus the checks that need gitignored evidence caches (N18/N22/MP-2/TP-1). Carries TP-2/TP-3.

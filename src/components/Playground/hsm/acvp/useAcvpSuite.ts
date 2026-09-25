@@ -30,6 +30,7 @@ import { hexToBytes } from '@/utils/dataInputUtils'
 import {
   hsm_initialize,
   hsm_finalize,
+  Pkcs11Error,
   hsm_getFirstSlot,
   hsm_initToken,
   hsm_openUserSession,
@@ -144,6 +145,7 @@ import {
 } from '@/wasm/softhsm'
 import type { SoftHSMModule, SLHDSASignOptions } from '@/wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
+import { runMldsaAcvpSection, type AcvpCaseMeta } from './sections/mldsaAcvp'
 import type { HsmKey } from '../HsmContext'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -217,7 +219,7 @@ export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'hashing_mac', label: 'Hashing & MAC', groups: 5 },
   { id: 'kdf', label: 'KDF', groups: 5 },
   { id: 'classical', label: 'Classical Asymmetric', groups: 10 },
-  { id: 'ml_dsa', label: 'ML-DSA', groups: 3 },
+  { id: 'ml_dsa', label: 'ML-DSA', groups: 6 },
   { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 5 },
   { id: 'ml_kem', label: 'ML-KEM', groups: 2 },
 ]
@@ -236,6 +238,9 @@ export interface TestResult {
   status: 'pass' | 'fail' | 'pending' | 'skip'
   details: string
   evidenceTier?: EvidenceTier
+  // Exact upstream identity (tgId/tcId, mode, context length, source commit,
+  // origin) for rows that have one — see sections/mldsaAcvp.ts.
+  caseMeta?: AcvpCaseMeta
   category: CategoryId
 }
 
@@ -421,7 +426,22 @@ export function useAcvpSuite() {
         } catch {
           // Ignore invalid session handle during cross-engine shutdown
         }
-        hsm_initialize(engine.M, ACVP_GLOBAL_SEED)
+        // The seed rides in CK_C_INITIALIZE_ARGS.pReserved, which PKCS#11 v3.2
+        // §5.4 requires to be NULL_PTR. The C++ engine enforces that (its
+        // pReserved seed hook is compiled only under WITH_ACVP_SEED, off in the
+        // shipped bundle) and returns CKR_ARGUMENTS_BAD — which used to abort
+        // the whole run for C++ and dual mode before a single row. Fall back to
+        // a standard unseeded C_Initialize; no reference-sample row depends on
+        // the seed (verification and deterministic signing are seed-free).
+        try {
+          hsm_initialize(engine.M, ACVP_GLOBAL_SEED)
+        } catch (e: unknown) {
+          if (!(e instanceof Pkcs11Error) || e.rv !== 0x00000007 /* CKR_ARGUMENTS_BAD */) throw e
+          addLog(
+            `[${engine.name}] C_Initialize rejected the non-standard pReserved test seed (CKR_ARGUMENTS_BAD) — continuing with a standard, unseeded C_Initialize`
+          )
+          hsm_initialize(engine.M)
+        }
         const slot = hsm_getFirstSlot(engine.M)
         const initSlot = hsm_initToken(engine.M, slot, '12345678', 'ACVP_Token')
         engine.slot = initSlot
@@ -812,7 +832,18 @@ export function useAcvpSuite() {
           }
         }
 
-        // ── 5. ML-DSA SigVer KAT (FIPS 204) ─────────────────────────────
+        // ── 5. ML-DSA SigVer from upstream sigGen output (FIPS 204) ──────
+        // D2-1 (2026-09-24): these tuples are NIST ACVP-Server *sigGen* output
+        // (pk, msg, signature) re-used locally as positive SigVer inputs — a
+        // transformation, not a dedicated NIST SigVer case. The row text says
+        // so; dedicated sigVer cases with NIST's own expected disposition live
+        // in section 5d (sections/mldsaAcvp.ts).
+        const sigGenLineage = (p: { source_url: string }) => {
+          const m = /ACVP-Server\/([0-9a-f]{8})[0-9a-f]*\/gen-val\/json-files\/([^/]+)\//.exec(
+            p.source_url
+          )
+          return m ? `ACVP-Server@${m[1]} ${m[2]}` : p.source_url
+        }
         if (activeCategories.has('ml_dsa')) {
           currentCategory = 'ml_dsa'
           for (const group of mldsaTestVectors.testGroups) {
@@ -820,6 +851,26 @@ export function useAcvpSuite() {
             const algo = group.parameterSet
             const variantNum = parseInt(algo.split('-')[2]) as 44 | 65 | 87
             const id5 = `mldsa-sigver-${algo}-${eName}`
+            const lineage5 = `upstream sigGen tg${group.tgId}/tc${test.tcId} → local SigVer`
+            const testCase5 = `SigVer · ${lineage5} · pure · ctx 0B`
+            const caseMeta5: AcvpCaseMeta = {
+              origin: 'nist-acvp-server',
+              upstreamOperation: 'sigGen',
+              localOperation: 'sigVer',
+              parameterSet: algo,
+              mode: 'pure',
+              contextBytes: 0,
+              messageBytes: test.msg.length / 2,
+              expected: 'valid',
+              tgId: group.tgId,
+              tcId: test.tcId,
+              source: {
+                repo: 'https://github.com/usnistgov/ACVP-Server',
+                commit: mldsaTestVectors._provenance.source_release,
+                path: 'gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json',
+                sha256: mldsaTestVectors._provenance.source_sha256,
+              },
+            }
             addLog(`[${eName}] Testing ${algo} SigVer (FIPS 204)...`)
             addLog(
               `  ACVP PK: ${test.pk.slice(0, 32)}… | Sig[${test.sig.length / 2}B]: ${test.sig.slice(0, 32)}…`
@@ -846,13 +897,16 @@ export function useAcvpSuite() {
               await pushResult({
                 id: id5,
                 algorithm: `${algo} (${eName})`,
-                testCase: 'SigVer KAT',
+                testCase: testCase5,
                 referenceUrl: REF.mldsa,
                 evidenceTier: deriveEvidenceTier(mldsaTestVectors._provenance),
+                caseMeta: caseMeta5,
                 status: isValid ? 'pass' : 'fail',
-                details: isValid
-                  ? `Verified sig[${sigBytes.length}B]: ${mldsaSigHex}…`
-                  : 'Signature verification failed',
+                details:
+                  (isValid
+                    ? `Verified sig[${sigBytes.length}B]: ${mldsaSigHex}…`
+                    : 'Signature verification failed') +
+                  ` · NIST sigGen output re-used as a positive SigVer tuple (${sigGenLineage(mldsaTestVectors._provenance)})`,
               })
               addLog(
                 `[${eName}] [id:${id5}] ${algo} SigVer: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${mldsaSigHex}…`
@@ -862,9 +916,10 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `mldsa-err-${algo}-${eName}`,
                 algorithm: `${algo} (${eName})`,
-                testCase: 'SigVer KAT',
+                testCase: testCase5,
                 referenceUrl: REF.mldsa,
                 evidenceTier: deriveEvidenceTier(mldsaTestVectors._provenance),
+                caseMeta: caseMeta5,
                 status: 'fail',
                 details: errorMessage,
               })
@@ -882,6 +937,24 @@ export function useAcvpSuite() {
           for (const [paramSet, tv] of Object.entries(mldsaExtendedTestVectors.context)) {
             const variantNum = parseInt(paramSet.split('-')[2]) as 44 | 65 | 87
             const id5b = `mldsa-ctx-sigver-${paramSet}-${eName}`
+            const testCase5b = `SigVer · upstream sigGen-tr1 tc${tv.tcId} → local SigVer · pure · ctx ${tv.context.length / 2}B`
+            const caseMeta5b: AcvpCaseMeta = {
+              origin: 'nist-acvp-server',
+              upstreamOperation: 'sigGen',
+              localOperation: 'sigVer',
+              parameterSet: paramSet,
+              mode: 'pure',
+              contextBytes: tv.context.length / 2,
+              messageBytes: tv.message.length / 2,
+              expected: 'valid',
+              tcId: tv.tcId,
+              source: {
+                repo: 'https://github.com/usnistgov/ACVP-Server',
+                commit: mldsaExtendedTestVectors._provenance.source_release,
+                path: 'gen-val/json-files/ML-DSA-sigGen-FIPS204-tr1/internalProjection.json',
+                sha256: mldsaExtendedTestVectors._provenance.source_sha256,
+              },
+            }
             addLog(
               `[${eName}] Testing ${paramSet} SigVer with context (FIPS 204 §5.2, tcId=${tv.tcId})...`
             )
@@ -906,11 +979,14 @@ export function useAcvpSuite() {
               await pushResult({
                 id: id5b,
                 algorithm: `${paramSet} (${eName})`,
-                testCase: `SigVer KAT (context, ${tv.context.length / 2}B)`,
+                testCase: testCase5b,
                 referenceUrl: REF.mldsa,
                 evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
+                caseMeta: caseMeta5b,
                 status: isValid ? 'pass' : 'fail',
-                details: isValid ? 'NIST vector verified with non-empty context' : 'verify=false',
+                details:
+                  (isValid ? 'Verified with non-empty context' : 'verify=false') +
+                  ` · NIST sigGen output re-used as a positive SigVer tuple (${sigGenLineage(mldsaExtendedTestVectors._provenance)})`,
               })
               addLog(
                 `[${eName}] [id:${id5b}] ${paramSet} context SigVer: ${isValid ? 'PASS' : 'FAIL'}`
@@ -920,9 +996,10 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `mldsa-ctx-err-${paramSet}-${eName}`,
                 algorithm: `${paramSet} (${eName})`,
-                testCase: 'SigVer KAT (context)',
+                testCase: testCase5b,
                 referenceUrl: REF.mldsa,
                 evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
+                caseMeta: caseMeta5b,
                 status: 'fail',
                 details: errorMessage,
               })
@@ -935,6 +1012,25 @@ export function useAcvpSuite() {
           for (const [paramSet, tv] of Object.entries(mldsaExtendedTestVectors.preHash)) {
             const variantNum = parseInt(paramSet.split('-')[2]) as 44 | 65 | 87
             const id5c = `mldsa-prehash-sigver-${paramSet}-${eName}`
+            const testCase5c = `SigVer · upstream sigGen-tr1 tc${tv.tcId} → local SigVer · HashML-DSA/${tv.hashAlg} · ctx ${(tv.context ?? '').length / 2}B`
+            const caseMeta5c: AcvpCaseMeta = {
+              origin: 'nist-acvp-server',
+              upstreamOperation: 'sigGen',
+              localOperation: 'sigVer',
+              parameterSet: paramSet,
+              mode: 'preHash',
+              hashAlg: tv.hashAlg,
+              contextBytes: (tv.context ?? '').length / 2,
+              messageBytes: tv.message.length / 2,
+              expected: 'valid',
+              tcId: tv.tcId,
+              source: {
+                repo: 'https://github.com/usnistgov/ACVP-Server',
+                commit: mldsaExtendedTestVectors._provenance.source_release,
+                path: 'gen-val/json-files/ML-DSA-sigGen-FIPS204-tr1/internalProjection.json',
+                sha256: mldsaExtendedTestVectors._provenance.source_sha256,
+              },
+            }
             addLog(
               `[${eName}] Testing ${paramSet} HashML-DSA SigVer (${tv.hashAlg}, tcId=${tv.tcId})...`
             )
@@ -962,11 +1058,14 @@ export function useAcvpSuite() {
               await pushResult({
                 id: id5c,
                 algorithm: `${paramSet} (${eName})`,
-                testCase: `HashML-DSA SigVer KAT (${tv.hashAlg})`,
+                testCase: testCase5c,
                 referenceUrl: REF.mldsa,
                 evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
+                caseMeta: caseMeta5c,
                 status: isValid ? 'pass' : 'fail',
-                details: isValid ? `NIST HashML-DSA/${tv.hashAlg} vector verified` : 'verify=false',
+                details:
+                  (isValid ? `HashML-DSA/${tv.hashAlg} verified` : 'verify=false') +
+                  ` · NIST sigGen output re-used as a positive SigVer tuple (${sigGenLineage(mldsaExtendedTestVectors._provenance)})`,
               })
               addLog(
                 `[${eName}] [id:${id5c}] ${paramSet} HashML-DSA/${tv.hashAlg} SigVer: ${isValid ? 'PASS' : 'FAIL'}`
@@ -976,9 +1075,10 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `mldsa-prehash-err-${paramSet}-${eName}`,
                 algorithm: `${paramSet} (${eName})`,
-                testCase: 'HashML-DSA SigVer KAT',
+                testCase: testCase5c,
                 referenceUrl: REF.mldsa,
                 evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
+                caseMeta: caseMeta5c,
                 status: 'fail',
                 details: errorMessage,
               })
@@ -987,6 +1087,22 @@ export function useAcvpSuite() {
               )
             }
           }
+
+          // ── 5d. ML-DSA reference-sample depth — dedicated NIST SigVer
+          // (positive + negative), product-authored pk/context negatives,
+          // deterministic SigGen byte-match, KeyGen from seed, and honest
+          // skips for upstream groups PKCS#11 cannot express. Self-contained
+          // in sections/mldsaAcvp.ts (WS-D D2-2/D2-3/D2-5, D4).
+          await runMldsaAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mldsa,
+            pushResult,
+            addLog,
+            evidenceTierFor: deriveEvidenceTier,
+          })
 
           // ── 6. ML-DSA Functional Sign+Verify (FIPS 204) — all variants ──
           for (const dsaVariant of [44, 65, 87] as const) {

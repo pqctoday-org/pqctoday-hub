@@ -758,9 +758,27 @@ src/.!*!.DS_Store
 # --upstream is passed explicitly.
 !scripts/audit-capture-integrity.ts
 !scripts/audit-capture-integrity.local.test.ts
+# ACVP remediation WS-G mechanism inventory (G-1/G-2) + advertise-vs-dispatch
+# analysis (G-7). Referenced by committed package.json scripts and they emit
+# the committed src/data/validation/mechanism-*.generated.json — same
+# `scripts/*` trap as above. Public input (the shipped wasm, public hsm source
+# read by commit), public output.
+!scripts/generate-mechanism-inventory.ts
+!scripts/analyze-mechanism-dispatch.ts
+!scripts/analyze-mechanism-dispatch.test.ts
 
 # Local-gate receipts: `.gate-ok-<short sha>` is written by `npm run
 # gate:release` / .husky/pre-push only when every step passed on that commit,
 # and read by the pre-push hook to skip a gate it already ran. Per-machine;
 # never committed. See GATES.md.
 .gate-ok-*
+
+# Validation-vector provenance gate (plan WS-B): every src/data/acvp vector
+# file is registered in src/data/validation/vector-manifest.json with its
+# SHA-256, evidence class, NIST upstream identity, lineage and declared
+# copies; the counts generator derives the public numbers from it. Both run
+# in gate:data (CI) — they MUST be tracked, same reason as the gates above.
+!scripts/audit-validation-manifest.ts
+!scripts/audit-validation-manifest.test.ts
+!scripts/generate-validation-counts.ts
+!scripts/generate-validation-counts.test.ts
