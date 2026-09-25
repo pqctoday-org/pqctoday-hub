@@ -802,3 +802,5 @@ src/.!*!.DS_Store
 # file-not-found for everyone else.
 !scripts/generate-coverage-matrix.ts
 !scripts/generate-coverage-matrix.test.ts
+# WS-I per-case evidence records generator
+!scripts/generate-case-evidence.ts

@@ -102,6 +102,18 @@ export const EVIDENCE_CLASSES: Record<EvidenceClassId, EvidenceClassMeta> = {
   },
 }
 
+/** Chip text per class — the same words on the workbench, Algorithms and Learn. */
+export const EVIDENCE_CLASS_SHORT: Record<EvidenceClassId, string> = {
+  'nist-acvp-reference-sample': 'NIST ACVP sample',
+  'acvts-issued-vector': 'ACVTS-issued',
+  'published-standard-kat': 'Standard KAT',
+  'independent-oracle': 'Oracle comparison',
+  'cross-implementation-differential': 'Differential',
+  'functional-round-trip': 'Functional',
+  'oasis-profile-case': 'OASIS case',
+  'product-mechanism-probe': 'Product probe',
+}
+
 export function isEvidenceClassId(value: unknown): value is EvidenceClassId {
   return typeof value === 'string' && (EVIDENCE_CLASS_IDS as readonly string[]).includes(value)
 }
