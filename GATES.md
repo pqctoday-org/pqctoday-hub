@@ -41,6 +41,7 @@ run on this exact commit is not paid twice):
   - `audit:tokens` — no hard-coded colours.
   - `validate:workshop` — every workshop cue resolves to a real route/slug/fixture.
 - `sync:wasm:check` — the vendored wasm bundles are built from the pqctoday-hsm commit they claim (needs the sibling checkout — only meaningful here).
+- `import:native-conformance:check` — `src/data/validation/native-conformance.generated.json` (the hsm engines' own PKCS#11 conformance reports, shown in the Playground conformance workbench) still equals a fresh import at the pinned hsm commit, and hsm main has committed no newer report than that pin. Reads the sibling `../pqctoday-hsm` by commit (`git show`); skips cleanly when the checkout or the pinned commit is absent, which is why it is not in GitHub CI (CI clones only the hub). Refresh: move `PINNED_HSM_COMMIT` in `scripts/import-native-conformance.ts`, then `npm run import:native-conformance`. It imports reports; regenerating them means re-running the suites in pqctoday-hsm.
 - `gen:landing-counts:check` — landing hero counts match the CSVs.
 - `audit:csv-copy-forward` — no silent row loss between two generations of a dated CSV.
 - `test` — the full vitest suite (also in GitHub, sharded; the local run is the fast path on an M-series machine).
