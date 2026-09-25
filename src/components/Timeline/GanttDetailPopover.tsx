@@ -260,7 +260,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                       confidenceScore={primaryEvent.confidenceScore}
                       trustedSourceIdStatus={primaryEvent.trustedSourceIdStatus}
                       sourceUrl={primaryEvent.sourceUrl}
-                      lastVerifiedDate={primaryEvent.sourceDate}
+                      publishedDate={primaryEvent.sourceDate}
                     />
                   </div>
                 )}

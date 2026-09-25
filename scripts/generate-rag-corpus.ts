@@ -268,6 +268,22 @@ function isInactiveRow(rows: string[][], i: number): boolean {
   return v === 'deprecated' || v === 'obsolete'
 }
 
+// Timeline rows whose capital-S `Status` is unreviewed are withheld from every
+// public surface, the assistant's corpus included (timelineReviewPolicy.json,
+// timeline remediation r2 T-B1, 2026-09-24).
+const TIMELINE_UNREVIEWED: ReadonlySet<string> = new Set(
+  (
+    JSON.parse(
+      fs.readFileSync(path.join(DATA_DIR, 'timelineReviewPolicy.json'), 'utf-8')
+    ) as { unreviewedStatuses: string[] }
+  ).unreviewedStatuses.map((s) => s.trim().toLowerCase())
+)
+function isUnreviewedTimelineRow(rows: string[][], i: number): boolean {
+  const idx = rows[0]?.indexOf('Status') ?? -1
+  if (idx === -1) return false
+  return TIMELINE_UNREVIEWED.has((rows[i]?.[idx] ?? '').trim().toLowerCase())
+}
+
 function isInactiveRecord(rec: Record<string, string>): boolean {
   const v = (rec.status ?? '').trim().toLowerCase()
   return v === 'deprecated' || v === 'obsolete'
@@ -304,7 +320,7 @@ function getTimelineRefIds(): Set<string> {
   if (file) {
     const rows = readCSV(file)
     for (let i = 1; i < rows.length; i++) {
-      if (isInactiveRow(rows, i)) continue
+      if (isInactiveRow(rows, i) || isUnreviewedTimelineRow(rows, i)) continue
       const row = rows[i]
       const country = sanitize(row[0])
       const orgName = sanitize(row[2])
@@ -642,7 +658,7 @@ function processTimeline(): RAGChunk[] {
 
   // Skip header row
   for (let i = 1; i < rows.length; i++) {
-    if (isInactiveRow(rows, i)) continue
+    if (isInactiveRow(rows, i) || isUnreviewedTimelineRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 12) continue
 

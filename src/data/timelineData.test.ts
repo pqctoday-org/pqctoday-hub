@@ -252,3 +252,38 @@ describe('getCountryLastVerified (Phase 8.4 — per-country freshness stamp)', (
     expect(getCountryLastVerified(country)).toBeUndefined()
   })
 })
+
+describe('parseTimelineCSV — review status (timeline remediation r2 T-B1)', () => {
+  const header =
+    'Country,FlagCode,OrgName,OrgFullName,OrgLogoUrl,Type,Category,StartYear,EndYear,Title,Description,SourceUrl,SourceDate,Status,status,event_id'
+  const csv = [
+    header,
+    'Testland,TL,Agency,Agency Full,,Milestone,Deadline,2030,2030,Reviewed Row,d,,,Completed,active,tl-reviewed',
+    'Testland,TL,Agency,Agency Full,,Milestone,Deadline,2031,2031,New Row,d,,,New,active,tl-new',
+    'Testland,TL,Agency,Agency Full,,Milestone,Deadline,2032,2032,Unverified Row,d,,,Unverified — needs review,active,tl-unverified',
+  ].join('\n')
+  const titles = (countries: CountryData[]) =>
+    countries.flatMap((c) => c.bodies.flatMap((b) => b.events.map((e) => e.title)))
+
+  it('withholds New and Unverified rows from the public output', () => {
+    expect(titles(parseTimelineCSV(csv))).toEqual(['Reviewed Row'])
+  })
+
+  it('keeps them only when explicitly asked (private review tooling)', () => {
+    expect(titles(parseTimelineCSV(csv, new Date(), { includeUnreviewed: true }))).toHaveLength(3)
+  })
+
+  it('carries the CSV Status as reviewStatus and leaves the change status unset', () => {
+    const [event] = parseTimelineCSV(csv)[0].bodies[0].events
+    expect(event.reviewStatus).toBe('Completed')
+    expect(event.status).toBeUndefined()
+  })
+
+  it('the live dataset exposes no unreviewed row', () => {
+    const events = timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events))
+    const unreviewed = events.filter((e) =>
+      ['new', 'unverified — needs review'].includes((e.reviewStatus ?? '').toLowerCase())
+    )
+    expect(unreviewed).toEqual([])
+  })
+})

@@ -11,6 +11,7 @@ import type {
 } from '../types/timeline'
 import { complianceFrameworks } from './complianceData'
 import { filterActive } from './loaderUtils'
+import timelineReviewPolicy from './timelineReviewPolicy.json'
 
 // Re-export types for backward compatibility
 export type {
@@ -216,9 +217,28 @@ function parseSaneYear(raw: string | undefined, context: string): number | null 
   return year
 }
 
+const UNREVIEWED_STATUSES: ReadonlySet<string> = new Set(
+  timelineReviewPolicy.unreviewedStatuses.map((s) => s.trim().toLowerCase())
+)
+
+/**
+ * True when a CSV `Status` value marks a row as not yet reviewed
+ * (timelineReviewPolicy.json). Such rows are withheld from the public timeline
+ * until a reviewer changes their Status (user decision T4, 2026-09-24).
+ */
+export function isUnreviewedStatus(status: string | undefined): boolean {
+  return UNREVIEWED_STATUSES.has((status ?? '').trim().toLowerCase())
+}
+
+export interface ParseTimelineOptions {
+  /** Keep rows whose Status is unreviewed. Off for everything public. */
+  includeUnreviewed?: boolean
+}
+
 export function parseTimelineCSV(
   csvContent: string,
-  referenceDate: Date = new Date()
+  referenceDate: Date = new Date(),
+  options: ParseTimelineOptions = {}
 ): CountryData[] {
   const { data: allRows } = Papa.parse<RawTimelineRow>(csvContent.trim(), {
     header: true,
@@ -227,7 +247,11 @@ export function parseTimelineCSV(
 
   // DS01: exclude deprecated/obsolete rows from the Gantt. Rows without a
   // `status` column are treated as active (backwards-compatible).
-  const rows = filterActive(allRows)
+  // Timeline remediation r2 T-B1: unreviewed rows are withheld from the public
+  // output (they stay in the CSV and in the private review queue).
+  const rows = filterActive(allRows).filter(
+    (r) => options.includeUnreviewed || !isUnreviewedStatus(r.Status)
+  )
 
   const countriesMap = new Map<string, CountryData>()
 
@@ -282,7 +306,7 @@ export function parseTimelineCSV(
       description: row.Description || '',
       sourceUrl: row.SourceUrl || '',
       sourceDate: row.SourceDate || '',
-      status: row.Status?.trim(),
+      reviewStatus: row.Status?.trim() || undefined,
       peerReviewed:
         (row.peer_reviewed?.toLowerCase() as TimelineEvent['peerReviewed']) || undefined,
       vettingBody: row.vetting_body
