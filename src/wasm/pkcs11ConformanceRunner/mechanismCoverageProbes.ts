@@ -5,9 +5,12 @@
 // tests that are not covered by the acvp test suites").
 //
 // NOT a "Tier C": that name is already reserved for porting the native
-// engines' own 976/815-check conformance suites into the browser (see
+// engines' own conformance suites into the browser (see
 // pkcs11-hsm-playground-ws11-conformance-runner-plan-08282026.md §3.3) — a
-// much larger, separate undertaking. This is a narrower, product-specific
+// much larger, separate undertaking. Their current counts are NOT written
+// here: they are imported from pqctoday-hsm's committed reports into
+// src/data/validation/native-conformance.generated.json
+// (scripts/import-native-conformance.ts). This is a narrower, product-specific
 // gap-closure pass, surfaced in the UI as its own "Mechanism Coverage"
 // section, not part of the OASIS A/B/C tier sequence at all.
 //
