@@ -2266,6 +2266,1439 @@
       "notes": "Reclassified from the plan baseline's published-standard group to independent-oracle on byte evidence."
     },
     {
+      "id": "aeskw_acvp_test",
+      "path": "src/data/acvp/aeskw_acvp_test.json",
+      "sha256": "a88eb339faea648dc97cd48ab0b66e1040a5bcf3d142025ddb872332b5b40e0e",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json",
+          "upstreamSha256": "f3307d3245bd30ab284fb04df2f24802a3a89de437416bd429426669dc56ff89",
+          "retrieved": "2026-09-25",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-25",
+          "method": "Fetched the upstream file(s) at the pinned commit: SHA-256 recorded as upstreamSha256 (and per-group in _provenance.source_files where a file draws on several upstream files); every local case was produced by a byte-copying subset script and re-compared field-by-field with the upstream case of the same tcId.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "ACVP-AES-KW-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json",
+              "sha256": "f3307d3245bd30ab284fb04df2f24802a3a89de437416bd429426669dc56ff89",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "ACVP-AES-KWP-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json",
+              "sha256": "804f4422bb86e7632bd4ffdf292bd845e8204404f7b3c9eef74f81354bdf68ba",
+              "retrieved": "2026-09-25"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/1/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/2/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/3/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/4/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/5/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/6/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/7/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/8/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/9/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/10/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/11/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/12/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/13/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/14/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/15/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/16/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/17/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/18/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/19/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/20/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/21/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/22/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/23/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 128,
+            "payloadLen": 128,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 5,
+            "tcId": 401
+          },
+          "lineage": ["aeskw-acvp-test-1"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/1/tests/0",
+          "pointer": "/testGroups/1/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 128,
+            "payloadLen": 4096,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 6,
+            "tcId": 501
+          },
+          "lineage": ["aeskw-acvp-test-2"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/2/tests/0",
+          "pointer": "/testGroups/2/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 128,
+            "payloadLen": 128,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 41,
+            "tcId": 4001
+          },
+          "lineage": ["aeskw-acvp-test-3"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/2/tests/1",
+          "pointer": "/testGroups/2/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 128,
+            "payloadLen": 128,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 41,
+            "tcId": 4003
+          },
+          "lineage": ["aeskw-acvp-test-3"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/3/tests/0",
+          "pointer": "/testGroups/3/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 128,
+            "payloadLen": 4096,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 42,
+            "tcId": 4101
+          },
+          "lineage": ["aeskw-acvp-test-4"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/4/tests/0",
+          "pointer": "/testGroups/4/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 192,
+            "payloadLen": 128,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 11,
+            "tcId": 1001
+          },
+          "lineage": ["aeskw-acvp-test-5"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/5/tests/0",
+          "pointer": "/testGroups/5/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 192,
+            "payloadLen": 4096,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 12,
+            "tcId": 1101
+          },
+          "lineage": ["aeskw-acvp-test-6"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/6/tests/0",
+          "pointer": "/testGroups/6/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 192,
+            "payloadLen": 128,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 47,
+            "tcId": 4601
+          },
+          "lineage": ["aeskw-acvp-test-7"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/6/tests/1",
+          "pointer": "/testGroups/6/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 192,
+            "payloadLen": 128,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 47,
+            "tcId": 4614
+          },
+          "lineage": ["aeskw-acvp-test-7"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/7/tests/0",
+          "pointer": "/testGroups/7/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 192,
+            "payloadLen": 4096,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 48,
+            "tcId": 4701
+          },
+          "lineage": ["aeskw-acvp-test-8"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/8/tests/0",
+          "pointer": "/testGroups/8/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 256,
+            "payloadLen": 128,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 17,
+            "tcId": 1601
+          },
+          "lineage": ["aeskw-acvp-test-9"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/9/tests/0",
+          "pointer": "/testGroups/9/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 256,
+            "payloadLen": 4096,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 18,
+            "tcId": 1701
+          },
+          "lineage": ["aeskw-acvp-test-10"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/10/tests/0",
+          "pointer": "/testGroups/10/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 256,
+            "payloadLen": 128,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 53,
+            "tcId": 5201
+          },
+          "lineage": ["aeskw-acvp-test-11"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/10/tests/1",
+          "pointer": "/testGroups/10/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 256,
+            "payloadLen": 128,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 53,
+            "tcId": 5202
+          },
+          "lineage": ["aeskw-acvp-test-11"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/11/tests/0",
+          "pointer": "/testGroups/11/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KW",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KW",
+            "keyLen": 256,
+            "payloadLen": 4096,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 54,
+            "tcId": 5302
+          },
+          "lineage": ["aeskw-acvp-test-12"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/12/tests/0",
+          "pointer": "/testGroups/12/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 128,
+            "payloadLen": 8,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 5,
+            "tcId": 401
+          },
+          "lineage": ["aeskw-acvp-test-13"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/13/tests/0",
+          "pointer": "/testGroups/13/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 128,
+            "payloadLen": 3040,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 1
+          },
+          "lineage": ["aeskw-acvp-test-14"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/14/tests/0",
+          "pointer": "/testGroups/14/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 128,
+            "payloadLen": 8,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 41,
+            "tcId": 4001
+          },
+          "lineage": ["aeskw-acvp-test-15"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/14/tests/1",
+          "pointer": "/testGroups/14/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 128,
+            "payloadLen": 8,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 41,
+            "tcId": 4007
+          },
+          "lineage": ["aeskw-acvp-test-15"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/15/tests/0",
+          "pointer": "/testGroups/15/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 128,
+            "payloadLen": 3040,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 37,
+            "tcId": 3601
+          },
+          "lineage": ["aeskw-acvp-test-16"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/16/tests/0",
+          "pointer": "/testGroups/16/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 192,
+            "payloadLen": 8,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 11,
+            "tcId": 1001
+          },
+          "lineage": ["aeskw-acvp-test-17"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/17/tests/0",
+          "pointer": "/testGroups/17/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 192,
+            "payloadLen": 3040,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 7,
+            "tcId": 601
+          },
+          "lineage": ["aeskw-acvp-test-18"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/18/tests/0",
+          "pointer": "/testGroups/18/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 192,
+            "payloadLen": 8,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 47,
+            "tcId": 4601
+          },
+          "lineage": ["aeskw-acvp-test-19"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/18/tests/1",
+          "pointer": "/testGroups/18/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 192,
+            "payloadLen": 8,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 47,
+            "tcId": 4606
+          },
+          "lineage": ["aeskw-acvp-test-19"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/19/tests/0",
+          "pointer": "/testGroups/19/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 192,
+            "payloadLen": 3040,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 43,
+            "tcId": 4204
+          },
+          "lineage": ["aeskw-acvp-test-20"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/20/tests/0",
+          "pointer": "/testGroups/20/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 256,
+            "payloadLen": 8,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 17,
+            "tcId": 1601
+          },
+          "lineage": ["aeskw-acvp-test-21"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/21/tests/0",
+          "pointer": "/testGroups/21/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "wrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 256,
+            "payloadLen": 3040,
+            "direction": "encrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 13,
+            "tcId": 1201
+          },
+          "lineage": ["aeskw-acvp-test-22"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/22/tests/0",
+          "pointer": "/testGroups/22/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 256,
+            "payloadLen": 8,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 53,
+            "tcId": 5201
+          },
+          "lineage": ["aeskw-acvp-test-23"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/22/tests/1",
+          "pointer": "/testGroups/22/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 256,
+            "payloadLen": 8,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 53,
+            "tcId": 5203
+          },
+          "lineage": ["aeskw-acvp-test-23"]
+        },
+        {
+          "caseId": "aeskw_acvp_test#/testGroups/23/tests/0",
+          "pointer": "/testGroups/23/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-KWP",
+            "revision": "1.0"
+          },
+          "operation": "unwrap",
+          "parameters": {
+            "mode": "KWP",
+            "keyLen": 256,
+            "payloadLen": 3040,
+            "direction": "decrypt",
+            "kwCipher": "cipher"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 49,
+            "tcId": 4801
+          },
+          "lineage": ["aeskw-acvp-test-24"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "aeskw-acvp-test-1",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/0/tests/0"],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT encrypt (keyLen 128, payloadLen 128, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 401) taken from upstream tgId 5 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-2",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/1/tests/0"],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT encrypt (keyLen 128, payloadLen 4096, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 501) taken from upstream tgId 6 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-3",
+          "appliesTo": [
+            "aeskw_acvp_test#/testGroups/2/tests/0",
+            "aeskw_acvp_test#/testGroups/2/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT decrypt (keyLen 128, payloadLen 128, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 4001, 4003) taken from upstream tgId 41 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-4",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/3/tests/0"],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT decrypt (keyLen 128, payloadLen 4096, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 4101) taken from upstream tgId 42 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-5",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/4/tests/0"],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT encrypt (keyLen 192, payloadLen 128, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1001) taken from upstream tgId 11 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-6",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/5/tests/0"],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT encrypt (keyLen 192, payloadLen 4096, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1101) taken from upstream tgId 12 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-7",
+          "appliesTo": [
+            "aeskw_acvp_test#/testGroups/6/tests/0",
+            "aeskw_acvp_test#/testGroups/6/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT decrypt (keyLen 192, payloadLen 128, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 4601, 4614) taken from upstream tgId 47 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-8",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/7/tests/0"],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT decrypt (keyLen 192, payloadLen 4096, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 4701) taken from upstream tgId 48 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-9",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/8/tests/0"],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT encrypt (keyLen 256, payloadLen 128, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1601) taken from upstream tgId 17 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-10",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/9/tests/0"],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT encrypt (keyLen 256, payloadLen 4096, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1701) taken from upstream tgId 18 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-11",
+          "appliesTo": [
+            "aeskw_acvp_test#/testGroups/10/tests/0",
+            "aeskw_acvp_test#/testGroups/10/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT decrypt (keyLen 256, payloadLen 128, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 5201, 5202) taken from upstream tgId 53 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-12",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/11/tests/0"],
+          "upstreamOperation": "ACVP-AES-KW 1.0 AFT decrypt (keyLen 256, payloadLen 4096, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 5302) taken from upstream tgId 54 of gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-13",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/12/tests/0"],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT encrypt (keyLen 128, payloadLen 8, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 401) taken from upstream tgId 5 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-14",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/13/tests/0"],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT encrypt (keyLen 128, payloadLen 3040, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1) taken from upstream tgId 1 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-15",
+          "appliesTo": [
+            "aeskw_acvp_test#/testGroups/14/tests/0",
+            "aeskw_acvp_test#/testGroups/14/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT decrypt (keyLen 128, payloadLen 8, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 4001, 4007) taken from upstream tgId 41 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-16",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/15/tests/0"],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT decrypt (keyLen 128, payloadLen 3040, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 3601) taken from upstream tgId 37 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-17",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/16/tests/0"],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT encrypt (keyLen 192, payloadLen 8, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1001) taken from upstream tgId 11 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-18",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/17/tests/0"],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT encrypt (keyLen 192, payloadLen 3040, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 601) taken from upstream tgId 7 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-19",
+          "appliesTo": [
+            "aeskw_acvp_test#/testGroups/18/tests/0",
+            "aeskw_acvp_test#/testGroups/18/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT decrypt (keyLen 192, payloadLen 8, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 4601, 4606) taken from upstream tgId 47 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-20",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/19/tests/0"],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT decrypt (keyLen 192, payloadLen 3040, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 4204) taken from upstream tgId 43 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-21",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/20/tests/0"],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT encrypt (keyLen 256, payloadLen 8, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1601) taken from upstream tgId 17 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-22",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/21/tests/0"],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT encrypt (keyLen 256, payloadLen 3040, cipher)",
+          "localOperation": "C_WrapKey (output compared to ct)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1201) taken from upstream tgId 13 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-23",
+          "appliesTo": [
+            "aeskw_acvp_test#/testGroups/22/tests/0",
+            "aeskw_acvp_test#/testGroups/22/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT decrypt (keyLen 256, payloadLen 8, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 5201, 5203) taken from upstream tgId 53 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        },
+        {
+          "id": "aeskw-acvp-test-24",
+          "appliesTo": ["aeskw_acvp_test#/testGroups/23/tests/0"],
+          "upstreamOperation": "ACVP-AES-KWP 1.0 AFT decrypt (keyLen 256, payloadLen 3040, cipher)",
+          "localOperation": "C_UnwrapKey (CKA_VALUE compared to pt, or refusal required)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 4801) taken from upstream tgId 49 of gen-val/json-files/ACVP-AES-KWP-1.0/internalProjection.json (7200 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. kwCipher=cipher groups only. Payload lengths: KW the shortest and longest registered (128 and 4096 bits, 64-bit aligned); KWP the shortest (8 bits, one byte) and the longest non-64-bit-aligned (3040 bits = 380 bytes, padding path). Per file x key length (128/192/256) x those two payload lengths: encrypt -> the lowest-tcId case; decrypt -> the lowest-tcId testPassed=true case, plus for the shorter payload the lowest-tcId testPassed=false case. kwCipher=inverse groups (KW-AE/KWP-AE with the inverse cipher) are listed in notExecuted: PKCS#11 v3.2 has no mechanism for them."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, mode, source_path, source_sha256 and source_git_blob_sha added: the file combines the KW and KWP upstream files"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream encrypt/decrypt is executed as C_WrapKey / C_UnwrapKey of a generic secret whose CKA_VALUE is the payload (the KW mechanisms advertise WRAP/UNWRAP only)."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "4 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): no-pkcs11-inverse-cipher-kw-mechanism."
+    },
+    {
       "id": "aeskw_test",
       "path": "src/data/acvp/aeskw_test.json",
       "sha256": "744efc7722aeca2a2f30e5c381927313a0bbe34541c2b7406076163dc368d1b1",
@@ -15444,6 +16877,1594 @@
       ],
       "copies": [],
       "publishabilityGaps": []
+    },
+    {
+      "id": "sha_acvp_boundary_test",
+      "path": "src/data/acvp/sha_acvp_boundary_test.json",
+      "sha256": "87209e8b945ebc2985ae2c2d3accb148b38d0049cb3f1bdb5d1c14b3df84dd28",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server gen-val/json-files/SHA2-256-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-256-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/SHA2-256-1.0/internalProjection.json",
+          "upstreamSha256": "a7e0bf4f5c661f1787b343bf3ae1a809b1e62f8fb2c8a627791510d03a570a6c",
+          "retrieved": "2026-09-25",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-256-1.0/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-25",
+          "method": "Fetched the upstream file(s) at the pinned commit: SHA-256 recorded as upstreamSha256 (and per-group in _provenance.source_files where a file draws on several upstream files); every local case was produced by a byte-copying subset script and re-compared field-by-field with the upstream case of the same tcId.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "SHA2-224-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-224-1.0/internalProjection.json",
+              "sha256": "288d0a4dbec49759c63462ca9e4bd82b794e27f50605c8fca7fad0a415649ca9",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA2-256-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-256-1.0/internalProjection.json",
+              "sha256": "a7e0bf4f5c661f1787b343bf3ae1a809b1e62f8fb2c8a627791510d03a570a6c",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA2-384-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-384-1.0/internalProjection.json",
+              "sha256": "b22d80da99444af78feecaaae49493ee6189f1e6675e49db8764fb77bf16e847",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA2-512-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-512-1.0/internalProjection.json",
+              "sha256": "2b514c517a2ef150d240efc52fdb2c4127925f0b4291b5a5b9153515e0ec7478",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA2-512-224-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-512-224-1.0/internalProjection.json",
+              "sha256": "b596a90659713c52091ea9946e80145aae016ef730c956e5ee4850cf112709a9",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA2-512-256-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-512-256-1.0/internalProjection.json",
+              "sha256": "fb813c4f42c748931978c4b5e6192d52ea156ff4e0797cbbebdf95458c816e5b",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA3-224-2.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-224-2.0/internalProjection.json",
+              "sha256": "9ae4b1480d15526b29498d442125dfcfe80d74fe74c1b56fa840b1fae702ae34",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA3-256-2.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-256-2.0/internalProjection.json",
+              "sha256": "dba4689436c7e440e61dc517210def3e8e09e50c0e9eff29ea66d89bdd0f2c63",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA3-384-2.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-384-2.0/internalProjection.json",
+              "sha256": "e9eae46bd676dc82e911dcc3af92ef0093e0118615b62ab431086fce47574396",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA3-512-2.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-512-2.0/internalProjection.json",
+              "sha256": "b0521468a178f7fd362d63319aa69b708885d08f0c71cee99ac70729f5bdf64b",
+              "retrieved": "2026-09-25"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/1/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/2/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/3/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/4/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/5/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/6/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/7/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/8/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/9/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/10/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/11/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/12/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/13/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/14/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/15/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/16/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "SHA2-224",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-224",
+            "messageBytes": 64,
+            "blockBytes": 64
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 68
+          },
+          "lineage": ["sha-acvp-boundary-test-1"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/0/tests/1",
+          "pointer": "/testGroups/0/tests/1",
+          "algorithm": {
+            "name": "SHA2-224",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-224",
+            "messageBytes": 0,
+            "blockBytes": 64
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 148
+          },
+          "lineage": ["sha-acvp-boundary-test-1"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/0/tests/2",
+          "pointer": "/testGroups/0/tests/2",
+          "algorithm": {
+            "name": "SHA2-224",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-224",
+            "messageBytes": 5,
+            "blockBytes": 64
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 227
+          },
+          "lineage": ["sha-acvp-boundary-test-1"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/0/tests/3",
+          "pointer": "/testGroups/0/tests/3",
+          "algorithm": {
+            "name": "SHA2-224",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-224",
+            "messageBytes": 8064,
+            "blockBytes": 64
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 456
+          },
+          "lineage": ["sha-acvp-boundary-test-1"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/0/tests/4",
+          "pointer": "/testGroups/0/tests/4",
+          "algorithm": {
+            "name": "SHA2-224",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-224",
+            "messageBytes": 55,
+            "blockBytes": 64
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 483
+          },
+          "lineage": ["sha-acvp-boundary-test-1"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/1/tests/0",
+          "pointer": "/testGroups/1/tests/0",
+          "algorithm": {
+            "name": "SHA2-224",
+            "revision": "1.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA2-224",
+            "messageBytes": 28,
+            "blockBytes": 64,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 513
+          },
+          "lineage": ["sha-acvp-boundary-test-2"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/2/tests/0",
+          "pointer": "/testGroups/2/tests/0",
+          "algorithm": {
+            "name": "SHA2-256",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-256",
+            "messageBytes": 222,
+            "blockBytes": 64
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 108
+          },
+          "lineage": ["sha-acvp-boundary-test-3"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/2/tests/1",
+          "pointer": "/testGroups/2/tests/1",
+          "algorithm": {
+            "name": "SHA2-256",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-256",
+            "messageBytes": 1518,
+            "blockBytes": 64
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 164
+          },
+          "lineage": ["sha-acvp-boundary-test-3"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/3/tests/0",
+          "pointer": "/testGroups/3/tests/0",
+          "algorithm": {
+            "name": "SHA2-384",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-384",
+            "messageBytes": 2,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 397
+          },
+          "lineage": ["sha-acvp-boundary-test-4"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/3/tests/1",
+          "pointer": "/testGroups/3/tests/1",
+          "algorithm": {
+            "name": "SHA2-384",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-384",
+            "messageBytes": 119,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 574
+          },
+          "lineage": ["sha-acvp-boundary-test-4"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/3/tests/2",
+          "pointer": "/testGroups/3/tests/2",
+          "algorithm": {
+            "name": "SHA2-384",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-384",
+            "messageBytes": 120,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 827
+          },
+          "lineage": ["sha-acvp-boundary-test-4"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/3/tests/3",
+          "pointer": "/testGroups/3/tests/3",
+          "algorithm": {
+            "name": "SHA2-384",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-384",
+            "messageBytes": 8064,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 831
+          },
+          "lineage": ["sha-acvp-boundary-test-4"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/3/tests/4",
+          "pointer": "/testGroups/3/tests/4",
+          "algorithm": {
+            "name": "SHA2-384",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-384",
+            "messageBytes": 128,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 924
+          },
+          "lineage": ["sha-acvp-boundary-test-4"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/4/tests/0",
+          "pointer": "/testGroups/4/tests/0",
+          "algorithm": {
+            "name": "SHA2-384",
+            "revision": "1.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA2-384",
+            "messageBytes": 48,
+            "blockBytes": 128,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 1025
+          },
+          "lineage": ["sha-acvp-boundary-test-5"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/5/tests/0",
+          "pointer": "/testGroups/5/tests/0",
+          "algorithm": {
+            "name": "SHA2-512",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-512",
+            "messageBytes": 1518,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 87
+          },
+          "lineage": ["sha-acvp-boundary-test-6"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/5/tests/1",
+          "pointer": "/testGroups/5/tests/1",
+          "algorithm": {
+            "name": "SHA2-512",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-512",
+            "messageBytes": 216,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 193
+          },
+          "lineage": ["sha-acvp-boundary-test-6"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/6/tests/0",
+          "pointer": "/testGroups/6/tests/0",
+          "algorithm": {
+            "name": "SHA2-512/224",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-512/224",
+            "messageBytes": 0,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 130
+          },
+          "lineage": ["sha-acvp-boundary-test-7"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/6/tests/1",
+          "pointer": "/testGroups/6/tests/1",
+          "algorithm": {
+            "name": "SHA2-512/224",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-512/224",
+            "messageBytes": 127,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 163
+          },
+          "lineage": ["sha-acvp-boundary-test-7"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/6/tests/2",
+          "pointer": "/testGroups/6/tests/2",
+          "algorithm": {
+            "name": "SHA2-512/224",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-512/224",
+            "messageBytes": 120,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 515
+          },
+          "lineage": ["sha-acvp-boundary-test-7"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/6/tests/3",
+          "pointer": "/testGroups/6/tests/3",
+          "algorithm": {
+            "name": "SHA2-512/224",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-512/224",
+            "messageBytes": 128,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 611
+          },
+          "lineage": ["sha-acvp-boundary-test-7"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/6/tests/4",
+          "pointer": "/testGroups/6/tests/4",
+          "algorithm": {
+            "name": "SHA2-512/224",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-512/224",
+            "messageBytes": 6,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 687
+          },
+          "lineage": ["sha-acvp-boundary-test-7"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/6/tests/5",
+          "pointer": "/testGroups/6/tests/5",
+          "algorithm": {
+            "name": "SHA2-512/224",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-512/224",
+            "messageBytes": 8066,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 755
+          },
+          "lineage": ["sha-acvp-boundary-test-7"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/7/tests/0",
+          "pointer": "/testGroups/7/tests/0",
+          "algorithm": {
+            "name": "SHA2-512/224",
+            "revision": "1.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA2-512/224",
+            "messageBytes": 28,
+            "blockBytes": 128,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 1025
+          },
+          "lineage": ["sha-acvp-boundary-test-8"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/8/tests/0",
+          "pointer": "/testGroups/8/tests/0",
+          "algorithm": {
+            "name": "SHA2-512/256",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-512/256",
+            "messageBytes": 1518,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 455
+          },
+          "lineage": ["sha-acvp-boundary-test-9"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/8/tests/1",
+          "pointer": "/testGroups/8/tests/1",
+          "algorithm": {
+            "name": "SHA2-512/256",
+            "revision": "1.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA2-512/256",
+            "messageBytes": 215,
+            "blockBytes": 128
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 493
+          },
+          "lineage": ["sha-acvp-boundary-test-9"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/9/tests/0",
+          "pointer": "/testGroups/9/tests/0",
+          "algorithm": {
+            "name": "SHA3-224",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-224",
+            "messageBytes": 143,
+            "blockBytes": 144
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 349
+          },
+          "lineage": ["sha-acvp-boundary-test-10"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/9/tests/1",
+          "pointer": "/testGroups/9/tests/1",
+          "algorithm": {
+            "name": "SHA3-224",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-224",
+            "messageBytes": 1,
+            "blockBytes": 144
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 448
+          },
+          "lineage": ["sha-acvp-boundary-test-10"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/9/tests/2",
+          "pointer": "/testGroups/9/tests/2",
+          "algorithm": {
+            "name": "SHA3-224",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-224",
+            "messageBytes": 8192,
+            "blockBytes": 144
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 566
+          },
+          "lineage": ["sha-acvp-boundary-test-10"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/9/tests/3",
+          "pointer": "/testGroups/9/tests/3",
+          "algorithm": {
+            "name": "SHA3-224",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-224",
+            "messageBytes": 0,
+            "blockBytes": 144
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 1028
+          },
+          "lineage": ["sha-acvp-boundary-test-10"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/9/tests/4",
+          "pointer": "/testGroups/9/tests/4",
+          "algorithm": {
+            "name": "SHA3-224",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-224",
+            "messageBytes": 144,
+            "blockBytes": 144
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 1088
+          },
+          "lineage": ["sha-acvp-boundary-test-10"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/10/tests/0",
+          "pointer": "/testGroups/10/tests/0",
+          "algorithm": {
+            "name": "SHA3-224",
+            "revision": "2.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA3-224",
+            "messageBytes": 28,
+            "blockBytes": 144,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 1259
+          },
+          "lineage": ["sha-acvp-boundary-test-11"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/11/tests/0",
+          "pointer": "/testGroups/11/tests/0",
+          "algorithm": {
+            "name": "SHA3-256",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-256",
+            "messageBytes": 135,
+            "blockBytes": 136
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 131
+          },
+          "lineage": ["sha-acvp-boundary-test-12"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/11/tests/1",
+          "pointer": "/testGroups/11/tests/1",
+          "algorithm": {
+            "name": "SHA3-256",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-256",
+            "messageBytes": 8192,
+            "blockBytes": 136
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 800
+          },
+          "lineage": ["sha-acvp-boundary-test-12"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/11/tests/2",
+          "pointer": "/testGroups/11/tests/2",
+          "algorithm": {
+            "name": "SHA3-256",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-256",
+            "messageBytes": 2,
+            "blockBytes": 136
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 847
+          },
+          "lineage": ["sha-acvp-boundary-test-12"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/11/tests/3",
+          "pointer": "/testGroups/11/tests/3",
+          "algorithm": {
+            "name": "SHA3-256",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-256",
+            "messageBytes": 136,
+            "blockBytes": 136
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 1191
+          },
+          "lineage": ["sha-acvp-boundary-test-12"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/12/tests/0",
+          "pointer": "/testGroups/12/tests/0",
+          "algorithm": {
+            "name": "SHA3-256",
+            "revision": "2.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA3-256",
+            "messageBytes": 32,
+            "blockBytes": 136,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 1195
+          },
+          "lineage": ["sha-acvp-boundary-test-13"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/13/tests/0",
+          "pointer": "/testGroups/13/tests/0",
+          "algorithm": {
+            "name": "SHA3-384",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-384",
+            "messageBytes": 0,
+            "blockBytes": 104
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 40
+          },
+          "lineage": ["sha-acvp-boundary-test-14"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/13/tests/1",
+          "pointer": "/testGroups/13/tests/1",
+          "algorithm": {
+            "name": "SHA3-384",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-384",
+            "messageBytes": 104,
+            "blockBytes": 104
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 326
+          },
+          "lineage": ["sha-acvp-boundary-test-14"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/13/tests/2",
+          "pointer": "/testGroups/13/tests/2",
+          "algorithm": {
+            "name": "SHA3-384",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-384",
+            "messageBytes": 8192,
+            "blockBytes": 104
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 381
+          },
+          "lineage": ["sha-acvp-boundary-test-14"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/13/tests/3",
+          "pointer": "/testGroups/13/tests/3",
+          "algorithm": {
+            "name": "SHA3-384",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-384",
+            "messageBytes": 103,
+            "blockBytes": 104
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 821
+          },
+          "lineage": ["sha-acvp-boundary-test-14"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/13/tests/4",
+          "pointer": "/testGroups/13/tests/4",
+          "algorithm": {
+            "name": "SHA3-384",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-384",
+            "messageBytes": 1,
+            "blockBytes": 104
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 882
+          },
+          "lineage": ["sha-acvp-boundary-test-14"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/14/tests/0",
+          "pointer": "/testGroups/14/tests/0",
+          "algorithm": {
+            "name": "SHA3-384",
+            "revision": "2.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA3-384",
+            "messageBytes": 48,
+            "blockBytes": 104,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 939
+          },
+          "lineage": ["sha-acvp-boundary-test-15"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/15/tests/0",
+          "pointer": "/testGroups/15/tests/0",
+          "algorithm": {
+            "name": "SHA3-512",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-512",
+            "messageBytes": 8192,
+            "blockBytes": 72
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 89
+          },
+          "lineage": ["sha-acvp-boundary-test-16"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/15/tests/1",
+          "pointer": "/testGroups/15/tests/1",
+          "algorithm": {
+            "name": "SHA3-512",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-512",
+            "messageBytes": 71,
+            "blockBytes": 72
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 388
+          },
+          "lineage": ["sha-acvp-boundary-test-16"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/15/tests/2",
+          "pointer": "/testGroups/15/tests/2",
+          "algorithm": {
+            "name": "SHA3-512",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-512",
+            "messageBytes": 2,
+            "blockBytes": 72
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 678
+          },
+          "lineage": ["sha-acvp-boundary-test-16"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/15/tests/3",
+          "pointer": "/testGroups/15/tests/3",
+          "algorithm": {
+            "name": "SHA3-512",
+            "revision": "2.0"
+          },
+          "operation": "digest",
+          "parameters": {
+            "hashAlg": "SHA3-512",
+            "messageBytes": 72,
+            "blockBytes": 72
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 680
+          },
+          "lineage": ["sha-acvp-boundary-test-16"]
+        },
+        {
+          "caseId": "sha_acvp_boundary_test#/testGroups/16/tests/0",
+          "pointer": "/testGroups/16/tests/0",
+          "algorithm": {
+            "name": "SHA3-512",
+            "revision": "2.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA3-512",
+            "messageBytes": 64,
+            "blockBytes": 72,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 683
+          },
+          "lineage": ["sha-acvp-boundary-test-17"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "sha-acvp-boundary-test-1",
+          "appliesTo": [
+            "sha_acvp_boundary_test#/testGroups/0/tests/0",
+            "sha_acvp_boundary_test#/testGroups/0/tests/1",
+            "sha_acvp_boundary_test#/testGroups/0/tests/2",
+            "sha_acvp_boundary_test#/testGroups/0/tests/3",
+            "sha_acvp_boundary_test#/testGroups/0/tests/4"
+          ],
+          "upstreamOperation": "SHA2-224 1.0 AFT",
+          "localOperation": "digest (C_Digest) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "5 case(s) (upstream tcId 68, 148, 227, 456, 483) taken from upstream tgId 1 of gen-val/json-files/SHA2-224-1.0/internalProjection.json (517 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-2",
+          "appliesTo": ["sha_acvp_boundary_test#/testGroups/1/tests/0"],
+          "upstreamOperation": "SHA2-224 1.0 MCT",
+          "localOperation": "MCT outer iteration 0 via 1000 chained C_Digest calls, byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 513) taken from upstream tgId 2 of gen-val/json-files/SHA2-224-1.0/internalProjection.json (517 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100): the workbench runs 1000 chained digests, not 100 000"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-3",
+          "appliesTo": [
+            "sha_acvp_boundary_test#/testGroups/2/tests/0",
+            "sha_acvp_boundary_test#/testGroups/2/tests/1"
+          ],
+          "upstreamOperation": "SHA2-256 1.0 AFT",
+          "localOperation": "digest (C_Digest) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 108, 164) taken from upstream tgId 1 of gen-val/json-files/SHA2-256-1.0/internalProjection.json (517 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-4",
+          "appliesTo": [
+            "sha_acvp_boundary_test#/testGroups/3/tests/0",
+            "sha_acvp_boundary_test#/testGroups/3/tests/1",
+            "sha_acvp_boundary_test#/testGroups/3/tests/2",
+            "sha_acvp_boundary_test#/testGroups/3/tests/3",
+            "sha_acvp_boundary_test#/testGroups/3/tests/4"
+          ],
+          "upstreamOperation": "SHA2-384 1.0 AFT",
+          "localOperation": "digest (C_Digest) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "5 case(s) (upstream tcId 397, 574, 827, 831, 924) taken from upstream tgId 1 of gen-val/json-files/SHA2-384-1.0/internalProjection.json (1029 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-5",
+          "appliesTo": ["sha_acvp_boundary_test#/testGroups/4/tests/0"],
+          "upstreamOperation": "SHA2-384 1.0 MCT",
+          "localOperation": "MCT outer iteration 0 via 1000 chained C_Digest calls, byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1025) taken from upstream tgId 2 of gen-val/json-files/SHA2-384-1.0/internalProjection.json (1029 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100): the workbench runs 1000 chained digests, not 100 000"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-6",
+          "appliesTo": [
+            "sha_acvp_boundary_test#/testGroups/5/tests/0",
+            "sha_acvp_boundary_test#/testGroups/5/tests/1"
+          ],
+          "upstreamOperation": "SHA2-512 1.0 AFT",
+          "localOperation": "digest (C_Digest) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 87, 193) taken from upstream tgId 1 of gen-val/json-files/SHA2-512-1.0/internalProjection.json (1029 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-7",
+          "appliesTo": [
+            "sha_acvp_boundary_test#/testGroups/6/tests/0",
+            "sha_acvp_boundary_test#/testGroups/6/tests/1",
+            "sha_acvp_boundary_test#/testGroups/6/tests/2",
+            "sha_acvp_boundary_test#/testGroups/6/tests/3",
+            "sha_acvp_boundary_test#/testGroups/6/tests/4",
+            "sha_acvp_boundary_test#/testGroups/6/tests/5"
+          ],
+          "upstreamOperation": "SHA2-512/224 1.0 AFT",
+          "localOperation": "digest (C_Digest) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "6 case(s) (upstream tcId 130, 163, 515, 611, 687, 755) taken from upstream tgId 1 of gen-val/json-files/SHA2-512-224-1.0/internalProjection.json (1029 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-8",
+          "appliesTo": ["sha_acvp_boundary_test#/testGroups/7/tests/0"],
+          "upstreamOperation": "SHA2-512/224 1.0 MCT",
+          "localOperation": "MCT outer iteration 0 via 1000 chained C_Digest calls, byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1025) taken from upstream tgId 2 of gen-val/json-files/SHA2-512-224-1.0/internalProjection.json (1029 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100): the workbench runs 1000 chained digests, not 100 000"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-9",
+          "appliesTo": [
+            "sha_acvp_boundary_test#/testGroups/8/tests/0",
+            "sha_acvp_boundary_test#/testGroups/8/tests/1"
+          ],
+          "upstreamOperation": "SHA2-512/256 1.0 AFT",
+          "localOperation": "digest (C_Digest) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 455, 493) taken from upstream tgId 1 of gen-val/json-files/SHA2-512-256-1.0/internalProjection.json (1029 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-10",
+          "appliesTo": [
+            "sha_acvp_boundary_test#/testGroups/9/tests/0",
+            "sha_acvp_boundary_test#/testGroups/9/tests/1",
+            "sha_acvp_boundary_test#/testGroups/9/tests/2",
+            "sha_acvp_boundary_test#/testGroups/9/tests/3",
+            "sha_acvp_boundary_test#/testGroups/9/tests/4"
+          ],
+          "upstreamOperation": "SHA3-224 2.0 AFT",
+          "localOperation": "digest (C_Digest) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "5 case(s) (upstream tcId 349, 448, 566, 1028, 1088) taken from upstream tgId 1 of gen-val/json-files/SHA3-224-2.0/internalProjection.json (1263 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-11",
+          "appliesTo": ["sha_acvp_boundary_test#/testGroups/10/tests/0"],
+          "upstreamOperation": "SHA3-224 2.0 MCT",
+          "localOperation": "MCT outer iteration 0 via 1000 chained C_Digest calls, byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1259) taken from upstream tgId 2 of gen-val/json-files/SHA3-224-2.0/internalProjection.json (1263 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100): the workbench runs 1000 chained digests, not 100 000"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-12",
+          "appliesTo": [
+            "sha_acvp_boundary_test#/testGroups/11/tests/0",
+            "sha_acvp_boundary_test#/testGroups/11/tests/1",
+            "sha_acvp_boundary_test#/testGroups/11/tests/2",
+            "sha_acvp_boundary_test#/testGroups/11/tests/3"
+          ],
+          "upstreamOperation": "SHA3-256 2.0 AFT",
+          "localOperation": "digest (C_Digest) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "4 case(s) (upstream tcId 131, 800, 847, 1191) taken from upstream tgId 1 of gen-val/json-files/SHA3-256-2.0/internalProjection.json (1199 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-13",
+          "appliesTo": ["sha_acvp_boundary_test#/testGroups/12/tests/0"],
+          "upstreamOperation": "SHA3-256 2.0 MCT",
+          "localOperation": "MCT outer iteration 0 via 1000 chained C_Digest calls, byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1195) taken from upstream tgId 2 of gen-val/json-files/SHA3-256-2.0/internalProjection.json (1199 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100): the workbench runs 1000 chained digests, not 100 000"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-14",
+          "appliesTo": [
+            "sha_acvp_boundary_test#/testGroups/13/tests/0",
+            "sha_acvp_boundary_test#/testGroups/13/tests/1",
+            "sha_acvp_boundary_test#/testGroups/13/tests/2",
+            "sha_acvp_boundary_test#/testGroups/13/tests/3",
+            "sha_acvp_boundary_test#/testGroups/13/tests/4"
+          ],
+          "upstreamOperation": "SHA3-384 2.0 AFT",
+          "localOperation": "digest (C_Digest) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "5 case(s) (upstream tcId 40, 326, 381, 821, 882) taken from upstream tgId 1 of gen-val/json-files/SHA3-384-2.0/internalProjection.json (943 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-15",
+          "appliesTo": ["sha_acvp_boundary_test#/testGroups/14/tests/0"],
+          "upstreamOperation": "SHA3-384 2.0 MCT",
+          "localOperation": "MCT outer iteration 0 via 1000 chained C_Digest calls, byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 939) taken from upstream tgId 2 of gen-val/json-files/SHA3-384-2.0/internalProjection.json (943 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100): the workbench runs 1000 chained digests, not 100 000"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-16",
+          "appliesTo": [
+            "sha_acvp_boundary_test#/testGroups/15/tests/0",
+            "sha_acvp_boundary_test#/testGroups/15/tests/1",
+            "sha_acvp_boundary_test#/testGroups/15/tests/2",
+            "sha_acvp_boundary_test#/testGroups/15/tests/3"
+          ],
+          "upstreamOperation": "SHA3-512 2.0 AFT",
+          "localOperation": "digest (C_Digest) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "4 case(s) (upstream tcId 89, 388, 678, 680) taken from upstream tgId 1 of gen-val/json-files/SHA3-512-2.0/internalProjection.json (687 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            }
+          ]
+        },
+        {
+          "id": "sha-acvp-boundary-test-17",
+          "appliesTo": ["sha_acvp_boundary_test#/testGroups/16/tests/0"],
+          "upstreamOperation": "SHA3-512 2.0 MCT",
+          "localOperation": "MCT outer iteration 0 via 1000 chained C_Digest calls, byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 683) taken from upstream tgId 2 of gen-val/json-files/SHA3-512-2.0/internalProjection.json (687 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (the 10 SHA-2/SHA-3 digests both engines advertise), byte-aligned AFT cases only (PKCS#11 digests whole bytes), excluding any case whose md is already carried by sha256/sha384/sha512/sha3_256/sha3_512_test: the empty message, the shortest non-empty message, the messages of exactly block-1, block and block+1 bytes, and for SHA-2 the 55/56-byte (64-byte block) or 119/120-byte (128-byte block) length-field boundary, where the upstream sample has them; plus the longest message; ties by lowest tcId. The SHA2-256, SHA2-512 and SHA2-512/256 samples carry no message shorter than 215 bytes, so they have no empty/short/block-boundary case here. Standard-version MCT groups (SHA2-224/384/512-224, all SHA-3): the single upstream case with its first outer-iteration result only (1000 chained digests). Alternate-version MCT groups (SHA2-256/512/512-256) and every LDT group (a 1 GiB expanded message) are listed in notExecuted."
+            },
+            {
+              "type": "field-add",
+              "detail": "group-level algorithm, revision, hashAlg, blockBytes, source_path, source_sha256 and source_git_blob_sha added: the file combines one upstream file per digest"
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100): the workbench runs 1000 chained digests, not 100 000"
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "13 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): alternate-mct-not-implemented, ldt-expanded-message-too-large-for-the-workbench."
     },
     {
       "id": "slhdsa_ctx_test",
