@@ -155,6 +155,7 @@ import { runHmacAcvpSection } from './sections/hmacAcvp'
 import { runShaAcvpSection } from './sections/shaAcvp'
 import { runEcdsaSigVerAcvpSection, runEddsaSigVerAcvpSection } from './sections/ecSigVerAcvp'
 import { runRsaSigVerAcvpSection } from './sections/rsaSigVerAcvp'
+import { runKmacAcvpSection, runPbkdf2AcvpSection } from './sections/kdfMacAcvp'
 import type { HsmKey } from '../HsmContext'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -187,8 +188,8 @@ export type CategoryId =
 
 export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'symmetric', label: 'Symmetric / AEAD', groups: 9 },
-  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 7 },
-  { id: 'kdf', label: 'KDF', groups: 5 },
+  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 8 },
+  { id: 'kdf', label: 'KDF', groups: 6 },
   { id: 'classical', label: 'Classical Asymmetric', groups: 13 },
   { id: 'ml_dsa', label: 'ML-DSA', groups: 7 },
   { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 6 },
@@ -2513,6 +2514,23 @@ export function useAcvpSuite() {
           }
         }
 
+        // ── 18b. PBKDF2 NIST reference samples (WS-E) — PBKDF 1.0, HMAC-SHA2-224
+        // PRF, derived-key byte-match; one 1-iteration case keeps the Rust
+        // iteration-floor divergence visible. sections/kdfMacAcvp.ts.
+        if (activeCategories.has('kdf')) {
+          currentCategory = 'kdf'
+          await runPbkdf2AcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.pbkdf2,
+            pushResult,
+            addLog,
+          })
+        }
+
         // ── 19. AES-KW Wrap KAT (RFC 3394) ────────────────────────────────
         if (activeCategories.has('symmetric')) {
           currentCategory = 'symmetric'
@@ -3912,6 +3930,23 @@ export function useAcvpSuite() {
               addLog(`[DISCREPANCY] [${eName}] [id:${id34}] ECDH P-521: ${errMessage}`)
             }
           }
+        }
+
+        // ── 35b. KMAC-128 NIST reference samples (WS-E) — the two byte-aligned
+        // non-XOF MVT cases (customization + output length via the vendor
+        // parameter block). sections/kdfMacAcvp.ts.
+        if (activeCategories.has('hashing_mac')) {
+          currentCategory = 'hashing_mac'
+          await runKmacAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.kmac,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 35. KMAC128 KAT (NIST SP 800-185) ─────────────────────────────

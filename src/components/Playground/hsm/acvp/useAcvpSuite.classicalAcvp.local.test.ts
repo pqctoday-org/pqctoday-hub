@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // KAT for the WS-E classical / symmetric / MAC reference-sample sections
-// (sections/aesGcmAcvp.ts, hmacAcvp.ts, ecSigVerAcvp.ts, shaAcvp.ts, aesKwAcvp.ts, aesCbcCtrAcvp.ts, rsaSigVerAcvp.ts), driven through the
+// (sections/aesGcmAcvp.ts, hmacAcvp.ts, ecSigVerAcvp.ts, shaAcvp.ts, aesKwAcvp.ts, aesCbcCtrAcvp.ts, rsaSigVerAcvp.ts, kdfMacAcvp.ts), driven through the
 // REAL useAcvpSuite hook in dual-engine mode (C++ Emscripten engine in Node +
 // Rust wasm-bindgen).
 //
@@ -29,6 +29,11 @@
 //  - RSA SigVer: every upstream case on C++; Rust refuses public exponents
 //    above 2^33-1 (CKR_KEY_TYPE_INCONSISTENT — open gap
 //    rust-rsa-public-exponent-limit);
+//  - PBKDF2 (HMAC-SHA2-224 PRF): C++ derives every NIST key; Rust refuses the
+//    PRF with CKR_ARGUMENTS_BAD (open gap rust-pbkdf2-prf-limited);
+//  - KMAC-128: the invalid MAC is rejected on both engines; the valid 478-byte
+//    MAC is refused with CKR_SIGNATURE_LEN_RANGE on both (open gap
+//    kmac-verify-ignores-output-length);
 //  - the literal mechanism numbers the sections use equal the generated
 //    mechanism inventory's;
 //  - sabotage on a COPY of the vectors (vi.doMock) turns exactly those rows red.
@@ -99,7 +104,7 @@ vi.mock('../HsmContext', async () => {
   }
 })
 
-const CATS = ['symmetric', 'hashing_mac', 'classical']
+const CATS = ['symmetric', 'hashing_mac', 'classical', 'kdf']
 const runSuite = async (): Promise<TestResult[]> => {
   const { useAcvpSuite } = await import('./useAcvpSuite')
   const { result } = renderHook(() => useAcvpSuite())
@@ -148,6 +153,17 @@ describe('WS-E classical reference samples — both engines, real vectors', () =
       'hmac-probe-',
       'ecdsa-sigver-nist-',
       'eddsa-sigver-nist-',
+      'sha-nist-',
+      'sha-mct-',
+      'aeskw-nist-',
+      'aeskwp-nist-',
+      'aescbc-nist-',
+      'aescbc-mct-',
+      'aescbc-probe-',
+      'aesctr-nist-',
+      'rsa-sigver-nist-',
+      'pbkdf2-nist-',
+      'kmac128-nist-',
     ]) {
       const cpp = results.filter((r) => r.id.startsWith(pre) && engineOf(r) === 'C++')
       const rust = results.filter((r) => r.id.startsWith(pre) && engineOf(r) === 'Rust')
@@ -367,6 +383,35 @@ describe('WS-E classical reference samples — both engines, real vectors', () =
     }
     const skips = results.filter((r) => r.id.startsWith('rsa-sigver-nist-skip-'))
     expect(skips).toHaveLength(2 * v.notExecuted.length)
+  })
+
+  it('PBKDF2: C++ derives every NIST key; Rust refuses the SHA2-224 PRF (pinned finding)', () => {
+    const v = readVectors('pbkdf2_acvp_test.json') as Vec
+    for (const g of v.testGroups)
+      for (const t of g.tests)
+        for (const e of ENGINES) {
+          const r = row(`pbkdf2-nist-tg${g.tgId}-tc${t.tcId}-${e}`)!
+          expect(r.status, `${r.id}: ${r.details}`).toBe(e === 'C++' ? 'pass' : 'fail')
+          expect(r.caseMeta?.observed).toBe(
+            e === 'C++' ? 'byte-equal' : 'C_DeriveKey → CKR_ARGUMENTS_BAD'
+          )
+          expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
+        }
+    expect(v.testGroups[0].tests.some((t) => Number(t.iterationCount) < 1000)).toBe(true)
+  })
+
+  it('KMAC-128: the invalid MAC is rejected; the 478-byte valid MAC hits the fixed-length check (pinned finding)', () => {
+    const v = readVectors('kmac_acvp_test.json') as Vec
+    for (const g of v.testGroups)
+      for (const t of g.tests)
+        for (const e of ENGINES) {
+          const r = row(`kmac128-nist-tg${g.tgId}-tc${t.tcId}-${e}`)!
+          expect(r.status, `${r.id}: ${r.details}`).toBe(t.testPassed ? 'fail' : 'pass')
+          expect(r.caseMeta?.observed).toBe(
+            t.testPassed ? 'CKR_SIGNATURE_LEN_RANGE' : 'CKR_SIGNATURE_INVALID'
+          )
+          expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
+        }
   })
 })
 
