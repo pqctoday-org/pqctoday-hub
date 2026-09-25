@@ -11,7 +11,7 @@
 // replay + probe sequences as before; e2e/pkcs11-conformance.local.spec.ts's
 // testids are preserved.
 import { useMemo, useState } from 'react'
-import { CheckCircle, XCircle, MinusCircle, Copy, ListChecks } from 'lucide-react'
+import { CheckCircle, XCircle, MinusCircle, Copy } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -24,6 +24,7 @@ import {
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
 import { emitConformanceSuite } from './suiteCodegen'
 import { createConformanceBridge, runSuiteScript } from './suiteBridges'
+import { NativeConformanceEvidence } from './NativeConformanceEvidence'
 
 const StatusIcon = ({ status }: { status: RowStatus }) => {
   if (status === 'pass') return <CheckCircle className="h-4 w-4 text-status-success shrink-0" />
@@ -278,16 +279,8 @@ export const ConformanceSuiteWorkbench = () => {
           )}
         </div>
       </Card>
-      <Card className="p-3.5 text-[11px] text-muted-foreground space-y-1.5">
-        <p className="flex items-center gap-1.5 font-medium text-foreground">
-          <ListChecks className="h-3.5 w-3.5" /> Not run in-browser
-        </p>
-        <p>
-          The C++ engine&apos;s native 815-row conformance suite, the Rust engine&apos;s native
-          976-check suite and the 49-scenario cross-engine differential harness are native-only by
-          construction (dlopen/fork/filesystem token store). Their evidence lives in
-          pqctoday-hsm&apos;s own checked-in reports.
-        </p>
+      <Card className="p-3.5 text-[11px] text-muted-foreground">
+        <NativeConformanceEvidence />
       </Card>
       <Card className="p-3.5 text-[11px] text-muted-foreground space-y-1.5">
         <p className="font-medium text-foreground">Methodology</p>
