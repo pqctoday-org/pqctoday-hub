@@ -7,92 +7,188 @@
   "required": ["vsId", "algorithm", "mode", "revision", "testGroups"],
   "additionalProperties": false,
   "properties": {
-    "vsId": { "type": "integer", "minimum": 0 },
-    "algorithm": { "const": "ML-DSA" },
-    "mode": { "const": "sigVer" },
-    "revision": { "const": "FIPS204" },
-    "isSample": { "type": "boolean" },
-    "testGroups": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/testGroup" } }
+    "vsId": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "algorithm": {
+      "const": "ML-DSA"
+    },
+    "mode": {
+      "const": "sigVer"
+    },
+    "revision": {
+      "const": "FIPS204"
+    },
+    "isSample": {
+      "type": "boolean"
+    },
+    "testGroups": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/testGroup"
+      }
+    }
   },
   "$defs": {
-    "hex": { "type": "string", "pattern": "^([0-9A-Fa-f]{2})*$" },
+    "hex": {
+      "type": "string",
+      "pattern": "^([0-9A-Fa-f]{2})*$"
+    },
     "testGroup": {
       "type": "object",
       "required": ["tgId", "testType", "parameterSet", "signatureInterface", "tests"],
       "additionalProperties": false,
       "properties": {
-        "tgId": { "type": "integer", "minimum": 0 },
-        "testType": { "const": "AFT" },
-        "parameterSet": { "enum": ["ML-DSA-44", "ML-DSA-65", "ML-DSA-87"] },
-        "signatureInterface": { "enum": ["external", "internal"] },
-        "preHash": { "enum": ["pure", "preHash"] },
-        "externalMu": { "type": "boolean" },
-        "tests": { "type": "array", "minItems": 1 }
+        "tgId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "testType": {
+          "const": "AFT"
+        },
+        "parameterSet": {
+          "enum": ["ML-DSA-44", "ML-DSA-65", "ML-DSA-87"]
+        },
+        "signatureInterface": {
+          "enum": ["external", "internal"]
+        },
+        "preHash": {
+          "enum": ["pure", "preHash"]
+        },
+        "externalMu": {
+          "type": "boolean"
+        },
+        "tests": {
+          "type": "array",
+          "minItems": 1
+        }
       },
       "allOf": [
         {
           "if": {
             "required": ["signatureInterface"],
-            "properties": { "signatureInterface": { "const": "external" } }
+            "properties": {
+              "signatureInterface": {
+                "const": "external"
+              }
+            }
           },
           "then": {
             "required": ["preHash"],
-            "properties": { "externalMu": false }
+            "properties": {
+              "externalMu": false
+            }
           }
         },
         {
           "if": {
             "required": ["signatureInterface"],
-            "properties": { "signatureInterface": { "const": "internal" } }
+            "properties": {
+              "signatureInterface": {
+                "const": "internal"
+              }
+            }
           },
           "then": {
             "required": ["externalMu"],
-            "properties": { "preHash": false }
+            "properties": {
+              "preHash": false
+            }
           }
         },
         {
           "if": {
             "required": ["signatureInterface", "preHash"],
             "properties": {
-              "signatureInterface": { "const": "external" },
-              "preHash": { "const": "pure" }
+              "signatureInterface": {
+                "const": "external"
+              },
+              "preHash": {
+                "const": "pure"
+              }
             }
           },
-          "then": { "properties": { "tests": { "items": { "$ref": "#/$defs/externalPureTest" } } } }
+          "then": {
+            "properties": {
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/externalPureTest"
+                }
+              }
+            }
+          }
         },
         {
           "if": {
             "required": ["signatureInterface", "preHash"],
             "properties": {
-              "signatureInterface": { "const": "external" },
-              "preHash": { "const": "preHash" }
+              "signatureInterface": {
+                "const": "external"
+              },
+              "preHash": {
+                "const": "preHash"
+              }
             }
           },
           "then": {
-            "properties": { "tests": { "items": { "$ref": "#/$defs/externalPreHashTest" } } }
+            "properties": {
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/externalPreHashTest"
+                }
+              }
+            }
           }
         },
         {
           "if": {
             "required": ["signatureInterface", "externalMu"],
             "properties": {
-              "signatureInterface": { "const": "internal" },
-              "externalMu": { "const": false }
+              "signatureInterface": {
+                "const": "internal"
+              },
+              "externalMu": {
+                "const": false
+              }
             }
           },
           "then": {
-            "properties": { "tests": { "items": { "$ref": "#/$defs/internalMessageTest" } } }
+            "properties": {
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/internalMessageTest"
+                }
+              }
+            }
           }
         },
         {
           "if": {
             "required": ["signatureInterface", "externalMu"],
             "properties": {
-              "signatureInterface": { "const": "internal" },
-              "externalMu": { "const": true }
+              "signatureInterface": {
+                "const": "internal"
+              },
+              "externalMu": {
+                "const": true
+              }
             }
           },
-          "then": { "properties": { "tests": { "items": { "$ref": "#/$defs/internalMuTest" } } } }
+          "then": {
+            "properties": {
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/internalMuTest"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -101,11 +197,24 @@
       "required": ["tcId", "pk", "message", "context", "signature"],
       "additionalProperties": false,
       "properties": {
-        "tcId": { "type": "integer", "minimum": 0 },
-        "pk": { "$ref": "#/$defs/hex" },
-        "message": { "$ref": "#/$defs/hex" },
-        "context": { "$ref": "#/$defs/hex", "maxLength": 510 },
-        "signature": { "$ref": "#/$defs/hex" }
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pk": {
+          "$ref": "#/$defs/hex"
+        },
+        "message": {
+          "$ref": "#/$defs/hex"
+        },
+        "context": {
+          "$ref": "#/$defs/hex",
+          "type": "string",
+          "maxLength": 510
+        },
+        "signature": {
+          "$ref": "#/$defs/hex"
+        }
       }
     },
     "externalPreHashTest": {
@@ -113,10 +222,21 @@
       "required": ["tcId", "pk", "message", "context", "hashAlg", "signature"],
       "additionalProperties": false,
       "properties": {
-        "tcId": { "type": "integer", "minimum": 0 },
-        "pk": { "$ref": "#/$defs/hex" },
-        "message": { "$ref": "#/$defs/hex" },
-        "context": { "$ref": "#/$defs/hex", "maxLength": 510 },
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pk": {
+          "$ref": "#/$defs/hex"
+        },
+        "message": {
+          "$ref": "#/$defs/hex"
+        },
+        "context": {
+          "$ref": "#/$defs/hex",
+          "type": "string",
+          "maxLength": 510
+        },
         "hashAlg": {
           "enum": [
             "SHA2-224",
@@ -133,7 +253,9 @@
             "SHAKE-256"
           ]
         },
-        "signature": { "$ref": "#/$defs/hex" }
+        "signature": {
+          "$ref": "#/$defs/hex"
+        }
       }
     },
     "internalMessageTest": {
@@ -141,10 +263,19 @@
       "required": ["tcId", "pk", "message", "signature"],
       "additionalProperties": false,
       "properties": {
-        "tcId": { "type": "integer", "minimum": 0 },
-        "pk": { "$ref": "#/$defs/hex" },
-        "message": { "$ref": "#/$defs/hex" },
-        "signature": { "$ref": "#/$defs/hex" }
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pk": {
+          "$ref": "#/$defs/hex"
+        },
+        "message": {
+          "$ref": "#/$defs/hex"
+        },
+        "signature": {
+          "$ref": "#/$defs/hex"
+        }
       }
     },
     "internalMuTest": {
@@ -152,10 +283,19 @@
       "required": ["tcId", "pk", "mu", "signature"],
       "additionalProperties": false,
       "properties": {
-        "tcId": { "type": "integer", "minimum": 0 },
-        "pk": { "$ref": "#/$defs/hex" },
-        "mu": { "$ref": "#/$defs/hex" },
-        "signature": { "$ref": "#/$defs/hex" }
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pk": {
+          "$ref": "#/$defs/hex"
+        },
+        "mu": {
+          "$ref": "#/$defs/hex"
+        },
+        "signature": {
+          "$ref": "#/$defs/hex"
+        }
       }
     }
   }

@@ -80,22 +80,26 @@ export const irToPrompt = (ir: AcvpPromptIR): JsonValue =>
 
 /**
  * Canonical JSON: object keys sorted by UTF-16 code unit, no whitespace,
- * JSON.stringify escaping. For the ASCII-only, integer-only documents ACVP
- * uses this is byte-identical to Python's
- * `json.dumps(o, sort_keys=True, separators=(',', ':'))`, which is what makes
- * the goldens portable to a non-JS runner.
+ * JSON.stringify escaping plus every non-ASCII UTF-16 code unit written as a
+ * lower-case \uXXXX escape. For integer-only documents (ACVP uses no floats)
+ * this is byte-identical to Python's default
+ * `json.dumps(o, sort_keys=True, separators=(',', ':'))` (ensure_ascii=True),
+ * which is what makes the goldens portable to a non-JS runner.
  */
+const asciiEscape = (json: string): string =>
+  json.replace(/[\u0080-\uffff]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0')}`)
+
 export const canonicalJson = (v: unknown): string => {
   if (v === null || typeof v !== 'object') {
     if (typeof v === 'number' && !Number.isFinite(v)) throw new Error('canonicalJson: non-finite')
     const s = JSON.stringify(v)
     if (s === undefined) throw new Error('canonicalJson: unsupported value')
-    return s
+    return typeof v === 'string' ? asciiEscape(s) : s
   }
   if (Array.isArray(v)) return `[${v.map((x) => canonicalJson(x)).join(',')}]`
   const obj = v as Record<string, unknown>
   const keys = Object.keys(obj).sort()
-  return `{${keys.map((k) => `${JSON.stringify(k)}:${canonicalJson(obj[k])}`).join(',')}}`
+  return `{${keys.map((k) => `${asciiEscape(JSON.stringify(k))}:${canonicalJson(obj[k])}`).join(',')}}`
 }
 
 /** SHA-256 (lower-case hex) over UTF-8 text or raw bytes, via Web Crypto (browser + Node 22). */

@@ -7,23 +7,50 @@
   "required": ["vsId", "algorithm", "mode", "revision", "testGroups"],
   "additionalProperties": false,
   "properties": {
-    "vsId": { "type": "integer", "minimum": 0 },
-    "algorithm": { "const": "ML-KEM" },
-    "mode": { "const": "encapDecap" },
-    "revision": { "const": "FIPS203" },
-    "isSample": { "type": "boolean" },
-    "testGroups": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/testGroup" } }
+    "vsId": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "algorithm": {
+      "const": "ML-KEM"
+    },
+    "mode": {
+      "const": "encapDecap"
+    },
+    "revision": {
+      "const": "FIPS203"
+    },
+    "isSample": {
+      "type": "boolean"
+    },
+    "testGroups": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/testGroup"
+      }
+    }
   },
   "$defs": {
-    "hex": { "type": "string", "pattern": "^([0-9A-Fa-f]{2})*$" },
+    "hex": {
+      "type": "string",
+      "pattern": "^([0-9A-Fa-f]{2})*$"
+    },
     "testGroup": {
       "type": "object",
       "required": ["tgId", "testType", "parameterSet", "function", "tests"],
       "additionalProperties": false,
       "properties": {
-        "tgId": { "type": "integer", "minimum": 0 },
-        "testType": { "enum": ["AFT", "VAL"] },
-        "parameterSet": { "enum": ["ML-KEM-512", "ML-KEM-768", "ML-KEM-1024"] },
+        "tgId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "testType": {
+          "enum": ["AFT", "VAL"]
+        },
+        "parameterSet": {
+          "enum": ["ML-KEM-512", "ML-KEM-768", "ML-KEM-1024"]
+        },
         "function": {
           "enum": [
             "encapsulation",
@@ -32,54 +59,101 @@
             "decapsulationKeyCheck"
           ]
         },
-        "tests": { "type": "array", "minItems": 1 }
+        "tests": {
+          "type": "array",
+          "minItems": 1
+        }
       },
       "allOf": [
         {
           "if": {
             "required": ["function"],
-            "properties": { "function": { "const": "encapsulation" } }
+            "properties": {
+              "function": {
+                "const": "encapsulation"
+              }
+            }
           },
           "then": {
             "properties": {
-              "testType": { "const": "AFT" },
-              "tests": { "items": { "$ref": "#/$defs/encapsulationTest" } }
+              "testType": {
+                "const": "AFT"
+              },
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/encapsulationTest"
+                }
+              }
             }
           }
         },
         {
           "if": {
             "required": ["function"],
-            "properties": { "function": { "const": "decapsulation" } }
+            "properties": {
+              "function": {
+                "const": "decapsulation"
+              }
+            }
           },
           "then": {
             "properties": {
-              "testType": { "const": "VAL" },
-              "tests": { "items": { "$ref": "#/$defs/decapsulationTest" } }
+              "testType": {
+                "const": "VAL"
+              },
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/decapsulationTest"
+                }
+              }
             }
           }
         },
         {
           "if": {
             "required": ["function"],
-            "properties": { "function": { "const": "encapsulationKeyCheck" } }
+            "properties": {
+              "function": {
+                "const": "encapsulationKeyCheck"
+              }
+            }
           },
           "then": {
             "properties": {
-              "testType": { "const": "VAL" },
-              "tests": { "items": { "$ref": "#/$defs/encapsulationKeyCheckTest" } }
+              "testType": {
+                "const": "VAL"
+              },
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/encapsulationKeyCheckTest"
+                }
+              }
             }
           }
         },
         {
           "if": {
             "required": ["function"],
-            "properties": { "function": { "const": "decapsulationKeyCheck" } }
+            "properties": {
+              "function": {
+                "const": "decapsulationKeyCheck"
+              }
+            }
           },
           "then": {
             "properties": {
-              "testType": { "const": "VAL" },
-              "tests": { "items": { "$ref": "#/$defs/decapsulationKeyCheckTest" } }
+              "testType": {
+                "const": "VAL"
+              },
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/decapsulationKeyCheckTest"
+                }
+              }
             }
           }
         }
@@ -90,9 +164,16 @@
       "required": ["tcId", "ek", "m"],
       "additionalProperties": false,
       "properties": {
-        "tcId": { "type": "integer", "minimum": 0 },
-        "ek": { "$ref": "#/$defs/hex" },
-        "m": { "$ref": "#/$defs/hex" }
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ek": {
+          "$ref": "#/$defs/hex"
+        },
+        "m": {
+          "$ref": "#/$defs/hex"
+        }
       }
     },
     "decapsulationTest": {
@@ -100,9 +181,16 @@
       "required": ["tcId", "dk", "c"],
       "additionalProperties": false,
       "properties": {
-        "tcId": { "type": "integer", "minimum": 0 },
-        "dk": { "$ref": "#/$defs/hex" },
-        "c": { "$ref": "#/$defs/hex" }
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dk": {
+          "$ref": "#/$defs/hex"
+        },
+        "c": {
+          "$ref": "#/$defs/hex"
+        }
       }
     },
     "encapsulationKeyCheckTest": {
@@ -110,8 +198,13 @@
       "required": ["tcId", "ek"],
       "additionalProperties": false,
       "properties": {
-        "tcId": { "type": "integer", "minimum": 0 },
-        "ek": { "$ref": "#/$defs/hex" }
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ek": {
+          "$ref": "#/$defs/hex"
+        }
       }
     },
     "decapsulationKeyCheckTest": {
@@ -119,8 +212,13 @@
       "required": ["tcId", "dk"],
       "additionalProperties": false,
       "properties": {
-        "tcId": { "type": "integer", "minimum": 0 },
-        "dk": { "$ref": "#/$defs/hex" }
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dk": {
+          "$ref": "#/$defs/hex"
+        }
       }
     }
   }
