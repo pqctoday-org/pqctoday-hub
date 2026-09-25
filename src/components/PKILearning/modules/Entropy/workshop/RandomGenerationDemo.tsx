@@ -670,27 +670,28 @@ export const RandomGenerationDemo: React.FC = () => {
       <div className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold text-foreground">Production Entropy Sources</h3>
         <p className="text-xs text-muted-foreground">
-          Hardware and cloud entropy services that feed NIST SP 800-90B qualified entropy into
-          production DRBGs and HSMs.
+          Products marketed as entropy sources for DRBGs and HSMs. Where a CMVP Entropy Validation
+          Certificate exists it is named (checked 2026-09-24); a certificate covers the listed
+          versions only, and none of this is demonstrated by this workshop.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {(
             [
               {
                 name: 'ID Quantique Quantis QRNG',
-                desc: 'Photon-detection QRNG · FIPS 140-2 entropy source qualified',
+                desc: 'QRNG chips · CMVP entropy certificate E63 (SP 800-90B, IDQ Quantis IID QRNG)',
               },
               {
                 name: 'Quantinuum Quantum Origin',
-                desc: 'Quantum computer-sourced entropy · HSM / KMS integration',
+                desc: 'CMVP entropy certificate E214 (SP 800-90B) · noise source classified Non-Physical',
               },
               {
                 name: 'QuintessenceLabs qStream',
-                desc: 'High-speed optical QRNG · NIST SP 800-90B compliant',
+                desc: 'CMVP entropy certificate E145 (SP 800-90B) · qStream 100 v1.5 only',
               },
               {
                 name: 'Qrypt BLAST SDK',
-                desc: 'Quantum entropy SDK · peer-reviewed algorithm',
+                desc: 'Quantum entropy SDK · vendor description only, no certificate cited',
               },
             ] as { name: string; desc: string }[]
           ).map(({ name, desc }) => (
