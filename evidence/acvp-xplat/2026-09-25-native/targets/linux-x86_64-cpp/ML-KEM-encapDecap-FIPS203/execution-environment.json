@@ -1,0 +1,99 @@
+{
+  "envVersion": "pqctoday.execution-environment/1",
+  "recordedAt": "2026-09-25T15:36:42.328Z",
+  "target": {
+    "id": "linux-x86_64-cpp",
+    "label": "Native Linux x86-64 (emulated) — C++ engine",
+    "class": "native"
+  },
+  "os": {
+    "name": "Ubuntu 24.04.4 LTS",
+    "version": "24.04",
+    "kernel": "Linux 7.0.14-orbstack-00380-ga7e0a2dc9535",
+    "image": {
+      "name": "pqc-dev-sandbox:latest",
+      "id": "sha256:cce738cdaddf38eb15661a5f9d9b91ea7c95f3d7ade7a777273fdbc25eea125f"
+    }
+  },
+  "arch": {
+    "machine": "x86_64",
+    "pointerBits": 64,
+    "endianness": "little"
+  },
+  "cpu": {
+    "model": "VirtualApple @ 2.50GHz",
+    "board": null,
+    "features": "fpu tsc de cx8 apic sep cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx lm rep_good nopl pni cpuid pclmulqdq ssse3 cx16 sse4_1 popcnt sse4_2 aes lahf_lm movbe fma f16c rdrand bmi1 bmi2"
+  },
+  "emulation": {
+    "emulated": true,
+    "mechanism": "Rosetta 2 x86-64 binary translation (OrbStack linux/amd64 container on Apple silicon)",
+    "hostMachine": "arm64 (Apple M5 Max, macOS 26.6.2, OrbStack; amd64 via Rosetta 2)",
+    "detection": "/proc/self/maps rosetta mapping: present; cpuinfo vendor_id: VirtualApple"
+  },
+  "engine": {
+    "id": "cpp",
+    "implementation": "pqctoday-hsm softhsmv3 C++ (OpenSSL 3.6 backend), native shared library libsofthsmv3.so",
+    "artifactKind": "shared-library",
+    "artifactPath": "/build/cpp1/src/lib/libsofthsmv3.so",
+    "artifactSha256": "fad6b2ae99737aa4ef214b4f14f1891606d0140ea2073861129f290700357f1a",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+    "sourceCommitEvidence": "Built from a clean detached worktree created for this run (git -C pqctoday-hsm worktree add --detach pqctoday-hsm-x86-7795799b 7795799b…; `git submodule update --init` of hash-sigs @21294a0f and xmss-reference @171ccbd2 only; liboqs not needed with WITH_LIBOQS=OFF), bind-mounted into a throwaway container. `git status --porcelain` was empty before and after the build (CMake writes only the gitignored src/vendor/pkcs11-provider/src/config.h into the tree); the worktree was removed afterwards. Same commit as the C++ WASM bundle (wasm-provenance.json softhsm-cpp-engine).",
+    "builtAt": "2026-09-25T15:29Z"
+  },
+  "build": {
+    "buildSystem": "CMake 3.28.3, out-of-tree, target softhsmv3",
+    "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 (ELF .comment: GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0)",
+    "flags": "-DCMAKE_BUILD_TYPE=Release (-O3 -DNDEBUG) -DWITH_CRYPTO_BACKEND=openssl -DBUILD_TESTS=OFF -DENABLE_STATIC=OFF -DWITH_LIBOQS=OFF -DOPENSSL_ROOT_DIR=/usr/local/ssl",
+    "profile": "Release",
+    "features": "WITH_LIBOQS=OFF (Classic McEliece only; matches the WASM build, where Emscripten forces it off)",
+    "location": "throwaway container (docker run --platform linux/amd64) from image pqc-dev-sandbox:latest sha256:cce738cdaddf38eb15661a5f9d9b91ea7c95f3d7ade7a777273fdbc25eea125f, used only for its toolchain — the shared pqc-dev-sandbox container and image were not touched; linux/amd64 under Rosetta 2 (OrbStack on Apple M5 Max), i.e. EMULATED; CMake build dir /build/cpp1 inside that container, removed with it"
+  },
+  "dependencies": {
+    "openssl": {
+      "linked": true,
+      "version": "OpenSSL 3.6.3 9 Jun 2026",
+      "source": "OpenSSL_version(OPENSSL_VERSION) of /usr/local/ssl/lib64/libcrypto.so.3, the only libcrypto mapped after loading the module"
+    },
+    "cryptoBackend": {
+      "name": "OpenSSL libcrypto (EVP)",
+      "version": "OpenSSL 3.6.3 9 Jun 2026"
+    },
+    "runtime": [
+      {
+        "name": "python",
+        "version": "3.12.3"
+      },
+      {
+        "name": "libc",
+        "version": "glibc 2.39"
+      }
+    ]
+  },
+  "acceleration": {
+    "state": "none",
+    "detail": "no hardware accelerator (no FPGA/NPU/crypto offload); CPU ISA extensions only, as translated by Rosetta 2; OpenSSL CPUINFO: OPENSSL_ia32cap=0x6ed8320f4f8b8f15:0x0000000000000108:0x0000000000000000:0x0000000000000000:0x0000000000000000"
+  },
+  "entropy": {
+    "source": "OpenSSL 3.6.3 default DRBG, seeded from getrandom(2)",
+    "exercisedByTestedOperations": false
+  },
+  "runner": {
+    "name": "pqctoday acvp-native (Python/ctypes)",
+    "version": "2.1.0",
+    "language": "python",
+    "languageVersion": "3.12.3"
+  },
+  "fixtureBundle": {
+    "manifestSha256": "d2ea5cd41c49bb156a0301ce033c09a12ccf61837a8edbecd1f9fcdbf8f702fd",
+    "schemaId": "ML-KEM/encapDecap/FIPS203",
+    "vsId": 42
+  },
+  "notes": [
+    "OpenSSL: the image's /usr/local/ssl OpenSSL 3.6.3 (openssl version -a: built on Fri Sep 4 16:35:27 2026 UTC, platform linux-x86_64, gcc -O3); the module's RUNPATH is /usr/local/ssl/lib64, where it resolves libcrypto.so.3.",
+    "Reproducibility: an independent second build in a second fresh throwaway container from the same image (different build directory) produced the identical SHA-256 fad6b2ae99737aa4ef214b4f14f1891606d0140ea2073861129f290700357f1a.",
+    "C_GetInfo: cryptoki 3.2, manufacturer 'SoftHSM', library 'Implementation of PKCS11' 3.0"
+  ],
+  "envId": "707f363d3ef9c6dec430aa673cab28cf703d1b1d0392b7560760eec9a5542acb"
+}

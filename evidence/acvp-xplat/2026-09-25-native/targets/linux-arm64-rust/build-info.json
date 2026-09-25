@@ -1,0 +1,31 @@
+{
+  "engine": {
+    "implementation": "pqctoday-hsm softhsmrustv3 (Rust), native cdylib libsofthsmrustv3.so",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": "417c47a224a9859a4a02b90700ca0cdeb30cfebc",
+    "sourceCommitEvidence": "Built from a clean detached worktree created for this run (git -C pqctoday-hsm worktree add --detach pqctoday-hsm-acvp-h-417c47a2 417c47a2; git status clean before and after, worktree removed afterwards). Same commit the Rust WASM bundle is anchored to (wasm-provenance.json softhsmrustv3-engine._reanchor20260923: byte-identical rebuild).",
+    "builtAt": "2026-09-25T02:42Z"
+  },
+  "build": {
+    "buildSystem": "cargo 1.96.0: cargo build --release --locked --offline -p softhsmrustv3 --lib",
+    "compiler": "rustc 1.96.0 (ac68faa20 2026-05-25) (ELF .comment also lists GCC 14.2.0 and clang 22.1.0-rc2 for C build-deps)",
+    "flags": "RUSTFLAGS unset",
+    "profile": "release (opt-level=\"s\", lto=true — rust/Cargo.toml [profile.release])",
+    "features": "default (no acvp, no hw-accel) — the shipped native feature set; the WASM bundle additionally enables acvp (C_Initialize pReserved RNG-seeding hook, unused: both runners pass NULL)",
+    "location": "pqc-rust container (image rust:1 sha256:c6811167278337db5f3b0234964ced5f538f154a2a20f09ec03721d7411c933d, linux/arm64, OrbStack Linux VM on Apple M5 Max) — native arm64, not emulated; private CARGO_TARGET_DIR / CMake build dir under /tmp/acvp-h-9241, removed after the runs"
+  },
+  "dependencies": {
+    "cryptoBackend": {
+      "name": "RustCrypto ml-kem (patched: rust/ml-kem-patched) + fips204 (patched: rust/fips204-patched)",
+      "version": "ml-kem 0.2.3, fips204 0.4.6 (rust/Cargo.lock @ 417c47a2)"
+    }
+  },
+  "entropy": {
+    "source": "getrandom crate → getrandom(2)"
+  },
+  "notes": [
+    "aws-lc-rs 1.18.0 (aws-lc-sys 0.44.0) is statically linked for the RSA / NIST-curve ECDH fast path only (rust/src/crypto/awslc.rs); ML-KEM decapsulation and ML-DSA verification run on the pure-Rust crates.",
+    "hw-accel feature OFF: no FPGA/NPU offload path is compiled in.",
+    "Run 2026-09-25-native re-uses the exact artifact built for run 2026-09-24 (SHA-256 e3cf1bd4dfd21d42c465f1d7191df063301b31ab1a983b48481325a6a04c0485, bit-reproducible build), kept outside the container and re-staged with run-in-container.sh --module-from-host."
+  ]
+}

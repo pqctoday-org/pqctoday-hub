@@ -1,0 +1,94 @@
+{
+  "envVersion": "pqctoday.execution-environment/1",
+  "recordedAt": "2026-09-25T15:31:09.114Z",
+  "target": {
+    "id": "wasm-cpp",
+    "label": "WebAssembly (Node 22, host V8) — C++ engine",
+    "class": "wasm"
+  },
+  "os": {
+    "name": "macOS 26.6.2 (host running Node)",
+    "version": "26.6.2",
+    "kernel": "Darwin 25.6.0",
+    "image": {
+      "name": null,
+      "id": null
+    }
+  },
+  "arch": {
+    "machine": "wasm32",
+    "pointerBits": 32,
+    "endianness": "little"
+  },
+  "cpu": {
+    "model": "Apple M5 Max",
+    "board": null,
+    "features": null
+  },
+  "emulation": {
+    "emulated": false,
+    "mechanism": null,
+    "hostMachine": "arm64",
+    "detection": "WebAssembly JIT-compiled by V8 (Node v22.23.1) on the host arm64 CPU — a VM, not ISA emulation"
+  },
+  "engine": {
+    "id": "cpp",
+    "implementation": "pqctoday-hsm softhsmv3 C++ (OpenSSL 3.6 backend), Emscripten WASM",
+    "artifactKind": "wasm",
+    "artifactPath": "src/vendor/softhsm-wasm/wasm/softhsm.wasm",
+    "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+    "sourceCommitEvidence": "public/wasm/wasm-provenance.json softhsm-cpp-engine.hsmCommit \"7795799b91c61097cb6cd28704c0ca1ab114a4c7\" resolved with git rev-parse in pqctoday-hsm",
+    "builtAt": "2026-09-23"
+  },
+  "build": {
+    "buildSystem": "hsm scripts/build-wasm.sh (CMake, SKIP_OPENSSL=1)",
+    "compiler": "emcc 6.0.4 (workspace emsdk; its own clang)",
+    "flags": null,
+    "profile": "Release (build-wasm.sh default)",
+    "features": "WITH_LIBOQS forced OFF for Emscripten (CMakeLists.txt D-4)",
+    "location": "host macOS via emsdk (no Xcode) — wasm-provenance.json softhsm-cpp-engine._rebuild20260923"
+  },
+  "dependencies": {
+    "openssl": {
+      "linked": true,
+      "version": "OpenSSL 3.6.3 (static libcrypto.a for wasm32)",
+      "source": "build record, not runtime: hsm scripts/build-openssl-wasm.sh OSSL_VERSION=3.6.3 at 7795799b; deps/openssl-wasm reused with libcrypto.a sha256 204eb4d7… verified (wasm-provenance.json _rebuild20260923). The module exports no OpenSSL_version()."
+    },
+    "cryptoBackend": {
+      "name": "OpenSSL libcrypto (EVP), statically linked",
+      "version": "3.6.3"
+    },
+    "runtime": [
+      {
+        "name": "node",
+        "version": "v22.23.1"
+      }
+    ]
+  },
+  "acceleration": {
+    "state": "none",
+    "detail": "no hardware accelerator: WebAssembly bytecode executed by the V8 JIT on the host CPU"
+  },
+  "entropy": {
+    "source": "Emscripten getentropy() → host crypto RNG (Node 22 webcrypto); not exercised by decapsulation/verification",
+    "exercisedByTestedOperations": false
+  },
+  "runner": {
+    "name": "acvp-respond (hub Node CLI, src/services/acvp/node/cli.ts)",
+    "version": "4.116.0+7ac9f33d1839",
+    "language": "typescript (tsx)",
+    "languageVersion": "v22.23.1"
+  },
+  "fixtureBundle": {
+    "manifestSha256": "966ec2faeba6d85fe862b3bead4f0aebf47b784cecd472c2e5fb3a30905f444f",
+    "schemaId": "ML-DSA/sigVer/FIPS204",
+    "vsId": 42
+  },
+  "notes": [
+    "build.flags: not recorded by build-wasm.sh; the provenance record names the script, not its flag set",
+    "hub commit 7ac9f33d18394d38ea112d4f91fb02e9dfc6303e"
+  ],
+  "envId": "158fd6c0fb5544168ef50fe61e1e0a13e1b4c77378c716cea53718836a62d24a"
+}
