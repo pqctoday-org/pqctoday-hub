@@ -30,6 +30,7 @@ import { hexToBytes } from '@/utils/dataInputUtils'
 import {
   hsm_initialize,
   hsm_finalize,
+  Pkcs11Error,
   hsm_getFirstSlot,
   hsm_initToken,
   hsm_openUserSession,
@@ -415,7 +416,22 @@ export function useAcvpSuite() {
         } catch {
           // Ignore invalid session handle during cross-engine shutdown
         }
-        hsm_initialize(engine.M, ACVP_GLOBAL_SEED)
+        // The seed rides in CK_C_INITIALIZE_ARGS.pReserved, which PKCS#11 v3.2
+        // §5.4 requires to be NULL_PTR. The C++ engine enforces that (its
+        // pReserved seed hook is compiled only under WITH_ACVP_SEED, off in the
+        // shipped bundle) and returns CKR_ARGUMENTS_BAD — which used to abort
+        // the whole run for C++ and dual mode before a single row. Fall back to
+        // a standard unseeded C_Initialize; no reference-sample row depends on
+        // the seed (verification and deterministic signing are seed-free).
+        try {
+          hsm_initialize(engine.M, ACVP_GLOBAL_SEED)
+        } catch (e: unknown) {
+          if (!(e instanceof Pkcs11Error) || e.rv !== 0x00000007 /* CKR_ARGUMENTS_BAD */) throw e
+          addLog(
+            `[${engine.name}] C_Initialize rejected the non-standard pReserved test seed (CKR_ARGUMENTS_BAD) — continuing with a standard, unseeded C_Initialize`
+          )
+          hsm_initialize(engine.M)
+        }
         const slot = hsm_getFirstSlot(engine.M)
         const initSlot = hsm_initToken(engine.M, slot, '12345678', 'ACVP_Token')
         engine.slot = initSlot
