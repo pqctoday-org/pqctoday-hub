@@ -54,7 +54,7 @@ import {
   TrackScreen,
 } from './EvidenceLabScreens'
 import { ProvesPanel } from './ProvesPanel'
-import { IDLE_RUN, type RunState } from './runState'
+import { IDLE_RUN, SELECTED, type RunState } from './runState'
 
 const SCREENS: Array<{ title: string; proves: string[]; doesNotProve: string[] }> = [
   {
@@ -554,12 +554,12 @@ export const EntropyEvidenceLab: FC = () => {
           {SCREENS.map((sc, i) => (
             <li key={sc.title}>
               <Button
-                variant={i === screen ? 'secondary' : 'ghost'}
+                variant="ghost"
                 size="sm"
                 aria-current={i === screen ? 'step' : undefined}
                 disabled={!canGo(i)}
                 onClick={() => setScreen(i)}
-                className="text-xs"
+                className={`text-xs ${i === screen ? SELECTED : ''}`}
               >
                 {i + 1}. {sc.title}
               </Button>

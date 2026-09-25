@@ -19,3 +19,6 @@ export const IDLE_RUN: RunState = {
   record: null,
   error: null,
 }
+
+/** Selected state for toggle buttons: primary outline, readable text in both themes. */
+export const SELECTED = 'border-primary bg-primary/10 ring-1 ring-primary text-foreground'

@@ -24,7 +24,7 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 import type { Sp80090bResultRecord } from '@/wasm/entropy90b/resultRecord'
 import { NIST_90B_TOOL_COMMIT } from '@/wasm/entropy90b/resultRecord'
 import type { TestResult } from '../../utils/entropyTests'
-import type { RunState } from './runState'
+import { SELECTED, type RunState } from './runState'
 import {
   ESV_CERTIFICATES,
   d4Spec,
@@ -132,18 +132,15 @@ export const DatasetScreen: FC<{
               return (
                 <Button
                   key={c.id}
-                  variant={selected ? 'secondary' : 'outline'}
+                  variant="outline"
                   size="tile"
+                  className={selected ? SELECTED : undefined}
                   aria-pressed={selected}
                   onClick={() => onSelect(c.id)}
                   data-testid={`evl-case-${c.id}`}
                 >
                   <span className="text-sm font-semibold">{c.title}</span>
-                  <span
-                    className={`text-xs ${selected ? 'text-secondary-foreground' : 'text-muted-foreground'}`}
-                  >
-                    {c.lesson}
-                  </span>
+                  <span className="text-xs text-muted-foreground">{c.lesson}</span>
                 </Button>
               )
             })}
@@ -326,31 +323,29 @@ export const TrackScreen: FC<{
   <div className="space-y-4">
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       <Button
-        variant={track === 'non-iid' ? 'secondary' : 'outline'}
+        variant="outline"
         size="tile"
+        className={track === 'non-iid' ? SELECTED : undefined}
         aria-pressed={track === 'non-iid'}
         onClick={() => onChoose('non-iid')}
         data-testid="evl-track-non-iid"
       >
         <span className="text-sm font-semibold">Non-IID track (SP 800-90B §6.2)</span>
-        <span
-          className={`text-xs ${track === 'non-iid' ? 'text-secondary-foreground' : 'text-muted-foreground'}`}
-        >
+        <span className="text-xs text-muted-foreground">
           Ten estimators on the samples and on the bit string; the minimum is the estimate. The
           default whenever an IID claim is not justified.
         </span>
       </Button>
       <Button
-        variant={track === 'iid' ? 'secondary' : 'outline'}
+        variant="outline"
         size="tile"
+        className={track === 'iid' ? SELECTED : undefined}
         aria-pressed={track === 'iid'}
         onClick={() => onChoose('iid')}
         data-testid="evl-track-iid"
       >
         <span className="text-sm font-semibold">IID track (SP 800-90B §6.1)</span>
-        <span
-          className={`text-xs ${track === 'iid' ? 'text-secondary-foreground' : 'text-muted-foreground'}`}
-        >
+        <span className="text-xs text-muted-foreground">
           Only the Most Common Value estimate — allowed only when an IID claim is justified and the
           IID tests (incl. 10,000-round permutation testing, §5.1) do not reject it.
         </span>
@@ -452,7 +447,12 @@ const RecordPanel: FC<{ record: Sp80090bResultRecord; onExport: () => void; test
         )}
       </Field>
       <Field label="Command line">
-        <Mono>{record.tool.argv.join(' ')}</Mono>
+        <Mono>
+          {[
+            record.tool.program,
+            ...record.tool.argv.filter((a) => !a.endsWith('this.program')),
+          ].join(' ')}
+        </Mono>
       </Field>
     </dl>
     <Button variant="outline" size="sm" onClick={onExport}>
@@ -904,10 +904,10 @@ export const ConclusionScreen: FC<{
         {VERDICT_ORDER.map((v) => (
           <Button
             key={v}
-            variant={chosen === v ? 'secondary' : 'outline'}
+            variant="outline"
             aria-pressed={chosen === v}
             onClick={() => onChoose(v)}
-            className="whitespace-normal h-auto min-h-10 text-left justify-start"
+            className={`whitespace-normal h-auto min-h-10 text-left justify-start ${chosen === v ? SELECTED : ''}`}
             data-testid={`evl-verdict-${v}`}
           >
             {VERDICT_LABELS[v]}
