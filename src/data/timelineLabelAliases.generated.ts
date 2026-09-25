@@ -717,6 +717,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'united-states-nist-nist-pqc-migration-pilot-complete-eo-june-22-2026': [
     'United States:NIST — NIST PQC Migration Pilot Complete (EO June 22 2026)',
+    'United States:NIST — NIST PQC Migration Pilot to Be Completed by December 31, 2027 (EO June 22 2026)',
   ],
   'united-states-nist-nist-sp-800-208-published-lms-xmss': [
     'United States:NIST — NIST SP 800-208 Published (LMS/XMSS)',

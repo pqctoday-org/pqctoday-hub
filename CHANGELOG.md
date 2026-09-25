@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.119.0] - 2026-09-25
+## [4.121.0] - 2026-09-25
 
 Every certification record now comes straight from its official source — NIST for FIPS 140-3 and CAVP, the Common Criteria Portal, ANSSI and ENISA — and anything a source does not back is gone.
 
@@ -49,6 +49,21 @@ Every certification record now comes straight from its official source — NIST 
 ### Data
 
 - **Common Criteria, ANSSI and EUCC records were re-checked against their issuers.** [view:/compliance] [persona:grc] 833 Common Criteria records match the Portal's current or archived lists (three corrected where the Portal changed a date, level or name). All 190 ANSSI records appear in ANSSI's September catalogue. The EUCC list matches ENISA's 107 certificates: 28 added, and 19 duplicate entries folded into their certificate.
+
+## [4.119.0] - 2026-09-25
+
+The 122 rows where the Timeline's two reviewers disagreed on 25 September were resolved by a closer read of what each one actually quoted from the source document.
+
+### Changed
+
+- **The Timeline drops 16 more entries that aren't post-quantum milestones.** [view:/timeline] [persona:grc] [persona:researcher] A closer read found a QKD hardware testbed, a general national quantum strategy, a workshop write-up, a research grant, and a generic risk-report sentence among entries that had been flagged as post-quantum milestones. Nothing is deleted — these are marked out-of-scope and carried forward, the same as the earlier 60.
+- **14 more entries are confirmed and now shown.** [view:/timeline] [persona:grc] [persona:researcher] Each one's cited document states the event in the past tense with a date, rather than as a plan — including NIST's Additional Signatures Round 3 candidates, ANSSI's first PQC accreditations, and Singapore's NQSN+ launch.
+- **Germany and the UK's country deadlines are held back pending stronger evidence.** [view:/timeline] [view:/assess] [view:/report] [persona:executive] [persona:grc] Both cited documents use future-target language ("should... by end of 2030", "target date of 2035") rather than confirming a completed regulatory deadline. Assess, Report and the Simulation now show 8 countries with a reviewed deadline instead of 10; both entries return as soon as a stronger source is found.
+- **26 field corrections across Description, Title, OrgFullName, binding force and dates.** [view:/timeline] [persona:grc] [persona:researcher] Each checked against the specific sentence in the cited document that supports it, including Spain's four-phase roadmap end date (was reading the plan's first-edition date), a NIST title corrected from "Complete" to the document's actual "to be completed by" language, and several organisation names trimmed to what the document itself states.
+
+### Data
+
+- **Timeline 09252026_r6:** [view:/timeline] [persona:grc] [persona:researcher] 58 rows changed (16 deprecated, 14 published, 2 withdrawn pending evidence, 26 field corrections); 311 rows total. Full row-by-row reasoning, with the deciding quote for each call, in `pqctoday-priv/maintenance/lineage/timeline-review/claude-recommendations-09252026.md`.
 
 ## [4.118.0] - 2026-09-25
 
