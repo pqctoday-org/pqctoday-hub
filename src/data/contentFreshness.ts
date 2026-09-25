@@ -20,6 +20,7 @@ import { SIM_MOVES } from './simMoves'
 import { NARRATION_TIME_ANCHOR_FRESHNESS } from './narrationFacts'
 import { IBM_BREACH_BASELINES_FRESHNESS } from './roiBaselines'
 import { CYCLONEDX_MAPPING_FRESHNESS } from './cryptoMechanisms'
+import { FIPS_FRESHNESS_CLAIMS } from '../components/PKILearning/modules/CryptoProductCertification/data/fipsData'
 
 /** A structured, re-verifiable timestamp attached to a time-sensitive claim. */
 export interface Freshness {
@@ -118,6 +119,8 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     ...IBM_BREACH_BASELINES_FRESHNESS,
   },
   ...simMoveClaims(),
+  // crypto-product-certification, Path A (FIPS author, 2026-09-24)
+  ...FIPS_FRESHNESS_CLAIMS,
 ].sort((a, b) => a.id.localeCompare(b.id))
 
 /** Every claim's asOf is a well-formed ISO date — guards typos at test time. */
