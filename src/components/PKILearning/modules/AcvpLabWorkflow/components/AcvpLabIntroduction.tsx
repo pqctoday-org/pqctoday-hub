@@ -207,7 +207,9 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
                 <Cite s="cavp" /> <Cite s="sp800140c" />
               </Td>
               <Td>
-                Those the module claims as approved services, each backed by algorithm testing
+                The approved algorithms the module claims; the lab confirms each complies with all
+                requirements of its standard, including those CAVP tests do not reach{' '}
+                <Cite s="cmvpMM" at="§2.6.2" />
               </Td>
             </tr>
             <tr>
@@ -270,7 +272,7 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           The registration below is the ML-DSA sigGen example from the ACVP ML-DSA
           sub-specification, with its hash list shortened. Every array is a promise: the server will
           generate test groups for combinations of these values, and the implementation has to
-          answer all of them <Cite s="acvpMlDsaCaps" />.
+          answer all of them <Cite s="acvpMlDsaCaps" /> <Cite s="acvpMlDsa" />.
         </p>
         <CodeBlock code={REGISTRATION_EXAMPLE} language="json" />
         <ul className="list-disc space-y-1 pl-5">
@@ -525,8 +527,9 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
         <p>
           FIPS 204 treats the variants differently for security, not only for testing: hedged
           signing helps mitigate side-channel attacks, the deterministic variant “should not be used
-          on platforms where side-channel attacks are a concern”, and implementing the hedged
-          variant alone is sufficient for interoperability <Cite s="fips204" at="§3.4" />.
+          on platforms where side-channel attacks are a concern and where they cannot be otherwise
+          mitigated”, and implementing the hedged variant alone is sufficient for interoperability{' '}
+          <Cite s="fips204" at="§3.4" />.
         </p>
         <Callout title="Comparator policy follows from the algorithm">
           <p>
@@ -608,8 +611,8 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             <tr>
               <Td>ML-DSA internal interface with external μ</Td>
               <Td>
-                No PKCS#11 v3.2 mechanism. Both Hub engines implement a non-standard mechanism code
-                0x403c for it; FIPS 204 allows μ to be computed in a different module{' '}
+                No PKCS#11 v3.2 mechanism. The Hub’s engines use a non-standard mechanism code,
+                0x403c, for it; FIPS 204 allows μ to be computed in a different module{' '}
                 <Cite s="fips204" at="Alg. 7, line 6" />
               </Td>
               <Td>
@@ -698,7 +701,7 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           zeroization, DRBG strength and incorrect-length ML-KEM/ML-DSA inputs{' '}
           <Cite s="acvpMlKem" /> <Cite s="acvpMlDsa" />. And <strong>API behaviour</strong>: wrong
           key type, wrong state, short buffers and other PKCS#11 return codes, which OASIS profile
-          cases and product probes cover <Cite s="pkcs11Profiles" />.
+          cases and product probes exercise <Cite s="pkcs11Profiles" />.
         </p>
         <p className="text-xs text-muted-foreground">
           Vocabulary the Hub holds itself to: one happy-path case is “sampled”, never “covered”;
@@ -826,11 +829,11 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
         </p>
         <ul className="list-disc space-y-1 pl-5">
           <li>
-            <strong>Shared layers.</strong> The Hub’s C++ and Rust engines are driven by one
-            dispatcher and one response builder. A defect in that shared code makes both engines
-            agree and both be wrong, so dual-engine agreement is differential evidence, not
-            independent validation. External expected values — a NIST sample, a published KAT — are
-            what break the tie.
+            <strong>Shared layers.</strong> In the Hub’s ACVP-format prototype, the C++ and Rust
+            engines are driven by one dispatcher and one response builder. A defect in that shared
+            code makes both engines agree and both be wrong, so dual-engine agreement is
+            differential evidence, not independent validation. External expected values — a NIST
+            sample, a published KAT — are what break the tie.
           </li>
           <li>
             <strong>Byte vs semantic equivalence.</strong> Hedged signatures differ on every run by
@@ -890,8 +893,8 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             <li>A licence or redistribution note exists for the copied values.</li>
             <li>The expected behaviour is stated, including every negative case.</li>
             <li>
-              Two people review it — one verifies the source, a different one reviews the
-              implementation — and the author is not the only reviewer.
+              The Hub’s evidence policy asks for two reviewers — one verifies the source, a
+              different one reviews the implementation — and the author is not the only reviewer.
             </li>
             <li>
               Nothing issued to a real ACVTS session is committed: issued vector sets may be

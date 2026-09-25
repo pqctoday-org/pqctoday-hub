@@ -4,7 +4,7 @@ import { Download, FileCheck2, Loader2, Upload } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { compareToExpected, type GoldenComparison } from '@/services/acvp/compare'
-import type { JsonObject } from '@/services/acvp/ir'
+import { summarizeEvidence, type EvidenceSummary } from './workshopLogic'
 import {
   PUBLIC_FIXTURES,
   PUBLIC_FIXTURE_IDS,
@@ -19,40 +19,6 @@ const AcvpFormatPrototypePanel = lazy(() =>
     default: m.AcvpFormatPrototypePanel,
   }))
 )
-
-interface EvidenceSummary {
-  evidenceClass: string
-  knownFixture: string | null
-  engine: string
-  answered: number
-  unsupported: number
-  error: number
-  artifactSha256Note: string | null
-}
-
-/** Pure: pull the fields a reviewer reads first out of an evidence.json. */
-export const summarizeEvidence = (doc: unknown): EvidenceSummary => {
-  const e = doc as JsonObject
-  const prompt = (e.prompt ?? {}) as JsonObject
-  const known = prompt.knownPublicFixture as JsonObject | null | undefined
-  const engine = (e.engine ?? {}) as JsonObject
-  const summary = (e.summary ?? {}) as JsonObject
-  if (typeof e.evidenceClass !== 'string') {
-    throw new Error('not an evidence.json from the Hub’s ACVP-format prototype (no evidenceClass)')
-  }
-  return {
-    evidenceClass: e.evidenceClass,
-    knownFixture: known
-      ? `${String(known.upstreamPath)} @ ${String(known.commit).slice(0, 7)}`
-      : null,
-    engine: typeof engine.label === 'string' ? engine.label : 'unknown engine',
-    answered: Number(summary.answered ?? 0),
-    unsupported: Number(summary.unsupported ?? 0),
-    error: Number(summary.error ?? 0),
-    artifactSha256Note:
-      typeof engine.artifactSha256Note === 'string' ? engine.artifactSha256Note : null,
-  }
-}
 
 const FilePick: React.FC<{ label: string; onText: (name: string, text: string) => void }> = ({
   label,

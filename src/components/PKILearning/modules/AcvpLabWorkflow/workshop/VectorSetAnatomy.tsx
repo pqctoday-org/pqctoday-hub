@@ -6,10 +6,8 @@ import { Button } from '@/components/ui/button'
 import { preparePrompt, type PrepareResult } from '@/services/acvp/run'
 import { identifyKnownFixture } from '@/services/acvp/evidence'
 import type { AcvpTestGroupIR, JsonValue } from '@/services/acvp/ir'
-import type { PlanItem } from '@/services/acvp/dispatch'
+import { groupOutcomes, type Prediction } from './workshopLogic'
 import { PUBLIC_FIXTURES, PUBLIC_FIXTURE_IDS, type PublicFixtureId } from '../data/publicFixtures'
-
-type Prediction = 'executes' | 'partly' | 'unsupported'
 
 const PREDICTIONS: { id: Prediction; label: string }[] = [
   { id: 'executes', label: 'Every test executes' },
@@ -24,38 +22,6 @@ const groupFacts = (g: AcvpTestGroupIR): [string, JsonValue][] =>
 const truncate = (v: JsonValue): string => {
   const s = typeof v === 'string' ? v : JSON.stringify(v)
   return s.length > 40 ? `${s.slice(0, 40)}… (${s.length} chars)` : s
-}
-
-export interface GroupOutcome {
-  tgId: number
-  execute: number
-  unsupported: number
-  reasons: string[]
-  actual: Prediction
-}
-
-/** Pure: per-group outcome of the prototype's execution plan. */
-export const groupOutcomes = (items: PlanItem[]): Map<number, GroupOutcome> => {
-  const out = new Map<number, GroupOutcome>()
-  for (const it of items) {
-    const g = out.get(it.tgId) ?? {
-      tgId: it.tgId,
-      execute: 0,
-      unsupported: 0,
-      reasons: [],
-      actual: 'executes' as Prediction,
-    }
-    if (it.kind === 'execute') g.execute++
-    else {
-      g.unsupported++
-      if (!g.reasons.includes(it.reason)) g.reasons.push(it.reason)
-    }
-    out.set(it.tgId, g)
-  }
-  for (const g of out.values()) {
-    g.actual = g.unsupported === 0 ? 'executes' : g.execute === 0 ? 'unsupported' : 'partly'
-  }
-  return out
 }
 
 /**
