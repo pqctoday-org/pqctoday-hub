@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
-import { ShieldAlert, FlaskConical, ChevronDown } from 'lucide-react'
+import { lazy, Suspense, useState } from 'react'
+import { ShieldAlert, FlaskConical, ChevronDown, Grid3x3 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -8,7 +8,13 @@ import { ImplementationAttacksView } from './ImplementationAttacksView'
 import { KATView } from './KATView'
 import { getAlgorithmDefaults, type AlgorithmSectionId } from '@/data/personaConfig'
 
-type ValidationSection = AlgorithmSectionId
+// WS-C C-6: the public coverage matrix + open-gaps register. Lazy — it fetches
+// its own generated JSON and only mounts when the section is opened.
+const CoverageMatrixView = lazy(() =>
+  import('./CoverageMatrixView').then((m) => ({ default: m.CoverageMatrixView }))
+)
+
+type ValidationSection = AlgorithmSectionId | 'coverage'
 
 interface AlgorithmValidationViewProps {
   /** `?section=` value from the URL — deep-link wins over the persona default. */
@@ -28,7 +34,9 @@ export function AlgorithmValidationView({ sectionParam }: AlgorithmValidationVie
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [open, setOpen] = useState<Set<ValidationSection>>(() => {
     const defaults = new Set<ValidationSection>(getAlgorithmDefaults(selectedPersona).openSections)
-    if (sectionParam === 'attacks' || sectionParam === 'kat') defaults.add(sectionParam)
+    if (sectionParam === 'attacks' || sectionParam === 'kat' || sectionParam === 'coverage') {
+      defaults.add(sectionParam)
+    }
     return defaults
   })
 
@@ -60,6 +68,18 @@ export function AlgorithmValidationView({ sectionParam }: AlgorithmValidationVie
       label: 'KAT Validation',
       caption: 'Run pinned known-answer-test vectors live in your browser via WASM.',
       content: <KATView />,
+    },
+    {
+      id: 'coverage',
+      icon: <Grid3x3 size={16} />,
+      label: 'Coverage Matrix',
+      caption:
+        'Every advertised PKCS#11 capability per engine vs. the registered tests, with open gaps.',
+      content: (
+        <Suspense fallback={<p className="text-xs text-muted-foreground">Loading…</p>}>
+          <CoverageMatrixView />
+        </Suspense>
+      ),
     },
   ]
 

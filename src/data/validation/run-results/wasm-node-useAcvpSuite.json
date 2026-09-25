@@ -1,0 +1,1864 @@
+{
+  "$comment": "Recorded by src/components/Playground/hsm/acvp/useAcvpSuite.runResults.local.test.ts (WRITE_RUN_RESULTS=1). One entry per registered case × engine whose useAcvpSuite row ran; skip/err rows produce none. Host is Node.js, not a browser. Counted by the coverage matrix only while artifactSha256 equals the mechanism inventory record.",
+  "schema": "pqctoday.run-results/v1",
+  "runner": "useAcvpSuite (all categories, dual engine)",
+  "artifactKind": "wasm",
+  "host": "Node.js via vitest local venue (not a browser)",
+  "environment": {
+    "node": "v22.23.1",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "hubCommit": "720a5c12ec5fb167d854f1a9121a0c22cc58d918",
+  "recordedAt": "2026-09-25",
+  "results": [
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.01#aesgcm_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.01#aesgcm_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.02#hmac_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.02#hmac_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.03#rsapss_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.03#rsapss_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.04#ecdsa_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.04#ecdsa_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05#mldsa_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05#mldsa_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05#mldsa_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05#mldsa_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05#mldsa_test#/testGroups/2/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05#mldsa_test#/testGroups/2/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05b#mldsa_extended_test#/context/ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05b#mldsa_extended_test#/context/ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05b#mldsa_extended_test#/context/ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05b#mldsa_extended_test#/context/ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05b#mldsa_extended_test#/context/ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05b#mldsa_extended_test#/context/ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05c#mldsa_extended_test#/preHash/ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05c#mldsa_extended_test#/preHash/ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05c#mldsa_extended_test#/preHash/ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05c#mldsa_extended_test#/preHash/ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05c#mldsa_extended_test#/preHash/ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05c#mldsa_extended_test#/preHash/ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.keygen#mldsa_keygen_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.keygen#mldsa_keygen_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.keygen#mldsa_keygen_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.keygen#mldsa_keygen_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.keygen#mldsa_keygen_test#/testGroups/2/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.keygen#mldsa_keygen_test#/testGroups/2/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/0@ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/0@ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/0@ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/0@ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/0@ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/0@ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/1@ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/1@ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/1@ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/1@ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/1@ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.mutation#mldsa_sigver_test#/localMutations/1@ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/2/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/2/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/3/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/3/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/4/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/4/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/5/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/5/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/6/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/6/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/7/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/7/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/8/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.siggen-det#mldsa_siggen_det_test#/testGroups/8/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/3",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/3",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/4",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/4",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/1/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/1/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/1/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/1/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/1/tests/3",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/1/tests/3",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/1/tests/4",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/1/tests/4",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/2/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/2/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/2/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/2/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/2/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/2/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/2/tests/3",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/2/tests/3",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/2/tests/4",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/2/tests/4",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/3/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/3/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/3/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/3/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/4/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/4/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/4/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/4/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/5/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/5/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/5/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/5/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.06#local:acvp.06/ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.06#local:acvp.06/ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.06#local:acvp.06/ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.06#local:acvp.06/ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.06#local:acvp.06/ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.06#local:acvp.06/ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.07#mlkem_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.07#mlkem_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.07#mlkem_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.07#mlkem_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.07#mlkem_test#/testGroups/2/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.07#mlkem_test#/testGroups/2/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.08#local:acvp.08/ML-KEM-1024",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.08#local:acvp.08/ML-KEM-1024",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.08#local:acvp.08/ML-KEM-512",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.08#local:acvp.08/ML-KEM-512",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.08#local:acvp.08/ML-KEM-768",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.08#local:acvp.08/ML-KEM-768",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-128f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-128f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-128s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-128s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-192f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-192f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-192s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-192s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-256f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-256f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-256s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHA2-256s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-128f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-128f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-128s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-128s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-192f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-192f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-192s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-192s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-256f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-256f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-256s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09#local:acvp.09/SLH-DSA-SHAKE-256s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-128s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-192s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHA2-256s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-128s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256f",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256f",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256s",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.09b#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256s",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10#sha256_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10#sha256_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10#sha256_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10#sha256_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10#sha256_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10#sha256_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10b#sha384_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10b#sha384_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10b#sha384_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10b#sha384_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10b#sha384_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10b#sha384_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10c#sha512_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10c#sha512_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10c#sha512_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10c#sha512_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10c#sha512_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10c#sha512_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10d#sha3_256_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10d#sha3_256_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10d#sha3_256_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10d#sha3_256_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10d#sha3_256_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10d#sha3_256_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10e#sha3_512_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10e#sha3_512_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10e#sha3_512_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10e#sha3_512_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.10e#sha3_512_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.10e#sha3_512_test#/testGroups/0/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.11#aescbc_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.11#aescbc_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.12#aesctr_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.12#aesctr_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.13#hmac_sha384_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.13#hmac_sha384_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.14#hmac_sha512_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.14#hmac_sha512_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.15#ecdsa_p384_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.15#ecdsa_p384_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.16#eddsa_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.16#eddsa_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.16b#eddsa_ed448_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.16b#eddsa_ed448_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.17#pbkdf2_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.17#pbkdf2_test#/testGroups/0/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.18#hkdf_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.18#hkdf_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.19#aeskw_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.19#aeskw_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.20#local:acvp.20/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.20#local:acvp.20/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.21#local:acvp.21/cross-context",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.21#local:acvp.21/cross-context",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.21#local:acvp.21/no-context",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.21#local:acvp.21/no-context",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.21#local:acvp.21/same-context",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.21#local:acvp.21/same-context",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.22#local:acvp.22/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.22#local:acvp.22/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.23#local:acvp.23/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.23#local:acvp.23/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.24#local:acvp.24/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.24#local:acvp.24/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.25#local:acvp.25/sha3-256-kdf",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.25#local:acvp.25/sha3-256-kdf",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.25#local:acvp.25/sha3-512-kdf",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.25#local:acvp.25/sha3-512-kdf",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.26#local:acvp.26/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.26#local:acvp.26/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.27#local:acvp.27/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.27#local:acvp.27/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.28#local:acvp.28/ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.28#local:acvp.28/ML-DSA-44",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.28#local:acvp.28/ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.28#local:acvp.28/ML-DSA-65",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.28#local:acvp.28/ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.28#local:acvp.28/ML-DSA-87",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.29#local:acvp.29/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.29#local:acvp.29/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.30#local:acvp.30/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.30#local:acvp.30/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.31#local:acvp.31/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.31#local:acvp.31/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.32#local:acvp.32/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.32#local:acvp.32/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.33#ecdsa_p521_test#/testGroups/0/tests/0",
+      "status": "fail"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.33#ecdsa_p521_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.34#local:acvp.34/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.34#local:acvp.34/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.35#kmac_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.35#kmac_test#/testGroups/1/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "acvp.36#rsa_oaep_test#/testGroups/0/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "acvp.36#rsa_oaep_test#/testGroups/0/tests/0",
+      "status": "pass"
+    }
+  ]
+}
