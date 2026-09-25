@@ -4906,7 +4906,12 @@
       "unified": "current",
       "admittedAt": "2026-08-17T09:51:19.066009+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:04.593672+00:00"
+      "stampedAt": "2026-09-17T13:12:04.593672+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-09252026/products/forward-edge-ai-space-router-brief-a2822004.html",
+      "supersededAt": "2026-09-25T17:04:02.632798+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "migrate r2 evidence re-sourcing 2026-09-25: previous capture was another product's page, a wrong page or missing; official document reviewed by Claude + Codex — replaced by forward-edge-ai-space-router-a2822004.html"
     },
     {
       "softwareName": "Freebsd",
