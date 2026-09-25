@@ -25,7 +25,7 @@ import { CRYPTO_MECHANISMS, isKnownMechanism, CYCLONEDX_REGISTRY } from './crypt
 import { ALGORITHM_FAMILIES, REGISTRY_LAST_UPDATED } from './cyclonedxCryptoRegistry'
 import { ALGORITHM_REGISTRY } from './algorithmProperties'
 import { PROTOCOL_MATRIX, DRAFT_STAGE_LEVEL } from './pqcProtocolMatrix'
-import { threatsData } from './threatsData'
+import { draftThreatIndustries, threatsData } from './threatsData'
 import { libraryData } from './libraryData'
 import { softwareData } from './migrateData'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from '../components/Algorithms/landscapeIcons'
@@ -33,7 +33,7 @@ import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
 import { WORKSHOP_TOOLS } from '../components/Playground/workshopRegistry'
 import { resolveToNaicsSet } from './sectorVocabularyData'
 import { isCrossIndustry } from './industryMatch'
-import { resolveIndustryParam } from '../components/Threats/threatsUrlParams'
+import { resolveIndustryParam, threatsIndustryHref } from '../components/Threats/threatsUrlParams'
 
 const { useCases, standards, marketSizes } = loadIndustryLandscape()
 const rowByIdForTargets = new Map(PROTOCOL_MATRIX.map((r) => [r.id, r]))
@@ -86,12 +86,23 @@ describe('industry-landscape driftguards', () => {
     // sub-labels are exempt: they're not real industries in the threats
     // taxonomy, and every row carrying one today has a populated
     // source_library_ref, so it never falls through to the link.
+    //
+    // A sector whose every threat is drafted (awaiting a source, 2026-09-24
+    // claim check) is still a known sector: it must resolve among the drafted
+    // rows, and the view then shows no threats link (threatsIndustryHref).
+    const drafted = [...draftThreatIndustries.values()].map((industry) => ({ industry }))
     for (const ind of getLandscapeIndustries()) {
       if (isCrossIndustry(ind)) continue
-      expect(
-        resolveIndustryParam(ind, threatsData),
-        `industry "${ind}" does not resolve to a threats-page industry`
-      ).toHaveLength(1)
+      const live = resolveIndustryParam(ind, threatsData)
+      if (live.length === 0) {
+        expect(
+          resolveIndustryParam(ind, drafted),
+          `industry "${ind}" is neither a published nor a drafted threats-page industry`
+        ).toHaveLength(1)
+        expect(threatsIndustryHref(ind, threatsData)).toBeNull()
+        continue
+      }
+      expect(live, `industry "${ind}" resolves to several threats-page industries`).toHaveLength(1)
     }
   })
 

@@ -7,6 +7,7 @@ import {
   resolveIndustryParam,
   threatClassParam,
   threatIdParam,
+  threatsIndustryHref,
   wantsHorizonView,
 } from './threatsUrlParams'
 import type { ThreatItem } from '@/data/threatsData'
@@ -19,6 +20,19 @@ describe('threatsUrlParams', () => {
     expect(threatIdParam(p('threat=FIN-002'))).toBe('FIN-002')
     expect(threatIdParam(p('id=FIN-001&threat=FIN-002'))).toBe('FIN-001')
     expect(threatIdParam(p(''))).toBeNull()
+  })
+
+  it('links a sector only when the filter lands on a published threat', () => {
+    const rows = [{ industry: 'Finance & Banking' }, { industry: 'Critical Infrastructure / OT' }]
+    expect(threatsIndustryHref('Finance & Banking', rows)).toBe(
+      '/threats?industry=Finance%20%26%20Banking'
+    )
+    // an old label still lands through the alias, and the link keeps the caller's label
+    expect(threatsIndustryHref('Critical Infrastructure', rows)).toBe(
+      '/threats?industry=Critical%20Infrastructure'
+    )
+    // every threat of the sector drafted: no link
+    expect(threatsIndustryHref('Water / Wastewater', rows)).toBeNull()
   })
 
   it('resolves ?industry= case-insensitively, through old labels and slugs, dropping unknowns', () => {

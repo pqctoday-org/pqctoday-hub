@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { threatsData } from './threatsData'
+import { draftThreatIndustries, knownThreatIndustries, threatsData } from './threatsData'
 import { INDUSTRY_TO_THREATS_MAP } from './personaConfig'
 import { ASSESS_TO_THREATS_INDUSTRY } from '@/components/Report/ReportThreatsAppendix'
 import {
@@ -61,18 +61,25 @@ describe('the Threats page industry vocabulary against the live CSV', () => {
     for (const old of Object.keys(THREAT_INDUSTRY_ALIASES)) expect(live.has(old)).toBe(false)
   })
 
-  it('every alias target, persona map and report map value is a live Threats label', () => {
+  it('every alias target, persona map and report map value is a known Threats sector', () => {
+    // known = has a published threat, or every one of its threats is drafted
+    // awaiting a source (2026-09-24 claim check) — links to those are hidden,
+    // the label itself stays valid
     const targets = [
       ...Object.values(THREAT_INDUSTRY_ALIASES),
       ...Object.values(INDUSTRY_TO_THREATS_MAP).flat(),
       ...Object.values(ASSESS_TO_THREATS_INDUSTRY).flat(),
     ]
-    for (const label of targets) expect(live, `"${label}"`).toContain(label)
+    for (const label of targets) expect(knownThreatIndustries, `"${label}"`).toContain(label)
   })
 
   it('HSM-001 and HSM-002 sit under their own Hardware Security Modules sector', () => {
+    // published or drafted (both were drafted by the 2026-09-24 claim check,
+    // pending a document that states them) — the sector label holds either way
     for (const id of ['HSM-001', 'HSM-002']) {
-      expect(threatsData.find((t) => t.threatId === id)?.industry).toBe('Hardware Security Modules')
+      const industry =
+        threatsData.find((t) => t.threatId === id)?.industry ?? draftThreatIndustries.get(id)
+      expect(industry).toBe('Hardware Security Modules')
     }
   })
 })

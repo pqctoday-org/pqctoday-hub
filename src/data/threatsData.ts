@@ -219,6 +219,33 @@ export const retiredThreats: ReadonlyMap<string, RetiredThreat> = new Map(
   )
 )
 
+/** A drafted threat: held off the page until a document that states it is
+ *  on file (the 2026-09-24 claim check drafted rows whose cited document
+ *  never states the quantum risk). Only its sector is exposed — so a sector
+ *  whose every threat is awaiting a source stays a KNOWN sector (links to it
+ *  are hidden, not broken) rather than vanishing from the vocabulary. */
+function transformDraft(row: RawThreatRow): { threatId: string; industry: string } | null {
+  if (isPublishedThreatStatus(row.status) || isRetiredThreatStatus(row.status) || !row.threat_id)
+    return null
+  return { threatId: row.threat_id, industry: canonicalThreatIndustry(row.industry || '') }
+}
+
+/** Drafted threats of the latest snapshot: id → sector. */
+export const draftThreatIndustries: ReadonlyMap<string, string> = new Map(
+  loadLatestCSV<RawThreatRow, { threatId: string; industry: string }>(
+    modules,
+    THREATS_FILE_RE,
+    transformDraft
+  ).data.map((r) => [r.threatId, r.industry])
+)
+
+/** Every sector the Threats page knows: those with a published threat plus
+ *  those whose threats are all drafted (awaiting a source). */
+export const knownThreatIndustries: ReadonlySet<string> = new Set([
+  ...threatsData.map((t) => t.industry),
+  ...draftThreatIndustries.values(),
+])
+
 export const THREATS_COUNT = threatsData.length
 
 // Standalone CSV parser for use by tests and RAG corpus generator

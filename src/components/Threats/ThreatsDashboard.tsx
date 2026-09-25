@@ -99,7 +99,7 @@ import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileThreatsView } from '@/components/Mobile/screens/MobileThreatsView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import {
-  LENS_PROTOCOLS,
+  lensProtocolsFor,
   protocolsForThreat,
   threatTouchesProtocol,
 } from '../../data/threatProtocolLens'
@@ -107,6 +107,9 @@ import {
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
 type ThreatsTab = 'list' | 'horizon'
+
+/** The protocol chips worth offering: only those that match a published threat. */
+const lensProtocols = lensProtocolsFor(threatsData)
 
 export const ThreatsDashboard: React.FC<{
   simEmbed?: boolean
@@ -700,7 +703,7 @@ export const ThreatsDashboard: React.FC<{
             <div className="mb-2 flex flex-wrap items-center gap-1.5">
               <Network size={14} className="shrink-0 text-primary" aria-hidden="true" />
               <span className="mr-1 text-xs font-semibold text-foreground">By protocol:</span>
-              {LENS_PROTOCOLS.map((p) => (
+              {lensProtocols.map((p) => (
                 <Button
                   key={p}
                   variant="ghost"

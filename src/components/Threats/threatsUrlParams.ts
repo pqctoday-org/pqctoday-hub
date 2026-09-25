@@ -61,6 +61,21 @@ export function resolveIndustryParam(
   return out
 }
 
+/**
+ * `/threats?industry=<industry>` when that filter lands on at least one
+ * published threat, else null — a sector whose threats are all drafted
+ * (awaiting a source) is not linked to, rather than linked to an empty or
+ * silently unfiltered page.
+ */
+export function threatsIndustryHref(
+  industry: string,
+  rows: readonly Pick<ThreatItem, 'industry'>[]
+): string | null {
+  return resolveIndustryParam(industry, rows).length
+    ? `/threats?industry=${encodeURIComponent(industry)}`
+    : null
+}
+
 const CLASS_PARAM_VALUES: readonly ThreatClass[] = ['hndl', 'hnfl', 'both']
 
 /** `?class=` → a threat class, or null for absent/unknown values. */
