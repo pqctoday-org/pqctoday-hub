@@ -1249,6 +1249,30 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 1,
     why: 'Route eligibility comes from the Management Manual, not the calendar: new approved algorithms, services and self-tests are security-relevant changes (UPDT under 30 % per category, else FS). TRNS needs a published CMVP transition, ALG allows no code change, and CVE may not add cryptography.',
   },
+
+  // ── crypto-product-certification: CC/EU author (2026-09-24; cc-claim-decoder, eidas-trace) ──
+  'crypto-product-certification/cc-claim-decoder': {
+    prompt:
+      'Two HSM listings both read “EAL4+”: TrustWay Proteccio (ADV_IMP.2, ALC_CMC.5, ALC_DVS.2, ALC_FLR.3, AVA_VAN.5) and nShield5s (ALC_FLR.2, AVA_VAN.5). What can you conclude from the shared headline?',
+    options: [
+      'They have identical assurance, because both are EAL4+',
+      'Nothing about which components were added — the “+” only means the EAL4 package was augmented, so each list must be read',
+      'Proteccio is exactly one level higher, EAL5, because it has more components',
+    ],
+    answer: 1,
+    why: 'Augmentation adds or substitutes named components; “EAL4+” without the list does not say which. Here both reach AVA_VAN.5 but differ in development, configuration-management and flaw-remediation components, and an augmented EAL4 is not a higher EAL.',
+  },
+  'crypto-product-certification/eidas-trace': {
+    prompt:
+      'In the remote-signing trace, where does the duty to use a certified signing device come from, and where do its security requirements come from?',
+    options: [
+      'Both from eIDAS 2.0, which is the Protection Profile the HSM conforms to',
+      'Both from EUCC, which obliges every QTSP to use certified HSMs',
+      'The duty from eIDAS (910/2014 as amended by 2024/1183); the requirements from Protection Profiles such as EN 419221-5, evaluated under a CC-based scheme',
+    ],
+    answer: 2,
+    why: 'eIDAS is law: it defines QSCDs and requires their certification. It is not a Protection Profile. The evaluable requirements are in the PPs (EN 419221-5, EN 419241-2), and EUCC is the scheme that runs the evaluation.',
+  },
 }
 
 export function stepExerciseFor(moduleId: string, stepId: string): StepExercise | undefined {
