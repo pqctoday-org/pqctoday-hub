@@ -51,7 +51,7 @@ Every entry on the Timeline was checked against its own source document by two i
 
 ### Data
 
-- **Timeline 09252026_r5:** 311 rows, 173 public; all 265 previously active rows reviewed; binding force recorded; one evidence manifest keyed by entry id. The site search index is rebuilt separately.
+- **Timeline 09252026_r5:** 311 rows, 173 public; all 265 previously active rows reviewed; binding force recorded; one evidence manifest keyed by entry id. The site search index is rebuilt with the reviewed rows only, and retitled rows keep their document analysis under their current title.
 
 ## [4.116.0] - 2026-09-23
 

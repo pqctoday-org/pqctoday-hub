@@ -308,15 +308,18 @@ function getLibraryRefIds(): Set<string> {
 }
 
 /**
- * Load all ACTIVE timeline enrichment keys ("{country}:{orgName} — {title}").
- * Used to keep doc-enrichment chunks in sync with the Gantt: deprecated rows
- * and stale-key orphan enrichments (present in older dated md files) are
- * excluded, mirroring the library safeguard in processDocumentEnrichments().
+ * Load all ACTIVE timeline enrichment keys ("{country}:{orgName} — {title}"),
+ * each mapped to the row's CURRENT key. Used to keep doc-enrichment chunks in
+ * sync with the Gantt: deprecated rows and stale-key orphan enrichments
+ * (present in older dated md files) are excluded, mirroring the library
+ * safeguard in processDocumentEnrichments(). A retitled row's earlier labels
+ * (r2 W-B) map to its current key so its enrichment is emitted under the
+ * label the trust scorer and the Gantt know.
  */
-let _timelineRefIds: Set<string> | null = null
-function getTimelineRefIds(): Set<string> {
+let _timelineRefIds: Map<string, string> | null = null
+function getTimelineRefIds(): Map<string, string> {
   if (_timelineRefIds) return _timelineRefIds
-  _timelineRefIds = new Set<string>()
+  _timelineRefIds = new Map<string, string>()
   const file = findLatestCSV('timeline_')
   if (file) {
     const rows = readCSV(file)
@@ -326,11 +329,13 @@ function getTimelineRefIds(): Set<string> {
       const country = sanitize(row[0])
       const orgName = sanitize(row[2])
       const title = sanitize(row[9])
-      if (country && title) _timelineRefIds.add(`${country}:${orgName} — ${title}`)
-      // Earlier labels of the same event (r2 W-B): a retitled row keeps its enrichment.
+      if (!country || !title) continue
+      const current = `${country}:${orgName} — ${title}`
+      _timelineRefIds.set(current, current)
       const eid = (row[rows[0].indexOf('event_id')] ?? '').trim()
       // eslint-disable-next-line security/detect-object-injection
-      for (const label of (eid && TIMELINE_LABEL_ALIASES[eid]) || []) _timelineRefIds.add(label)
+      for (const label of (eid && TIMELINE_LABEL_ALIASES[eid]) || [])
+        if (!_timelineRefIds.has(label)) _timelineRefIds.set(label, current)
     }
   }
   return _timelineRefIds
@@ -3724,11 +3729,22 @@ function processDocumentEnrichments(): RAGChunk[] {
       .sort()
       .reverse()[0]
 
-    for (const [refId, fields] of enrichLookup) {
+    const emittedTimelineKeys = new Set<string>()
+    for (const [lookupKey, fields] of enrichLookup) {
       // Skip enrichment chunks for deprecated/inactive library entries so the
       // corpus stays in sync with what the UI actually surfaces.
-      if (collection === 'library' && !getLibraryRefIds().has(refId)) continue
-      if (collection === 'timeline' && !getTimelineRefIds().has(refId)) continue
+      if (collection === 'library' && !getLibraryRefIds().has(lookupKey)) continue
+      let refId = lookupKey
+      if (collection === 'timeline') {
+        const current = getTimelineRefIds().get(lookupKey)
+        if (!current) continue
+        // An earlier label yields to the row's own current-label enrichment,
+        // and one row gets one enrichment chunk however many labels it had.
+        if (current !== lookupKey && enrichLookup.has(current)) continue
+        if (emittedTimelineKeys.has(current)) continue
+        emittedTimelineKeys.add(current)
+        refId = current
+      }
 
       const title = fields['Title'] || refId
       if (title === '---') continue
