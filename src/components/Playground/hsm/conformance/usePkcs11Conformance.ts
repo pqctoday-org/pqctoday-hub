@@ -33,6 +33,7 @@ import {
   type TestCaseExecutionResult,
 } from '@/wasm/pkcs11ConformanceRunner/xmlTestCaseExecutor'
 import {
+  profileConditionProbeCounts,
   runProfileConditionProbes,
   type ProfileClaim,
 } from '@/wasm/pkcs11ConformanceRunner/profileConditions'
@@ -40,7 +41,10 @@ import {
   provisionAuthFixture,
   provisionCertFixture,
 } from '@/wasm/pkcs11ConformanceRunner/profileFixtures'
-import { runMechanismCoverageProbes } from '@/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
+import {
+  mechanismProbes,
+  runMechanismCoverageProbes,
+} from '@/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
 import {
   captureMechanismInventory,
   compareToGenerated,
@@ -195,15 +199,70 @@ export const TIER_A_CASES: TierACase[] = [
 
 export const TIER_A_IDS: string[] = TIER_A_CASES.map((c) => c.id)
 
-/** Tier B probe groups per profile — counts from profileConditions.ts,
- *  shown in the palette; gating stays discovery-driven at run time. */
-export const TIER_B_GROUPS: { id: ProfileClaim; label: string; probes: number }[] = [
-  { id: 'baseline', label: 'Baseline', probes: 17 },
-  { id: 'extended', label: 'Extended', probes: 6 },
-  { id: 'authentication', label: 'Auth Token', probes: 8 },
-  { id: 'certificates', label: 'Cert Token', probes: 5 },
-  { id: 'hkdf_tls', label: 'HKDF TLS', probes: 6 },
-]
+/** Tier B probe groups per profile — counted from profileConditions.ts's own
+ *  probe definitions (never hand-written), shown in the palette; gating stays
+ *  discovery-driven at run time. A function: see profileConditionProbeCounts. */
+export const tierBGroups = (): { id: ProfileClaim; label: string; probes: number }[] => {
+  const n = profileConditionProbeCounts()
+  return [
+    { id: 'baseline', label: 'Baseline', probes: n.baseline },
+    { id: 'extended', label: 'Extended', probes: n.extended },
+    { id: 'authentication', label: 'Auth Token', probes: n.authentication },
+    { id: 'certificates', label: 'Cert Token', probes: n.certificates },
+    { id: 'hkdf_tls', label: 'HKDF TLS', probes: n.hkdf_tls },
+  ]
+}
+
+/** Product mechanism probes defined in mechanismCoverageProbes.ts (counted, not written). */
+export const mechanismProbeCount = (): number => mechanismProbes().length
+
+/**
+ * WS-G G-4: what each tier's rows ARE, so no view or report summarizes the
+ * three together as "OASIS test cases". Only Tier A replays test cases OASIS
+ * published; Tier B probes are generated here from the numbered conditions of
+ * the OASIS Profiles text; Mechanism Coverage probes are product-authored.
+ * `evidenceClass` uses the plan's §2.1 vocabulary.
+ */
+export const CONFORMANCE_TIER_LABELS: Record<
+  RunnerRow['tier'],
+  { label: string; short: string; source: string; evidenceClass: string }
+> = {
+  A: {
+    label: 'OASIS published test case',
+    short: 'OASIS case',
+    source: 'OASIS PKCS#11 Profiles v3.2 mandatory XML test case, replayed verbatim',
+    evidenceClass: 'oasis-profile-case',
+  },
+  B: {
+    label: 'Generated profile-condition probe',
+    short: 'Generated probe',
+    source:
+      'PQC Today-authored probe of one numbered OASIS Profiles v3.2 condition — not an OASIS-published test case',
+    evidenceClass: 'product-mechanism-probe',
+  },
+  Coverage: {
+    label: 'Product mechanism probe',
+    short: 'Product probe',
+    source: 'PQC Today-authored PKCS#11 v3.2 mechanism probe — not an OASIS test case',
+    evidenceClass: 'product-mechanism-probe',
+  },
+}
+
+const TIER_ORDER: RunnerRow['tier'][] = ['A', 'B', 'Coverage']
+
+/** Per-tier pass/fail/not-claimed tallies — the only way results are summarized. */
+export const tallyByTier = (rows: RunnerRow[]) =>
+  TIER_ORDER.map((tier) => {
+    const t = rows.filter((r) => r.tier === tier)
+    return {
+      tier,
+      ...CONFORMANCE_TIER_LABELS[tier],
+      rows: t.length,
+      pass: t.filter((r) => r.status === 'pass').length,
+      fail: t.filter((r) => r.status === 'fail').length,
+      notClaimed: t.filter((r) => r.status === 'not-claimed').length,
+    }
+  }).filter((t) => t.rows > 0)
 
 export interface ConformanceSelection {
   tierA: Set<string>
@@ -491,11 +550,16 @@ export function usePkcs11Conformance() {
 
   const reportText = () => {
     const lines = rows.map(
-      (r) => `[${r.status.toUpperCase()}] ${r.engine} ${r.name} (${r.citation}): ${r.detail}`
+      (r) =>
+        `[${r.status.toUpperCase()}] ${r.engine} ${CONFORMANCE_TIER_LABELS[r.tier].short}: ${r.name} (${r.citation}): ${r.detail}`
     )
     lines.push(
       '',
-      `Result: ${pass} pass, ${fail} fail, ${notClaimed} not-claimed (of ${rows.length} rows)`
+      `Result: ${pass} pass, ${fail} fail, ${notClaimed} not-claimed (of ${rows.length} rows)`,
+      ...tallyByTier(rows).map(
+        (t) =>
+          `  ${t.label}s: ${t.pass} pass, ${t.fail} fail, ${t.notClaimed} not-claimed (of ${t.rows}) — ${t.source}`
+      )
     )
     if (inventories.length > 0) lines.push('', ...inventories.map(describeInventory))
     return lines.join('\n')

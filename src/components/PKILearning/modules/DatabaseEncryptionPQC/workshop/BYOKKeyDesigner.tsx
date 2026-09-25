@@ -10,14 +10,14 @@ const DBENC_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'dbenc-tde-decrypt',
     useCase: 'TDE tablespace decryption (AES-256-GCM)',
-    standard: 'SP 800-38D ACVP',
+    standard: 'SP 800-38D',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
     kind: { type: 'aesgcm-decrypt' },
   },
   {
     id: 'dbenc-dek-wrap',
     useCase: 'Column DEK key wrapping (AES-256-KW)',
-    standard: 'RFC 3394 ACVP',
+    standard: 'RFC 3394',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc3394',
     kind: { type: 'aeskw-wrap' },
   },

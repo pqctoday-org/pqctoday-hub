@@ -59,7 +59,7 @@ describe('MobileKATValidationView', () => {
     const tile = screen.getByText('ML-KEM-512').closest('div')!
     fireEvent.click(
       Array.from(tile.parentElement!.querySelectorAll('button')).find((b) =>
-        b.textContent?.includes('Run NIST KAT')
+        b.textContent?.includes('Run validation tests')
       )!
     )
     await waitFor(() => expect(mockRunKAT).toHaveBeenCalled())

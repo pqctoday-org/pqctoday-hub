@@ -52,8 +52,9 @@ const FEATURES = [
   },
   {
     icon: ShieldCheck,
-    title: 'ACVP Testing',
-    description: 'Run NIST ACVP Known Answer Test vectors against the WASM crypto backends.',
+    title: 'Cryptographic Validation Workbench',
+    description:
+      'Run selected public NIST ACVP-Server reference samples, published-standard KATs, oracle comparisons and functional round-trips against the WASM crypto backends — each row labelled with its evidence class.',
   },
 ]
 

@@ -24,14 +24,14 @@ const DEVAPI_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'devapi-ecdsa-verify',
     useCase: 'Classical ECDSA P-256 verification',
-    standard: 'FIPS 186-5 ACVP',
+    standard: 'FIPS 186-5',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/186-5/final',
     kind: { type: 'ecdsa-sigver', curve: 'P-256' },
   },
   {
     id: 'devapi-eddsa-verify',
     useCase: 'EdDSA Ed25519 verification',
-    standard: 'RFC 8032 ACVP',
+    standard: 'RFC 8032',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc8032',
     kind: { type: 'eddsa-sigver' },
   },

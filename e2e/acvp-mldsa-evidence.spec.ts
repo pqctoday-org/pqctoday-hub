@@ -31,7 +31,7 @@ test.describe('ACVP workbench — ML-DSA reference samples (dual engine)', () =>
     page.on('pageerror', (err) => pageErrors.push(err.message))
 
     await page.goto('/playground/hsm?tab=developer&dtab=acvp')
-    const acvpTab = page.getByRole('tab', { name: 'ACVP' })
+    const acvpTab = page.getByRole('tab', { name: 'Validation' })
     await acvpTab.waitFor({ state: 'visible', timeout: 30000 })
     await acvpTab.click()
 

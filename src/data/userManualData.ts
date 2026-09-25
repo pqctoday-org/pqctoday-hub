@@ -130,7 +130,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'HSM Playground',
-        body: 'The /playground/hsm route emulates a PKCS#11 v3.2 HSM via SoftHSMv3 WASM with 10 tabs: Keystore, Symmetric, Key Wrap, Hashing, Sign/Verify, Key Agreement, Key Derivation, Mechanisms, ACVP (NIST KAT vectors), and Logs. Supports C++, Rust, and Dual engine modes with parity cross-check.',
+        body: 'The /playground/hsm route emulates a PKCS#11 v3.2 HSM via SoftHSMv3 WASM with 10 tabs: Keystore, Symmetric, Key Wrap, Hashing, Sign/Verify, Key Agreement, Key Derivation, Mechanisms, Validation (mixed-evidence workbench: selected NIST ACVP-Server reference samples, standard KATs, oracle and functional tests), and Logs. Supports C++, Rust, and Dual engine modes with parity cross-check.',
       },
       {
         heading: 'Individual Tools',

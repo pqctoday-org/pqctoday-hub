@@ -169,9 +169,10 @@ export const AcvpFormatPrototypePanel = ({
       <p className="text-xs text-muted-foreground">
         Supports exactly two pinned vector-set types:{' '}
         {PINNED_SCHEMAS.map((s) => `${s.algorithm} / ${s.mode} / ${s.revision}`).join(' and ')}.
-        Only ML-KEM decapsulation groups and ML-DSA external-interface (pure and pre-hash) groups
-        are executed; every other group or test is listed as unsupported and left out of the
-        response, never guessed or defaulted.
+        Executed: ML-KEM decapsulation groups; ML-DSA external-interface (pure and pre-hash) groups;
+        and ML-DSA internal-interface external-μ groups through the vendor-defined (not PKCS#11
+        v3.2) mechanism CKM_ML_DSA_EXTERNAL_MU. Every other group or test is listed as unsupported
+        and left out of the response, never guessed or defaulted.
       </p>
 
       <div

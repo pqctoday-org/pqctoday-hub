@@ -420,7 +420,7 @@ export const HsmPlayground = () => {
   useEffect(() => {
     const railLabel = RAIL.find((r) => r.id === rail)?.label ?? rail
     const suiteLabel =
-      devSubTab === 'acvp' ? 'ACVP' : devSubTab === 'conformance' ? 'Conformance' : 'Standard'
+      devSubTab === 'acvp' ? 'Validation' : devSubTab === 'conformance' ? 'Conformance' : 'Standard'
     if (activeTab === 'operate') setLogOrigin(`operate:${rail}`, `Operate · ${railLabel}`)
     else if (activeTab === 'build') setLogOrigin(`build:${devSubTab}`, `Build · ${suiteLabel}`)
     else if (activeTab === 'inspect') setLogOrigin('inspect', 'Inspect')

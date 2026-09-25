@@ -3049,7 +3049,7 @@
       },
       {
         "id": "acvp-validator",
-        "label": "NIST ACVP Validation"
+        "label": "ACVP Workflow & Validation Tests"
       }
     ],
     "platform-eng-pqc": [

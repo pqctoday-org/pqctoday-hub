@@ -19,14 +19,14 @@
       "schemaId": "ML-DSA/sigVer/FIPS204",
       "vsId": 42,
       "irCanonicalSha256": "342cba821659c89200b3e790400b863954dcd43d9c253f478564392b80fa458b",
-      "planCanonicalSha256": "4952cd8d431937931a27b4c37e1e6c8386b03fe05102284c794b84128d3505a2",
-      "responseCanonicalSha256": "730c0264680c10f04d9a105231158f7c1df1324704ecfea872f831d2ee1c94ef",
+      "planCanonicalSha256": "7485f50e93b40dfdadfc25ca58f6fcf931fb1d6f8dbbba65fc1bbc74b5e10e7b",
+      "responseCanonicalSha256": "ac66a18aeb14f71ed2f65d758a2ebf95a86807b63eac18b519e025bd48815178",
       "responseFile": "ML-DSA-sigVer-FIPS204.response.json",
       "counts": {
         "testGroups": 12,
         "testCases": 180,
-        "planExecute": 82,
-        "planUnsupported": 98
+        "planExecute": 127,
+        "planUnsupported": 53
       }
     }
   }

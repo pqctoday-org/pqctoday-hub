@@ -12,6 +12,7 @@ import sha256Test from '@/data/acvp/sha256_test.json'
 import ecdsaTest from '@/data/acvp/ecdsa_p384_test.json'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { KAT_EVIDENCE_META, evidenceForVectorFile } from '@/utils/katEvidence'
 import { Button } from '@/components/ui/button'
 
 const TESTING_KAT_SPECS: KatTestSpec[] = [
@@ -33,8 +34,8 @@ const TESTING_KAT_SPECS: KatTestSpec[] = [
   },
   {
     id: 'test-aesgcm-acvp',
-    useCase: 'AES-GCM ACVP decryption validation',
-    standard: 'SP 800-38D ACVP',
+    useCase: 'AES-GCM decryption (OpenSSL-oracle vector)',
+    standard: 'SP 800-38D',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
     kind: { type: 'aesgcm-decrypt' },
   },
@@ -73,12 +74,22 @@ type AlgorithmFamily = 'mlkem' | 'mldsa' | 'aescbc' | 'sha256' | 'ecdsap384'
 
 const ALG_DATA: Record<
   AlgorithmFamily,
-  { name: string; type: string; fips: string; data: any; vectorCount: number; timeMs: number }
+  {
+    name: string
+    type: string
+    fips: string
+    /** Vector file under src/data/ — its evidence class is derived, never typed here. */
+    file: string
+    data: any
+    vectorCount: number
+    timeMs: number
+  }
 > = {
   mlkem: {
     name: 'ML-KEM-768',
     type: 'Post-Quantum Key Decapsulation',
     fips: 'FIPS 203',
+    file: 'acvp/mlkem_test.json',
     data: mlkemTest,
     vectorCount:
       mlkemTest.testGroups?.reduce((acc: number, g: any) => acc + g.tests.length, 0) || 124,
@@ -88,6 +99,7 @@ const ALG_DATA: Record<
     name: 'ML-DSA-65',
     type: 'Post-Quantum Digital Signature',
     fips: 'FIPS 204',
+    file: 'acvp/mldsa_test.json',
     data: mldsaTest,
     vectorCount:
       mldsaTest.testGroups?.reduce((acc: number, g: any) => acc + g.tests.length, 0) || 312,
@@ -97,6 +109,7 @@ const ALG_DATA: Record<
     name: 'AES-CBC-256',
     type: 'Block Cipher Encryption',
     fips: 'FIPS 197',
+    file: 'acvp/aescbc_test.json',
     data: aesCbcTest,
     vectorCount:
       aesCbcTest.testGroups?.reduce((acc: number, g: any) => acc + g.tests.length, 0) || 45,
@@ -106,6 +119,7 @@ const ALG_DATA: Record<
     name: 'ECDSA P-384',
     type: 'Elliptic Curve Signature',
     fips: 'FIPS 186-5',
+    file: 'acvp/ecdsa_p384_test.json',
     data: ecdsaTest,
     vectorCount:
       ecdsaTest.testGroups?.reduce((acc: number, g: any) => acc + g.tests.length, 0) || 98,
@@ -115,6 +129,7 @@ const ALG_DATA: Record<
     name: 'SHA-256',
     type: 'Secure Hash Algorithm',
     fips: 'FIPS 180-4',
+    file: 'acvp/sha256_test.json',
     data: sha256Test,
     vectorCount:
       sha256Test.testGroups?.reduce((acc: number, g: any) => acc + g.tests.length, 0) || 64,
@@ -132,6 +147,10 @@ export const ACVPValidator: React.FC = () => {
 
   const consoleRef = useRef<HTMLDivElement>(null)
   const activeAlg = ALG_DATA[selectedAlg]
+  const vectorEvidence = (alg: (typeof ALG_DATA)[AlgorithmFamily]) =>
+    KAT_EVIDENCE_META[
+      evidenceForVectorFile({ file: alg.file, producer: alg.data?._provenance?.producer })
+    ]
 
   // Flatten tests to mock stream them
   const flattenedTests = useMemo(() => {
@@ -225,9 +244,10 @@ export const ACVPValidator: React.FC = () => {
             . No cryptography executes here and every entry is marked PASS regardless of content —
             it shows what an ACVP run looks like, but it is not a real test and proves nothing about
             FIPS 140-3 correctness. For a genuine pass/fail run against the real SoftHSMv3
-            WebAssembly engine, use the &quot;Run NIST KAT&quot; panel further below, which performs
-            real PKCS#11 operations and compares results byte-for-byte against NIST reference
-            vectors.
+            WebAssembly engine, use the test panel further below, which performs real PKCS#11
+            operations and labels each result with its evidence class — a public NIST ACVP-Server
+            reference sample compared byte-for-byte, a published-standard example, or a functional
+            round-trip with no external expected value.
           </p>
           <a
             href="https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/"
@@ -280,6 +300,7 @@ export const ACVPValidator: React.FC = () => {
                   <span>{alg.fips}</span>
                   <span>{alg.vectorCount} Vectors</span>
                 </div>
+                <div className="text-[10px] text-muted-foreground">{vectorEvidence(alg).short}</div>
               </Button>
             )
           })}
@@ -330,8 +351,9 @@ export const ACVPValidator: React.FC = () => {
           {status !== 'idle' && (
             <>
               <div className="text-primary/80">
-                [simulation] Loading JSON test vectors {selectedAlg}_test.json
+                [simulation] Loading JSON test vectors {activeAlg.file.replace('acvp/', '')}
               </div>
+              <div>[simulation] Vector source: {vectorEvidence(activeAlg).label}</div>
               <div>
                 [simulation] Found algorithm definition: {activeAlg.name} ({activeAlg.fips})
               </div>
@@ -452,7 +474,7 @@ export const ACVPValidator: React.FC = () => {
       <KatValidationPanel
         specs={TESTING_KAT_SPECS}
         label="PQC Testing & Validation Known Answer Tests"
-        authorityNote="NIST ACVP · FIPS 203 · FIPS 204 · SP 800-38D"
+        authorityNote="FIPS 203 · FIPS 204 · SP 800-38D"
       />
     </div>
   )

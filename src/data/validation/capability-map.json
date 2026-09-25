@@ -1,0 +1,1592 @@
+{
+  "$comment": [
+    "Reviewed mapping: PKCS #11 mechanism -> algorithm capability (plan WS-C C-1). ONE file; edits are reviewed like code.",
+    "DISCOVERED at runtime (mechanism-inventory.generated.json): which mechanisms each engine lists (C_GetMechanismList), which operations its CKF_ flags make required, and the ulMinKeySize..ulMaxKeySize range (C_GetMechanismInfo).",
+    "DECLARED here: algorithm name + revision, PKCS #11 section, enumerated parameter sets (kept only when their keySize falls inside the engine-reported range), sign variants (hedged/deterministic), pre-hash / external-mu / context options, and the length boundaries a boundary case must hit.",
+    "Section numbers cite PKCS #11 Specification Version 3.2, OASIS Standard (pkcs11-spec-v3.2-os, 03 June 2026). vendorDefined = a 0x8000xxxx or engine-extension mechanism with no section in that standard. historical = defined only in the PKCS #11 historical-mechanisms document, not the v3.2 base specification.",
+    "A mechanism listed by an engine but absent here still produces capability rows (source: discovered-only) and is reported by the coverage gate as unmapped."
+  ],
+  "schema": "pqctoday.capability-map/v1",
+  "specification": {
+    "title": "PKCS #11 Specification Version 3.2 (OASIS Standard)",
+    "edition": "pkcs11-spec-v3.2-os",
+    "date": "2026-06-03"
+  },
+  "signVariantOperations": ["sign", "message-sign"],
+  "parameterSetGroups": {
+    "ML-KEM": {
+      "keySizeMeaning": "encapsulation-key bytes (as both engines report ulMin/MaxKeySize)",
+      "sets": [
+        {
+          "id": "ML-KEM-512",
+          "keySize": 800
+        },
+        {
+          "id": "ML-KEM-768",
+          "keySize": 1184
+        },
+        {
+          "id": "ML-KEM-1024",
+          "keySize": 1568
+        }
+      ],
+      "source": "FIPS 203 Table 3 (ek length); PKCS #11 v3.2 §6.68 CKP_ML_KEM_*"
+    },
+    "ML-DSA": {
+      "keySizeMeaning": "public-key bytes",
+      "sets": [
+        {
+          "id": "ML-DSA-44",
+          "keySize": 1312
+        },
+        {
+          "id": "ML-DSA-65",
+          "keySize": 1952
+        },
+        {
+          "id": "ML-DSA-87",
+          "keySize": 2592
+        }
+      ],
+      "source": "FIPS 204 Table 2 (pk length); PKCS #11 v3.2 §6.67 CKP_ML_DSA_*"
+    },
+    "SLH-DSA": {
+      "keySizeMeaning": "public-key bytes (2n)",
+      "sets": [
+        {
+          "id": "SLH-DSA-SHA2-128s",
+          "keySize": 32
+        },
+        {
+          "id": "SLH-DSA-SHA2-128f",
+          "keySize": 32
+        },
+        {
+          "id": "SLH-DSA-SHA2-192s",
+          "keySize": 48
+        },
+        {
+          "id": "SLH-DSA-SHA2-192f",
+          "keySize": 48
+        },
+        {
+          "id": "SLH-DSA-SHA2-256s",
+          "keySize": 64
+        },
+        {
+          "id": "SLH-DSA-SHA2-256f",
+          "keySize": 64
+        },
+        {
+          "id": "SLH-DSA-SHAKE-128s",
+          "keySize": 32
+        },
+        {
+          "id": "SLH-DSA-SHAKE-128f",
+          "keySize": 32
+        },
+        {
+          "id": "SLH-DSA-SHAKE-192s",
+          "keySize": 48
+        },
+        {
+          "id": "SLH-DSA-SHAKE-192f",
+          "keySize": 48
+        },
+        {
+          "id": "SLH-DSA-SHAKE-256s",
+          "keySize": 64
+        },
+        {
+          "id": "SLH-DSA-SHAKE-256f",
+          "keySize": 64
+        }
+      ],
+      "source": "FIPS 205 Table 2; PKCS #11 v3.2 §6.69 CKP_SLH_DSA_*"
+    },
+    "EC": {
+      "keySizeMeaning": "field size in bits",
+      "sets": [
+        {
+          "id": "P-256",
+          "keySize": 256
+        },
+        {
+          "id": "P-384",
+          "keySize": 384
+        },
+        {
+          "id": "P-521",
+          "keySize": 521
+        },
+        {
+          "id": "secp256k1",
+          "keySize": 256
+        }
+      ],
+      "source": "Hub-declared curve set (the curves the hub offers); which named curves an engine accepts is NOT discoverable from C_GetMechanismInfo — only the bit range is"
+    },
+    "ECDH": {
+      "keySizeMeaning": "field size in bits",
+      "sets": [
+        {
+          "id": "P-256",
+          "keySize": 256
+        },
+        {
+          "id": "P-384",
+          "keySize": 384
+        },
+        {
+          "id": "P-521",
+          "keySize": 521
+        },
+        {
+          "id": "X25519",
+          "keySize": 255
+        },
+        {
+          "id": "X448",
+          "keySize": 448
+        }
+      ],
+      "source": "Hub-declared; PKCS #11 v3.2 §6.3.17 applies CKM_ECDH1_DERIVE to Weierstrass and Montgomery keys"
+    },
+    "EDWARDS": {
+      "keySizeMeaning": "field size in bits",
+      "sets": [
+        {
+          "id": "Ed25519",
+          "keySize": 255
+        },
+        {
+          "id": "Ed448",
+          "keySize": 448
+        }
+      ],
+      "source": "RFC 8032; PKCS #11 v3.2 §6.3.5"
+    },
+    "MONTGOMERY": {
+      "keySizeMeaning": "field size in bits",
+      "sets": [
+        {
+          "id": "X25519",
+          "keySize": 255
+        },
+        {
+          "id": "X448",
+          "keySize": 448
+        }
+      ],
+      "source": "RFC 7748; PKCS #11 v3.2 §6.3.7"
+    },
+    "AES": {
+      "keySizeMeaning": "key bytes",
+      "sets": [
+        {
+          "id": "AES-128",
+          "keySize": 16
+        },
+        {
+          "id": "AES-192",
+          "keySize": 24
+        },
+        {
+          "id": "AES-256",
+          "keySize": 32
+        }
+      ],
+      "source": "FIPS 197"
+    },
+    "AES-XTS": {
+      "keySizeMeaning": "double-key bytes",
+      "sets": [
+        {
+          "id": "XTS-AES-128",
+          "keySize": 32
+        },
+        {
+          "id": "XTS-AES-256",
+          "keySize": 64
+        }
+      ],
+      "source": "SP 800-38E / IEEE 1619"
+    }
+  },
+  "mechanisms": {
+    "CKM_RSA_PKCS_KEY_PAIR_GEN": {
+      "algorithm": "RSA",
+      "revision": "PKCS #1 v2.2 / FIPS 186-5",
+      "section": "§6.1.4"
+    },
+    "CKM_RSA_PKCS": {
+      "algorithm": "RSA PKCS #1 v1.5",
+      "revision": "PKCS #1 v2.2",
+      "section": "§6.1.6"
+    },
+    "CKM_RSA_X_509": {
+      "algorithm": "RSA raw (X.509)",
+      "revision": "PKCS #1 v2.2 RSAEP/RSADP/RSASP1/RSAVP1",
+      "section": "§6.1.12"
+    },
+    "CKM_MD5_RSA_PKCS": {
+      "algorithm": "RSA PKCS #1 v1.5 signature with MD5",
+      "revision": "PKCS #1 v2.2",
+      "section": "§6.1.14",
+      "preHash": "MD5",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA1_RSA_PKCS": {
+      "algorithm": "RSA PKCS #1 v1.5 signature with SHA-1",
+      "revision": "PKCS #1 v2.2",
+      "section": "§6.1.14",
+      "preHash": "SHA-1",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA224_RSA_PKCS": {
+      "algorithm": "RSA PKCS #1 v1.5 signature with SHA2-224",
+      "revision": "PKCS #1 v2.2",
+      "section": "§6.1.14",
+      "preHash": "SHA2-224",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA256_RSA_PKCS": {
+      "algorithm": "RSA PKCS #1 v1.5 signature with SHA2-256",
+      "revision": "PKCS #1 v2.2",
+      "section": "§6.1.14",
+      "preHash": "SHA2-256",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA384_RSA_PKCS": {
+      "algorithm": "RSA PKCS #1 v1.5 signature with SHA2-384",
+      "revision": "PKCS #1 v2.2",
+      "section": "§6.1.14",
+      "preHash": "SHA2-384",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA512_RSA_PKCS": {
+      "algorithm": "RSA PKCS #1 v1.5 signature with SHA2-512",
+      "revision": "PKCS #1 v2.2",
+      "section": "§6.1.14",
+      "preHash": "SHA2-512",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_224_RSA_PKCS": {
+      "algorithm": "RSA PKCS #1 v1.5 signature with SHA3-224",
+      "revision": "PKCS #1 v2.2",
+      "section": "§6.1.14",
+      "preHash": "SHA3-224",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_256_RSA_PKCS": {
+      "algorithm": "RSA PKCS #1 v1.5 signature with SHA3-256",
+      "revision": "PKCS #1 v2.2",
+      "section": "§6.1.14",
+      "preHash": "SHA3-256",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_384_RSA_PKCS": {
+      "algorithm": "RSA PKCS #1 v1.5 signature with SHA3-384",
+      "revision": "PKCS #1 v2.2",
+      "section": "§6.1.14",
+      "preHash": "SHA3-384",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_512_RSA_PKCS": {
+      "algorithm": "RSA PKCS #1 v1.5 signature with SHA3-512",
+      "revision": "PKCS #1 v2.2",
+      "section": "§6.1.14",
+      "preHash": "SHA3-512",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_RSA_PKCS_OAEP": {
+      "algorithm": "RSA-OAEP",
+      "revision": "PKCS #1 v2.2 / SP 800-56B",
+      "section": "§6.1.8"
+    },
+    "CKM_RSA_PKCS_PSS": {
+      "algorithm": "RSA-PSS (caller-hashed)",
+      "revision": "PKCS #1 v2.2 / FIPS 186-5",
+      "section": "§6.1.10"
+    },
+    "CKM_SHA1_RSA_PKCS_PSS": {
+      "algorithm": "RSA-PSS signature with SHA-1",
+      "revision": "PKCS #1 v2.2 / FIPS 186-5",
+      "section": "§6.1.15",
+      "preHash": "SHA-1",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA224_RSA_PKCS_PSS": {
+      "algorithm": "RSA-PSS signature with SHA2-224",
+      "revision": "PKCS #1 v2.2 / FIPS 186-5",
+      "section": "§6.1.15",
+      "preHash": "SHA2-224",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA256_RSA_PKCS_PSS": {
+      "algorithm": "RSA-PSS signature with SHA2-256",
+      "revision": "PKCS #1 v2.2 / FIPS 186-5",
+      "section": "§6.1.15",
+      "preHash": "SHA2-256",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA384_RSA_PKCS_PSS": {
+      "algorithm": "RSA-PSS signature with SHA2-384",
+      "revision": "PKCS #1 v2.2 / FIPS 186-5",
+      "section": "§6.1.15",
+      "preHash": "SHA2-384",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA512_RSA_PKCS_PSS": {
+      "algorithm": "RSA-PSS signature with SHA2-512",
+      "revision": "PKCS #1 v2.2 / FIPS 186-5",
+      "section": "§6.1.15",
+      "preHash": "SHA2-512",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_224_RSA_PKCS_PSS": {
+      "algorithm": "RSA-PSS signature with SHA3-224",
+      "revision": "PKCS #1 v2.2 / FIPS 186-5",
+      "section": "§6.1.15",
+      "preHash": "SHA3-224",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_256_RSA_PKCS_PSS": {
+      "algorithm": "RSA-PSS signature with SHA3-256",
+      "revision": "PKCS #1 v2.2 / FIPS 186-5",
+      "section": "§6.1.15",
+      "preHash": "SHA3-256",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_384_RSA_PKCS_PSS": {
+      "algorithm": "RSA-PSS signature with SHA3-384",
+      "revision": "PKCS #1 v2.2 / FIPS 186-5",
+      "section": "§6.1.15",
+      "preHash": "SHA3-384",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_512_RSA_PKCS_PSS": {
+      "algorithm": "RSA-PSS signature with SHA3-512",
+      "revision": "PKCS #1 v2.2 / FIPS 186-5",
+      "section": "§6.1.15",
+      "preHash": "SHA3-512",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_RSA_AES_KEY_WRAP": {
+      "algorithm": "RSA-OAEP + AES key wrap",
+      "revision": "PKCS #11 v3.2",
+      "section": "§6.1.19"
+    },
+    "CKM_ML_KEM_KEY_PAIR_GEN": {
+      "algorithm": "ML-KEM",
+      "revision": "FIPS 203",
+      "section": "§6.68.4",
+      "parameterSets": "ML-KEM"
+    },
+    "CKM_ML_KEM": {
+      "algorithm": "ML-KEM",
+      "revision": "FIPS 203",
+      "section": "§6.68.5",
+      "parameterSets": "ML-KEM"
+    },
+    "CKM_ML_DSA_KEY_PAIR_GEN": {
+      "algorithm": "ML-DSA",
+      "revision": "FIPS 204",
+      "section": "§6.67.4",
+      "parameterSets": "ML-DSA"
+    },
+    "CKM_ML_DSA": {
+      "algorithm": "ML-DSA (pure)",
+      "revision": "FIPS 204",
+      "section": "§6.67.5",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_ML_DSA": {
+      "algorithm": "HashML-DSA (caller-supplied digest)",
+      "revision": "FIPS 204",
+      "section": "§6.67.6",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "caller-supplied",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255]
+      }
+    },
+    "CKM_HASH_ML_DSA_SHA224": {
+      "algorithm": "HashML-DSA with SHA2-224",
+      "revision": "FIPS 204",
+      "section": "§6.67.7",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA2-224",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_ML_DSA_SHA256": {
+      "algorithm": "HashML-DSA with SHA2-256",
+      "revision": "FIPS 204",
+      "section": "§6.67.7",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA2-256",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_ML_DSA_SHA384": {
+      "algorithm": "HashML-DSA with SHA2-384",
+      "revision": "FIPS 204",
+      "section": "§6.67.7",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA2-384",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_ML_DSA_SHA512": {
+      "algorithm": "HashML-DSA with SHA2-512",
+      "revision": "FIPS 204",
+      "section": "§6.67.7",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA2-512",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_ML_DSA_SHA3_224": {
+      "algorithm": "HashML-DSA with SHA3-224",
+      "revision": "FIPS 204",
+      "section": "§6.67.7",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA3-224",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_ML_DSA_SHA3_256": {
+      "algorithm": "HashML-DSA with SHA3-256",
+      "revision": "FIPS 204",
+      "section": "§6.67.7",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA3-256",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_ML_DSA_SHA3_384": {
+      "algorithm": "HashML-DSA with SHA3-384",
+      "revision": "FIPS 204",
+      "section": "§6.67.7",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA3-384",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_ML_DSA_SHA3_512": {
+      "algorithm": "HashML-DSA with SHA3-512",
+      "revision": "FIPS 204",
+      "section": "§6.67.7",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA3-512",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_ML_DSA_SHAKE128": {
+      "algorithm": "HashML-DSA with SHAKE-128",
+      "revision": "FIPS 204",
+      "section": "§6.67.7",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHAKE-128",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_ML_DSA_SHAKE256": {
+      "algorithm": "HashML-DSA with SHAKE-256",
+      "revision": "FIPS 204",
+      "section": "§6.67.7",
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHAKE-256",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SLH_DSA_KEY_PAIR_GEN": {
+      "algorithm": "SLH-DSA",
+      "revision": "FIPS 205",
+      "section": "§6.69.4",
+      "parameterSets": "SLH-DSA"
+    },
+    "CKM_SLH_DSA": {
+      "algorithm": "SLH-DSA (pure)",
+      "revision": "FIPS 205",
+      "section": "§6.69.5",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_SLH_DSA": {
+      "algorithm": "HashSLH-DSA (caller-supplied digest)",
+      "revision": "FIPS 205",
+      "section": "§6.69.6",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "caller-supplied",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255]
+      }
+    },
+    "CKM_HASH_SLH_DSA_SHA224": {
+      "algorithm": "HashSLH-DSA with SHA2-224",
+      "revision": "FIPS 205",
+      "section": "§6.69.7",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA2-224",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_SLH_DSA_SHA256": {
+      "algorithm": "HashSLH-DSA with SHA2-256",
+      "revision": "FIPS 205",
+      "section": "§6.69.7",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA2-256",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_SLH_DSA_SHA384": {
+      "algorithm": "HashSLH-DSA with SHA2-384",
+      "revision": "FIPS 205",
+      "section": "§6.69.7",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA2-384",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_SLH_DSA_SHA512": {
+      "algorithm": "HashSLH-DSA with SHA2-512",
+      "revision": "FIPS 205",
+      "section": "§6.69.7",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA2-512",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_SLH_DSA_SHA3_224": {
+      "algorithm": "HashSLH-DSA with SHA3-224",
+      "revision": "FIPS 205",
+      "section": "§6.69.7",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA3-224",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_SLH_DSA_SHA3_256": {
+      "algorithm": "HashSLH-DSA with SHA3-256",
+      "revision": "FIPS 205",
+      "section": "§6.69.7",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA3-256",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_SLH_DSA_SHA3_384": {
+      "algorithm": "HashSLH-DSA with SHA3-384",
+      "revision": "FIPS 205",
+      "section": "§6.69.7",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA3-384",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_SLH_DSA_SHA3_512": {
+      "algorithm": "HashSLH-DSA with SHA3-512",
+      "revision": "FIPS 205",
+      "section": "§6.69.7",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHA3-512",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_SLH_DSA_SHAKE128": {
+      "algorithm": "HashSLH-DSA with SHAKE-128",
+      "revision": "FIPS 205",
+      "section": "§6.69.7",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHAKE-128",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_HASH_SLH_DSA_SHAKE256": {
+      "algorithm": "HashSLH-DSA with SHAKE-256",
+      "revision": "FIPS 205",
+      "section": "§6.69.7",
+      "parameterSets": "SLH-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "preHash": "SHAKE-256",
+      "context": "0..255 bytes",
+      "boundaries": {
+        "contextBytes": [0, 255],
+        "messageBytes": [0]
+      }
+    },
+    "CKM_ML_DSA_EXTERNAL_MU_GEN": {
+      "algorithm": "ML-DSA external-mu computation",
+      "revision": "FIPS 204 (external μ)",
+      "section": null,
+      "vendorDefined": true
+    },
+    "CKM_ML_DSA_EXTERNAL_MU": {
+      "algorithm": "ML-DSA sign/verify from external mu",
+      "revision": "FIPS 204",
+      "section": null,
+      "vendorDefined": true,
+      "parameterSets": "ML-DSA",
+      "signVariants": ["hedged", "deterministic"],
+      "externalMu": true
+    },
+    "CKM_HSS_KEY_PAIR_GEN": {
+      "algorithm": "HSS/LMS",
+      "revision": "SP 800-208 / RFC 8554",
+      "section": "§6.65.4"
+    },
+    "CKM_HSS": {
+      "algorithm": "HSS/LMS",
+      "revision": "SP 800-208 / RFC 8554",
+      "section": "§6.65.5"
+    },
+    "CKM_XMSS_KEY_PAIR_GEN": {
+      "algorithm": "XMSS",
+      "revision": "SP 800-208 / RFC 8391",
+      "section": "§6.66.6"
+    },
+    "CKM_XMSSMT_KEY_PAIR_GEN": {
+      "algorithm": "XMSS^MT",
+      "revision": "SP 800-208 / RFC 8391",
+      "section": "§6.66.7"
+    },
+    "CKM_XMSS": {
+      "algorithm": "XMSS",
+      "revision": "SP 800-208 / RFC 8391",
+      "section": "§6.66.8"
+    },
+    "CKM_XMSSMT": {
+      "algorithm": "XMSS^MT",
+      "revision": "SP 800-208 / RFC 8391",
+      "section": "§6.66.8"
+    },
+    "CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN": {
+      "algorithm": "FrodoKEM",
+      "revision": "FrodoKEM standard proposal (2025-09-29)",
+      "section": null,
+      "vendorDefined": true
+    },
+    "CKM_PQCTODAY_FRODOKEM_ENCAPSULATE": {
+      "algorithm": "FrodoKEM",
+      "revision": "FrodoKEM standard proposal (2025-09-29)",
+      "section": null,
+      "vendorDefined": true
+    },
+    "CKM_PQCTODAY_CLASSIC_MCELIECE_KEY_PAIR_GEN": {
+      "algorithm": "Classic McEliece",
+      "revision": "Classic McEliece spec (2022-10-23)",
+      "section": null,
+      "vendorDefined": true
+    },
+    "CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE": {
+      "algorithm": "Classic McEliece",
+      "revision": "Classic McEliece spec (2022-10-23)",
+      "section": null,
+      "vendorDefined": true
+    },
+    "CKM_SHA_1": {
+      "algorithm": "SHA-1",
+      "revision": "FIPS 180-4",
+      "section": "§6.20.2",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA_1_HMAC_GENERAL": {
+      "algorithm": "HMAC-SHA-1 (general length)",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.20.3",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA_1_HMAC": {
+      "algorithm": "HMAC-SHA-1",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.20.4",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA224": {
+      "algorithm": "SHA2-224",
+      "revision": "FIPS 180-4",
+      "section": "§6.21.2",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA224_HMAC_GENERAL": {
+      "algorithm": "HMAC-SHA2-224 (general length)",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.21.3",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA224_HMAC": {
+      "algorithm": "HMAC-SHA2-224",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.21.4",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA256": {
+      "algorithm": "SHA2-256",
+      "revision": "FIPS 180-4",
+      "section": "§6.22.2",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA256_HMAC_GENERAL": {
+      "algorithm": "HMAC-SHA2-256 (general length)",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.22.3",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA256_HMAC": {
+      "algorithm": "HMAC-SHA2-256",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.22.4",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA256_KEY_DERIVATION": {
+      "algorithm": "SHA2-256 key derivation (digest of a key)",
+      "revision": "PKCS #11 v3.2 / FIPS 180-4",
+      "section": "§6.22.5"
+    },
+    "CKM_SHA384": {
+      "algorithm": "SHA2-384",
+      "revision": "FIPS 180-4",
+      "section": "§6.23.2",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA384_HMAC_GENERAL": {
+      "algorithm": "HMAC-SHA2-384 (general length)",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.23.3",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA384_HMAC": {
+      "algorithm": "HMAC-SHA2-384",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.23.4",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA384_KEY_DERIVATION": {
+      "algorithm": "SHA2-384 key derivation (digest of a key)",
+      "revision": "PKCS #11 v3.2 / FIPS 180-4",
+      "section": "§6.23.5"
+    },
+    "CKM_SHA512": {
+      "algorithm": "SHA2-512",
+      "revision": "FIPS 180-4",
+      "section": "§6.24.2",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA512_HMAC_GENERAL": {
+      "algorithm": "HMAC-SHA2-512 (general length)",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.24.3",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA512_HMAC": {
+      "algorithm": "HMAC-SHA2-512",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.24.4",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA512_KEY_DERIVATION": {
+      "algorithm": "SHA2-512 key derivation (digest of a key)",
+      "revision": "PKCS #11 v3.2 / FIPS 180-4",
+      "section": "§6.24.5"
+    },
+    "CKM_SHA512_224": {
+      "algorithm": "SHA2-512/224",
+      "revision": "FIPS 180-4",
+      "section": "§6.25.2",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA512_224_HMAC_GENERAL": {
+      "algorithm": "HMAC-SHA2-512/224 (general length)",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.25.3",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA512_224_HMAC": {
+      "algorithm": "HMAC-SHA2-512/224",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.25.4",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA512_224_KEY_DERIVATION": {
+      "algorithm": "SHA2-512/224 key derivation (digest of a key)",
+      "revision": "PKCS #11 v3.2 / FIPS 180-4",
+      "section": "§6.25.5"
+    },
+    "CKM_SHA512_256": {
+      "algorithm": "SHA2-512/256",
+      "revision": "FIPS 180-4",
+      "section": "§6.26.2",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA512_256_HMAC_GENERAL": {
+      "algorithm": "HMAC-SHA2-512/256 (general length)",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.26.3",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA512_256_HMAC": {
+      "algorithm": "HMAC-SHA2-512/256",
+      "revision": "FIPS 198-1 / FIPS 180-4",
+      "section": "§6.26.4",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA512_256_KEY_DERIVATION": {
+      "algorithm": "SHA2-512/256 key derivation (digest of a key)",
+      "revision": "PKCS #11 v3.2 / FIPS 180-4",
+      "section": "§6.26.5"
+    },
+    "CKM_SHA3_224": {
+      "algorithm": "SHA3-224",
+      "revision": "FIPS 202",
+      "section": "§6.28.2",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_224_HMAC_GENERAL": {
+      "algorithm": "HMAC-SHA3-224 (general length)",
+      "revision": "FIPS 198-1 / FIPS 202",
+      "section": "§6.28.3",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_224_HMAC": {
+      "algorithm": "HMAC-SHA3-224",
+      "revision": "FIPS 198-1 / FIPS 202",
+      "section": "§6.28.4",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_256": {
+      "algorithm": "SHA3-256",
+      "revision": "FIPS 202",
+      "section": "§6.29.2",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_256_HMAC_GENERAL": {
+      "algorithm": "HMAC-SHA3-256 (general length)",
+      "revision": "FIPS 198-1 / FIPS 202",
+      "section": "§6.29.3",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_256_HMAC": {
+      "algorithm": "HMAC-SHA3-256",
+      "revision": "FIPS 198-1 / FIPS 202",
+      "section": "§6.29.4",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_256_KEY_DERIVATION": {
+      "algorithm": "SHA3-256 key derivation (digest of a key)",
+      "revision": "PKCS #11 v3.2 / FIPS 202",
+      "section": "§6.29.5"
+    },
+    "CKM_SHA3_384": {
+      "algorithm": "SHA3-384",
+      "revision": "FIPS 202",
+      "section": "§6.30.2",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_384_HMAC_GENERAL": {
+      "algorithm": "HMAC-SHA3-384 (general length)",
+      "revision": "FIPS 198-1 / FIPS 202",
+      "section": "§6.30.3",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_384_HMAC": {
+      "algorithm": "HMAC-SHA3-384",
+      "revision": "FIPS 198-1 / FIPS 202",
+      "section": "§6.30.4",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_384_KEY_DERIVATION": {
+      "algorithm": "SHA3-384 key derivation (digest of a key)",
+      "revision": "PKCS #11 v3.2 / FIPS 202",
+      "section": "§6.30.5"
+    },
+    "CKM_SHA3_512": {
+      "algorithm": "SHA3-512",
+      "revision": "FIPS 202",
+      "section": "§6.31.2",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_512_HMAC_GENERAL": {
+      "algorithm": "HMAC-SHA3-512 (general length)",
+      "revision": "FIPS 198-1 / FIPS 202",
+      "section": "§6.31.3",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_512_HMAC": {
+      "algorithm": "HMAC-SHA3-512",
+      "revision": "FIPS 198-1 / FIPS 202",
+      "section": "§6.31.4",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_SHA3_512_KEY_DERIVATION": {
+      "algorithm": "SHA3-512 key derivation (digest of a key)",
+      "revision": "PKCS #11 v3.2 / FIPS 202",
+      "section": "§6.31.5"
+    },
+    "CKM_MD5": {
+      "algorithm": "MD5",
+      "revision": null,
+      "section": null,
+      "historical": true,
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_MD5_HMAC": {
+      "algorithm": "HMAC-MD5",
+      "revision": null,
+      "section": null,
+      "historical": true
+    },
+    "CKM_MD5_HMAC_GENERAL": {
+      "algorithm": "HMAC-MD5 (general length)",
+      "revision": null,
+      "section": null,
+      "historical": true
+    },
+    "CKM_RIPEMD160": {
+      "algorithm": "RIPEMD-160",
+      "revision": null,
+      "section": null,
+      "historical": true,
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_RIPEMD160_HMAC": {
+      "algorithm": "HMAC-RIPEMD-160",
+      "revision": null,
+      "section": null,
+      "historical": true
+    },
+    "CKM_RIPEMD160_HMAC_GENERAL": {
+      "algorithm": "HMAC-RIPEMD-160 (general length)",
+      "revision": null,
+      "section": null,
+      "historical": true
+    },
+    "CKM_SHAKE_256_KEY_DERIVATION": {
+      "algorithm": "SHAKE256 key derivation",
+      "revision": "PKCS #11 v3.2 / FIPS 202",
+      "section": "§6.32.2"
+    },
+    "CKM_KECCAK_256": {
+      "algorithm": "Keccak-256 (pre-FIPS 202 padding)",
+      "revision": "Keccak submission",
+      "section": null,
+      "vendorDefined": true,
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_GENERIC_SECRET_KEY_GEN": {
+      "algorithm": "Generic secret key generation",
+      "revision": "PKCS #11 v3.2",
+      "section": "§6.8.3"
+    },
+    "CKM_CONCATENATE_BASE_AND_KEY": {
+      "algorithm": "Concatenate base key and key",
+      "revision": "PKCS #11 v3.2",
+      "section": "§6.43.3"
+    },
+    "CKM_CONCATENATE_BASE_AND_DATA": {
+      "algorithm": "Concatenate base key and data",
+      "revision": "PKCS #11 v3.2",
+      "section": "§6.43.4"
+    },
+    "CKM_CONCATENATE_DATA_AND_BASE": {
+      "algorithm": "Concatenate data and base key",
+      "revision": "PKCS #11 v3.2",
+      "section": "§6.43.5"
+    },
+    "CKM_SP800_108_COUNTER_KDF": {
+      "algorithm": "KBKDF counter mode",
+      "revision": "SP 800-108r1",
+      "section": "§6.42.3"
+    },
+    "CKM_SP800_108_FEEDBACK_KDF": {
+      "algorithm": "KBKDF feedback mode",
+      "revision": "SP 800-108r1",
+      "section": "§6.42.4"
+    },
+    "CKM_SP800_108_DOUBLE_PIPELINE_KDF": {
+      "algorithm": "KBKDF double-pipeline mode",
+      "revision": "SP 800-108r1",
+      "section": "§6.42.5"
+    },
+    "CKM_PKCS5_PBKD2": {
+      "algorithm": "PBKDF2",
+      "revision": "PKCS #5 v2.1 / SP 800-132",
+      "section": "§6.37.4"
+    },
+    "CKM_HKDF_DERIVE": {
+      "algorithm": "HKDF",
+      "revision": "RFC 5869 / SP 800-56C",
+      "section": "§6.62.3"
+    },
+    "CKM_HKDF_DATA": {
+      "algorithm": "HKDF (data object output)",
+      "revision": "RFC 5869 / SP 800-56C",
+      "section": "§6.62.4"
+    },
+    "CKM_EC_KEY_PAIR_GEN": {
+      "algorithm": "EC (short Weierstrass)",
+      "revision": "FIPS 186-5 / SEC 2",
+      "section": "§6.3.9",
+      "parameterSets": "EC"
+    },
+    "CKM_EC_KEY_PAIR_GEN_W_EXTRA_BITS": {
+      "algorithm": "EC key generation with extra random bits",
+      "revision": "FIPS 186-5 A.2.1",
+      "section": "§6.3.9",
+      "parameterSets": "EC"
+    },
+    "CKM_ECDSA": {
+      "algorithm": "ECDSA (caller-hashed)",
+      "revision": "FIPS 186-5",
+      "section": "§6.3.12",
+      "parameterSets": "EC"
+    },
+    "CKM_ECDSA_SHA1": {
+      "algorithm": "ECDSA with SHA-1",
+      "revision": "FIPS 186-5",
+      "section": "§6.3.13",
+      "parameterSets": "EC",
+      "preHash": "SHA-1",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_ECDSA_SHA224": {
+      "algorithm": "ECDSA with SHA2-224",
+      "revision": "FIPS 186-5",
+      "section": "§6.3.13",
+      "parameterSets": "EC",
+      "preHash": "SHA2-224",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_ECDSA_SHA256": {
+      "algorithm": "ECDSA with SHA2-256",
+      "revision": "FIPS 186-5",
+      "section": "§6.3.13",
+      "parameterSets": "EC",
+      "preHash": "SHA2-256",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_ECDSA_SHA384": {
+      "algorithm": "ECDSA with SHA2-384",
+      "revision": "FIPS 186-5",
+      "section": "§6.3.13",
+      "parameterSets": "EC",
+      "preHash": "SHA2-384",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_ECDSA_SHA512": {
+      "algorithm": "ECDSA with SHA2-512",
+      "revision": "FIPS 186-5",
+      "section": "§6.3.13",
+      "parameterSets": "EC",
+      "preHash": "SHA2-512",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_ECDSA_SHA3_224": {
+      "algorithm": "ECDSA with SHA3-224",
+      "revision": "FIPS 186-5",
+      "section": "§6.3.13",
+      "parameterSets": "EC",
+      "preHash": "SHA3-224",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_ECDSA_SHA3_256": {
+      "algorithm": "ECDSA with SHA3-256",
+      "revision": "FIPS 186-5",
+      "section": "§6.3.13",
+      "parameterSets": "EC",
+      "preHash": "SHA3-256",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_ECDSA_SHA3_384": {
+      "algorithm": "ECDSA with SHA3-384",
+      "revision": "FIPS 186-5",
+      "section": "§6.3.13",
+      "parameterSets": "EC",
+      "preHash": "SHA3-384",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_ECDSA_SHA3_512": {
+      "algorithm": "ECDSA with SHA3-512",
+      "revision": "FIPS 186-5",
+      "section": "§6.3.13",
+      "parameterSets": "EC",
+      "preHash": "SHA3-512",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_ECDH1_DERIVE": {
+      "algorithm": "ECDH (incl. X25519/X448 keys)",
+      "revision": "SP 800-56A r3 / RFC 7748",
+      "section": "§6.3.17",
+      "parameterSets": "ECDH"
+    },
+    "CKM_ECDH1_COFACTOR_DERIVE": {
+      "algorithm": "ECDH with cofactor",
+      "revision": "SP 800-56A r3",
+      "section": "§6.3.18",
+      "parameterSets": "EC"
+    },
+    "CKM_EC_EDWARDS_KEY_PAIR_GEN": {
+      "algorithm": "EdDSA key generation",
+      "revision": "RFC 8032 / FIPS 186-5",
+      "section": "§6.3.10",
+      "parameterSets": "EDWARDS"
+    },
+    "CKM_EC_MONTGOMERY_KEY_PAIR_GEN": {
+      "algorithm": "X25519/X448 key generation",
+      "revision": "RFC 7748",
+      "section": "§6.3.11",
+      "parameterSets": "MONTGOMERY"
+    },
+    "CKM_EDDSA": {
+      "algorithm": "EdDSA (PureEdDSA)",
+      "revision": "RFC 8032 / FIPS 186-5",
+      "section": "§6.3.14",
+      "parameterSets": "EDWARDS",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_EDDSA_PH": {
+      "algorithm": "HashEdDSA (Ed25519ph/Ed448ph)",
+      "revision": "RFC 8032",
+      "section": null,
+      "vendorDefined": true,
+      "parameterSets": "EDWARDS"
+    },
+    "CKM_X25519": {
+      "algorithm": "X25519",
+      "revision": "RFC 7748",
+      "section": null,
+      "vendorDefined": true
+    },
+    "CKM_X448": {
+      "algorithm": "X448",
+      "revision": "RFC 7748",
+      "section": null,
+      "vendorDefined": true
+    },
+    "CKM_EC_MONTGOMERY_KEY_DERIVE": {
+      "algorithm": "Montgomery key derivation",
+      "revision": null,
+      "section": null,
+      "vendorDefined": true
+    },
+    "CKM_BIP32_MASTER_DERIVE": {
+      "algorithm": "BIP32 master key derivation",
+      "revision": "BIP-0032",
+      "section": null,
+      "vendorDefined": true
+    },
+    "CKM_BIP32_CHILD_DERIVE": {
+      "algorithm": "BIP32 child key derivation",
+      "revision": "BIP-0032",
+      "section": null,
+      "vendorDefined": true
+    },
+    "CKM_AES_KEY_GEN": {
+      "algorithm": "AES key generation",
+      "revision": "FIPS 197",
+      "section": "§6.10.3",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_ECB": {
+      "algorithm": "AES-ECB",
+      "revision": "SP 800-38A",
+      "section": "§6.10.4",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_CBC": {
+      "algorithm": "AES-CBC",
+      "revision": "SP 800-38A",
+      "section": "§6.10.5",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_CBC_PAD": {
+      "algorithm": "AES-CBC with PKCS #7 padding",
+      "revision": "SP 800-38A / RFC 5652 §6.3",
+      "section": "§6.10.6",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_OFB": {
+      "algorithm": "AES-OFB",
+      "revision": "SP 800-38A",
+      "section": "§6.10.7",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_CFB1": {
+      "algorithm": "AES-CFB1",
+      "revision": "SP 800-38A",
+      "section": "§6.10.8",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_CFB8": {
+      "algorithm": "AES-CFB8",
+      "revision": "SP 800-38A",
+      "section": "§6.10.8",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_CFB128": {
+      "algorithm": "AES-CFB128",
+      "revision": "SP 800-38A",
+      "section": "§6.10.8",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_CTR": {
+      "algorithm": "AES-CTR",
+      "revision": "SP 800-38A",
+      "section": "§6.11.3",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_GCM": {
+      "algorithm": "AES-GCM",
+      "revision": "SP 800-38D",
+      "section": "§6.13.2",
+      "parameterSets": "AES",
+      "tagBits": [128, 120, 112, 104, 96, 64, 32]
+    },
+    "CKM_AES_CCM": {
+      "algorithm": "AES-CCM",
+      "revision": "SP 800-38C",
+      "section": "§6.13.4",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_GMAC": {
+      "algorithm": "AES-GMAC",
+      "revision": "SP 800-38D",
+      "section": "§6.13.6",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_CMAC": {
+      "algorithm": "AES-CMAC",
+      "revision": "SP 800-38B",
+      "section": "§6.14.4",
+      "parameterSets": "AES",
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_AES_XTS_KEY_GEN": {
+      "algorithm": "AES-XTS key generation",
+      "revision": "SP 800-38E",
+      "section": "§6.15.3",
+      "parameterSets": "AES-XTS"
+    },
+    "CKM_AES_XTS": {
+      "algorithm": "AES-XTS",
+      "revision": "SP 800-38E",
+      "section": "§6.15.4",
+      "parameterSets": "AES-XTS"
+    },
+    "CKM_AES_KEY_WRAP": {
+      "algorithm": "AES-KW",
+      "revision": "SP 800-38F / RFC 3394",
+      "section": "§6.16.3",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_KEY_WRAP_PAD": {
+      "algorithm": "AES-KW with PKCS #7 padding (legacy)",
+      "revision": "PKCS #11 v3.2",
+      "section": "§6.16.3",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_KEY_WRAP_KWP": {
+      "algorithm": "AES-KWP",
+      "revision": "SP 800-38F / RFC 5649",
+      "section": "§6.16.3",
+      "parameterSets": "AES"
+    },
+    "CKM_AES_ECB_ENCRYPT_DATA": {
+      "algorithm": "Key derivation by AES-ECB data encryption",
+      "revision": "PKCS #11 v3.2",
+      "section": "§6.17.3"
+    },
+    "CKM_AES_CBC_ENCRYPT_DATA": {
+      "algorithm": "Key derivation by AES-CBC data encryption",
+      "revision": "PKCS #11 v3.2",
+      "section": "§6.17.3"
+    },
+    "CKM_CHACHA20_KEY_GEN": {
+      "algorithm": "ChaCha20 key generation",
+      "revision": "RFC 8439",
+      "section": "§6.58.4"
+    },
+    "CKM_CHACHA20": {
+      "algorithm": "ChaCha20",
+      "revision": "RFC 8439",
+      "section": "§6.58.5"
+    },
+    "CKM_CHACHA20_POLY1305": {
+      "algorithm": "ChaCha20-Poly1305",
+      "revision": "RFC 8439",
+      "section": "§6.61"
+    },
+    "CKM_KMAC_128": {
+      "algorithm": "KMAC128",
+      "revision": "SP 800-185",
+      "section": null,
+      "vendorDefined": true,
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    },
+    "CKM_KMAC_256": {
+      "algorithm": "KMAC256",
+      "revision": "SP 800-185",
+      "section": null,
+      "vendorDefined": true,
+      "boundaries": {
+        "messageBytes": [0]
+      }
+    }
+  },
+  "declaredUnreachable": [
+    {
+      "id": "mldsa-hash-sha512t",
+      "algorithm": "HashML-DSA with SHA2-512/224 or SHA2-512/256",
+      "revision": "FIPS 204",
+      "operations": ["sign", "verify"],
+      "parameterSets": "ML-DSA",
+      "reason": "PKCS #11 v3.2 §6.67.7 defines no CKM_HASH_ML_DSA_<hash> mechanism for SHA2-512/224 or SHA2-512/256, so no engine can advertise one; the NIST ACVP sigVer groups for these hashes are listed in mldsa_sigver_test.json notExecuted.",
+      "openGap": "mldsa-hash-sha512t-no-mechanism"
+    },
+    {
+      "id": "mldsa-hedged-rnd",
+      "algorithm": "ML-DSA hedged signing with caller-supplied rnd",
+      "revision": "FIPS 204",
+      "operations": ["sign"],
+      "parameterSets": "ML-DSA",
+      "reason": "CK_SIGN_ADDITIONAL_CONTEXT carries hedgeVariant and context only; PKCS #11 v3.2 has no parameter for an explicit rnd, so the NIST hedged sigGen expected signatures cannot be reproduced through either engine (plan D2-4).",
+      "openGap": "d2-4-hedged-rnd"
+    },
+    {
+      "id": "mldsa-internal-interface",
+      "algorithm": "ML-DSA Sign_internal / Verify_internal on a caller-supplied M′",
+      "revision": "FIPS 204",
+      "operations": ["sign", "verify"],
+      "parameterSets": "ML-DSA",
+      "reason": "No PKCS #11 v3.2 mechanism exposes the internal interface on a raw M′ (CKM_ML_DSA always applies the external domain-separation prefix); NIST groups with signatureInterface=internal and externalMu=false are listed in the vector files notExecuted.",
+      "openGap": "mldsa-internal-interface"
+    }
+  ]
+}

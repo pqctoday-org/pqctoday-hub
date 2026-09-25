@@ -46,14 +46,28 @@ describe('dispatch plan (F-3)', () => {
     expect([...byFn('encapsulationKeyCheck'), ...byFn('decapsulationKeyCheck')]).toHaveLength(60)
   })
 
-  it('ML-DSA: internal interface unsupported by group; SHA2-512/t unsupported by test; no coercion', async () => {
+  it('ML-DSA: internal+externalMu runs on the vendor mechanism; internal raw M′ and SHA2-512/t unsupported; no coercion', async () => {
     const p = await prepare(prompt('ML-DSA-sigVer-FIPS204'))
-    const internal = p.plan.items.filter(
-      (i) =>
-        p.ir.testGroups.find((g) => g.tgId === i.tgId)!.properties.signatureInterface === 'internal'
-    )
-    expect(internal).toHaveLength(90)
-    expect(internal.every((i) => i.kind === 'unsupported' && i.scope === 'group')).toBe(true)
+    const groupOf = (tgId: number) => p.ir.testGroups.find((g) => g.tgId === tgId)!.properties
+    const internal = p.plan.items.filter((i) => groupOf(i.tgId).signatureInterface === 'internal')
+    const rawMessage = internal.filter((i) => groupOf(i.tgId).externalMu === false)
+    const externalMu = internal.filter((i) => groupOf(i.tgId).externalMu === true)
+    expect(rawMessage).toHaveLength(45)
+    for (const i of rawMessage) {
+      expect(i).toMatchObject({ kind: 'unsupported', scope: 'group' })
+      if (i.kind === 'unsupported') expect(i.reason).toBe(UNSUPPORTED_REASONS.mlDsaInternal)
+    }
+    expect(externalMu).toHaveLength(45)
+    for (const i of externalMu) {
+      expect(i.kind).toBe('execute')
+      if (i.kind === 'execute') {
+        expect(i.op).toMatchObject({
+          operation: 'ml-dsa.verify-external-mu',
+          mechanism: 'CKM_ML_DSA_EXTERNAL_MU',
+          vendorDefined: true,
+        })
+      }
+    }
     const perTest = p.plan.items.filter((i) => i.kind === 'unsupported' && i.scope === 'test')
     expect(perTest).toHaveLength(8)
     for (const i of perTest)
@@ -184,6 +198,27 @@ describe.each(FIXTURE_NAMES)('pipeline on %s with the TEST-ONLY fake engine', (n
     )
     expect(run.evidence.disclaimers).toEqual([DISCLAIMER_GENERAL, DISCLAIMER_IMPORT])
     expect(run.evidence.evidenceClass).toBe('nist-acvp-reference-sample')
+    const cases = run.evidence.cases as JsonObject[]
+    const vendor = run.evidence.vendorDefinedMechanisms as JsonObject[]
+    if (name.startsWith('ML-DSA')) {
+      expect(vendor).toEqual([
+        expect.objectContaining({
+          name: 'CKM_ML_DSA_EXTERNAL_MU',
+          value: '0x0000403c',
+          answered: 45,
+        }),
+      ])
+      const muCases = cases.filter((c) => c.mechanism === 'CKM_ML_DSA_EXTERNAL_MU')
+      expect(muCases).toHaveLength(45)
+      expect(muCases.every((c) => c.mechanismKind === 'vendor-defined')).toBe(true)
+      expect(
+        cases
+          .filter((c) => c.mechanism === 'CKM_ML_DSA')
+          .every((c) => c.mechanismKind === 'pkcs11-v3.2')
+      ).toBe(true)
+    } else {
+      expect(vendor).toEqual([])
+    }
     expect((run.evidence.prompt as JsonObject).sha256).toBe(await sha256Hex(text))
     expect((run.evidence.response as JsonObject).sha256).toBe(await sha256Hex(run.response.text))
     // No hex payload (keys, ciphertexts, signatures, shared secrets) leaks into the sidecar.

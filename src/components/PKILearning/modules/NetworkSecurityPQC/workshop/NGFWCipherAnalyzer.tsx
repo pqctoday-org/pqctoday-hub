@@ -26,7 +26,7 @@ const NETSEC_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'netsec-traffic-encrypt',
     useCase: 'Inspection tunnel encryption (AES-256-CTR)',
-    standard: 'SP 800-38A ACVP',
+    standard: 'SP 800-38A',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/a/final',
     kind: { type: 'aesctr-roundtrip' },
   },

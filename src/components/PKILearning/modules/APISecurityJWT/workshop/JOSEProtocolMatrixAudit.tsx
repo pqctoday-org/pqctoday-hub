@@ -217,8 +217,8 @@ interface ComplianceCheck {
 const PRIMITIVE_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'jose-mldsa65-acvp',
-    useCase: 'ML-DSA-65 sign/verify functional KAT (FIPS 204)',
-    standard: 'FIPS 204 + NIST ACVP',
+    useCase: 'ML-DSA-65 sign/verify functional round-trip (FIPS 204)',
+    standard: 'FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     libraryRefId: 'FIPS-204',
     kind: { type: 'mldsa-functional', variant: 65 },
@@ -226,8 +226,8 @@ const PRIMITIVE_KAT_SPECS: KatTestSpec[] = [
   },
   {
     id: 'jose-mldsa44-acvp',
-    useCase: 'ML-DSA-44 sign/verify functional KAT (FIPS 204)',
-    standard: 'FIPS 204 + NIST ACVP',
+    useCase: 'ML-DSA-44 sign/verify functional round-trip (FIPS 204)',
+    standard: 'FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 44 },
     message: 'standards-compliance probe — JOSE matrix audit',
@@ -235,7 +235,7 @@ const PRIMITIVE_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'jose-mlkem768-acvp',
     useCase: 'ML-KEM-768 encap/decap roundtrip (FIPS 203)',
-    standard: 'FIPS 203 + NIST ACVP',
+    standard: 'FIPS 203',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     libraryRefId: 'FIPS-203',
     kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
@@ -926,8 +926,9 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
           >
             draft-ietf-jose-pq-composite-sigs-03
           </a>
-          . The KAT panel below replays NIST ACVP test vectors (FIPS 203/204) against the same
-          primitives the workshop uses.
+          . The test panel below runs the same primitives the workshop uses: ML-DSA and ML-KEM
+          functional round-trips plus one HMAC-SHA256 check against a public NIST ACVP-Server
+          reference sample — each row names its evidence class.
         </p>
 
         {complianceError && (
@@ -1101,7 +1102,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
 
       <KatValidationPanel
         specs={PRIMITIVE_KAT_SPECS}
-        label="Primitive KATs — NIST ACVP vectors for FIPS 203 / 204 / 198-1"
+        label="Primitive KATs — FIPS 203 / 204 / 198-1"
         authorityNote="Vectors imported from src/data/acvp/{mldsa,mlkem,hmac}_test.json — green = our primitive output matches NIST's expected output byte-for-byte."
       />
 

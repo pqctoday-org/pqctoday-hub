@@ -79,7 +79,7 @@ test.describe('ACVP-format prototype (local import → run → download)', () =>
     page.on('request', onRequest)
 
     await page.getByLabel('ACVP prompt file').setInputFiles(FIXTURE)
-    await expect(page.getByTestId('acvp-io-loaded')).toContainText('82 executable here')
+    await expect(page.getByTestId('acvp-io-loaded')).toContainText('127 executable here')
 
     const golden = canonical(JSON.parse(readFileSync(GOLDEN, 'utf8')))
     for (const [engine, label] of [
@@ -89,7 +89,7 @@ test.describe('ACVP-format prototype (local import → run → download)', () =>
       await page.getByRole('button', { name: engine, exact: true }).click()
       await page.getByRole('button', { name: /Run locally/ }).click()
       await expect(page.getByTestId('acvp-io-summary')).toContainText(
-        `180 test cases on the ${label}: 82 answered · 98 unsupported · 0 error`,
+        `180 test cases on the ${label}: 127 answered · 53 unsupported · 0 error`,
         { timeout: 120000 }
       )
       const [download] = await Promise.all([

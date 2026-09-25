@@ -21,7 +21,13 @@
  *     operation "ml-dsa.verify" via CKM_ML_DSA, context from the test → testPassed.
  * D5  … preHash "preHash": same via CKM_HASH_ML_DSA_<hash> by HASH_ALG_TO_MECHANISM;
  *     a hashAlg with no PKCS#11 v3.2 mechanism is unsupported (test).
- * D6  ML-DSA signatureInterface "internal" (either externalMu value): unsupported (group).
+ * D6  ML-DSA signatureInterface "internal", externalMu true: operation
+ *     "ml-dsa.verify-external-mu" {parameterSet, pk, mu, signature} via the
+ *     VENDOR-DEFINED mechanism CKM_ML_DSA_EXTERNAL_MU (0x0000403c, pqctoday-hsm
+ *     src/lib/vendor_mechanisms.h / rust/src/constants.rs — not PKCS#11 v3.2):
+ *     C_VerifyInit(no parameter) + C_Verify(data = mu) → testPassed.
+ * D6b ML-DSA signatureInterface "internal", externalMu false: unsupported
+ *     (group) — raw M′ (ML-DSA.Verify_internal on a message) has no PKCS#11 path.
  * D7  Engine outcome → value: decapsulation CKR_OK → k = upper-case hex of the
  *     derived secret's CKA_VALUE; verification CKR_OK → testPassed true,
  *     CKR_SIGNATURE_INVALID / CKR_SIGNATURE_LEN_RANGE → false; any other
@@ -48,6 +54,8 @@ export type Pkcs11MechanismName =
   | 'CKM_HASH_ML_DSA_SHA3_512'
   | 'CKM_HASH_ML_DSA_SHAKE128'
   | 'CKM_HASH_ML_DSA_SHAKE256'
+  /** Vendor-defined by pqctoday-hsm (0x0000403c) — NOT a PKCS#11 v3.2 mechanism. */
+  | 'CKM_ML_DSA_EXTERNAL_MU'
 
 /**
  * ACVP hashAlg → PKCS#11 v3.2 HashML-DSA mechanism. SHA2-512/224 and
@@ -88,7 +96,29 @@ export interface MlDsaVerifyOp {
   hashAlg: string | null
 }
 
-export type PlanOperation = MlKemDecapsulateOp | MlDsaVerifyOp
+export interface MlDsaVerifyExternalMuOp {
+  operation: 'ml-dsa.verify-external-mu'
+  mechanism: 'CKM_ML_DSA_EXTERNAL_MU'
+  /** Always true: this mechanism is pqctoday-hsm vendor-defined, not PKCS#11 v3.2. */
+  vendorDefined: true
+  parameterSet: MlDsaParameterSet
+  pk: string
+  mu: string
+  signature: string
+}
+
+/** Vendor-defined mechanisms this prototype may dispatch, with their CK_MECHANISM_TYPE. */
+export const VENDOR_DEFINED_MECHANISMS: Readonly<
+  Partial<Record<Pkcs11MechanismName, { value: string; source: string }>>
+> = {
+  CKM_ML_DSA_EXTERNAL_MU: {
+    value: '0x0000403c',
+    source:
+      'pqctoday-hsm src/lib/vendor_mechanisms.h + rust/src/constants.rs (CKM_VENDOR_DEFINED range; not a PKCS#11 v3.2 mechanism)',
+  },
+}
+
+export type PlanOperation = MlKemDecapsulateOp | MlDsaVerifyOp | MlDsaVerifyExternalMuOp
 
 export type ResponseField = 'k' | 'testPassed'
 
@@ -109,14 +139,14 @@ export const UNSUPPORTED_REASONS = {
   mlKemKeyCheck:
     'FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation).',
   mlDsaInternal:
-    'signatureInterface "internal" is ML-DSA.Verify_internal (FIPS 204 Alg. 8, message or external mu); PKCS#11 v3.2 CKM_ML_DSA / CKM_HASH_ML_DSA_* implement only the external ML-DSA.Verify / HashML-DSA.Verify interface (Alg. 3/5).',
+    'signatureInterface "internal" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu.',
   mlDsaHashAlg: (h: string) =>
     `hashAlg "${h}" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do).`,
 } as const
 
 const str = (o: JsonObject, k: string): string => o[k] as string
 
-/** Pure: IR → plan (rules D1–D6). */
+/** Pure: IR → plan (rules D1–D6b). */
 export const planVectorSet = (ir: AcvpPromptIR): ExecutionPlan => {
   const items: PlanItem[] = []
   for (const g of ir.testGroups) {
@@ -151,7 +181,27 @@ export const planVectorSet = (ir: AcvpPromptIR): ExecutionPlan => {
       }
     } else {
       if (str(p, 'signatureInterface') !== 'external') {
-        groupUnsupported(UNSUPPORTED_REASONS.mlDsaInternal)
+        if (p.externalMu !== true) {
+          groupUnsupported(UNSUPPORTED_REASONS.mlDsaInternal)
+          continue
+        }
+        for (const t of g.tests) {
+          items.push({
+            tgId: g.tgId,
+            tcId: t.tcId,
+            kind: 'execute',
+            responseField: 'testPassed',
+            op: {
+              operation: 'ml-dsa.verify-external-mu',
+              mechanism: 'CKM_ML_DSA_EXTERNAL_MU',
+              vendorDefined: true,
+              parameterSet: str(p, 'parameterSet') as MlDsaParameterSet,
+              pk: str(t.fields, 'pk'),
+              mu: str(t.fields, 'mu'),
+              signature: str(t.fields, 'signature'),
+            },
+          })
+        }
         continue
       }
       const preHash = str(p, 'preHash') === 'preHash'
@@ -234,6 +284,8 @@ export interface CaseResult {
   reason?: string
   /** Engine-side note (e.g. the PKCS#11 return value that produced testPassed=false). */
   detail?: string
+  /** The PKCS#11 mechanism the case was dispatched to (executed items only). */
+  mechanism?: Pkcs11MechanismName
 }
 
 /** Run every executable plan item on the engine; carry plan-level unsupported through. */
@@ -265,6 +317,7 @@ export const executePlan = (
           tcId: item.tcId,
           disposition: 'answered',
           responseField: item.responseField,
+          mechanism: item.op.mechanism,
           value: outcome.value,
           ...(outcome.detail ? { detail: outcome.detail } : {}),
         })
@@ -274,6 +327,7 @@ export const executePlan = (
           tcId: item.tcId,
           disposition: 'unsupported',
           scope: 'engine',
+          mechanism: item.op.mechanism,
           reason: outcome.reason,
         })
       } else {
@@ -282,6 +336,7 @@ export const executePlan = (
           tcId: item.tcId,
           disposition: 'error',
           reason: outcome.reason,
+          mechanism: item.op.mechanism,
         })
       }
     }

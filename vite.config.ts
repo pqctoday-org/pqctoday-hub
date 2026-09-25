@@ -252,6 +252,10 @@ export default defineConfig({
           // precache. A blanket removal of `json` would silently break them offline.
           'data/**/*.json',
           'dist/**/*.json',
+          // WS-C coverage-matrix static export (~0.3 MB, linked from the
+          // /algorithms Coverage Matrix section) — an online document, not
+          // app shell; keep it out of the install payload.
+          'data/validation/*.html',
           // pyodide-lock.json (dev-tabs-pkcs11-kmip plan P1, G7) — the same
           // blanket `json` glob swept this in too, missed until G7 first ran
           // gate:precache against a build containing it. pyRuntime.ts's own
