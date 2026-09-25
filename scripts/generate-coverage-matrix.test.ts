@@ -75,9 +75,14 @@ describe('generate-coverage-matrix (committed inputs)', () => {
       // rust-mlkem-no-key-input-checks; 09c cpp-hashslhdsa-double-wrap; WS-E —
       // 01b rust-gcm-iv-96-only, 04b rust-ecdsa-p224-unsupported, 04d
       // rust-rsa-public-exponent-limit, 12b.probes rust-cbc-iv-length-arguments-bad,
-      // 18b rust-pbkdf2-prf-limited, 35b kmac-verify-ignores-output-length.
+      // 18b rust-pbkdf2-prf-limited, 35b kmac-verify-ignores-output-length;
+      // gap-closure P5 — 07c rust-mlkem-no-key-input-checks, 04e.keyver
+      // cpp-ec-public-key-not-validated, 04e.ecdsa-siggen
+      // g8-rust-advertised-cells-do-not-execute (SHA-224), 04e.eddsa-siggen
+      // rust-eddsa-ph-context-ignored, 18c.kbkdf cpp-kbkdf-counter-position-ignored
+      // / rust-kbkdf-iteration-variable-rejected.
       expect(f.registryCase, f.registryCase).toMatch(
-        /^acvp\.(07b\.keycheck|09c\.(sigver|siggen-det)|01b|04b|04d|12b\.probes|18b|35b)#/
+        /^acvp\.(07b\.keycheck|07c\.ekcheck-depth|09c\.(sigver|siggen-det)|01b|04b|04d|04e\.(keyver|ecdsa-siggen|eddsa-siggen)|12b\.probes|18b|18c\.kbkdf|35b)#/
       )
       expect(
         matrix.openGaps.some((g) => g.id === `recorded-fail:${f.registryCase}:${f.engine}`)
