@@ -487,7 +487,7 @@ export const SCHEME_CLOCKS: SchemeClock[] = [
     scheme: 'FIPS 140-3 / CMVP',
     when: '21/22 September 2026',
     isoDate: '2026-09-22',
-    what: 'All FIPS 140-2 certificates moved to the Historical list. Historical modules may still be used in existing systems, but not bought new. NIST’s own pages give both dates.',
+    what: 'All FIPS 140-2 certificates moved to the Historical list. Historical modules may still be bought and used for existing systems, but should not be included in new procurements. NIST’s own pages give both dates.',
     sources: [SHARED_SOURCES.fips1402Transition],
   },
   {
@@ -766,7 +766,7 @@ export const CHANGE_CASES: ChangeCase[] = [
       'Random-bit generation underlies every key; its evidence is shared by every algorithm.',
     fips: {
       affected:
-        'RBG algorithm testing; entropy evidence (IG D.K, 9 April 2026; ESV for the entropy source); SSP generation.',
+        'RBG algorithm testing; entropy evidence (IG D.K, 16 April 2026; ESV for the entropy source); SSP generation.',
       candidates: 'UPDT or FS.',
     },
     ccEucc: { affected: 'RNG claims and their evidence.', candidates: 'Impact analysis.' },

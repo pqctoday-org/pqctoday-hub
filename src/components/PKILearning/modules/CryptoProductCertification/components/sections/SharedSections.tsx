@@ -618,8 +618,9 @@ export const TransitionDeadlines = () => {
         The first clock has already struck: on 21/22 September 2026 every FIPS 140-2 certificate
         moved to the Historical list. Those modules may still run in existing systems, but a new
         procurement that asks for a validated module needs a FIPS 140-3 record. That is what a
-        scheme transition looks like from the inside — and it is the only kind of event the CMVP’s
-        TRNS route exists for.
+        scheme transition looks like from the inside. It is not a TRNS event either: the CMVP’s TRNS
+        route exists only for published CMVP <em>algorithm</em> transitions (for example the 2024
+        non-SP 800-56Brev2 RSA key-encapsulation transition, Management Manual §7.1.12).
       </p>
 
       <H3>Urgency without shortcuts</H3>

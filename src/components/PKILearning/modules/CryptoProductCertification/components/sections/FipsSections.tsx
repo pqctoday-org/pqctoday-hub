@@ -692,9 +692,10 @@ export const FipsLifecycle = () => (
       </table>
     </div>
     <p>
-      The Manual sets two clocks: a validation must complete within 24 months of entering Review,
-      and the lab has 90 days to answer comments. It gives no typical end-to-end duration, and
-      neither do we. Treat any duration figure without a source with caution.
+      The Manual sets two clocks: the CMVP may drop a module that has not completed validation
+      within two years of entering Review (the lab can ask for reconsideration), and the lab has 90
+      days to answer comments. It gives no typical end-to-end duration, and neither do we. Treat any
+      duration figure without a source with caution.
     </p>
     <p>
       Two kinds of validation exist today. A full validation lasts five years. An{' '}

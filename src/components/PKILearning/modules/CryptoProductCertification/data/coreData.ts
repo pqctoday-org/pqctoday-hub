@@ -468,7 +468,7 @@ export const CUSTOMER_APPLICABILITY: Record<AnchorCustomerId, CustomerApplicabil
       },
     ],
     clarify: [
-      'Which PP and which version does the conformity assessment expect? (EN 419221-5’s certified PP is written against CC 3.1 R4 and stays usable through the eIDAS carve-out in 2024/3144.)',
+      'Which PP and which version does the conformity assessment expect? (EN 419221-5’s certified PP is written against CC 3.1 R4. It may stay usable through the 2024/3144 carve-out for PPs that eIDAS requires — confirm with the certification body.)',
       'Is the HSM part of a remote QSCD? Then QSCD certification is valid for at most 5 years, with a vulnerability assessment every 2 years (Reg. 2024/1183, Art 30(3a)).',
       'Which EUCC assurance level? High means AVA_VAN 3–5; EN 419221-5 requires EAL4 augmented with AVA_VAN.5.',
       'For PQC, the applicable ECCG ACM v2 expects lattice schemes such as ML-KEM to be combined with a classical mechanism.',
@@ -603,7 +603,7 @@ export function evaluateBoundary(
       out.push({
         severity: 'error',
         component: 'appliance-hardware',
-        text: 'For a hardware module the physical boundary is the tamper-responsive enclosure. Without it you are describing a different module type, with different physical-security claims.',
+        text: 'For this HSM the physical boundary is its tamper-responsive enclosure. Without it you are describing a different module type, with different physical-security claims. (Not every hardware module has tamper response: a Level 1 hardware module can sit in a plain steel enclosure.)',
       })
     if (!has('firmware'))
       out.push({

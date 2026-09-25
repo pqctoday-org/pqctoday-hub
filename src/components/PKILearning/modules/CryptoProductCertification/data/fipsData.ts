@@ -262,7 +262,7 @@ export const MIP_STATES: readonly MipState[] = [
     state: 'Review',
     whoActs: 'CMVP',
     meaning:
-      'A reviewer has started. The validation must complete within 24 months of entering Review.',
+      'A reviewer has started. The CMVP may drop a module that has not completed validation within two years of entering Review (the lab can ask for reconsideration).',
   },
   {
     state: 'Comment Resolution – Lab',

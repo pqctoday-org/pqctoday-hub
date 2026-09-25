@@ -383,16 +383,16 @@ export const ScopeBeforeLevel = () => {
       </div>
 
       <p>
-        Now draw the three boundaries. A <strong>FIPS 140-3 hardware module</strong> is bounded by
-        its tamper-responsive enclosure: appliance hardware, firmware, the crypto library compiled
-        into it, and the firmware-enforced tenant partitions. The client SDK runs on customer hosts
-        and the cloud front end runs on the provider’s servers, so both normally stay outside — and
-        the validation then says nothing about them. A <strong>Common Criteria TOE</strong> is
-        whatever the Security Target defines; it could be drawn larger (claiming the administration
-        interfaces, for example) or smaller, and a Protection Profile may constrain it. A{' '}
-        <strong>PCI PTS HSM</strong> approval names the device — model, hardware and firmware
-        version — up to initial deployment; the way a processor then operates it is assessed
-        separately.
+        Now draw the three boundaries. For Orrin N7 the <strong>FIPS 140-3 module</strong> is
+        bounded by its tamper-responsive enclosure: appliance hardware, firmware, the crypto library
+        compiled into it, and the firmware-enforced tenant partitions. The client SDK runs on
+        customer hosts and the cloud front end runs on the provider’s servers, so both normally stay
+        outside — and the validation then says nothing about them. A{' '}
+        <strong>Common Criteria TOE</strong> is whatever the Security Target defines; it could be
+        drawn larger (claiming the administration interfaces, for example) or smaller, and a
+        Protection Profile may constrain it. A <strong>PCI PTS HSM</strong> approval names the
+        device — model, hardware and firmware version — up to initial deployment; the way a
+        processor then operates it is assessed separately.
       </p>
 
       <Callout tone="warning" title="The multi-tenant cloud trap">
