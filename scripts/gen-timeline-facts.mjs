@@ -38,6 +38,17 @@ function latestCsv() {
   return best.file
 }
 
+// Rows a reviewer has not cleared yet (shared with the loader, landing counts and
+// RAG corpus — one policy file).
+const UNREVIEWED = new Set(
+  JSON.parse(readFileSync(join(DATA, 'timelineReviewPolicy.json'), 'utf8')).unreviewedStatuses.map(
+    (s) => s.trim().toLowerCase()
+  )
+)
+const isUnreviewed = (status) => UNREVIEWED.has((status ?? '').trim().toLowerCase())
+/** Tagged deadline/milestone rows skipped because they are unreviewed (reported on stderr). */
+const withheld = []
+
 // CSV uses ISO-3166 flags; the sim uses 'UK' for Great Britain.
 const FLAG_TO_SIM = { GB: 'UK' }
 
@@ -52,7 +63,19 @@ function derive() {
     header: true,
     skipEmptyLines: true,
   })
-  const active = data.filter((r) => r.status !== 'deprecated')
+  // Lifecycle: deprecated/obsolete rows never derive a fact. Review: a row whose
+  // capital-S Status is unreviewed (timelineReviewPolicy.json) cannot become a
+  // country's canonical deadline or milestone either — Assess/Report present these
+  // as regulatory facts (timeline remediation r2 T-B2, 2026-09-24). The country
+  // falls back to the Q-Day anchor until the row is reviewed.
+  const lifecycleActive = data.filter(
+    (r) => !['deprecated', 'obsolete'].includes((r.status ?? '').trim().toLowerCase())
+  )
+  const active = lifecycleActive.filter((r) => !isUnreviewed(r.Status))
+  for (const r of lifecycleActive) {
+    if (isUnreviewed(r.Status) && (r.is_sim_deadline === 'true' || (r.sim_milestone ?? '').trim()))
+      withheld.push(`${r.event_id || r.Title} (Status=${(r.Status ?? '').trim()})`)
+  }
 
   // The row each country tagged `is_sim_deadline=true` (curated canonical deadline).
   // Keyed by sim code (UK/US/…) for the sim/timeline, and by full Country NAME for
@@ -150,6 +173,8 @@ ${mlines.join('\n')}
 
 const args = process.argv.slice(2)
 const derived = derive()
+for (const w of withheld)
+  console.warn(`⚠ unreviewed row withheld from the generated deadline facts: ${w}`)
 
 if (args.includes('--print')) {
   console.log(`source: ${derived.file}\n`)
