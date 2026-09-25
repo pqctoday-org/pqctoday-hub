@@ -11,5 +11,24 @@
       "reason": "2026-09-22 re-enrichment through the fixed reader; same class as protocols/entropy_source above",
       "until": "2026-10-06"
     }
+  },
+  "emptiedOk": {
+    "migrate-catalog": {
+      "latest_version": {
+        "expectedEmptied": 218,
+        "reason": "2026-09-25 migrate remediation r2: every remaining non-blank latest_version is now one a cached document states; these 218 were researched (evidence re-sourced in 3 waves, official pages checked for each) and no document — cached or found on the open web — states a specific released-version identifier for the product. Placeholder values (bare years, 'Current', 'Rolling', 'N/A', version ranges like '1.x') were blanked outright as non-versions. Owner pre-approved this exact-count waiver 2026-09-25 after the research pass, per the plan's D-review convention: unsupported latest_version must be fixed before release, which for these rows means blank rather than a fabricated number.",
+        "until": "2026-12-31"
+      },
+      "release_date": {
+        "expectedEmptied": 339,
+        "reason": "2026-09-25 migrate remediation r2: a full sweep checked every release_date against its row's cached documents (exact date, then year-only per the owner's partial-date rule, else blank). These 339 have no document — including newly re-sourced ones across 3 evidence waves — stating any date for the product's release. Owner pre-approved this exact-count waiver 2026-09-25 after the research pass.",
+        "until": "2026-12-31"
+      },
+      "proof_publication_date": {
+        "expectedEmptied": 201,
+        "reason": "2026-09-25 migrate remediation r2: same sweep as release_date, applied to the proof document's own publication date (never a last-updated/modified date, PDF creation date, or copyright year — those are explicitly excluded, per the review's date conventions). These 201 proof documents state no publication date of their own. Owner pre-approved this exact-count waiver 2026-09-25 after the research pass.",
+        "until": "2026-12-31"
+      }
+    }
   }
 }
