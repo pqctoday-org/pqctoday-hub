@@ -3,7 +3,7 @@ import React from 'react'
 import {
   TestTubes,
   Eye,
-  Atom,
+  Workflow,
   Shield,
   Layers,
   ArrowRight,
@@ -42,122 +42,128 @@ export const EntropyExercises: React.FC<EntropyExercisesProps> = ({
   onNavigateToWorkshop,
   onSetWorkshopConfig,
 }) => {
+  // Entropy remediation P0 cleanup (2026-09-24): every exercise asks for a
+  // decision about the current step's behaviour. Step indices follow
+  // manifest.ts workshopSteps: 0 random-generation, 1 entropy-testing,
+  // 2 esv-walkthrough, 3 drbg-state-machine, 4 source-combining. Outcomes
+  // quoted in "observe" were checked against utils/entropyTests.ts and
+  // workshop/sourceAssessment.ts; normative sentences carry their section.
   const exercises: Exercise[] = [
     {
       id: 'detect-bad-randomness',
-      title: '1. Detect Bad Randomness',
+      title: '1. A Stuck Source: Which Check Belongs in the Device?',
       description:
-        'Load a sample of all-zero bytes into the entropy testing step. Run the tests and observe which fail and why. This simulates a stuck-at hardware failure.',
-      badge: 'Testing',
+        'Load All Zeros (a stuck-at failure) and run the checks. Every result turns red. Decide which of them an entropy source has to run on its own raw samples while it operates, and why the others cannot stand in for it.',
+      badge: 'SP 800-90B',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       borderColor: 'border-primary',
       icon: TestTubes,
       observe:
-        'All tests should fail. The frequency test shows 0% ones. Chi-squared shows extreme deviation. Min-entropy = 0 bits/byte.',
+        'Every visual check lands outside range and both health tests signal a failure (Repetition Count sees a run of 64 against a cutoff of 4 at the assumed H = 8 bits/sample). Only the health tests belong in the device: SP 800-90B §4.3 says the health tests "shall include both continuous and start-up tests", and the Repetition Count Test is there "to quickly detect catastrophic failures that cause the noise source to become “stuck”" (§4.4.1). The visual checks describe one buffer after the fact.',
       config: { step: 1, sampleType: 'bad-zeros' },
     },
     {
       id: 'spot-repeating-pattern',
-      title: '2. Spot the Repeating Pattern',
+      title: '2. Repeating Pattern: Stuck or Biased?',
       description:
-        'Load a repeating 4-byte pattern (0xDEADBEEF). The frequency test may pass since only 4 byte values appear with equal frequency, but the runs test should catch the repetition.',
-      badge: 'Pattern',
+        'Load Repeating Pattern (0xDEADBEEF over and over) and run the checks. Before reading the health-test group, predict which of the two SP 800-90B health tests catches a source that never repeats a byte back-to-back but keeps returning to the same few values.',
+      badge: 'Health tests',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       borderColor: 'border-warning',
       icon: Eye,
       observe:
-        'The chi-squared test shows extreme deviation (only 4 of 256 byte values present). The runs test detects the periodic pattern.',
+        'Repetition Count signals nothing, because no byte repeats consecutively. Adaptive Proportion signals a failure: 0xDE recurs 16 times against a cutoff of 6. That is the split SP 800-90B describes — Repetition Count for a source stuck on one value (§4.4.1), Adaptive Proportion to detect "when some value begins to occur much more frequently than expected" (§4.4.2). With 64 samples the Adaptive Proportion window is partial (the specified window for 8-bit samples is 512), so this demonstrates the idea; it is not the test as specified.',
       config: { step: 1, sampleType: 'bad-pattern' },
     },
     {
-      id: 'compare-trng-qrng',
-      title: '3. Compare TRNG and QRNG',
+      id: 'drbg-known-answer',
+      title: '3. DRBG State Machine: What Does a Known-Answer Match Prove?',
       description:
-        'Run entropy tests on both pre-fetched QRNG data and locally generated TRNG data. Compare the results side-by-side.',
-      badge: 'Quantum',
+        'Instantiate HMAC_DRBG, press Generate until it refuses, then Reseed. Run the known-answer check. Decide: if all 16 NIST vectors match byte for byte, what have you learned about the entropy input on this page?',
+      badge: 'SP 800-90A',
       badgeColor: 'bg-success/20 text-success border-success/50',
       borderColor: 'border-success',
-      icon: Atom,
+      icon: Workflow,
       observe:
-        'Both sources should pass all tests. The educational point: both produce high-quality randomness — the difference is the physical source, not the statistical output.',
+        'Generate refuses once reseed_counter exceeds the demo interval of 10 (SP 800-90A Rev. 1 §10.1.2.5 step 1; Table 2 allows HMAC_DRBG up to 2^48 requests between reseeds), and Reseed takes fresh entropy input and sets the counter back to 1 (§10.1.2.4). The vectors match because HMAC_DRBG is deterministic: the same entropy input, nonce and personalization string always give the same output, and one flipped entropy-input bit gives a different one. So a match shows the mechanism is computed correctly — and nothing about the entropy input. The output is only as unpredictable as the seed, which is why SP 800-90C §2.6 has validated SP 800-90B entropy sources provide the seed material.',
       config: { step: 3 },
     },
     {
-      id: 'defense-in-depth',
-      title: '4. Defense-in-Depth Combination',
+      id: 'compromised-source',
+      title: '4. One Source Compromised: Does the Other Save You?',
       description:
-        "Combine TRNG and QRNG sources using XOR and HMAC conditioning. Then use the 'compromise Source A' demo to see that entropy is preserved from Source B.",
+        'In Step 6, load the "Stuck source, detected" counterexample, then "Malicious cancellation". In both, Source A is compromised and Source B is healthy. For each, decide before reading the verdict whether Source B justifies the construction.',
       badge: 'SP 800-90C',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       borderColor: 'border-secondary',
       icon: Shield,
       observe:
-        "When Source A is all zeros, XOR(0, B) = B, so the output retains Source B's entropy. HMAC conditioning further distributes the entropy uniformly.",
+        'Stuck source: the raw-sample health tests catch Source A and its samples are excluded (SP 800-90C §3.1 item 4.a.1), so only Source B’s 256 declared bits are credited — fewer than the 384 bits (3s/2 for s = 256, §2.6 item 11) needed to instantiate the DRBG — and the sources are not validated: "Not enough evidence". Malicious cancellation: an attacker who controls A and can see B sets A = B, and A ⊕ B is all zeros: "Construction is unsafe". Whether the surviving source protects you depends on independence, the adversary’s control and the entropy you can credit — not on the combining function.',
       config: { step: 4 },
     },
     {
-      id: 'end-to-end-rbg',
-      title: '5. End-to-End RBG Pipeline',
+      id: 'health-test-placement',
+      title: '5. Where Must the Health Test Sit?',
       description:
-        'Build a complete Random Bit Generator: generate TRNG bytes, combine with QRNG, apply HMAC conditioning, expand with HKDF, and run entropy tests on the final output.',
+        'Load the "Conditioned output from a failed source" counterexample: Source A is biased toward 0x5A and the design conditions its samples anyway. Walk the pipeline to Step 5 and run the output diagnostics. Decide: could any check on the final output have caught this failure?',
       badge: 'Pipeline',
       badgeColor: 'bg-muted text-muted-foreground border-border',
       borderColor: 'border-muted-foreground',
       icon: Layers,
       observe:
-        'The final DRBG output should have near-perfect statistical properties. Each stage of the pipeline contributes to the quality of the output.',
+        'In Step 2 only Adaptive Proportion signals Source A’s failure — 0x5A is every fourth sample but never repeats back-to-back, so Repetition Count stays quiet. After conditioning and the HKDF expansion, the output diagnostics usually land within range. No output check could have caught it: SP 800-90B §4.3 item 6 says "Health tests shall be performed on the noise source samples before any conditioning is done." The verdict is "Construction is unsafe" — entropy collected by a failed source shall not be used (SP 800-90C §3.1 item 4.a.1).',
       config: { step: 4 },
     },
     {
-      id: 'visual-pattern-recognition',
-      title: '6. Visual Pattern Recognition',
+      id: 'counter-passes-health-tests',
+      title: '6. A Counter Passes the Health Tests',
       description:
-        'Load each bad sample (zeros, repeating, incrementing) and observe the Bit Matrix visualization. Compare what your eyes can detect vs what statistical tests catch.',
-      badge: 'Visual',
+        'Load Incrementing (bytes 0x00, 0x01, 0x02, …) and run the checks, then look at the Bit Matrix and the lag plot. The sequence is completely predictable. Decide why both SP 800-90B health tests stay quiet, and what that tells you about what health tests are for.',
+      badge: 'Limits',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       borderColor: 'border-primary',
       icon: Grid3x3,
       observe:
-        'All-zeros produces a solid block. The repeating pattern shows clear stripes in the bit matrix. The incrementing pattern shows a diagonal gradient. Random data looks like TV static. The lag plot reveals correlations invisible in the histogram.',
-      config: { step: 1, sampleType: 'bad-pattern' },
+        'No byte repeats and no value recurs in the window, so Repetition Count and Adaptive Proportion signal nothing; the monobit and chi-squared checks and the straight line in the lag plot give the pattern away. Health tests are not an entropy assessment: SP 800-90B §4.2 says continuous tests "are usually designed so that only gross failures are likely to be detected". Whether a source is predictable is a question for the SP 800-90B entropy assessment of at least 1,000,000 raw noise-source samples (§3.1.1), not for any check on 64 bytes.',
+      config: { step: 1, sampleType: 'bad-increment' },
     },
     {
       id: 'bad-rng-challenge',
       title: '7. Bad RNG Challenge',
       description:
-        'Enable all 4 RNG sources (Web Crypto, OpenSSL, Math.random, LCG) and generate data. Use the LCG prediction feature to prove determinism. Compare test results across all sources.',
+        'Enable all four sources (Web Crypto, OpenSSL, Math.random, Timestamp LCG), generate, and use Predict Next 4 Bytes to show the LCG is fully predictable. Then press Compare All Tests. Decide what verdict about a generator the visual-check group can support.',
       badge: 'Security',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       borderColor: 'border-warning',
       icon: ShieldAlert,
       observe:
-        'Math.random() output looks random and may pass some tests at small sample sizes, but it is fully deterministic. The LCG prediction demo proves this by correctly predicting future output.',
+        'The prediction matches the LCG’s next bytes exactly, yet Math.random() and the LCG usually land within range on the visual checks and signal nothing on the health tests. That is the expected lesson: output statistics cannot tell a predictable generator from an unpredictable one, so the visual group supports no secure or insecure verdict. What separates the sources is how they are seeded — the LCG from the clock, Web Crypto and OpenSSL from the operating system’s entropy source.',
       config: { step: 0 },
     },
     {
       id: 'bit-corruption-threshold',
-      title: '8. Bit Corruption Threshold',
+      title: '8. Corruption Without Structure',
       description:
-        'Switch to Bit Flipper mode in the testing step. Start with random data, then flip bits one at a time or in batches. Discover how many corruptions it takes before each test fails.',
+        'Switch to Bit Flipper mode. Press Flip 10% a few times, then All Zeros. Decide why the checks barely react to random flips but all react to All Zeros, and what that means for spotting a degraded or tampered source from its output.',
       badge: 'Interactive',
       badgeColor: 'bg-success/20 text-success border-success/50',
       borderColor: 'border-success',
       icon: ToggleLeft,
       observe:
-        'A few random flips rarely trigger failures. The frequency test fails when bit balance shifts significantly (~10% bias). The runs test catches systematic flipping first. Try "All Zeros" to see instant total failure.',
+        'Flipping random bits of random data leaves random-looking data, so the visual checks mostly stay within range and the health tests stay quiet; All Zeros sends every visual check outside range and trips both health tests. Output checks only see structure. A degraded source that still emits unstructured output — or a generator seeded with a guessable value — looks the same as a healthy one, which is why assurance comes from assessing the noise source, not from checking its output.',
       config: { step: 1 },
     },
     {
       id: 'live-degradation',
-      title: '9. Live Degradation',
+      title: '9. Live Degradation: Which Health Test Fires?',
       description:
-        'Switch to Live Monitor mode. Start streaming with Web Crypto (good source), then switch to "All Zeros" or "Repeating Pattern" mid-stream. Watch how quickly the gauges react.',
+        'Switch to Live Monitor. Stream Web Crypto, then switch to All Zeros, then to Repeating 0xDEADBEEF. For each bad source, predict which SP 800-90B health test fires before you look.',
       badge: 'Real-time',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       borderColor: 'border-secondary',
       icon: Activity,
       observe:
-        'The min-entropy and repetition count gauges respond immediately to bad data. The chi-squared test may take 1-2 samples to show the full impact. This demonstrates why continuous health monitoring is mandatory in SP 800-90B.',
+        'All Zeros trips Repetition Count in the first batch — a stuck source is the failure it exists for (SP 800-90B §4.4.1). The repeating pattern never repeats a byte back-to-back, so Repetition Count stays quiet and Adaptive Proportion fires instead (§4.4.2, here on a 64-sample partial window). Continuous tests run on the noise-source output while it operates, to detect failures (§4.2), and SP 800-90B requires them (§4.3). These gauges run on 64-byte batches of browser output, so they demonstrate the idea; they are not an entropy-source health test.',
       config: { step: 1 },
     },
   ]
