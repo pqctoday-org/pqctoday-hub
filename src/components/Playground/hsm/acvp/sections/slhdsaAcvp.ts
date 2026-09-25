@@ -239,9 +239,6 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
   const det = detMod.default as unknown as VectorFile<SigGenGroup>
   const SV = svFiles[0]._provenance
   const DET = det._provenance
-  const svTier = ctx.evidenceTierFor(SV)
-  const detTier = ctx.evidenceTierFor(DET)
-  const ctxTier = ctx.evidenceTierFor(CTX_PROV)
 
   const pushSkip = async (
     id: string,
@@ -326,7 +323,6 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
             algorithm,
             testCase,
             referenceUrl,
-            evidenceTier: svTier,
             status: ok ? 'pass' : 'fail',
             details: `${observed} (expected ${rvName(want)})${verdict} · msg ${nBytes(t.message)}B · sig ${nBytes(t.signature)}B · ${srcTag(f._provenance)}`,
             caseMeta: { ...meta, observed },
@@ -339,7 +335,6 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
             algorithm,
             testCase,
             referenceUrl,
-            evidenceTier: svTier,
             status: 'fail',
             details: `${msg} · ${srcTag(f._provenance)}`,
             caseMeta: { ...meta, observed: msg },
@@ -364,7 +359,6 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
     context: string
     signature: string
     src: Provenance
-    tier: typeof detTier
     file: 'ctx' | 'det'
   }[] = [
     ...Object.values(slhdsaCtxTestVectors.sigGen as Record<string, CtxEntry>).map((v) => ({
@@ -378,7 +372,6 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
       context: v.context,
       signature: v.signature,
       src: CTX_SRC,
-      tier: ctxTier,
       file: 'ctx' as const,
     })),
     ...det.testGroups.flatMap((g) =>
@@ -393,7 +386,6 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
         context: t.context ?? '',
         signature: t.signature,
         src: DET,
-        tier: detTier,
         file: 'det' as const,
       }))
     ),
@@ -446,7 +438,6 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
         algorithm,
         testCase,
         referenceUrl,
-        evidenceTier: c.tier,
         status: ok ? 'pass' : 'fail',
         details:
           (ok
@@ -462,7 +453,6 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
         algorithm,
         testCase,
         referenceUrl,
-        evidenceTier: c.tier,
         status: 'fail',
         details: `${msg} · ${srcTag(c.src)}`,
         caseMeta: { ...meta, observed: msg },

@@ -270,8 +270,6 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
   const val = valMod.default as unknown as VectorFile<ValGroup>
   const KG = kg._provenance
   const VAL = val._provenance
-  const kgTier = ctx.evidenceTierFor(KG)
-  const valTier = ctx.evidenceTierFor(VAL)
 
   const skipIfUnadvertised = async (
     id: string,
@@ -367,7 +365,6 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           algorithm,
           testCase,
           referenceUrl,
-          evidenceTier: kgTier,
           status: ok ? 'pass' : 'fail',
           details:
             (ok
@@ -385,7 +382,6 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           algorithm,
           testCase,
           referenceUrl,
-          evidenceTier: kgTier,
           status: 'fail',
           details: `${msg} · ${srcTag(KG)}`,
           caseMeta: { ...meta, observed: msg },
@@ -471,7 +467,6 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
             algorithm,
             testCase,
             referenceUrl,
-            evidenceTier: valTier,
             status: ok ? 'pass' : 'fail',
             details:
               (ok
@@ -488,7 +483,6 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
             algorithm,
             testCase,
             referenceUrl,
-            evidenceTier: valTier,
             status: 'fail',
             details: `${msg} · ${srcTag(VAL)}`,
             caseMeta: { ...meta, observed: msg },
@@ -544,7 +538,6 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           algorithm,
           testCase,
           referenceUrl,
-          evidenceTier: valTier,
           status: ok ? 'pass' : 'fail',
           details:
             `${observed}` +
@@ -564,7 +557,6 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           algorithm,
           testCase,
           referenceUrl,
-          evidenceTier: valTier,
           status: 'fail',
           details: `${msg} · ${srcTag(VAL)}`,
           caseMeta: { ...meta, observed: msg },

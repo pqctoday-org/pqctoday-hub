@@ -83,8 +83,8 @@ ${cats.map((c) => `#   ${c.id.padEnd(12)} ${c.label} · ${c.groups} test groups`
 
 rows = json.loads(await acvp.run_categories(CATEGORIES))
 for r in rows:
-    tier = r.get("evidenceTier") or "—"
-    print(f"[{r['status'].upper():>5}] {r['category']:<12} {r['algorithm']:<32} {r['testCase']}  ({tier})")
+    cls = r.get("evidenceClass") or "no evidence record"
+    print(f"[{r['status'].upper():>5}] {r['category']:<12} {r['algorithm']:<32} {r['testCase']}  ({cls})")
 
 passed = sum(1 for r in rows if r["status"] == "pass")
 failed = sum(1 for r in rows if r["status"] == "fail")

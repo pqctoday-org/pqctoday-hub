@@ -31,6 +31,11 @@ import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { TestResult } from './useAcvpSuite'
 import { MLKEM_BOUNDARY_PINS } from './sections/mlkemAcvp'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+
+/** Manifest evidence classes of a row (generated per-case records; [] = no record). */
+const classesOf = (rowId: string) =>
+  [...new Set(evidenceForRowId(rowId).map((e) => e.evidenceClass))].sort()
 
 const require_ = createRequire(import.meta.url)
 const loadCppEngineInNode = async (): Promise<SoftHSMModule> => {
@@ -131,7 +136,7 @@ describe('ML-KEM reference samples — both engines, real vectors', () => {
             tgId: g.tgId,
             tcId: t.tcId,
           })
-          expect(row!.evidenceTier).toBe('nist-acvp')
+          expect(classesOf(row!.id)).toEqual(['nist-acvp-reference-sample'])
         }
   })
 
@@ -191,7 +196,7 @@ describe('ML-KEM reference samples — both engines, real vectors', () => {
     for (const r of rows) {
       expect(r.status, r.details).toBe('pass')
       expect(r.caseMeta?.observed).toBe('C_DecapsulateKey → CKR_OK · k = J(z‖c′)')
-      expect(r.evidenceTier).toBeUndefined()
+      expect(classesOf(r!.id)).not.toContain('nist-acvp-reference-sample')
       expect(r.caseMeta?.origin).toBe('product-authored-mutation')
       expect(r.details).toMatch(/not a NIST vector/)
       expect(r.details).toMatch(/values not shown/)
@@ -204,7 +209,7 @@ describe('ML-KEM reference samples — both engines, real vectors', () => {
         const row = results.find((r) => r.id === `mlkem-boundary-${key}-${engine}`)
         expect(row?.status, `${engine} ${key}: ${row?.details}`).toBe('pass')
         expect(row!.caseMeta?.observed).toBe(engine === 'C++' ? pin.cpp : pin.rust)
-        expect(row!.evidenceTier).toBeUndefined()
+        expect(classesOf(row!.id)).not.toContain('nist-acvp-reference-sample')
       }
     // Findings the rows must surface, not hide.
     const rustDecap = results.find((r) => r.id === 'mlkem-boundary-decap-ct-short-Rust')!
@@ -218,7 +223,7 @@ describe('ML-KEM reference samples — both engines, real vectors', () => {
     const skips = section().filter((r) => r.status === 'skip')
     expect(skips.map(caseKey)).toEqual(['mlkem-skip-encap-m', 'mlkem-skip-encap-m'])
     for (const r of skips) {
-      expect(r.evidenceTier).toBeUndefined()
+      expect(classesOf(r.id)).toEqual([])
       expect(r.details).toMatch(
         /^Skipped — C_EncapsulateKey .* takes no caller-supplied randomness/
       )

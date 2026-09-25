@@ -28,6 +28,11 @@ import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { TestResult } from './useAcvpSuite'
 import { SLH_CTX256_PIN } from './sections/slhdsaAcvp'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+
+/** Manifest evidence classes of a row (generated per-case records; [] = no record). */
+const classesOf = (rowId: string) =>
+  [...new Set(evidenceForRowId(rowId).map((e) => e.evidenceClass))].sort()
 
 const require_ = createRequire(import.meta.url)
 const loadCppEngineInNode = async (): Promise<SoftHSMModule> => {
@@ -145,7 +150,7 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
             ? 'CKR_SIGNATURE_LEN_RANGE'
             : 'CKR_SIGNATURE_INVALID'
         expect(row!.caseMeta?.expectedRv).toBe(want)
-        expect(row!.evidenceTier).toBe('nist-acvp')
+        expect(classesOf(row!.id)).toEqual(['nist-acvp-reference-sample'])
         const cppPreHashPositive = engine === 'C++' && t.preHash === 'preHash' && t.testPassed
         if (cppPreHashPositive) continue // FINDING — asserted separately below
         expect(row!.status, `${engine} ${row!.testCase}: ${row!.details}`).toBe('pass')
@@ -204,7 +209,7 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
     for (const r of det) {
       expect(r.status, `${r.algorithm} ${r.testCase}: ${r.details}`).toBe('pass')
       expect(r.caseMeta?.observed).toBe('byte-equal')
-      expect(r.evidenceTier).toBe('nist-acvp')
+      expect(classesOf(r!.id)).toEqual(['nist-acvp-reference-sample'])
     }
     expect(det.some((r) => r.caseMeta?.contextBytes === 0)).toBe(true)
     expect(det.some((r) => r.caseMeta?.contextBytes === 255)).toBe(true)
@@ -216,7 +221,7 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
     for (const r of local) {
       expect(r.status, r.details).toBe('pass')
       expect(r.caseMeta?.observed).toBe('C_Verify → CKR_SIGNATURE_INVALID')
-      expect(r.evidenceTier).toBeUndefined()
+      expect(classesOf(r!.id)).not.toContain('nist-acvp-reference-sample')
       expect(r.caseMeta?.origin).toBe('product-authored-mutation')
       expect(r.details).toMatch(/not a NIST vector/)
     }
@@ -231,7 +236,7 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
       const h = results.find((r) => r.id === `slhdsa-probe-hedged-randomized-${engine}`)!
       expect(h.status, h.details).toBe('pass')
       expect(h.caseMeta?.observed).toMatch(/^signatures differ; verify CKR_OK\/CKR_OK; sha256:/)
-      expect(h.evidenceTier).toBeUndefined()
+      expect(classesOf(h!.id)).not.toContain('nist-acvp-reference-sample')
     }
   })
 
@@ -246,7 +251,7 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
       'slhdsa-skip-internal',
     ])
     for (const r of skips) {
-      expect(r.evidenceTier).toBeUndefined()
+      expect(classesOf(r.id)).toEqual([])
       expect(r.details).toMatch(/^Skipped — /)
     }
     expect(skips.find((r) => r.id.startsWith('slhdsa-skip-hash'))!.details).toMatch(

@@ -3,7 +3,7 @@ import { test, expect, type Locator, type Page } from '@playwright/test'
 // ML-KEM, SLH-DSA and ML-DSA depth rows (WS-D D1/D3/D2-6: sections/mlkemAcvp.ts,
 // slhdsaAcvp.ts, mldsaDepth.ts) rendered in the real workbench on BOTH engines
 // (dual mode). Asserts row semantics, not a row count: NIST positives and
-// negatives with an evidence tier, product-authored rows with NO tier, honest
+// negatives with the NIST evidence class, product-authored rows without it, honest
 // skips — and the two engine findings rendered as red rows on exactly the
 // engine that has them (they are findings to report, not noise to filter).
 //
@@ -62,7 +62,8 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
     const rows = page.getByTestId('acvp-result-row')
     const row = (algorithm: string, testCase: string): Locator =>
       rows.filter({ hasText: algorithm }).filter({ hasText: testCase })
-    const statusBadge = (r: Locator) => r.locator('td').nth(3).locator('span').first()
+    // Evidence class comes from the generated per-case records (manifest + registry).
+    const evidenceBadge = (r: Locator) => r.getByTestId('case-evidence-badge').first()
     const details = (r: Locator) => r.locator('td').nth(4)
 
     for (const engine of ['C++', 'Rust']) {
@@ -70,7 +71,7 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
       const kg = row(`ML-KEM-512 (${engine})`, 'NIST keyGen tg1/tc1 · ek+dk')
       await expect(kg).toHaveCount(1)
       await expect(kg).toHaveAttribute('data-status', 'pass')
-      await expect(statusBadge(kg)).toHaveAttribute('title', /.+/)
+      await expect(evidenceBadge(kg)).toHaveAttribute('data-evidence', 'nist-acvp-reference-sample')
 
       const rej = row(
         `ML-KEM-512 (${engine})`,
@@ -83,7 +84,10 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
       const local = row(`ML-KEM-512 (${engine})`, 'product-authored negative · ciphertext bit flip')
       await expect(local).toHaveCount(1)
       await expect(local).toHaveAttribute('data-status', 'pass')
-      await expect(statusBadge(local)).not.toHaveAttribute('title', /.+/)
+      await expect(evidenceBadge(local)).not.toHaveAttribute(
+        'data-evidence',
+        'nist-acvp-reference-sample'
+      )
 
       const buf = row(`ML-KEM-512 (${engine})`, 'C_EncapsulateKey with a 767-byte output buffer')
       await expect(buf).toHaveAttribute('data-status', 'pass')
@@ -128,7 +132,10 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
         'product-authored negative · public-key bit flip'
       )
       await expect(pkFlip).toHaveAttribute('data-status', 'pass')
-      await expect(statusBadge(pkFlip)).not.toHaveAttribute('title', /.+/)
+      await expect(evidenceBadge(pkFlip)).not.toHaveAttribute(
+        'data-evidence',
+        'nist-acvp-reference-sample'
+      )
 
       const internal = row(`SLH-DSA (${engine})`, 'internal interface')
       await expect(internal).toHaveAttribute('data-status', 'skip')

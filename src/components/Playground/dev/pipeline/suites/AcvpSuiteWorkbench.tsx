@@ -6,7 +6,7 @@
 // Builder/Code shell (design handoff design_handoff_kmip_pkcs11_playground
 // §3.6, D6). Palette = the 7 algorithm-family categories (checkbox each,
 // All/None), canvas = live progress + the streamed result rows, aside =
-// counts, evidence-tier legend and the execution log. Code = a generated
+// counts, evidence-class legend and the execution log. Code = a generated
 // Python driver that runs the same selection through the `acvp_native`
 // bridge. Execution is the untouched hsm/acvp/useAcvpSuite.ts runner —
 // e2e/acvp-validator.spec.ts's testids and its `e2e:trigger_acvp` window
@@ -27,14 +27,11 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useHsmContext } from '../../../hsm/HsmContext'
-import {
-  useAcvpSuite,
-  CATEGORIES,
-  ALL_CATEGORY_IDS,
-  EVIDENCE_TIER_META,
-  type EvidenceTier,
-} from '../../../hsm/acvp/useAcvpSuite'
+import { useAcvpSuite, CATEGORIES, ALL_CATEGORY_IDS } from '../../../hsm/acvp/useAcvpSuite'
 import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
+import { CaseEvidenceBadge, coverageMatrixUrl } from '@/components/shared/CaseEvidenceBadge'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+import { EVIDENCE_CLASSES, EVIDENCE_CLASS_SHORT } from '@/data/validation/evidenceClasses'
 import { VALIDATION_DISCLAIMER_TEXT } from '@/data/validationDisclaimer'
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
 import { emitAcvpSuite } from './suiteCodegen'
@@ -280,7 +277,10 @@ export const AcvpSuiteWorkbench = () => {
                       {CATEGORIES.find((c) => c.id === res.category)?.label ?? res.category}
                     </td>
                     <td className="p-2 font-medium text-foreground">{res.algorithm}</td>
-                    <td className="p-2 text-muted-foreground">{res.testCase}</td>
+                    <td className="p-2 text-muted-foreground">
+                      {res.testCase}
+                      <CaseEvidenceBadge records={evidenceForRowId(res.id)} className="mt-1" />
+                    </td>
                     <td className="p-2">
                       <span
                         className={clsx(
@@ -291,9 +291,6 @@ export const AcvpSuiteWorkbench = () => {
                               ? 'bg-status-warning/20 text-status-warning'
                               : 'bg-destructive/20 text-destructive'
                         )}
-                        title={
-                          res.evidenceTier ? EVIDENCE_TIER_META[res.evidenceTier].label : undefined
-                        }
                       >
                         {res.status === 'pass' ? (
                           <CheckCircle size={12} />
@@ -303,11 +300,6 @@ export const AcvpSuiteWorkbench = () => {
                           <XCircle size={12} />
                         )}
                         {res.status}
-                        {res.evidenceTier &&
-                          (() => {
-                            const TierIcon = EVIDENCE_TIER_META[res.evidenceTier].icon
-                            return <TierIcon size={11} className="opacity-70" aria-hidden="true" />
-                          })()}
                       </span>
                     </td>
                     <td
@@ -370,19 +362,27 @@ export const AcvpSuiteWorkbench = () => {
       </Card>
       <Card className="p-3.5">
         <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
-          Evidence tiers
+          Evidence classes
         </div>
-        <div className="flex flex-col gap-1 text-[11px]">
-          {(Object.keys(EVIDENCE_TIER_META) as EvidenceTier[]).map((t) => {
-            const Icon = EVIDENCE_TIER_META[t].icon
-            return (
-              <div key={t} className="flex items-start gap-1.5">
-                <Icon size={12} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
-                <span className="text-muted-foreground">{EVIDENCE_TIER_META[t].label}</span>
-              </div>
-            )
-          })}
-        </div>
+        <p className="mb-1.5 text-[10.5px] text-muted-foreground">
+          Each row&apos;s class, case, parameters, source and limits come from the reviewed vector
+          manifest and test registry. Rows with no badge (skips, errors) are evidence of nothing.
+        </p>
+        <dl className="flex flex-col gap-1 text-[11px]" data-testid="acvp-evidence-legend">
+          {Object.values(EVIDENCE_CLASSES).map((c) => (
+            <div key={c.id}>
+              <dt className="font-medium text-foreground">{EVIDENCE_CLASS_SHORT[c.id]}</dt>
+              <dd className="text-muted-foreground">{c.permittedClaim}</dd>
+            </div>
+          ))}
+        </dl>
+        <a
+          href={coverageMatrixUrl()}
+          className="mt-2 inline-block text-[11px] text-primary hover:underline"
+          data-testid="acvp-coverage-link"
+        >
+          Full coverage matrix and open gaps →
+        </a>
       </Card>
       <Card className="p-3.5 flex-1 min-h-0 flex flex-col">
         <div className="flex items-center justify-between mb-2">

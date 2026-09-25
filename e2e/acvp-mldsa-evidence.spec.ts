@@ -3,8 +3,8 @@ import { test, expect, type Locator } from '@playwright/test'
 // ML-DSA reference-sample rows (useAcvpSuite section 5d, sections/mldsaAcvp.ts)
 // rendered in the real workbench on BOTH engines (dual mode). Asserts row
 // semantics, not a row count: a NIST positive and a NIST negative case pass on
-// C++ and Rust with an evidence tier, a product-authored negative passes with
-// NO tier, and unsupported upstream groups render as 'skip' — never pass.
+// C++ and Rust with the NIST evidence class, a product-authored negative passes
+// without it, and unsupported upstream groups render as 'skip' — never pass.
 //
 // Nightly only (deliberately NOT in SMOKE_SPECS): dual mode loads both WASM
 // engines, which is heavier than the smoke budget allows.
@@ -60,7 +60,8 @@ test.describe('ACVP workbench — ML-DSA reference samples (dual engine)', () =>
     const rows = page.getByTestId('acvp-result-row')
     const row = (algorithm: string, testCase: string): Locator =>
       rows.filter({ hasText: algorithm }).filter({ hasText: testCase })
-    const statusBadge = (r: Locator) => r.locator('td').nth(3).locator('span').first()
+    // Evidence class comes from the generated per-case records (manifest + registry).
+    const evidenceBadge = (r: Locator) => r.getByTestId('case-evidence-badge').first()
 
     for (const engine of ['C++', 'Rust']) {
       // NIST positive + NIST negative (exact upstream tgId/tcId in the row).
@@ -68,7 +69,10 @@ test.describe('ACVP workbench — ML-DSA reference samples (dual engine)', () =>
       await expect(pos).toHaveCount(1)
       await expect(pos).toHaveAttribute('data-status', 'pass')
       await expect(pos).toContainText('expect valid')
-      await expect(statusBadge(pos)).toHaveAttribute('title', /.+/)
+      await expect(evidenceBadge(pos)).toHaveAttribute(
+        'data-evidence',
+        'nist-acvp-reference-sample'
+      )
 
       const neg = row(`ML-DSA-44 (${engine})`, 'NIST sigVer tg1/tc5')
       await expect(neg).toHaveCount(1)
@@ -79,11 +83,14 @@ test.describe('ACVP workbench — ML-DSA reference samples (dual engine)', () =>
         /C_Verify → CKR_SIGNATURE_INVALID \(expected CKR_SIGNATURE_INVALID\)/
       )
 
-      // Product-authored negative: passes, but carries no NIST evidence tier.
+      // Product-authored negative: passes, but carries no NIST evidence class.
       const local = row(`ML-DSA-44 (${engine})`, 'product-authored negative · public-key bit flip')
       await expect(local).toHaveCount(1)
       await expect(local).toHaveAttribute('data-status', 'pass')
-      await expect(statusBadge(local)).not.toHaveAttribute('title', /.+/)
+      await expect(evidenceBadge(local)).not.toHaveAttribute(
+        'data-evidence',
+        'nist-acvp-reference-sample'
+      )
 
       // Honest skip: an upstream group PKCS#11 cannot express.
       const skip = row(
