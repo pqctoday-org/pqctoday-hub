@@ -283,11 +283,14 @@ export const ESVWalkthroughDemo: React.FC = () => {
                     non-binary one (&sect;4.4.2)
                   </p>
                   <p>
-                    <strong>C</strong> = maximum count of the most frequent value in the window
+                    <strong>C</strong> = cutoff: the test takes the window&rsquo;s first sample and
+                    counts how often that value occurs in the next W&minus;1 samples; reaching C
+                    signals a failure. C is chosen so that a healthy source reaches it with
+                    probability at most &alpha; (&sect;4.4.2).
                   </p>
                   <p>
-                    Detects bias: if one value appears too frequently within a window, the source
-                    may be degraded.
+                    Detects a large loss of entropy, such as one value becoming much more common
+                    than the assessed entropy allows.
                   </p>
                 </div>
                 <div className="mt-3 bg-primary/5 rounded p-2 border border-primary/20">

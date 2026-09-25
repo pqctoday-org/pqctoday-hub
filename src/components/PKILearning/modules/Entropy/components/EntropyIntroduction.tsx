@@ -223,9 +223,10 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
                   Repetition Count Test
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Detects stuck-at failures by flagging repeated outputs. If the same value appears
-                  more than a threshold number of consecutive times, the source is considered
-                  failed.
+                  Detects a noise source that gets stuck on one value (SP 800-90B §4.4.1). The test
+                  signals a failure if a sample is repeated C or more times in a row, where the
+                  cutoff C follows from the assessed min-entropy H and the false-positive
+                  probability &alpha;.
                 </p>
               </div>
               <div>
@@ -233,8 +234,10 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
                   Adaptive Proportion Test
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Detects bias by tracking the frequency of the most common value within a sliding
-                  window. Flags the source if any value appears disproportionately often.
+                  Detects a large loss of entropy (SP 800-90B §4.4.2). It takes one sample, counts
+                  how many times that same value occurs within the next W&minus;1 samples, and
+                  signals a failure if the count reaches the cutoff C; then it starts a new window
+                  with the next sample. W is 1,024 for a binary noise source and 512 otherwise.
                 </p>
               </div>
             </div>
