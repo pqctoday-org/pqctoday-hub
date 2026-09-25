@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "publicationId": "6f3261ea3bbb176fd2165f8c007e565330f98e009aa62a9339fab81b5f1cb7d8",
-  "generatedAt": "2026-09-25T04:40:14+00:00",
+  "publicationId": "92718bbfa3a83965084dfac1210c0adeb2ed1f31fdceda7811fdfb80773d9b81",
+  "generatedAt": "2026-09-25T12:52:56+00:00",
   "scope": {
     "fips": "FIPS 140-3 only (NIST CMVP)",
     "cavp": "NIST CAVP validations for ML-KEM, ML-DSA, SLH-DSA, LMS",

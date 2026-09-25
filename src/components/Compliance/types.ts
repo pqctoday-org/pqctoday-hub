@@ -107,6 +107,16 @@ export interface ComplianceRecord {
   // ── Common Criteria (CC Portal lists) ──
   ccArchivedDate?: string | null
   ccListObservedAt?: string
+
+  /** Official sources that disagree on a field — both shown, neither chosen. */
+  sourceConflicts?: SourceConflict[]
+}
+
+/** One field on which two official sources state different values. */
+export interface SourceConflict {
+  field: string
+  note?: string
+  values: Array<{ value: string; source: string; url?: string; quote?: string }>
 }
 
 /** One source partition of the published snapshot (compliance-data.meta.json). */

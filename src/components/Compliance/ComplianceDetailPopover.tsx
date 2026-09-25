@@ -402,6 +402,41 @@ export const ComplianceDetailPopover = ({
                   </div>
                 )}
 
+                {/* Official sources that disagree — both shown, neither chosen */}
+                {record.sourceConflicts?.map((conflict) => (
+                  <div
+                    key={conflict.field}
+                    className="space-y-1.5 rounded-md border border-border bg-status-warning/10 p-2"
+                  >
+                    <h4 className="text-xs font-semibold text-status-warning uppercase tracking-wider">
+                      Official sources disagree
+                    </h4>
+                    <ul className="space-y-1">
+                      {conflict.values.map((v) => (
+                        <li key={v.source} className="text-sm text-foreground break-words">
+                          <span className="font-medium">{v.value}</span>
+                          <span className="text-muted-foreground"> — </span>
+                          {v.url ? (
+                            <a
+                              href={v.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary underline underline-offset-2"
+                            >
+                              {v.source}
+                            </a>
+                          ) : (
+                            <span className="text-muted-foreground">{v.source}</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                    {conflict.note && (
+                      <p className="text-xs text-muted-foreground">{conflict.note}</p>
+                    )}
+                  </div>
+                ))}
+
                 {/* Date */}
                 <div className="space-y-1">
                   <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">

@@ -234583,7 +234583,27 @@
     ],
     "ccArchivedDate": "2029-09-24",
     "protectionProfile": "ANSSI-CC-PP-2016&#x2f;05",
-    "ccListObservedAt": "2026-09-25T02:44:12+00:00"
+    "ccListObservedAt": "2026-09-25T02:44:12+00:00",
+    "sourceConflicts": [
+      {
+        "field": "certificationLevel",
+        "note": "The CC Portal's certified-products list and the certificate's own certification report state different assurance packages. Both are shown; neither is chosen (user decision 2026-09-25).",
+        "values": [
+          {
+            "value": "EAL4+,ALC_FLR.2,AVA_VAN.4",
+            "source": "Common Criteria Portal — certified_products.csv",
+            "url": "https://www.commoncriteriaportal.org/products/certified_products.csv"
+          },
+          {
+            "value": "EAL4 augmented by ALC_FLR.2 and AVA_VAN.5",
+            "source": "Certification report CSA_CC_23004 (Cyber Security Agency of Singapore, 24 September 2024)",
+            "url": "https://www.commoncriteriaportal.org/files/epfiles/[CER] nShield5s Hardware Security Module Certificate Report.pdf",
+            "quote": "All components of the EAL 4 augmented by ALC_FLR.2 and AVA_VAN.5 assurance package",
+            "sha256": "7d52319b83f172b4813882930fd5bbc3a843400c8f08808ee608574b4d76e4a8"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "cc-samsung-exynostee--version-2-0-72b077cb",
