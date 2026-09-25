@@ -219,11 +219,7 @@ export function CoverageMatrixView({ loader = loadCoverageMatrix }: CoverageMatr
                       return (
                         <tr key={p} className="border-t border-border">
                           <th scope="row" className="py-1 pr-2 font-normal text-foreground">
-                            {
-                              POLARITY_LABEL[
-                                p
-                              ] /* eslint-disable-line security/detect-object-injection */
-                            }
+                            {POLARITY_LABEL[p]}
                           </th>
                           <td className="py-1 pr-2 text-foreground">
                             {b.covered} / {t.advertisedCells}
@@ -242,8 +238,9 @@ export function CoverageMatrixView({ loader = loadCoverageMatrix }: CoverageMatr
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">
                 WebAssembly: {t.byArtifact.wasm.passedCells} cells with a recorded pass,{' '}
-                {t.byArtifact.wasm.failedCells} with a recorded fail · native: not run · hardware:
-                not run
+                {t.byArtifact.wasm.failedCells} with a recorded fail,{' '}
+                {t.byArtifact.wasm.skippedCells ?? 0} with a recorded skip (not run — never a pass)
+                · native: not run · hardware: not run
               </p>
             </section>
           )
@@ -526,12 +523,7 @@ function GroupRows({
                       {POLARITIES.map((p) => (
                         <td key={p} className="pr-2">
                           <StatusBadge status={c.polarity[p].status} />{' '}
-                          <span className="text-muted-foreground">
-                            {
-                              c.polarity[p]
-                                .level /* eslint-disable-line security/detect-object-injection */
-                            }
-                          </span>
+                          <span className="text-muted-foreground">{c.polarity[p].level}</span>
                         </td>
                       ))}
                       <td className="pr-2 text-muted-foreground">{r.parity.positive}</td>
@@ -540,9 +532,11 @@ function GroupRows({
                           ? c.reason
                           : c.run?.fail
                             ? `recorded FAIL (${c.run.fail})`
-                            : c.waiver
-                              ? `waiver ${c.waiver}`
-                              : ''}
+                            : c.run?.skip
+                              ? `recorded SKIP (${c.run.skip}) — not run`
+                              : c.waiver
+                                ? `waiver ${c.waiver}`
+                                : ''}
                       </td>
                     </tr>
                   )

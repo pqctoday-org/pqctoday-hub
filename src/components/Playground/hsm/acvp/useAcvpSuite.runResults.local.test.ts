@@ -16,8 +16,9 @@
 // the inventory records, but the JS host differs — the file says so. The
 // generator ignores any result whose artifact sha256 is not the one the
 // mechanism inventory records, so a rebuilt engine invalidates these results
-// automatically. Every row that is not an exact registered rowId (skip rows,
-// `-err-` rows) produces no result, so it can never count as a pass.
+// automatically. A section's skip row (registry skipRowId) records 'skip' for
+// every case of that test — its own status, never a pass; `-err-` rows and
+// unregistered rows produce no result.
 //
 // Venue: `*.local.test.ts` — local gate only (directive 2026-07-01).
 import { createHash } from 'node:crypto'
@@ -100,6 +101,19 @@ const rowIndex = (engineLabel: string): Map<string, string[]> => {
   return m
 }
 
+/** Concrete skip-row id → every registry case of the test it stands for (one engine). */
+const skipRowIndex = (engineLabel: string): Map<string, string[]> => {
+  const m = new Map<string, string[]>()
+  for (const t of TEST_REGISTRY) {
+    if (t.runner !== 'useAcvpSuite' || !t.skipRowId) continue
+    m.set(
+      t.skipRowId.replace('{engine}', engineLabel),
+      t.cases.map((c) => `${t.id}#${caseKeyOf(c)}`)
+    )
+  }
+  return m
+}
+
 const toRunResults = (rows: TestResult[], artifacts: Record<EngineId, string>): RunResult[] => {
   const out: RunResult[] = []
   for (const [engine, label] of [
@@ -107,8 +121,12 @@ const toRunResults = (rows: TestResult[], artifacts: Record<EngineId, string>): 
     ['rust', 'Rust'],
   ] as const) {
     const index = rowIndex(label)
+    const skips = skipRowIndex(label)
     for (const r of rows) {
-      const ids = index.get(r.id)
+      // A section's skip row (engine does not advertise the mechanism) is a
+      // recorded 'skip' of every case of that test — its own status, never a pass.
+      const skipped = r.status === 'skip' ? skips.get(r.id) : undefined
+      const ids = index.get(r.id) ?? skipped
       if (!ids) continue
       const status = r.status === 'pass' ? 'pass' : r.status === 'fail' ? 'fail' : 'skip'
       for (const registryCase of ids) {
@@ -118,7 +136,7 @@ const toRunResults = (rows: TestResult[], artifacts: Record<EngineId, string>): 
           artifactSha256: artifacts[engine],
           registryCase,
           status,
-        }) // eslint-disable-line security/detect-object-injection
+        })
       }
     }
   }
@@ -165,7 +183,7 @@ describe('useAcvpSuite run results for the coverage matrix (both engines, real w
       if (process.env.WRITE_RUN_RESULTS === '1') {
         const file = {
           $comment:
-            'Recorded by src/components/Playground/hsm/acvp/useAcvpSuite.runResults.local.test.ts (WRITE_RUN_RESULTS=1). One entry per registered case × engine whose useAcvpSuite row ran; skip/err rows produce none. Host is Node.js, not a browser. Counted by the coverage matrix only while artifactSha256 equals the mechanism inventory record.',
+            'Recorded by src/components/Playground/hsm/acvp/useAcvpSuite.runResults.local.test.ts (WRITE_RUN_RESULTS=1). One entry per registered case × engine whose useAcvpSuite row ran; a section skip row (mechanism not advertised) records skip for every case of that test; err rows produce none. Host is Node.js, not a browser. Counted by the coverage matrix only while artifactSha256 equals the mechanism inventory record.',
           schema: 'pqctoday.run-results/v1',
           runner: 'useAcvpSuite (all categories, dual engine)',
           artifactKind: 'wasm',

@@ -1754,8 +1754,53 @@ const CONFORMANCE: RegisteredTest[] = [
 ]
 
 /** Every registered test, in runner order. */
+/**
+ * The skip row each workbench section emits (pushSkip) when the engine does
+ * not advertise its mechanism — read from useAcvpSuite.ts. A recorded skip
+ * counts for every case of that test on that engine, as its own status.
+ */
+const SKIP_ROW_PREFIX: Readonly<Record<string, string>> = {
+  'acvp.01': 'aes',
+  'acvp.02': 'hmac',
+  'acvp.03': 'rsa',
+  'acvp.04': 'ecdsa',
+  'acvp.10': 'sha256',
+  'acvp.10b': 'sha384',
+  'acvp.10c': 'sha512',
+  'acvp.10d': 'sha3-256',
+  'acvp.10e': 'sha3-512',
+  'acvp.11': 'aescbc',
+  'acvp.12': 'aesctr',
+  'acvp.13': 'hmac384',
+  'acvp.14': 'hmac512',
+  'acvp.15': 'ecdsa384',
+  'acvp.16': 'eddsa-sigver',
+  'acvp.16b': 'eddsa448-sigver',
+  'acvp.17': 'pbkdf2',
+  'acvp.18': 'hkdf',
+  'acvp.19': 'aeskw',
+  'acvp.20': 'aeskwp',
+  'acvp.23': 'x25519',
+  'acvp.24': 'x448',
+  'acvp.25': 'x963-sha3-kdf',
+  'acvp.26': 'chacha20',
+  'acvp.27': 'sp800-108',
+  'acvp.29': 'sp800-108-feedback',
+  'acvp.30': 'xmss',
+  'acvp.31': 'hss',
+  'acvp.32': 'ecdsa-k1',
+  'acvp.33': 'ecdsa521',
+  'acvp.34': 'ecdh521',
+  'acvp.35': 'kmac128',
+  'acvp.36': 'rsaoaep',
+}
+const withSkipRows = (tests: RegisteredTest[]): RegisteredTest[] =>
+  tests.map((t) =>
+    SKIP_ROW_PREFIX[t.id] ? { ...t, skipRowId: `${SKIP_ROW_PREFIX[t.id]}-skip-{engine}` } : t
+  )
+
 export const TEST_REGISTRY: RegisteredTest[] = [
-  ...USE_ACVP_SUITE,
+  ...withSkipRows(USE_ACVP_SUITE),
   ...KAT_RUNNER,
   ...MECHANISM_PROBES,
   ...CONFORMANCE,
