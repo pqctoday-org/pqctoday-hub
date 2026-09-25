@@ -30,7 +30,9 @@ import hmacSha384TestVectors from '../data/acvp/hmac_sha384_test.json'
 import hmacSha512TestVectors from '../data/acvp/hmac_sha512_test.json'
 import ecdsaTestVectors from '../data/acvp/ecdsa_test.json'
 import ecdsaP384TestVectors from '../data/acvp/ecdsa_p384_test.json'
+import ecdsaP521TestVectors from '../data/acvp/ecdsa_p521_test.json'
 import eddsaTestVectors from '../data/acvp/eddsa_test.json'
+import eddsaEd448TestVectors from '../data/acvp/eddsa_ed448_test.json'
 import rsapssTestVectors from '../data/acvp/rsapss_test.json'
 import sha256TestVectors from '../data/acvp/sha256_test.json'
 // Phase 2 gap-fill vectors — wiring in progress
@@ -64,6 +66,8 @@ import {
   hsm_generateSLHDSAKeyPair,
   hsm_slhdsaSign,
   hsm_slhdsaVerify,
+  hsm_slhdsaVerifyBytes,
+  hsm_importSLHDSAPublicKey,
   CKP_SLH_DSA_SHA2_128S,
   CKP_SLH_DSA_SHA2_128F,
   CKP_SLH_DSA_SHA2_192S,
@@ -91,10 +95,12 @@ import {
   hsm_generateECKeyPair,
   hsm_ecdsaSign,
   hsm_ecdsaVerify,
+  hsm_ecdsaVerifyBytes,
   hsm_importEdDSAPublicKey,
   hsm_generateEdDSAKeyPair,
   hsm_eddsaSign,
   hsm_eddsaVerify,
+  hsm_eddsaVerifyBytes,
   hsm_importRSAPublicKey,
   hsm_generateRSAKeyPair,
   hsm_rsaSign,
@@ -131,6 +137,8 @@ import {
   CKM_SHA512_HMAC_GENERAL,
   CKM_ECDSA_SHA256,
   CKM_ECDSA_SHA384,
+  CKM_ECDSA_SHA512,
+  rvName,
   CKM_SHA256_RSA_PKCS_PSS,
   CKM_SHA384,
   CKM_SHA512,
@@ -141,6 +149,7 @@ import {
   CKD_SHA256_KDF,
 } from '../wasm/softhsm'
 import type { SoftHSMModule } from '../wasm/softhsm'
+import { CKM_ML_DSA } from '../wasm/softhsm/constants'
 import { evidenceForKind, type KatEvidenceClass } from './katEvidence'
 
 export interface KATResult {
@@ -177,7 +186,13 @@ export type KatKind =
   | { type: 'mlkem-encap-roundtrip'; variant: 512 | 768 | 1024 }
   | { type: 'mldsa-sigver'; variant: 44 | 65 | 87; testIndex?: number }
   | { type: 'mldsa-functional'; variant: 44 | 65 | 87 }
+  /** Dedicated NIST ACVP ML-DSA sigVer case (external/pure group): the group's
+   *  positive case, or its first negative case, verified through the same
+   *  verifyRv the workbench's §5d.1 uses. */
+  | { type: 'mldsa-sigver-nist'; variant: 44 | 65 | 87; expect: 'valid' | 'invalid' }
   | { type: 'slhdsa-functional'; variant: SlhDsaVariant }
+  /** NIST ACVP SLH-DSA sigGen output verified locally (workbench §9b). */
+  | { type: 'slhdsa-sigver'; variant: SlhDsaVariant }
   // AES symmetric (SP 800-38D/38A, RFC 3394)
   | { type: 'aesgcm-decrypt'; testIndex?: number }
   | { type: 'aescbc-decrypt'; testIndex?: number }
@@ -188,8 +203,10 @@ export type KatKind =
   | { type: 'hmac-verify'; hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'; testIndex?: number }
   | { type: 'sha256-hash'; testIndex?: number }
   // Classical signatures — vector verification (RFC 6979 / RFC 8032 examples, OpenSSL-oracle RSA-PSS)
-  | { type: 'ecdsa-sigver'; curve: 'P-256' | 'P-384'; testIndex?: number }
-  | { type: 'eddsa-sigver'; testIndex?: number }
+  /** P-256/P-384: RFC 6979 examples; P-521: NIST ACVP-Server sigVer sample (workbench §33). */
+  | { type: 'ecdsa-sigver'; curve: 'P-256' | 'P-384' | 'P-521'; testIndex?: number }
+  /** Ed25519: RFC 8032 example; Ed448: NIST ACVP-Server sigVer sample (workbench §16b). */
+  | { type: 'eddsa-sigver'; curve?: 'Ed25519' | 'Ed448'; testIndex?: number }
   | { type: 'rsapss-sigver'; testIndex?: number }
   // Classical signatures — functional round-trips
   | { type: 'ecdsa-functional'; curve: 'P-256' | 'P-384' }
@@ -716,9 +733,30 @@ async function runSHA256HashKAT(
 async function runECDSASigVerKAT(
   M: SoftHSMModule,
   hSession: number,
-  curve: 'P-256' | 'P-384',
+  curve: 'P-256' | 'P-384' | 'P-521',
   testIndex = 0
 ): Promise<{ status: 'pass' | 'fail'; details: string }> {
+  if (curve === 'P-521') {
+    // NIST ACVP-Server ECDSA-SigVer-FIPS186-5 sample (binary message), the
+    // same case as the workbench's §33.
+    const t = ecdsaP521TestVectors.testGroups[0].tests[0]
+    const r = hexToBytes(t.r)
+    const sBytes = hexToBytes(t.s)
+    const sig = new Uint8Array([...r, ...sBytes])
+    const pub = hsm_importECPublicKey(M, hSession, hexToBytes(t.qx), hexToBytes(t.qy), 'P-521')
+    const ok =
+      hsm_ecdsaVerifyBytes(M, hSession, pub, hexToBytes(t.message), sig, CKM_ECDSA_SHA512) ===
+      t.testPassed
+    return ok
+      ? {
+          status: 'pass',
+          details: `Imported the NIST sample's P-521 public key → C_Verify(CKM_ECDSA_SHA512) = ${t.testPassed ? 'valid' : 'invalid'}, as the sample expects (tcId ${t.tcId})`,
+        }
+      : {
+          status: 'fail',
+          details: `ECDSA-P-521 verify disagrees with the NIST sample's testPassed=${t.testPassed} (tcId ${t.tcId})`,
+        }
+  }
   const vectors = curve === 'P-384' ? ecdsaP384TestVectors : ecdsaTestVectors
   const mechType = curve === 'P-384' ? CKM_ECDSA_SHA384 : CKM_ECDSA_SHA256
   const test = vectors.testGroups[0].tests[testIndex] ?? vectors.testGroups[0].tests[0]
@@ -757,8 +795,26 @@ async function runECDSASigVerKAT(
 async function runEdDSASigVerKAT(
   M: SoftHSMModule,
   hSession: number,
-  testIndex = 0
+  testIndex = 0,
+  curve: 'Ed25519' | 'Ed448' = 'Ed25519'
 ): Promise<{ status: 'pass' | 'fail'; details: string }> {
+  if (curve === 'Ed448') {
+    // NIST ACVP-Server EDDSA-SigVer-1.0 sample (Ed448, pure), workbench §16b.
+    const t = eddsaEd448TestVectors.testGroups[0].tests[0]
+    const pub = hsm_importEdDSAPublicKey(M, hSession, hexToBytes(t.pk), 'Ed448')
+    const ok =
+      hsm_eddsaVerifyBytes(M, hSession, pub, hexToBytes(t.message), hexToBytes(t.signature)) ===
+      t.testPassed
+    return ok
+      ? {
+          status: 'pass',
+          details: `Imported the NIST sample's Ed448 public key → C_Verify(CKM_EDDSA) = ${t.testPassed ? 'valid' : 'invalid'}, as the sample expects (tcId ${t.tcId})`,
+        }
+      : {
+          status: 'fail',
+          details: `Ed448 verify disagrees with the NIST sample's testPassed=${t.testPassed} (tcId ${t.tcId})`,
+        }
+  }
   const test =
     eddsaTestVectors.testGroups[0].tests[testIndex] ?? eddsaTestVectors.testGroups[0].tests[0]
   const pkBytes = hexToBytes(test.pk)
@@ -1333,6 +1389,98 @@ async function runAESKWPWrapKAT(
       }
 }
 
+// ── NIST reference samples shared with the workbench (large files: loaded on demand) ──
+
+const SLH_CKP: Record<SlhDsaVariant, number> = {
+  'SHA2-128s': CKP_SLH_DSA_SHA2_128S,
+  'SHA2-128f': CKP_SLH_DSA_SHA2_128F,
+  'SHA2-192s': CKP_SLH_DSA_SHA2_192S,
+  'SHA2-192f': CKP_SLH_DSA_SHA2_192F,
+  'SHA2-256s': CKP_SLH_DSA_SHA2_256S,
+  'SHA2-256f': CKP_SLH_DSA_SHA2_256F,
+  'SHAKE-128s': CKP_SLH_DSA_SHAKE_128S,
+  'SHAKE-128f': CKP_SLH_DSA_SHAKE_128F,
+  'SHAKE-192s': CKP_SLH_DSA_SHAKE_192S,
+  'SHAKE-192f': CKP_SLH_DSA_SHAKE_192F,
+  'SHAKE-256s': CKP_SLH_DSA_SHAKE_256S,
+  'SHAKE-256f': CKP_SLH_DSA_SHAKE_256F,
+}
+
+/** SLH-DSA verify of the NIST sigGen output for one parameter set (workbench §9b). */
+async function runSLHDSASigVerKAT(
+  M: SoftHSMModule,
+  hSession: number,
+  variant: SlhDsaVariant
+): Promise<{ status: 'pass' | 'fail'; details: string }> {
+  const vectors = (await import('../data/acvp/slhdsa_ctx_test.json')).default
+  const name = `SLH-DSA-${variant}`
+  const tv = (vectors.sigVer as Record<string, (typeof vectors.sigVer)['SLH-DSA-SHA2-128f']>)[name]
+  if (!tv) throw new Error(`No NIST sigVer tuple for ${name} in slhdsa_ctx_test.json`)
+  const pub = hsm_importSLHDSAPublicKey(M, hSession, SLH_CKP[variant], hexToBytes(tv.pk))
+  const isValid = hsm_slhdsaVerifyBytes(
+    M,
+    hSession,
+    pub,
+    hexToBytes(tv.message),
+    hexToBytes(tv.signature),
+    { context: hexToBytes(tv.context) }
+  )
+  return isValid === tv.testPassed
+    ? {
+        status: 'pass',
+        details: `Verified the NIST sigGen output (tcId ${tv.tcId}, context ${tv.context.length / 2}B): verify=${isValid} matches testPassed=${tv.testPassed}`,
+      }
+    : {
+        status: 'fail',
+        details: `${name}: verify=${isValid}, the NIST sample expects testPassed=${tv.testPassed} (tcId ${tv.tcId})`,
+      }
+}
+
+/**
+ * Dedicated NIST ML-DSA sigVer case (external interface, pure) through the
+ * workbench's own verifyRv — same case, same executor, same expected return
+ * (CKR_OK for the positive case, CKR_SIGNATURE_INVALID for the negative one;
+ * any other return fails).
+ */
+async function runMLDSASigVerNistKAT(
+  M: SoftHSMModule,
+  hSession: number,
+  variant: 44 | 65 | 87,
+  expect: 'valid' | 'invalid'
+): Promise<{ status: 'pass' | 'fail'; details: string }> {
+  const [{ default: vectors }, section] = await Promise.all([
+    import('../data/acvp/mldsa_sigver_test.json'),
+    import('../components/Playground/hsm/acvp/sections/mldsaAcvp'),
+  ])
+  const g = vectors.testGroups.find(
+    (x) => x.parameterSet === `ML-DSA-${variant}` && x.preHash === 'pure' && !x.externalMu
+  )
+  const t = g?.tests.find((x) => x.testPassed === (expect === 'valid'))
+  if (!g || !t || !('message' in t))
+    throw new Error(`No pure ${expect} sigVer case for ML-DSA-${variant}`)
+  const pub = hsm_importMLDSAPublicKey(M, hSession, variant, hexToBytes(t.pk))
+  const r = section.verifyRv(
+    M,
+    hSession,
+    pub,
+    CKM_ML_DSA,
+    hexToBytes(t.message),
+    hexToBytes(t.signature),
+    hexToBytes(t.context)
+  )
+  const want = expect === 'valid' ? 0 : section.CKR_SIGNATURE_INVALID
+  const observed =
+    r.initRv !== 0 ? `C_VerifyInit → ${rvName(r.initRv)}` : `C_Verify → ${rvName(r.rv)}`
+  const ok = r.initRv === 0 && r.rv === want
+  const what = `tg${g.tgId}/tc${t.tcId} (${expect === 'valid' ? 'valid' : t.reason})`
+  return ok
+    ? { status: 'pass', details: `NIST sigVer ${what}: ${observed}, as expected` }
+    : {
+        status: 'fail',
+        details: `NIST sigVer ${what}: ${observed}, expected ${rvName(want)}${expect === 'invalid' && r.rv === 0 ? ' — ACCEPTED an invalid signature' : ''}`,
+      }
+}
+
 // ── Algorithm name derivation ────────────────────────────────────────────────
 
 function getAlgorithmName(kind: KatKind): string {
@@ -1342,8 +1490,10 @@ function getAlgorithmName(kind: KatKind): string {
       return `ML-KEM-${kind.variant}`
     case 'mldsa-sigver':
     case 'mldsa-functional':
+    case 'mldsa-sigver-nist':
       return `ML-DSA-${kind.variant}`
     case 'slhdsa-functional':
+    case 'slhdsa-sigver':
       return `SLH-DSA-${kind.variant}`
     case 'aesgcm-decrypt':
     case 'aesgcm-functional':
@@ -1362,6 +1512,7 @@ function getAlgorithmName(kind: KatKind): string {
     case 'ecdsa-functional':
       return `ECDSA-${kind.curve}`
     case 'eddsa-sigver':
+      return kind.curve ?? 'Ed25519'
     case 'eddsa-functional':
       return 'Ed25519'
     case 'rsapss-sigver':
@@ -1603,6 +1754,12 @@ export async function runKAT(
       case 'mldsa-functional':
         result = await runMLDSAFunctionalKAT(M, hSession, spec.kind.variant, spec.message)
         break
+      case 'mldsa-sigver-nist':
+        result = await runMLDSASigVerNistKAT(M, hSession, spec.kind.variant, spec.kind.expect)
+        break
+      case 'slhdsa-sigver':
+        result = await runSLHDSASigVerKAT(M, hSession, spec.kind.variant)
+        break
       case 'slhdsa-functional':
         result = await runSLHDSAFunctionalKAT(M, hSession, spec.kind.variant, spec.message)
         break
@@ -1631,7 +1788,7 @@ export async function runKAT(
         result = await runECDSASigVerKAT(M, hSession, spec.kind.curve, spec.kind.testIndex)
         break
       case 'eddsa-sigver':
-        result = await runEdDSASigVerKAT(M, hSession, spec.kind.testIndex)
+        result = await runEdDSASigVerKAT(M, hSession, spec.kind.testIndex, spec.kind.curve)
         break
       case 'rsapss-sigver':
         result = await runRSAPSSSigVerKAT(M, hSession, spec.kind.testIndex)

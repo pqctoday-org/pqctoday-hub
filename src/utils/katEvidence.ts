@@ -27,7 +27,9 @@ import hmacSha384TestVectors from '../data/acvp/hmac_sha384_test.json'
 import hmacSha512TestVectors from '../data/acvp/hmac_sha512_test.json'
 import ecdsaTestVectors from '../data/acvp/ecdsa_test.json'
 import ecdsaP384TestVectors from '../data/acvp/ecdsa_p384_test.json'
+import ecdsaP521TestVectors from '../data/acvp/ecdsa_p521_test.json'
 import eddsaTestVectors from '../data/acvp/eddsa_test.json'
+import eddsaEd448TestVectors from '../data/acvp/eddsa_ed448_test.json'
 import rsapssTestVectors from '../data/acvp/rsapss_test.json'
 import sha256TestVectors from '../data/acvp/sha256_test.json'
 import sha384TestVectors from '../data/acvp/sha384_test.json'
@@ -119,11 +121,26 @@ export function vectorFileForKind(kind: KatKind): VectorFileRef | null {
           ? ref('acvp/sha512_test.json', sha512TestVectors)
           : ref('acvp/sha256_test.json', sha256TestVectors)
     case 'ecdsa-sigver':
-      return kind.curve === 'P-384'
-        ? ref('acvp/ecdsa_p384_test.json', ecdsaP384TestVectors)
-        : ref('acvp/ecdsa_test.json', ecdsaTestVectors)
+      return kind.curve === 'P-521'
+        ? ref('acvp/ecdsa_p521_test.json', ecdsaP521TestVectors)
+        : kind.curve === 'P-384'
+          ? ref('acvp/ecdsa_p384_test.json', ecdsaP384TestVectors)
+          : ref('acvp/ecdsa_test.json', ecdsaTestVectors)
     case 'eddsa-sigver':
-      return ref('acvp/eddsa_test.json', eddsaTestVectors)
+      return kind.curve === 'Ed448'
+        ? ref('acvp/eddsa_ed448_test.json', eddsaEd448TestVectors)
+        : ref('acvp/eddsa_test.json', eddsaTestVectors)
+    // Large files, loaded on demand by the runner: provenance recorded here.
+    case 'mldsa-sigver-nist':
+      return {
+        file: 'acvp/mldsa_sigver_test.json',
+        producer: 'NIST ACVP-Server (reference/generator-validated sample vectors)',
+      }
+    case 'slhdsa-sigver':
+      return {
+        file: 'acvp/slhdsa_ctx_test.json',
+        producer: 'NIST ACVP-Server (reference/generator-validated sample vectors)',
+      }
     case 'rsapss-sigver':
       return ref('acvp/rsapss_test.json', rsapssTestVectors)
     case 'aescmac-verify':
