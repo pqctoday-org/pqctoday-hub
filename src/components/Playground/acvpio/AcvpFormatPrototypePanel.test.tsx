@@ -90,14 +90,14 @@ describe('AcvpFormatPrototypePanel', () => {
     const user = await upload(promptText)
     await screen.findByTestId('acvp-io-loaded')
     expect(screen.getByTestId('acvp-io-loaded')).toHaveTextContent(
-      'ML-DSA / sigVer / FIPS204, vsId 42, 12 groups, 180 test cases (82 executable here)'
+      'ML-DSA / sigVer / FIPS204, vsId 42, 12 groups, 180 test cases (127 executable here)'
     )
 
     await user.click(screen.getByRole('button', { name: 'C++ engine' }))
     await user.click(screen.getByRole('button', { name: /Run locally/ }))
     await waitFor(() =>
       expect(screen.getByTestId('acvp-io-summary')).toHaveTextContent(
-        '180 test cases on the softhsmv3 C++ engine: 82 answered · 98 unsupported · 0 error'
+        '180 test cases on the softhsmv3 C++ engine: 127 answered · 53 unsupported · 0 error'
       )
     )
     expect(loadEngine).toHaveBeenCalledWith('cpp')
