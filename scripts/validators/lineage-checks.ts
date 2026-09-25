@@ -456,6 +456,21 @@ export function contradictedFindings(
   return { blocking, legacy }
 }
 
+/**
+ * The records of one manifest.json: a bare array, `entries` (most sources) or
+ * `downloads` (migrate-proofs). Reading only `entries` silently skipped the
+ * migrate proofs (migrate remediation r2 W-E1).
+ */
+export function manifestEntries(m: unknown): ManifestEntryLite[] | null {
+  if (Array.isArray(m)) return m as ManifestEntryLite[]
+  if (m && typeof m === 'object') {
+    const o = m as { entries?: unknown; downloads?: unknown }
+    if (Array.isArray(o.entries)) return o.entries as ManifestEntryLite[]
+    if (Array.isArray(o.downloads)) return o.downloads as ManifestEntryLite[]
+  }
+  return null
+}
+
 function readManifests(): Array<{ source: string; entries: ManifestEntryLite[] }> {
   const pub = path.join(process.cwd(), 'public')
   if (!fs.existsSync(pub)) return []
@@ -464,9 +479,7 @@ function readManifests(): Array<{ source: string; entries: ManifestEntryLite[] }
     const p = path.join(pub, dir, 'manifest.json')
     if (!fs.existsSync(p)) continue
     try {
-      const m = JSON.parse(fs.readFileSync(p, 'utf-8')) as
-        { entries?: ManifestEntryLite[] } | ManifestEntryLite[]
-      const entries = Array.isArray(m) ? m : Array.isArray(m.entries) ? m.entries : null
+      const entries = manifestEntries(JSON.parse(fs.readFileSync(p, 'utf-8')))
       if (entries) out.push({ source: dir, entries })
     } catch {
       /* not a manifest we understand — other checks own JSON validity */
