@@ -1,0 +1,1055 @@
+{
+  "_provenance": {
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_repo": "https://github.com/usnistgov/ACVP-Server",
+    "source_commit": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "source_path": "gen-val/json-files/KDF-1.0/internalProjection.json",
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KDF-1.0/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "source_sha256": "9900da42897bc6ec6a42cd6844c37f05ff0b6ae830723cb61d53b6d560572090",
+    "source_git_blob_sha": "e3e0efaad02e3c17ce9939d41d1d01f45f026698",
+    "retrieved": "2026-09-25",
+    "upstream_operation": "KDF (SP 800-108r1) AFT: keyIn (+ iv for feedback) -> fixedData, keyOut",
+    "local_operation": "C_CreateObject(base key: CKK_AES for CMAC, CKK_GENERIC_SECRET for HMAC; CKA_DERIVE, CKA_VALUE = keyIn) then C_DeriveKey(CKM_SP800_108_COUNTER_KDF / _FEEDBACK_KDF / _DOUBLE_PIPELINE_KDF) with prfType = CKM_<hash>_HMAC or CKM_AES_CMAC and CK_PRF_DATA_PARAM segments laid out per counterLocation: ITERATION_VARIABLE (counter mode: CK_SP800_108_COUNTER_FORMAT big-endian, counterLength bits; feedback / double pipeline: NULL, the K(i-1) / A(i) chaining value), COUNTER where the upstream places it, BYTE_ARRAY = fixedData (split at breakLocation for \"middle\"); feedback IV = upstream iv; CKA_VALUE_LEN = keyOutLength/8; output byte-compared to keyOut",
+    "transformation": "subset only; every retained field is byte-copied from the upstream file (hex case preserved); no value is re-derived",
+    "subset_policy": "Deterministic, keyOutLength = 1024 bits (multi-block) groups (for \"middle fixed data\", when no 1024-bit group has a byte-aligned breakLocation, the lowest-tgId byte-aligned-output group that has one). (a) Every kdfMode (counter, feedback, double pipeline iteration) x every macMode with a PKCS#11 v3.2 Table 196 PRF (CMAC-AES128/192/256, HMAC-SHA-1, SHA2-224/256/384/512, SHA3-224/256/384/512) at counterLocation \"before fixed data\", 32-bit counter. (b) For HMAC-SHA2-256 and CMAC-AES128 only: every other counterLocation of each mode (32-bit counter; none for \"none\"), an 8-bit counter in counter mode, and a zero-length IV in feedback mode. Within a group the lowest tcId (for \"middle fixed data\" the lowest tcId with a byte-aligned breakLocation). Not used: CMAC-TDES and HMAC-SHA2-512/224, /256 (not in PKCS#11 v3.2 Table 196), bit-oriented output lengths, the remaining groups.",
+    "retained_fields": "tcId, keyIn, fixedData, keyOut, iv (feedback), breakLocation (middle fixed data) — deferred, l and unused fields dropped",
+    "construction_note": "The data-parameter layouts were checked with an independent SP 800-108 implementation (Python hmac/cryptography CMAC) against every byte-aligned upstream case of the executed macModes (4680 cases, all reproduced; double pipeline A(0) = fixedData) before the subset was cut."
+  },
+  "vsId": 0,
+  "algorithm": "KDF",
+  "mode": null,
+  "revision": "1.0",
+  "testGroups": [
+    {
+      "tgId": 80,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 159,
+          "keyIn": "0EC4E4CC1106C49EB9E91C52FDD94507",
+          "fixedData": "44429E36F8090A5A0A519C7C0AA7F6AA",
+          "keyOut": "8B7A360979168FC0C96B53ADCF1E8F106656E0E0233AA3E8BA19B1CDC220CE56D69D09A11FCE76039B9EB18E33BA3BE6279E05B34FA90404B5878A92383751A45FEBE20EF60ABC61DE5BACFC8D72A609A613DD99D32EAD4AB7A80A0AB7F4248D6661C657A9AD8777864811A86146D96FBA2401CFD16EE6211EDD60B13D6DA49F"
+        }
+      ]
+    },
+    {
+      "tgId": 174,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "CMAC-AES192",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 347,
+          "keyIn": "C4E769952659528FB0A39EAAF90F6415DE77B9F8E310675E",
+          "fixedData": "F508B49A29FB4DE328AF4314B495FBFB",
+          "keyOut": "23211C03480805AE4E7F732BFBBEE6C5D90459035A3DD2A07E3BAC7C1B2E7D5DFFDC88CF526EBBE14C3F5EB0F94757F3778A54C8A8485262565494571790302BA255F78796C3CD9CEAE59E92BA0C9DDFF047350D17E67FCCDF5702FA90C7E4F3034202D99FA4388FF6050B33AE26EBDAD961DD3FCA778C5CEB009C81D59592CE"
+        }
+      ]
+    },
+    {
+      "tgId": 263,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "CMAC-AES256",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 525,
+          "keyIn": "BFB99C6AAB859A9873ACC9880BD875BB83A8B24A9307576A054216908756BE5B",
+          "fixedData": "CD9B9791F5EEE211918BA1E2B01B4E29",
+          "keyOut": "C303887FB0ACA8E78DEBB8A008E75C88C26E927F0FA8A1DF1614C97E1B6F78B35C8F8A1CB9CD9F18DC30D06C73B75FDEA5A636ACB92F690FC6CB060F0A3DB66E759E30097C297E56C59DB8E17FF2656A8520D7309307B8E161B091FDDAF375B34E2EB8084D2832621C37BB67F09AAB29F3E467F422270B237D9B5AEBAD2D1F05"
+        }
+      ]
+    },
+    {
+      "tgId": 455,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA-1",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 909,
+          "keyIn": "82F7B49A0EA23E91697D848B17BB7D630FE7F45C",
+          "fixedData": "138EF84DCDFE1B23C3739313B9878BB3",
+          "keyOut": "54BB871C1DCA577ACAEB33C6AA22F3F68D31527669392621E377E551795749CB3E61B9DFCCDF96ACF26A82E523976FF021E1B3D03BA02E7DEA05330888941C80B541ECFBC39CFA5D815CFB3A6F00ABDD27027255876299E1C750B11F29AEE77D539DE8C301111447A9B40045C517E3D7500B158A498F714262DF29DC35C7301C"
+        }
+      ]
+    },
+    {
+      "tgId": 551,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA2-224",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 1101,
+          "keyIn": "6280BDF53E9E644621435978C0F1339CF735B4EEF4F93C71C98DAE02",
+          "fixedData": "24A9A047ADA00927E15D97BBB3D44F10",
+          "keyOut": "0A4DB13A9CD0A9D474878E6DEA2CD4FE948C39C48D139FFDBC28D5771451EA646A1B764EC7DAF928B14419E4AA64EB5024E96D7626D5E0DC9CC47D4D1C4D29570DCA563BA7E54A329BA3EC63A82715AADDB19F1DC0FDC206F4156784F5A4C6BF9FD4567A516848481F46E94337C700AA8F86D12DF30C2247B7A196A24F9C1BFA"
+        }
+      ]
+    },
+    {
+      "tgId": 642,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 1283,
+          "keyIn": "40DED4EB53E4D65178644B03C80D0805C06DBF8D609342FD5958FFD0B64E0CD3",
+          "fixedData": "A9A20A1A0BCBE3D144AF117018EE5364",
+          "keyOut": "138E6019530F122A8B2833CD553FFD4A4A36A1CE544CA990D0131F2B015351806958CFA42AB5E4EC3D32151F4A69A7B490562CEA046923E4ACB68120C078E1BCF5DF7BE0322CF317BA1D02CC16B56AD050310EA20BDDE0EF7C60B615F139DE68DD743BBA15BFBC1ED2540C58C4DEDFEC594403E7B3757A7BAB1EFF4C2CBD6D23"
+        }
+      ]
+    },
+    {
+      "tgId": 737,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA2-384",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 1473,
+          "keyIn": "DCCBE36F60D9B6DCCFA670F7DCFA443FAB18D5C2D25057710065FC17B4E7A8C2604FA7B75ACFF5959D569661A6BDE039",
+          "fixedData": "7519F2D85569FB5FC82E58C94B8319DB",
+          "keyOut": "56FBA79C893EB86B4C95A54B3B6C5AFD8A14E1AAFEE9D12BA985E145363BA85DC3B8E3D6109F2E63987C7708710CBBDEDCBF1CD8E6901AF07788A4520B56AC79861B66763F90691A02018C7525A4361DBE1DE352EAABA75E99D7EB2A979B786B509BA237D2A0B765385A29763CBE37B3D83669CD4A8210B5CFF61D9AFA3471BA"
+        }
+      ]
+    },
+    {
+      "tgId": 823,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA2-512",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 1645,
+          "keyIn": "F91150F95A5B766E0A49F3D99A6949561B7BE4532B5678986D017658E01F7631C21AEF20C2495D802F15F7331E85A49EBFF075942F5296E8311343B8DBA58301",
+          "fixedData": "A0D0288844F2256884B4193A44543EA4",
+          "keyOut": "DE6684835FD59A759416125F0EBC6F8DE1DC5C13E41F239BE9FE96A44C11C2F4804442B973529538AAB1A8E089272CD51E644FEAA558D6B745740285BA1BB4C2FEE408D5D270B1FEF51FF2C88EB2919990B77EBBC9A13767B8BA1DFB1A666DBAAC13682069AE8E8BADF3491574DAAA0B2FE4D59BC8DF616ABC7BCD4A645D00B5"
+        }
+      ]
+    },
+    {
+      "tgId": 1103,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA3-224",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 2205,
+          "keyIn": "EA2301836ADC501E22DD134B82BF417818AB780D002B08C4355F4E30",
+          "fixedData": "6EBE67750330EEFAD08741E4C2B2F471",
+          "keyOut": "BA9498033E6BB194682E29DE8178C73310BFC63A0D54675953D5DC6344B04D39E32662F3DE636EC8DC10E85FA85F3831890CA80D2FDA7398DF50C02322AE9434F5AC593BC244733247BFD359427C8E4393F35ACC83A96895E0F7BEC5CBF0E8A3966A1A05232458701B45F7953585F8D1AB0657464329CC6ADE1BE98ED5F3B893"
+        }
+      ]
+    },
+    {
+      "tgId": 1192,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA3-256",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 2383,
+          "keyIn": "CCE85CE5B28022075E60244492BC797BE882845BB96FABE766C2B2098C2FC77D",
+          "fixedData": "278CE8627BBAB2405D9F98EE41A4A3C3",
+          "keyOut": "0361AF833ED8D429AFB5F523D063AED4FFF72C14128CAF12166995DEBDAA9E90959F0B019BCAC777BE0FA3F3B2B0B18CDB922B8C10B8DC67EA8FD531F8677DAD793AE321A4A50B37953AE1C0D440910C88F56CCAD3FDE5F1ECB6BE8F79908D4AB4C8086F509C5D2EBF3E5CFE9926A528E286473427356665BCBA877ED29656B6"
+        }
+      ]
+    },
+    {
+      "tgId": 1287,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA3-384",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 2573,
+          "keyIn": "CC13CE5E3CC01D6B51E996590AE812E45759E52BA4B3F2A051FD5321BB3ED30F1518C5FEAC8D3AD81D0609ABFAA7EAFC",
+          "fixedData": "2D1591B009D9BFD2B7EF2606285BCD2B",
+          "keyOut": "55AD0BE324C829023B68C41CBFA2D54176664FD4332EF41968A958DC16E0C1BFD45D2C73A5F52234475067F588F757FFFA541EEAD72001A80759588EAA8D21E96A3AEBE0F4BDEE53F45FC648AED9A4348F552872221C98B1183173E7934ED36B3AEC5DD7EC94ACE1F8FE240FC5374042A16E2CB2E2BA7C4CADEC51830DF34308"
+        }
+      ]
+    },
+    {
+      "tgId": 1373,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA3-512",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 2745,
+          "keyIn": "5DD1C0A6984453335FA34A7C9B1D8DCE0CCD2DDCBE32715ADFD068B50045F5F53D9CDC18B3838584A22F322BAEDE7D05F2BDD576C3FF6339EA74291DC9F56291",
+          "fixedData": "67B443123D3AD2F96CF6AB792B19BBC5",
+          "keyOut": "90775FB903DDF6498B07AA38CE35C28D6F7555F757FE15F92197FAD93FC16846FAAEB4A6095AB67FE8BB8C30199A46F7C456A674BE556A3A20FD8E640AE5101A6433265044EC32B4945681DC04BB1D02A22B78E999E10F348EB94E0CFBA0792C19C7FE07DDD12E4ACF213E2E59087E4EBB50658EEA163BAADE8A318086432589"
+        }
+      ]
+    },
+    {
+      "tgId": 634,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "after fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 1267,
+          "keyIn": "F411ECDFA76FD5C4D3EBD13D455C937088DDF9EC120E53CF2B20D49BAE488263",
+          "fixedData": "4BFA331619ECEFD59556E71478DD1941",
+          "keyOut": "9BF87F38E30A7A2850CDFD173DF463E504ABF4FBB9F11C3F7D761023014D21AFB6A5A2CCE40ED1830FDF2682196C1B68B8DE79A67EA646E83ADB667B05EA2BBC1A61BD8F3FCDD6C2E872A2C7F7AA42134F38DC1ACC30CB044FB8969547D44F1F28034E0EDAC4CA41ACDC40E3819291B1B2A4E94DB09653E35356FCFAB12E2114"
+        }
+      ]
+    },
+    {
+      "tgId": 649,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "middle fixed data",
+      "counterLength": 32,
+      "keyOutLength": 8,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 1298,
+          "keyIn": "6B3C56FD9BA4D64CA3C4E93E975FE93E1078E8DDE5D1456DB359D885F2A5F0CE",
+          "fixedData": "6555130F288A84833E3F556E54326608",
+          "keyOut": "61",
+          "breakLocation": 64
+        }
+      ]
+    },
+    {
+      "tgId": 574,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "before fixed data",
+      "counterLength": 8,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 1147,
+          "keyIn": "78DC81FD38EEB0C3F332D4D2C24A3CCAB07FC800526BF21199A981152181602E",
+          "fixedData": "20264B5D985B3C106F11D0B9883CF215",
+          "keyOut": "4F7C9BA173BCF799FD99425E3EE131C1BC18A84C7D66DADD7329E5151B15AA66CE51F0BAE9CCB7001A97F67E9811BAEC493163AA4DC58174FA809A53B5AE3DF2E05BF363BB5BDA4041BCA239DFFA3AE3080293425D63C7C33CA6FEE3EEED87047CFC9F7F3BD286F9718F37E8D5CC44322D34FB3ED2006D93CF5C4E3A45C40F71"
+        }
+      ]
+    },
+    {
+      "tgId": 72,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "after fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 143,
+          "keyIn": "153A8A749D2A4B0B6A50F832E096C2FF",
+          "fixedData": "C828C9FC4C0B00E7046AF5DC39829642",
+          "keyOut": "79EDEF4BAC3DCE520612A4EC3D8835503BD8A3DB04548E054D2947A10A7B4A1784E19BCEF847D3030C5DA4BEAB8A2B337F756501FD770711DC5CD604E3DE4CB048C5A72345FA282420D5AC970FBEC221690259C715832362A2BDA57EDE35C18CADEDB34EC567386D7AA780BBF301C3AF2B715936766B1443F5F8F71D3AC262FA"
+        }
+      ]
+    },
+    {
+      "tgId": 92,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "middle fixed data",
+      "counterLength": 32,
+      "keyOutLength": 376,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 184,
+          "keyIn": "D4D39D4AB55E9B886D478D32E1B689D8",
+          "fixedData": "F062B81D0251D6CF10676F4723F008DE",
+          "keyOut": "C108A518D6C4266ED97A2ED2AABF822AEFE0C0445F700C50C6371D48FC8DC4C854D069955556B8BA1F8AA3FD0322A7",
+          "breakLocation": 72
+        }
+      ]
+    },
+    {
+      "tgId": 10,
+      "testType": "AFT",
+      "kdfMode": "counter",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "before fixed data",
+      "counterLength": 8,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 19,
+          "keyIn": "A5B4D68C085C6EBCB75149D0BD89CB93",
+          "fixedData": "2D34E227E740C763D7C2FBFF86CA7E53",
+          "keyOut": "12F36641B589DB5DE49A94D445C02A7AED531EFC18CD96F323C94C9B78856651A9D642BC9006034F3F0E76FC3182D8B56648BD67F4383E8E2F7CECD2ED06457EDDF6444AD0E83D7A76C86EEE5B4F8FD38F24F4D424B68E2FC6785BC4283247D008CC692B4309601CDFE19E19F73FD72DF80636C19DFD6867DF382FC1FA9C3220"
+        }
+      ]
+    },
+    {
+      "tgId": 1555,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 3109,
+          "keyIn": "BA96CC6D87FF4EACD95DC43F3B54ABCF",
+          "fixedData": "25F9D8B1D73994909196401733FF739A",
+          "keyOut": "F11CB4D539A40020D7559374DAEB3CF9146FD307BDF440FEA0A9BD9930DC3BB304CD7FFE34740C495E78831AF4965FD63F4492F3E26745170F5B423C7007788AA7355D90586D33FA1F0F86CF181904105CF4F15FFD867889163D9878F6C44EB3A52AB25773A2A89E1E164474F61E2E650514E611F8C57BC0C6A4599E8C31ABB2",
+          "iv": "807427FD7216AD29881294EE7B2D4258"
+        }
+      ]
+    },
+    {
+      "tgId": 1757,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "CMAC-AES192",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 3513,
+          "keyIn": "BE07BA5CB639097A8E88EB619468BC07B73968595EC253C3",
+          "fixedData": "09697362BEAB13C656F47749381A9B4F",
+          "keyOut": "81157E71111AAD14748DB0460F1C40DEFBB97F152C46368C7810645F0AF53B11F14A6B38860803C7202977CBA2E01CE1FEF929DF54DA29DD868BCF02320ED9D7DEEB31BE514E24CF8466902616A59497FB7D424D1C3C8A0F5366FAA8C650182674490FBE5126D20DD6F7ECD3C7C593FB41AD3FAB0404502339C9008D45DF5DDE",
+          "iv": "834FC41C50BF38DBFCE810E95CABEE95"
+        }
+      ]
+    },
+    {
+      "tgId": 1955,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "CMAC-AES256",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 3909,
+          "keyIn": "452FC64D8BD472B4DE9651CAF4708BD71D915381ADC878F3B8329134C8CAE739",
+          "fixedData": "2D6AA7BCC114EB50E85492BF06EB9B01",
+          "keyOut": "F49CC55072BEEA4166A1220A31094ED647C5A4DD53ED1787019CD0E2DECB4DD423D332DCB3CB42FD96D02451E3EE788937FBA25BFA66BF9B6247D400785B888417290E8729BB27984F91DBA57048BCAFE55DB3E2744A48BC5332F07105AEDA4E83B29427599581DDDA9CBBFCDA2E7CA1A5A2BEBF2B7D8066BE7490E8FF8E6001",
+          "iv": "DCE8F24CA6D54FE82F777D7C81212078"
+        }
+      ]
+    },
+    {
+      "tgId": 2365,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA-1",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 4729,
+          "keyIn": "021956CEF95F3483A00B21817D006576E1AAC734",
+          "fixedData": "C1249B7024731700DD1053BF00DA787B",
+          "keyOut": "C5E280C4BD7D44F9EC51B9281DF99150B5C7056B88C447225F220F6959B4C7B1A78A5937EC88A7575C8E388DC2AF695D31BFE3D8A052E4C2EDA31C0CD5DBC4A7FEF9A4A4014FA7F4D0AEC66749503616F26856CD2290051F73E26B3A6337D530910F6A4AD73AF829CF9A0C843B581541F8FA84DBF0256C700A280A6A3DDE32A1",
+          "iv": "3FD8538F226CC5124AC5E66B848387FB36767296"
+        }
+      ]
+    },
+    {
+      "tgId": 2573,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA2-224",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 5145,
+          "keyIn": "8D76B10C4B1BAD4F47AE7BBB3FCD3D8D4EA79965642C7372B04A9A03",
+          "fixedData": "0BB0DEACBDB011F62B849FFCC1A3FE7E",
+          "keyOut": "F1564DBA4F75E1DEB8D7994D056776E539017063380001A8A12872E8B679D977824B9E84F0318CF49E3AD775BEABF0BA966B5B48C9C613B66B2C2E90628E60D3B5DBF85B2947A76DB76F404C5A47821483724CC761CE8E8F2F9A11CC89542EBFA0AACA62E5C50312E696E1DE47EC8F018CDC72A5338DFC80805AE6BF5DE53375",
+          "iv": "55BC8C758A5A8F166FED121253EC57E06E5CAF8FEE90CF9D95A33AE0"
+        }
+      ]
+    },
+    {
+      "tgId": 2767,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 5533,
+          "keyIn": "DBE4C5631B35E10F250C6BBB871E8C14020457D9273D6D3BF3A1098CF200F2D3",
+          "fixedData": "EB238AECD020177E3CBD4E17C3736188",
+          "keyOut": "7DB6C5DE8203BFA69D8E46C9E2BCD623DAE7F39515361F3E4CDB497C1FAFC9BDC93420F48F9FF2CED8891A51EF37DAE8AD3B4A7969936F34630D50CE168C332C1B969AB9B97B57297663A516154090F1BE8A185FF9DEE42F7603DC6E19B2921CC4E19B404E0AB5DE1FDEC1BE285BB548369E9CFB5E691AD20BBA17873B8D2738",
+          "iv": "768F85D4AAE3DBE667C6DCB8DB64A9DE750D2302827EEA67060ED745B53F16B3"
+        }
+      ]
+    },
+    {
+      "tgId": 2971,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA2-384",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 5941,
+          "keyIn": "69467C5C9BC964C9D9E907734BF35218C57CD7E92932344CFB0B654A3CD96C55A4C55A7979059585B6FF6E0EBBFE7484",
+          "fixedData": "F883EFEF45DCECF977011E1B1C821C97",
+          "keyOut": "5CB7C21D99440646C56455E2023FEACADA65D20DA1D6BC3ACEEDD0E75A366D29A99FBB41976378888EC0994E529B315A6D776CE2CED5F1F89F4E6B761C18883B9E00E9B15E54A0AADE83FE143D229CBFDED7ACDE7112A844649221BE2CA49C25A8A55CFD4CEAD9DAB944AA48A7C3F46720F1AC70B0A1417DB73DDFBB3B2C3803",
+          "iv": "F39D0E9770E2D47CB5801C9CBF36C9EECF9E709BE672FF834E307A6727613F18ADCCD63BDA6F02681ED562445F3B2AF2"
+        }
+      ]
+    },
+    {
+      "tgId": 3157,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA2-512",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 6313,
+          "keyIn": "D0F4D2B27C991B782FAA1990D6C9264A86049B4CC247F83F5357DD01E80BF403B4219E88D4FF02B24FAA18826EC480B8B67AA7CCE391126F7CA7B27E4C6B2347",
+          "fixedData": "29FF059DE7EECF8FD35B94175985C2D0",
+          "keyOut": "39D1DD7B0F795FAAC1B11F0142D9627C2AB9BA955B6C3C1FA2D124416F7800EE446592552521C8330F5B7D0116BA0CFC5DF41EB896A84D15499203084B6B79206F46D57C5C7BA16EFA4AB5F491791D0AD94E6BB2272FCBC74A63A6234E300FC249C7D5F97696E9723A9C7025F16A6A3AE024463102774614DB481DEF5BC788C0",
+          "iv": "4E97CE21C08EF5B8A6FA9349387D8218905E20EA1FADEE72B9EA2BBB6FD077036CA1DB43E570DB4AEA244AD5618979FE1703E8D0892F7129DAB4919CD8E0DCF1"
+        }
+      ]
+    },
+    {
+      "tgId": 3763,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA3-224",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 7525,
+          "keyIn": "B61321EB9E0BB5751B2C34166C540723E1E1C0229D12021D5F186387",
+          "fixedData": "04E7E271B11CEB6EE6475BEFFC737A57",
+          "keyOut": "2905DE89E391C36C81CF6202729A82CC1409EA3BC7CB9A9AF54CE8DF3192B2C7D4A674A82CDCC1D2FAD6215A8B1B164E775C862ECE8B335443CDFB28F586424FA27234ED8AFED291D0C0D4125BC1F8394C81A17967A3CF8C137940C6A3B62E5376967277683A957F8267B629D15E3821B8569DCA2DD576894CD005D534C691BE",
+          "iv": "D2CAC638A2AF80F6240DB64DECF9471ADA2D1285729671C4F5523B56"
+        }
+      ]
+    },
+    {
+      "tgId": 3961,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA3-256",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 7921,
+          "keyIn": "4421AF0AFADD65C7BDDAE46C7FF48320A8891319EE73F9931090550BB96D3D6D",
+          "fixedData": "336DC5B633A8404BA874418244242FD7",
+          "keyOut": "2B2A0C4E8DF667E0B065F0004B686023B39BF6FC8E6123AC0CCB6F3C49D5EB0F5BF87BCAAE0D12224676EFB87E8F376D2AA8A238A1325E18129B9E13202BF926FA314EF76FEE1BAA56CF959D577714A222D0931B9826CA642BE8147BE6F4E61EBB78384735631EE2353994876D78E1EE1D13822D3CF7862E9C587D0D5E30C7E3",
+          "iv": "E3069578A5F2B0628993BC4F4D03BE9394329450152D38D7B43878344891D4C9"
+        }
+      ]
+    },
+    {
+      "tgId": 4167,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA3-384",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 8333,
+          "keyIn": "518E63E7AC96F2CA6177A56F7697B2F66515C6139E97BBBB80852B164BBDE062B4F3FFEBEDA1F48E2945CFE41BE2D35B",
+          "fixedData": "759B63C41AEC02B6D5EA556DABCDCFDC",
+          "keyOut": "5CDEF345626D070D2AA19FCC634D4CA168406A6BB76A069C1D6FB79BA4DE4AB43581F050E993BE071BA28C181A6D1C56F8E876B725B0B986C67841A8447A55B2CE5AB018F473C4B66DEA722ECB775E37D120D5113B74F062D4DEB9E741BE5A3836F269DC8D8AE3DF220E3899146E0995DB5261A5446B1315C7DF2AA37E83F13C",
+          "iv": "232A4D450D28682BB1EFC006184B452D5799D99423815B69BD457D6738F63CDFC715A737295F624E2F87457555BFFB53"
+        }
+      ]
+    },
+    {
+      "tgId": 4353,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA3-512",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 8705,
+          "keyIn": "43E08E9C7DB33F2D8252C4E4BCDBC49F6AE9FAB204887D6D7DAE09FD271120780A379A8CAB8BE9EF3505A41E35AA89A97F851DDB8721EDDD6D3A2866A2753226",
+          "fixedData": "1DB76E998385C9C2D108E8B2D604E84C",
+          "keyOut": "84244C38BF67AEB27B0A419023F51AC98D45BC7BB45C96B35A104968228230A9751F9AE58DFDEB1E707521F94792B2E5C7118C0084F0279ECEF29DA229F27DD2F074B3DF514AA558371391864761F8C101568EE8F44B9B1BF991F1963A129A5C23390F95BB38B86DAC4DF48F32BFB7736D52625E23AFFD5872C0B087F34F88B9",
+          "iv": "AB4AC5637CEC5AF13B8418827B7DBFBC2B67B1FCB7E13B42425E2EEB9B4E459CDFE03055BDFA8ECEB4257ABEC70B21FFF483011BA1C72DDBA0825D0BBA0F16B5"
+        }
+      ]
+    },
+    {
+      "tgId": 2605,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "none",
+      "counterLength": 0,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 5209,
+          "keyIn": "6BFB2B8CF13E580ABEA98BE954CF0A685AA927C8E8B80930956B3371E3DF0681",
+          "fixedData": "8B06025C0EED619D51FDA8EE927C4D0D",
+          "keyOut": "A8A6EB07FE8ADF61F6D0549B23B0C90C723CDA80D2CE6486A9F2B935CB8C28E1AF82126C1BDBFEC7B0AC5D69C03C89176769D4764BB692883A08352CA783E552A9BBA29C1F3B18B04A8B665087B121CA5E724EFA635D1C1268B2A75C23996BF1B1981E2380877EF90B89CAAF0297A34F43212574D11853032E2F5FA70E3A302A",
+          "iv": "04087AF519D9215DF5B4F6635A44E52ACB8A7FB7A72FDB666D6D175C0139366B"
+        }
+      ]
+    },
+    {
+      "tgId": 2781,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "before iterator",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 5561,
+          "keyIn": "96FE7F1EF8F4F30C0297042144AC854E113E29958F705D267A4AAC082A949ED0",
+          "fixedData": "5D42912AC574A0219B9946DD172CD95F",
+          "keyOut": "2A406F6504B56C77A5087B3BF6D98D7FAD779911D87831A77A45351A77FC72F0B48D5E20E4FE46F1B8586F2A95F48A52B78BF5E86A7EE626CC359DB792AF1C52BA4D68F86DC1A03342F944377C680C1D6A296F4C3F62F88F061F14AD7312FC8A7A4DA6F1008061006DF1EE4BB9EB64C34AB254FD13B669C3F7E5AF58269C3C0B",
+          "iv": "A75C52B7151D9107CBDD09A729F4F3EB0CADAEC005DA5CD00B64B278F84C7D62"
+        }
+      ]
+    },
+    {
+      "tgId": 2751,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "after fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 5501,
+          "keyIn": "CDD01D6D96A044888B989ABB87C4AB4A8314A9BEBFDB466884B4BD4513CFF798",
+          "fixedData": "36A1D2DCF824264E14A7B69CCE370E75",
+          "keyOut": "2720185A2E336676EB0A6A372E012244C4FC893FAB49FDE662BF2EF4CA918E1C84F688E0C90B40B6A305ED19FA2E57F9CAB1FAAF0589224B7714B44BAE244CF5A9B84E9DC125EAA345439277D241143B092E01273FA862428DF4201314148FA80CDC8681E66233AF335471B15D3729437B56630444E6BB55FA6EAB4D1BB5D1E4",
+          "iv": "4A171D1C008B445FFEE4B13B0D7679607D7451E9C6BEC3629E5D35DB5E0DEF87"
+        }
+      ]
+    },
+    {
+      "tgId": 2604,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "none",
+      "counterLength": 0,
+      "keyOutLength": 1024,
+      "zeroLengthIv": true,
+      "tests": [
+        {
+          "tcId": 5207,
+          "keyIn": "767C2813D6858D03807D42A49B0CF95B7CD17D2F87564ABDB22F13C1F31E0DD0",
+          "fixedData": "784FA09A1C2F94E6F0E85A770AA78C33",
+          "keyOut": "C09D6CF69E99935180332C92007CAF8784E7716244321884D3798DA1E4713D9AF55A8BA2DC72600F91716B82D52CFE49B38DB6D80A2F9A17E94DA8528313A14ADD493AF9B522B9147C9DF7DFD9D6EEA650643249CFECE249C06003BC8BED564A56A4AF7B340E66F925766D7815876269B023456878E4AC226DFA730D331EC17B",
+          "iv": ""
+        }
+      ]
+    },
+    {
+      "tgId": 1389,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "none",
+      "counterLength": 0,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 2777,
+          "keyIn": "F87E7CD7D446E05F9B37330031A020A8",
+          "fixedData": "C53847B4E64772F56D58EDF58B2685DD",
+          "keyOut": "3C83337AB2C00F8D19E1FB3A22BE7506B987FF7D52141D468437DC6A711C25E5427743026321B2CDF4F826202EE6178B8904750D24E54F60E451A28E2DF933E832A3846B4C896A6363B12FE93D00BA5379BB418C7DD75991F220413E885C6B703A9514EC69A570AB1FF601924C28F4B086E143B496015C6323E988BB56768010",
+          "iv": "683DA7BE32E94E5E5BFE6E55B1CF5B98"
+        }
+      ]
+    },
+    {
+      "tgId": 1571,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "before iterator",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 3141,
+          "keyIn": "1BE8EDB56396969E377D8AACF1FC0B73",
+          "fixedData": "93A70FE7D931862BA6CA73C310C39F16",
+          "keyOut": "E6B6EF9513E8FF9410B574F9CDFCFB30436A9DBA9B460039B9B5947B97E6CFE927D522DA368C265319334DDE8DCB9B0A79319781A9835DA1099939A53127E6AD3E22E9CE20BCD13573400C0683BAA39E412E1095DB52CA5A62A95AF49EE757761FD6B7C2A9D6B51954BD4C8BE56887CA5CA098C609E8FC5D3D84D25EE9C85004",
+          "iv": "0064B83752A167E332E1A0225A42C005"
+        }
+      ]
+    },
+    {
+      "tgId": 1539,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "after fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 3077,
+          "keyIn": "4FCAB5B45C7F9538B8C5FDA85B9B4C1A",
+          "fixedData": "E468CBC2B63F3B9403B705F04D356005",
+          "keyOut": "CAB8A8DDFC227C7BC7BEB7B15E645A3A7BDB1E27AC156BABD876734DB6DBA1F82F4B9FA5A265C694ADA9BCED76451C9D9480B9B4E4500871496750285481ABA2F5A307FD0FAD1ABCC038DE7C67D234CA5975CAF43EF0B351701F09AD054098C926FB4EB714C2C655761A23FBBECA04934098A572C73C0702CC0139DB8F11FDFB",
+          "iv": "0A514615587CE7FC11577034B8DE5F92"
+        }
+      ]
+    },
+    {
+      "tgId": 1388,
+      "testType": "AFT",
+      "kdfMode": "feedback",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "none",
+      "counterLength": 0,
+      "keyOutLength": 1024,
+      "zeroLengthIv": true,
+      "tests": [
+        {
+          "tcId": 2775,
+          "keyIn": "5C6E0CF5F1A0BAA00B28A41C6AE40F63",
+          "fixedData": "C20CBE38D72256DEF0B3067C180E85D8",
+          "keyOut": "F159866DE2A21BFF23C1B79A4D2CEC8D9F4BF53690F46AEA352A8750E9A46287033C11A3F40A34338DE04315C7A1CB2471E4142299C6D0572DD04FE578D5D67247F00D1AA18157B3E61AB5683C2D79FEDAACB324C0C82F0CAC5B24C8607D383C6291878A286905828AAD9AB0CAF9ECC690C76D900F940F53795B85D2F71181E3",
+          "iv": ""
+        }
+      ]
+    },
+    {
+      "tgId": 4464,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 8927,
+          "keyIn": "ABFAE5E497671B724D30608218BFEAA7",
+          "fixedData": "95EF89619BE125AB2474329128B12852",
+          "keyOut": "8D91FE745675DA8503B059827391ABCBCAB8C5F783B410801459DE9D7CD9F932707F54E4FE05802DD9EDBA65070D793E74959432C05E37ADF5B17697110694995C66DA46BE8B90F54DC62162CFDDF580FC5E3A03B45735C3E2E07000CB797A02B7A9F2E8A599D8C1DD521B7E8D6AE7B0C40315E61ABB055D3ED926706C98FD35"
+        }
+      ]
+    },
+    {
+      "tgId": 4563,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "CMAC-AES192",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 9125,
+          "keyIn": "A46C0BC9E5EFA1E0A8931BA6CD0F7C4AB7C799809D13152B",
+          "fixedData": "1FF0C01A4D2ABF4FA09D89FC51D160E0",
+          "keyOut": "062B9114422C4EC847CE2BD1E0241C2F88B0FEBA43E8FFE84F4CA7BDB34FCE54ACC6810CBEAE2DCB26D08E9FDA426E0359F41923D4F95D4EF78017C324D74763F068EEC9B649BC312C29135A7C0429DACD9EC27B04EF227B8247EFD6B921F5055F3DBD1C5C851AFDBD21CA815C0C76CCC447DE2F3156967A28531C0BCDA053F2"
+        }
+      ]
+    },
+    {
+      "tgId": 4664,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "CMAC-AES256",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 9327,
+          "keyIn": "19DE08C56E5D192A0C2A3CBA227234405F0E68A2A0FB16912B214F710FFFA41F",
+          "fixedData": "8866B3F158E5F37AE33E08FD3CDD5D90",
+          "keyOut": "CD50EB91C2CDB94E286C335144F2653E1F921766C0E910BF44D945FF1B45A9E89C734AE023A408AC6DB68E076D63FA2B70B6421B530FBD78C37281B2359E8194F3EDC39A7B2FA446463314CE9C97F8118AD24FE77ACEAF5533BA17BD8573D48FAE81B0586E5045D953B986D1764C3184E90DE56DB68B16A90C962EB518EE647C"
+        }
+      ]
+    },
+    {
+      "tgId": 4870,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA-1",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 9739,
+          "keyIn": "EE9ADA09455E7405C5DDD5438A8A438D28637BDC",
+          "fixedData": "A9B86D25F9D6B87F63664CCE73ADD052",
+          "keyOut": "97DD6F318A63D46CC4C2EFC5958278DBBDFEF327A296DD0DA6501C08B8115E0030607CDC67A71E708CB6928FEE943190F12331F8D7DFB0EEE747E90992186662D99C0F65CAF02F14A63D1B7A28B524CBA99448BD35F625FD58555393CED317D52C97D56E48CC929744B8FF25EAE529E4BC04787441B875D7DF95567DC758E581"
+        }
+      ]
+    },
+    {
+      "tgId": 4974,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA2-224",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 9947,
+          "keyIn": "2ED17FFF8E04B39EECECB1A6D6170FDBE2F03FC6BBD265F519E80DDB",
+          "fixedData": "DDD3FC7FDC27E6137B5CA494751A5909",
+          "keyOut": "5D07C5F621D9B0ACD4ED4CBE7F6AFF93DA531760481B243BF2265B48FC5CFAB796C804A4F15EBDAC86ED2288910A29BF78D99FAAC2990E1FD0C5E850CA1C9CDB1E52D4FAA5B2858C3CD62F51DE8F60EB392E9370FA915745EDC9381C30BE16C3F3508B6CF92439E8FB5B2B44462781536370FC5DC7B3A88F70470ED47EA90DDD"
+        }
+      ]
+    },
+    {
+      "tgId": 5076,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 10151,
+          "keyIn": "0424D50DE3F059A45105F436129E9FAAC42881AE45116F4B2EC835754C82106F",
+          "fixedData": "3B10161D8B181486DD67F86719300D4A",
+          "keyOut": "A54F373B38502C38C411F1B8EE66849BB471762B5B18466E4929E51C15BE5DFD1BA7FBDF676D02D1671EFF358BE1DC5DBEDA5AB3C4E2D8CE0C6AC320C2D103D8E44A66BED7ED53A7D1530E1A1C3711D8690F4184BC7190E05B68B29D5BF0F06F82FA9C9CA3FA97BE22B113D1B4EB0048124869F19C4D4504A356028F0E9B3897"
+        }
+      ]
+    },
+    {
+      "tgId": 5179,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA2-384",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 10357,
+          "keyIn": "51D9873B8F30D750A6FA638FF5713379ADDC91DA2B647448DF64E77B2DDA52A73B359C6A6BA1FB7BACD684AE57574115",
+          "fixedData": "097707B990C24342D625A29546704505",
+          "keyOut": "EA3648C5E7EDE02FA18C08C67F41D9F46C79AFE633C98879CE74BC43EC6AF5235B13CDB79402FAB4153DD742149E2E322B05B5C5B0C384F4A743ED2D993EA4519DB5565582D6B602EC0C19C8BC8EBC03D70F4D6495B5CDDB1C560A09641E5A951E728D96C342ECE9E6EF3305D8714778D5DD56F04C8304F76E38486566F7FA31"
+        }
+      ]
+    },
+    {
+      "tgId": 5272,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA2-512",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 10543,
+          "keyIn": "8595577BD639F374F496F2D2A7BDEC33B0B7FF52DAA7407AB9ED9155F524EC5545D3CFC7206F69BA3BC414040301AC909CC7697B7F09F9555C78EB40F42F3909",
+          "fixedData": "83FBE94255348B548AE55B364C19670A",
+          "keyOut": "A0765C78B980F9F1E5945EBC06CC33C981273F2EFBF24645338432C063BDEEEFEB8749F4428AA4ECA1C2CCE1640DAB55C74A7D3E7DAF13E7C7FF994A7F85578949F9EDB7AD1F8370A656B9BD1656E8F159A7CB2C6B077D3FFB9512C98AAFD592DD74F37EF22CF36BDC47528A4BA95FF384846F15BA8EF3922DAE8485B7292FB5"
+        }
+      ]
+    },
+    {
+      "tgId": 5572,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA3-224",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 11143,
+          "keyIn": "25340081AA3E775B6B8ABC0160249C479C6F536A48C7B6E75084E4C8",
+          "fixedData": "72BF9C541D53121031F9A182E7CFD9A6",
+          "keyOut": "F2F1C17C0848D1F3817F3D657FA4E57C13C9A10A40ADE7E3CE33B6D74945108795959DAB3BCCECB2F9B646F5C5D66436ABEB5602F226B2FAB492E91698A96472F63C62080CB281FF2BA1D2CBA5BC85654E8D07B4CB5CC6D7E3C6B62EE32FFF85C17AD1757E4744F26325E8EA2D5FFC96D2F306D2C02391A5E85C692C9703012F"
+        }
+      ]
+    },
+    {
+      "tgId": 5669,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA3-256",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 11337,
+          "keyIn": "873F848FB7C5DDB3E32996E8BE88458E7DC9744BA36FE7CD9C61E43EF6D768F6",
+          "fixedData": "CBEAF118AC610BD6DB2CF1B4F9B9E7A8",
+          "keyOut": "8DBDD350F1AC9D2B8349BA9B0C990B763211B5400C7DB0A57B619FE51E0CAAF3CD8C5E263C9424802FD03F4B119C267F13C3EC569A832B6259A6581FAA22DF18267D9F21BAF57E4DFBD42F5FC5B4967FCCA515BD7DDB523BE527F2021BEC869B9CC0AAE051DECA8BCA4BFB8E0EA2FE72BEEBF14C05DE03D387705DCE04CAD147"
+        }
+      ]
+    },
+    {
+      "tgId": 5773,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA3-384",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 11545,
+          "keyIn": "FACCAF49DA88C17BDA8534F7A5BEB7FDA0309B80CD772CE1EE630AB723034059EDAC8128C67150D246189521870612F7",
+          "fixedData": "266B3F626DFA814D8A385BE677BB51FB",
+          "keyOut": "F35EFDA1B4B87D8BABF3A002C49B4D90842F153EEC060B54F00A89C31A15394DA89E98F6821E21E90438C8A8D050207F66E83266ED653B230A6AA00DB42608B6B2357CFA89EB49D685EFB3BB0F5BDAE64665415508D8CB092F37E6D51DDA22AE0E6FDCBB121FC8045C01C0C1F4F1B86648A0943E670F87A46992CB8CC4EF1EE9"
+        }
+      ]
+    },
+    {
+      "tgId": 5866,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA3-512",
+      "counterLocation": "before fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 11731,
+          "keyIn": "42ADE672F6053E595CCA121964C9E90B71318996B5FD5D9C2A0C7DD23047106159A15F606BC214BB0A371E81C1883C8215659B58D2C47DA20D51340BC149907B",
+          "fixedData": "A0618309D1CF8931FA1949A865746FA4",
+          "keyOut": "7778CD662EADBAEA30B753D78618D03C4B2FDC9F57A3015EFEBB8189E3C5EFC6247A3234756E66F366582290831CD4E7E2F172ABCF0612C5110599EAF0480A1B49428D700BAEC39CF3BBA79CB54D7BD75AA53B063BB4340F4A957B520D8F997E9387E301C1D39C027C200A60C59FB7600FB708D36F80ED4EF6BDBCE6B7722DC5"
+        }
+      ]
+    },
+    {
+      "tgId": 4990,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "none",
+      "counterLength": 0,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 9979,
+          "keyIn": "31CA989352C014DA6F41156BE43A1FD877CEF1167C3EB264BE619EB9CCF750DF",
+          "fixedData": "9697CC712504307739B56DA049AD0DE7",
+          "keyOut": "FC059A211BCA05C20CB95239476D7373047977237BB2624CC3FE622F88F090726BAC4EE16EDB1966F879611B044523238F26A8B67EF536D4879927270E882AA1238DB9A054606BCD87AB7674E89CBCDCE0FD9664A42A232F1D3D7533E895FA697FD76D02CC8CB8FB6541610D434E9D9A2EE069385830A1C843DD36B77194DC8C"
+        }
+      ]
+    },
+    {
+      "tgId": 5083,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "before iterator",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 10165,
+          "keyIn": "20E0C62FCD1E7F43E53C46B0CA3A70C3682E10DDB5FB6156C2DF92005C84A63E",
+          "fixedData": "C0DCCC1C33BF183994F218F755EEDA80",
+          "keyOut": "796B8733016D3883418B117BEC06ABC6612770208E585DEB5914D38CA276E6D2757C019A563B56CE291B12EDACC4B12135D2D1D2F46EDFFA26D642C862FC2F3EA333C0D4071B9913888F365C3229F003AD15072FE3321B181F2DE47C913BA3A87AC9DA2C462558991C7A5805BB8E6026900FFCF61A5D41C8BACCCFFE55C7724E"
+        }
+      ]
+    },
+    {
+      "tgId": 5068,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "HMAC-SHA2-256",
+      "counterLocation": "after fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 10135,
+          "keyIn": "22FEDB7151E5CE34A4E9FE7D310670237B7777AF30A00B37EFD09C2EFC5DD35A",
+          "fixedData": "103D47AA840414146855AA85C3407D0C",
+          "keyOut": "3103BF27D04513CF4AFF2C2A27AB76A8099C847FB4F853BF10548669AB25638426580FDBD2C7F8ADD6E85EC2C2A935FC44D59E2F0403BEF43424EA8F93F3595DAF597AC29C65948AE24D710116659FB1B547A3EECE9E3FB8FF8234109F893AECA22F39CF3E139A5F167C9B8B368FDF2B5C4E2A02E156DDDD89F75970850D199B"
+        }
+      ]
+    },
+    {
+      "tgId": 4379,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "none",
+      "counterLength": 0,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 8757,
+          "keyIn": "62ECB6408E86E3A83738486CEF845DE1",
+          "fixedData": "93A76CB7B46F61E37779FBF887ED5DA8",
+          "keyOut": "C0002465A0D2916EB106760C9B1066908DA7E387D91F9069DEE67F163FFA2A1AF57C95AD7FCA61AAE406C773AC52E622DE544DE6025927F38F244560D3C892AC9E37D154DADB696775585401084F80932FD5ACA3D961B720EABDBD013D62E1A1517E10187DC5367596014C28716D2CD506FDD865566D7398D5FA4121597029BE"
+        }
+      ]
+    },
+    {
+      "tgId": 4472,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "before iterator",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 8943,
+          "keyIn": "75ADB81D96757EB209F51FA7F28702E0",
+          "fixedData": "716FA038A9A4AFB49E3CE7C88E667380",
+          "keyOut": "C853806258C3294D64C2D678659FE510A3740D34AC89EC35F341D0A72429C47F446CF913137AE201E21AC28015CD32A43BBA17CD1A0215E3B1B29A39F33C1907F189F6094715AB40955A04DCA3E2567C0B11C8A1D5BFAB2BB00AF6C471DB7525C9DAC8CEBA2C90B32740CB98D3559AF0BEF31051A5DA2BDD2C8F7D289122B3C6"
+        }
+      ]
+    },
+    {
+      "tgId": 4456,
+      "testType": "AFT",
+      "kdfMode": "double pipeline iteration",
+      "macMode": "CMAC-AES128",
+      "counterLocation": "after fixed data",
+      "counterLength": 32,
+      "keyOutLength": 1024,
+      "zeroLengthIv": false,
+      "tests": [
+        {
+          "tcId": 8911,
+          "keyIn": "7FE8F4449D03E6C8123BF1D8945B9405",
+          "fixedData": "52437A42F59CC7326A2DD1E235EF9BB9",
+          "keyOut": "5BE0195C5899C85A1ADC1453AF9511DB88F9DAB46C22320E1C0C9B74EE9F30C19C5D10CC9286CAB01A3415452B3046B6C0F68CB5839F1F20450D3EC96636D171747BFE831BF0B864F86C730F84360F898E86D95BBEA5C498F288F7EBE9F28CD753BDD36E8E5749BC4FF6D1A5EF83AEFC215AB737BFFE351C75DBA43937ACCC34"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2668 @@
+{
+  "_provenance": {
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_repo": "https://github.com/usnistgov/ACVP-Server",
+    "source_commit": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "source_path": "gen-val/json-files/KDA-HKDF-Sp800-56Cr2/internalProjection.json",
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KDA-HKDF-Sp800-56Cr2/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "source_sha256": "8a31c66049aa816d93f7e200898a4bb484c0814ce5bc2bc9e7249c86e79ded50",
+    "source_git_blob_sha": "b16e481fab5bbca78dad19fd3b92eb1767e38396",
+    "retrieved": "2026-09-25",
+    "upstream_operation": "KDA HKDF SP 800-56Cr2 (hybrid shared secret Z || T, fixedInfo uPartyInfo||vPartyInfo||l, concatenation encoding)",
+    "local_operation": "C_CreateObject(CKK_GENERIC_SECRET, CKA_DERIVE, CKA_VALUE = Z || T) then C_DeriveKey(CKM_HKDF_DERIVE, CK_HKDF_PARAMS{bExtract, bExpand, prfHashMechanism = the hmacAlg digest, CKF_HKDF_SALT_DATA = salt, pInfo = uPartyId || uEphemeralData || vPartyId || vEphemeralData || L (32-bit big-endian, bits)}) into a generic secret of L/8 bytes; its CKA_VALUE compared to dkm (AFT: must equal; VAL testPassed=false: must differ)",
+    "transformation": "subset only; every retained field is byte-copied from the upstream file (hex case preserved); no value is re-derived",
+    "subset_policy": "Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only.",
+    "retained_fields": "tcId, testPassed (VAL), kdfParameter (salt, z, t, l, hmacAlg, pattern/encoding), fixedInfoPartyU/V, dkm (deferred dropped)",
+    "construction_note": "The local fixedInfo construction (partyId || ephemeralData for U then V, then L as a 32-bit big-endian bit count) and IKM = Z || T were checked against all 1000 single-expansion upstream cases with an independent HKDF (Python hashlib/hmac) before the subset was cut: 1000/1000 dispositions reproduced."
+  },
+  "vsId": 0,
+  "algorithm": "KDA",
+  "mode": "HKDF",
+  "revision": "Sp800-56Cr2",
+  "testGroups": [
+    {
+      "tgId": 7,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 512,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-224"
+      },
+      "zLength": 640,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 392,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 31,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "933FD18574C22ADF668AA33F23FCD2C8FEF51E227ED0B2B8B5455E85031972415FAA9037152A44DC4C030E9348B6F24344650E355418C52377E6AFB89E77E3741DEBF5153F172D0C2B723A43F4299F65",
+            "t": "005A29A9133D7518136609320B69633D72E62FD19C5B23B3E89E208793654C2B4EBE2A853DE09001ADE4BE61F4C312B81A",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-224"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "D1DC47633E41DA739892FFDA84592504",
+            "ephemeralData": "194FB90FC39EA1461C906103217677AAA1BE5AC41AF151C2D547FB30AE0875B79BE8B68184889E3709513E38293B696C99D0AF27C85797D0D03D9861D5AB985AC88A3E8BE2117B51E6221CB2C121006E"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "DD45364DE7666521706921A6B211BCAE",
+            "ephemeralData": "F333CF403F8EE484FEBB279CA09C32581D3C5BFBC83AFA50EBD3943DCA75E65E9F9D12DAB9BACCBA23E7D946E029E3C15C10CEA8FA9DFF050E89FA0C49086CD70108C6845D8E68ECE55698C74009D9E6"
+          },
+          "dkm": "9BC9787E0AE783CDA72D0A4150C1561F42E2A43D874934D661343BF1190BCF5862EA017BC063D8DF2CBEF5EBF1C2862AC1D5BDE6DCB734D80DA2F0F55E7CBC78777FF8FD5FE950DC32F34919669A96A82A8C5B56D869510FBD8216B3DCDD2F91131FC673D8E8B6EA15D0088DA25103F170FB1B8093665C74C731248311410866"
+        }
+      ]
+    },
+    {
+      "tgId": 15,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 512,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-224"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 71,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "BC905FF1F78EB186E708281234B5A36BA50DC2D37F7630297A72AC5C182FA3B0BC21A10ECB04F9305123F5F27CEE11340960FB9DA11ABD5D9E2AF6F1BF02A9DC",
+            "z": "AA92489B87A9ECEC6A5F5FEC6D7EA37EC252749E87AD47CBF9F05E9C",
+            "t": "2DF624DA13D174E3BAA0CA887B1D",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-224"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "69B5AFCF25FF920A2133E26845D69E95"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "733B84D89B0AC0C32187EB236902B582"
+          },
+          "dkm": "4491A3EDFE8EBE05901D02EA60A7A0DE0038006B185B58AEBD91693A1571C1518B93350CE481C3B1BD54BA00F8219661B58242E5BD2218617C5DB35A2FE0A268CF390374F9A3F69CB1E7DF0347CB15B10A895FC9C66F62F7C606A2383D25987CC172A6327E9A76B7DC839A20193638189AAC57E2F621877508F3983002979B14"
+        }
+      ]
+    },
+    {
+      "tgId": 21,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 512,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-256"
+      },
+      "zLength": 656,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 192,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 101,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "3A0238270AD80FE34259F46FCE33FF2AEC667889EE8F4BD3663B890E680DB28B706F94CA4CBB4A1E2BFB84E83A6EF83971C1D9EE65E3C5CFCC84E254F63ADFC6412FDEC76C70EBC654DD6CB45E1858499080",
+            "t": "9701A061CB22CFE4A5A20CF59C6708BDAF6358CB3BD97255",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-256"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "D1202A9F169854499B3E30B1FE85CB59",
+            "ephemeralData": "244045E3817FD324804537D725FB07C5AA6B2DE162AC69C19D848536FD20485EA4E37B1185E60B7E91AF7F9C0A9A8FDD2F50AEBA058B73A052CBC98CFD64D3FFE24171B5D837155825326DD64CBC8D671183"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "51AF4DD23248FC0A57F8528D72A7E690"
+          },
+          "dkm": "2F3E93B0058C7267164B094033BF4586AAD95F4488B0805E63E124900A008E1CA6CBD0F4A01CBAF1041B38698522BB1762E217379A65C7478A369A12DABF4FB0960DC33FAFC5A38BB33E5AF994DF646D991D68C65793969E037176F3A288C4111FDE8452048AC3B468B743402BCB30CF051D22F4B223D7FEC8C1B6316950D118"
+        }
+      ]
+    },
+    {
+      "tgId": 35,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 512,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-256"
+      },
+      "zLength": 368,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 400,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 171,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "8BBFE9D4349C1F9B3004922EE79FF9AA185D84B840AF0FCBC3D75B61C3CC0EC872D6AD97C1E5D8D4D8891B749DB7227BA894EBFB1AA8E13957AABA0C71F8244B",
+            "z": "9FC03A9C7EB2DAF9713282352350E2EEA3BE41289B0A3644EF0E9E17CC7A501F496C64D2F34A2047D01FEC52360A",
+            "t": "AC32758E16901AA52F10E6E97241D7D76A7509538FEC3DD3091D9D144914F004A76105A783E21CF11B7D21D107B94C0051C4",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-256"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "E8C8ED349434B02E623C7B8BD036F41D"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "0A5D7A070DFAA3E5DF1DBEEFC4D0AC77",
+            "ephemeralData": "646B85ABE53551980015697AF589D736275542D8A6F018362EE862C9166FA752B7FA7BB23843DE9A5BDFA5D35E72"
+          },
+          "dkm": "06040D7FC5A617C417FF3CAA86CEF905127B4AEAAA5AEF812A890361AC14BBB0283D0C8653FAECF981EABABE7608AD5C9C6B7058A43C6F605C5A887F717EC46FF9B72785346CF7542689BD1113DEA7F9C798872D2BAD21F03EACEB4B7C1CACBB23597D4B6C195BC4B0BC70D3F433B45290838727F279601D8A9B504C82814B42"
+        }
+      ]
+    },
+    {
+      "tgId": 41,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-384"
+      },
+      "zLength": 232,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 201,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "09C735BE296268803E6BACA869FF59FBB60E8D3ADAFDFE8998855F2E7A",
+            "t": "C9E77F12653E31EB8E1C1640F9CB",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-384"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "5CFCC6F93666386D84A5844848198675",
+            "ephemeralData": "E5B0078C476442EC750FDCF3B756EB9A432ACE6E6D99F74D400EF43754"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "D615DBAF223834BAF347BD8BE2342594",
+            "ephemeralData": "EDA3BEFC62A3DCB7489949D9B44645B4C78FF467644C1FD242E07A9E2A"
+          },
+          "dkm": "2BF97BD6D69AEBEF792C1B3CFB9AEB9DBE0C129FEFDAB97D89E267868D38EA007DD43C3CE465A1B56FB5D834C80C6AC144AA3F32086C51DE3E54E905345D558E94FBF3DA531C7921B18386DC43970A1E82587E738C1380944F6D7E353E09B5E5793E512F5517011794E6267A585B4872CA0413D01D8E70ED8C1AB49EAF00AE05"
+        }
+      ]
+    },
+    {
+      "tgId": 57,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-384"
+      },
+      "zLength": 904,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 281,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "9837062667A2309522DBBB308F07D22F7E96E8AC8F9F6974052D2B469812A844CFD94999063D3A605EA894173D8B3D942F77370EBE37E6E1D00D63A2038E3DB6F2F8BBCC9B02A7B5A5A6E376803A8169D02ED5D6C89B3C8BA5E59BAEF3DF07411E1551BEF40DC2044EFFA9FBC28CC76CBB56810AD05CCB44B7B0D95E06F5B54E",
+            "z": "5CD4F8B194A801501E10E53EB3980536BC177524977B7CBFB0C03E78025E9887C29E95F3CAA4DC8665730B6D96EE7B5AA549E1D2DB3599F2C8C256712F67C3297D7C2C2EF2AB7F9DE95059306D448206326EDFC6881603EFCC889F4A42C6D7BEA378B218F5ADC8850F69E8DE24667A670D",
+            "t": "DC8FF0D73DBA1B2D4682395372FA",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-384"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "2C9576B23F87A184EBFDEE94E7C41040",
+            "ephemeralData": "DFF1A31873548309938F94C18689F549B5BA7FCAB2B285AC093187015691491E6A1DDFD0BF1CE9A832341DD8FEC26BF6205BF72C6FC48DBEC263355CFDB53EB1679383F28016A4ADE6EF8E3F71470F3E8D85B79442B1B1ED0F5FE663C9CF98C0748E200E00F97CD7EF3ADE21B29C1EA8C7"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "2968816A5252B8396E1E0466E2515A6F"
+          },
+          "dkm": "9AE5371F5F0546F90198C7F3901CA8826B6B828D17824E5932F6A03837974920ADAFC0DB1EBBD1E32BE53F87121B24A08700B36E3A6FEB0A16FE55AEF005CEF545C74B14345F1DB9A19909DBD4B541946ECACF043FD652DF567E4A63E09594B1AC624EC4BD6B9C154C82BA4DB9E1B56CDBD803BA9F94212E85EF22A7F383B8D9"
+        }
+      ]
+    },
+    {
+      "tgId": 69,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-512"
+      },
+      "zLength": 272,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 312,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 341,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "7EF34183DB836EDDE517096352C05A33C353F6DA42D4EC47068D0206D6BCED9B1704",
+            "t": "FA202B812855F80683B17F98F9D6D692B3B278CDFFC5AA906AEE1013E5D354C600D6C933CA5819",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-512"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "062541BE30F303EED504238FFDFA595C",
+            "ephemeralData": "C04ED2C4C4818B950A01D26E23B47D74A3CA8A64E8C5BA1ADE50A24768DDF25C38A4"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "A58E1A291AE9453F5BB3F17F07C3F2DD",
+            "ephemeralData": "D1DCFD7AE1E7E828E458CA8323C2C6720B046B481A8B20BBD3D2F08ACA80B388B19E"
+          },
+          "dkm": "05248F79514D281ABD1ADCFE7ED390565BFEB5FA1E26460C53D5FD561A1BCF49B1F4C75EB8ECA2F7681C50DF951683B70D1CC3569D1F2A600A0E94BCB336FD5915321EFD1DCF0C470640E6A4706B47934C1AAC162BA570807C663C1F7D0539A32205DEC7E154BF740ED15BEF903E501DB5A962C2FEF9884E84DEC90CB1A3B057"
+        }
+      ]
+    },
+    {
+      "tgId": 79,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-512"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 1544,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 391,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "7EDCA8865270F2E2AAFCC926CC42D815AE4AC19C85D4914BD0C5F2959F31D9EB9E78D45CA3B7A62698E1847BCF002194B8BEB796141E6652384B3EF8978AC42F789826EED690D466E0D6BAEC27CA970FBE892064605284C567AAED771E87FC52CEAC466610E01DD82218E998E3CDFD25C35D8094DD92DBBFFE36CEF369F67FCA",
+            "z": "A2BC86DD2278AB92838E095C65FB5CB0EA832F5BA2221F86BC287FEE",
+            "t": "BFE9B8E3E27B34132B2B02BF0E0A6420B22F6FBA7AF9E7E2884A523445263EE56978959D389B0289CF3A2382044FE9137140B58629AF145487F07EE405034D4FAE060EF81DD56168B5986A8F4D6ED3072F57389376ECEC7870B2739903B8213ACA70F1D756196AA9D42B7315288507FA89829C263D18C09FDE6511887F359428AD921554695C89CC7D76AB368CCADD813BF2CE97E0CFCCDFC55A34E0E5E8208062FFDF050742EC581A7DF50AF786FA1245F6709FB5F6288D981C9755B5A34A7381",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-512"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "1A14C02A9B22C79EC13CFA8F4743469C",
+            "ephemeralData": "DFF76F48282523E72B74DE39FD29A468D60032FA13E3AA6A8B3917E8"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "C894345F9B3233B0A1FA0E611F53018F",
+            "ephemeralData": "AC054D88AA5A74E1DFF98303B3FA4211F1C5ECEEA0E1F09DF82236EB"
+          },
+          "dkm": "11B3CA07267C39AECEB0864A3F4B034CCCA696034EF21ACF4C59CE3C1BA2AC950F938B12DD1FB3E8FCFFC5AA7D09BFB01C94667AA481F8583102A8A252E929C722EBFE8E12742A9566656ACA5060B2BE13AF9430118FB5D3A84ACF4677983A92F4FBD6E1641112C59805F306ED6198AB51C469754904AEB1F53B10A9F4F1EF24"
+        }
+      ]
+    },
+    {
+      "tgId": 85,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-512/224"
+      },
+      "zLength": 344,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 421,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "3FFFEF1831E1B108415C5F22256EBF61A4316DBB5C88A9250FA78F452A5B2FC44FDFFF17B0DB5C0F160C59",
+            "t": "B0D17D9751B87BA71767C5874FD4",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-512/224"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "76AE942119D2642CB990574F362BA25B",
+            "ephemeralData": "06F8BFBCEF2889D3615942CC13F64DF222221AAEA7A0E2053E55586FDFC7D16CF318493D6CE66C8748A936"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "6D9901961570703EC8A9F39C5B4C9D3F",
+            "ephemeralData": "36E4227639B30945F8A5BAEFD1CB44D15CD42DA4FE85C6CD116899E946816630E60B66772A260552EF79C3"
+          },
+          "dkm": "D23873D67334845876A6B0BCDE963966403F1327F99C0167BE8D1E72D9075AEC9DB2B95D17ECB710D1D2D09F454116E3CC920B9087CC1649D7BB18259FF54D7625C4B8668E37855E0EC4C6987715185256495BFADF2830A2147407862159913FE780382B8554B0AF3B3C57519DDCD1011129EF214E76F210B262088AE5BCDE5A"
+        }
+      ]
+    },
+    {
+      "tgId": 97,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-512/224"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 1216,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 481,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "EF67CED006AE547FE2FCD3CA13FC9BB94E7F637982C10A8B5CA3FFD51179DF35C0A98137067EFE9ACB3AD7A713E035F464833A1843C93B719ED44E054820BAB9A3E6AB49F1003D8898A643BD33A85FAAA848F6CB33821C6CF37337430696410FF70A50728BDE3D5A4E6D9B5F362EE4D517559C8A2FB1C4F35936272E5B8CF633",
+            "z": "809197E262F595859B4C2F7F3752B8159C878492F48E72C0390D0991",
+            "t": "8CC56388D0211882324B1AB9FF025CD6B1DFC3015F9C2CAB45F23FA99D7150081916F80D7998BEEBC8455CCA431B95628A178D9D3B4B3685D3DC218E0DE0C78F165DD49464E6ED3E7DFF4D9521FF8867814D8A65006665EEAA5CF467D73BEB15DB7ECACB8216AF157C8D04A139E1E1C743F8CAF8F6A20DE02857AB13FB6ACC81A0877602C7CC604B4680080D478E455670F0D1A3BD8B9C51",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-512/224"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "28C6E5C09E97D5A222E0791C4D33311F"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "6648BC221D911B3E04EE6016F6B1A2E7",
+            "ephemeralData": "4F5EDD4845D1099614C0A1F2F9529C71AD82E35DDF7B5C95928FD03F"
+          },
+          "dkm": "36E45F17E403A777DE18A086BFC6C6EAFBCC40500E20A62A5DF64092E341676824CA6F0C901889007F55DEFA0FCFF89AFC56BAD11939AC9D58D8538CEDECE593673CCDA2D1E962BE48CB59E55B6B5FC7D04C3C3514942708ECCE5C949B12F68FC62E2D05A441B4E197FAA94D1CFAB82F94312DA5254F9434F582C574DDB8165E"
+        }
+      ]
+    },
+    {
+      "tgId": 109,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-512/256"
+      },
+      "zLength": 936,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 512,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 541,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "007DCDA62B1D8A62EC9A6F48A5E24C203594EA2BD781C75495C1ABD47D5F9D83A7FB1B24A30AB8D46E7970FC2FCC0DEE41F0D9D10671141CA171B0E3F2F8DC5D979E15B3D08E100E65F09DEB9E68C645A49DCD5ABC3421BCAEECB2B4181DC40C650E65F511B28B0E4A9505282EC2085325C901B705",
+            "t": "B6B6235807316F6CC3C7A549D1063346C1FD669412599EDFADBB606761BE804A86EF968D4A1A7202135E5539D783D424EA43A1EE34DA364C436D727A3382CA18",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-512/256"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "9B7E4CFC9BF8D618C482E1E36EE95347",
+            "ephemeralData": "86D70E9F8225850BE513E3DD289F2A42FB8316B2274C4DC7D9B48182AC76B29D6C7971F154AD2578F6DA382A9F7C8A9C56229907D5358DF7C9634CA89E7BE51E3D8259B33B8164948AECE7B444162A265D1FFE9295F01FC62CAD73B942B065DD8F7D41CAA3E7BC55B42FF7F5FBB9A53C1D8F590359"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "6143B2ECDDD8A2D51AD475225438C814"
+          },
+          "dkm": "E803F8B1803FE5143857BC1F091FF8A7A8A8A7135669BA893FB1F74EF73BAABA7D6B41CFADCC8E55FD7E05A3701ABE442AD5AFB88FAF5E21D41779E6436DA089619D98DE705081E10419FD7007E1BA6FBEA98D511E83F70FCD16F7BE696AE0C8959417B010300B9A741B832A12478BBC331F7DA8336DF156C34AFDF32BBB0EB7"
+        }
+      ]
+    },
+    {
+      "tgId": 115,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-512/256"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 320,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 571,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "EDFACA691DADC9AA60ED56707DBF22AC8124FE4225DE4AC6231E4FBD5DC7E82B024120D1ED34E8C9EA392BE237C1491D90D1CEF053B5920ECBB89E0677B3E38CCF8E31C7DDB37E4F1451F8B7EC157EC124C6714053B7B93409FE846C84FD1BE2F118F8B6836EE4021221A80DE99B0C4F2422039396D4A5C844B536C2B59071BC",
+            "z": "F4B266FBD591C360AE41B3C4CBA8144D98719D2BCED374070828B250",
+            "t": "5C4775E4292DDEC1A00C52208C8C4C89B658E121961354E5D252F14F387A1CD58FD4F150FBB901A1",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-512/256"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "BFD31C52A6F0BF706F5E0839A8F5183F",
+            "ephemeralData": "62611B1CEE817CAFEB0856B70D6FEE29C37177D90F836F4864037203"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "905F9972A9F7F74302E07F6D0BA44D66"
+          },
+          "dkm": "375164E6D1C30785A94FF0C312B8670E8B9DBAAFA783F0323103536C2D5CA4A1EA11DFAC2088649C5078EBF838521B2A705706CD76A103DF4480A5ACAB3340106E0A68689BDDA6E84CB45577762773C1AE276425F55377D81701EF98FD49149DAE16B98E1C76A4D0972EFCA49526B457EC4C12BACDEA5EBBB00FF263ED946407"
+        }
+      ]
+    },
+    {
+      "tgId": 123,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1152,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-224"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 200,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 611,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "362647ACEC5FA1AA23707F23215DFE3E9DF7913A05944F0D70A7DD66",
+            "t": "74AD664F07AD9231D31B81E192AF728F1BCC3D789249254DF5",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-224"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "C1C60BAD6CEC0F5D29C5C3BA7DC5CC51"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "77E7A62F79B57A18441FC991C10C9405",
+            "ephemeralData": "1048A139A603BFB2A0D24A77EBCC2625AF95D13486ADCB604F78AB41"
+          },
+          "dkm": "08587FCC5B0AA9A9ADC29FCCE1329A7470D4D1D4B14C3B80731F0021D39BEA60D4322629438EA613B64770FD216B1D1C58EBD7D280396FFCE6946C8A185E7F5485C0B367AAFE9180C416FF2632434D2D8F6E79CF0041A822EBAD8BC9CB65BCE11E4ADEF4526F23AEFD0931A0798863F6CC903714095BE4941C8E9E7FA99FC4AB"
+        }
+      ]
+    },
+    {
+      "tgId": 131,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1152,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-224"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 3016,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 651,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "E24B46215566CC8A654C97A7E8D74067EDED3F0CF00B76A4820DA0DB12E89F41D64B39FA200E52D2459C18733B8CCC7B917D85650C92CF1B466730A83911267EC0D234B453D1E572524B9FBF27BD0CB3B5D9EC39665F140A008DCC0581A51EE45C3F31474082557EB6EBC5209DCFA9126CB24D58F683BDF1197436A94F9B5E176C3C8FD0CF78650332E2BD24512D7E37",
+            "z": "0E888252AA2F6262BAB821659338AC0CFD9609BEDBB66A9DC6CABC84",
+            "t": "56EBECE94731EEA46E59924FEE42AFB43FFAE6B3949921EF1A370F7E9EB75CBB736C507BDF8C6EF0796F373DD9A089BF69BF124B058CA3A667CB76B5226714A6966CF0780219735245EC3F374088BB90ED31E6B35EF32763E4529453DEB4DDB8A777C5943177F04F72713E2DEF88F9FB1F546AFF20BC1E5B0021EFF269E6C3841A2FC03984DAE45830076F7D4F2884D445FD39A138F7E867B1496F15CF2157E2EE8D56745C3FF959F6A2F60924D0A47037BF13C0C8B11170A31C787D33DBFA2710934DF499BC9359BE02534A678C842AC6A3F1CA4967763B81EF30EF98B75B4AED5E95A8FA6B1428895C283FED935FD40C11358F25E886A63C4860ADE41DB6E64241DEC660903BFC3316B2CF0EB283E19C140D4E9E9D8BCB25F6393668473E3C2C36F27175FBE9195FD32DB1B3AB9C767EC8F42359E21C34B354C24AA99BCF61C7667BAB2902AA91386630BAD23E1FE840E3D138A806A2A7E11B73208D217F908E00EFD393DD594F009D2AFB89FD4F2674506B292B5E61B739",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-224"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "0AC5DB9E1BE98651AFEB215BEE4A1836"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "350330F0DE8FF9480328237E0DCC2B4D"
+          },
+          "dkm": "05E76FE3682548CCF430F83C53465DF7C394BB9309955B290408459B0ADB0E4E93951FE27AA4D4C416ACAFFEBB6BA038FFBB1AB43582CD1642D642CAB1037F6D5D4072057D3534920451C1D5454C34F4525A820C4D0CB82A400BE4FBA698BF46F7EB7F19505035FEF847BDF01E35DE5EC6BCC30B2B3C5E8233F4D29856A122A6"
+        }
+      ]
+    },
+    {
+      "tgId": 149,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1088,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-256"
+      },
+      "zLength": 240,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 741,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "1CFDA51F0D0592568DF2B5406F2F5D15AE59678D372FCADFEDFF3DC0F7E9",
+            "t": "354046583CCFB2999C0A476AE852",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-256"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "F1382EA05B68B094A01F8E7587C3ECD1"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "4DAB5D04A07CC478A411FCA5E512CD39",
+            "ephemeralData": "8F00A2CAFCE3B1F02C4F2D791E6DDE796BFBAFDFBA54B1FD6E2F974A18C0"
+          },
+          "dkm": "68AA2CB511357B72A29B367A8E96AE711FDCFF1EEB28E3EB89CC8BFF3F2F18B0B34CF1C1E89A1C60A3B38C8968DA16D4C5F0EF82787F505022BAA548D9EE62DE5BE954D8D1FD6B4CE67DC386932568243754EA447D4C91F91A6B8665D8B777BF4D97869521A255CBB59DF0EAB464602A3B7CCB07D97824C3B31E24573FD9084B"
+        }
+      ]
+    },
+    {
+      "tgId": 153,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1088,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-256"
+      },
+      "zLength": 384,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 2664,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 761,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "949B53B718AD29B044AA7AFC5C26F8778C7DF37D92DDD17B4E1522CA35A82F4F60211A5EAB0DC0AEA06D6E64FC1925FE336C0C486E72DBAEF9FFC5D85BC91DB20E761581252CE399C561F06D8BCB7A14EE7D93525A3EC676A3408A8FA7851090DAFA2F762D137CC7BE678634E97FEE848E6C5E6B5AF7AC3EEC4395A2F3A2004B96D9EC7A5009804D",
+            "z": "D5B317F9314D4A8F402864D46BD849362797FD75A0846485D564C4F465338143BB22DA909280CA0FDC693664181E11B9",
+            "t": "AE5D8FA2ADD2764245A0C87066750D2DDBCD5D2C3731BC6B17F70D8C369E85F381098C1E62027A84AB3A3D0E4B1CDC1B786CE70A0A727F3A7BF1A52756217C83AF148C4291859AC3D7679EB66C385DBC1E63AEB32135080D4C1DA4FCC651EC4AF1A947A9D8FA7F2620093F127FCB5820EE6B78426C6E2CF7BD643C10ACBACC167A1E82C4584B2897A61A224E2CC572892D50B692686668746DA0F40091254142586CD7F1558570A5FEE1A9D4E29A97B265CE35EDFC24825210D749C9F026784FEF04E9C477D757633EB3B7EBB8784BB769E5260A75304741304FC9ACE8AF58B5CC614D2E5201978CD8AA1D4466B3A1D984327849DB45B13C333BC50F63300D5CF71D9E5A52D0E9E22E024F266C7A7DF55F2DDDF60B50D36BBC9FFF3BE4C68E28D08ABEE4A9010761288399AFB06DDC3277A9D6F258DEE6B601475B59321166C8B1009349ADF49F352035D4F206",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-256"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "277E030C52E005E40EEB35488416F175"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "5FDB74493B15F458E52B11A316103427"
+          },
+          "dkm": "BBA1429E24BDB7A0A0C7D51129E02FC7FD5222C730F4D2218DF2B48138295A8D04D1FA449BBDE32B0BD489E6B9222D2853EC7EC283E6273F430AEA0540713D25968184F0AD333BA382D280E0AC5FF2836D758AB00CDAC62D972B603985BA51A93EA484C675DC405687FE5339910C415E8301D2E6B939FAC9AB2319CA48D30480"
+        }
+      ]
+    },
+    {
+      "tgId": 163,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 832,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-384"
+      },
+      "zLength": 480,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 768,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 811,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "69F4163BED516ADAF9D205E01C0488E8D7B388B2B9A4C21A4BA4A1FE2F0F09E85340B7388D48082807D9F34774D288C861DC3DC0A0F17C212DA384F6",
+            "t": "56E5927BFBE866848992451E9D7D9B6BE83818ECD68B68C759CF40A113B655762DD7CF561780D42C17B64471CA98B215BAAA4EAB5938DD253CA9FBD0147D3BCE0410B64F93551636E37224B3B0A471559F541F4E845A87E42762AC2DB7B79E3B",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-384"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "132AE0B808033EE3D518979855E20A05"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "8334DED3583B8E2CC3310F3951BBAB97",
+            "ephemeralData": "E45184E50430594DFA7383FFE95B3AEF2F7FA838D747B9DD490F8385CE60107DDD086B91B1FBCB042AE6E35FD53BA4D18942DFBAA882D450E235E1D0"
+          },
+          "dkm": "C25066D0B72246FD64DCA5E5D6DE34DE42AA4A98FF50D964AEA58467D144D400BB3AE59D0BFD77CE18C9E007983FBBF29FCD9BC9D782693A22F27AF7606987D0CD6E89AFF17D72B1D49697E79DF67168DF8EA9C00984022BBF6DB3370EE7C6883931FA9A3F8EF676B535756E2DC6A6E02F91D41FFFB8C79D08DAA25A8EB0F03A"
+        }
+      ]
+    },
+    {
+      "tgId": 171,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 832,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-384"
+      },
+      "zLength": 328,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 851,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "F19969E9F46C0B5FD24F1C74F96C09F58E6ED97B9EF29818FB3D6D69CD88F3DE2106F5E1C9F4DAFD308DD6359D079E0BA6B75B3CF30AD0E67A32DDCF6A3BEDA984BA7B9877B0ACE9AACC856ED9134BD90DD8A4BA3177989D9E6D9176DD85CAB5FCB048E9E0ABE44B",
+            "z": "CC0BBB24C493D401FEAF1248015E6DB5A3C1AC0C89D7D3656C24B4EFE49D850B619D3CEAD34914E8C9",
+            "t": "67C2958388485670EEB1976998CE",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-384"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "5F211BE29ED6F9189CDE7C1EA5523BBD",
+            "ephemeralData": "28F74AADB7CCD840E935540B13C1708032EE8E9C7F715716993C198EC0B807FDC6F22A4373BA0AC8AA"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "390DC8EDC9044961BC6B58E4D77E57B3"
+          },
+          "dkm": "37FBAA4279DAB0CA2CCD200EA93AE6CD52F26523277E57D11B7E137F44BC47FB944498EADBF6EE79CB8133EDCDFC8EC8901D7549C77107DC7E9DFD026B2A7BD49E1535B8294801C44F2519B88276A351F307CA1A2B56B674B3723E4F9A8EE97CB380CCF17010F3B65D6FA5B855448546359BF0C1094243FA9DE85C60FDAC4E83"
+        }
+      ]
+    },
+    {
+      "tgId": 185,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 576,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-512"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 624,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 921,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "9EE631CC3999C8EDEBF45B7F7DDAF5A25E2E5D049B90C3F992CAA15D",
+            "t": "BF62C1B1F751EC5F73CF60A61ED299D0964C27AEFC5AF5DB6A52C2AB26512D987075E75302C9E8B9A11303F0F1DDC7C59008956C7CDF4CA6B5C37BDF0A8E7376C05284E5982AD82BB9A48D4901AB",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-512"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "91F216A9FB16727503E4E2433FE46ED6",
+            "ephemeralData": "4A33A9CEB4EE520D433F269B9219B85B70BEC7DE5E37CA5715B93233"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "1B65E1ACA47FA9A98F7E5BBFFA48C9D3"
+          },
+          "dkm": "F72C46223B807B11C29F5B4E30F4FC12B2F9679930EA411355A58EB1C5CF9164B343CE8863B267915DDA278D34E6CB1F19896F1D2F5A3A9D94A2351D1E1D22DC0B1BE824A5DD205F18A46340F2C4565AA657C86CA90046765A505BDC4DD2CB24158D5B90F09A398FDF94F6850FA6E227AA075A0BCB5B9263104464795191E6F8"
+        }
+      ]
+    },
+    {
+      "tgId": 197,
+      "testType": "AFT",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 576,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-512"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 981,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "FA61D198D8565849FB6AD035A3265B21AA3735C52DA91FDF90C2490102E016FEA15987BC279F46C061E9B5BA4EAD98EBC2691BA4499ECB821DF8381E16BA32B1241EE33B111E8BC6",
+            "z": "A8B8E4AC2E6BB6616005F50E8B9CBB0B9A6E1DD6A2C1673B8D4AFC72",
+            "t": "849ABA6FA9EBC8BBAEBD0EF7E9F3",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-512"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "1B90BB9901CBA3C9CABC8EF0CF6218CC",
+            "ephemeralData": "43531F28EC29F4DCCB53E9DDC64B85649FD4FF5DDC5F26ECAE18AF56"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "8E92F203F2E0D5810B18C8CF37FF15BC",
+            "ephemeralData": "090744406C9CD09C0048201BD2CD862C856105503DD2BC3A801E642A"
+          },
+          "dkm": "32C41CBF8966D6A91CFE95C47585212C6847C793C71158D3DBB8498C4B59A69CFE2FFAC3F28BA29BE74D8463EF65F50202CBD0CD09CDBF24F419BAF3128A9E45EAB6C7DB9BBE10965EFFBA684069156E5C386E9297653C850215BEE965C869350FE2F52CEEF261B8D464D664AF926D4B12CDF42BFC210EAD5261CC07F5BEBEE9"
+        }
+      ]
+    },
+    {
+      "tgId": 215,
+      "testType": "VAL",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 512,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-224"
+      },
+      "zLength": 384,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 1073,
+          "testPassed": false,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "5DE5CB10B7337375245BD6AC219281FD9AD0C13F3F58092FC8D1DA5D246942423856AFE6E35E63D21A2C5ADD8E266D805723C628EF3EE50CCCAE6F1A058EA27F",
+            "z": "7634BB722133CCA7BA3477A65F40A10CF99210156151F219D7AB02CE3FC162BAF81663D0CC02707775BC812D488481A7",
+            "t": "5B303B2FACD6A5DCC0C044C16A45",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-224"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "3CAE30DDE887A9FDA13C06AFFAA581FE",
+            "ephemeralData": "C02BE1E84B0C7B398C78BC2BF7A04D3DAC10A3FDC47A23F74B1CD87EAA03EE79AC24E9D2BF54BAA37E6BF5865225215F"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "FF81A67B625BD904877592AA42633B62"
+          },
+          "dkm": "190C588E820D7E0F19A12EF0FD7FD8B685FFEDDA68F1058FC95EB377C802D164C4A0F8D1275B6FFD5C69D37AE3933475EC7E835802E4C96B15CB152C8FBB4DA48CADDA17FA9249D30017194408723081A4CDE28EBE708BBDC746BA520A39969669629F9BA43861741BB94F051C002A6EB0B670858C5F2CA870C345CB1050B9BA"
+        }
+      ]
+    },
+    {
+      "tgId": 225,
+      "testType": "VAL",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 512,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-256"
+      },
+      "zLength": 296,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 1122,
+          "testPassed": false,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "DBC62E4E2F833D1DFD575C0A625F6E90B37C8BD518B18DD3D75DC97F758AF938544111582D",
+            "t": "954DEDAC970CA67D580D62C87CEC",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-256"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "628243C2F39C28AEAAA273D70E1E2816",
+            "ephemeralData": "2DEC1E5B64D93959CBFCD3DC79CCCF6C5E4BD78DA6469DAC2E3B3703D94086CC15CD0DE1C4"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "AAB51BADFE7B806E6A70FDCD975B01D1"
+          },
+          "dkm": "D96A24E61C5CB78FC706F89980F30868ECAFA5F55A4E25FDA9514E57A698E748AFD177736448713ACFA5DA6A29A263881C14AA831B906B4880E6C5812E751638E927DABEDA07B77F5FCCD446163FB1C0D1D3A948CCD3CF8E9D8A989A322853C46B205E7089CF5935DA23FAF988371BE9FEEFBA11858E9B5A40F630F6E2145DD4"
+        }
+      ]
+    },
+    {
+      "tgId": 255,
+      "testType": "VAL",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-384"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 1273,
+          "testPassed": false,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "E6923DB8F8811C25CACE8A6BE2399BEF3C9AEEDDD3844547BE991F62B31BDC0FE65826EF0E139A5A824CFE865576392402935C53A84E9F0D814BCB92DB9E71C855E0E21C5D9D8399EE962C7391C792892BFB0125E331F0C874848C91AC88F1AEBF904DE800652003B84085981614910EDC771BCD4D3158A2C8E2817DA13BD974",
+            "z": "48BF74FE770042CBA4BD0ABB4287BBA573EB23A789CFE1008108C734",
+            "t": "DE8971EFE70A269C3EE810061DFD",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-384"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "13EDD1F83F1EE1F81477AC508D7CB341"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "560EDBDB162EECDB8E04B2FF675852F0"
+          },
+          "dkm": "9AF94BF44065CEA747E340D8B9C09A865989EA638FD25ED57A787F3364EB0EF39802A8AC567522242C92DE3466C57FB24DD92F7307472E4ED2E15FC0D6B80078C0D291999184E7E61A0AFA0CDBD72CEF4DF1AC1A5AFF95E43136784BFFF7843C8832E991B1E408C16C65C98C998212E6D621881C00AFB13E39317BC237A35C92"
+        }
+      ]
+    },
+    {
+      "tgId": 273,
+      "testType": "VAL",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-512"
+      },
+      "zLength": 624,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 1363,
+          "testPassed": false,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "D3880EDA40CCA33F19AB05A251DF5849C9E3A8CAEC0C8A14213C7D17EAB8CA0A0975F7D28E9FC4B7F7C1C21DC5641DFE6717B3693D4815CB5A9C7904839A01DBC8CB076FDEC0617D4DE51201D7E5B09B4101B2EB9493D511E4D692EF1D119D09C39A0276005E00190348FC1359FAA1EC8C961621A4C475CA4107CDDED965C549",
+            "z": "8A5755B85EA8F884DEE6013F396C94CFF8DE75F13141848708B57E48D5717008B4DFC9F8742BA6D55B1567F0D0E826E9EA38AB45B5505A534FCAE4047E549A46D7D22860557F08A4242A428C94D4",
+            "t": "E3266C49E0716AA26339D5AD9C7A",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-512"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "A1FCC522D5E0E688A8638D8F2D9B72C6"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "ECBAFD9D6FB847DADD401F777DCFCA00"
+          },
+          "dkm": "4B81A2D74BD3ABF09B5DDB8CE5E46012D8F641F64A0446BC5EC99FD9D0854A4AFB34D31BD264493B9B62A9EC50F6E79597A3737CB99FE9B12663ED1678B173FC1C84ADA7593481DEDBB26D6A0972AD685374BA313329949ED1505BEE3D833DAF66BDFDD8DD72034F0324ADBBC48FDB1DFB77F45958378D9FBAC11006D950E503"
+        }
+      ]
+    },
+    {
+      "tgId": 281,
+      "testType": "VAL",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-512/224"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 320,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 1405,
+          "testPassed": false,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "B1B4F6CCEA3A4A016F5C9638D0BD10CC1F951BD5DDCCFE0AA604F884",
+            "t": "D4B491BCA1361B4913D91ABE397D13A4522AF4E2C6417718AA88A1E6B0AA0E32F0FDF86B035F33A7",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-512/224"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "E3AF78950F7BE63997F3570ADE2A7149",
+            "ephemeralData": "646B491D890E0A9CF92D00A60B3350CC476853A5462AC9C8D137C3C0"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "04649700A880230A4BED07A792440E99",
+            "ephemeralData": "7F8300E862C59FD60E97ADC55D7FB3AEB4B537E98277EE0448966C50"
+          },
+          "dkm": "5629A551A4DC072ACE7BF72F9C47B0B7F2FD709F263B055EBB2B14FCD5439C0B5D5290B39C82DBC475BFB6FC2031D5CFE3077BD78254093F935F642E946BF37A9B11CCFDF125C613B0BE5D7F3662372B60620C5F5FAC2FD3395C32CCDB13D5D877AAE8CE9AD9D89852C0F3589F51A08D13D2C342938F1CDACE15EC361CB01F55"
+        }
+      ]
+    },
+    {
+      "tgId": 311,
+      "testType": "VAL",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1024,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA2-512/256"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 392,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 1551,
+          "testPassed": false,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "A552597002E19A0CCAECE029EA60B9D13752E8D0D9E29A2A1551B1564D0DFBC73EAA48EB6BF764E29ED153145E862AD3A98349C68A9707EE3EC46766C439DD1E003EAF1534625481187367E0D1D9EF7DB875902B2BFC05EDBF7C4DC0787D5506B124ED4D03E34939AE74C29084C66B8C85E0E41A408F42EE8BB3F97D9C03F6DB",
+            "z": "D27A93C05AF26E25BEFB58C3BD88239DB20851D72A6BA5C9121F9FE8",
+            "t": "59C73ED07BD411DED9AF443400D132982A3652C5AD79CB5359672AA88B51FB7538F7155D802ADCEEACAA4AEE6DD45106F8",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA2-512/256"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "CC4A33DE802811F35EE7F02CE79C3B5B"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "1254C0ED66147598274149ED88EBD0A6"
+          },
+          "dkm": "3D4C299C2D2E3C940204B0BF2BF2F404C3E6FA609BB1471EDDA96671E0D8C0ACD635A11F4252BBC9A55BFD222E14E3692B1759AA82FFF0F61C00B1AB84D9182CCF6377652D6866CDF074EF7546917ABF4F671C7C76938E37858B1CD57F49FE77F7AF64937C0003E70A460888B3CA5EA23005EE2CC0C7233A560BC81884E7DD05"
+        }
+      ]
+    },
+    {
+      "tgId": 325,
+      "testType": "VAL",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1152,
+        "saltMethod": "default",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-224"
+      },
+      "zLength": 688,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 1624,
+          "testPassed": false,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "z": "AA07EC208F31084D7708AB9C3DCBDBBD872BB0CD68BA34C2BB787980430296BB2B9E2CC86FEBA74BD3EB8728497421957F7E58B061A79DD7CF5C0C367DDB39FE30F5105E605A3CDFDB11740591041FC7AFF65C7C01C7",
+            "t": "83CCF386B9A91BFE3B5519A67BFE",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-224"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "F82B416440A4FFB297C3E7BFB0C4C463",
+            "ephemeralData": "DBFB597711E39A64F208D8B9DA232A175D5E4D2FEC353739522357A0F6F628A069D07FA719240F892D7A58E404D5809F920F2291DC3A5C5AA3729C216CC8DF4AECDD8F5AC2BD277FF0296A498FDBABEE44C368D64115"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "3CFD8D22ACCB825C47F1192C693CD18B"
+          },
+          "dkm": "08BA9F975994A154EBDAF02365AA804FDFF4409DFC0C6A4278B55C59871449627591E5C4E77FB02B7549499734C6B03472E51694E0BEE004A9D7327ECA97D3B08DF81ACCF635DAC5725E251ADC94233A33ECEFBC79C117BEF561E26E1FA20246D91A4C1365865C4172BB3C77686FBD5F7B26ED469896630A391557B3AE66E133"
+        }
+      ]
+    },
+    {
+      "tgId": 351,
+      "testType": "VAL",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 1088,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-256"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 1753,
+          "testPassed": false,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "6501BA991D24352E33EE0628BC84129A2853744F5D5E4F478E3DA4BE742826E98F3B9F4945E51F373B87EA322BD9729394017E6FDBF128054A007E3C5B70B51D2132022E17A69BA6C24F40856399470D7AFF2F2A46481B9269B7EFE08CE2877B0D4ECC72E7EC93C42BC4B8F78392BC3AE10B1FE2ECC26BEDA4E91BAB6AC66B7B46C41820D3281899",
+            "z": "86620BD775C8CC0DB9E511DA3C47510D0511E14F7376C3CF71F38E21",
+            "t": "7E8AEAB30C253FFCF5F73AB9F400",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-256"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "0FFB6E4ACA0FDC51614904A70A22DD86"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "FA9EE9C240FFBA93955755156F4C465F",
+            "ephemeralData": "4A4A1374CB887124EFC674F973F100AE837D18CE1E3F414E2EBF88F8"
+          },
+          "dkm": "B2D2446D2E88C43E7DF7EFB58AA36969851835EA46E6A06D42091EFBB22A1EE9F3C441D10A7E83DECF84DCB14F628212CB292A45D840E2B943EFF041E6F0624590C5F3912AC24D50B40A91C6A3958E32D40E41055C1329F1F8C159550C0D1B5430A87C70CB4C005D146CDB6F132B81F07F6AFEBC49FAF90CB4F806EF340D2D8B"
+        }
+      ]
+    },
+    {
+      "tgId": 379,
+      "testType": "VAL",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 832,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-384"
+      },
+      "zLength": 224,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 112,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 1895,
+          "testPassed": false,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "DF4A2F610C7BDEADA0DA134929BC63FC163B607086E637CAD3DFDCD316DE4F01ED33C4CCB121DBBEE0570178F64C0DFB805DBDB10D3177A317E083E83ABE04A1530A9636B7E35AD3EC6DA2FD8A4EAA56C717921A80A20B836A7BB00BF5C82C82548BC7A1A3D41212",
+            "z": "7089B2293CDAD2B884E24B6FEDF5783251E61217CE296C2F7A81A614",
+            "t": "BCDFC3DAA699C02F583E4597AE0A",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-384"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "1DA139D7E17A566C1D6FDC8599E7D0FA",
+            "ephemeralData": "211B6644858CB8DB06D20F6AB1FFD4C609428E125590085BBCB7DE9F"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "4D724357C89FE1FFD697EC368A09300A"
+          },
+          "dkm": "921A15960113A55F0E2D81B4258BABDB2D6C37C8660F65BF314E17D3153A3D400D2BD1D8AF5954F9DD0F0950FF1EDF7698B8F722802604D93ACBC13893347AB03AA4AF24FC0788688FE8845A498AA6F795216DF8BB4ADD618E15928397E35A0395DC0D48F35A9EAFCC8ACC6E73A0DEA285DE480BE83ABAA7B1634138AF6BE6AC"
+        }
+      ]
+    },
+    {
+      "tgId": 397,
+      "testType": "VAL",
+      "kdfConfiguration": {
+        "kdfType": "hkdf",
+        "l": 1024,
+        "saltLen": 576,
+        "saltMethod": "random",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+        "fixedInfoEncoding": "concatenation",
+        "hmacAlg": "SHA3-512"
+      },
+      "zLength": 928,
+      "usesHybridSharedSecret": true,
+      "auxSharedSecretLen": 168,
+      "multiExpansion": false,
+      "tests": [
+        {
+          "tcId": 1982,
+          "testPassed": false,
+          "kdfParameter": {
+            "kdfType": "hkdf",
+            "requiresAdditionalNoncePair": false,
+            "salt": "4E774133034246A76D1B025C9861553FFC04524FF58DBBCC66373EA19029F380DE7C34128E1D5B41F0DA599E7EDC5911102430FFCC9B1D8389D0505E843682C7B98138F17265642C",
+            "z": "3F4FE3DBB681EDFB23F9EBE3499022689003E4448255C6528D7ECDAC60F75C4D4E9A5B19E392BE62B4BCC89C4862A83E9F506F7ADE8D999B69C66E74E4A1B8EB963445F2CEC1B9007EC2D21BF03019FBF3B24D18E3F282938C2ADB9C923C2586D8B8CC625E9BF0ED69526D602125C5456301B10A",
+            "t": "CAF67A01BA7E6F3A72D5F5D52A70F3F0771E903FFE",
+            "l": 1024,
+            "fixedInfoPattern": "uPartyInfo||vPartyInfo||l",
+            "fixedInputEncoding": "concatenation",
+            "hmacAlg": "SHA3-512"
+          },
+          "fixedInfoPartyU": {
+            "partyId": "258574797C2E95B9468EA7483A393B1F"
+          },
+          "fixedInfoPartyV": {
+            "partyId": "27909EA56DA7DEAC67B2BBE0344A869B",
+            "ephemeralData": "2890A46296A38EBEAF2353EC23F441B5757CFCA5BC76A9885519371AE98AC0E629497B196E41DF5A40AC6313DBC37A5940AECF23E7DB53A3AA13A476FECE6B12362EAF9D4D826445A0E4800F1A549BF98F36E9549DF714D9E7C89BD3877F3FC1BC7D6776BD09902A026D1AFCB43A6C46E62BF53D"
+          },
+          "dkm": "FDA2ADE46DB3888409642CC1774067C5E77C7D53D9D3EE77DEAFB98760000A99671891BDA6C811F942EC7A11CABD401020E923B0B6AE5113F4E2F0EC10659068F2E259D0AE92C9FCF5AB4CE6A1978F6E25BC4911FBCB3F0A7E29AA87760308A11690CFC729B81E7076167D4E3560F960C1662A25E1045CD76DF04EDC85062959"
+        }
+      ]
+    }
+  ],
+  "notExecuted": [
+    {
+      "tgId": 2,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 4,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 6,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 8,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 10,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 12,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 14,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 16,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 18,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 20,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 22,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 24,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 26,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 28,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 30,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 32,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 34,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 36,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 38,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 40,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 42,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 44,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 46,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 48,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 50,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 52,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 54,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 56,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 58,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 60,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 62,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 64,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 66,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 68,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 70,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 72,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 74,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 76,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 78,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 80,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 82,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 84,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 86,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 88,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 90,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 92,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 94,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 96,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 98,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 100,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 102,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 104,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 106,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 108,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 110,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 112,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 114,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 116,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 118,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 120,
+      "testType": "AFT",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 122,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 124,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 126,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 128,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 130,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 132,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 134,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 136,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 138,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 140,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 142,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 144,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 146,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 148,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 150,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 152,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 154,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 156,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 158,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 160,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 162,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 164,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 166,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 168,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 170,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 172,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 174,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 176,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 178,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 180,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 182,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 184,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 186,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 188,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 190,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 192,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 194,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 196,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 198,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 200,
+      "testType": "AFT",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 202,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 204,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 206,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 208,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 210,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 212,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 214,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 216,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 218,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 220,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 222,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 224,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 226,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 228,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 230,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 232,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 234,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 236,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 238,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 240,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 242,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 244,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 246,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 248,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 250,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 252,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 254,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 256,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 258,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 260,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 262,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 264,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 266,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 268,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 270,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 272,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 274,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 276,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 278,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 280,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 282,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 284,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 286,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 288,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 290,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 292,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 294,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 296,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 298,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 300,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 302,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 304,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 306,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 308,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 310,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 312,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 314,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 316,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 318,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 320,
+      "testType": "VAL",
+      "hmacAlg": "SHA2-512/256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 322,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 324,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 326,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 328,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 330,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 332,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 334,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 336,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 338,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 340,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-224",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 342,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 344,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 346,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 348,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 350,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 352,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 354,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 356,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 358,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 360,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-256",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 362,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 364,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 366,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 368,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 370,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 372,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 374,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 376,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 378,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 380,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-384",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 382,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 384,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 386,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 388,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 390,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 392,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 394,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 396,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 398,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    },
+    {
+      "tgId": 400,
+      "testType": "VAL",
+      "hmacAlg": "SHA3-512",
+      "cases": 5,
+      "why": "multi-expansion-not-in-subset"
+    }
+  ]
+}

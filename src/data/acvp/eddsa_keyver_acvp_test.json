@@ -1,0 +1,95 @@
+{
+  "_provenance": {
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_repo": "https://github.com/usnistgov/ACVP-Server",
+    "source_commit": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "source_path": "gen-val/json-files/EDDSA-KeyVer-1.0/internalProjection.json",
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/EDDSA-KeyVer-1.0/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "source_sha256": "46bc373003ed7c5ee2780587ea7518ea6952b0be1cb467f8632163debf591fc8",
+    "source_git_blob_sha": "323595125faa5ac65bf2933865a93d8680dd4353",
+    "retrieved": "2026-09-25",
+    "upstream_operation": "keyVer (q -> testPassed, reason)",
+    "local_operation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_EC_EDWARDS, CKA_EC_PARAMS = curve OID, CKA_EC_POINT = q) and CKO_PRIVATE_KEY from the upstream d; C_Sign(CKM_EDDSA) of a fixed message with d, then C_VerifyInit/C_Verify with the public key. Valid key: CKR_OK. Invalid key: refused at C_CreateObject, C_VerifyInit or C_Verify with a code other than CKR_SIGNATURE_INVALID / CKR_SIGNATURE_LEN_RANGE",
+    "transformation": "subset only; every retained field is byte-copied from the upstream file (hex case preserved); no value is re-derived",
+    "subset_policy": "Deterministic. Every case of both groups (Ed25519, Ed448: 2 valid, 2 invalid each).",
+    "retained_fields": "tcId, testPassed, reason, d, q",
+    "test_only_key_material": "d values are public NIST ACVP-Server sample data, imported as session objects (CKA_TOKEN=false) and destroyed after the case"
+  },
+  "vsId": 0,
+  "algorithm": "EDDSA",
+  "mode": "keyVer",
+  "revision": "1.0",
+  "testGroups": [
+    {
+      "tgId": 1,
+      "testType": "AFT",
+      "curve": "ED-25519",
+      "tests": [
+        {
+          "tcId": 1,
+          "testPassed": false,
+          "reason": "point not on curve",
+          "d": "D470756402E6B84BFFBC498C993C001F92B153B3D4F01757DA706804287C4259",
+          "q": "5BC0D8831F8D7FB200E32DAF36C54BF2808E69D40BD48BD915DF585B2696C166"
+        },
+        {
+          "tcId": 2,
+          "testPassed": true,
+          "reason": "none",
+          "d": "9FCF6CA888B9E34E44D184E269E94F9A7452F67C46A565AF8BF710A5D46668B4",
+          "q": "CF1BD87814E4113E9CAB4D5B95A4F85EA04BAC9EB70053023B1D201A85225072"
+        },
+        {
+          "tcId": 3,
+          "testPassed": true,
+          "reason": "none",
+          "d": "69D5EC4BA51EDE42EBC3836DE815581235513596B448DC19A0B0A3338CF26FCA",
+          "q": "EB0E59A5D0EC784B3EFC7E5A86DFBD244789E5B384A652A43DC0968974E83571"
+        },
+        {
+          "tcId": 4,
+          "testPassed": false,
+          "reason": "point not on curve",
+          "d": "477EB09FAD4D6BF6307FD06611BA30F80C0246C2F82F768E9D56A8C2362BB8DB",
+          "q": "FBB4F7945F521A5CB169883477E9DFAFA14767FD4D973D8FD3667C46253F5943"
+        }
+      ]
+    },
+    {
+      "tgId": 2,
+      "testType": "AFT",
+      "curve": "ED-448",
+      "tests": [
+        {
+          "tcId": 5,
+          "testPassed": true,
+          "reason": "none",
+          "d": "EC12AD170B87F83160B855119DCE8DAE9B2B3C2BCD32BBDD35D19A3474E7ADD28BD0DF9198B04D541FB8923A1692CBFE88F20626FF7A51CBA4",
+          "q": "D74E406880F2BD2950D8AC5593AAC612D945EA7CA08DC1EF6BE7FE0BB61C3B0DDA563ED2B545919937B3174CB9826698F575B15DAC6B642A80"
+        },
+        {
+          "tcId": 6,
+          "testPassed": false,
+          "reason": "point not on curve",
+          "d": "9165A0A4F82B129E862F14D7C6F9115015C9AD49D5EB24539EF00D151FD35CB094F3547D3E9E6342A22076B0C060ED713D52C9BC855FF4E6E3",
+          "q": "8DE82D8611D23882CEFC1C3BD13C1E5E3BAC0D1AAE908FFF0B0A5431B90BEF715F1160073C919B886BBDAF156FA051CA37022E8118B260FF00"
+        },
+        {
+          "tcId": 7,
+          "testPassed": true,
+          "reason": "none",
+          "d": "072C924F74E0E176F7875BD84A62D28EB09B5EB0B8E75A1B5C2C97DBC12C20406BF9156B1EEC196855C9C5FBB552FA8FEB03A9EEDB857A1C99",
+          "q": "BC17476D69799F0CDAAF4D730FBD7BE9078DE04A1B90A91938E994FFF14C029214DE2FD97D75A0A973BC106C6AF465D44C2EE0D32D4D4CBB00"
+        },
+        {
+          "tcId": 8,
+          "testPassed": false,
+          "reason": "point not on curve",
+          "d": "6D938F85573977EDEAAC72F0879F44EC9DF1CE2EABBCD5501F3B29FB4462902303E231F424BD1AFB5C9511EAD8A96CDF58FFBA54309DE29E89",
+          "q": "480B6575633FEFAF3635EFA2294F2CBF1E8D49F6BC0CD8B8F5A91A0A59922BE33CDD837A3ACCAA419970CBE4A21A062CF37F839931CF17EE80"
+        }
+      ]
+    }
+  ]
+}
