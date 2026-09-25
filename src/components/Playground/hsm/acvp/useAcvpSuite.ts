@@ -188,11 +188,17 @@ const deriveEvidenceTier = (
 
 export const EVIDENCE_TIER_META: Record<EvidenceTier, { icon: typeof ShieldCheck; label: string }> =
   {
-    'nist-acvp': { icon: ShieldCheck, label: 'NIST ACVP reference vector' },
-    'published-standard': { icon: BookMarked, label: "Published standard's own KAT" },
+    'nist-acvp': {
+      icon: ShieldCheck,
+      label: 'Public NIST ACVP-Server reference sample (not an ACVTS-issued vector)',
+    },
+    'published-standard': {
+      icon: BookMarked,
+      label: "Published standard's own example / KAT (not ACVP)",
+    },
     'self-consistency': {
       icon: FlaskConical,
-      label: 'Self-consistency (independent oracle, not a published KAT)',
+      label: 'Independent-oracle comparison (OpenSSL), not a published KAT',
     },
   }
 
@@ -326,8 +332,8 @@ export function useAcvpSuite() {
     // destroyed the visitor's whole session trace (2026-08-13 audit, N14).
     // A step-header marker delimits this run's output in the shared log
     // instead; the pane's own results live in local `logs` state anyway.
-    addHsmStepLog('ACVP Validation Run')
-    addLog('Starting ACVP Validation Suite via PKCS#11...')
+    addHsmStepLog('Cryptographic Validation Workbench run')
+    addLog('Starting Cryptographic Validation Workbench via PKCS#11...')
 
     const newResults: TestResult[] = []
     // Paint the "running" state before the (heavy, synchronous) engine setup.
@@ -508,9 +514,9 @@ export function useAcvpSuite() {
             const tv = aesGcmTestVectors.testGroups[0].tests[0]
             const id1 = `aes-acvp-${eName}`
             addLog(`[${eName}] Testing AES-GCM-256 Decrypt KAT (SP 800-38D)...`)
-            addLog(`  ACVP Key: ${tv.key.slice(0, 32)}… | IV: ${tv.iv} | Tag: ${tv.tag}`)
+            addLog(`  GCM example Key: ${tv.key.slice(0, 32)}… | IV: ${tv.iv} | Tag: ${tv.tag}`)
             addLog(
-              `  ACVP CT[${tv.ct.length / 2}B]: ${tv.ct.slice(0, 32)}… | Expected PT: ${tv.pt.slice(0, 32)}…`
+              `  GCM example CT[${tv.ct.length / 2}B]: ${tv.ct.slice(0, 32)}… | Expected PT: ${tv.pt.slice(0, 32)}…`
             )
             try {
               const keyBytes = hexToBytes(tv.key)
@@ -676,9 +682,9 @@ export function useAcvpSuite() {
             const tv = rsaPssTestVectors.testGroups[0].tests[0]
             const id3 = `rsa-acvp-${eName}`
             addLog(`[${eName}] Testing RSA-PSS-2048 SigVer KAT (FIPS 186-5)...`)
-            addLog(`  ACVP Modulus: ${tv.n.slice(0, 32)}… | Exp: ${tv.e}`)
+            addLog(`  Oracle vector Modulus: ${tv.n.slice(0, 32)}… | Exp: ${tv.e}`)
             addLog(
-              `  ACVP Signature: ${tv.signature.slice(0, 32)}… | Msg: "${tv.msg.slice(0, 40)}"`
+              `  Oracle vector Signature: ${tv.signature.slice(0, 32)}… | Msg: "${tv.msg.slice(0, 40)}"`
             )
             try {
               const modBytes = hexToBytes(tv.n)
@@ -749,8 +755,8 @@ export function useAcvpSuite() {
             const tv = ecdsaTestVectors.testGroups[0].tests[0]
             const id4 = `ecdsa-acvp-${eName}`
             addLog(`[${eName}] Testing ECDSA P-256 SigVer KAT (FIPS 186-5)...`)
-            addLog(`  ACVP Qx: ${tv.qx.slice(0, 32)}… | Qy: ${tv.qy.slice(0, 32)}…`)
-            addLog(`  ACVP r: ${tv.r.slice(0, 32)}… | s: ${tv.s.slice(0, 32)}…`)
+            addLog(`  RFC 6979 Qx: ${tv.qx.slice(0, 32)}… | Qy: ${tv.qy.slice(0, 32)}…`)
+            addLog(`  RFC 6979 r: ${tv.r.slice(0, 32)}… | s: ${tv.s.slice(0, 32)}…`)
             try {
               const qx = hexToBytes(tv.qx)
               const qy = hexToBytes(tv.qy)
@@ -1954,7 +1960,7 @@ export function useAcvpSuite() {
             const edTv = eddsaTestVectors.testGroups[0].tests[0]
             const id16 = `eddsa-sigver-${eName}`
             addLog(`[${eName}] Testing EdDSA Ed25519 SigVer KAT (RFC 8032)...`)
-            addLog(`  ACVP PK: ${edTv.pk} | Sig: ${edTv.signature.slice(0, 32)}…`)
+            addLog(`  RFC 8032 PK: ${edTv.pk} | Sig: ${edTv.signature.slice(0, 32)}…`)
             try {
               const pkBytes = hexToBytes(edTv.pk)
               const msgBytes = hexToBytes(edTv.msg)
@@ -3785,7 +3791,7 @@ export function useAcvpSuite() {
       setResults(newResults)
       setLoading(false)
       setProgress(null)
-      addLog('Validation Suite Completed.')
+      addLog('Cryptographic Validation Workbench run completed.')
     }
     return newResults
   }

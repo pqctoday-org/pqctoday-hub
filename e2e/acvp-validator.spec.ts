@@ -32,12 +32,12 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // defensive re-assertion. Be specific: there are TWO buttons matching
     // "ACVP" — the role=tab sub-tab entry and the results-table category
     // badge text. Target the tab.
-    const acvpTab = page.getByRole('tab', { name: 'ACVP' })
+    const acvpTab = page.getByRole('tab', { name: 'Validation' })
     await acvpTab.waitFor({ state: 'visible', timeout: 30000 })
     await acvpTab.click()
 
     // Make sure the component is loaded before dispatching events
-    await page.waitForSelector('text="ACVP Known-Answer Tests"', { timeout: 30000 })
+    await page.waitForSelector('text="Cryptographic Validation Workbench"', { timeout: 30000 })
 
     // Advance HSM phase to 'session_open' via the e2e hook in HsmContext.
     // The runTests() guard at HsmAcvpTesting.tsx returns early unless the
@@ -104,7 +104,9 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // tipped over on GitHub's shared CI runners. Widened to match this file's
     // other WASM checkpoints rather than re-guessing; investigate for a real
     // hang only if this is still red at 90s.
-    const logSection = page.locator('div', { hasText: 'Validation Suite Completed' }).last()
+    const logSection = page
+      .locator('div', { hasText: 'Cryptographic Validation Workbench run completed' })
+      .last()
     await expect(logSection).toBeVisible({ timeout: 90000 })
 
     // Validate that at least one ML-KEM and ML-DSA passed
@@ -178,10 +180,10 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     page.on('pageerror', (err) => pageErrors.push(err.message))
 
     await page.goto('/playground/hsm?tab=developer&dtab=acvp')
-    const acvpTab = page.getByRole('tab', { name: 'ACVP' })
+    const acvpTab = page.getByRole('tab', { name: 'Validation' })
     await acvpTab.waitFor({ state: 'visible', timeout: 30000 })
     await acvpTab.click()
-    await page.waitForSelector('text="ACVP Known-Answer Tests"', { timeout: 30000 })
+    await page.waitForSelector('text="Cryptographic Validation Workbench"', { timeout: 30000 })
 
     await page.waitForFunction(
       () =>

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// AcvpSuiteWorkbench — the Build tab's ACVP suite inside the shared
+// AcvpSuiteWorkbench — the Build tab's Cryptographic Validation Workbench
+// (historically "the ACVP suite"; it mixes evidence classes, so the visible
+// heading no longer says ACVP — remediation plan WS-A, A-1) inside the shared
 // Builder/Code shell (design handoff design_handoff_kmip_pkcs11_playground
 // §3.6, D6). Palette = the 7 algorithm-family categories (checkbox each,
 // All/None), canvas = live progress + the streamed result rows, aside =
@@ -32,6 +34,8 @@ import {
   EVIDENCE_TIER_META,
   type EvidenceTier,
 } from '../../../hsm/acvp/useAcvpSuite'
+import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
+import { VALIDATION_DISCLAIMER_TEXT } from '@/data/validationDisclaimer'
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
 import { emitAcvpSuite } from './suiteCodegen'
 import { createAcvpBridge, runSuiteScript } from './suiteBridges'
@@ -170,21 +174,26 @@ export const AcvpSuiteWorkbench = () => {
     <div className="space-y-3 flex flex-col min-h-0 flex-1">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h3 className="text-base font-bold">ACVP Known-Answer Tests</h3>
+          <h3 className="text-base font-bold">Cryptographic Validation Workbench</h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Validates deterministic operations across the WASM PKCS#11 FFI using NIST CAVP target
-            vectors.{' '}
+            Replays sampled test cases across the WASM PKCS#11 FFI. Evidence is mixed: selected
+            public{' '}
             <a
               href="https://github.com/usnistgov/ACVP-Server"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:underline text-primary"
             >
-              NIST ACVP JSON reference vectors
+              NIST ACVP-Server reference samples
             </a>
+            , published-standard KATs, OpenSSL-oracle comparisons and functional round-trips. Hover
+            a row&apos;s status badge for its evidence tier; rows without a tier icon are functional
+            or behavioral checks with no external expected value.
           </p>
         </div>
       </div>
+
+      <ValidationDisclaimer />
 
       {(loading || totalChecks > 0) && (
         <div className="space-y-1.5" aria-live="polite">
@@ -193,7 +202,7 @@ export const AcvpSuiteWorkbench = () => {
               {loading ? (
                 <>
                   <Loader2 size={13} className="animate-spin text-primary" aria-hidden="true" />
-                  Running ACVP validation…
+                  Running validation tests…
                   {progress ? ` ${progress.current} (${progress.done} done)` : ''}
                 </>
               ) : (
@@ -383,11 +392,13 @@ export const AcvpSuiteWorkbench = () => {
               variant="ghost"
               size="sm"
               onClick={() => {
-                void navigator.clipboard.writeText(logs.join('\n')).then(() => {
-                  setLogCopied(true)
-                  if (logCopyTimerRef.current) clearTimeout(logCopyTimerRef.current)
-                  logCopyTimerRef.current = setTimeout(() => setLogCopied(false), 2000)
-                })
+                void navigator.clipboard
+                  .writeText([VALIDATION_DISCLAIMER_TEXT, '', ...logs].join('\n'))
+                  .then(() => {
+                    setLogCopied(true)
+                    if (logCopyTimerRef.current) clearTimeout(logCopyTimerRef.current)
+                    logCopyTimerRef.current = setTimeout(() => setLogCopied(false), 2000)
+                  })
               }}
               className="h-6 gap-1 px-1.5 text-[10.5px] text-muted-foreground hover:text-foreground"
               title="Copy log to clipboard"
@@ -417,8 +428,8 @@ export const AcvpSuiteWorkbench = () => {
 
   return (
     <SuiteShell
-      title="ACVP Known-Answer Tests"
-      subtitle="NIST ACVP reference vectors + self-consistency oracles, replayed against the WASM engine"
+      title="Cryptographic Validation Workbench"
+      subtitle="Selected NIST ACVP-Server reference samples, standard KATs, oracle comparisons and functional round-trips, replayed against the WASM engine"
       actions={
         <Button
           variant="ghost"

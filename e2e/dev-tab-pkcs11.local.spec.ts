@@ -168,9 +168,13 @@ test('the guided lesson still works when started from the ACVP sub-tab, not just
   // open Lessons, since TabsContent unmounts the Standard workbench (and its
   // data-tour="pkcs-dev-*" targets) while a different sub-tab is active.
   await page.goto('/playground/hsm?tab=developer&dtab=acvp')
-  await expect(page.getByRole('tab', { name: 'ACVP' })).toHaveAttribute('aria-selected', 'true', {
-    timeout: 30000,
-  })
+  await expect(page.getByRole('tab', { name: 'Validation' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+    {
+      timeout: 30000,
+    }
+  )
 
   await page.getByRole('button', { name: /Lessons/i }).click()
   await page.getByRole('button', { name: /Build a PKCS#11 v3\.2 sequence/ }).click()
@@ -223,7 +227,7 @@ test('Curious/Executive personas never see the ACVP/Conformance sub-tabs, even v
   await expect(page.getByRole('tab', { name: 'Build', exact: true })).toBeVisible({
     timeout: 30000,
   })
-  await expect(page.getByRole('tab', { name: 'ACVP' })).toHaveCount(0)
+  await expect(page.getByRole('tab', { name: 'Validation' })).toHaveCount(0)
   await expect(page.getByRole('tab', { name: 'Conformance' })).toHaveCount(0)
 
   // Land on Developer directly with the new sub-tab param — must fall back
@@ -232,7 +236,7 @@ test('Curious/Executive personas never see the ACVP/Conformance sub-tabs, even v
   await expect(page.getByRole('button', { name: 'Encrypt + sign (PQ)' })).toBeVisible({
     timeout: 30000,
   })
-  await expect(page.getByRole('tab', { name: 'ACVP' })).toHaveCount(0)
+  await expect(page.getByRole('tab', { name: 'Validation' })).toHaveCount(0)
   await expect(page.getByRole('tab', { name: 'Conformance' })).toHaveCount(0)
 })
 

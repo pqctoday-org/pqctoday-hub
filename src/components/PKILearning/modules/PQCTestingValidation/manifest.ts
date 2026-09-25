@@ -30,7 +30,7 @@ const manifest: ModuleManifest = {
     { id: 'interop-test-matrix', label: 'Interoperability Test Matrix' },
     { id: 'tvla-leakage-analyzer', label: 'TVLA Leakage Analyzer' },
     { id: 'test-strategy-builder', label: 'Test Strategy Builder' },
-    { id: 'acvp-validator', label: 'NIST ACVP Validation' },
+    { id: 'acvp-validator', label: 'ACVP Workflow & Validation Tests' },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {
