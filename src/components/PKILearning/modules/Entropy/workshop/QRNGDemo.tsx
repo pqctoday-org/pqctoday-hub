@@ -93,7 +93,11 @@ function formatTestValue(result: TestResult): string {
 }
 
 /**
- * Public CMVP Entropy Validation Certificates for QRNG noise sources.
+ * Public CMVP Entropy Validation Certificates for products marketed as quantum
+ * entropy sources. The certificate's own "Noise Source Classification" is
+ * shown for each: E214 is certified as Non-Physical, i.e. a noise source that
+ * uses system data (SP 800-90B §2.2.1), so it is not a QRNG noise-source
+ * certificate.
  * Every field is copied from the certificate page on csrc.nist.gov, checked
  * 2026-09-24. Replaces an unsourced product-certification line: the CMVP
  * search found no such certificate, and a web search for a BSI entry
@@ -110,6 +114,7 @@ const QRNG_ESV_CERTIFICATES = [
     catalogLink: '/migrate?q=ID+Quantique+Quantis+QRNG',
     implementation: 'IDQ Quantis IID QRNG',
     scope: 'QRNG chips IDQ250C2, IDQ250C3, IDQ6MC1, IDQ20MC1, IDQ20MC1-S1, IDQ20MC1-S3',
+    classification: 'Physical',
     validated: '2023-08-25',
   },
   {
@@ -119,6 +124,7 @@ const QRNG_ESV_CERTIFICATES = [
     catalogLink: '/migrate?q=QuintessenceLabs+qStream',
     implementation: 'qStream 100',
     scope: 'version 1.5, quantum tunnelling diode noise source',
+    classification: 'Physical',
     validated: '2024-06-21',
   },
   {
@@ -127,7 +133,8 @@ const QRNG_ESV_CERTIFICATES = [
     certUrl: `${ESV_CERT_BASE}214`,
     catalogLink: '/migrate?q=Quantinuum+Quantum+Origin',
     implementation: 'Entropy Source for Quantum Origin',
-    scope: 'version 3.4.1, noise source classified Non-Physical',
+    scope: 'version 3.4.1',
+    classification: 'Non-Physical',
     validated: '2024-11-22',
   },
 ] as const
@@ -147,7 +154,7 @@ const generateSimulatedQrng = (bytes: number): Uint8Array => {
  *   - the monobit frequency test fails (every byte loses 4 of its 8 bits
  *     → ones-ratio collapses from ~0.5 to ~0.25)
  *   - chi-squared blows up (only 16 of 256 buckets ever populated)
- *   - SP 800-90B min-entropy collapses (∼4 bits/byte instead of ≥6)
+ *   - its min-entropy is at most 4 bits/byte (only 16 values ever occur)
  *   - the histogram is visibly broken (1/16 of the x-axis populated)
  *
  * This is NOT a real-world weak RNG; it is an explicitly-broken source
@@ -551,10 +558,10 @@ export const QRNGDemo: React.FC = () => {
       {/* Educational Callout */}
       {hasComparison && (
         <div className="glass-panel p-4 space-y-3 border-l-4 border-l-primary bg-primary/5">
-          {/* QRNG noise sources with public CMVP entropy certificates */}
+          {/* Products marketed as quantum entropy sources, with public CMVP entropy certificates */}
           <div className="pt-1 border-t border-border/50">
             <p className="text-xs font-medium text-foreground mb-2">
-              QRNG noise sources with CMVP Entropy Validation Certificates
+              CMVP Entropy Validation Certificates for products marketed as quantum entropy sources
             </p>
             <ul className="space-y-1">
               {QRNG_ESV_CERTIFICATES.map((cert) => (
@@ -576,14 +583,17 @@ export const QRNGDemo: React.FC = () => {
                   >
                     Entropy Certificate #{cert.cert}
                   </a>
-                  : &ldquo;{cert.implementation}&rdquo; ({cert.scope}), validated {cert.validated}
+                  : &ldquo;{cert.implementation}&rdquo; ({cert.scope}), noise source classified{' '}
+                  {cert.classification}, validated {cert.validated}
                 </li>
               ))}
             </ul>
             <p className="text-[11px] text-muted-foreground mt-2">
               Checked on the CMVP entropy-validation search on {QRNG_ESV_CHECKED_ON}. A certificate
               covers the implementation and versions it lists, not a vendor&apos;s whole product
-              line.
+              line. The classification is the certificate&apos;s own: a Non-Physical noise source
+              uses system data (SP 800-90B §2.2.1), so #E214 does not certify a quantum noise
+              source.
             </p>
           </div>
 
