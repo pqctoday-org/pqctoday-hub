@@ -40,7 +40,10 @@
  *
  * Presentation drift (plan A-5): in extra paths only, a sentence of the form
  * "<N> ... NIST ACVP-Server" must use `nistReferenceSampleFileCount` from the
- * WS-B generated counts (src/data/validation/validation-counts.generated.json).
+ * WS-B generated counts (src/data/validation/validation-counts.generated.json),
+ * and "<N> test groups/sections … <M> families" must match the CATEGORIES table
+ * in src/components/Playground/hsm/acvp/useAcvpSuite.ts (M = categories, N = the
+ * sum of their `groups`).
  *
  * Exit 0 = clean, 1 = findings. `--json` prints machine-readable output.
  */
@@ -326,6 +329,121 @@ export function scanCountDrift(text: string, file: string, expected: number): Cl
   return out
 }
 
+/**
+ * Workbench size (coordinator request 2026-09-24, plan A-5 / J-6): the deck and
+ * README quote "N test groups/sections in M families". The source of truth is
+ * the CATEGORIES table in useAcvpSuite.ts — M = its length, N = the sum of its
+ * `groups`. Parsed statically (importing the hook would load React and both
+ * WASM engines); a CATEGORIES table this parser cannot read is an error, never
+ * a silent pass.
+ */
+export const WORKBENCH_SUITE_SOURCE = path.join(
+  REPO_ROOT,
+  'src',
+  'components',
+  'Playground',
+  'hsm',
+  'acvp',
+  'useAcvpSuite.ts'
+)
+
+export interface WorkbenchGroups {
+  families: number
+  groups: number
+  categories: Array<{ id: string; label: string; groups: number }>
+}
+
+export function countWorkbenchGroups(source: string = WORKBENCH_SUITE_SOURCE): WorkbenchGroups {
+  const text = fs.readFileSync(source, 'utf8')
+  const block = /export const CATEGORIES\b[^=]*=\s*\[([\s\S]*?)\n\]/.exec(text)
+  if (!block) throw new Error(`countWorkbenchGroups: no CATEGORIES table in ${source}`)
+  const categories = [
+    ...block[1].matchAll(/\{\s*id:\s*'([^']+)',\s*label:\s*(['"])(.*?)\2,\s*groups:\s*(\d+)\s*\}/g),
+  ].map((m) => ({ id: m[1], label: m[3], groups: Number(m[4]) }))
+  const entries = (block[1].match(/\bid:/g) ?? []).length
+  if (categories.length === 0 || categories.length !== entries)
+    throw new Error(
+      `countWorkbenchGroups: read ${categories.length} of ${entries} CATEGORIES entries in ${source} — update the parser`
+    )
+  return {
+    families: categories.length,
+    groups: categories.reduce((n, c) => n + c.groups, 0),
+    categories,
+  }
+}
+
+const COUNT_WORDS: Record<string, number> = {
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+  six: 6,
+  seven: 7,
+  eight: 8,
+  nine: 9,
+  ...NUMBER_WORDS,
+  thirty: 30,
+  forty: 40,
+  fifty: 50,
+  sixty: 60,
+}
+const COUNT = `(?<![\\w-])~?\\s*(\\d+|(?:thirty|forty|fifty|sixty)-(?:one|two|three|four|five|six|seven|eight|nine)|${Object.keys(COUNT_WORDS).join('|')})`
+const parseCount = (raw: string): number => {
+  const k = raw.toLowerCase()
+  const [tens, unit] = k.split('-')
+  if (unit !== undefined) return (COUNT_WORDS[tens] ?? NaN) + (COUNT_WORDS[unit] ?? NaN) // eslint-disable-line security/detect-object-injection
+  return /^\d+$/.test(k) ? Number(k) : (COUNT_WORDS[k] ?? NaN) // eslint-disable-line security/detect-object-injection
+}
+
+/**
+ * Presentation / docs drift: "N test groups" or "N test sections" must equal
+ * the CATEGORIES group total, and on the same line "M (algorithm) families"
+ * or "M categories" must equal the number of categories.
+ */
+export function scanWorkbenchCountDrift(
+  text: string,
+  file: string,
+  expected: WorkbenchGroups
+): ClaimFinding[] {
+  const out: ClaimFinding[] = []
+  // eslint-disable-next-line security/detect-non-literal-regexp
+  const groupsRe = new RegExp(`${COUNT}\\s+(?:grouped\\s+)?test\\s+(?:groups|sections)\\b`, 'gi')
+  // eslint-disable-next-line security/detect-non-literal-regexp
+  const familiesRe = new RegExp(
+    `${COUNT}\\s+(?:algorithm[- ](?:family\\s+)?)?(?:families|categories)\\b`,
+    'gi'
+  )
+  text.split('\n').forEach((raw, i) => {
+    const line = raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ')
+    if (!/\btest\s+(?:groups|sections)\b/i.test(line)) return
+    const src = 'src/components/Playground/hsm/acvp/useAcvpSuite.ts CATEGORIES'
+    for (const m of line.matchAll(groupsRe)) {
+      const n = parseCount(m[1])
+      if (n === expected.groups) continue
+      out.push({
+        file,
+        line: i + 1,
+        rule: 'workbench-group-count-drift',
+        match: m[0].trim(),
+        sentence: `says ${n}; ${src} sums to ${expected.groups} test groups`,
+      })
+    }
+    for (const m of line.matchAll(familiesRe)) {
+      const n = parseCount(m[1])
+      if (n === expected.families) continue
+      out.push({
+        file,
+        line: i + 1,
+        rule: 'workbench-family-count-drift',
+        match: m[0].trim(),
+        sentence: `says ${n}; ${src} has ${expected.families} families`,
+      })
+    }
+  })
+  return out
+}
+
 function loadAllowlist(): AllowEntry[] {
   if (!fs.existsSync(ALLOWLIST_PATH)) return []
   return JSON.parse(fs.readFileSync(ALLOWLIST_PATH, 'utf8')) as AllowEntry[]
@@ -335,6 +453,7 @@ export function runAudit(extraPaths: string[] = []): {
   findings: ClaimFinding[]
   scanned: number
   nistReferenceFiles: number
+  workbench: WorkbenchGroups | null
 } {
   const allow = loadAllowlist()
   const files = [
@@ -349,12 +468,19 @@ export function runAudit(extraPaths: string[] = []): {
     return r.startsWith('..') ? p : r.split(path.sep).join('/')
   }
   for (const f of files) findings.push(...scanText(fs.readFileSync(f, 'utf8'), rel(f), allow))
+  const workbench = extraFiles.length ? countWorkbenchGroups() : null
   for (const f of extraFiles) {
     const text = fs.readFileSync(f, 'utf8')
     findings.push(...scanText(text, rel(f), allow))
     findings.push(...scanCountDrift(text, rel(f), nist))
+    findings.push(...scanWorkbenchCountDrift(text, rel(f), workbench!))
   }
-  return { findings, scanned: files.length + extraFiles.length, nistReferenceFiles: nist }
+  return {
+    findings,
+    scanned: files.length + extraFiles.length,
+    nistReferenceFiles: nist,
+    workbench,
+  }
 }
 
 function main(): void {
@@ -367,7 +493,7 @@ function main(): void {
       process.exit(1)
     }
   }
-  const { findings, scanned, nistReferenceFiles } = runAudit(extra)
+  const { findings, scanned, nistReferenceFiles, workbench } = runAudit(extra)
   if (wantJson) {
     process.stdout.write(JSON.stringify({ scanned, nistReferenceFiles, findings }, null, 2) + '\n')
     process.exit(findings.length > 0 ? 1 : 0)
@@ -376,7 +502,7 @@ function main(): void {
     console.log(
       `PASS validation-claims — ${scanned} files scanned, no banned validation claims` +
         (extra.length
-          ? ` (incl. ${extra.join(', ')}; ${nistReferenceFiles} NIST ACVP-Server files)`
+          ? ` (incl. ${extra.join(', ')}; ${nistReferenceFiles} NIST ACVP-Server files; ${workbench?.groups} test groups in ${workbench?.families} families)`
           : '')
     )
     process.exit(0)
