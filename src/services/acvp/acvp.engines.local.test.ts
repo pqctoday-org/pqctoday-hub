@@ -200,3 +200,64 @@ describe('F-8: CLI subprocess ≡ browser code path', () => {
     120000
   )
 })
+
+describe('--emit-bundle: language-neutral bundle for non-JS (e.g. Python/ctypes board) runners', () => {
+  const pythonCanonicalSha256 = (file: string): string | null => {
+    try {
+      return execFileSync(
+        'python3',
+        [
+          '-c',
+          'import hashlib,json,sys;print(hashlib.sha256(json.dumps(json.load(open(sys.argv[1])),sort_keys=True,separators=(",",":")).encode()).hexdigest())',
+          file,
+        ],
+        { encoding: 'utf8' }
+      ).trim()
+    } catch {
+      return null // python3 not installed on this machine — the JS-side check still runs
+    }
+  }
+
+  it.each(FIXTURE_NAMES)(
+    '%s: manifest + Python json.dumps reproduce the goldens',
+    (name) => {
+      const dir = mkdtempSync(path.join(tmpdir(), 'acvp-bundle-'))
+      execFileSync(
+        'npx',
+        [
+          'tsx',
+          'scripts/acvp-respond.ts',
+          '--prompt',
+          fixturePath(repo, name, 'prompt.json'),
+          '--expected',
+          fixturePath(repo, name, 'expectedResults.json'),
+          '--engine',
+          'cpp',
+          '--out',
+          path.join(dir, 'out'),
+          '--emit-bundle',
+          path.join(dir, 'bundle'),
+        ],
+        { cwd: repo, stdio: 'pipe' }
+      )
+      const b = path.join(dir, 'bundle')
+      const manifest = JSON.parse(readFileSync(path.join(b, 'manifest.json'), 'utf8'))
+      const g = goldens.fixtures[name]
+      expect(manifest.canonicalSha256).toEqual({
+        ir: g.irCanonicalSha256,
+        plan: g.planCanonicalSha256,
+        response: g.responseCanonicalSha256,
+      })
+      expect(readFileSync(path.join(b, 'prompt.json'), 'utf8')).toBe(prompt(name))
+      for (const [file, want] of [
+        ['ir.json', g.irCanonicalSha256],
+        ['plan.json', g.planCanonicalSha256],
+        ['response.json', g.responseCanonicalSha256],
+      ] as const) {
+        const py = pythonCanonicalSha256(path.join(b, file))
+        if (py !== null) expect(py, `python canonical ${file}`).toBe(want)
+      }
+    },
+    120000
+  )
+})
