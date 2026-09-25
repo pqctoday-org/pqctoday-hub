@@ -330,7 +330,7 @@ export const CC_DECODER_RECORDS: readonly CertRecordFixture[] = [
       },
     ],
     datasetNote:
-      'The Hub dataset lists this certificate as "EAL4+,ALC_FLR.2,AVA_VAN.4". The certification report says EAL4 augmented by ALC_FLR.2 and AVA_VAN.5. Always decode from the certification report, not from an aggregator.',
+      'The CC portal’s own certified-products list (and the Hub dataset, which mirrors it) gives this certificate as "EAL4+,ALC_FLR.2,AVA_VAN.4"; the certification report says EAL4 augmented by ALC_FLR.2 and AVA_VAN.5 (both read 24 September 2026). When two official sources disagree, decode from the certification report — the evaluated result — and record the disagreement rather than silently picking one. A separate Dutch (NSCIB) certificate exists for “Entrust nShield5s v13.5.1”; this record is the Singapore one, CSA_CC_23004.',
     claims: [
       {
         id: 'n-same-as-proteccio',
@@ -1014,11 +1014,11 @@ export const exercises: ExerciseItem[] = [
   {
     id: 'cc-dataset-vs-report',
     paths: ['cc'],
-    title: 'The aggregator says AVA_VAN.4',
+    title: 'The portal list says AVA_VAN.4',
     description:
-      'Open the nShield5s record. The Hub dataset lists it as AVA_VAN.4; decode it from the certification report instead and compare it with Proteccio.',
+      'Open the nShield5s record. The CC portal’s certified-products list (mirrored by the Hub dataset) gives AVA_VAN.4; decode it from the certification report instead and compare it with Proteccio.',
     observe:
-      'Primary evidence: an assurance claim is read from the certification report, not from a list that re-typed it. Two “EAL4+ AVA_VAN.5” HSMs still differ in their other components.',
+      'Primary evidence: an assurance claim is read from the certification report, not from a list that re-typed it — even an official list. Two “EAL4+ AVA_VAN.5” HSMs still differ in their other components.',
     stepId: 'cc-claim-decoder',
     config: { recordId: 'nshield5s', focus: 'components' },
   },
