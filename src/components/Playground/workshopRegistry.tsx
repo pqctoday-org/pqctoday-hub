@@ -781,7 +781,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'rng-demo',
     pt_id: 'PT-010',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Random Generation',
     description: 'Web Crypto + OpenSSL DRBG random generation with statistical analysis',
     category: 'Entropy & Random',
@@ -802,7 +802,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'qrng-demo',
     pt_id: 'PT-012',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'QRNG Demo',
     // Entropy remediation P0.7/P0.8 (2026-09-24): the module's QRNG workshop step
     // was removed, so this links to the module root, not a step. The description
@@ -828,7 +828,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'entropy-test',
     pt_id: 'PT-011',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Entropy Testing',
     // Previously "NIST SP 800-90B entropy test suite: monobit, frequency,
     // min-entropy", which attributed monobit and frequency to SP 800-90B —
@@ -877,7 +877,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'drbg-demo',
     pt_id: 'PT-014',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'SP 800-90A DRBG',
     description:
       'Interactive HMAC_DRBG (SHA-256) state machine — Instantiate, Generate, Reseed as specified in NIST SP 800-90A Rev. 1 §10.1.2 — with a known-answer check against pinned NIST ACVP and CAVP vectors.',
@@ -913,7 +913,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'source-combining',
     pt_id: 'PT-013',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Source Combining',
     // Entropy remediation P0 cleanup (2026-09-24): HKDF was listed as a
     // conditioning function. It is only the workshop's demonstration expansion
