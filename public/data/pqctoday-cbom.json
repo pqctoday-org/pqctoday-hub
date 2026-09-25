@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:93e84278-1ee5-4a09-b5a3-968eec7a4f21",
+  "serialNumber": "urn:uuid:206f638f-f3c4-4f79-8377-8d15b9128a2b",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-17T00:00:00.000Z",
+    "timestamp": "2026-09-25T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -31,7 +31,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "First quantum-safe fork of Bitcoin. Testnet v0.3.0 (Mar 2026) is the first working implementation of BIP-360 Pay-to-Merkle-Root (P2MR) outputs: SegWit v2 outputs with bc1z (bech32m) addresses, Merkle-root commitment verification, control-block validation, and all five Dilithium (ML-DSA) post-quantum signature opcodes enabled in P2MR tapscript context. Replaces ECDSA/Taproot internal-key exposure with NIST-standardized ML-DSA signatures. Testnet V3 surpassed 200,000 blocks and 50+ miners as of Mar 2026.",
+      "description": "Post-quantum fork of Bitcoin. Testnet v0.3.0 (Mar 2026) is the first working implementation of BIP-360 Pay-to-Merkle-Root (P2MR) outputs: SegWit v2 outputs with bc1z (bech32m) addresses, Merkle-root commitment verification, control-block validation, and all five Dilithium (ML-DSA) post-quantum signature opcodes enabled in P2MR tapscript context. P2MR eliminates Taproot's key-path spend that exposes public keys; the fork implements NIST-standardized ML-DSA (Dilithium) signatures. As of Mar 2026 the testnet (fourth iteration) had more than 50 miners and more than 100,000 blocks mined.",
       "externalReferences": [
         {
           "type": "website",
@@ -447,6 +447,7 @@
       "name": "Bouncy Castle Java",
       "version": "1.85",
       "purl": "pkg:maven/org.bouncycastle/bcprov-jdk18on",
+      "cpe": "cpe:2.3:a:bouncycastle:legion-of-the-bouncy-castle-java-crytography-api:1.36:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -498,6 +499,7 @@
       "name": "Bouncy Castle Java LTS",
       "version": "2.73.11",
       "purl": "pkg:maven/org.bouncycastle/bcprov-lts8on",
+      "cpe": "cpe:2.3:a:bouncycastle:bouncy_castle_for_java_lts:2.73.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -549,6 +551,7 @@
       "name": "OpenSSL",
       "version": "4.0.0",
       "purl": "pkg:github/openssl/openssl",
+      "cpe": "cpe:2.3:a:openssl:openssl:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -604,6 +607,7 @@
       "name": "Google Tink",
       "version": "1.21.0",
       "purl": "pkg:github/tink-crypto/tink-java",
+      "cpe": "cpe:2.3:a:google:tink:1.0.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -655,6 +659,7 @@
       "name": "Botan",
       "version": "3.12.0",
       "purl": "pkg:github/randombit/botan",
+      "cpe": "cpe:2.3:a:botan_project:botan:1.10.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -892,7 +897,7 @@
       "bom-ref": "095703b4af80d113",
       "name": "RustCrypto ml-kem",
       "version": "0.3.2",
-      "purl": "pkg:cargo/ml-kem",
+      "purl": "pkg:github/RustCrypto/KEMs",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -944,7 +949,7 @@
       "bom-ref": "2d7f21e4063b9fd8",
       "name": "RustCrypto ml-dsa",
       "version": "0.1.1",
-      "purl": "pkg:cargo/ml-dsa",
+      "purl": "pkg:github/RustCrypto/signatures",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -1207,6 +1212,7 @@
       "name": "leancrypto",
       "version": "v1.7.2",
       "purl": "pkg:github/wolfeidau/leancrypto",
+      "cpe": "cpe:2.3:a:leancrypto:leancrypto:1.7.1:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -1214,7 +1220,7 @@
           "primitive": "kem"
         }
       },
-      "description": "The library exclusively contains PQC-resistant algorithms. It implements NIST-approved schemes: ML-DSA/Dilithium, ML-KEM/Kyber, SLH-DSA/Sphincs+, and BIKE. Accelerated implementations exist for x86_64, ARMv7/ARMv8, and RISCV64. Algorithms are tested with NIST ACVP and hold official CAVP certificates.",
+      "description": "The vendor describes the library as containing exclusively PQC-resistant algorithms; it also includes classical Curve25519/Curve448 (ED25519/X25519, ED448/X448) for use in hybrid PQC constructions. It implements the NIST-standardized schemes ML-DSA/Dilithium, ML-KEM/Kyber and SLH-DSA/Sphincs+, plus the NIST round 4 KEM candidate BIKE. Accelerated implementations exist for x86_64, ARMv7/ARMv8, and RISCV64. Algorithms testable with NIST ACVP are tested and hold official CAVP certificates.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -1458,6 +1464,7 @@
       "name": "Microsoft SymCrypt",
       "version": "v103.11.0",
       "purl": "pkg:github/microsoft/SymCrypt",
+      "cpe": "cpe:2.3:a:microsoft:symcrypt:103.11.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -1513,6 +1520,7 @@
       "name": "AWS-LC",
       "version": "v5.0.0 (FIPS branch decoupled; also v1.73.0 in legacy scheme)",
       "purl": "pkg:github/aws/aws-lc",
+      "cpe": "cpe:2.3:a:amazon:aws-lc-sys:-:*:*:*:*:rust:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -1753,6 +1761,7 @@
       "bom-ref": "aaf8aedcc0406201",
       "name": "Entrust nShield",
       "version": "13.9.5 (Security World; nShield 5s firmware 13.8.4, Solo XC firmware 13.8.3)",
+      "cpe": "cpe:2.3:h:entrust:nshield_5c:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -1846,6 +1855,7 @@
       "name": "HashiCorp Vault",
       "version": "2.0.2",
       "purl": "pkg:github/hashicorp/vault",
+      "cpe": "cpe:2.3:a:hashicorp:vault:0.1.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2035,6 +2045,7 @@
       "name": "Keyfactor EJBCA",
       "version": "Enterprise 9.6.1",
       "purl": "pkg:github/Keyfactor/ejbca-ce",
+      "cpe": "cpe:2.3:a:keyfactor:ejbca:8.0.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2184,6 +2195,7 @@
       "name": "BoringSSL",
       "version": "Rolling",
       "purl": "pkg:github/google/boringssl",
+      "cpe": "cpe:2.3:a:google:chrome:0.2.149.29:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2239,15 +2251,15 @@
       "name": "GnuTLS",
       "version": "3.8.13",
       "purl": "pkg:github/gnutls/gnutls",
+      "cpe": "cpe:2.3:a:gnu:gnutls:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
         }
       },
-      "description": "GnuTLS implements ML-KEM for TLS (x25519mlkem768 hybrid key exchange). Deployed in RHEL 10.0 for production TLS connections.",
+      "description": "GnuTLS supports ML-KEM hybrid key exchange and ML-DSA signatures/certificates in TLS. In RHEL 10.0 this was released as a technology preview; in RHEL 10.1 it is generally available and fully supported, with post-quantum key exchange enabled by default.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -2291,6 +2303,7 @@
       "name": "LibreSSL",
       "version": "4.3.2",
       "purl": "pkg:github/libressl/portable",
+      "cpe": "cpe:2.3:a:openbsd:libressl:2.1.1:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2343,6 +2356,7 @@
       "name": "rustls",
       "version": "0.23.36",
       "purl": "pkg:github/rustls/rustls",
+      "cpe": "cpe:2.3:a:rustls_project:rustls:0.1.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -2390,6 +2404,7 @@
       "name": "wolfSSL",
       "version": "5.9.0",
       "purl": "pkg:github/wolfSSL/wolfssl",
+      "cpe": "cpe:2.3:a:wolfssl:wolfssl:3.6.6:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2496,6 +2511,7 @@
       "name": "strongSwan",
       "version": "6.0.7",
       "purl": "pkg:github/strongswan/strongswan",
+      "cpe": "cpe:2.3:a:strongswan:strongswan:2.1.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2599,6 +2615,7 @@
       "name": "OpenSSH",
       "version": "10.5p1",
       "purl": "pkg:github/openssh/openssh-portable",
+      "cpe": "cpe:2.3:a:openbsd:openssh:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2651,6 +2668,7 @@
       "name": "wolfSSH",
       "version": "1.5.0",
       "purl": "pkg:github/wolfSSL/wolfssh",
+      "cpe": "cpe:2.3:a:wolfssh:wolfssh:1.4.7:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2703,6 +2721,7 @@
       "name": "liboqs",
       "version": "0.16.0",
       "purl": "pkg:github/open-quantum-safe/liboqs",
+      "cpe": "cpe:2.3:a:openquantumsafe:liboqs:0.10.1:-:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -3141,6 +3160,7 @@
       "bom-ref": "16fc3514151e1f0e",
       "name": "Juniper Junos OS",
       "version": "25.4R1",
+      "cpe": "cpe:2.3:o:juniper:junos:12.3x48:-:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -3187,6 +3207,7 @@
       "bom-ref": "2bdd651dcf514ee6",
       "name": "Palo Alto PAN-OS",
       "version": "12.1 Orion",
+      "cpe": "cpe:2.3:o:paloaltonetworks:pan-os:5.1.10:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -3229,6 +3250,7 @@
       "bom-ref": "fe96a32025ce7d20",
       "name": "Fortinet FortiOS",
       "version": "7.6.6",
+      "cpe": "cpe:2.3:o:fortinet:fortios:4.3.10:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -3275,6 +3297,7 @@
       "bom-ref": "8ff01b1beece6027",
       "name": "Check Point Quantum",
       "version": "R82",
+      "cpe": "cpe:2.3:h:checkpoint:quantum_security_management:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -3363,6 +3386,7 @@
       "bom-ref": "0d874f1388d50bf5",
       "name": "Cloudflare CIRCL",
       "version": "1.6.5",
+      "cpe": "cpe:2.3:a:cloudflare:circl:1.3.3:*:*:*:*:go:*:*",
       "manufacturer": {
         "name": "Cloudflare Inc."
       },
@@ -3820,11 +3844,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
           "primitive": "kem"
         }
       },
-      "description": "High-throughput PCIe HSM with hardware PQC acceleration. CAVP certifications achieved for ML-KEM, ML-DSA, and SLH-DSA, upgrading from Beta. FIPS 140-3 Level 3 validated hardware (#4703). Used in cloud infrastructure and financial transaction processing.",
+      "description": "High-performance PCIe HSM for key management and crypto acceleration. ML-KEM and ML-DSA are listed as non-compliant algorithms; ML-KEM provides key generation and asymmetric key encapsulation and un-encapsulation, while ML-DSA provides key generation, sign, and verify. The module provides a FIPS 140-3 overall Level 3 security solution.",
       "externalReferences": [
         {
           "type": "website",
@@ -4050,6 +4074,7 @@
       "name": "PQClean",
       "version": "Current",
       "purl": "pkg:github/PQClean/PQClean",
+      "cpe": "cpe:2.3:a:pqclean_project:pqclean:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -4438,6 +4463,7 @@
       "name": "GnuPG",
       "version": "2.5.20",
       "purl": "pkg:github/gpg/gnupg",
+      "cpe": "cpe:2.3:a:gnupg:gnupg:1.4.3:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -4864,6 +4890,7 @@
       "name": "Apache HTTP Server",
       "version": "2.4.67",
       "purl": "pkg:github/apache/httpd",
+      "cpe": "cpe:2.3:a:apache:http_server:1.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -4911,6 +4938,7 @@
       "name": "Node.js",
       "version": "24.x LTS (24.15.0) / 26.0.0 Current",
       "purl": "pkg:github/nodejs/node",
+      "cpe": "cpe:2.3:a:nodejs:node.js:0.10.18:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -4961,6 +4989,7 @@
       "bom-ref": "2bf4d5c57279bf08",
       "name": "F5 BIG-IP",
       "version": "21.1 (GA 2026-05-06); PQC minor 17.5.1",
+      "cpe": "cpe:2.3:h:f5:big-ip:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -5009,6 +5038,7 @@
       "name": "HAProxy",
       "version": "3.4 (LTS, 2026-06-03) / 3.3.10 (stable)",
       "purl": "pkg:github/haproxy/haproxy",
+      "cpe": "cpe:2.3:a:haproxy:haproxy:1.4.20:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -5152,6 +5182,7 @@
       "bom-ref": "08f8f9ad7118addb",
       "name": "Keyfactor Command",
       "version": "25.3",
+      "cpe": "cpe:2.3:a:keyfactor:command:10.5.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -5292,6 +5323,7 @@
       "name": "Keycloak",
       "version": "26.x",
       "purl": "pkg:github/keycloak/keycloak",
+      "cpe": "cpe:2.3:a:keycloak:keycloak-nodejs-auth-utils:2.5.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -6018,6 +6050,7 @@
       "bom-ref": "dac5d78e5e31b1bd",
       "name": "Google Chrome",
       "version": "131+",
+      "cpe": "cpe:2.3:a:google:chrome:0.2.149.29:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -6064,6 +6097,7 @@
       "bom-ref": "834022648658414f",
       "name": "Microsoft Edge",
       "version": "131+",
+      "cpe": "cpe:2.3:a:microsoft:edge:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -6111,6 +6145,7 @@
       "bom-ref": "eea7583d35d6fcf5",
       "name": "Mozilla Firefox",
       "version": "132+",
+      "cpe": "cpe:2.3:a:mozilla:firefox:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -6158,6 +6193,7 @@
       "bom-ref": "0c5f133584911c9a",
       "name": "Apple Safari",
       "version": "26+",
+      "cpe": "cpe:2.3:a:apple:safari:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -6389,7 +6425,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "RPM 6.0 (backported into RHEL 10.1, GA'd November 12, 2025) supports hybrid ML-DSA-87+Ed448 package signing via Sequoia-PGP with OpenPGP v6. Red Hat's own authoritative source (last updated Feb 27, 2026) still describes this as a 'technology preview... not intended for production use.' Red Hat has begun signing select RHEL 10.1 packages (e.g. ipmitool-1.8.19-10.el10_1, RHBA-2025:23156) with the hybrid key alongside the existing RSA signature — sources found do not support 'all Red Hat products' being PQC-signed. Red Hat states (in separate blog posts, not the cited authoritative_source) that RHEL is 'the first and currently only major Linux distribution' to reach this milestone. RPM v6 packages support multiple signatures per package.",
+      "description": "RHEL 10.1 includes the post-quantum OpenPGP implementation in Sequoia-PGP (which Red Hat describes as available as a pre-release); RHEL 10 uses Sequoia-PGP to verify package signatures. Red Hat has created a post-quantum signing key that uses a hybrid of ML-DSA-87 and Ed448 and has started signing its RPM packages with it; the first post-quantum signed package was ipmitool-1.8.19-10.el10_1 in RHBA-2025:23156, which is also still signed with Red Hat's RSA key. Red Hat states in this source that RHEL is 'the first and currently only major Linux distribution' to achieve this milestone. Systems that understand the RPM 6 header format and OpenPGP v6 signatures verify both the RSA and PQC signatures; older systems validate only the classic RSA signature.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -6482,11 +6518,12 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "kem"
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "JDK 24 (March 2025) introduced ML-KEM and ML-DSA as JCA providers via JEP 496/497. JDK 26 (released March 17, 2026) adds signed JAR support for ML-DSA, so jarsigner can now sign JARs with ML-DSA (e.g. ML-DSA-65) per JDK-8349732. JDK 26 also adds an HPKE (Hybrid Public Key Encryption) API (initially traditional/non-PQC algorithms, with PQC planned once RFCs finalize). The X25519MLKEM768 post-quantum hybrid TLS named group is NOT part of JDK 26 — it ships via JEP 527 (Post-Quantum Hybrid Key Exchange for TLS 1.3), whose JBS ticket shows Fix Version 27, resolved 2026-04-22 (after JDK 26 GA). JEP 527 is integrated into JDK 27 early-access builds and targets JDK 27 GA (scheduled September 15, 2026, currently in Release Candidate phase).",
+      "description": "JDK 24 added support for ML-DSA (FIPS 204, JEP 497). JDK 26 (released March 17, 2026) extends that support to signing JARs with ML-DSA, using the jarsigner utility or the JarSigner API (e.g. -sigalg ML-DSA-65), per JDK-8349732. JDK 26 also adds a Hybrid Public Key Encryption (HPKE, RFC 9180) API that initially supports only traditional, non-PQC algorithms; PQC algorithms are planned for a later JDK release once the Internet draft on post-quantum HPKE becomes an RFC.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -6530,6 +6567,7 @@
       "name": "Mbed TLS",
       "version": "4.2.0",
       "purl": "pkg:github/Mbed-TLS/mbedtls",
+      "cpe": "cpe:2.3:a:mbed:mbedtls:1.3.10:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -6770,14 +6808,9 @@
       "name": "Thales CipherTrust Cloud Key Manager",
       "version": "2.23.0",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "Cloud key management for BYOK/HYOK across AWS Azure GCP and Google Workspace. Quantum-resilient TLS ciphers for Chrome/CCKM connections (GA v2.22.0, Dec 2025) for Google Workspace CSE connections between Chrome and CM/CCKM. ML-KEM-enabled channels for Google Workspace CSE BYOK key rotation. BYOK key rotation for AWS KMS supported since v2.19; automated multi-account and on-demand rotation added in v2.21.0. SAP BYOK integration available (GA since v2.19, Feb 2025). Current CipherTrust Manager/CCKM platform version: 2.23.0 LTS (July 2026).",
+      "description": "Cloud key management offering cloud-native, bring your own key (BYOK) and hold your own key (HYOK) options, including support for Google Workspace Client-Side Encryption (CSE). CipherTrust Manager/CCKM v2.21.0 added Post-Quantum Computing-enabled TLS channels between CipherTrust Cloud Key Manager and Google Chrome as a technical preview. CCKM v2.21.0 made generally available an AWS KMS key rotation feature (automated rotation policies across multiple accounts and regions) and on-demand rotation of imported (BYOK) AWS KMS key material.",
       "externalReferences": [
         {
           "type": "website",
@@ -6913,6 +6946,7 @@
       "bom-ref": "f0944178e75eee0c",
       "name": "Red Hat Enterprise Linux 9",
       "version": "9.8",
+      "cpe": "cpe:2.3:o:redhat:enterprise_linux:9.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -6963,6 +6997,7 @@
       "bom-ref": "16bc499a929597bf",
       "name": "Fedora Linux",
       "version": "Fedora 44",
+      "cpe": "cpe:2.3:a:fedoraproject:fedora_extra_packages_for_enterprise_linux:7.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -7465,52 +7500,6 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
-        }
-      ]
-    },
-    {
-      "type": "cryptographic-asset",
-      "bom-ref": "bebae62d9c697fc4",
-      "name": "Wire",
-      "version": "Current",
-      "cryptoProperties": {
-        "assetType": "related-crypto-material"
-      },
-      "description": "The document mentions \"ciphersuite agility\" in the context of MLS to allow future algorithm negotiation, but explicitly states current use of the Proteus Protocol (DoubleRatchet) and does not list any specific Post-Quantum Cryptography algorithms or implementations.",
-      "externalReferences": [
-        {
-          "type": "vcs",
-          "url": "https://github.com/wireapp"
-        },
-        {
-          "type": "website",
-          "url": "https://wire.com/en/blog/messaging-layer-security-evolving-secure-communication"
-        }
-      ],
-      "properties": [
-        {
-          "name": "pqctoday:product_id",
-          "value": "wire"
-        },
-        {
-          "name": "pqctoday:category",
-          "value": "Secure Messaging and Communication"
-        },
-        {
-          "name": "pqctoday:layer",
-          "value": "AppServers"
-        },
-        {
-          "name": "pqctoday:fips_validated",
-          "value": "No"
-        },
-        {
-          "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
-        },
-        {
-          "name": "pqctoday:confidence_score",
-          "value": "60"
         }
       ]
     },
@@ -8089,6 +8078,7 @@
       "bom-ref": "479cb76e56f3e284",
       "name": "Alpine Linux",
       "version": "3.22",
+      "cpe": "cpe:2.3:o:alpinelinux:alpine_linux:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8140,6 +8130,7 @@
       "name": "FreeBSD",
       "version": "15.0-RELEASE",
       "purl": "pkg:github/freebsd/freebsd-src",
+      "cpe": "cpe:2.3:o:freebsd:freebsd:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8190,6 +8181,7 @@
       "bom-ref": "4499ffb9673ebaf9",
       "name": "openSUSE Leap",
       "version": "16.0",
+      "cpe": "cpe:2.3:o:opensuse_project:leap:42.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8241,6 +8233,7 @@
       "bom-ref": "9420bdb17c361c84",
       "name": "Rocky Linux",
       "version": "10.2",
+      "cpe": "cpe:2.3:o:rockylinux:rocky_linux:8.4:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8291,6 +8284,7 @@
       "bom-ref": "c0f17e637a146cd8",
       "name": "CentOS Stream",
       "version": "Stream 10",
+      "cpe": "cpe:2.3:o:centos:stream:8:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -8388,6 +8382,7 @@
       "name": "NixOS",
       "version": "26.05",
       "purl": "pkg:github/NixOS/nixpkgs",
+      "cpe": "cpe:2.3:o:nixos:nix:0.5:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -8434,6 +8429,7 @@
       "bom-ref": "df6cf2c4d9b2d462",
       "name": "SUSE Linux Enterprise Server (SLES)",
       "version": "16.0",
+      "cpe": "cpe:2.3:o:suse:linux_enterprise_server:12:*:*:*:ltss:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8525,6 +8521,7 @@
       "type": "cryptographic-asset",
       "bom-ref": "db6ffa139d8c8dff",
       "name": "Delinea Secret Server",
+      "cpe": "cpe:2.3:a:delinea:secret_server:10.9.000002:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8667,6 +8664,7 @@
       "name": "HashiCorp Boundary",
       "version": "0.21.3",
       "purl": "pkg:github/hashicorp/boundary",
+      "cpe": "cpe:2.3:a:hashicorp:boundary:0.1.8:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -8806,6 +8804,7 @@
       "bom-ref": "2b2f27d6785074e6",
       "name": "Splunk Enterprise",
       "version": "10.4",
+      "cpe": "cpe:2.3:a:splunk:splunk:6.1.3:*:*:*:enterprise:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8851,6 +8850,7 @@
       "type": "cryptographic-asset",
       "bom-ref": "28619e1fbf3dcc26",
       "name": "Qualys Cloud Platform",
+      "cpe": "cpe:2.3:a:qualys:private_cloud_platform:10.24.0.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -8938,6 +8938,7 @@
       "bom-ref": "b6f05edc0f510f61",
       "name": "Citrix Virtual Apps and Desktops",
       "version": "2507 LTSR",
+      "cpe": "cpe:2.3:a:citrix:virtual_apps_and_desktops:1903:*:*:*:ltsr:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9037,6 +9038,7 @@
       "name": "AsyncSSH",
       "version": "2.23.0",
       "purl": "pkg:github/ronf/asyncssh",
+      "cpe": "cpe:2.3:a:asyncssh_project:asyncssh:0.1.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9223,6 +9225,7 @@
       "name": "OpenWrt",
       "version": "24.10.7",
       "purl": "pkg:github/openwrt/openwrt",
+      "cpe": "cpe:2.3:o:openwrt:lede:17.01:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -9270,6 +9273,7 @@
       "name": "OPNsense",
       "version": "24.7",
       "purl": "pkg:github/opnsense/core",
+      "cpe": "cpe:2.3:a:opnsense:opnsense:16.1.16:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9411,6 +9415,7 @@
       "name": "Kubernetes",
       "version": "1.36",
       "purl": "pkg:github/kubernetes/kubernetes",
+      "cpe": "cpe:2.3:a:kubernetes:kubernetes:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9509,6 +9514,7 @@
       "name": "Linkerd",
       "version": "2.20",
       "purl": "pkg:github/linkerd/linkerd2",
+      "cpe": "cpe:2.3:a:linkerd:linkerd:2.13.0:*:*:*:stable:kubernetes:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9561,6 +9567,7 @@
       "name": "OpenVPN",
       "version": "2.7.0",
       "purl": "pkg:github/OpenVPN/openvpn",
+      "cpe": "cpe:2.3:a:openvpn:openvpn:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9658,6 +9665,7 @@
       "name": "Apache Traffic Server",
       "version": "10.0",
       "purl": "pkg:github/apache/trafficserver",
+      "cpe": "cpe:2.3:a:apache:traffic_server:2.0.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -9704,6 +9712,7 @@
       "bom-ref": "227855759cf2c928",
       "name": "libssh",
       "version": "0.12.2",
+      "cpe": "cpe:2.3:a:libssh:libssh:0.5.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9756,6 +9765,7 @@
       "name": "Apache Tomcat",
       "version": "11.0.24",
       "purl": "pkg:github/apache/tomcat",
+      "cpe": "cpe:2.3:a:apache:tomcat:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9808,6 +9818,7 @@
       "name": "Eclipse Jetty",
       "version": "12.1.9",
       "purl": "pkg:github/jetty/jetty.project",
+      "cpe": "cpe:2.3:a:eclipse:jetty:9.3.0:m2:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9907,7 +9918,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Not stated. The document describes standard cryptographic protocols (OAuth 2.0, OIDC, JWT) but contains no mention of Post-Quantum Cryptography algorithms, implementations, or migration plans.",
+      "description": "The iGov Profile for OAuth 2.0 (Implementers Draft 2, published 13 April 2026) requires TLS 1.3 and states that when post-quantum safety is required for TLS, implementers SHOULD adopt a NIST PQC cipher suite such as X25519MLKEM768 or SecP256r1MLKEM768. It also says implementations SHOULD be crypto-agile and SHOULD monitor post-quantum cryptography specifications. JWTs MUST use PS256, ES256, or Ed25519 (no post-quantum signature algorithm).",
       "externalReferences": [
         {
           "type": "website",
@@ -9947,6 +9958,7 @@
       "name": "MySQL Community Server",
       "version": "LTS: 8.4.11 (2026-07-28); PQC-capable release is the separate Innovation track 26.7.0 (also GA 2026-07-28)",
       "purl": "pkg:github/mysql/mysql-server",
+      "cpe": "cpe:2.3:a:mysql:mysql_community_server:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -10273,6 +10285,7 @@
       "name": "Bitcoin Core",
       "version": "29.0",
       "purl": "pkg:github/bitcoin/bitcoin",
+      "cpe": "cpe:2.3:a:bitcoincore:bitcoin_core:0.16.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -10323,7 +10336,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Ethereum has a published quantum-resistance roadmap (ethereum.org/roadmap/future-proofing). It targets: replacing consensus-layer BLS signatures with hash-based Winternitz signatures aggregated via STARKs; moving from KZG commitments to STARK-based data availability; enabling post-quantum user account signatures via native account abstraction (EIP-8141); and migrating ZK proofs from elliptic-curve SNARKs to STARKs. The Ethereum Foundation launched a post-quantum security hub/roadmap in March 2026 with 10+ client teams. Not yet implemented on mainnet.",
+      "description": "Ethereum has a published quantum-resistance roadmap (ethereum.org/roadmap/future-proofing). It targets: replacing consensus-layer BLS signatures with leanXMSS, a hash-based signature scheme, with SNARK-based aggregation via the leanVM zkVM; replacing KZG data-availability commitments with a quantum-safe commitment scheme (STARK-based or lattice-based candidates, still being researched); giving user accounts post-quantum signature agility via account abstraction (EIP-8141, being considered for Hegotá in H2 2026); and STARK-based application-layer ZK proofs. The Ethereum Foundation formed a dedicated Post-Quantum Security team in January 2026 (work tracked at pq.ethereum.org); as of April 2026 more than 10 client teams participate in weekly post-quantum interop devnets. Fork milestones target core post-quantum infrastructure by approximately 2029; these are planning milestones, not yet on mainnet.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -10366,6 +10379,7 @@
       "bom-ref": "382953f41a7bef5d",
       "name": "Solana",
       "purl": "pkg:github/solana-labs/solana",
+      "cpe": "cpe:2.3:a:solana:rbpf:0.2.14:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -10424,7 +10438,7 @@
           "primitive": "kem"
         }
       },
-      "description": "QRL 2.0 / Project Zond Testnet V2 launched 2026-03-31 as an EVM-compatible PoS network. PQC: ML-DSA-87 (CRYSTALS-Dilithium) is the primary signature scheme (mandatory for staking validators, stateless/unlimited signatures) and is fully integrated across the stack; XMSS (stateful, one-time keys) retained from the original 2018 mainnet. SLH-DSA/SPHINCS+ was formally decided on as XMSS's eventual replacement but its implementation has been explicitly rescheduled to post-mainnet — the wallet layer reserves the type but does not yet issue SLH-DSA wallets. ML-KEM is in early-stage development for a future messaging/P2P layer, not yet operational. No official source describes active development of Falcon/FN-DSA; it appears only in a generic future crypto-agility list. The in-house Hyperion compiler lets smart contracts natively verify quantum-secure signatures (ML-DSA-87).",
+      "description": "QRL 2.0 / Project Zond Testnet V2 launched 2026-03-31 as an EVM-compatible PoS network; mainnet is gated on completion of external audits. PQC: ML-DSA-87 (Dilithium, FIPS 204) is the primary signature scheme (required for staking validators, unlimited signatures per address), with integration completed across the stack; XMSS (stateful, one-time keys) secures the original 2018 mainnet. SLH-DSA/SPHINCS+ is recognized at the wallet-descriptor level, with integration continuing toward and after mainnet. Falcon-1024 (FN-DSA) signatures and ML-KEM (FIPS 203) key encapsulation are being implemented to secure the peer-to-peer networking layer (in progress as of late May 2026). The Hyperion compiler is a post-quantum superset of Solidity with NIST-approved post-quantum primitives layered on top.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -10670,6 +10684,7 @@
       "bom-ref": "7856dbd7ea70bb0d",
       "name": "Aptos",
       "purl": "pkg:github/aptos-labs/aptos-core",
+      "cpe": "cpe:2.3:a:aptosfoundation:aptos:1.4.3:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -11193,6 +11208,7 @@
       "bom-ref": "246ead0ed4bd27c8",
       "name": "WhatsApp",
       "version": "Current",
+      "cpe": "cpe:2.3:a:whatsapp:whatsapp:2.2.5:*:*:*:*:iphone_os:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -11485,7 +11501,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Detects PQC and hybrid algorithm usage in live network traffic and PCAP captures. SSH detection (production): sntrup761x25519-sha512@openssh.com (OpenSSH 9.0+) via custom SSH_MSG_KEXINIT parser; mlkem/kyber/ntruprime SSH variants are pattern-ready but NOT yet implemented (roadmap item). TLS 1.3 detection: X25519Kyber768 (Chrome 0x11ec), X25519Kyber768Draft00 (Cloudflare 0xfe31/0x6399), NIST ML-KEM drafts (0x2001+) via custom ClientHello/ServerHello supported_groups and key_share extension parser. QUIC detection via TLS-in-QUIC handshake parsing. IKE/IPsec via nDPI classification (limited metadata support, not extensively tested). Post-quantum signature detection (ML-DSA/Dilithium, SLH-DSA/SPHINCS+, Falcon) is roadmap-only, not yet implemented — requires future TLS certificate parsing. PQC flags bitmask tracks KEM presence, signature presence, hybrid negotiation, offered-only, and session resumption states. No nDPI patches required for SSH/TLS PQC extraction.",
+      "description": "Detects PQC and hybrid algorithm usage in live network traffic and PCAP captures. SSH detection (production): sntrup761x25519-sha512@openssh.com (OpenSSH 9.0+) via custom SSH_MSG_KEXINIT parser; mlkem/kyber/ntruprime SSH variants are pattern-ready but NOT yet implemented (roadmap item). TLS 1.3 detection: X25519Kyber768 (Chrome 0x11ec), X25519Kyber768Draft00 (Cloudflare 0xfe31/0x6399), NIST ML-KEM drafts (0x2001+) via custom ClientHello/ServerHello supported_groups and key_share extension parser. QUIC detection is a partial implementation (nDPI classification plus the TLS extension parser applied to the TLS-in-QUIC handshake; limited testing; the README also lists QUIC as limited/nDPI-only with a custom QUIC Initial parser on the roadmap). IKE/IPsec via nDPI classification (limited metadata support, not extensively tested). Post-quantum signature detection (ML-DSA/Dilithium, SLH-DSA/SPHINCS+, Falcon) is roadmap-only, not yet implemented — requires future TLS certificate parsing. PQC flags bitmask tracks KEM presence, signature presence, hybrid negotiation, offered-only, and session resumption states. No nDPI patches required for SSH/TLS PQC extraction.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -11721,7 +11737,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Conformance testing harness for ML-KEM (FIPS 203) and ML-DSA (FIPS 204) cryptographic library implementations. Tests real-world vulnerabilities that evade both NIST Known Answer Tests and formal verification tools. ML-KEM: 78 tests across 6 categories (compression algorithms; NTT operations; coefficient bounds validation; decapsulation logic; serialization; sampling distributions). ML-DSA: 51 tests across 6 categories (norm checks; arithmetic operations; signing determinism; verification robustness; serialization; timing consistency). Uses a language-agnostic JSON line protocol enabling harness support for C; C++; Go; Java; Rust; and other languages. Ships with harnesses for 19 production implementations across 7 languages including CIRCL; liboqs; AWS-LC; Go stdlib; and Bouncy Castle. Created by Symbolic Software.",
+      "description": "Conformance testing harness for ML-KEM (FIPS 203) and ML-DSA (FIPS 204) implementations. Tests bug classes found in production cryptographic code that NIST Known Answer Tests and formal-verification tools do not catch. ML-KEM: 78 tests across 6 categories (compression; NTT; bounds; decapsulation; serialization; sampling). ML-DSA: 51 tests across 6 categories (norm checks; arithmetic; signing; verification; serialization; timing). Crucible communicates through a JSON line protocol over stdin/stdout, so any language can implement a harness. Ships with harnesses for implementations in several languages, including CIRCL, liboqs, AWS-LC, Go stdlib crypto/mlkem, and Bouncy Castle.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -11856,6 +11872,7 @@
       "bom-ref": "e7e12ee1f0a21a26",
       "name": "Cisco IOS XR",
       "version": "25.4.2",
+      "cpe": "cpe:2.3:o:cisco:ios_xr_for_crs-1:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -11906,6 +11923,7 @@
       "bom-ref": "43f10538d1d7b863",
       "name": "Cisco Catalyst Center",
       "version": "3.2.3",
+      "cpe": "cpe:2.3:a:cisco:dna_center:1.2.5:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -11953,6 +11971,7 @@
       "bom-ref": "195514347d6b5b5f",
       "name": "Red Hat OpenShift",
       "version": "4.22",
+      "cpe": "cpe:2.3:a:redhat:openshift:2.0.5:*:enterprise:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -12187,6 +12206,7 @@
       "bom-ref": "9defd456376228f3",
       "name": "IBM MQ",
       "version": "10.0.0.0 (LTS, GA 16 June 2026; 19 June 2026 for MQ for z/OS)",
+      "cpe": "cpe:2.3:a:ibm:websphere_mq:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -12241,7 +12261,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Quantum-Safe Security (Strata Cloud Manager app) reached GA Jan 30, 2026, covering NGFW and Prisma Access; ML-KEM support delivered via Cipher Translation re-encryption at the network edge.",
+      "description": "Palo Alto Networks Quantum-Safe Security was expected to be generally available to customers on January 30, 2026, with additional integration enhancements planned for April 2026. It ingests telemetry and logs from PAN-OS NGFW and Prisma Access, and its Cipher Translation proxy reencrypts vulnerable traffic into quantum-safe standards, such as ML-KEM, in real time at the network edge.",
       "externalReferences": [
         {
           "type": "website",
@@ -12327,6 +12347,7 @@
       "bom-ref": "639a9fb2208ccdc5",
       "name": "Fortinet FortiWeb",
       "version": "8.0.6",
+      "cpe": "cpe:2.3:a:fortinet:fortiweb:5.0.4:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -12896,6 +12917,7 @@
       "bom-ref": "e6a6c6cff91cab99",
       "name": "JetBrains TeamCity 2026.1",
       "version": "2026.1",
+      "cpe": "cpe:2.3:a:jetbrains:teamcity:2026.1:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -13426,6 +13448,7 @@
       "bom-ref": "0c087a91551cb481",
       "name": "NetApp ONTAP 9.16",
       "version": "9.18.1",
+      "cpe": "cpe:2.3:a:netapp:ontap:9.16.1:-:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -13472,10 +13495,11 @@
       "bom-ref": "c95446935b95a500",
       "name": "Pure Storage Purity//FA 6.6",
       "version": "FA-1.5 (Module version); Purity OS 6.4 (Tested OS version); Platform context: Purity//FA 6.6",
+      "cpe": "cpe:2.3:a:purestorage:purity\\/\\/fa:6.6.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "The document contains no mention of Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or migration plans. It exclusively details FIPS 140-3 Level 1 validation using classical cryptography (AES-256).",
+      "description": "No PQC capability is stated for Purity//FA 6.6. A third-party StorageReview article reports that Pure Storage has acknowledged the quantum threat and is working on integrating post-quantum security into its Evergreen architecture, ensuring seamless cryptographic updates; it names no algorithms, products or dates.",
       "externalReferences": [
         {
           "type": "website",
@@ -13682,6 +13706,7 @@
       "type": "cryptographic-asset",
       "bom-ref": "6cd7a39390b75998",
       "name": "Microsoft Azure",
+      "cpe": "cpe:2.3:a:microsoft:azure_active_directory_connect:1.1.524.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -13728,6 +13753,7 @@
       "bom-ref": "8a1cddbe8baef4dc",
       "name": "Docker Engine 28.0",
       "version": "29.5.3",
+      "cpe": "cpe:2.3:a:docker:engine:28.0.4:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -14083,6 +14109,7 @@
       "type": "cryptographic-asset",
       "bom-ref": "ce41961da8dfde34",
       "name": "Microsoft Defender for Endpoint",
+      "cpe": "cpe:2.3:a:microsoft:defender_for_endpoint:-:*:*:*:*:-:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -14128,6 +14155,7 @@
       "type": "cryptographic-asset",
       "bom-ref": "ac350c6ae52318ca",
       "name": "Windscribe",
+      "cpe": "cpe:2.3:a:windscribe:windscribe:1.81:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -14169,6 +14197,7 @@
       "type": "cryptographic-asset",
       "bom-ref": "2e728f83c823c979",
       "name": "NordVPN",
+      "cpe": "cpe:2.3:a:nordvpn:nordvpn:6.14.28.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -14257,6 +14286,7 @@
       "bom-ref": "a103eb2cb7ca09ec",
       "name": "Brave Browser",
       "version": "1.93.136 (Aug 12, 2026; Chromium 151.0.7922.137)",
+      "cpe": "cpe:2.3:a:brave:browser:1.9.56:*:*:*:*:android:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -14304,6 +14334,7 @@
       "bom-ref": "fdb681c03c78e87d",
       "name": "Tor Browser",
       "version": "15.0.19 (Tor Browser stable release, 2026-07-21; 16.0a9 alpha also available)",
+      "cpe": "cpe:2.3:a:tor_browser_the_short_guide_project:tor_browser_the_short_guide:0.1:*:*:*:*:android:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -14348,9 +14379,51 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "4371aae0f11cfa5a",
+      "name": "Proton VPN",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Proton VPN's 2025-2026 fall and winter roadmap says its new VPN architecture, replacing the current WireGuard implementation, will allow it to provide robust post-quantum encryption in the future. No post-quantum algorithm or delivery date is named.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://protonvpn.com/blog/post-quantum-cryptography/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "proton-vpn"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "VPN and IPsec Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "30"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "8a47c2f060e3fd7e",
       "name": "MinIO Enterprise",
       "version": "RELEASE.2026-08-07T18-34-35Z (latest MinIO AIStor Enterprise release, confirmed via dl.min.io/aistor release-notes directory; AIStor now has its own separate release/support cadence. The open-source minio/minio GitHub repo was archived/read-only by its owner on 2026-04-25 — confirmed directly via GitHub's archive banner — and is no longer the live product; its last tag, RELEASE.2025-10-15T17-29-55Z, is stale/inapplicable to the current Enterprise product)",
+      "cpe": "cpe:2.3:a:miniorange:oauth_single_sign_on:48.4.9:*:*:*:enterprise:wordpress:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -14713,11 +14786,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA, Classic-McEliece",
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
           "primitive": "kem"
         }
       },
-      "description": "Supports ML-KEM (FIPS 203/Kyber), ML-DSA (FIPS 204/Dilithium), SLH-DSA (FIPS 205/SPHINCS+), and Classic McEliece. Offers a PQC Starter Kit and POC for enterprise migration.",
+      "description": "Supports finalised ML-DSA (FIPS 204; ML-DSA-44/65/87) and ML-KEM (FIPS 203; ML-KEM-512/768/1024) parameter sets. ML-DSA is used for X.509 certificate and CRL signing (RFC 9881), OCSP response signing, CMS signatures and timestamp tokens (RFC 9882), and server-side PKCS#1 signatures on the ADSS SAM Appliance; ML-KEM keys can be included in certificates, enabling hybrid classical and post-quantum deployment models. Production-grade PQC support was introduced in ADSS Server 8.3.5 (July 2024).",
       "externalReferences": [
         {
           "type": "website",
@@ -14855,7 +14928,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Supports NIST-approved post-quantum algorithms including ML-DSA, ML-KEM, and SLH-DSA. The platform is described as \"Crypto-Agile,\" allowing the issuance of post-quantum certificates now and transparent migration of existing certificates when Q-day arrives without infrastructure reconstruction.",
+      "description": "Per the PKI Consortium PQC Capabilities Matrix (EVERTRUST entry last updated 2025-03-03), released versions of EVERTRUST Stream (PKI CA/VA/TSA) support ML-DSA (with or without prehash), pure PQC certificates, and hybrid backward-compatible certificates as per ITU-T X.509 10/19. ML-KEM (FIPS 203) and SLH-DSA (FIPS 205) are marked as planned on the product roadmap; other algorithms, some protocol support and PKCS#11 support are available in beta versions.",
       "externalReferences": [
         {
           "type": "website",
@@ -15308,7 +15381,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Quantum Protect firmware on u.trust GP HSM Se-Series supports CAVP-validated ML-KEM, ML-DSA, LMS, HSS, and XMSS/XMSS-MT (plus SHA/SHAKE); SLH-DSA is listed by Utimaco as in progress / on the roadmap, not yet generally available. Free simulator available. NIST CAVP validation numbers 40010 and 40011, corroborated by CAVP cert #20182 for the LMS stateful hash-based signature module (folded in from the now-deprecated utimaco-quantum-protect-stateful-hash-based-signature-module row, which described the same u.trust Anchor platform). Supports custom PQC algorithm loading through CryptoServer SDK. Available in network and PCIe form factors (folded in from the now-deprecated utimaco-securityserver row, which described the same hardware line).",
+      "description": "The Quantum Protect application package for the u.trust GP HSM Se-Series provides PQC algorithms that Utimaco states passed NIST CAVP testing: ML-KEM, ML-DSA, LMS, SLH-DSA, and SHA/SHAKE (NIST CAVP validation numbers 40010 and 40011). Utimaco also includes XMSS and XMSS-MT. A Software Development Kit included with all HSM deployments lets customers integrate and deploy new algorithms.",
       "externalReferences": [
         {
           "type": "website",
@@ -15668,6 +15741,7 @@
       "type": "cryptographic-asset",
       "bom-ref": "a9d491e7b4ffc835",
       "name": "Dell BSAFE Crypto Module for C",
+      "cpe": "cpe:2.3:a:dell:bsafe_crypto-module-for-c:3.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -15714,6 +15788,7 @@
       "bom-ref": "58fdd4a2aec7e9d9",
       "name": "Dell BSAFE Crypto-J",
       "version": "7.1",
+      "cpe": "cpe:2.3:a:dell:bsafe_crypto-j:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -16452,6 +16527,7 @@
       "bom-ref": "0416a2d95a4753a2",
       "name": "AdGuard DNS",
       "version": "2.23",
+      "cpe": "cpe:2.3:a:adguard-dns:adguard_dns:2.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -16536,6 +16612,7 @@
       "bom-ref": "0a43629c17ef3519",
       "name": "Keeper Security",
       "version": "No single unified product version; PQC/QRC shipped per-component: Web Vault & Desktop App 18.5.0, iOS 17.8.0, Android 17.5.0, Admin Console 17.8.3, Browser Extension 17.7.0",
+      "cpe": "cpe:2.3:a:keepersecurity:keeper:16.10.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -16583,6 +16660,7 @@
       "bom-ref": "465229e0ed695bc2",
       "name": "Dashlane",
       "version": "N/A — no version is tied to PQC (unshipped). Dashlane's actual current app versions, unrelated to PQC, per official release notes as of 2026-08-17: Extension 6.2633, Android 6.2633, iOS 6.2630.",
+      "cpe": "cpe:2.3:a:dashlane:dashlane:-:*:*:*:*:windows:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -20495,7 +20573,7 @@
           "primitive": "kem"
         }
       },
-      "description": "PQC software library for STM32H563xx (Arm Cortex-M33) microcontrollers: ML-KEM key encapsulation/decapsulation, ML-DSA digital signature generation/verification, and LMS/XMSS stateful hash-based signature verification used mainly for secure boot code and firmware authentication. Product status is NRND (Not Recommended for New Design) on ST's own live product page; ST directs new designs to X-CUBE-CRYPTOLIB, whose V5.x.x release folded in these same PQC algorithms (previously delivered separately as X-CUBE-PQC).",
+      "description": "PQC software library for STM32H563xx (Arm Cortex-M33) microcontrollers: ML-KEM key generation, encapsulation and decapsulation; ML-DSA key generation, signature generation and verification; and LMS/XMSS stateful hash-based signature verification used mainly for secure boot code authentication. Also includes all cryptographic functions of X-CUBE-CRYPTOLIB.",
       "externalReferences": [
         {
           "type": "website",
@@ -23749,6 +23827,7 @@
       "bom-ref": "d187df81635d4266",
       "name": "Mozilla NSS",
       "version": "3.119",
+      "cpe": "cpe:2.3:a:mozilla:nss:3.20.1:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -24024,6 +24103,7 @@
       "name": "CIRCL",
       "version": "1.6.x",
       "purl": "pkg:github/cloudflare/circl",
+      "cpe": "cpe:2.3:a:secretcircle:secret_circle_-_talk_freely:2.2.00.26:*:*:*:*:android:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -24327,6 +24407,7 @@
       "name": "OpenSSL 3.5.0",
       "version": "3.5.0",
       "purl": "pkg:github/openssl/openssl",
+      "cpe": "cpe:2.3:a:openssl:openssl:3.5.0:-:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -26205,6 +26286,7 @@
       "bom-ref": "11c31221fbf83b43",
       "name": "IVPN",
       "version": "Current",
+      "cpe": "cpe:2.3:a:ivpn:ivpn:2.6.6120.33863:*:*:*:*:windows:*:*",
       "manufacturer": {
         "name": "IVPN"
       },
@@ -27607,6 +27689,7 @@
       "bom-ref": "da7985291c1ce977",
       "name": "libtpms",
       "version": "0.10.2",
+      "cpe": "cpe:2.3:a:libtpms_project:libtpms:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -27653,6 +27736,7 @@
       "bom-ref": "986d97555ad74944",
       "name": "swtpm",
       "version": "0.10.1",
+      "cpe": "cpe:2.3:a:swtpm_project:swtpm:0.7.0:-:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -27752,6 +27836,7 @@
       "bom-ref": "dd7b719def5eec63",
       "name": "Eclipse Mosquitto",
       "version": "2.1.2",
+      "cpe": "cpe:2.3:a:eclipse:mosquitto:0.1:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -27802,6 +27887,7 @@
       "bom-ref": "24ba3d89384524f0",
       "name": "osslsigncode",
       "version": "2.13",
+      "cpe": "cpe:2.3:a:osslsigncode_project:osslsigncode:2.3:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -27857,6 +27943,7 @@
       "bom-ref": "430559eb6e4753d5",
       "name": "OpenBao",
       "version": "2.5.4",
+      "cpe": "cpe:2.3:a:openbao:openbao:2.0.0:-:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -28238,6 +28325,7 @@
       "bom-ref": "aae87a45268c4ccc",
       "name": "Open Policy Agent (OPA)",
       "version": "1.17.0",
+      "cpe": "cpe:2.3:a:openpolicyagent:open_policy_agent:0.9.2:*:*:*:*:*:*:*",
       "manufacturer": {
         "name": "Styra / CNCF"
       },
@@ -28397,13 +28485,9 @@
       "name": "Red Hat Enterprise Linux 9.8",
       "version": "9.8",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "kem"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "RHEL 9.8 GA May 6 2026, released alongside RHEL 10.2. Extends PQC backport initiated in RHEL 9.7 (hybrid ML-KEM and ML-DSA subpolicy). Part of Red Hat unified PQC rollout across RHEL 9.x and 10.x. Provides PQC for organizations on RHEL 9 maintenance track.",
+      "description": "RHEL 9.8 announced May 6 2026 with upcoming general availability, alongside RHEL 10.2. Red Hat says RHEL 10.2 and 9.8 integrate post-quantum cryptography and NIST standards.",
       "externalReferences": [
         {
           "type": "website",
@@ -28488,6 +28572,7 @@
       "bom-ref": "300da4e1729cca20",
       "name": "Red Hat Ansible Automation Platform",
       "version": "2026+",
+      "cpe": "cpe:2.3:a:redhat:ansible_automation_platform:1.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -28531,14 +28616,9 @@
       "name": "Red Hat Certificate System 11.0",
       "version": "11.0",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA",
-          "primitive": "signature",
-          "algorithmFamily": "ML-DSA"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "Red Hat Certificate System 11.0 GA May 6 2026. Integrates NIST-standardized ML-DSA signatures into PKI certificate infrastructure. Addresses harvest-now-decrypt-later risk for certificate-based authentication and long-lived certificates. Released alongside RHEL 10.2 and 9.8.",
+      "description": "Red Hat Certificate System 11.0 announced May 6 2026, alongside the upcoming RHEL 10.2 and 9.8 releases. Per Red Hat, it introduces quantum-resistant signatures to help organizations meet emerging NIST standards and resist \"harvest now, decrypt later\".",
       "externalReferences": [
         {
           "type": "website",
@@ -28684,6 +28764,7 @@
       "bom-ref": "93300cdaca862a96",
       "name": "HPE Aruba ArubaOS-CX",
       "version": "10.x",
+      "cpe": "cpe:2.3:o:hpe:arubaos-cx:10.06.0001:*:*:*:*:*:*:*",
       "manufacturer": {
         "name": "Hewlett Packard Enterprise (Aruba Networking)"
       },
@@ -31018,12 +31099,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
         }
       },
-      "description": "Common Criteria (EUCC/ANSSI) certified secure-element crypto library supporting ML-KEM and LMS post-quantum algorithms (PQ verification mainly for secure boot). Certified on ST31N600, ST31R480, and ST33K1M5 secure microcontroller platforms; PQ algorithms delivered via the NesLib_PQML component.",
+      "description": "NesLib 6.11.6 provides LMS signature verification; the NesLib-PQML 2.1.3 add-on provides ML-KEM encapsulation and decapsulation and ML-DSA signature and verification on ST33K1M5A and ST33K1M5M B04.",
       "externalReferences": [
         {
           "type": "website",
@@ -31996,6 +32076,7 @@
       "bom-ref": "ba3f8f2662a7b7f9",
       "name": "Rosenpass",
       "version": "v0.2.3",
+      "cpe": "cpe:2.3:a:rosenpass:rosenpass:0.2.1:-:*:*:*:rust:*:*",
       "manufacturer": {
         "name": "Rosenpass Project"
       },
@@ -32156,6 +32237,7 @@
       "bom-ref": "343409c3488b4dd8",
       "name": "Microsoft 365",
       "version": "Current (SaaS)",
+      "cpe": "cpe:2.3:a:microsoft:dynamics_365:8.0:*:*:*:*:*:*:*",
       "manufacturer": {
         "name": "Microsoft"
       },
@@ -32254,6 +32336,7 @@
       "bom-ref": "8958951221b2a8fd",
       "name": "Prometheus",
       "version": "3.14.0",
+      "cpe": "cpe:2.3:a:prometheus:prometheus:0.2.0:*:*:*:*:*:*:*",
       "manufacturer": {
         "name": "Prometheus Authors (CNCF)"
       },
@@ -33614,7 +33697,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Implements the NIST PQC standards ML-DSA (FIPS 204) KeyGen/SigGen/SigVer, ML-KEM (FIPS 203) KeyGen/EncapDecap, and SLH-DSA (FIPS 205) KeyGen/SigGen/SigVer, validated for algorithmic correctness through the NIST ACVP/CAVP program (CSRC product #20549) across all listed platforms (Oracle ILOM OS, Oracle Linux 9.6, Oracle Solaris 11.4, Windows Server 2022/2025), alongside its classical algorithms (AES, DSA, ECDSA, EdDSA, Counter DRBG).",
+      "description": "The CAVP page for Oracle OpenSSL FIPS Provider 3.5.4 lists ML-DSA KeyGen/SigGen/SigVer, ML-KEM KeyGen/EncapDecap, and SLH-DSA KeyGen/SigGen/SigVer across its listed operating environments.",
       "externalReferences": [],
       "properties": [
         {
@@ -33836,7 +33919,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "The product is a balanced IP core implementing ML-DSA (CRYSTALS-Dilithium). It has been validated for ML-DSA KeyGen, SigGen, and SigVer operations.",
+      "description": "The product is a balanced IP core implementing ML-DSA. It has been validated for ML-DSA KeyGen, SigGen, and SigVer operations.",
       "externalReferences": [],
       "properties": [
         {
@@ -35595,6 +35678,59 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "1fe6359d083d7cd9",
+      "name": "aws-lc-rs",
+      "manufacturer": {
+        "name": "Amazon Web Services Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
+        }
+      },
+      "description": "ML-DSA signature APIs, including ML_DSA_44, ML_DSA_65, and ML_DSA_87, are stable in aws_lc_rs::signature from v1.18.0 and are available under the fips feature via the FIPS 4.0 module.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/aws/aws-lc-rs"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/aws/aws-lc-rs"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "GitHub-aws-aws-lc-rs"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (AWS-LC-FIPS 3.x has completed lab testing and been submitted to NIST for certification)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "d8723cbed8b154b4",
       "name": "Dashboard - PQProbe",
       "manufacturer": {
@@ -36238,6 +36374,50 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a3b8baee1c85281c",
+      "name": "Cryptographic Library NesLib 6.11.3 on ST31N600 A04 (EUCC-3090-2026-25)",
+      "version": "6.11.3",
+      "manufacturer": {
+        "name": "STMicroelectronics N.V."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Certified scope includes the (post-quantum) stateful hash-based LMS signature scheme (NIST SP 800-208): LMS signature verification, SFR FCS_COP.1/SFHDSA. No ML-KEM or ML-DSA in this certified configuration (those are in the separate NesLib-PQML certifications).",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "neslib-6-11-3-st31n600-a04"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     }
