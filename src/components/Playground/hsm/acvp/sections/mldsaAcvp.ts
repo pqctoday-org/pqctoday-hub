@@ -76,8 +76,12 @@ export const CKR_SIGNATURE_INVALID = 0x000000c0
 
 /** ACVP hashAlg → PKCS#11 v3.2 Table 284 CKM_HASH_ML_DSA_<hash>. SHA2-512/224 and
  * SHA2-512/256 are absent on purpose: the specification defines no mechanism
- * for them, so no engine can advertise one. */
-export const ACVP_HASH_TO_MECH: Readonly<Record<string, number>> = {
+ * for them, so no engine can advertise one.
+ *
+ * Built at call time, not module-eval time: in the production bundle these
+ * constants live in the softhsm chunk, whose top-level await this chunk never
+ * awaits, so a module-scope object would hold undefined (build TLA check). */
+export const acvpHashToMech = (): Readonly<Record<string, number>> => ({
   'SHA2-224': CKM_HASH_ML_DSA_SHA224,
   'SHA2-256': CKM_HASH_ML_DSA_SHA256,
   'SHA2-384': CKM_HASH_ML_DSA_SHA384,
@@ -88,7 +92,7 @@ export const ACVP_HASH_TO_MECH: Readonly<Record<string, number>> = {
   'SHA3-512': CKM_HASH_ML_DSA_SHA3_512,
   'SHAKE-128': CKM_HASH_ML_DSA_SHAKE128,
   'SHAKE-256': CKM_HASH_ML_DSA_SHAKE256,
-}
+})
 
 /** Structured identity of one executed (or skipped) case — the same facts the
  * row's text shows, in machine-readable form for evidence export. */
@@ -439,7 +443,7 @@ const mechFor = (g: { preHash: string; externalMu: boolean }, hashAlg: string) =
   g.externalMu
     ? CKM_ML_DSA_EXTERNAL_MU_VENDOR
     : g.preHash === 'preHash'
-      ? ACVP_HASH_TO_MECH[hashAlg] // eslint-disable-line security/detect-object-injection
+      ? acvpHashToMech()[hashAlg] // eslint-disable-line security/detect-object-injection
       : CKM_ML_DSA
 
 /** Why a mechanism can't run on this engine, or null when it can. Mirrors the
@@ -819,7 +823,7 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
     // Runtime confirmation, not an assumption: none of this engine's advertised
     // mechanisms is a HashML-DSA-with-hashing mechanism for these hashes (the
     // Table 284 set is the only one that exists), so there is nothing to call.
-    const advertisedHashMechs = Object.values(ACVP_HASH_TO_MECH).filter((m) => mechs.has(m)).length
+    const advertisedHashMechs = Object.values(acvpHashToMech()).filter((m) => mechs.has(m)).length
     await pushResult({
       id: `mldsa-skip-hash-sha512t-${eName}`,
       algorithm: `ML-DSA-44/65/87 (${eName})`,

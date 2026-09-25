@@ -34,7 +34,7 @@ import {
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import { CKM_ML_DSA, CKH_DETERMINISTIC_REQUIRED } from '@/wasm/softhsm/constants'
 import {
-  ACVP_HASH_TO_MECH,
+  acvpHashToMech,
   verifyRv,
   destroy,
   firstDiff,
@@ -141,7 +141,7 @@ export async function runMldsaDepthSection(ctx: MldsaAcvpSectionCtx): Promise<vo
           source: srcOf(f._provenance),
         }
         const algorithm = `${ps} (${eName})`
-        const mech = pre ? ACVP_HASH_TO_MECH[t.hashAlg] : CKM_ML_DSA
+        const mech = pre ? acvpHashToMech()[t.hashAlg] : CKM_ML_DSA
         const why = unsupportedReason(mechs, mech, pre ? mode : 'CKM_ML_DSA')
         if (why) {
           await pushResult({

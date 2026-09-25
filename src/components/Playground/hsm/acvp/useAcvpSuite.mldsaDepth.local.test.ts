@@ -25,7 +25,7 @@ import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { TestResult } from './useAcvpSuite'
 import { MLDSA_CTX256_PINS } from './sections/mldsaDepth'
-import { ACVP_HASH_TO_MECH } from './sections/mldsaAcvp'
+import { acvpHashToMech } from './sections/mldsaAcvp'
 import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
 
 /** Manifest evidence classes of a row (generated per-case records; [] = no record). */
@@ -156,7 +156,7 @@ describe('ML-DSA depth (D2-6) — both engines, real vectors', () => {
         )
         .map((r) => r.caseMeta!.hashAlg)
     )
-    expect([...covered].sort()).toEqual(Object.keys(ACVP_HASH_TO_MECH).sort())
+    expect([...covered].sort()).toEqual(Object.keys(acvpHashToMech()).sort())
   })
 
   it('signs with a 1-byte context, binds it, and produces the same signature on both engines', () => {
