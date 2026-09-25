@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pqctoday.com/schemas/acvp/ml-kem-encapdecap-fips203.response.schema.json",
+  "title": "ML-KEM / encapDecap / FIPS203 — ACVP test vector response (vector-set object)",
+  "$comment": "Pinned transcription of draft-celi-acvp-ml-kem at usnistgov/ACVP commit bccef3648f6c05b224a051188ffe66f447cfdb6d: src/ml-kem/sections/07-responses.adoc [[response_table]] + [[response_group_table]] and 07-ml-kem-encapdecap-responses.adoc [[ML-KEM_encapDecap_vs_tr_table]] (c only for encapsulation, k for encapsulation/decapsulation, testPassed only for the key checks). acvVersion lives in the [{acvVersion},{…}] envelope element, not in this object. Which ONE of c/k/testPassed a given test carries depends on its group's function, which is not part of the response — response.ts enforces that per group; this schema pins the permitted field set.",
+  "type": "object",
+  "required": ["vsId", "testGroups"],
+  "additionalProperties": false,
+  "properties": {
+    "vsId": { "type": "integer", "minimum": 0 },
+    "testGroups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tgId", "tests"],
+        "additionalProperties": false,
+        "properties": {
+          "tgId": { "type": "integer", "minimum": 0 },
+          "tests": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["tcId"],
+              "additionalProperties": false,
+              "properties": {
+                "tcId": { "type": "integer", "minimum": 0 },
+                "c": { "type": "string", "pattern": "^([0-9A-Fa-f]{2})*$" },
+                "k": { "type": "string", "pattern": "^([0-9A-Fa-f]{2})*$" },
+                "testPassed": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
