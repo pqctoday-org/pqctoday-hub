@@ -15,7 +15,7 @@
  * Header text is a slot (`title`/`description`) defaulting to the manifest —
  * because a module's in-page header often differs from its catalog description.
  */
-import { useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -39,6 +39,13 @@ import { WorkshopStepHeader } from './WorkshopStepHeader'
 import { GlossaryAutoWrap } from './GlossaryAutoWrap'
 import { useModuleProgress } from './useModuleProgress'
 import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
+import {
+  isInLearnPath,
+  isWorkshopStepOptional,
+  requiredWorkshopStepIds,
+} from '../manifest/learnPathScope'
+import { LearnModuleContext, useActiveLearnPathId } from './useLearnPath'
+import { LearnPathPicker, OptionalReferenceBadge } from './LearnPathPicker'
 import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { RelatedModulesPanel } from './RelatedModulesPanel'
@@ -168,6 +175,11 @@ export interface ModuleShellProps {
 interface WorkshopStepperProps {
   moduleId: string
   parts: WorkshopPart[]
+  /** indices into `parts` shown on the active learn path, in order (WS-0).
+   *  Every index when the module has no path-tagged steps. */
+  visibleIndices: number[]
+  /** ids of steps marked `optional` in the manifest (reference steps) */
+  optionalStepIds: ReadonlySet<string>
   currentPart: number
   configKey: number
   onPartChange: (index: number) => void
@@ -179,6 +191,8 @@ interface WorkshopStepperProps {
 function WorkshopStepper({
   moduleId,
   parts,
+  visibleIndices,
+  optionalStepIds,
   currentPart,
   configKey,
   onPartChange,
@@ -186,6 +200,15 @@ function WorkshopStepper({
   onComplete,
   renderStep,
 }: WorkshopStepperProps) {
+  // Positions are counted over the VISIBLE steps (WS-0 learn paths), while
+  // `currentPart` and every callback stay in `parts` index space — so module
+  // renderWorkshopStep switches, ?step= deep links and completion ids are
+  // unchanged. With no path-tagged steps visibleIndices is 0..n-1 and this is
+  // exactly the previous behaviour.
+  const pos = Math.max(0, visibleIndices.indexOf(currentPart))
+  const isFirst = pos === 0
+  const isLast = pos === visibleIndices.length - 1
+  const currentOptional = optionalStepIds.has(parts[currentPart].id)
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex justify-end">
@@ -204,16 +227,23 @@ function WorkshopStepper({
           steps, same click, same aria-current). The chips carry the step titles;
           the rail only repeated the numbers and cost ~90 px above the fold. */}
       <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
+        {currentOptional ? <OptionalReferenceBadge className="mb-2" /> : null}
         <WorkshopStepHeader
           moduleId={moduleId}
           stepId={parts[currentPart].id}
           stepTitle={parts[currentPart].title}
           stepDescription={parts[currentPart].description}
-          stepIndex={currentPart}
-          totalSteps={parts.length}
+          stepIndex={pos}
+          totalSteps={visibleIndices.length}
+          deepLinkStep={currentPart}
           cswp39Step={parts[currentPart].cswp39Step}
-          steps={parts.map((p) => ({ id: p.id, label: p.title }))}
-          onStepClick={onPartChange}
+          steps={visibleIndices.map((i) => ({
+            id: parts[i].id,
+            label: optionalStepIds.has(parts[i].id)
+              ? `${parts[i].title} (optional reference)`
+              : parts[i].title,
+          }))}
+          onStepClick={(p) => onPartChange(visibleIndices[p])}
         />
         {renderStep(currentPart, configKey, onPartChange)}
         {/* Round 9, wave 2 — one question per step with feedback that names the
@@ -228,14 +258,14 @@ function WorkshopStepper({
       <div className="flex flex-col sm:flex-row justify-between gap-3">
         <Button
           variant="ghost"
-          onClick={() => onPartChange(Math.max(0, currentPart - 1))}
-          disabled={currentPart === 0}
+          onClick={() => onPartChange(visibleIndices[Math.max(0, pos - 1)])}
+          disabled={isFirst}
           className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
           data-workshop-target="learn-stepper-prev"
         >
           &larr; Previous Step
         </Button>
-        {currentPart === parts.length - 1 ? (
+        {isLast ? (
           <Button
             variant="gradient"
             onClick={() => onComplete(parts[currentPart].id)}
@@ -247,7 +277,7 @@ function WorkshopStepper({
         ) : (
           <Button
             variant="gradient"
-            onClick={() => onPartChange(currentPart + 1)}
+            onClick={() => onPartChange(visibleIndices[pos + 1])}
             className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
             data-workshop-target="learn-stepper-next"
           >
@@ -279,7 +309,12 @@ export const ModuleShell = ({
   // in-prose "Start Workshop" CTA (see slotApi.goToWorkshop below and
   // MobileModuleShell's "Practice on your phone" card).
   const practiceTool = mobilePracticeTool(manifest)
-  const parts = workshopParts ?? []
+  const parts = useMemo(() => workshopParts ?? [], [workshopParts])
+  // WS-0 learn paths: the active path scopes which workshop steps show and
+  // which count toward completion (manifest/learnPathScope.ts). Modules with
+  // no `paths`-tagged or `optional` steps get every step, as before.
+  const activePathId = useActiveLearnPathId(manifest.id, manifest)
+  const requiredStepIds = requiredWorkshopStepIds(manifest, activePathId)
   const {
     activeTab,
     handleTabChange,
@@ -295,10 +330,34 @@ export const ModuleShell = ({
   } = useModuleProgress(manifest.id, {
     steps: parts.length ? parts : manifest.workshopSteps,
     // dot tracks the canonical workshopSteps (matches the golden master), even
-    // if the UI parts are wired differently
-    dotSteps: manifest.workshopSteps,
+    // if the UI parts are wired differently — narrowed to the steps REQUIRED on
+    // the active path (identical to workshopSteps for an untagged module)
+    dotSteps: manifest.workshopSteps?.filter((st) => requiredStepIds.includes(st.id)),
     resetLabel: `Restart ${manifest.title}?`,
   })
+
+  // Indices of `parts` visible on the active path, and where the stepper
+  // should sit if `currentPart` (from ?step=, the sim embed, or an exercise)
+  // names a step that is not on it: the next visible step, else the last.
+  const stepDefs = manifest.workshopSteps
+  const { visibleIndices, shownPart } = useMemo(() => {
+    const byId = new Map((stepDefs ?? []).map((st) => [st.id, st]))
+    const onPath = parts
+      .map((_, i) => i)
+      .filter((i) => isInLearnPath(byId.get(parts[i].id), activePathId))
+    const visible = onPath.length > 0 ? onPath : parts.map((_, i) => i)
+    const shown = visible.includes(currentPart)
+      ? currentPart
+      : (visible.find((i) => i > currentPart) ?? visible[visible.length - 1] ?? 0)
+    return { visibleIndices: visible, shownPart: shown }
+  }, [parts, stepDefs, activePathId, currentPart])
+  useEffect(() => {
+    if (parts.length > 0 && shownPart !== currentPart) setCurrentPart(shownPart)
+  }, [parts.length, shownPart, currentPart, setCurrentPart])
+  const optionalStepIds = useMemo(
+    () => new Set(parts.filter((p) => isWorkshopStepOptional(manifest, p.id)).map((p) => p.id)),
+    [parts, manifest]
+  )
 
   // P2.2 — headline progress + track momentum, read from the same store the
   // catalog ModuleCard uses (workshop steps for workshop modules, else learn
@@ -321,9 +380,15 @@ export const ModuleShell = ({
   // CC-5: Learn-tab framing folded on the Workshop tab until the reader asks for it.
   const [introOpen, setIntroOpen] = useState(false)
   // Wave C: index of the manifest's "Start here" step, or -1 when absent/unknown.
-  const startHereIndex = manifest.startHere
-    ? (manifest.workshopSteps ?? []).findIndex((st) => st.id === manifest.startHere?.step)
-    : -1
+  // A "Start here" step that is not on the learner's active path is not offered.
+  const startHereIndex =
+    manifest.startHere &&
+    isInLearnPath(
+      manifest.workshopSteps?.find((st) => st.id === manifest.startHere?.step),
+      activePathId
+    )
+      ? (manifest.workshopSteps ?? []).findIndex((st) => st.id === manifest.startHere?.step)
+      : -1
   const slotApi: ModuleSlotApi = {
     goToWorkshop: (step) => {
       // Wave B1 (2026-08-29): MobileModuleShell never mounts a Workshop tab,
@@ -530,8 +595,15 @@ export const ModuleShell = ({
 
   // Custom modules (Quiz) own their entire body; the hook still tracks time.
   if (manifest.custom) {
-    return <div className="space-y-6">{children}</div>
+    return (
+      <LearnModuleContext.Provider value={manifest.id}>
+        <div className="space-y-6">{children}</div>
+      </LearnModuleContext.Provider>
+    )
   }
+
+  // WS-0 — the in-module path picker, only for manifests that declare paths.
+  const pathPicker = manifest.learnPaths?.length ? <LearnPathPicker manifest={manifest} /> : null
 
   const tabs = manifest.tabs ?? STANDARD_TABS
   const present = new Set(tabs.map((t) => t.value))
@@ -546,7 +618,9 @@ export const ModuleShell = ({
       <WorkshopStepper
         moduleId={manifest.id}
         parts={parts}
-        currentPart={currentPart}
+        visibleIndices={visibleIndices}
+        optionalStepIds={optionalStepIds}
+        currentPart={shownPart}
         configKey={configKey}
         onPartChange={handlePartChange}
         onReset={resetWorkshop}
@@ -566,154 +640,160 @@ export const ModuleShell = ({
       )
     const mobileWorkshop = MOBILE_WORKSHOP_READY.has(manifest.id) ? workshopBody : null
     return (
-      <MobileModuleShell
-        manifest={manifest}
-        title={title}
-        description={headerDescription}
-        learnContent={learnContent}
-        practiceTool={practiceTool}
-        workshopContent={mobileWorkshop}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        onStartHere={startHereIndex >= 0 ? () => slotApi.goToWorkshop(startHereIndex) : undefined}
-      />
+      <LearnModuleContext.Provider value={manifest.id}>
+        <MobileModuleShell
+          manifest={manifest}
+          title={title}
+          description={headerDescription}
+          learnContent={learnContent}
+          practiceTool={practiceTool}
+          workshopContent={mobileWorkshop}
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          onStartHere={startHereIndex >= 0 ? () => slotApi.goToWorkshop(startHereIndex) : undefined}
+          pathPicker={pathPicker}
+        />
+      </LearnModuleContext.Provider>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {header}
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <ModuleTabBar tabs={barTabs} value={activeTab} onValueChange={handleTabChange} />
+    <LearnModuleContext.Provider value={manifest.id}>
+      <div className="space-y-6">
+        {header}
+        {pathPicker}
+        <Tabs value={activeTab} onValueChange={handleTabChange}>
+          <ModuleTabBar tabs={barTabs} value={activeTab} onValueChange={handleTabChange} />
 
-        {present.has('learn') && (
-          <TabsContent value="learn">
-            {learnRaw !== undefined ? (
-              resolve(learnRaw)
-            ) : (
-              <GlossaryAutoWrap>{resolve(learn)}</GlossaryAutoWrap>
-            )}
-          </TabsContent>
-        )}
-        {present.has('visual') && (
-          <TabsContent value="visual">
-            {visual !== undefined ? resolve(visual) : <ModuleVisualTab moduleId={manifest.id} />}
-          </TabsContent>
-        )}
-        {workshopBody && <TabsContent value="workshop">{workshopBody}</TabsContent>}
-        {present.has('exercises') && (
-          <TabsContent value="exercises">{resolve(exercises)}</TabsContent>
-        )}
-        {present.has('references') && (
-          <TabsContent value="references">
-            <ModuleReferencesTab moduleId={manifest.id} />
-          </TabsContent>
-        )}
-        {present.has('tools') && (
-          <TabsContent value="tools">
-            <ModuleMigrateTab moduleId={manifest.id} />
-          </TabsContent>
-        )}
-      </Tabs>
-      {/* WS22 Stage 3 (2026-08-21) — module→module relations, computed from the
+          {present.has('learn') && (
+            <TabsContent value="learn">
+              {learnRaw !== undefined ? (
+                resolve(learnRaw)
+              ) : (
+                <GlossaryAutoWrap>{resolve(learn)}</GlossaryAutoWrap>
+              )}
+            </TabsContent>
+          )}
+          {present.has('visual') && (
+            <TabsContent value="visual">
+              {visual !== undefined ? resolve(visual) : <ModuleVisualTab moduleId={manifest.id} />}
+            </TabsContent>
+          )}
+          {workshopBody && <TabsContent value="workshop">{workshopBody}</TabsContent>}
+          {present.has('exercises') && (
+            <TabsContent value="exercises">{resolve(exercises)}</TabsContent>
+          )}
+          {present.has('references') && (
+            <TabsContent value="references">
+              <ModuleReferencesTab moduleId={manifest.id} />
+            </TabsContent>
+          )}
+          {present.has('tools') && (
+            <TabsContent value="tools">
+              <ModuleMigrateTab moduleId={manifest.id} />
+            </TabsContent>
+          )}
+        </Tabs>
+        {/* WS22 Stage 3 (2026-08-21) — module→module relations, computed from the
           `track`/`frameworkPhase`/`taxonomy` tags the manifests already carry.
           Rendered unconditionally (not gated on completion) because the point
           is to be found, not to be a reward; hidden in both embed contexts for
           the same reason the back link is. See src/data/moduleRelations.ts. */}
-      {!embedded && !iframeEmbedded ? <RelatedModulesPanel moduleId={manifest.id} /> : null}
-      {/* 2026-09-17 — the reverse of the landscape's learn_module_id column:
+        {!embedded && !iframeEmbedded ? <RelatedModulesPanel moduleId={manifest.id} /> : null}
+        {/* 2026-09-17 — the reverse of the landscape's learn_module_id column:
           which industries' use cases point at THIS module. Same embed rules. */}
-      {!embedded && !iframeEmbedded ? <IndustryLandscapePanel moduleId={manifest.id} /> : null}
-      {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts),
+        {!embedded && !iframeEmbedded ? <IndustryLandscapePanel moduleId={manifest.id} /> : null}
+        {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts),
           rendered whether or not the module is completed. Same embed rules. */}
-      {/* Round 9, wave 2 — the quiz handoff, visible before completion. */}
-      {!embedded && !iframeEmbedded ? (
-        <UnderstandingCheckCard moduleId={manifest.id} moduleTitle={manifest.title} />
-      ) : null}
-      {!embedded && !iframeEmbedded ? <NextStepCard route={`/learn/${manifest.id}`} /> : null}
-      {/* P2.3 — completion handoff footer. Replaces the sidebar NextModuleCTA so
+        {/* Round 9, wave 2 — the quiz handoff, visible before completion. */}
+        {!embedded && !iframeEmbedded ? (
+          <UnderstandingCheckCard moduleId={manifest.id} moduleTitle={manifest.title} />
+        ) : null}
+        {!embedded && !iframeEmbedded ? <NextStepCard route={`/learn/${manifest.id}`} /> : null}
+        {/* P2.3 — completion handoff footer. Replaces the sidebar NextModuleCTA so
           finishing a module always routes somewhere, never a dead-end "Complete".
           The sim "Practice" CTA lives in the header (persistent, curated) so it is
           not duplicated here. */}
-      {!embedded && here?.status === 'completed' ? (
-        <div className="rounded-xl border border-border bg-card p-4 sm:p-5 animate-fade-in">
-          <div className="mb-3 flex items-center gap-2">
-            <CheckCircle2 size={18} className="shrink-0 text-status-success" />
-            <span className="text-sm font-semibold text-foreground">
-              Module complete — keep your momentum
-            </span>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {nextInTrack ? (
-              <Link to={`/learn/${nextInTrack.id}`} className={footerLink}>
-                <ArrowRight size={15} className="shrink-0 text-primary" />
-                <span className="min-w-0">
-                  <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
-                    Next in {track}
+        {!embedded && here?.status === 'completed' ? (
+          <div className="rounded-xl border border-border bg-card p-4 sm:p-5 animate-fade-in">
+            <div className="mb-3 flex items-center gap-2">
+              <CheckCircle2 size={18} className="shrink-0 text-status-success" />
+              <span className="text-sm font-semibold text-foreground">
+                Module complete — keep your momentum
+              </span>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {nextInTrack ? (
+                <Link to={`/learn/${nextInTrack.id}`} className={footerLink}>
+                  <ArrowRight size={15} className="shrink-0 text-primary" />
+                  <span className="min-w-0">
+                    <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
+                      Next in {track}
+                    </span>
+                    <span className="block truncate font-medium text-foreground">
+                      {nextInTrack.title}
+                    </span>
                   </span>
-                  <span className="block truncate font-medium text-foreground">
-                    {nextInTrack.title}
-                  </span>
-                </span>
-              </Link>
-            ) : (
-              <Link to="/learn" className={footerLink}>
-                <ArrowRight size={15} className="shrink-0 text-primary" />
-                <span className="font-medium text-foreground">Back to the Learning hub</span>
-              </Link>
-            )}
-            {/* Quiz handoff. Until 2026-07-31 nothing in the app routed a
+                </Link>
+              ) : (
+                <Link to="/learn" className={footerLink}>
+                  <ArrowRight size={15} className="shrink-0 text-primary" />
+                  <span className="font-medium text-foreground">Back to the Learning hub</span>
+                </Link>
+              )}
+              {/* Quiz handoff. Until 2026-07-31 nothing in the app routed a
                 learner from a finished module to its questions — the only
                 /learn/quiz?category= links lived in the persona path view — so
                 20 digital-id questions (and every other module's) were
                 effectively unreachable from the module itself. Gated on the
                 module id actually being a quiz category: 59 of 65 are, and the
                 remaining 6 correctly get no CTA rather than a dead link. */}
-            {(QUIZ_CATEGORIES as readonly string[]).includes(manifest.id) ? (
-              <Link to={`/learn/quiz?category=${manifest.id}`} className={footerLink}>
-                <GraduationCap size={15} className="shrink-0 text-primary" />
-                <span className="min-w-0">
-                  <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
-                    Check your understanding
+              {(QUIZ_CATEGORIES as readonly string[]).includes(manifest.id) ? (
+                <Link to={`/learn/quiz?category=${manifest.id}`} className={footerLink}>
+                  <GraduationCap size={15} className="shrink-0 text-primary" />
+                  <span className="min-w-0">
+                    <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
+                      Check your understanding
+                    </span>
+                    <span className="block truncate font-medium text-foreground">
+                      Take the {manifest.title} quiz
+                    </span>
                   </span>
-                  <span className="block truncate font-medium text-foreground">
-                    Take the {manifest.title} quiz
+                </Link>
+              ) : null}
+              {relatedTool ? (
+                <Link to={`/playground/${relatedTool}`} className={footerLink}>
+                  <Wrench size={15} className="shrink-0 text-primary" />
+                  <span className="min-w-0">
+                    <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
+                      Related tool
+                    </span>
+                    <span className="block truncate font-medium text-foreground">
+                      Open in the Playground
+                    </span>
                   </span>
-                </span>
-              </Link>
-            ) : null}
-            {relatedTool ? (
-              <Link to={`/playground/${relatedTool}`} className={footerLink}>
-                <Wrench size={15} className="shrink-0 text-primary" />
-                <span className="min-w-0">
-                  <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
-                    Related tool
+                </Link>
+              ) : null}
+            </div>
+            {moreTools.length > 0 ? (
+              <p className="mt-3 text-xs text-muted-foreground">
+                <span className="font-medium text-foreground">Also in the Playground: </span>
+                {moreTools.map((t, i) => (
+                  <span key={t}>
+                    {i > 0 ? ' · ' : ''}
+                    <Link
+                      to={`/playground/${t}`}
+                      className="text-primary underline underline-offset-2"
+                    >
+                      {TOOL_TITLE_BY_ID.get(t) ?? t}
+                    </Link>
                   </span>
-                  <span className="block truncate font-medium text-foreground">
-                    Open in the Playground
-                  </span>
-                </span>
-              </Link>
+                ))}
+              </p>
             ) : null}
           </div>
-          {moreTools.length > 0 ? (
-            <p className="mt-3 text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">Also in the Playground: </span>
-              {moreTools.map((t, i) => (
-                <span key={t}>
-                  {i > 0 ? ' · ' : ''}
-                  <Link
-                    to={`/playground/${t}`}
-                    className="text-primary underline underline-offset-2"
-                  >
-                    {TOOL_TITLE_BY_ID.get(t) ?? t}
-                  </Link>
-                </span>
-              ))}
-            </p>
-          ) : null}
-        </div>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
+    </LearnModuleContext.Provider>
   )
 }

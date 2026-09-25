@@ -3,6 +3,7 @@
 import { BookOpen, CheckSquare, Square } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { LEARN_SECTIONS } from './moduleData'
+import { requiredLearnSectionIdsFor } from './manifest/learnPathScope'
 import { Button } from '@/components/ui/button'
 
 interface LearnSectionChecklistProps {
@@ -17,11 +18,14 @@ interface LearnSectionChecklistProps {
  */
 export const LearnSectionChecklist = ({ moduleId, className = '' }: LearnSectionChecklistProps) => {
   const { modules, toggleLearnSection } = useModuleStore()
-  const sections = LEARN_SECTIONS[moduleId] ?? []
+  const moduleState = modules[moduleId]
+  // Only the sections that count toward completion on the active learn path
+  // (optional references are never listed as required reading).
+  const required = new Set(requiredLearnSectionIdsFor(moduleId, moduleState?.activeLearnPath))
+  const sections = (LEARN_SECTIONS[moduleId] ?? []).filter((s) => required.has(s.id))
 
   if (sections.length === 0) return null
 
-  const moduleState = modules[moduleId]
   const checks = moduleState?.learnSectionChecks ?? {}
   const checkedCount = sections.filter((s) => checks[s.id]).length
 

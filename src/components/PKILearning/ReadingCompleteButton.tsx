@@ -3,6 +3,7 @@ import { CheckCircle, CheckSquare } from 'lucide-react'
 import { useLocation } from 'react-router'
 import { useModuleStore } from '../../store/useModuleStore'
 import { LEARN_SECTIONS } from './moduleData'
+import { requiredLearnSectionIdsFor } from './manifest/learnPathScope'
 import { Button } from '../ui/button'
 
 /**
@@ -27,7 +28,10 @@ export const ReadingCompleteButton = () => {
 
   const moduleState = modules[moduleId]
   const checks = moduleState?.learnSectionChecks ?? {}
-  const allDone = sections.length > 0 && sections.every((s) => checks[s.id])
+  // "Done" = every section that counts toward completion (the active learn
+  // path's, minus optional references) — the same set the store completes on.
+  const required = requiredLearnSectionIdsFor(moduleId, moduleState?.activeLearnPath)
+  const allDone = required.length > 0 && required.every((id) => checks[id])
 
   if (allDone) {
     return (

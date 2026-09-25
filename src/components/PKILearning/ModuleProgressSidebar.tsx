@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ArrowRight, CheckCircle, ChevronDown, ChevronUp, Trophy, Wrench } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
+import { requiredLearnSectionIdsFor, requiredWorkshopStepIdsFor } from './manifest/learnPathScope'
 import { LearnSectionChecklist } from './LearnSectionChecklist'
 import { ModuleProgressPie } from '../ui/ModuleProgressPie'
 import { Button } from '@/components/ui/button'
@@ -21,19 +22,25 @@ export const ModuleProgressSidebar = ({ moduleId }: ModuleProgressSidebarProps) 
   const [mobileOpen, setMobileOpen] = useState(false)
   const { modules } = useModuleStore()
 
-  const sections = LEARN_SECTIONS[moduleId] ?? []
+  const moduleState = modules[moduleId]
+  // Sections/steps that count toward completion: the active learn path's,
+  // minus optional references (manifest/learnPathScope.ts).
+  const requiredSections = new Set(
+    requiredLearnSectionIdsFor(moduleId, moduleState?.activeLearnPath)
+  )
+  const sections = (LEARN_SECTIONS[moduleId] ?? []).filter((s) => requiredSections.has(s.id))
 
   // Nothing to show for modules without learn sections
   if (sections.length === 0) return null
 
-  const moduleState = modules[moduleId]
   const checks = moduleState?.learnSectionChecks ?? {}
   const checkedCount = sections.filter((s) => checks[s.id]).length
   const learnPct = Math.round((checkedCount / sections.length) * 100)
   const isComplete = moduleState?.status === 'completed'
 
   // Workshop progress
-  const workshopSteps = WORKSHOP_STEPS[moduleId] ?? []
+  const requiredSteps = new Set(requiredWorkshopStepIdsFor(moduleId, moduleState?.activeLearnPath))
+  const workshopSteps = (WORKSHOP_STEPS[moduleId] ?? []).filter((s) => requiredSteps.has(s.id))
   const completedSteps = moduleState?.completedSteps ?? []
   const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
   const workshopPct =
