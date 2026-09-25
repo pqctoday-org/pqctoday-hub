@@ -221,6 +221,9 @@ export interface RegisteredCase {
   /** Local cases whose expected values come from a document outside the vector
    *  manifest (e.g. 3GPP TS 33.501 Annex C.4): what the case was checked against. */
   source?: { citation: string; url?: string }
+  /** The operation this runner executes when it differs from the manifest's
+   *  recorded local operation (e.g. MAC generation on a case the workbench verifies). */
+  operation?: string
   note?: string
 }
 

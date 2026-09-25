@@ -143,11 +143,12 @@ const HASH_SUFFIX: Record<string, string> = {
   'shake-256': 'SHAKE256',
   shake256: 'SHAKE256',
 }
-const hashMlDsaMech = (hashAlg: string): string => {
+const hashMech = (family: 'ML_DSA' | 'SLH_DSA', hashAlg: string): string => {
   const s = HASH_SUFFIX[hashAlg.toLowerCase()]
-  if (!s) throw new Error(`testRegistry: no CKM_HASH_ML_DSA mechanism for ${hashAlg}`)
-  return `CKM_HASH_ML_DSA_${s}`
+  if (!s) throw new Error(`testRegistry: no CKM_HASH_${family} mechanism for ${hashAlg}`)
+  return `CKM_HASH_${family}_${s}`
 }
+const hashMlDsaMech = (hashAlg: string): string => hashMech('ML_DSA', hashAlg)
 /** The mechanism an ML-DSA manifest case drives (mirrors sections/mldsaAcvp.ts mechFor()). */
 const mldsaMech = (c: CaseRecord): string =>
   c.parameters.externalMu === true
@@ -155,6 +156,14 @@ const mldsaMech = (c: CaseRecord): string =>
     : c.parameters.preHash === 'preHash'
       ? hashMlDsaMech(param(c, 'hashAlg'))
       : 'CKM_ML_DSA'
+/** The mechanism an SLH-DSA manifest case drives (mirrors sections/slhdsaAcvp.ts mechFor()). */
+const slhdsaMech = (c: CaseRecord): string =>
+  c.parameters.preHash === 'preHash' ? hashMech('SLH_DSA', param(c, 'hashAlg')) : 'CKM_SLH_DSA'
+/** Manifest `contextBytes` / `messageBytes` of a case, for product-authored cases derived from it. */
+const lengthsOf = (c: CaseRecord): CaseParams => ({
+  contextBytes: Number(param(c, 'contextBytes')),
+  messageBytes: Number(param(c, 'messageBytes')),
+})
 
 const upstreamIds = (c: CaseRecord) => `tg${c.upstream?.tgId ?? '?'}-tc${c.upstream?.tcId ?? '?'}`
 
@@ -357,6 +366,87 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     'Skip rows are evidence of nothing; the capabilities they stand for are the capability map declaredUnreachable rows (mldsa-hash-sha512t, mldsa-hedged-rnd, mldsa-internal-interface), shown as unsupported.'
   ),
   acvp(
+    '05e.siggen-det',
+    '§5e.1 (sections/mldsaDepth.ts)',
+    'ML-DSA deterministic sigGen byte-match at context 0/255, 8192-byte messages and the remaining HashML-DSA functions (sk via C_CreateObject)',
+    [...casesOf('mldsa_siggen_ctxmsg_test'), ...casesOf('mldsa_siggen_prehash_test')].map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x(mldsaMech(c), 'sign', param(c, 'parameterSet'), 'deterministic')],
+        `mldsa-depth-siggen-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
+  acvp(
+    '05e.ctx-probes',
+    '§5e.2 (sections/mldsaDepth.ts)',
+    'ML-DSA-44 context boundaries: 1-byte context sign + verify, 256-byte context refused at C_SignInit / C_VerifyInit',
+    (() => {
+      const base = manifestCase('mldsa_siggen_ctxmsg_test#/testGroups/0/tests/0')
+      const ps = 'ML-DSA-44'
+      const msg = Number(param(base, 'messageBytes'))
+      return [
+        lc(
+          'acvp.05e.ctx-probes',
+          'ctx1',
+          RT,
+          'positive',
+          [x('CKM_ML_DSA', 'sign', ps, 'deterministic'), x('CKM_ML_DSA', 'verify', ps)],
+          {
+            rowId: 'mldsa-depth-probe-ctx1-{engine}',
+            parameters: { contextBytes: 1, messageBytes: msg },
+            note: `Key material from ${base.caseId}; the deterministic signature is verified by the same engine. Its sha256 fingerprint is recorded for a C++/Rust comparison, but the row does not compare it.`,
+          }
+        ),
+        lc(
+          'acvp.05e.ctx-probes',
+          'ctx1-verify-no-context',
+          PROBE,
+          'negative',
+          [x('CKM_ML_DSA', 'verify', ps)],
+          {
+            rowId: 'mldsa-depth-probe-ctx1-{engine}',
+            parameters: { contextBytes: 0, messageBytes: msg },
+            note: 'Asserts CKR_SIGNATURE_INVALID when the 1-byte-context signature is verified without its context.',
+          }
+        ),
+        lc(
+          'acvp.05e.ctx-probes',
+          'ctx256-sign',
+          PROBE,
+          'state-error',
+          [x('CKM_ML_DSA', 'sign', ps, 'deterministic')],
+          {
+            rowId: 'mldsa-depth-probe-ctx256-sign-{engine}',
+            parameters: { contextBytes: 256, messageBytes: msg },
+            note: 'Asserts refusal at C_SignInit with the CK_RV pinned per engine (C++ CKR_ARGUMENTS_BAD, Rust CKR_MECHANISM_PARAM_INVALID).',
+          }
+        ),
+        lc(
+          'acvp.05e.ctx-probes',
+          'ctx256-verify',
+          PROBE,
+          'state-error',
+          [x('CKM_ML_DSA', 'verify', ps)],
+          {
+            rowId: 'mldsa-depth-probe-ctx256-verify-{engine}',
+            parameters: { contextBytes: 256, messageBytes: msg },
+            note: 'Asserts refusal at C_VerifyInit with the CK_RV pinned per engine (C++ CKR_ARGUMENTS_BAD, Rust CKR_MECHANISM_PARAM_INVALID).',
+          }
+        ),
+      ]
+    })()
+  ),
+  acvp(
+    '05e.skips',
+    '§5e.3 (sections/mldsaDepth.ts)',
+    'ML-DSA honest skip (the NIST 1-byte-context sigGen case)',
+    [],
+    'Skip rows are evidence of nothing; the one NIST 1-byte-context case is hedged and uses SHA2-512/256 — the declaredUnreachable rows mldsa-hedged-rnd and mldsa-hash-sha512t.'
+  ),
+  acvp(
     '06',
     '§6',
     'ML-DSA functional sign + verify',
@@ -388,6 +478,111 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
         `test-${param(c, 'parameterSet')}-decap-{engine}`
       )
     )
+  ),
+  acvp(
+    '07b.keygen',
+    '§7b.1 (sections/mlkemAcvp.ts)',
+    'ML-KEM keyGen from seed (CKA_SEED d‖z), ek + dk byte-match',
+    casesOf('mlkem_keygen_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_ML_KEM_KEY_PAIR_GEN', 'generate-key-pair', param(c, 'parameterSet'))],
+        `mlkem-keygen-seed-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
+  acvp(
+    '07b.decap-val',
+    '§7b.3 (sections/mlkemAcvp.ts)',
+    'ML-KEM decapsulation VAL: valid and modified ciphertexts (dk via C_CreateObject), k byte-match',
+    casesOf('mlkem_encapdecap_val_test')
+      .filter((c) => c.parameters.function === 'decapsulation')
+      .map((c) =>
+        mc(
+          c.caseId,
+          NIST,
+          c.expectation,
+          [x('CKM_ML_KEM', 'decapsulate', param(c, 'parameterSet'))],
+          `mlkem-decap-val-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+        )
+      ),
+    'A modified-ciphertext case (negative) must still return CKR_OK, with k equal to the NIST implicit-rejection value.'
+  ),
+  acvp(
+    '07b.keycheck',
+    '§7b.4 (sections/mlkemAcvp.ts)',
+    'ML-KEM decapsulation-key / encapsulation-key checks (FIPS 203 §7.3 / §7.2), key import + decapsulate / encapsulate',
+    casesOf('mlkem_encapdecap_val_test')
+      .filter((c) => c.parameters.function !== 'decapsulation')
+      .map((c) => {
+        const isDk = c.parameters.function === 'decapsulationKeyCheck'
+        return mc(
+          c.caseId,
+          NIST,
+          c.expectation,
+          [x('CKM_ML_KEM', isDk ? 'decapsulate' : 'encapsulate', param(c, 'parameterSet'))],
+          `mlkem-keycheck-${isDk ? 'dk' : 'ek'}-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+        )
+      }),
+    'A negative case passes when the invalid key is rejected anywhere on the path — at C_CreateObject or at the C_DecapsulateKey / C_EncapsulateKey that must perform the check.'
+  ),
+  acvp(
+    '07b.implicit-reject',
+    '§7b.5 (sections/mlkemAcvp.ts)',
+    'ML-KEM product-authored implicit rejection (ciphertext bit flip → k = J(z‖c′)), per parameter set',
+    casesOf('mlkem_encapdecap_val_test')
+      .filter((c) => c.parameters.function === 'decapsulation')
+      .filter(
+        (c, i, all) =>
+          c.parameters.reason === 'valid decapsulation' &&
+          all.findIndex(
+            (d) =>
+              d.parameters.parameterSet === c.parameters.parameterSet &&
+              d.parameters.reason === 'valid decapsulation'
+          ) === i
+      )
+      .map((c) =>
+        lc(
+          'acvp.07b.implicit-reject',
+          param(c, 'parameterSet'),
+          PROBE,
+          'negative',
+          [x('CKM_ML_KEM', 'decapsulate', param(c, 'parameterSet'))],
+          {
+            rowId: `mlkem-implicit-reject-local-${param(c, 'parameterSet')}-{engine}`,
+            note: `Mutation of ${c.caseId} (c[0]^=0x01). Expects CKR_OK and k = SHAKE256(z‖c′, 32) computed with @noble/hashes (FIPS 203 Alg. 18), never the original k; the mutation is PQC Today-authored, not NIST.`,
+          }
+        )
+      )
+  ),
+  acvp(
+    '07b.boundary',
+    '§7b.6 (sections/mlkemAcvp.ts)',
+    'ML-KEM-512 PKCS #11 boundary probes (ciphertext length, output buffer, short ek), exact CK_RV pinned per engine',
+    (
+      [
+        ['decap-ct-short', 'decapsulate', 'state-error'],
+        ['decap-ct-long', 'decapsulate', 'state-error'],
+        ['decap-ct-other-set', 'decapsulate', 'state-error'],
+        ['encap-size-query', 'encapsulate', 'positive'],
+        ['encap-short-buffer', 'encapsulate', 'state-error'],
+        ['import-ek-short', 'encapsulate', 'state-error'],
+      ] as const
+    ).map(([key, op, pol]) =>
+      lc('acvp.07b.boundary', key, PROBE, pol, [x('CKM_ML_KEM', op, 'ML-KEM-512')], {
+        rowId: `mlkem-boundary-${key}-{engine}`,
+      })
+    ),
+    'import-dk-short is not registered: the Rust engine rejects the 1-byte-short dk at C_CreateObject, so on that engine the row drives no mechanism operation. import-ek-short is: both engines accept the short ek and the pinned code comes from C_EncapsulateKey.'
+  ),
+  acvp(
+    '07b.skips',
+    '§7b.2 (sections/mlkemAcvp.ts)',
+    'ML-KEM honest skip (encapsulation AFT: C_EncapsulateKey takes no caller-supplied randomness m)',
+    [],
+    'Skip rows are evidence of nothing; the encapsulation AFT groups are listed under notExecuted in mlkem_encapdecap_val_test.json.'
   ),
   acvp(
     '08',
@@ -440,6 +635,113 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
         `slhdsa-sigver-kat-${param(c, 'parameterSet')}-{engine}`
       )
     )
+  ),
+  acvp(
+    '09c.sigver',
+    '§9c.1 (sections/slhdsaAcvp.ts)',
+    'SLH-DSA dedicated NIST sigVer, pure and pre-hash (positive and negative)',
+    [...casesOf('slhdsa_sigver_sha2_test'), ...casesOf('slhdsa_sigver_shake_test')].map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x(slhdsaMech(c), 'verify', param(c, 'parameterSet'))],
+        `slhdsa-sigver-nist-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    ),
+    'A too-small / too-large signature must return CKR_SIGNATURE_LEN_RANGE; any other invalid case CKR_SIGNATURE_INVALID.'
+  ),
+  acvp(
+    '09c.siggen-det',
+    '§9c.2 (sections/slhdsaAcvp.ts)',
+    'SLH-DSA deterministic sigGen byte-match (sk via C_CreateObject, CKH_DETERMINISTIC_REQUIRED): all 12 sets at context 255 B, plus 128f empty-context and pre-hash',
+    [...casesOf('slhdsa_ctx_test', '/sigGen/'), ...casesOf('slhdsa_siggen_det_test')].map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x(slhdsaMech(c), 'sign', param(c, 'parameterSet'), 'deterministic')],
+        `slhdsa-siggen-det-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
+  acvp(
+    '09c.mutation',
+    '§9c.3 (sections/slhdsaAcvp.ts)',
+    'SLH-DSA product-authored negatives (public-key / context flips for all 12 sets; signature / message flips for the sets without a pure NIST sigVer case)',
+    (() => {
+      const nistSigVerSets = new Set(
+        [...casesOf('slhdsa_sigver_sha2_test'), ...casesOf('slhdsa_sigver_shake_test')]
+          .filter((c) => c.parameters.preHash === 'pure')
+          .map((c) => param(c, 'parameterSet'))
+      )
+      return casesOf('slhdsa_ctx_test', '/sigVer/').flatMap((c) => {
+        const ps = param(c, 'parameterSet')
+        const keys = nistSigVerSets.has(ps)
+          ? ['pk-bitflip', 'ctx-bitflip']
+          : ['pk-bitflip', 'ctx-bitflip', 'sig-bitflip', 'msg-bitflip']
+        return keys.map((key) =>
+          lc(
+            'acvp.09c.mutation',
+            `${key}-${ps}`,
+            PROBE,
+            'negative',
+            [x('CKM_SLH_DSA', 'verify', ps)],
+            {
+              rowId: `slhdsa-sigver-local-${key}-${ps}-{engine}`,
+              parameters: lengthsOf(c),
+              note: `One-bit mutation of ${c.caseId}; expected CKR_SIGNATURE_INVALID is PQC Today-authored, not NIST.`,
+            }
+          )
+        )
+      })
+    })()
+  ),
+  acvp(
+    '09c.probes',
+    '§9c.4 (sections/slhdsaAcvp.ts)',
+    'SLH-DSA-SHA2-128f product-authored probes: 256-byte context refused at C_SignInit; hedged signing randomized',
+    (() => {
+      const base = casesOf('slhdsa_siggen_det_test').find(
+        (c) => c.parameters.parameterSet === 'SLH-DSA-SHA2-128f' && c.parameters.preHash === 'pure'
+      )
+      if (!base)
+        throw new Error('testRegistry: no pure SLH-DSA-SHA2-128f deterministic sigGen case')
+      const ps = 'SLH-DSA-SHA2-128f'
+      return [
+        lc(
+          'acvp.09c.probes',
+          'ctx256',
+          PROBE,
+          'state-error',
+          [x('CKM_SLH_DSA', 'sign', ps, 'deterministic')],
+          {
+            rowId: 'slhdsa-probe-ctx256-{engine}',
+            parameters: { ...lengthsOf(base), contextBytes: 256 },
+            note: `Key material from ${base.caseId}. Asserts refusal at C_SignInit with the CK_RV pinned per engine (C++ CKR_ARGUMENTS_BAD, Rust CKR_MECHANISM_PARAM_INVALID).`,
+          }
+        ),
+        lc(
+          'acvp.09c.probes',
+          'hedged-randomized',
+          RT,
+          'positive',
+          [x('CKM_SLH_DSA', 'sign', ps, 'hedged'), x('CKM_SLH_DSA', 'verify', ps)],
+          {
+            rowId: 'slhdsa-probe-hedged-randomized-{engine}',
+            parameters: lengthsOf(base),
+            note: `Key material from ${base.caseId}. Two CKH_HEDGE_REQUIRED signatures must differ (and differ from the NIST deterministic one) and both verify; shows randomization is active, not that the randomness is correct.`,
+          }
+        ),
+      ]
+    })()
+  ),
+  acvp(
+    '09c.skips',
+    '§9c.5 (sections/slhdsaAcvp.ts)',
+    'SLH-DSA honest skips (pre-hash functions with no PKCS #11 mechanism, internal interface, hedged sigGen)',
+    [],
+    'Skip rows are evidence of nothing; the upstream groups they stand for are listed under notExecuted in the SLH-DSA vector files. No capability-map declaredUnreachable row covers them yet.'
   ),
   acvp('10', '§10', 'SHA2-256 digest', digestCases('sha256_test', sha256V, 'CKM_SHA256', 'sha256')),
   acvp(
@@ -998,44 +1300,77 @@ const KAT_RUNNER: RegisteredTest[] = [
     'HMAC-SHA2 generation at the NIST truncated macLen (_GENERAL mechanism)',
     HMACS.map(([hashAlg, file, mech]) =>
       k(
-        mc(
-          `${file}#/testGroups/0/tests/0`,
-          NIST,
-          'positive',
-          [x(mech, 'sign')],
-          undefined,
-          'generate'
-        ),
+        {
+          ...mc(
+            `${file}#/testGroups/0/tests/0`,
+            NIST,
+            'positive',
+            [x(mech, 'sign')],
+            undefined,
+            'generate'
+          ),
+          operation: 'mac-generate',
+        },
         { type: 'hmac-generate', hashAlg }
       )
     ),
     "Runs the upstream AFT's own operation (MAC generation) on the manifest case whose recorded local operation is verification."
   ),
-  kat('sha256-hash', 'SHA2-256 digest (testIndex 0)', [
-    k(mc('sha256_test#/testGroups/0/tests/0', NIST, 'positive', [x('CKM_SHA256', 'digest')]), {
-      type: 'sha256-hash',
-    }),
-  ]),
-  kat('sha384-hash', 'SHA2-384 digest (testIndex 0)', [
-    k(mc('sha384_test#/testGroups/0/tests/0', NIST, 'positive', [x('CKM_SHA384', 'digest')]), {
-      type: 'sha384-hash',
-    }),
-  ]),
-  kat('sha512-hash', 'SHA2-512 digest (testIndex 0)', [
-    k(mc('sha512_test#/testGroups/0/tests/0', NIST, 'positive', [x('CKM_SHA512', 'digest')]), {
-      type: 'sha512-hash',
-    }),
-  ]),
-  kat('sha3-256-hash', 'SHA3-256 digest (testIndex 0)', [
-    k(mc('sha3_256_test#/testGroups/0/tests/0', NIST, 'positive', [x('CKM_SHA3_256', 'digest')]), {
-      type: 'sha3-256-hash',
-    }),
-  ]),
-  kat('sha3-512-hash', 'SHA3-512 digest (testIndex 0)', [
-    k(mc('sha3_512_test#/testGroups/0/tests/0', NIST, 'positive', [x('CKM_SHA3_512', 'digest')]), {
-      type: 'sha3-512-hash',
-    }),
-  ]),
+  kat(
+    'sha256-hash',
+    "SHA2-256 digest (testIndex 0-2: the file's three NIST cases)",
+    casesOf('sha256_test', '/testGroups/0/tests/').map((c) => {
+      const i = Number(c.pointer.split('/').pop())
+      return k(mc(c.caseId, NIST, 'positive', [x('CKM_SHA256', 'digest')]), {
+        type: 'sha256-hash',
+        ...(i ? { testIndex: i } : {}),
+      })
+    })
+  ),
+  kat(
+    'sha384-hash',
+    "SHA2-384 digest (testIndex 0-2: the file's three NIST cases)",
+    casesOf('sha384_test', '/testGroups/0/tests/').map((c) => {
+      const i = Number(c.pointer.split('/').pop())
+      return k(mc(c.caseId, NIST, 'positive', [x('CKM_SHA384', 'digest')]), {
+        type: 'sha384-hash',
+        ...(i ? { testIndex: i } : {}),
+      })
+    })
+  ),
+  kat(
+    'sha512-hash',
+    "SHA2-512 digest (testIndex 0-2: the file's three NIST cases)",
+    casesOf('sha512_test', '/testGroups/0/tests/').map((c) => {
+      const i = Number(c.pointer.split('/').pop())
+      return k(mc(c.caseId, NIST, 'positive', [x('CKM_SHA512', 'digest')]), {
+        type: 'sha512-hash',
+        ...(i ? { testIndex: i } : {}),
+      })
+    })
+  ),
+  kat(
+    'sha3-256-hash',
+    "SHA3-256 digest (testIndex 0-2: the file's three NIST cases)",
+    casesOf('sha3_256_test', '/testGroups/0/tests/').map((c) => {
+      const i = Number(c.pointer.split('/').pop())
+      return k(mc(c.caseId, NIST, 'positive', [x('CKM_SHA3_256', 'digest')]), {
+        type: 'sha3-256-hash',
+        ...(i ? { testIndex: i } : {}),
+      })
+    })
+  ),
+  kat(
+    'sha3-512-hash',
+    "SHA3-512 digest (testIndex 0-2: the file's three NIST cases)",
+    casesOf('sha3_512_test', '/testGroups/0/tests/').map((c) => {
+      const i = Number(c.pointer.split('/').pop())
+      return k(mc(c.caseId, NIST, 'positive', [x('CKM_SHA3_512', 'digest')]), {
+        type: 'sha3-512-hash',
+        ...(i ? { testIndex: i } : {}),
+      })
+    })
+  ),
   kat(
     'digest-multipart',
     'Multi-part digest (C_DigestUpdate) vs single-shot expected value',
