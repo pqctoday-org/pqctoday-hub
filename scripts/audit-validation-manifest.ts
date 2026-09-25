@@ -20,7 +20,11 @@
  *     the conflict is not declared (or a declared conflict no longer exists);
  *   - a copy of a vector (byte-equal file, or a case's expected value embedded
  *     elsewhere in src/ public/ e2e/ kat/) is not declared, or a declared copy
- *     has diverged from the source case.
+ *     has diverged from the source case;
+ *   - a CONTRIBUTED vector (any active file not in PRE_CONTRIBUTOR_FLOW_FILES)
+ *     lacks a reviewed license note, complete source identity for its kind,
+ *     operation/expectation/testType per case, or an approved, non-stale
+ *     two-person review record (reviews/*.review.json) — WS-I contributor flow.
  *
  * Usage:
  *   npx tsx scripts/audit-validation-manifest.ts                 # the gate
@@ -45,6 +49,12 @@ import type {
   ValidationCaseManifest,
   VectorFileEntry,
 } from '../src/data/validation/validationCaseManifest'
+import {
+  validateReviewRecord,
+  type ReviewItem,
+  type ReviewRecord,
+} from '../src/data/validation/reviewRecords'
+import { canonical } from './generate-release-evidence'
 
 export const MANIFEST_REL = 'src/data/validation/vector-manifest.json'
 export const SCHEMA_REL = 'src/data/validation/validationCaseManifest.schema.json'
@@ -68,6 +78,126 @@ const SKIP_DIRS = new Set([
 // not test vectors, and would make the gate take ~30 s instead of a few.
 const TEXT_EXT = /\.(json|ts|tsx|js|mjs|cjs|snap|xml|txt|html|yaml|yml)$/i
 const MAX_SCAN_BYTES = 64 * 1024 * 1024
+
+/**
+ * Vector files registered before the contributor flow (WS-I, 2026-09-25) —
+ * the 40 files on the integration branch at 1c35f842f. They predate the
+ * two-person review (plan J-5) and are listed in the release evidence's
+ * review items. EVERY OTHER active file is a contribution and must carry, in
+ * the manifest, a reviewed license/redistribution note, complete source
+ * identity for its kind, an operation and expectation per case, and an
+ * approved, non-stale two-person review record
+ * (src/data/validation/reviews/*.review.json, item vector-source:<id>).
+ * Adding an id here is a reviewed decision, never a way around the rule.
+ */
+export const PRE_CONTRIBUTOR_FLOW_FILES: ReadonlySet<string> = new Set([
+  'aescbc_test',
+  'aescmac_test',
+  'aesctr_test',
+  'aesgcm_test',
+  'aeskw_test',
+  'composite-sigs-jose-kat',
+  'cose-dilithium-11-jose-kat',
+  'ecdsa_p384_test',
+  'ecdsa_p521_test',
+  'ecdsa_test',
+  'eddsa_ed448_test',
+  'eddsa_test',
+  'hkdf_test',
+  'hmac_sha384_test',
+  'hmac_sha512_test',
+  'hmac_test',
+  'jose-pqc-kem-jwe-kat',
+  'kmac_test',
+  'mldsa_extended_test',
+  'mldsa_keygen_test',
+  'mldsa_siggen_ctxmsg_test',
+  'mldsa_siggen_det_test',
+  'mldsa_siggen_prehash_test',
+  'mldsa_sigver_test',
+  'mldsa_test',
+  'mlkem_encapdecap_val_test',
+  'mlkem_keygen_test',
+  'mlkem_test',
+  'pbkdf2_test',
+  'rsa_oaep_test',
+  'rsapss_test',
+  'sha256_test',
+  'sha384_test',
+  'sha3_256_test',
+  'sha3_512_test',
+  'sha512_test',
+  'slhdsa_ctx_test',
+  'slhdsa_siggen_det_test',
+  'slhdsa_sigver_sha2_test',
+  'slhdsa_sigver_shake_test',
+])
+
+export const REVIEWS_REL = 'src/data/validation/reviews'
+
+/** What a contributed (non-baseline) vector record is missing, one message per gap. */
+export function contributionProblems(
+  e: VectorFileEntry,
+  reviews: ReadonlyArray<{ file: string; record: unknown }>
+): { code: string; message: string }[] {
+  const out: { code: string; message: string }[] = []
+  const note = e.license?.note ?? ''
+  if (e.license?.reviewed !== true || /\bTODO\b/.test(note) || note.trim().length < 20)
+    out.push({
+      code: 'CONTRIB_LICENSE',
+      message:
+        'a contributed vector needs a reviewed license/redistribution note (license.reviewed: true)',
+    })
+  const src = e.source
+  const missing: string[] = []
+  if (src?.kind === 'nist-acvp-server') {
+    if (!src.nist) missing.push('source.nist (repository, commit, upstream path, upstream SHA-256)')
+  } else if (src?.kind === 'published-document') {
+    if (!src.url) missing.push('source.url')
+    if (!src.revision) missing.push('source.revision')
+    if (!src.verification?.evidence?.some((d) => d.sha256))
+      missing.push('source.verification.evidence[].sha256 (hash of the reviewed document)')
+  } else if (src?.kind === 'oracle-generated') {
+    if (!src.oracle?.name || !src.oracle?.version) missing.push('source.oracle name AND version')
+    if (!src.generator) missing.push('source.generator (script/command, in the repo)')
+  } else if (src?.kind === 'self-pinned-snapshot') {
+    if (!src.generator) missing.push('source.generator')
+  } else missing.push('source.kind')
+  if (missing.length)
+    out.push({
+      code: 'CONTRIB_PROVENANCE',
+      message: `a contributed vector needs ${missing.join(', ')}`,
+    })
+  const vague = e.cases.filter((c) => !c.operation || !c.expectation || !c.testType)
+  if (vague.length)
+    out.push({
+      code: 'CONTRIB_EXPECTATION',
+      message: `every case needs operation, expectation and testType (missing on ${vague.map((c) => c.caseId).join(', ')})`,
+    })
+  const item: ReviewItem = {
+    id: `vector-source:${e.id}`,
+    kind: 'vector-source',
+    title: e.path,
+    requirement: 'two-person review',
+    subjectSha256: createHash('sha256').update(canonical(e)).digest('hex'),
+  }
+  const items = new Map([[item.id, item]])
+  const recs = reviews.filter((r) => (r.record as Partial<ReviewRecord>)?.item === item.id)
+  const ok = recs.some(
+    (r) =>
+      validateReviewRecord(r.record, items).length === 0 &&
+      (r.record as ReviewRecord).decision === 'approved' &&
+      (r.record as ReviewRecord).subjectSha256 === item.subjectSha256
+  )
+  if (!ok)
+    out.push({
+      code: 'CONTRIB_REVIEW',
+      message: recs.length
+        ? `the review record for ${item.id} is invalid, not approved, or stale (subject SHA-256 now ${item.subjectSha256})`
+        : `no two-person review record for ${item.id} in ${REVIEWS_REL} (source verification + implementation review by two distinct named people)`,
+    })
+  return out
+}
 
 /** Case fields whose values identify a case when found elsewhere (expected outputs + public keys). */
 const FINGERPRINT_FIELDS = new Set([
@@ -585,6 +715,29 @@ export function auditManifest(opts: AuditOptions): {
           entry?.path
         )
     }
+  }
+
+  // 9. contributor flow (WS-I): a vector added after the baseline is trusted
+  //    only with complete provenance, license, expectations and a two-person review.
+  const reviewsDir = path.join(root, REVIEWS_REL)
+  const reviews = fs.existsSync(reviewsDir)
+    ? fs
+        .readdirSync(reviewsDir)
+        .filter((f) => f.endsWith('.review.json'))
+        .map((f) => {
+          try {
+            return {
+              file: f,
+              record: JSON.parse(fs.readFileSync(path.join(reviewsDir, f), 'utf8')),
+            }
+          } catch {
+            return { file: f, record: null }
+          }
+        })
+    : []
+  for (const e of manifest.files) {
+    if (e.status !== 'active' || PRE_CONTRIBUTOR_FLOW_FILES.has(e.id)) continue
+    for (const p of contributionProblems(e, reviews)) err(p.code, `${e.id}: ${p.message}`, e.path)
   }
 
   return { findings, manifest, loaded }
