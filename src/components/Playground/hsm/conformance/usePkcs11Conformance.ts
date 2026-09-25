@@ -41,6 +41,12 @@ import {
   provisionCertFixture,
 } from '@/wasm/pkcs11ConformanceRunner/profileFixtures'
 import { runMechanismCoverageProbes } from '@/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
+import {
+  captureMechanismInventory,
+  compareToGenerated,
+  type EngineArtifactFile,
+  type GeneratedMechanismInventoryFile,
+} from '@/wasm/softhsm/mechanismInventory'
 import blM132Xml from '@/data/pkcs11-profiles/test-cases/BL-M-1-32.xml?raw'
 import extM132Xml from '@/data/pkcs11-profiles/test-cases/EXT-M-1-32.xml?raw'
 import authM132Xml from '@/data/pkcs11-profiles/test-cases/AUTH-M-1-32.xml?raw'
@@ -56,6 +62,85 @@ export interface RunnerRow {
   citation: string
   status: RowStatus
   detail: string
+  /** SHA-256 of the engine's advertised mechanism inventory captured at the
+   *  start of this run (WS-G G-1) — the build-specific denominator this row
+   *  was produced against. Absent when the capture failed. */
+  inventorySha256?: string
+}
+
+/**
+ * What an engine advertised (C_GetMechanismList + C_GetMechanismInfo) when a
+ * conformance run started, and whether that matches the committed build
+ * record in src/data/validation/mechanism-inventory.generated.json. Artifact
+ * identity is only reported when it does match — otherwise the running engine
+ * is not the recorded build and its artifact is unknown.
+ */
+export interface EngineInventorySummary {
+  engine: string
+  mechanismCount: number | null
+  inventorySha256: string | null
+  buildRecord:
+    'matches-generated' | 'differs-from-generated' | 'no-generated-record' | 'capture-failed'
+  artifacts: EngineArtifactFile[] | null
+  sourceCommit: string | null
+  error?: string
+}
+
+const loadGeneratedInventory = async (): Promise<GeneratedMechanismInventoryFile | null> => {
+  try {
+    const mod = await import('@/data/validation/mechanism-inventory.generated.json')
+    return mod.default as unknown as GeneratedMechanismInventoryFile
+  } catch {
+    return null
+  }
+}
+
+/** Capture one engine's inventory; never throws (a failure is recorded). */
+const summarizeInventory = async (
+  M: SoftHSMModule,
+  slotId: number,
+  engineName: string,
+  generated: GeneratedMechanismInventoryFile | null
+): Promise<EngineInventorySummary> => {
+  try {
+    const inv = await captureMechanismInventory(M, slotId)
+    const record = generated?.engines[engineName === 'C++' ? 'cpp' : 'rust']
+    const buildRecord = compareToGenerated(inv, record)
+    const matches = buildRecord === 'matches-generated'
+    return {
+      engine: engineName,
+      mechanismCount: inv.mechanismCount,
+      inventorySha256: inv.inventorySha256,
+      buildRecord,
+      artifacts: matches ? (record?.identity.artifacts ?? null) : null,
+      sourceCommit: matches ? (record?.identity.sourceCommit ?? null) : null,
+    }
+  } catch (e) {
+    return {
+      engine: engineName,
+      mechanismCount: null,
+      inventorySha256: null,
+      buildRecord: 'capture-failed',
+      artifacts: null,
+      sourceCommit: null,
+      error: e instanceof Error ? e.message : String(e),
+    }
+  }
+}
+
+const describeInventory = (s: EngineInventorySummary): string => {
+  if (s.buildRecord === 'capture-failed') {
+    return `Mechanism inventory (${s.engine}): capture failed — ${s.error ?? 'unknown error'}`
+  }
+  const head = `Mechanism inventory (${s.engine}): ${s.mechanismCount} advertised, sha256 ${s.inventorySha256}`
+  if (s.buildRecord === 'matches-generated') {
+    const files = (s.artifacts ?? []).map((a) => `${a.path} sha256 ${a.sha256}`).join('; ')
+    return `${head} — matches the recorded build (${files}; hsm ${s.sourceCommit ?? 'unrecorded'})`
+  }
+  if (s.buildRecord === 'differs-from-generated') {
+    return `${head} — DIFFERS from the recorded build; artifact identity unknown`
+  }
+  return `${head} — no recorded build to compare against`
 }
 
 export interface TierACase {
@@ -159,6 +244,7 @@ export function usePkcs11Conformance() {
   const [ran, setRan] = useState(false)
   const [selection, setSelection] = useState<ConformanceSelection>(FULL_SELECTION)
   const [claims, setClaims] = useState<Record<string, ProfileClaim[]>>({})
+  const [inventories, setInventories] = useState<EngineInventorySummary[]>([])
   const loadingRef = useRef(false)
 
   const toggleCase = useCallback((id: string) => {
@@ -225,6 +311,8 @@ export function usePkcs11Conformance() {
 
       const newRows: RunnerRow[] = []
       const newClaims: Record<string, ProfileClaim[]> = {}
+      const newInventories: EngineInventorySummary[] = []
+      const generatedInventory = await loadGeneratedInventory()
 
       for (const engine of engines) {
         const { M, name: eName } = engine
@@ -236,6 +324,10 @@ export function usePkcs11Conformance() {
           }
           hsm_initialize(M)
           const slot0 = hsm_getFirstSlot(M)
+          // WS-G G-1: the build-specific denominator for every row below.
+          const inventory = await summarizeInventory(M, slot0, eName, generatedInventory)
+          newInventories.push(inventory)
+          const rowsBefore = newRows.length
           const initSlot = hsm_initToken(M, slot0, '12345678', 'SoftHSM3')
           const hSession = hsm_openUserSession(M, initSlot, '12345678', 'user1234')
 
@@ -355,6 +447,12 @@ export function usePkcs11Conformance() {
             hsm_finalize(M, mechCovSession)
           }
 
+          if (inventory.inventorySha256) {
+            for (let i = rowsBefore; i < newRows.length; i++) {
+              newRows[i] = { ...newRows[i], inventorySha256: inventory.inventorySha256 }
+            }
+          }
+
           // Restore context state so the Operate panels (which read
           // hSessionRef/slotRef directly) keep working after a run.
           hsm_initialize(M)
@@ -376,6 +474,7 @@ export function usePkcs11Conformance() {
       }
 
       setClaims(newClaims)
+      setInventories(newInventories)
       setRows(newRows)
       setLoading(false)
       loadingRef.current = false
@@ -398,6 +497,7 @@ export function usePkcs11Conformance() {
       '',
       `Result: ${pass} pass, ${fail} fail, ${notClaimed} not-claimed (of ${rows.length} rows)`
     )
+    if (inventories.length > 0) lines.push('', ...inventories.map(describeInventory))
     return lines.join('\n')
   }
 
@@ -411,6 +511,7 @@ export function usePkcs11Conformance() {
     setTierB,
     setCoverage,
     claims,
+    inventories,
     run,
     runAll,
     pass,
