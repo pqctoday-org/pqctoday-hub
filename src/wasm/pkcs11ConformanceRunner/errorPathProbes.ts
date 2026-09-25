@@ -789,7 +789,7 @@ function singleCall(
   param: ReturnType<typeof paramFor>,
   pre: Uint8Array,
   _data: Uint8Array,
-  opts: { token?: boolean; target?: number; outLen?: number | null } = {}
+  opts: { token?: boolean; target?: number; outLen?: number | null; nullHandlePtr?: boolean } = {}
 ): OpResult {
   void _data
   const m = mechParam(x, param)
@@ -847,7 +847,7 @@ function singleCall(
     }
     case 'decapsulate': {
       const t = x.a.template(secretTemplate(x, token, false))
-      const hk = x.a.ulong()
+      const hk = opts.nullHandlePtr ? 0 : x.a.ulong()
       return {
         rv: f(x.h, m, key, t.ptr, t.n, x.a.bytes(pre), pre.length, hk),
         step: spec.call,
@@ -1022,6 +1022,12 @@ function runKind(x: Sub, kindId: ErrorPathCase['kind']): string {
         )
       }
       return `1-byte mechanism parameter → ${rvName(want)}`
+    }
+    case 'null-handle-pointer': {
+      const pre = prerequisite(x)
+      const r = singleCall(x, key(), paramFor(x), pre, dataFor(x), { nullHandlePtr: true })
+      expectRv(r.rv, want, `${spec.call} with phKey = NULL_PTR`)
+      return `phKey = NULL_PTR → ${rvName(want)}`
     }
     case 'wrong-function': {
       const a = x.a

@@ -36,6 +36,7 @@ export const ERROR_PATH_SPEC =
 
 export const RV = {
   CKR_OK: 0x0,
+  CKR_ARGUMENTS_BAD: 0x7,
   CKR_KEY_HANDLE_INVALID: 0x60,
   CKR_KEY_TYPE_INCONSISTENT: 0x63,
   CKR_KEY_FUNCTION_NOT_PERMITTED: 0x68,
@@ -334,6 +335,7 @@ export const PROBE_KIND_IDS = [
   'key-handle-invalid',
   'buffer-too-small',
   'mechanism-param-invalid',
+  'null-handle-pointer',
   'wrong-function',
   'template-inconsistent',
 ] as const
@@ -572,6 +574,21 @@ export const PROBE_KINDS: readonly ProbeKind[] = [
       `valid key; the mechanism's required parameter replaced by a single byte (ulParameterLen = 1); ${s(op).init ?? s(op).call} → CKR_MECHANISM_PARAM_INVALID`,
     citation: (op) =>
       `PKCS #11 v3.2 ${s(op).initSection ?? s(op).callSection} (return values), §5.1.6 CKR_MECHANISM_PARAM_INVALID ("Invalid parameters were supplied to the mechanism"); the mechanism's section in chapter 6 defines the parameter structure`,
+    whyNotCovered: WHY_PARAM,
+  },
+  {
+    id: 'null-handle-pointer',
+    probeClass: 'invalid-parameter',
+    polarity: 'state-error',
+    // C_DecapsulateKey only: its key-handle / key-type codes are not specified
+    // unambiguously (see key-handle-invalid), so this is its argument probe.
+    applies: (op) => op === 'decapsulate',
+    expected: () => 'CKR_ARGUMENTS_BAD',
+    title: () => 'C_DecapsulateKey with phKey = NULL_PTR → CKR_ARGUMENTS_BAD',
+    steps: () =>
+      'valid private key and ciphertext (from C_EncapsulateKey); C_DecapsulateKey with phKey = NULL_PTR → CKR_ARGUMENTS_BAD',
+    citation: () =>
+      'PKCS #11 v3.2 §5.18.9 (phKey "points to the location that receives the handle"; return values), §5.1.6 CKR_ARGUMENTS_BAD ("the arguments supplied to the Cryptoki function were in some way not appropriate")',
     whyNotCovered: WHY_PARAM,
   },
   {
