@@ -247,7 +247,7 @@ interface WaiverFile {
 }
 
 interface NativeFile {
-  hsm: { pinnedCommit: string; pinnedCommitDate: string }
+  hsm: { pinnedCommit: string; pinnedCommitDate: string; pinnedCommitPublished: boolean }
   suites: Array<{
     id: string
     name: string
@@ -277,6 +277,7 @@ interface NativeFile {
         bundleHsmCommit: string
         engineCommitEqualsBundleCommit: boolean
         commitsFromEngineToBundle: number
+        commitsFromBundleToEngine: number
       }
     }
   }>
@@ -450,6 +451,7 @@ function buildNative(n: NativeFile) {
     note: 'Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser.',
     hsmPinnedCommit: n.hsm.pinnedCommit,
     hsmPinnedCommitDate: n.hsm.pinnedCommitDate,
+    hsmPinnedCommitPublished: n.hsm.pinnedCommitPublished,
     suites: n.suites.map((s) => ({
       id: s.id,
       name: s.name,
@@ -474,6 +476,7 @@ function buildNative(n: NativeFile) {
             wasmBundleHsmCommit: s.report.wasm.bundleHsmCommit,
             engineCommitEqualsWasmBundleCommit: s.report.wasm.engineCommitEqualsBundleCommit,
             commitsFromEngineToWasmBundle: s.report.wasm.commitsFromEngineToBundle,
+            commitsFromWasmBundleToEngine: s.report.wasm.commitsFromBundleToEngine,
           }
         : null,
     })),
@@ -1178,10 +1181,12 @@ export function renderMarkdown(r: ReleaseEvidence): string {
 
   p('## Native engine conformance suites (imported, not executed by the Hub)')
   p()
-  p(`${nat.note} Pinned hsm commit \`${short(nat.hsmPinnedCommit)}\` (${nat.hsmPinnedCommitDate}).`)
+  p(
+    `${nat.note} Pinned hsm commit \`${short(nat.hsmPinnedCommit)}\` (${nat.hsmPinnedCommitDate})${nat.hsmPinnedCommitPublished ? '' : ' — **an unpushed local hsm commit, on no pqctoday-hsm remote: not independently verifiable until pushed**'}.`
+  )
   p()
   p(
-    '| Suite | Engine | Pass | Fail | Skip | Total | Engine commit | Commits behind pinned hsm main | Engine = WASM bundle commit? |'
+    '| Suite | Engine | Pass | Fail | Skip | Total | Engine commit | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit? |'
   )
   p('| --- | --- | ---: | ---: | ---: | ---: | --- | ---: | --- |')
   for (const s of nat.suites) {
@@ -1191,7 +1196,7 @@ export function renderMarkdown(r: ReleaseEvidence): string {
       continue
     }
     p(
-      `| ${s.name} | ${s.engine} | ${fmt(rp.counts.pass)} | ${fmt(rp.counts.fail)} | ${rp.counts.skip === null ? 'not reported' : fmt(rp.counts.skip)} | ${fmt(rp.counts.total)} | \`${short(rp.engineCommit)}\` (${rp.engineCommitDate}) | ${fmt(rp.commitsBehindPinnedHsmMain)} | ${rp.engineCommitEqualsWasmBundleCommit ? 'yes' : `no — ${fmt(rp.commitsFromEngineToWasmBundle)} commits to \`${short(rp.wasmBundleHsmCommit)}\``} |`
+      `| ${s.name} | ${s.engine} | ${fmt(rp.counts.pass)} | ${fmt(rp.counts.fail)} | ${rp.counts.skip === null ? 'not reported' : fmt(rp.counts.skip)} | ${fmt(rp.counts.total)} | \`${short(rp.engineCommit)}\` (${rp.engineCommitDate}) | ${fmt(rp.commitsBehindPinnedHsmMain)} | ${rp.engineCommitEqualsWasmBundleCommit ? 'yes' : `no — bundle \`${short(rp.wasmBundleHsmCommit)}\`: ${fmt(rp.commitsFromEngineToWasmBundle)} commit(s) ahead of the engine commit, ${fmt(rp.commitsFromWasmBundleToEngine)} behind it`} |`
     )
   }
   p()

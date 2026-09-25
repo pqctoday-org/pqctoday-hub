@@ -4,8 +4,8 @@
 // v3.2 conformance suites, shown from src/data/validation/
 // native-conformance.generated.json (scripts/import-native-conformance.ts),
 // never from hand-written numbers. Every count is shown with the engine
-// commit and report date it belongs to, how far that commit is behind hsm
-// main, whether it is the commit this page's own WASM was built from, and the
+// commit and report date it belongs to, how far that commit is behind the
+// pinned hsm commit, whether it is the commit this page's own WASM was built from, and the
 // statement that none of it ran in this browser.
 import { useEffect, useState } from 'react'
 import { ListChecks } from 'lucide-react'
@@ -62,8 +62,8 @@ const SuiteBlock = ({ s }: { s: NativeSuiteRecord }) => {
           </p>
           <p>
             {r.staleness.engineCommitOnPinnedMainHistory
-              ? `${r.staleness.commitsFromEngineToPinnedMain} commit(s) behind hsm main (at the pin above).`
-              : `Not on hsm main's history (a branch build); ${r.staleness.commitsFromEngineToPinnedMain} main commit(s) at the pin are not in it.`}
+              ? `${r.staleness.commitsFromEngineToPinnedMain} engine commit(s) behind the pinned hsm commit above (report-only commits not counted).`
+              : `Not in the pinned hsm commit's history (a branch build); ${r.staleness.commitsFromEngineToPinnedMain} commit(s) at the pin are not in it.`}
           </p>
           {r.wasm && (
             <p>
@@ -97,8 +97,12 @@ export const NativeConformanceEvidenceView = ({ data }: { data: NativeConformanc
     <p>
       Imported from the reports pqctoday-hsm committed, read at hsm{' '}
       <span className="font-mono">{shortCommit(data.hsm.pinnedCommit)}</span> (
-      {data.hsm.pinnedCommitDate}). They are the engines&apos; own results for the commit named
-      under each suite, not results for this browser session.
+      {data.hsm.pinnedCommitDate}
+      {data.hsm.pinnedCommitPublished
+        ? ''
+        : '; an unpushed local hsm commit, not yet on any pqctoday-hsm remote'}
+      ). They are the engines&apos; own results for the commit named under each suite, not results
+      for this browser session.
     </p>
     {data.suites.map((s) => (
       <SuiteBlock key={s.id} s={s} />
