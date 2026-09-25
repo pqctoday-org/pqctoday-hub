@@ -91,7 +91,7 @@ developer,pilot,cta_primary_href,,/playground/hybrid-encrypt,active,,,2026-08-02
 developer,pilot,cta_secondary_label,,Grade your crypto agility,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
 developer,pilot,cta_secondary_href,,/business/tools/crypto-api-refactor-audit,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 developer,pilot,proof_chip,0,Real PKCS#11 + SoftHSMv3 in your browser,active,,,2026-09-03,2026-09-03: was 'Real liboqs + SoftHSMv3 in your browser' — HybridEncryptionDemo.tsx's ML-KEM keygen/encapsulation/decapsulation all route through hsm_* PKCS#11 calls (SoftHSMv3); no liboqs import anywhere in the workshop.
-developer,pilot,proof_chip,1,Verified against NIST ACVP vectors,active,,,2026-08-02,
+developer,pilot,proof_chip,1,"Tested against public NIST ACVP-Server vectors, not asserted",active,,,2026-09-25,"2026-09-25: was 'Verified against NIST ACVP vectors' -- overclaimed 'verified' for a locally-run comparison and named ACVP (the protocol) as if it were the issuing/certifying source. Repointed to the house style established 2026-09-03 on the researcher board ('X, not asserted') and to the correct evidence class: these are public NIST ACVP-Server reference-sample vectors, not an ACVTS-issued or certified result."
 developer,pilot,proof_chip,2,"No signup, no key required",active,,,2026-08-02,
 developer,pilot,side_card_title,,What this breaks in your code,active,,,2026-08-02,
 developer,pilot,side_card_tone,,warn,active,,,2026-08-02,
@@ -546,7 +546,7 @@ researcher,threatmodel,proof_chip,0,Every source dated and tiered,active,,,2026-
 researcher,threatmodel,proof_chip,1,Authoritative / Core / Supporting / Contextual source tiers,active,,,2026-09-03,2026-09-03: 'High/Moderate/Low' is not this site's vocabulary — trustedSourcesData.ts's real tiers are Authoritative/Core/Supporting/Contextual (same fix already applied to executive/evidence).
 researcher,threatmodel,proof_chip,2,"{library_active_count} documents, trust-tiered",active,,,2026-09-03,"2026-09-03: see executive/evidence's proof_chip,0 note."
 researcher,threatmodel,proof_chip,3,Drift guards fail the build on silent data change,active,,,2026-08-02,
-researcher,threatmodel,side_card_title,,The CRQC consensus,active,,,2026-08-02,
+researcher,threatmodel,side_card_title,,The CRQC expert forecast,active,,,2026-09-24,"2026-09-24: ruling R5 (cx-20260924T223958Z-5e54ccb6) — one CRQC window everywhere, from arrival forecasts only (GRI 2025 survey); ""consensus"" wording dropped."
 researcher,threatmodel,side_card_tone,,bad,active,,,2026-08-02,
 researcher,threatmodel,side_card_provenance,,illustrative,active,,,2026-09-03,"2026-09-03: was 'sourced' — rows 1-2 (EXEC_EXPOSURE.secrecyYears/migrationYears) are the executive board's own illustrative planning assumptions, not data the researcher board sourced; only row 0 (CRQC consensus) is genuinely sourced."
 researcher,threatmodel,side_card_row_label,0,Consensus estimate,active,,,2026-08-02,
@@ -652,7 +652,7 @@ executive,deadlines,side_card_tone,,bad,active,,,2026-08-09,
 executive,deadlines,side_card_provenance,,sourced,active,,,2026-08-09,
 executive,deadlines,side_card_row_label,0,"CNSA 2.0 exclusive use (web, cloud, OS)",active,,,2026-09-03,"2026-09-03: relabelled — verified against NSA's CNSA 2.0 Suite table (PP-22-1338, Sept 2022, fetched 2026-09-03): 2033 is the exclusive-use year for web browsers/servers/cloud services and operating systems specifically, not the 'full transition' the old label claimed. A new row below carries the real full-NSS-transition year (2035, NSM-10)."
 executive,deadlines,side_card_row_value,0,{cnsa2_year:networkingExclusive},active,,,2026-09-03,"2026-09-03: literal '2033' tokenised against CNSA_2_0.networkingExclusive (regulatoryTimelines.ts), verified against the source PDF."
-executive,deadlines,side_card_row_label,1,CRQC consensus,active,,,2026-08-09,
+executive,deadlines,side_card_row_label,1,CRQC expert forecast,active,,,2026-09-24,"2026-09-24: ruling R5 (cx-20260924T223958Z-5e54ccb6) — one CRQC window everywhere, from arrival forecasts only (GRI 2025 survey); ""consensus"" wording dropped."
 executive,deadlines,side_card_row_value,1,{crqc_estimate_row},active,,,2026-08-23,"Tokenised 2026-08-23: caught by audit-role-board-literals.ts's backfill run as a raw literal '2033 (2030-2036)' duplicating the exact value {exec_crqc_estimate_row} and {crqc_estimate_row} already compute from getCrqcConsensus() on three other boards. Currently correct, but exactly the un-sourced-duplicate shape that let '~2032' drift on curious/break for three weeks unnoticed — tokenised so it can't happen a third time."
 executive,deadlines,side_card_row_label,2,Your migration takes,active,,,2026-08-09,
 executive,deadlines,side_card_row_value,2,{exec_migration_row},active,,,2026-09-03,"2026-09-03: literal '5 yrs' tokenised against EXEC_MIGRATION_ROW, the same illustrative-assumption export the executive/mandate Mosca card already uses."
@@ -1164,7 +1164,7 @@ curious,howbad,side_card_provenance,,sourced,active,,,2026-08-09,"Reclassified 2
 curious,howbad,side_card_row_label,0,The maths breaking,active,,,2026-08-09,
 curious,howbad,side_card_row_value,0,settled,active,,,2026-08-09,
 curious,howbad,side_card_row_label,1,The year it breaks,active,,,2026-08-09,
-curious,howbad,side_card_row_value,1,"a range, 2030–2036",active,,,2026-08-09,
+curious,howbad,side_card_row_value,1,{crqc_estimate_row},active,,,2026-09-24,"2026-09-24: ruling R5 (cx-20260924T223958Z-5e54ccb6) — one CRQC window everywhere, from arrival forecasts only (GRI 2025 survey); ""consensus"" wording dropped."
 curious,howbad,side_card_row_label,2,The replacement,active,,,2026-08-09,
 curious,howbad,side_card_row_value,2,published and final,active,,,2026-08-09,
 curious,howbad,side_card_punchline,,Uncertain timing is not the same as uncertain outcome.,active,,,2026-08-09,
