@@ -47,7 +47,7 @@ import shutil
 import sys
 
 RUNNER_NAME = "pqctoday acvp-native (Python/ctypes)"
-RUNNER_VERSION = "2.0.0"
+RUNNER_VERSION = "2.1.0"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.dont_write_bytecode = True  # never leave __pycache__ in a (possibly shared) checkout
@@ -117,14 +117,67 @@ def canonical(o):
     return json.dumps(o, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
 
 
+IS_DARWIN = platform.system() == "Darwin"
+
+
+def _dyld_images():
+    """Every image dyld has loaded into this process (macOS; the /proc/self/maps analogue)."""
+    libsys = ctypes.CDLL("/usr/lib/libSystem.B.dylib")
+    libsys._dyld_image_count.restype = ctypes.c_uint32
+    libsys._dyld_get_image_name.restype = ctypes.c_char_p
+    libsys._dyld_get_image_name.argtypes = [ctypes.c_uint32]
+    names = (libsys._dyld_get_image_name(i) for i in range(libsys._dyld_image_count()))
+    return [n.decode("utf-8", "replace") for n in names if n]
+
+
 def mapped_libcrypto():
-    """Distinct libcrypto files mapped into this process (Linux /proc only)."""
+    """Distinct libcrypto files mapped into this process (Linux /proc/self/maps; macOS dyld image list)."""
+    if IS_DARWIN:
+        try:
+            paths = {os.path.realpath(p) for p in _dyld_images() if "libcrypto" in os.path.basename(p)}
+            return sorted(paths)
+        except (OSError, AttributeError):
+            return None
     try:
         with open("/proc/self/maps", encoding="utf-8", errors="replace") as f:
             paths = {line.split()[-1] for line in f if "libcrypto" in line and "/" in line}
         return sorted(p for p in paths if p.startswith("/"))
     except OSError:
         return None
+
+
+def darwin_sysctl(name, as_int=False):
+    """sysctlbyname(name) as str, or as int when as_int; None if absent (macOS only)."""
+    try:
+        libc = ctypes.CDLL("/usr/lib/libSystem.B.dylib")
+        size = ctypes.c_size_t(0)
+        if libc.sysctlbyname(name.encode(), None, ctypes.byref(size), None, ctypes.c_size_t(0)) != 0:
+            return None
+        buf = ctypes.create_string_buffer(max(size.value, 1))
+        if libc.sysctlbyname(name.encode(), buf, ctypes.byref(size), None, ctypes.c_size_t(0)) != 0:
+            return None
+        raw = buf.raw[: size.value]
+        if as_int:
+            return int.from_bytes(raw, sys.byteorder)
+        return raw.rstrip(b"\x00").decode("utf-8", "replace")
+    except (OSError, AttributeError):
+        return None
+
+
+def darwin_cpu_features():
+    """Names of the hw.optional.arm.FEAT_* (or hw.optional.*) flags that read 1 (macOS)."""
+    import subprocess
+
+    try:
+        out = subprocess.run(["/usr/sbin/sysctl", "hw.optional"], capture_output=True, text=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    feats = []
+    for line in out.splitlines():
+        k, _, v = line.partition(":")
+        if v.strip() == "1":
+            feats.append(k.strip().rsplit(".", 1)[-1])
+    return " ".join(feats) or None
 
 
 class PkcsError(Exception):
@@ -643,6 +696,15 @@ def cpu_info():
 
 
 def detect_emulation(machine, vendor):
+    if IS_DARWIN:
+        # sysctl.proc_translated: 1 = this process runs under Rosetta 2, 0 = native; absent on Intel Macs.
+        t = darwin_sysctl("sysctl.proc_translated", as_int=True)
+        emulated = t == 1
+        mechanism = "Rosetta 2 x86-64 binary translation (macOS)" if emulated else None
+        return emulated, mechanism, "sysctl.proc_translated: %s; hw.machine: %s" % (
+            "absent" if t is None else t,
+            darwin_sysctl("hw.machine"),
+        )
     checks = []
     rosetta = False
     try:
@@ -657,20 +719,33 @@ def detect_emulation(machine, vendor):
     return emulated, mechanism, "; ".join(checks)
 
 
-def openssl_runtime(module_path):
-    """OpenSSL actually mapped for the module (after load): (linked, version, cpuinfo, source)."""
+def openssl_runtime(module_path, pre=None):
+    """OpenSSL actually mapped for the module (after load): (linked, version, cpuinfo, source).
+
+    Linux: every libcrypto in /proc/self/maps (none may be mapped before the module, see the
+    import-order note). macOS: a framework Python maps the system LibreSSL (/usr/lib/libcrypto.*.dylib)
+    at start-up; Mach-O two-level namespace binds the module only to the install names it lists, so
+    the module's libcrypto is the one NEWLY mapped by loading it (after minus pre).
+    """
     maps = mapped_libcrypto()
+    where = "dyld image list" if IS_DARWIN else "/proc/self/maps"
     if maps is None:
-        return None, None, None, "not determinable: /proc/self/maps unavailable on this OS"
+        return None, None, None, "not determinable: %s unavailable on this OS" % where
+    what = "mapped into the runner process"
+    if IS_DARWIN and pre:
+        maps = [m for m in maps if m not in pre]
+        what = "newly mapped by loading the module (pre-mapped by the interpreter, not bound by it: %s)" % ", ".join(pre)
     if not maps:
-        return False, None, None, "no libcrypto mapped into the runner process after loading %s (/proc/self/maps)" % module_path
+        return False, None, None, "no libcrypto %s after loading %s (%s)" % (what, module_path, where)
     if len(maps) > 1:
-        return None, None, None, "ambiguous: several libcrypto files mapped %s" % maps
+        return None, None, None, "ambiguous: several libcrypto files %s: %s" % (what, maps)
     lib = ctypes.CDLL(maps[0])
     lib.OpenSSL_version.restype = ctypes.c_char_p
     lib.OpenSSL_version.argtypes = [ctypes.c_int]
     ver = lib.OpenSSL_version(0).decode()
     cpu = lib.OpenSSL_version(9).decode()  # OPENSSL_CPU_INFO
+    if IS_DARWIN:
+        return True, ver, cpu, "OpenSSL_version(OPENSSL_VERSION) of %s, the only libcrypto %s" % (maps[0], what)
     return True, ver, cpu, "OpenSSL_version(OPENSSL_VERSION) of %s, the only libcrypto mapped after loading the module" % maps[0]
 
 
@@ -680,9 +755,17 @@ def build_environment(args, module_path, module_sha, manifest_sha, manifest, lib
     osr = read_os_release()
     machine = platform.machine()
     model, features, vendor = cpu_info()
-    if platform.system() == "Darwin":
-        model = model or platform.processor()
+    if IS_DARWIN:
+        model = model or darwin_sysctl("machdep.cpu.brand_string") or platform.processor()
+        features = features or darwin_cpu_features()
     emulated, mechanism, detection = detect_emulation(machine, vendor)
+    mac_ver = platform.mac_ver()[0] if IS_DARWIN else ""
+    if IS_DARWIN:
+        os_name = "macOS %s (build %s)" % (mac_ver, darwin_sysctl("kern.osversion"))
+        libc = "libSystem.B.dylib (macOS %s)" % mac_ver
+    else:
+        os_name = osr.get("PRETTY_NAME")
+        libc = " ".join(platform.libc_ver()).strip() or None
     linked, over, ocpu, osrc = ossl
     bi = build_info or {}
     eng = bi.get("engine", {})
@@ -705,8 +788,8 @@ def build_environment(args, module_path, module_sha, manifest_sha, manifest, lib
         "recordedAt": now_iso(),
         "target": {"id": args.target_id, "label": args.target_label, "class": args.target_class},
         "os": {
-            "name": osr.get("PRETTY_NAME") or ("%s %s" % (platform.system(), platform.mac_ver()[0]) if platform.system() == "Darwin" else None),
-            "version": osr.get("VERSION_ID") or (platform.mac_ver()[0] or None),
+            "name": os_name,
+            "version": osr.get("VERSION_ID") or mac_ver or None,
             "kernel": "%s %s" % (platform.system(), platform.release()),
             "image": {"name": args.image_name, "id": args.image_id},
         },
@@ -728,7 +811,7 @@ def build_environment(args, module_path, module_sha, manifest_sha, manifest, lib
         "dependencies": {
             "openssl": {"linked": linked, "version": over, "source": osrc},
             "cryptoBackend": {"name": crypto.get("name"), "version": crypto.get("version")},
-            "runtime": [{"name": "python", "version": platform.python_version()}, {"name": "libc", "version": " ".join(platform.libc_ver()) or None}],
+            "runtime": [{"name": "python", "version": platform.python_version()}, {"name": "libc", "version": libc}],
         },
         "acceleration": {"state": accel_state, "detail": accel_detail},
         "entropy": {
@@ -777,9 +860,9 @@ def main(argv=None):
         f.write("directories.tokendir = %s\nobjectstore.backend = file\nlog.level = ERROR\n" % tokens)
     os.environ["SOFTHSM2_CONF"] = conf
 
-    pre = mapped_libcrypto()  # must be empty: see IMPORT ORDER in the module docstring
+    pre = mapped_libcrypto()  # Linux: must be empty (IMPORT ORDER in the docstring); macOS: see openssl_runtime
     lib = ctypes.CDLL(module_path)
-    ossl = openssl_runtime(module_path)
+    ossl = openssl_runtime(module_path, pre)
     import hashlib  # noqa: E402 — only now (see docstring)
 
     def sha(b):
@@ -841,7 +924,7 @@ def main(argv=None):
     }
     evidence = build_evidence(ir, manifest["files"]["prompt.json"], sha(text.encode()), results, identity, started, finished, golden)
     env = build_environment(args, module_path, module_sha, sha(manifest_bytes), manifest, lib_info, ossl, build_info)
-    if pre:
+    if pre and not IS_DARWIN:
         env["notes"].append("WARNING: libcrypto already mapped before the module was loaded: %s" % pre)
         env["envId"] = sha(canonical({k: v for k, v in env.items() if k != "envId"}).encode())
 

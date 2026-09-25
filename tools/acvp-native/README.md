@@ -43,6 +43,14 @@ softhsmv3 C++ `libsofthsmv3.so` or the Rust `libsofthsmrustv3.so`. It writes the
   soname. The C++ engine would then run on the interpreter's OpenSSL instead of the one it
   was linked against. The environment record reports the OpenSSL that was actually mapped
   (`/proc/self/maps` + `OpenSSL_version()`).
+- **macOS runs on the host.** On macOS the runner reads the same facts from macOS itself.
+  Libraries come from dyld's image list instead of `/proc/self/maps`. The CPU model,
+  feature flags and Rosetta status come from `sysctl` (`machdep.cpu.brand_string`,
+  `hw.optional`, `sysctl.proc_translated`). A framework build of Python loads the system
+  LibreSSL (`/usr/lib/libcrypto.*.dylib`) when it starts. Mach-O two-level namespace binds
+  the engine only to the libraries its load commands name. So on macOS the record reports
+  the libcrypto that loading the engine newly mapped, and names the one that was already
+  loaded.
 
 ## Run it
 
@@ -76,6 +84,11 @@ softhsmv3 C++ `libsofthsmv3.so` or the Rust `libsofthsmrustv3.so`. It writes the
    source commit and how it was proven, compiler, flags, features, crypto backend and
    entropy source.
 
+   On the macOS host, run `acvp_native_runner.py` directly with Homebrew Python. Use
+   `/opt/homebrew/bin/python3`, never `/usr/bin/python3`. The arguments are the ones
+   `run-in-container.sh` passes, plus `--build-info` and `--work-dir`. The steps used for run
+   `2026-09-25-native` are in that run's README.
+
    On a board (plan phase 2), copy `acvp_native_runner.py`, `pkcs11_constants.py`,
    `hub_contract.json`, the bundle directory and `build-info.json` to the board, then run:
 
@@ -94,11 +107,24 @@ softhsmv3 C++ `libsofthsmv3.so` or the Rust `libsofthsmrustv3.so`. It writes the
 
 ## Engine builds (hsm policy)
 
-Engines are **never** built with Xcode, host `cc` or host `cargo`. Build them only inside
-the `pqc-rust` container, from a **detached hsm worktree at an exact commit**. Use a
-private build directory, never the shared `/cargo-target`. Remove the worktree afterwards
-with `git worktree remove`, without `--force`. The steps used for run `2026-09-24` are in
-`evidence/acvp-xplat/2026-09-24/README.md`.
+Linux engines are **never** built with Xcode, host `cc` or host `cargo`. Build them only in
+a container, from a **detached hsm worktree at an exact commit**:
+
+- Arm64: the `pqc-rust` container.
+- x86-64: a new throwaway `--platform linux/amd64` container that you remove afterwards.
+
+Use a private build directory, never the shared `/cargo-target`. Remove the worktree
+afterwards with `git worktree remove`, without `--force`.
+
+The one exception is the **macOS arm64** target (acvp-gap-closure plan §P4). A native macOS
+engine can only come from the host toolchain, so it is built on the host from its own
+detached worktree:
+
+- Xcode clang and Homebrew OpenSSL for C++.
+- A rustup toolchain called by absolute path for Rust, with `~/.cargo/bin` kept off `PATH`.
+
+The steps are in the READMEs of runs `2026-09-24` (Arm64) and `2026-09-25-native` (x86-64
+and macOS).
 
 An artifact whose source commit cannot be proven can still be run. An image built from a
 working tree is one example. The runner records such a run with `engine.sourceCommit = null`,
