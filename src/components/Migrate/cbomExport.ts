@@ -57,8 +57,8 @@ export function softwareItemToCbomInput(
   item: SoftwareItem,
   extraProperties: CbomProperty[] = []
 ): CbomComponentInput {
-  const cpe = cpeByProduct.get(item.softwareName)
-  const purl = purlByProduct.get(item.softwareName)
+  const cpe = cpeByProduct.get(item.productId) ?? cpeByProduct.get(item.softwareName)
+  const purl = purlByProduct.get(item.productId) ?? purlByProduct.get(item.softwareName)
   const certs = getCertsForProduct(item.productId, item.softwareName)
 
   const properties: CbomProperty[] = [

@@ -1,0 +1,12 @@
+software_name,saas_url,deployment_model,last_verified_date,product_id
+AWS Certificate Manager,https://aws.amazon.com/certificate-manager/,managed-service,2026-06-04,aws-certificate-manager
+AnyDesk Remote Desktop,https://anydesk.com/,managed-service,2026-06-04,anydesk-remote-desktop
+BeyondTrust Pathfinder Platform,https://www.beyondtrust.com/pathfinder-platform,managed-service,2026-06-04,beyondtrust-pathfinder-platform
+Certicom Code Signing and Key Management Server,https://www.blackberry.com/us/en/products/blackberry-certicom,managed-service,2026-05-01,certicom-pqc-code-signing
+CyberZero Quantanaut,https://cyberzero.io/quantanaut,managed-service,2026-06-04,cyberzero-quantanaut
+Descope Customer & Agentic Identity Platform,https://www.descope.com/,api-platform,2026-06-04,descope-platform
+Galileo AI Observability and Eval Platform,https://www.galileo.ai/,api-platform,2026-06-04,galileo-ai-platform
+Hex Trust Institutional Custody,https://hextrust.com/,managed-service,2026-06-04,hex-trust-custody
+Komainu Custody,https://komainu.com/,managed-service,2026-06-04,komainu-custody
+Metaco Harmonize,https://www.metaco.com/,hybrid-cloud,2026-05-01,metaco-harmonize
+Stytch Authentication Platform,https://stytch.com/,api-platform,2026-06-04,stytch-platform

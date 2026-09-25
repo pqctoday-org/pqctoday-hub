@@ -43,9 +43,9 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
   // CBOM export + CVE matching elsewhere, but never rendered as a link
   // anywhere in src/components/Migrate. Only surface rows with a real match
   // (never `not_found`) so this never links out with an empty href.
-  const cpe = cpeByProduct.get(product.softwareName)
+  const cpe = cpeByProduct.get(product.productId) ?? cpeByProduct.get(product.softwareName)
   const hasCpe = !!cpe && (cpe.status === 'matched' || cpe.status === 'partial') && !!cpe.nvdUrl
-  const purl = purlByProduct.get(product.softwareName)
+  const purl = purlByProduct.get(product.productId) ?? purlByProduct.get(product.softwareName)
   const hasPurl = !!purl && purl.status === 'matched' && !!purl.registryUrl
   const roadmaps = product.vendorId ? (roadmapByVendorId.get(product.vendorId) ?? []) : []
   const vendorEnrichments = product.vendorId

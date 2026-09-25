@@ -209,6 +209,8 @@ export interface PurlXref {
 
 export interface SaasXref {
   softwareName: string
+  /** Catalogue product_id (blank on files older than 2026-09-24). */
+  productId?: string
   saasUrl: string
   deploymentModel: 'managed-service' | 'api-platform' | 'hybrid-cloud'
   lastVerifiedDate: string
