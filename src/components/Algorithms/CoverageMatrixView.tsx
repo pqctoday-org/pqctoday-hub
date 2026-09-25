@@ -20,6 +20,8 @@ import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
 import {
   ENGINES,
   ENGINE_LABEL,
+  DIMENSIONS,
+  DIMENSION_LABEL,
   MATRIX_STATUSES,
   POLARITIES,
   expandMatrix,
@@ -220,6 +222,26 @@ export function CoverageMatrixView({ loader = loadCoverageMatrix }: CoverageMatr
                         <tr key={p} className="border-t border-border">
                           <th scope="row" className="py-1 pr-2 font-normal text-foreground">
                             {POLARITY_LABEL[p]}
+                          </th>
+                          <td className="py-1 pr-2 text-foreground">
+                            {b.covered} / {t.advertisedCells}
+                          </td>
+                          <td className="py-1 pr-2 text-foreground">
+                            {b.sampled} / {t.advertisedCells}
+                          </td>
+                          <td className="py-1 text-foreground">
+                            {b.untested} / {t.advertisedCells}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                    {DIMENSIONS.map((d) => {
+                      const b = t.byDimension?.[d] // eslint-disable-line security/detect-object-injection
+                      if (!b) return null
+                      return (
+                        <tr key={d} className="border-t border-border">
+                          <th scope="row" className="py-1 pr-2 font-normal text-foreground">
+                            {DIMENSION_LABEL[d]} (G-3)
                           </th>
                           <td className="py-1 pr-2 text-foreground">
                             {b.covered} / {t.advertisedCells}

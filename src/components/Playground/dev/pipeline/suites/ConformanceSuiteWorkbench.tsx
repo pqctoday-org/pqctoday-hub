@@ -21,6 +21,7 @@ import {
   CONFORMANCE_TIER_LABELS,
   tierBGroups,
   mechanismProbeCount,
+  errorPathProbeSummary,
   tallyByTier,
   type RowStatus,
 } from '../../../hsm/conformance/usePkcs11Conformance'
@@ -48,6 +49,7 @@ export const ConformanceSuiteWorkbench = () => {
     toggleCase,
     setTierB,
     setCoverage,
+    setErrorPaths,
     run,
     pass,
     fail,
@@ -78,7 +80,9 @@ export const ConformanceSuiteWorkbench = () => {
   }
 
   const running = loading || codeRunning
-  const nothingSelected = selection.tierA.size === 0 && !selection.tierB && !selection.coverage
+  const nothingSelected =
+    selection.tierA.size === 0 && !selection.tierB && !selection.coverage && !selection.errorPaths
+  const errorPaths = errorPathProbeSummary()
   // WS-G G-4: every count below is counted from the case/probe definitions.
   const TIER_B_GROUPS = tierBGroups()
   const tierBCount = TIER_B_GROUPS.reduce((n, g) => n + g.probes, 0)
@@ -185,6 +189,23 @@ export const ConformanceSuiteWorkbench = () => {
           </span>
         </span>
       </label>
+      <label className="flex items-start gap-2 p-1.5 rounded-md hover:bg-muted/50 cursor-pointer text-xs">
+        <input
+          type="checkbox"
+          aria-label="Error-path probes"
+          className="mt-0.5 accent-primary"
+          checked={selection.errorPaths ?? false}
+          onChange={(e) => setErrorPaths(e.target.checked)}
+        />
+        <span className="flex-1 min-w-0">
+          <span className="block font-medium text-foreground">Error-path probes · G-8</span>
+          <span className="block text-[10.5px] text-muted-foreground">
+            {errorPaths.kinds} probe kinds × {errorPaths.families} operation families, expanded per
+            advertised mechanism at run time — exact CK_RV from the cited PKCS#11 v3.2 section
+            (about a minute per engine)
+          </span>
+        </span>
+      </label>
       <div className="mt-auto pt-3 border-t text-[10.5px] text-muted-foreground">
         <div className="font-semibold uppercase mb-1">Engine</div>
         <div className="font-mono">
@@ -199,11 +220,12 @@ export const ConformanceSuiteWorkbench = () => {
       <div>
         <h3 className="text-base font-bold">PKCS#11 v3.2 Conformance Runner</h3>
         <p className="text-xs text-muted-foreground mt-0.5" data-testid="pkcs11-conformance-scope">
-          Three kinds of rows, reported separately: {TIER_A_CASES.length} mandatory test cases OASIS
+          Four kinds of rows, reported separately: {TIER_A_CASES.length} mandatory test cases OASIS
           published for PKCS#11 Profiles v3.2 (Tier A); up to {tierBCount} probes PQC Today
           generated from the numbered conditions of the profiles each engine claims (Tier B — not
-          OASIS test cases); and {mechCount} product-authored mechanism probes. All run in this
-          browser, against the raw WASM ABI.
+          OASIS test cases); {mechCount} product-authored mechanism probes; and, when selected,
+          product-authored error-path probes ({errorPaths.kinds} kinds, expanded from the engine's
+          advertised mechanisms). All run in this browser, against the raw WASM ABI.
         </p>
       </div>
 

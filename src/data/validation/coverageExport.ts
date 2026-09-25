@@ -11,6 +11,8 @@ import {
   ENGINE_LABEL,
   MATRIX_STATUSES,
   POLARITIES,
+  DIMENSIONS,
+  DIMENSION_LABEL,
   strongest,
   type CoverageLevel,
   type CoverageMatrix,
@@ -164,6 +166,12 @@ export function renderCoverageMarkdown(matrix: CoverageMatrix): string {
     L.push(
       `| ${ENGINE_LABEL[e]} | **overall** | ${t.overall.covered} | ${t.overall.sampled} | ${t.overall.untested} | ${t.advertisedCells} | ${pct(t.overall.covered, t.advertisedCells)} |` // eslint-disable-line security/detect-object-injection
     )
+    for (const d of DIMENSIONS) {
+      const b = t.byDimension[d] // eslint-disable-line security/detect-object-injection
+      L.push(
+        `| ${ENGINE_LABEL[e]} | ${DIMENSION_LABEL[d]} (G-3) | ${b.covered} | ${b.sampled} | ${b.untested} | ${t.advertisedCells} | ${pct(b.covered, t.advertisedCells)} |` // eslint-disable-line security/detect-object-injection
+      )
+    }
   }
   L.push('')
   L.push('## Cells by strongest registered evidence (positive polarity)')
@@ -270,10 +278,16 @@ export function renderCoverageHtml(matrix: CoverageMatrix): string {
   )
   for (const e of ENGINES) {
     const t = matrix.totals.byEngine[e] // eslint-disable-line security/detect-object-injection
-    for (const p of [...POLARITIES, 'overall'] as const) {
-      const b = p === 'overall' ? t.overall : t.byPolarity[p] // eslint-disable-line security/detect-object-injection
+    for (const p of [...POLARITIES, 'overall', ...DIMENSIONS] as const) {
+      const b =
+        p === 'overall'
+          ? t.overall
+          : p === 'algorithm' || p === 'api'
+            ? t.byDimension[p] // eslint-disable-line security/detect-object-injection
+            : t.byPolarity[p] // eslint-disable-line security/detect-object-injection
+      const label = p === 'algorithm' || p === 'api' ? `${DIMENSION_LABEL[p]} (G-3)` : p // eslint-disable-line security/detect-object-injection
       h.push(
-        `<tr><td>${ENGINE_LABEL[e]}</td><td>${p}</td>${LEVELS.map((l) => `<td>${b[l]}</td>`).join('')}<td>${t.advertisedCells}</td></tr>` // eslint-disable-line security/detect-object-injection
+        `<tr><td>${ENGINE_LABEL[e]}</td><td>${esc(label)}</td>${LEVELS.map((l) => `<td>${b[l]}</td>`).join('')}<td>${t.advertisedCells}</td></tr>` // eslint-disable-line security/detect-object-injection
       )
     }
   }

@@ -59,6 +59,15 @@ const ROWS: RunnerRow[] = [
     status: 'pass',
     detail: 'ok',
   },
+  {
+    id: 'e',
+    engine: 'C++',
+    tier: 'ErrorPath',
+    name: 'CKM_AES_CBC · encrypt · operation-active',
+    citation: '§5.8.1',
+    status: 'fail',
+    detail: 'second C_EncryptInit → CKR_OK',
+  },
 ]
 
 vi.mock('../../../hsm/conformance/usePkcs11Conformance', async (importActual) => {
@@ -74,9 +83,10 @@ vi.mock('../../../hsm/conformance/usePkcs11Conformance', async (importActual) =>
       toggleCase: vi.fn(),
       setTierB: vi.fn(),
       setCoverage: vi.fn(),
+      setErrorPaths: vi.fn(),
       run: vi.fn(),
       pass: 3,
-      fail: 1,
+      fail: 2,
       notClaimed: 0,
       reportText: () => '',
       engineMode: 'cpp',
@@ -135,10 +145,13 @@ describe('ConformanceSuiteWorkbench', () => {
     expect(breakdown).toHaveTextContent('OASIS published test cases: 1/1 pass')
     expect(breakdown).toHaveTextContent('Generated profile-condition probes: 1/2 pass, 1 fail')
     expect(breakdown).toHaveTextContent('Product mechanism probes: 1/1 pass')
+    expect(breakdown).toHaveTextContent('Error-path probes: 0/1 pass, 1 fail')
 
     const badges = screen.getAllByTestId('pkcs11-conformance-row').map((r) => r.textContent ?? '')
     expect(badges[0]).toMatch(/OASIS case/)
     expect(badges[1]).toMatch(/Generated probe/)
     expect(badges[3]).toMatch(/Product probe/)
+    expect(badges[4]).toMatch(/Error-path probe/)
+    expect(scope).toHaveTextContent('error-path probes')
   })
 })
