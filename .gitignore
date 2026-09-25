@@ -758,3 +758,13 @@ src/.!*!.DS_Store
 # and read by the pre-push hook to skip a gate it already ran. Per-machine;
 # never committed. See GATES.md.
 .gate-ok-*
+
+# Validation-vector provenance gate (plan WS-B): every src/data/acvp vector
+# file is registered in src/data/validation/vector-manifest.json with its
+# SHA-256, evidence class, NIST upstream identity, lineage and declared
+# copies; the counts generator derives the public numbers from it. Both run
+# in gate:data (CI) — they MUST be tracked, same reason as the gates above.
+!scripts/audit-validation-manifest.ts
+!scripts/audit-validation-manifest.test.ts
+!scripts/generate-validation-counts.ts
+!scripts/generate-validation-counts.test.ts
