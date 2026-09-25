@@ -39,8 +39,8 @@
  *      scripts/audit-validation-claims.allowlist.json ({ file, match, reason }).
  *
  * Presentation drift (plan A-5): in extra paths only, a sentence of the form
- * "<N> ... NIST ACVP-Server" must use the live count of src/data/acvp/*.json
- * files whose `_provenance.producer` starts with "NIST ACVP-Server".
+ * "<N> ... NIST ACVP-Server" must use `nistReferenceSampleFileCount` from the
+ * WS-B generated counts (src/data/validation/validation-counts.generated.json).
  *
  * Exit 0 = clean, 1 = findings. `--json` prints machine-readable output.
  */
@@ -250,9 +250,31 @@ export function scanText(
 }
 
 /** Count of vector files backed by the public NIST ACVP-Server repository. */
+export const GENERATED_COUNTS_PATH = path.join(
+  REPO_ROOT,
+  'src',
+  'data',
+  'validation',
+  'validation-counts.generated.json'
+)
+
+/**
+ * Count of vector files backed by the public NIST ACVP-Server repository.
+ * Source of truth is the WS-B generated manifest counts
+ * (src/data/validation/validation-counts.generated.json,
+ * `nistReferenceSampleFileCount`, itself checked by gen:validation-counts:check);
+ * the provenance scan is only a fallback for a checkout without it.
+ */
 export function countNistReferenceFiles(
-  acvpDir: string = path.join(REPO_ROOT, 'src', 'data', 'acvp')
+  acvpDir: string = path.join(REPO_ROOT, 'src', 'data', 'acvp'),
+  countsPath: string = GENERATED_COUNTS_PATH
 ): number {
+  if (fs.existsSync(countsPath)) {
+    const c = JSON.parse(fs.readFileSync(countsPath, 'utf8')) as {
+      nistReferenceSampleFileCount?: number
+    }
+    if (typeof c.nistReferenceSampleFileCount === 'number') return c.nistReferenceSampleFileCount
+  }
   return fs
     .readdirSync(acvpDir)
     .filter((f) => f.endsWith('.json'))
@@ -298,7 +320,7 @@ export function scanCountDrift(text: string, file: string, expected: number): Cl
       line: lineAt(start),
       rule: 'reference-sample-count-drift',
       match: m[0],
-      sentence: `says ${n}; src/data/acvp has ${expected} NIST ACVP-Server-backed vector files`,
+      sentence: `says ${n}; the generated manifest counts (src/data/validation/validation-counts.generated.json) say ${expected} NIST ACVP-Server reference-sample files`,
     })
   }
   return out

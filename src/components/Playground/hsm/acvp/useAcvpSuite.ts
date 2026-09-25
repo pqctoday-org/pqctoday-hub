@@ -519,24 +519,29 @@ export function useAcvpSuite() {
           return derWrapped ? pt.slice(2) : pt
         }
 
-        // ── 1. AES-GCM-256 Decrypt KAT (SP 800-38D) ────────────────────
+        // ── 1. AES-GCM-256 Decrypt vs OpenSSL-oracle vector ────────────
+        // aesgcm_test.json's own _provenance says "published KAT", but its tag
+        // differs from GCM Test Case 16's published tag (AAD dropped; tag
+        // computed by Node/OpenSSL). The WS-B manifest classes it
+        // independent-oracle, so the tier is pinned here instead of derived
+        // from that producer string (katEvidence.test.ts enforces agreement).
         if (activeCategories.has('symmetric')) {
           currentCategory = 'symmetric'
           if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_GCM)) {
             await pushSkip(
               `aes-skip-${eName}`,
               `AES-GCM-256 (${eName})`,
-              'Decrypt KAT',
+              'Decrypt (OpenSSL-oracle vector)',
               REF.aesgcm,
               'AES-GCM-256: mechanism not supported'
             )
           } else {
             const tv = aesGcmTestVectors.testGroups[0].tests[0]
             const id1 = `aes-acvp-${eName}`
-            addLog(`[${eName}] Testing AES-GCM-256 Decrypt KAT (SP 800-38D)...`)
-            addLog(`  GCM example Key: ${tv.key.slice(0, 32)}… | IV: ${tv.iv} | Tag: ${tv.tag}`)
+            addLog(`[${eName}] Testing AES-GCM-256 Decrypt vs OpenSSL-oracle vector...`)
+            addLog(`  Oracle vector Key: ${tv.key.slice(0, 32)}… | IV: ${tv.iv} | Tag: ${tv.tag}`)
             addLog(
-              `  GCM example CT[${tv.ct.length / 2}B]: ${tv.ct.slice(0, 32)}… | Expected PT: ${tv.pt.slice(0, 32)}…`
+              `  Oracle vector CT[${tv.ct.length / 2}B]: ${tv.ct.slice(0, 32)}… | Expected PT: ${tv.pt.slice(0, 32)}…`
             )
             try {
               const keyBytes = hexToBytes(tv.key)
@@ -570,7 +575,7 @@ export function useAcvpSuite() {
               ctWithTag.set(tagBytes, ctBytes.length)
               const recoveredPt = hsm_aesDecrypt(M, hSession, aesHandle, ctWithTag, ivBytes, 'gcm')
 
-              // Compare recovered plaintext against NIST reference
+              // Compare recovered plaintext against the oracle vector's plaintext
               const matches =
                 recoveredPt.length === expectedPt.length &&
                 // eslint-disable-next-line security/detect-object-injection
@@ -580,25 +585,25 @@ export function useAcvpSuite() {
               await pushResult({
                 id: id1,
                 algorithm: `AES-GCM-256 (${eName})`,
-                testCase: 'Decrypt KAT',
+                testCase: 'Decrypt (OpenSSL-oracle vector)',
                 referenceUrl: REF.aesgcm,
                 status: matches ? 'pass' : 'fail',
                 details: matches
                   ? `PT[${recoveredPt.length}B]: ${ptHex}`
                   : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
-                evidenceTier: deriveEvidenceTier(aesGcmTestVectors._provenance),
+                evidenceTier: 'self-consistency',
               })
               addLog(
-                `[${eName}] [id:${id1}] AES-GCM Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
+                `[${eName}] [id:${id1}] AES-GCM Decrypt (oracle vector): ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
               )
             } catch (e: unknown) {
               const errMessage = e instanceof Error ? e.message : String(e)
               await pushResult({
                 id: `aes-err-${eName}`,
                 algorithm: `AES-GCM-256 (${eName})`,
-                testCase: 'Decrypt KAT',
+                testCase: 'Decrypt (OpenSSL-oracle vector)',
                 referenceUrl: REF.aesgcm,
-                evidenceTier: deriveEvidenceTier(aesGcmTestVectors._provenance),
+                evidenceTier: 'self-consistency',
                 status: 'fail',
                 details: errMessage,
               })

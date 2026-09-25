@@ -48,7 +48,7 @@ export type KatEvidenceClass =
   /** Vector file exists but carries no `_provenance` block — origin unknown. */
   | 'unverified-provenance'
 
-interface VectorFileRef {
+export interface VectorFileRef {
   /** Path under src/data/, for display and for the static test. */
   file: string
   producer: string | undefined
@@ -150,9 +150,36 @@ export function vectorFileForKind(kind: KatKind): VectorFileRef | null {
   }
 }
 
+/**
+ * Files whose WS-B manifest class (src/data/validation/vector-manifest.json)
+ * differs from what their own `_provenance.producer` string implies. The
+ * manifest is the reviewed source of truth, but it is ~300 KB, too heavy to
+ * ship to every Learn panel, so the few disagreements are pinned here and
+ * katEvidence.test.ts fails if this map and the manifest ever diverge (for any
+ * file, in either direction).
+ *   - aesgcm_test: producer says "published KAT", but the tag differs from
+ *     GCM Test Case 16's published tag (AAD dropped; tag computed by
+ *     Node/OpenSSL; cases 2–3 locally generated) — an OpenSSL-oracle vector.
+ *   - aescmac_test, hkdf_test: no `_provenance` block; the manifest records
+ *     them as the SP 800-38B / RFC 5869 published examples.
+ */
+export const MANIFEST_CLASS_OVERRIDES: Readonly<Record<string, KatEvidenceClass>> = {
+  'acvp/aesgcm_test.json': 'independent-oracle',
+  'acvp/aescmac_test.json': 'published-standard-kat',
+  'acvp/hkdf_test.json': 'published-standard-kat',
+  // JOSE fixtures without a `_provenance` block (not read by any katRunner kind):
+  'acvp/cose-dilithium-11-jose-kat.json': 'published-standard-kat',
+  'acvp/composite-sigs-jose-kat.json': 'functional-round-trip',
+  'acvp/jose-pqc-kem-jwe-kat.json': 'functional-round-trip',
+}
+
+export function evidenceForVectorFile(ref: VectorFileRef): KatEvidenceClass {
+  return MANIFEST_CLASS_OVERRIDES[ref.file] ?? classifyProducer(ref.producer)
+}
+
 export function evidenceForKind(kind: KatKind): KatEvidenceClass {
   const file = vectorFileForKind(kind)
-  return file ? classifyProducer(file.producer) : 'functional-round-trip'
+  return file ? evidenceForVectorFile(file) : 'functional-round-trip'
 }
 
 export const isAcvpBacked = (kind: KatKind): boolean =>

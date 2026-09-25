@@ -24,9 +24,9 @@ const METHODOLOGY_ROWS: { algo: string; tested: string; limits: string }[] = [
   {
     algo: 'ML-DSA',
     tested:
-      'ML-DSA-44 / 65 / 87: verification of one sigGen-derived NIST ACVP-Server signature per set [§5]; one non-empty-context and one pre-hash (HashML-DSA) verification per set from the tr1 sample [§5b]; sign + verify round-trips (pure and HashML-DSA SHA-512) with fresh key pairs [§6, §28].',
+      "ML-DSA-44 / 65 / 87: dedicated NIST ACVP-Server sigVer cases in pure mode — per set one positive and four negatives (NIST's own modified-message / modified-signature cases), asserting CKR_OK or CKR_SIGNATURE_INVALID — plus two product-authored negatives (public-key and context bit flips, labelled as not NIST) [§5d]; deterministic signing with the NIST private key imported, byte-compared to the NIST signature (one pure and one pre-hash case per set) [§5d]; key generation from the NIST seed via CKA_SEED, public key byte-compared [§5d]; verification of sigGen-derived tuples, including one non-empty-context and one pre-hash case per set [§5, §5b]; sign + verify round-trips with fresh key pairs [§6, §28]. External Mu cases run only through the vendor-defined mechanism 0x403c (not a PKCS#11 v3.2 mechanism) and show as skip rows where an engine does not advertise it.",
     limits:
-      'deterministic signing against an expected signature, hedged signing against expected values, External Mu, key generation against NIST expected values, negative (must-reject) verification cases.',
+      'hedged (randomized) signing against expected values, the internal signing interface, pre-hash functions with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256 — shown as skip rows), more than one case per upstream group.',
   },
   {
     algo: 'SLH-DSA',
@@ -38,9 +38,9 @@ const METHODOLOGY_ROWS: { algo: string; tested: string; limits: string }[] = [
   {
     algo: 'AES-GCM',
     tested:
-      'AES-256-GCM decryption of one published example (GCM specification Test Case 16, cited by SP 800-38D) — a published-standard KAT, not an ACVP vector [§1].',
+      'AES-256-GCM decryption of one OpenSSL-oracle vector (built from GCM Test Case 16 inputs with the AAD dropped and the tag computed by OpenSSL) — an independent-oracle comparison, not a published KAT and not an ACVP vector [§1].',
     limits:
-      'ACVP AES-GCM vectors, encryption against expected values, other key / IV / tag lengths, authentication-failure cases.',
+      'the published GCM Test Case 16 itself, ACVP AES-GCM vectors, encryption against expected values, other key / IV / tag lengths, authentication-failure cases.',
   },
   {
     algo: 'AES-KW',
@@ -143,11 +143,12 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
               </ul>
               <p className="text-xs leading-relaxed pt-1">
                 <span className="font-medium text-foreground">Seeds and response files:</span> the
-                workbench initializes each engine with a fixed test seed so runs are repeatable, but
-                no test compares seeded randomized output (key generation, encapsulation, hedged
-                signing) with a NIST expected value. The NIST-backed checks use imported keys and
-                deterministic operations (decapsulation, verification, digest, MAC, decryption). No
-                ACVP response file is generated or submitted.
+                workbench asks each engine for a fixed test seed (the shipped C++ build rejects it
+                and runs unseeded), but no test compares seeded randomized output (encapsulation,
+                hedged signing) with a NIST expected value. The NIST-backed checks use imported
+                keys, NIST-supplied seeds (ML-DSA key generation via CKA_SEED) and deterministic
+                operations (decapsulation, verification, deterministic signing, digest, MAC,
+                decryption). No ACVP response file is generated or submitted.
               </p>
             </div>
           </section>
@@ -269,7 +270,9 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
           <section>
             <div className="flex items-center gap-2 mb-3">
               <FlaskConical size={15} className="text-muted-foreground shrink-0" />
-              <h3 className="font-semibold text-foreground">Layer 4 — Self-Consistency Checks</h3>
+              <h3 className="font-semibold text-foreground">
+                Layer 4 — Oracle Comparisons (Self-Consistency)
+              </h3>
             </div>
             <div className="pl-5 space-y-2 text-muted-foreground">
               <p className="leading-relaxed">
@@ -289,6 +292,11 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
                   {
                     algo: 'RSA-OAEP',
                     detail: 'No ACVP registration exists for RSA-OAEP decryption at all',
+                  },
+                  {
+                    algo: 'AES-GCM',
+                    detail:
+                      'The bundled vector reuses GCM Test Case 16 inputs with the AAD dropped, so its tag was computed with OpenSSL — it is not the published Test Case 16',
                   },
                   {
                     algo: 'RSA-PSS',

@@ -15,11 +15,34 @@ import type { KatKind, KatTestSpec } from './katRunner'
 import {
   classifyProducer,
   evidenceForKind,
+  evidenceForVectorFile,
   isAcvpBacked,
   katActionLabel,
   vectorFileForKind,
 } from './katEvidence'
 import { ALL_KAT_TILES } from '@/components/Algorithms/katTileConfig'
+import vectorManifest from '@/data/validation/vector-manifest.json'
+
+type KatClass = ReturnType<typeof evidenceForKind>
+const MANIFEST: Map<string, { evidenceClass: string; status: string }> = new Map(
+  (
+    vectorManifest as { files: { path: string; evidenceClass: string; status: string }[] }
+  ).files.map((f) => [f.path.replace(/^src\/data\/acvp\//, ''), f])
+)
+/** WS-B manifest class → the UI's evidence class (quarantined/unverified → no badge). */
+function manifestClass(file: string): KatClass {
+  const e = MANIFEST.get(file)
+  if (!e || e.status !== 'active') return 'unverified-provenance'
+  const known: KatClass[] = [
+    'nist-acvp-reference-sample',
+    'published-standard-kat',
+    'independent-oracle',
+    'functional-round-trip',
+  ]
+  return (known as string[]).includes(e.evidenceClass)
+    ? (e.evidenceClass as KatClass)
+    : 'unverified-provenance'
+}
 
 const ROOT = join(__dirname, '..', '..')
 const SRC = join(ROOT, 'src')
@@ -58,10 +81,22 @@ describe('katEvidence classification', () => {
     expect(classifyProducer(undefined)).toBe('unverified-provenance')
   })
 
+  it('agrees with the WS-B vector manifest for every src/data/acvp file', () => {
+    const files = readdirSync(ACVP_DIR).filter((f) => f.endsWith('.json'))
+    expect(files.length).toBe(MANIFEST.size)
+    const disagreements = files
+      .map((f) => ({
+        f,
+        ours: evidenceForVectorFile({ file: `acvp/${f}`, producer: producerOf(f) }),
+        manifest: manifestClass(f),
+      }))
+      .filter((x) => x.ours !== x.manifest)
+    expect(disagreements).toEqual([])
+  })
+
   it('reads the same producer string as the vector file on disk', () => {
     const kinds: KatKind[] = [
       { type: 'mlkem-decap', variant: 768 },
-      { type: 'aesgcm-decrypt' },
       { type: 'aeskw-wrap' },
       { type: 'ecdsa-sigver', curve: 'P-256' },
       { type: 'pbkdf2-derive', prf: 'SHA-256' },
@@ -77,10 +112,12 @@ describe('katEvidence classification', () => {
     expect(evidenceForKind({ type: 'mlkem-decap', variant: 512 })).toBe(
       'nist-acvp-reference-sample'
     )
-    expect(evidenceForKind({ type: 'aesgcm-decrypt' })).toBe('published-standard-kat')
+    // aesgcm_test's own producer string says "published KAT"; the WS-B manifest
+    // (tag ≠ GCM Test Case 16's published tag) says OpenSSL oracle — manifest wins.
+    expect(evidenceForKind({ type: 'aesgcm-decrypt' })).toBe('independent-oracle')
     expect(evidenceForKind({ type: 'aeskw-wrap' })).toBe('published-standard-kat')
     expect(evidenceForKind({ type: 'rsapss-sigver' })).toBe('independent-oracle')
-    expect(evidenceForKind({ type: 'hkdf-derive' })).toBe('unverified-provenance')
+    expect(evidenceForKind({ type: 'hkdf-derive' })).toBe('published-standard-kat')
     expect(evidenceForKind({ type: 'slhdsa-functional', variant: 'SHA2-128s' })).toBe(
       'functional-round-trip'
     )
@@ -204,6 +241,42 @@ describe('evidence-label static guard', () => {
     expect(offenders).toEqual([])
   })
 
+  it('validation-workbench rows: a provenance-derived tier matches the manifest class', () => {
+    // deriveEvidenceTier reads `_provenance.producer`; where that string and the
+    // reviewed manifest disagree (aesgcm_test), the row must not use it.
+    const path = join(SRC, 'components', 'Playground', 'hsm', 'acvp', 'useAcvpSuite.ts')
+    const src = readFileSync(path, 'utf8')
+    const importMap = new Map<string, string>()
+    for (const m of src.matchAll(/^import (\w+) from '@\/data\/acvp\/([\w-]+\.json)'/gm)) {
+      importMap.set(m[1], m[2])
+    }
+    const tierOf: Record<string, KatClass> = {
+      'nist-acvp': 'nist-acvp-reference-sample',
+      'published-standard': 'published-standard-kat',
+      'self-consistency': 'independent-oracle',
+    }
+    const derive = (p: string | undefined): string | undefined =>
+      !p
+        ? undefined
+        : p.startsWith('NIST ACVP-Server')
+          ? 'nist-acvp'
+          : p.startsWith('self-generated')
+            ? 'self-consistency'
+            : 'published-standard'
+    const offenders: string[] = []
+    for (const m of src.matchAll(/deriveEvidenceTier\((\w+)\._provenance\)/g)) {
+      const file = importMap.get(m[1])
+      if (!file) continue
+      const shown = derive(producerOf(file))
+      if (!shown || tierOf[shown] !== manifestClass(file)) {
+        offenders.push(
+          `${m[1]} (${file}): row shows ${shown}, manifest says ${manifestClass(file)}`
+        )
+      }
+    }
+    expect([...new Set(offenders)]).toEqual([])
+  })
+
   it('validation-workbench result rows say ACVP only when their evidence tier is ACVP-backed', () => {
     const path = join(SRC, 'components', 'Playground', 'hsm', 'acvp', 'useAcvpSuite.ts')
     const src = readFileSync(path, 'utf8')
@@ -222,7 +295,7 @@ describe('evidence-label static guard', () => {
       if (!ACVP_CLAIM.test(text)) continue
       const tier = /evidenceTier:\s*deriveEvidenceTier\((\w+)\._provenance\)/.exec(block)
       const file = tier ? importMap.get(tier[1]) : undefined
-      if (!file || !producerOf(file)?.startsWith('NIST ACVP-Server')) {
+      if (!file || manifestClass(file) !== 'nist-acvp-reference-sample') {
         offenders.push(`${tier?.[1] ?? '(no tier)'}: ${text.slice(0, 120)}`)
       }
     }

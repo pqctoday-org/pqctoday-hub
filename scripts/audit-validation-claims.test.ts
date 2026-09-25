@@ -88,9 +88,17 @@ describe('legitimate uses are not flagged', () => {
 })
 
 describe('presentation count drift (A-5)', () => {
-  it('counts the NIST ACVP-Server-backed vector files from their provenance', () => {
+  it('takes the NIST ACVP-Server file count from the generated manifest counts', () => {
     const n = countNistReferenceFiles()
-    expect(n).toBeGreaterThanOrEqual(15)
+    const generated = JSON.parse(
+      fs.readFileSync(
+        path.join(__dirname, '..', 'src', 'data', 'validation', 'validation-counts.generated.json'),
+        'utf8'
+      )
+    ) as { nistReferenceSampleFileCount: number }
+    expect(n).toBe(generated.nistReferenceSampleFileCount)
+    // …and the provenance fallback agrees with it on this tree.
+    expect(countNistReferenceFiles(undefined, '/nonexistent/counts.json')).toBe(n)
   })
 
   it('flags a stale count and accepts the live one', () => {

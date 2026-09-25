@@ -82,7 +82,9 @@ const runMlDsa = async (): Promise<TestResult[]> => {
   const { useAcvpSuite } = await import('./useAcvpSuite')
   const { result } = renderHook(() => useAcvpSuite())
   const out = await result.current.runTests(new Set(['ml_dsa']))
-  await waitFor(() => expect(result.current.logs.at(-1)).toMatch(/Validation Suite Completed/))
+  await waitFor(() =>
+    expect(result.current.logs.at(-1)).toMatch(/Validation Workbench run completed/)
+  )
   // A run that throws before its first row lands in the hook's own log, not in
   // `out` — surface it so an empty result is diagnosable.
   const critical = result.current.logs.filter((l) => /Critical Error/.test(l))
