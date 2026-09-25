@@ -91,7 +91,12 @@ function deriveCisaCategory(categoryName: string, layer: string): string {
  * - Verified: proof_url present + validation confirms PQC (VALIDATED, FIPS_VERIFIED, CORRECTED)
  * - Partially Verified: proof_url present but validation incomplete or evidence indirect
  * - Pending Verification: no proof_url or validation negative
- * - Preserves manually set "Verified" if proof_url exists (manual override)
+ * - Needs Review: the maintenance flow withheld the row (csv
+ *   "Unverified — needs review") because a claim was contradicted — wins over
+ *   every other rule, VALIDATED_NO_PQC included
+ * - A csv "Verified" alone never produces Verified: the validation result must
+ *   confirm it (the old manual override let 15 rows with FIPS_ISSUE,
+ *   NEEDS_REVIEW, PENDING or blank results render as Verified)
  *
  * Exported for tests.
  */
@@ -107,16 +112,15 @@ export function deriveVerificationStatus(
   const ef = (evidenceFlags || '').toLowerCase()
   const hasProofContent = !!(proofRelevantInfo || '').trim()
 
-  // A proof that validated the ABSENCE of PQC must take precedence over the
-  // manual 'Verified' override below — otherwise rows whose evidence disproves
-  // the PQC claim display the same badge as rows whose evidence confirms it
-  // (160 active VALIDATED_NO_PQC rows leaked through as plain 'Verified').
+  // A withheld row stays withheld until a reviewed decision restores it.
+  if (csvStatus.trim().toLowerCase().startsWith('unverified')) return 'Needs Review'
+
+  // A proof that validated the ABSENCE of PQC is its own state — rows whose
+  // evidence disproves the PQC claim must not share a badge with rows whose
+  // evidence confirms it.
   if (vr === 'VALIDATED_NO_PQC') {
     return hasProofUrl ? 'Verified (No PQC)' : 'Pending Verification'
   }
-
-  // If CSV already says Verified and proof_url exists, trust it
-  if (csvStatus === 'Verified' && hasProofUrl) return 'Verified'
 
   // Derive from evidence
   if (hasProofUrl) {
@@ -128,6 +132,7 @@ export function deriveVerificationStatus(
 
   // No proof_url
   if (ef.includes('doc-extraction') || ef.includes('iec')) return 'Pending Verification'
+  if (csvStatus === 'Verified' || csvStatus === 'Partially Verified') return 'Pending Verification'
   if (csvStatus && csvStatus !== 'Needs Verification') return csvStatus
   return 'Needs Verification'
 }

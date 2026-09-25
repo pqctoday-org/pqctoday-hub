@@ -84,7 +84,7 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
         <Pill tone={verification.tone}>{verification.label}</Pill>
         {product.lastVerifiedDate && (
           <span className="text-[11px] text-muted-foreground">
-            as of {product.lastVerifiedDate}
+            evidence fetched {product.lastVerifiedDate}
           </span>
         )}
         <TrustScoreBadge resourceType="migrate" resourceId={product.softwareName} size="sm" />
