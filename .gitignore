@@ -387,6 +387,8 @@ scripts/*
 !scripts/generate-role-board-content.ts
 !scripts/lib/
 !scripts/lib/roleBoardTokens.ts
+!scripts/lib/threatsCorpus.ts
+!scripts/lib/threatsCorpus.test.ts
 
 # Role-board content maintenance aid — npm run audit:role-board-content,
 # backing the audit-role-board-content skill. Same reason: referenced by a

@@ -1617,7 +1617,8 @@
       "sizeBytes": 872986,
       "contentType": "application/pdf",
       "sha256": "9ac6bee3da878e883874847b40f80d2265d6268385d8201f866581437533465f",
-      "verifiedAt": "2026-09-25"
+      "verifiedAt": "2026-09-25",
+      "unified": "converted"
     },
     {
       "refId": "global-oasis-pkcs-11-v3-2-pqc-mechanisms-draft-published",
@@ -1749,7 +1750,8 @@
       "sizeBytes": 588999,
       "contentType": "application/pdf",
       "sha256": "d802f4849a52d18001533cef86e0950f31350643cc06881ee62b2382e1ea0e9d",
-      "verifiedAt": "2026-09-25"
+      "verifiedAt": "2026-09-25",
+      "unified": "converted"
     },
     {
       "refId": "united-states-gsa-gsa-pqc-buyer-guide-v1-0",

@@ -32,6 +32,13 @@ import {
   CRQC_ESTIMATES,
 } from '../src/data/regulatoryTimelines'
 import { FRAMEWORK_MAX_FINE_USD_MILLIONS } from '../src/data/frameworkFines'
+import {
+  buildThreatsPageGuide,
+  isUnpublishedThreatRow,
+  publishedThreatIds,
+  publishedThreatRecords,
+  threatDeepLink,
+} from './lib/threatsCorpus'
 // NOTE: workshopRegistry.tsx uses `@/*`-aliased imports internally, so this
 // script must be invoked with TSX_TSCONFIG_PATH=tsconfig.app.json (see
 // refresh-index.sh and scripts/ci/check-index-freshness.ts) for tsx to
@@ -339,6 +346,15 @@ function getTimelineRefIds(): Map<string, string> {
     }
   }
   return _timelineRefIds
+}
+
+/** Ids of the threats the page shows (see scripts/lib/threatsCorpus.ts). */
+let _publishedThreatIds: Set<string> | null = null
+function getPublishedThreatIds(): Set<string> {
+  if (_publishedThreatIds) return _publishedThreatIds
+  const file = findLatestCSV('quantum_threats_hsm_industries_')
+  _publishedThreatIds = file ? publishedThreatIds(readCSV(file)) : new Set()
+  return _publishedThreatIds
 }
 
 /** Find a library referenceId mentioned in the given text */
@@ -1038,7 +1054,7 @@ function processThreats(): RAGChunk[] {
   const chunks: RAGChunk[] = []
 
   for (let i = 1; i < rows.length; i++) {
-    if (isInactiveRow(rows, i)) continue
+    if (isUnpublishedThreatRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 7) continue
 
@@ -1081,9 +1097,9 @@ function processThreats(): RAGChunk[] {
         ...(relatedModules ? { relatedModules } : {}),
         ...(trustedSourceId ? { trustedSourceId } : {}),
       },
-      ...(sanitize(threatId)
-        ? { deepLink: `/threats?id=${encodeParam(threatId)}&industry=${encodeParam(industry)}` }
-        : {}),
+      // &industry= carries the label the page shows (it merges some raw CSV
+      // labels), via the same rule the page's loader applies.
+      ...(sanitize(threatId) ? { deepLink: threatDeepLink(threatId, industry) } : {}),
       prov: buildChunkProv({ csvFile: path.basename(file), csvRow: i, attributedTo: 'human' }),
     })
   }
@@ -3734,6 +3750,10 @@ function processDocumentEnrichments(): RAGChunk[] {
       // Skip enrichment chunks for deprecated/inactive library entries so the
       // corpus stays in sync with what the UI actually surfaces.
       if (collection === 'library' && !getLibraryRefIds().has(lookupKey)) continue
+      // Same for threats: enrichments exist for retired (and draft) threats
+      // too, and a chunk for one would link /threats?id=<id> the page no
+      // longer opens.
+      if (collection === 'threats' && !getPublishedThreatIds().has(lookupKey)) continue
       let refId = lookupKey
       if (collection === 'timeline') {
         const current = getTimelineRefIds().get(lookupKey)
@@ -3821,7 +3841,7 @@ function processDocumentEnrichments(): RAGChunk[] {
         ...(collection === 'library' && refId
           ? { deepLink: `/library?ref=${encodeParam(refId)}` }
           : collection === 'threats' && refId
-            ? { deepLink: `/threats?id=${encodeParam(refId)}` }
+            ? { deepLink: threatDeepLink(refId) }
             : collection === 'catalog' && refId
               ? { deepLink: `/migrate?q=${encodeParam(refId)}` }
               : collection === 'timeline' && refId
@@ -3939,6 +3959,12 @@ async function processUserManuals(): Promise<RAGChunk[]> {
 // Page-level guides (non-learn pages)
 // ---------------------------------------------------------------------------
 
+/** Published threats rows, for the Threats page guide. */
+function threatsGuideRecords(): Record<string, string>[] {
+  const file = findLatestCSV('quantum_threats_hsm_industries_')
+  return file ? publishedThreatRecords(readCSV(file)) : []
+}
+
 function processPageGuides(): RAGChunk[] {
   return [
     // --- Landing Page ---
@@ -3990,8 +4016,9 @@ function processPageGuides(): RAGChunk[] {
       id: 'page-guide-threats',
       source: 'documentation',
       title: 'Threats Page — Industry-Specific Quantum Risk Dashboard',
-      content:
-        'Threats Page Overview\n\nThe Threats dashboard shows 80+ quantum threat scenarios across 20 industries: Aerospace, Automotive, Cloud Computing, Cryptocurrency/Blockchain, Cross-Industry, Energy/Critical Infrastructure, Financial Services, Government/Defense, Healthcare, Insurance, IoT, IT/Software, Legal/eSignature, Media/DRM, Payment Card, Rail/Transit, Retail, Supply Chain, Telecommunications, and Water/Wastewater.\n\nThreat severity levels: Critical (immediate action required), High (1–3 year timeline), Medium-High, Medium, and Low.\n\nKey concepts:\n- HNDL (Harvest Now, Decrypt Later): Adversaries intercept and store encrypted data today to decrypt when quantum computers arrive. Primary near-term threat.\n- HNFL (Harvest Now, Forge Later): Adversaries plan to forge digital signatures (code signing, certificates, legal documents) once quantum computers break ECDSA/RSA.\n- CRQC (Cryptographically Relevant Quantum Computer): Global Risk Institute 2024 estimates 19–34% probability within 10 years.\n\nEach threat entry includes: threat ID, industry, detailed description, criticality level, crypto at risk, PQC replacement recommendation, regulation/source, confidence percentage, trust score badge, and related learning modules. A persona-aware summary card highlights the most impactful threats for your role (e.g., "3 high-impact threats across 2 industries require board-level attention" for executives).\n\nURL filter parameters (all combinable):\n- ?id=<threatId> — open a specific threat detail (e.g., /threats?id=FIN-001)\n- ?industry=<name> — multi-select industry filter; comma-join for multiple industries (e.g., /threats?industry=Finance,Healthcare); valid values: Aerospace, Automotive, Cloud Computing, Cryptocurrency/Blockchain, Cross-Industry, Energy/Critical Infrastructure, Financial Services, Government/Defense, Healthcare, Insurance, IoT, IT/Software, Legal/eSignature, Media/DRM, Payment Card, Rail/Transit, Retail, Supply Chain, Telecommunications, Water/Wastewater\n- ?criticality=<level> — filter by severity: Critical | High | Medium-High | Medium | Low\n- ?q=<text> — search across threat descriptions, crypto at risk, and PQC recommendations\n- ?sort=<field> — sort column: industry (default) | threatId | criticality\n- ?dir=<order> — sort direction: asc (default) | desc\n\nExample links: /threats?industry=Financial+Services&criticality=Critical (critical finance threats), /threats?industry=Healthcare,Government%2FDefense&sort=threatId (multi-industry sorted by ID), /threats?id=FIN-001 (open specific threat), /threats?q=HNDL&criticality=High (high-severity HNDL threats).',
+      // Counts, industries and criticality levels come from the published
+      // threats rows; parameters are the ones the page reads.
+      content: buildThreatsPageGuide(threatsGuideRecords()),
       category: 'page-guide',
       metadata: { page: 'threats' },
       deepLink: '/threats',
