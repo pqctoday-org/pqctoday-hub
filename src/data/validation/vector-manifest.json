@@ -17069,6 +17069,737 @@
       "publishabilityGaps": ["oracle-version-not-recorded", "retrieval-date-not-recorded"]
     },
     {
+      "id": "rsa_sigver_acvp_test",
+      "path": "src/data/acvp/rsa_sigver_acvp_test.json",
+      "sha256": "7b2c745820a1523bba6b4d9688edb11b40fac86e06acb320443a2e21f95756ec",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+          "upstreamSha256": "86088be5f46b3b10794357495c6d914af4a4c03b97bd3d185482f2d47d338578",
+          "retrieved": "2026-09-25",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-25",
+          "method": "Fetched the upstream file(s) at the pinned commit: SHA-256 recorded as upstreamSha256 (and per-group in _provenance.source_files where a file draws on several upstream files); every local case was produced by a byte-copying subset script and re-compared field-by-field with the upstream case of the same tcId.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+              "sha256": "86088be5f46b3b10794357495c6d914af4a4c03b97bd3d185482f2d47d338578",
+              "retrieved": "2026-09-25"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/1/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/2/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/3/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "No modification, i.e., \"testPassed\": true expected"
+          },
+          "testType": "GDT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 1
+          },
+          "lineage": ["rsa-sigver-acvp-test-1"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/1",
+          "pointer": "/testGroups/0/tests/1",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "IR trailer modified from expected value"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 2
+          },
+          "lineage": ["rsa-sigver-acvp-test-1"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/2",
+          "pointer": "/testGroups/0/tests/2",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "Message modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 3
+          },
+          "lineage": ["rsa-sigver-acvp-test-1"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/3",
+          "pointer": "/testGroups/0/tests/3",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "Key modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 4
+          },
+          "lineage": ["rsa-sigver-acvp-test-1"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/4",
+          "pointer": "/testGroups/0/tests/4",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "IR moved from expected location"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 5
+          },
+          "lineage": ["rsa-sigver-acvp-test-1"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/5",
+          "pointer": "/testGroups/0/tests/5",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "Signature modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 6
+          },
+          "lineage": ["rsa-sigver-acvp-test-1"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/0",
+          "pointer": "/testGroups/1/tests/0",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 3072,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "IR moved from expected location"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 7,
+            "tcId": 37
+          },
+          "lineage": ["rsa-sigver-acvp-test-2"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/1",
+          "pointer": "/testGroups/1/tests/1",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 3072,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "Message modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 7,
+            "tcId": 38
+          },
+          "lineage": ["rsa-sigver-acvp-test-2"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/2",
+          "pointer": "/testGroups/1/tests/2",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 3072,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "Key modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 7,
+            "tcId": 39
+          },
+          "lineage": ["rsa-sigver-acvp-test-2"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/3",
+          "pointer": "/testGroups/1/tests/3",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 3072,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "Signature modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 7,
+            "tcId": 40
+          },
+          "lineage": ["rsa-sigver-acvp-test-2"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/4",
+          "pointer": "/testGroups/1/tests/4",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 3072,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "IR trailer modified from expected value"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 7,
+            "tcId": 41
+          },
+          "lineage": ["rsa-sigver-acvp-test-2"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/5",
+          "pointer": "/testGroups/1/tests/5",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 3072,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "No modification, i.e., \"testPassed\": true expected"
+          },
+          "testType": "GDT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 7,
+            "tcId": 42
+          },
+          "lineage": ["rsa-sigver-acvp-test-2"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/0",
+          "pointer": "/testGroups/2/tests/0",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 4096,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "Key modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 13,
+            "tcId": 73
+          },
+          "lineage": ["rsa-sigver-acvp-test-3"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/1",
+          "pointer": "/testGroups/2/tests/1",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 4096,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "Message modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 13,
+            "tcId": 74
+          },
+          "lineage": ["rsa-sigver-acvp-test-3"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/2",
+          "pointer": "/testGroups/2/tests/2",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 4096,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "Signature modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 13,
+            "tcId": 75
+          },
+          "lineage": ["rsa-sigver-acvp-test-3"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/3",
+          "pointer": "/testGroups/2/tests/3",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 4096,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "No modification, i.e., \"testPassed\": true expected"
+          },
+          "testType": "GDT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 13,
+            "tcId": 76
+          },
+          "lineage": ["rsa-sigver-acvp-test-3"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/4",
+          "pointer": "/testGroups/2/tests/4",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 4096,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "IR moved from expected location"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 13,
+            "tcId": 77
+          },
+          "lineage": ["rsa-sigver-acvp-test-3"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/5",
+          "pointer": "/testGroups/2/tests/5",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 4096,
+            "sigType": "pkcs1v1.5",
+            "hashAlg": "SHA2-256",
+            "maskFunction": "none",
+            "saltLen": 0,
+            "reason": "IR trailer modified from expected value"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 13,
+            "tcId": 78
+          },
+          "lineage": ["rsa-sigver-acvp-test-3"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/0",
+          "pointer": "/testGroups/3/tests/0",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pss",
+            "hashAlg": "SHA3-256",
+            "maskFunction": "mgf1",
+            "saltLen": 32,
+            "reason": "Signature modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 25,
+            "tcId": 145
+          },
+          "lineage": ["rsa-sigver-acvp-test-4"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/1",
+          "pointer": "/testGroups/3/tests/1",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pss",
+            "hashAlg": "SHA3-256",
+            "maskFunction": "mgf1",
+            "saltLen": 32,
+            "reason": "No modification, i.e., \"testPassed\": true expected"
+          },
+          "testType": "GDT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 25,
+            "tcId": 146
+          },
+          "lineage": ["rsa-sigver-acvp-test-4"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/2",
+          "pointer": "/testGroups/3/tests/2",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pss",
+            "hashAlg": "SHA3-256",
+            "maskFunction": "mgf1",
+            "saltLen": 32,
+            "reason": "Key modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 25,
+            "tcId": 147
+          },
+          "lineage": ["rsa-sigver-acvp-test-4"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/3",
+          "pointer": "/testGroups/3/tests/3",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pss",
+            "hashAlg": "SHA3-256",
+            "maskFunction": "mgf1",
+            "saltLen": 32,
+            "reason": "IR moved from expected location"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 25,
+            "tcId": 148
+          },
+          "lineage": ["rsa-sigver-acvp-test-4"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/4",
+          "pointer": "/testGroups/3/tests/4",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pss",
+            "hashAlg": "SHA3-256",
+            "maskFunction": "mgf1",
+            "saltLen": 32,
+            "reason": "IR trailer modified from expected value"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 25,
+            "tcId": 149
+          },
+          "lineage": ["rsa-sigver-acvp-test-4"]
+        },
+        {
+          "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/5",
+          "pointer": "/testGroups/3/tests/5",
+          "algorithm": {
+            "name": "RSA",
+            "revision": "FIPS186-5"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "modulo": 2048,
+            "sigType": "pss",
+            "hashAlg": "SHA3-256",
+            "maskFunction": "mgf1",
+            "saltLen": 32,
+            "reason": "Message modified"
+          },
+          "testType": "GDT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 25,
+            "tcId": 150
+          },
+          "lineage": ["rsa-sigver-acvp-test-4"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "rsa-sigver-acvp-test-1",
+          "appliesTo": [
+            "rsa_sigver_acvp_test#/testGroups/0/tests/0",
+            "rsa_sigver_acvp_test#/testGroups/0/tests/1",
+            "rsa_sigver_acvp_test#/testGroups/0/tests/2",
+            "rsa_sigver_acvp_test#/testGroups/0/tests/3",
+            "rsa_sigver_acvp_test#/testGroups/0/tests/4",
+            "rsa_sigver_acvp_test#/testGroups/0/tests/5"
+          ],
+          "upstreamOperation": "RSA sigVer FIPS186-5 GDT (2048-bit, pkcs1v1.5, SHA2-256)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "6 case(s) (upstream tcId 1, 2, 3, 4, 5, 6) taken from upstream tgId 1 (270 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
+            }
+          ]
+        },
+        {
+          "id": "rsa-sigver-acvp-test-2",
+          "appliesTo": [
+            "rsa_sigver_acvp_test#/testGroups/1/tests/0",
+            "rsa_sigver_acvp_test#/testGroups/1/tests/1",
+            "rsa_sigver_acvp_test#/testGroups/1/tests/2",
+            "rsa_sigver_acvp_test#/testGroups/1/tests/3",
+            "rsa_sigver_acvp_test#/testGroups/1/tests/4",
+            "rsa_sigver_acvp_test#/testGroups/1/tests/5"
+          ],
+          "upstreamOperation": "RSA sigVer FIPS186-5 GDT (3072-bit, pkcs1v1.5, SHA2-256)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "6 case(s) (upstream tcId 37, 38, 39, 40, 41, 42) taken from upstream tgId 7 (270 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
+            }
+          ]
+        },
+        {
+          "id": "rsa-sigver-acvp-test-3",
+          "appliesTo": [
+            "rsa_sigver_acvp_test#/testGroups/2/tests/0",
+            "rsa_sigver_acvp_test#/testGroups/2/tests/1",
+            "rsa_sigver_acvp_test#/testGroups/2/tests/2",
+            "rsa_sigver_acvp_test#/testGroups/2/tests/3",
+            "rsa_sigver_acvp_test#/testGroups/2/tests/4",
+            "rsa_sigver_acvp_test#/testGroups/2/tests/5"
+          ],
+          "upstreamOperation": "RSA sigVer FIPS186-5 GDT (4096-bit, pkcs1v1.5, SHA2-256)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "6 case(s) (upstream tcId 73, 74, 75, 76, 77, 78) taken from upstream tgId 13 (270 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
+            }
+          ]
+        },
+        {
+          "id": "rsa-sigver-acvp-test-4",
+          "appliesTo": [
+            "rsa_sigver_acvp_test#/testGroups/3/tests/0",
+            "rsa_sigver_acvp_test#/testGroups/3/tests/1",
+            "rsa_sigver_acvp_test#/testGroups/3/tests/2",
+            "rsa_sigver_acvp_test#/testGroups/3/tests/3",
+            "rsa_sigver_acvp_test#/testGroups/3/tests/4",
+            "rsa_sigver_acvp_test#/testGroups/3/tests/5"
+          ],
+          "upstreamOperation": "RSA sigVer FIPS186-5 GDT (2048-bit, pss, SHA3-256)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "6 case(s) (upstream tcId 145, 146, 147, 148, 149, 150) taken from upstream tgId 25 (270 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "24 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): no-pkcs11-mechanism-for-shake-hash-or-mask."
+    },
+    {
       "id": "rsapss_test",
       "path": "src/data/acvp/rsapss_test.json",
       "sha256": "50bf2659063f48c0b13476ae310688fc129f36e54bc26de657a98e7d77559ad8",
