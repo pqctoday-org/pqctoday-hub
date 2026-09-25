@@ -15,7 +15,7 @@
  * "no caveat", never a crash.
  */
 
-import type { SecondarySource } from './threatsData'
+import type { SecondarySource, ThreatData } from './threatsData'
 
 export type ClaimVerdict = 'supported' | 'undeterminable' | 'contradicted'
 
@@ -127,6 +127,23 @@ export function sourceIdentityText(lineage: ThreatLineage): string {
 export function claimsCheckedText(lineage: ThreatLineage): string | null {
   if (lineage.supported + lineage.unconfirmed === 0) return null
   return `Claims checked against the cited document: ${lineage.supported} supported · ${lineage.unconfirmed} could not be confirmed`
+}
+
+/**
+ * Plain facts about the cited source for the Evidence panel (ruling R2 as
+ * adjusted on the user's review): "Peer reviewed: yes" and "Vetting body:
+ * IETF; NIST", each only when the row has a value. Facts, not scores — no
+ * number is derived from them.
+ */
+export function sourceFactLines(
+  threat: Pick<ThreatData, 'peerReviewed' | 'vettingBody'>
+): { key: 'peer' | 'vetting'; text: string }[] {
+  const lines: { key: 'peer' | 'vetting'; text: string }[] = []
+  if (threat.peerReviewed)
+    lines.push({ key: 'peer', text: `Peer reviewed: ${threat.peerReviewed}` })
+  const bodies = (threat.vettingBody ?? []).map((b) => b.trim()).filter(Boolean)
+  if (bodies.length > 0) lines.push({ key: 'vetting', text: `Vetting body: ${bodies.join('; ')}` })
+  return lines
 }
 
 /** `sourceCaveatFor` against the bundled file. */

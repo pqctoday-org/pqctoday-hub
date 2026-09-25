@@ -8,6 +8,7 @@ import {
   secondSourceLines,
   SOURCE_CAVEAT_TEXT,
   sourceCaveatFor,
+  sourceFactLines,
   sourceIdentityText,
   type ThreatClaimStatusFile,
 } from './threatClaimStatus'
@@ -135,5 +136,20 @@ describe('threat lineage — the Evidence panel (ruling R2)', () => {
     for (const t of [sourceIdentityText(l), claimsCheckedText(l) ?? '']) {
       expect(t).not.toMatch(/%|confidence|accuracy/i)
     }
+  })
+})
+
+describe('source facts — peer review and vetting body (ruling R2, adjusted)', () => {
+  it('states each as a plain fact, only when the row has a value', () => {
+    expect(
+      sourceFactLines({ peerReviewed: 'partial', vettingBody: ['IETF', ' NIST '] }).map(
+        (l) => l.text
+      )
+    ).toEqual(['Peer reviewed: partial', 'Vetting body: IETF; NIST'])
+    expect(sourceFactLines({ peerReviewed: 'no' }).map((l) => l.text)).toEqual([
+      'Peer reviewed: no',
+    ])
+    expect(sourceFactLines({})).toEqual([])
+    expect(sourceFactLines({ vettingBody: [] })).toEqual([])
   })
 })

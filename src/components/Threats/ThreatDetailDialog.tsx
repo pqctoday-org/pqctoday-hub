@@ -15,7 +15,9 @@ import {
   ShieldCheck,
   ClipboardCheck,
   ArrowRight,
+  BookCheck,
   CalendarCheck,
+  Landmark,
   CheckCircle2,
   CircleDashed,
   ListChecks,
@@ -44,6 +46,7 @@ import {
   getSourceCaveat,
   getThreatLineage,
   secondSourceLines,
+  sourceFactLines,
   sourceIdentityText,
 } from '@/data/threatClaimStatus'
 
@@ -78,6 +81,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
   )
   const lineage = useMemo(() => getThreatLineage(threat.threatId), [threat.threatId])
   const claimsLine = claimsCheckedText(lineage)
+  const sourceFacts = sourceFactLines(threat)
 
   // Set when the CTI pointer closes the dialog to scroll to the Horizon
   // section: focus must not return to (and scroll back to) the trigger row.
@@ -273,6 +277,16 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                     <span>{claimsLine}</span>
                   </li>
                 )}
+                {sourceFacts.map((f) => (
+                  <li key={f.key} className="flex items-start gap-1.5">
+                    {f.key === 'peer' ? (
+                      <BookCheck size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+                    ) : (
+                      <Landmark size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+                    )}
+                    <span>{f.text}</span>
+                  </li>
+                ))}
                 {threat.lastVerified && (
                   <li className="flex items-start gap-1.5">
                     <CalendarCheck size={12} className="mt-0.5 shrink-0" aria-hidden="true" />

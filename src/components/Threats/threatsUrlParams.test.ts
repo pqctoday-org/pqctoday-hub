@@ -27,6 +27,7 @@ describe('threatsUrlParams', () => {
       { industry: 'Critical Infrastructure / OT' },
       { industry: 'Aerospace / Aviation / Space' },
       { industry: 'Cross-Industry' },
+      { industry: 'Hardware Security Modules' },
     ]
     expect(resolveIndustryParam('finance & banking', rows)).toEqual(['Finance & Banking'])
     // Old labels the page renamed (ruling R3) still land on the new label.
@@ -40,7 +41,13 @@ describe('threatsUrlParams', () => {
     expect(resolveIndustryParam('Aerospace / Aviation', rows)).toEqual([
       'Aerospace / Aviation / Space',
     ])
-    expect(resolveIndustryParam('Hardware Security Modules', rows)).toEqual(['Cross-Industry'])
+    // HSM is its own sector — its label and slug land on it, not on Cross-Industry.
+    expect(resolveIndustryParam('Hardware Security Modules', rows)).toEqual([
+      'Hardware Security Modules',
+    ])
+    expect(resolveIndustryParam('hardware-security-modules', rows)).toEqual([
+      'Hardware Security Modules',
+    ])
     expect(resolveIndustryParam('Energy / Critical Infrastructure,Nope', rows)).toEqual([
       'Critical Infrastructure / OT',
     ])
