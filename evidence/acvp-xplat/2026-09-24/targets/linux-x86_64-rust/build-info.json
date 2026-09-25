@@ -1,0 +1,27 @@
+{
+  "engine": {
+    "implementation": "pqctoday-hsm softhsmrustv3 (Rust), native cdylib from the pqctoday-sandbox playground-network image (hsm-perf-bench leg)",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": null,
+    "sourceCommitEvidence": "UNKNOWN — not publishable. The artifact comes from the existing image pqc-sandbox-network:latest sha256:224ca8076e2cd82b5a6554c633c51a6962008109128060117ce16e02987b6bdf (created 2026-09-24T07:07-05:00; .so mtime 2026-09-24T12:07Z), built by pqctoday-sandbox docker/Dockerfile.network with `COPY pqctoday-hsm` from a sibling WORKING TREE: the image carries no .git, and neither the commit nor the tree's dirty state was recorded. It was run as found (no rebuild: amd64 builds are outside the permitted pqc-rust build path) to exercise the x86-64 ABI, and is recorded honestly as unattributable.",
+    "builtAt": "2026-09-24T12:07Z (file mtime inside the image)"
+  },
+  "build": {
+    "buildSystem": "cargo (Dockerfile.network scenario-39 / hsm-perf-bench stage)",
+    "compiler": "rustc version 1.98.1 (48a229cea 2026-09-01) (ELF .comment; linker LLD 22.1.8)",
+    "flags": null,
+    "profile": "release (per the image's copy of rust/Cargo.toml — not verifiable)",
+    "features": null,
+    "location": "docker build of pqctoday-sandbox playground-network (linux/amd64 under Rosetta 2 on Apple silicon)"
+  },
+  "dependencies": {
+    "cryptoBackend": {
+      "name": "RustCrypto ml-kem + fips204 (pqctoday-patched), per the image's unknown source tree",
+      "version": null
+    }
+  },
+  "entropy": {
+    "source": "getrandom crate → getrandom(2)"
+  },
+  "notes": []
+}
