@@ -366,12 +366,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   reads the live merged library CSV, which now carries both causes'
   //   deprecations). Drive down via the same trustScoreData.ts extension
   //   named above.
-  'document-enrichment': 219,
-  // 2026-09-24: bumped 166 → 219 — the threats Codex claim check (priv
-  // lineage/claim-checks/) moved 27 threats to draft (their cited document
-  // never states the quantum threat) on top of the day's earlier 25 drafts;
-  // a drafted row is not tier-scored, so its committed doc-enrichment chunks
-  // surface here until the next refresh-index. Same cause as `threats` below.
+  'document-enrichment': 166,
   // 2026-09-13: bumped 164 → 166 — same session/cause as the `timeline: 3`
   // bump above (data-maintenance/lineage-replacements' 7-source close-out);
   // each of the 2 new gaps here shares a title with one of that bump's 2 new
@@ -386,9 +381,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   // 404 link) — same proof-gate deprecation pattern as the timeline/library
   // entries above. Deprecated rows aren't tier-scored, so they surface here.
   // Expected; corpus lags until the next refresh-index run.
-  // 2026-09-24: 38 → 56 — the same 2026-09-24 drafts (see the
-  // document-enrichment note above); resolves on the next refresh-index.
-  threats: 56,
+  threats: 38,
   // 2026-08-07: governance-maturity — 168 chunks across 29 distinct ref_ids,
   // ALL because processGovernanceMaturity() switched from findLatestCSV to a
   // merge-all read of every dated pqc_maturity_governance_requirements_*.csv
