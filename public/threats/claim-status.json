@@ -1,6 +1,6 @@
 {
- "csv": "quantum_threats_hsm_industries_09242026_r14.csv",
- "generatedAt": "2026-09-25T04:26:02+00:00",
+ "csv": "quantum_threats_hsm_industries_09252026_r1.csv",
+ "generatedAt": "2026-09-25T11:28:47+00:00",
  "note": "Claim-ledger verdicts on each row's cited document, only where the verdict was reached on the file cited today. Verdict words only; no document text.",
  "rows": {
   "AERO-002": {
@@ -678,6 +678,47 @@
    },
    "evidenceSha256": "d995ec99296bc13d"
   },
+  "CROSS-006": {
+   "claims": {
+    "crypto_at_risk": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112736Z-9763d677",
+     "decidedAt": "2026-09-25",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112736Z-9763d677",
+     "decidedAt": "2026-09-25",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112736Z-9763d677",
+     "decidedAt": "2026-09-25",
+     "verdict": "supported"
+    },
+    "related_standards": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112736Z-9763d677",
+     "decidedAt": "2026-09-25",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112736Z-9763d677",
+     "decidedAt": "2026-09-25",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112736Z-9763d677",
+     "decidedAt": "2026-09-25",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "d802f4849a52d180"
+  },
   "CROSS-007": {
    "claims": {
     "crypto_at_risk": {
@@ -836,6 +877,35 @@
    },
    "evidenceSha256": "483c8097e5f0760d"
   },
+  "CROSS-012": {
+   "claims": {
+    "crypto_at_risk": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112707Z-6af49f9a",
+     "decidedAt": "2026-09-25",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112707Z-6af49f9a",
+     "decidedAt": "2026-09-25",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112707Z-6af49f9a",
+     "decidedAt": "2026-09-25",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112707Z-6af49f9a",
+     "decidedAt": "2026-09-25",
+     "verdict": "supported"
+    }
+   },
+   "evidenceSha256": "ec64c97f9f88b116"
+  },
   "CROSS-013": {
    "claims": {
     "crypto_at_risk": {
@@ -938,6 +1008,47 @@
     }
    },
    "evidenceSha256": "cc32391022c1382a"
+  },
+  "CROSS-017": {
+   "claims": {
+    "crypto_at_risk": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112728Z-cce7da25",
+     "decidedAt": "2026-09-25",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112728Z-cce7da25",
+     "decidedAt": "2026-09-25",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112728Z-cce7da25",
+     "decidedAt": "2026-09-25",
+     "verdict": "supported"
+    },
+    "related_standards": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112728Z-cce7da25",
+     "decidedAt": "2026-09-25",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112728Z-cce7da25",
+     "decidedAt": "2026-09-25",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T112728Z-cce7da25",
+     "decidedAt": "2026-09-25",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "0fed900232f11acc"
   },
   "CRYPTO-001": {
    "claims": {
