@@ -21,6 +21,7 @@ import {
   hmacDrbgInstantiate,
   runHmacDrbgKatCase,
   runHmacDrbgKatSuite,
+  sabotageVariants,
   type HmacDrbgKatCase,
   type HmacDrbgKatStep,
 } from './hmacDrbg'
@@ -178,5 +179,36 @@ describe('HMAC_DRBG state rules — SP 800-90A Rev. 1 §10.1.2', () => {
     expect(s.reseedCounter).toBe(interval + 1)
     const blocked = await hmacDrbgGenerate(s, 16, new Uint8Array(0), interval)
     expect(blocked.status).toBe('RESEED_REQUIRED')
+  })
+})
+
+// Review pass 2, L3: the demo flipped only the entropy input. The UI now runs
+// sabotageVariants(), which this block checks covers every input kind.
+describe('sabotageVariants — the list the demo runs', () => {
+  it('covers every input kind across tc196 (reseed) and tg3 tc31 (prediction resistance)', async () => {
+    const variants = [byId('acvp-tg14-tc196'), byId('acvp-tg3-tc31')].flatMap((c) =>
+      sabotageVariants(c)
+    )
+    expect(new Set(variants.map((v) => v.input))).toEqual(
+      new Set([
+        'entropy input',
+        'nonce',
+        'personalization string',
+        'generate additional input',
+        'reseed entropy input',
+        'reseed additional input',
+        'prediction-resistance entropy input',
+      ])
+    )
+    const outcomes = await runHmacDrbgKatSuite(variants.map((v) => v.mutated))
+    for (const [i, o] of outcomes.entries()) {
+      expect(o.passed, `${variants[i].caseId} / ${variants[i].input}`).toBe(false)
+    }
+  })
+
+  it('does not mutate the pinned fixture', () => {
+    const before = JSON.stringify(byId('acvp-tg14-tc196'))
+    sabotageVariants(byId('acvp-tg14-tc196'))
+    expect(JSON.stringify(byId('acvp-tg14-tc196'))).toBe(before)
   })
 })
