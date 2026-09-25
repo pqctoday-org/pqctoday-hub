@@ -118,6 +118,114 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     ...IBM_BREACH_BASELINES_FRESHNESS,
   },
   ...simMoveClaims(),
+  // ── crypto-product-certification, CC/EU author (build spec §6.5) ──
+  {
+    id: 'cpc-cceu-eucc-cir-2024-482-consolidated',
+    claim:
+      'EUCC legal text (CIR 2024/482 as amended by 2024/3144 and 2025/2462): AVA_VAN-based levels, CC 3.1 R5 allowed until 31 Dec 2027, Art 3(4) eIDAS PP carve-out, minor change → no new certificate, Annex I/II contents',
+    source:
+      'src/components/PKILearning/modules/CryptoProductCertification/components/sections/CcEuSections.tsx',
+    asOf: '2026-09-24',
+    recheck: 'https://eur-lex.europa.eu/eli/reg_impl/2024/482/oj/eng',
+  },
+  {
+    id: 'cpc-cceu-acm-v2-applicable-v3-draft',
+    claim:
+      'EUCC cryptography: ECCG ACM v2 (6 May 2025) is the applicable version and lists ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, XMSS, LMS with lattice hybridisation; ACM v3 is a draft (public review closed end of July 2026)',
+    source:
+      'src/components/PKILearning/modules/CryptoProductCertification/components/sections/CcEuSections.tsx',
+    asOf: '2026-09-24',
+    recheck: 'https://certification.enisa.europa.eu/publications/eucc-guidelines-cryptography_en',
+  },
+  {
+    id: 'cpc-cceu-eucc-guidelines-status',
+    claim:
+      'ENISA EUCC guidelines and state-of-the-art list: FPT_PHP interpretation for EN 419221-5 v1 (final via 2025/2462), product-series methodology v1, change-scenarios v1, vulnerability-management v1.1',
+    source:
+      'src/components/PKILearning/modules/CryptoProductCertification/components/sections/CcEuSections.tsx',
+    asOf: '2026-09-24',
+    recheck:
+      'https://certification.enisa.europa.eu/certification-library/eucc-certification-scheme_en',
+  },
+  {
+    id: 'cpc-cceu-cc2022-transition',
+    claim:
+      'CCRA CC:2022 transition policy CCMC-2023-04-001: CC 3.1 R5 starts until 30 Jun 2024; exact-conformance PP products until 31 Dec 2025; CC 3.1 PP claims until 31 Dec 2027',
+    source:
+      'src/components/PKILearning/modules/CryptoProductCertification/components/sections/CcEuSections.tsx',
+    asOf: '2026-09-24',
+    recheck: 'https://www.commoncriteriaportal.org/cc/index.cfm',
+  },
+  {
+    id: 'cpc-cceu-ccdb-014-v3-1',
+    claim: 'CCRA assurance continuity CCDB-014 v3.1 (29 Feb 2024) is the current version',
+    source:
+      'src/components/PKILearning/modules/CryptoProductCertification/components/sections/CcEuSections.tsx',
+    asOf: '2026-09-24',
+    recheck:
+      'https://www.commoncriteriaportal.org/files/operatingprocedures/CCDB-014-v3.1-2024-February-29-Final-Assurance_Continuity.pdf',
+  },
+  {
+    id: 'cpc-cceu-ccra-eucc-coexistence-sogis',
+    claim:
+      'CCMC-011 v1.0 CCRA/EUCC co-existence (19 Mar 2025) and SOG-IS ceasing to issue certificates on 27 Feb 2026',
+    source:
+      'src/components/PKILearning/modules/CryptoProductCertification/components/sections/CcEuSections.tsx',
+    asOf: '2026-09-24',
+    recheck: 'https://www.sogis.eu/',
+  },
+  {
+    id: 'cpc-cceu-en419221-5-pp-status',
+    claim:
+      'EN 419221-5 PP: ANSSI-CC-PP-2016/05 (v0.15) + M01 (v1.0), CC 3.1 R4, EAL4+AVA_VAN.5; no CC:2022 revision listed on the CC portal',
+    source:
+      'src/components/PKILearning/modules/CryptoProductCertification/components/sections/CcEuSections.tsx',
+    asOf: '2026-09-24',
+    recheck: 'https://www.commoncriteriaportal.org/pps/index.cfm',
+  },
+  {
+    id: 'cpc-cceu-security-ic-pp-v2',
+    claim:
+      'Security IC Platform PP BSI-CC-PP-0084-V2-2026 (v2.0, CC:2022 R1, certified 25 Feb 2026, EAL4+ALC_DVS.2/ALC_FLR.2/AVA_VAN.5) is the current version',
+    source:
+      'src/components/PKILearning/modules/CryptoProductCertification/components/sections/CcEuSections.tsx',
+    asOf: '2026-09-24',
+    recheck: 'https://www.commoncriteriaportal.org/pps/index.cfm',
+  },
+  {
+    id: 'cpc-cceu-eidas-qscd-acts',
+    claim:
+      'eIDAS QSCD rules: Art 30(3a) 5-year/2-year cycle; Decision 2016/650 in force; CIR 2025/1567 (applies 19 Aug 2027) and 2025/1570 (applies 19 Dec 2025); open question whether a newer act lists EN 419221-5/EN 419241-2',
+    source:
+      'src/components/PKILearning/modules/CryptoProductCertification/components/sections/CcEuSections.tsx',
+    asOf: '2026-09-24',
+    recheck: 'https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R1567',
+  },
+  {
+    id: 'cpc-cceu-decoder-record-proteccio',
+    claim:
+      'Claim-decoder fixture: TrustWay Proteccio ANSSI-CC-2025/09 (EAL4 augmented ADV_IMP.2, ALC_CMC.5, ALC_DVS.2, ALC_FLR.3, AVA_VAN.5; CCRA at EAL2+ALC_FLR.3; valid to 31 Mar 2030)',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/ccEuData.ts',
+    asOf: '2026-09-24',
+    recheck: 'https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2025-09-certificat.pdf',
+  },
+  {
+    id: 'cpc-cceu-decoder-record-nshield5s',
+    claim:
+      'Claim-decoder fixture: nShield5s v13.5.1 CSA_CC_23004 (EAL4 augmented ALC_FLR.2, AVA_VAN.5; valid till 23 Sep 2029)',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/ccEuData.ts',
+    asOf: '2026-09-24',
+    recheck:
+      'https://www.commoncriteriaportal.org/files/epfiles/%5BCER%5D%20nShield5s%20Hardware%20Security%20Module%20Certificate%20Report.pdf',
+  },
+  {
+    id: 'cpc-cceu-decoder-record-cisco-eucc',
+    claim:
+      'Claim-decoder fixture: EUCC-3110-2025-12-2500098-01 Cisco Nexus 9000 (EUCC substantial, AVA_VAN.1, EAL1+ALC_FLR.2+ASE_SPD.1, NDcPP v3.0e; expiry Dec 2030)',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/ccEuData.ts',
+    asOf: '2026-09-24',
+    recheck: 'https://certification.enisa.europa.eu/certificates/eucc-3110-2025-12-2500098-01_en',
+  },
 ].sort((a, b) => a.id.localeCompare(b.id))
 
 /** Every claim's asOf is a well-formed ISO date — guards typos at test time. */
