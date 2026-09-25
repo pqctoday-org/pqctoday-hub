@@ -15,9 +15,13 @@ export interface FipsValidationEntry {
   vendorName: string
   certType: 'FIPS 140-3' | 'FIPS 140-2' | 'ACVP' | 'CAVP' | 'Common Criteria'
   certId: string
-  /** For ACVP: PQC algorithms validated. For FIPS 140-3: empty — module certs do not include PQC. */
+  /**
+   * For ACVP/CAVP: PQC algorithms on the algorithm certificate. For FIPS 140-x: PQC algorithms in
+   * the module certificate's Approved Algorithms list (empty when there are none).
+   */
   algorithms: string[]
-  status: 'Active' | 'Pending' | 'Planned'
+  /** 'Historical' = on the CMVP Historical list: existing systems only, not new procurement. */
+  status: 'Active' | 'Pending' | 'Planned' | 'Historical'
   date: string
   level?: string
   /** Direct link to NIST CMVP or ACVP certificate page */
@@ -473,10 +477,20 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
   },
 ]
 
+/**
+ * Certificate data below was checked against the NIST CMVP and CAVP certificate pages on
+ * 2026-09-24. It is a static snapshot: re-check the linked page before relying on an entry.
+ *
+ * It is deliberately NOT derived from public/data/compliance-data.json: on 2026-09-24 that file
+ * listed ML-KEM/ML-DSA for CMVP #5300 and #5502, whose certificate pages do not include them in
+ * the approved-algorithm list, and still showed #4250, #4765 and #4086 as Active.
+ */
+export const FIPS_VALIDATIONS_AS_OF = '2026-09-24'
+
 export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
-  // === ACVP — Algorithm-level PQC validations (NIST CAVP/ACVP program) ===
-  // ACVP validates individual algorithm implementations, not the hardware module.
-  // These are the ONLY validated PQC certifications that exist for HSMs as of early 2026.
+  // === CAVP (tested via ACVP) — algorithm validations ===
+  // An algorithm certificate says an identified implementation passed the NIST tests for the
+  // listed algorithms. It is not a module certificate.
   {
     vendorId: 'thales-luna',
     vendorName: 'Thales Luna K7 Cryptographic Library',
@@ -501,6 +515,18 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
   },
   {
     vendorId: 'entrust-nshield',
+    vendorName: 'Entrust nShield 5 Algorithm Library - nCore',
+    certType: 'ACVP',
+    certId: 'A7285',
+    algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'],
+    status: 'Active',
+    date: '2025-07-30',
+    certLink:
+      'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20056',
+    note: 'CAVP describes this implementation as providing cryptographic functionality for Entrust nShield HSMs.',
+  },
+  {
+    vendorId: 'entrust-nshield',
     vendorName: 'Entrust nShield PQSDK',
     certType: 'ACVP',
     certId: 'A7990',
@@ -509,23 +535,23 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     date: '2026-01-30',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20796',
-    note: 'LMS validated (nShield 5 v13 + nShield XC v12 on NXP QorIQ T1024). ML-KEM, ML-DSA, and SLH-DSA CAVP validated Sep 2025 (firmware v13.8.0+); separate ACVP certificate pending NIST database listing.',
-  },
-  {
-    vendorId: 'entrust-nshield',
-    vendorName: 'Entrust nShield 5 Firmware v13.8.0 — PQC Algorithms',
-    certType: 'ACVP',
-    certId: 'TBD',
-    algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'],
-    status: 'Active',
-    date: '2025-09-10',
-    certLink:
-      'https://www.entrust.com/company/newsroom/entrust-nshield-hsms-achieve-validation-from-nist-cryptographic-algorithm-validation-program',
-    note: 'ML-KEM (512/768/1024), ML-DSA (44/65/87), SLH-DSA (all 12 param sets) CAVP validated. ACVP certificate number pending NIST database listing. FIPS 140-3 Level 3 resubmission in progress.',
+    note: 'LMS only. ML-KEM, ML-DSA and SLH-DSA for nShield are on A7285.',
   },
   {
     vendorId: 'utimaco',
-    vendorName: 'Utimaco SecurityServer — Stateful HBS Module',
+    vendorName: 'Utimaco Lattice Module - ML',
+    certType: 'ACVP',
+    certId: 'A7400',
+    algorithms: ['ML-KEM', 'ML-DSA'],
+    status: 'Active',
+    date: '2025-09-17',
+    certLink:
+      'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20181',
+    note: 'CAVP describes it as the lattice PQC module for the containerized HSM (cHSM) on u.trust Anchor.',
+  },
+  {
+    vendorId: 'utimaco',
+    vendorName: 'Utimaco Stateful hash based Module - HBS',
     certType: 'ACVP',
     certId: 'A7401',
     algorithms: ['LMS'],
@@ -533,31 +559,6 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     date: '2025-09-17',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20182',
-    note: 'LMS validated. ML-KEM and ML-DSA CAVP validated Oct 2025 (separate certs #40010, #40011).',
-  },
-  {
-    vendorId: 'utimaco',
-    vendorName: 'Utimaco Quantum Protect — ML-KEM',
-    certType: 'ACVP',
-    certId: '#40010',
-    algorithms: ['ML-KEM'],
-    status: 'Active',
-    date: '2025-10-14',
-    certLink:
-      'https://utimaco.com/news/press-releases/utimacos-quantum-protect-algorithms-successfully-passed-nist-testing',
-    note: 'ML-KEM (512/768/1024) CAVP validated. Covers all standardized parameter sets for SecurityServer Se Gen2 Q-safe v5.0.',
-  },
-  {
-    vendorId: 'utimaco',
-    vendorName: 'Utimaco Quantum Protect — ML-DSA',
-    certType: 'ACVP',
-    certId: '#40011',
-    algorithms: ['ML-DSA'],
-    status: 'Active',
-    date: '2025-10-14',
-    certLink:
-      'https://utimaco.com/news/press-releases/utimacos-quantum-protect-algorithms-successfully-passed-nist-testing',
-    note: 'ML-DSA (44/65/87) CAVP validated. Covers all standardized parameter sets for SecurityServer Se Gen2 Q-safe v5.0.',
   },
   {
     vendorId: 'aws-cloudhsm',
@@ -572,6 +573,17 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     note: 'ACVP validation is for the AWS-LC software library used by CloudHSM SDK — not for the HSM firmware itself.',
   },
   {
+    vendorId: 'futurex-cryptohub',
+    vendorName: 'Futurex GSP4000 Hardware Security Module',
+    certType: 'ACVP',
+    certId: 'A7998',
+    algorithms: ['ML-KEM', 'ML-DSA'],
+    status: 'Active',
+    date: '2026-02-04',
+    certLink:
+      'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20805',
+  },
+  {
     vendorId: 'crypto4a-qxhsm',
     vendorName: 'Crypto4A QASM Cryptographic Module',
     certType: 'ACVP',
@@ -582,10 +594,36 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18297',
   },
-  // === FIPS 140-3 — Module certifications (hardware + classical algorithms only) ===
-  // IMPORTANT: No HSM has a FIPS 140-3 module certificate that includes PQC algorithm certification.
-  // FIPS 140-3 certifies the hardware security boundary and classical algorithms (AES, SHA, RSA, ECDH).
-  // All entries below show "No PQC Mechanisms Detected" in the NIST CMVP database.
+  // === CMVP — module certificates ===
+  // `algorithms` lists the PQC algorithms that appear in the certificate's Approved Algorithms
+  // list. Apart from a few vendor-affirmed functions, each is backed by a CAVP certificate. An empty list means the certificate
+  // lists no PQC algorithm as approved.
+  {
+    vendorId: 'thales-luna',
+    vendorName: 'Thales Luna T7',
+    certType: 'FIPS 140-3',
+    certId: '5450',
+    algorithms: ['ML-KEM', 'ML-DSA', 'LMS'],
+    status: 'Active',
+    date: '2026-07-29',
+    level: 'Level 3',
+    certLink:
+      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5450',
+    note: 'Hardware module. Sunset date 7/28/2031. The approved-algorithm list includes ML-KEM, ML-DSA and LMS.',
+  },
+  {
+    vendorId: 'thales-luna',
+    vendorName: 'Thales Luna M7 Cryptographic Module',
+    certType: 'FIPS 140-3',
+    certId: '5300',
+    algorithms: ['LMS'],
+    status: 'Active',
+    date: '2026-06-03',
+    level: 'Level 3',
+    certLink:
+      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5300',
+    note: 'LMS is the only PQC algorithm in the approved list. The Security Policy lists pre-standard DILITHIUM, FALCON and KYBER as non-approved, not allowed.',
+  },
   {
     vendorId: 'thales-luna',
     vendorName: 'Thales Luna K7 Cryptographic Module',
@@ -597,44 +635,58 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4684',
-    note: 'Certifies hardware module + classical algorithms. PQC algorithm validations are in ACVP A7358 and A7879.',
+    note: 'No PQC algorithm in the approved list. The K7 library passed CAVP testing for ML-KEM, ML-DSA and LMS (A7358), but this module certificate does not include them.',
   },
   {
     vendorId: 'entrust-nshield',
     vendorName: 'Entrust nShield 5s Hardware Security Module',
     certType: 'FIPS 140-3',
-    certId: '4765',
+    certId: '5329',
     algorithms: [],
     status: 'Active',
-    date: '2024-08-19',
+    date: '2026-06-15',
     level: 'Level 3',
     certLink:
-      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4765',
-    note: 'Certifies hardware module + classical algorithms. PQC firmware v13.8.0+ is undergoing FIPS 140-3 resubmission; ACVP A7990 covers LMS.',
+      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5329',
+    note: 'Replaces #4765, now Historical. No PQC algorithm in the approved list.',
   },
   {
     vendorId: 'entrust-nshield',
-    vendorName: 'Entrust nShield 5 — PQC firmware v13.8.0+ (resubmission)',
+    vendorName: 'Entrust nShield 5s Hardware Security Module (Modules in Process)',
     certType: 'FIPS 140-3',
-    certId: 'Pending',
+    certId: 'MIP',
     algorithms: [],
     status: 'Pending',
-    date: '2025-09-01',
-    level: 'Level 3',
-    note: 'FIPS 140-3 resubmission in progress for firmware v13.8.0+. Module cert will not include PQC algorithm validation — use ACVP for PQC.',
+    date: '2026-07-30',
+    certLink:
+      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/modules-in-process/modules-in-process-list',
+    note: 'On the CMVP Modules in Process list with status "Review" (7/30/2026). The list does not show firmware version, algorithms or level. A queue position is not evidence of the outcome.',
   },
   {
     vendorId: 'utimaco',
     vendorName: 'Utimaco CryptoServer Se-Series Gen2',
-    certType: 'FIPS 140-3',
+    certType: 'FIPS 140-2',
     certId: '3925',
     algorithms: [],
-    status: 'Active',
+    status: 'Historical',
     date: '2021-05-10',
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/3925',
-    note: 'Certifies hardware module + classical algorithms. FIPS 140-3 recertification pending for Q-safe v5.0. ACVP A7401 covers LMS.',
+    note: 'A FIPS 140-2 certificate. CMVP moved it to the Historical list at sunset: usable only in existing systems, not for new procurement.',
+  },
+  {
+    vendorId: 'marvell-ls2',
+    vendorName: 'Marvell LS2 HSM Family',
+    certType: 'FIPS 140-3',
+    certId: '5502',
+    algorithms: [],
+    status: 'Active',
+    date: '2026-08-25',
+    level: 'Level 3',
+    certLink:
+      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5502',
+    note: 'No PQC algorithm in the approved list. The Security Policy names ML-DSA/ML-KEM keys and lists a hybrid ML-DSA + ECDSA signature as non-approved, not allowed.',
   },
   {
     vendorId: 'marvell-ls2',
@@ -647,20 +699,33 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4703',
-    note: 'Powers Azure Managed HSM backend. Module cert covers classical algorithms only.',
+    note: 'Powers Azure Managed HSM backend. No PQC algorithm in the approved list.',
   },
   {
     vendorId: 'futurex-cryptohub',
     vendorName: 'Futurex EXP1000 Hardware Security Module',
-    certType: 'FIPS 140-3',
+    certType: 'FIPS 140-2',
     certId: '4086',
     algorithms: [],
-    status: 'Active',
+    status: 'Historical',
     date: '2021-11-30',
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4086',
-    note: 'FIPS 140-3 for classical algorithms. No PQC ACVP validations found as of early 2026 — beta firmware PQC claims are not yet ACVP-validated.',
+    note: 'A FIPS 140-2 certificate, moved to the Historical list at sunset. A Futurex GSP4000 module is on the Modules in Process list ("Pending Resubmission", 7/17/2026).',
+  },
+  {
+    vendorId: 'crypto4a-qxhsm',
+    vendorName: 'Crypto4A QASM Cryptographic Module',
+    certType: 'FIPS 140-3',
+    certId: '5497',
+    algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS'],
+    status: 'Active',
+    date: '2026-08-19',
+    level: 'Level 3',
+    certLink:
+      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5497',
+    note: 'Hardware module. Sunset date 8/18/2031. The approved-algorithm list includes ML-KEM, ML-DSA, SLH-DSA and LMS.',
   },
   {
     vendorId: 'crypto4a-qxhsm',
@@ -668,23 +733,38 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     certType: 'FIPS 140-2',
     certId: '4250',
     algorithms: [],
-    status: 'Active',
+    status: 'Historical',
     date: '2022-06-13',
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4250',
-    note: 'Certifies hardware module + classical algorithms. FIPS 140-3 v5.0 (PQC firmware) submission in progress. ACVP A5631 covers ML-KEM, ML-DSA, SLH-DSA, and LMS.',
+    note: 'A FIPS 140-2 certificate, moved to the Historical list at sunset. The current FIPS 140-3 certificate for the QASM module is #5497.',
   },
   {
-    vendorId: 'crypto4a-qxhsm',
-    vendorName: 'Crypto4A QASM v5.0 — PQC firmware resubmission',
+    vendorId: 'kryptus',
+    vendorName: 'Kryptus ASI-HSM AHX5 kNET Cryptographic Module',
     certType: 'FIPS 140-3',
-    certId: 'Pending',
-    algorithms: [],
-    status: 'Pending',
-    date: '2024-01-01',
+    certId: '5282',
+    algorithms: ['ML-KEM', 'ML-DSA'],
+    status: 'Active',
+    date: '2026-05-20',
     level: 'Level 3',
-    note: 'FIPS 140-3 v5.0 submission in progress. Module cert will not include PQC algorithm validation — use ACVP A5631 for PQC.',
+    certLink:
+      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5282',
+    note: 'Hardware module. Sunset date 5/19/2031. The approved-algorithm list includes ML-KEM and ML-DSA.',
+  },
+  {
+    vendorId: 'sansec',
+    vendorName: 'Sansec HSM Cryptographic Module',
+    certType: 'FIPS 140-3',
+    certId: '5503',
+    algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'],
+    status: 'Active',
+    date: '2026-08-25',
+    level: 'Level 3',
+    certLink:
+      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5503',
+    note: 'Hardware module. Sunset date 8/24/2031. The approved-algorithm list includes ML-KEM, ML-DSA and SLH-DSA.',
   },
 ]
 
@@ -778,7 +858,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     upgradeComplexity: 'low',
     estimatedDowntime: '1-2 hours per HSM',
     notes:
-      'ML-KEM, ML-DSA, and SLH-DSA are native in firmware v13.8.0 via standard PKCS#11 — no additional packages required for core PQC. LMS/XMSS available via optional PQSDK C API. CAVP validated Sep 2025. FIPS 140-3 Level 3 resubmission in progress (est. 12–18 months). nShield as a Service receives automatic updates.',
+      'ML-KEM, ML-DSA, and SLH-DSA are native in firmware v13.8.0 via standard PKCS#11 — no additional packages required for core PQC. LMS/XMSS available via optional PQSDK C API. ML-KEM, ML-DSA and SLH-DSA are on CAVP certificate A7285. An nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026); that is a queue position, not an outcome. nShield as a Service receives automatic updates.',
   },
   {
     vendorId: 'utimaco',
@@ -789,7 +869,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     upgradeComplexity: 'low',
     estimatedDowntime: '1-3 hours per HSM (firmware + Q-safe extension)',
     notes:
-      'Q-safe is a firmware extension installed on top of the base firmware. Existing keys preserved. Free PQC simulator available for pre-upgrade testing. SLH-DSA on roadmap for a future Q-safe update. FIPS 140-3 Level 3 cert #3925 (Active); Q-safe v5.0 CMVP resubmission in progress (est. 12–18 months).',
+      'Q-safe is a firmware extension installed on top of the base firmware. Existing keys preserved. Free PQC simulator available for pre-upgrade testing. SLH-DSA on roadmap for a future Q-safe update. Cert #3925 is a FIPS 140-2 Level 3 certificate, now Historical (sunset).',
   },
   {
     vendorId: 'aws-cloudhsm',
@@ -822,7 +902,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     upgradeComplexity: 'low',
     estimatedDowntime: '30-60 minutes per HSM (FPGA firmware update)',
     notes:
-      'FPGA-based design enables algorithm agility via firmware update — no hardware replacement needed. FIPS 140-2 Level 3 validated (cert #4250, Active). CAVP A5631 validated (ML-KEM, ML-DSA, SLH-DSA, LMS). v5.0 FIPS 140-3 submission in progress for PQC firmware.',
+      'FPGA-based design enables algorithm agility via firmware update — no hardware replacement needed. CAVP A5631 covers ML-KEM, ML-DSA, SLH-DSA and LMS. FIPS 140-3 Level 3 certificate #5497 (19 Aug 2026) lists all four as approved; the FIPS 140-2 certificate #4250 is Historical.',
   },
 ]
 
