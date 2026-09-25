@@ -47,6 +47,7 @@ RUNNER_NAME = "pqctoday acvp-native (Python/ctypes)"
 RUNNER_VERSION = "1.0.0"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.dont_write_bytecode = True  # never leave __pycache__ in a (possibly shared) checkout
 sys.path.insert(0, HERE)
 import pkcs11_constants as K  # noqa: E402  (generated from the hub tables)
 
