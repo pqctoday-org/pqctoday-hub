@@ -4,7 +4,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 const manifest: ModuleManifest = {
   id: 'acvp-lab-workflow',
   contentVersion: 2,
-  lm_id: 'LM-065',
+  lm_id: 'LM-066',
   title: 'ACVP Lab Workflow: From Vector Set to Evidence',
   description:
     'How algorithm validation testing actually runs: CAVP versus CMVP, capability registration and vector sets, the prompt → response → disposition → validation lifecycle, ACVP test types, deterministic versus randomized algorithms, the limits of a PKCS#11 test adapter, negative testing, and how to state a result at exactly the evidence level it reached. Draft — awaiting validation-lab practitioner review.',

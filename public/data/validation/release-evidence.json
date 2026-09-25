@@ -4035,7 +4035,7 @@
     ]
   },
   "reviews": {
-    "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-065 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
+    "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
     "validRecords": 0,
     "statusCounts": {
       "awaiting-review": 96
@@ -4715,7 +4715,7 @@
       {
         "id": "learn-module-practitioner:acvp-lab-workflow",
         "kind": "learn-module-practitioner",
-        "title": "Learn module LM-065 acvp-lab-workflow (draft)",
+        "title": "Learn module LM-066 acvp-lab-workflow (draft)",
         "requirement": "Plan WS-I: reviewed by at least one validation-lab practitioner before it is described as a lab training resource; recorded in the same two-reviewer format.",
         "status": "awaiting-review"
       }

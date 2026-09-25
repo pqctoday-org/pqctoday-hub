@@ -622,7 +622,7 @@ export function buildReviewItems(
   const manifestTs = readText(ctx, IN.lm065Manifest, false) ?? ''
   const content = readText(ctx, IN.lm065Content, false)
   if (content !== null) {
-    const lm = LM_ID_RE.exec(manifestTs)?.[1] ?? 'LM-065'
+    const lm = LM_ID_RE.exec(manifestTs)?.[1] ?? 'LM-066'
     items.push({
       id: 'learn-module-practitioner:acvp-lab-workflow',
       kind: 'learn-module-practitioner',
@@ -985,7 +985,7 @@ export function buildReleaseEvidence(root: string = ROOT): {
     openGaps,
     workbench,
     reviews: {
-      rule: `Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in ${IN.reviews}/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module ${LM_ID_RE.exec(readText(ctx, IN.lm065Manifest, false) ?? '')?.[1] ?? 'LM-065'} (acvp-lab-workflow, state ${lmState ?? 'unknown'}) additionally needs a validation-lab practitioner (plan WS-I).`,
+      rule: `Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in ${IN.reviews}/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module ${LM_ID_RE.exec(readText(ctx, IN.lm065Manifest, false) ?? '')?.[1] ?? 'LM-066'} (acvp-lab-workflow, state ${lmState ?? 'unknown'}) additionally needs a validation-lab practitioner (plan WS-I).`,
       validRecords: ev.validRecords.length,
       statusCounts,
       awaiting,

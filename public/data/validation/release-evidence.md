@@ -848,7 +848,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Awaiting two-person review (plan J-5)
 
-Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-065 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).
+Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).
 
 Valid review records: 0.
 
@@ -864,7 +864,7 @@ Public-claim and Learn items:
 - `public-claim:coverage-matrix` — Published coverage matrix (public/data/validation/coverage-matrix.json): **awaiting-review**
 - `public-claim:open-gaps-register` — Open-gaps register (src/data/validation/open-gaps.json): **awaiting-review**
 - `public-claim:release-claims` — Release evidence figures — the claims matrix the deck, script and site quote (public/data/validation/release-evidence.json): **awaiting-review**
-- `learn-module-practitioner:acvp-lab-workflow` — Learn module LM-065 acvp-lab-workflow (draft): **awaiting-review**
+- `learn-module-practitioner:acvp-lab-workflow` — Learn module LM-066 acvp-lab-workflow (draft): **awaiting-review**
 
 The full item list (with every vector source and waiver) is in `release-evidence.json` → `reviews.items`; `npm run gen:release-evidence -- --print-review-items` prints the subject hashes a review record must quote.
 

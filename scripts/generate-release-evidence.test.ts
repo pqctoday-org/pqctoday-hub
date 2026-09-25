@@ -92,7 +92,7 @@ describe('release evidence — committed report', () => {
     const r = committed()
     const lm = r.reviews.items.find((i) => i.id === 'learn-module-practitioner:acvp-lab-workflow')
     expect(lm?.status).not.toBe('approved')
-    expect(r.reviews.rule).toMatch(/LM-065/)
+    expect(r.reviews.rule).toMatch(/LM-066/)
     const waiverItems = r.reviews.items.filter((i) => i.kind === 'coverage-waiver')
     expect(waiverItems).toHaveLength((r.waivers as { entries: number }).entries)
   })
