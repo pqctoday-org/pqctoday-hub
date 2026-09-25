@@ -551,6 +551,7 @@ public/data/rag-index-freshness.json
 !scripts/audit-timeline-evidence.ts
 !scripts/sync-timeline-csv-from-manifest.ts
 !scripts/audit-timeline-enrichment-freshness.ts
+!scripts/audit-timeline-enrichment-freshness.test.ts
 
 # Content-freshness audit — CI gate that flags time-sensitive sim claims
 # (CMVP/FIPS status, protocol-matrix snapshot, Q-Day anchor) aged past 90 days.
