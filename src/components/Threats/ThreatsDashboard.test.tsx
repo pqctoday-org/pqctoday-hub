@@ -8,6 +8,7 @@ import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
 import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import * as endorsement from '@/utils/endorsement'
 
 vi.mock('@/services/search/useSemanticSearch', async () => {
   const actual = await vi.importActual<typeof useSemanticSearchModule>(
@@ -49,7 +50,27 @@ vi.mock('../../data/threatsData', () => ({
       pqcReplacement: 'ML-DSA',
       mainSource: 'Auto-ISAC',
     },
+    {
+      // A live stub with a blank criticality / crypto / PQC (the CROS-008 shape).
+      industry: 'Insurance',
+      threatId: 'THR-004',
+      description: 'Underwriting archive exposure',
+      criticality: 'Unrated',
+      cryptoAtRisk: '',
+      pqcReplacement: '',
+      mainSource: 'Stub Source',
+    },
   ] as ThreatData[],
+  retiredThreats: new Map([
+    [
+      'OLD-001',
+      {
+        threatId: 'OLD-001',
+        deprecatedAt: '2026-07-16',
+        deprecatedReason: 'Removed in consolidation',
+      },
+    ],
+  ]),
   threatsMetadata: {
     filename: 'test_file.csv',
     lastUpdate: new Date('2025-01-01'),
@@ -109,6 +130,16 @@ vi.mock('../common/FilterDropdown', () => ({
     )
   },
 }))
+
+// Pass-through spies: lets a test read every Endorse/Flag pageUrl the page builds.
+vi.mock('@/utils/endorsement', async () => {
+  const actual = await vi.importActual<typeof import('@/utils/endorsement')>('@/utils/endorsement')
+  return {
+    ...actual,
+    buildEndorsementUrl: vi.fn(actual.buildEndorsementUrl),
+    buildFlagUrl: vi.fn(actual.buildFlagUrl),
+  }
+})
 
 // Mock Analytics
 vi.mock('../../utils/analytics', () => ({
@@ -263,6 +294,121 @@ describe('ThreatsDashboard', () => {
     // jsdom simultaneously since CSS breakpoints aren't applied here.
     expect(screen.getAllByText('No threats found').length).toBeGreaterThan(0)
     expect(screen.getAllByText('No threats match the constraints.').length).toBeGreaterThan(0)
+  })
+
+  describe('criticality and blank fields (UX-5 / UX-6)', () => {
+    it('offers only the criticality levels some row has — no Medium-High — plus Unrated', () => {
+      render(
+        <MemoryRouter>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const deck = screen.getByTestId('threats-control-deck')
+      expect(within(deck).queryByRole('button', { name: 'Medium-High' })).not.toBeInTheDocument()
+      expect(within(deck).getByRole('button', { name: 'Unrated' })).toBeInTheDocument()
+      expect(within(deck).getByRole('button', { name: 'Critical' })).toBeInTheDocument()
+    })
+
+    it('?criticality=Unrated filters to the blank-criticality row', () => {
+      render(
+        <MemoryRouter initialEntries={['/threats?criticality=Unrated']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const table = screen.getByRole('table')
+      expect(within(table).getByText('THR-004')).toBeInTheDocument()
+      expect(within(table).queryByText('THR-001')).not.toBeInTheDocument()
+      // Blank at-risk / PQC cells say so instead of rendering empty.
+      expect(within(table).getAllByText('Not yet specified')).toHaveLength(2)
+    })
+
+    it('a link to a retired threat says it was retired, with date and reason', () => {
+      render(
+        <MemoryRouter initialEntries={['/threats?id=OLD-001']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      expect(
+        screen.getByText(/This entry was retired on 2026-07-16: Removed in consolidation/)
+      ).toBeInTheDocument()
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('deep links (UX-3)', () => {
+    // The dialog is React.lazy() and pulls in the implementation-attack and
+    // enrichment data; in a loaded full-suite run its first import can take
+    // well over findBy*'s 1s default (seen at ~1.1s), so wait longer. This is
+    // a wait, not a masked assertion.
+    const LAZY_DIALOG = { timeout: 15_000 }
+
+    it('?id= opens the threat dialog', async () => {
+      render(
+        <MemoryRouter initialEntries={['/threats?id=THR-002']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const dialog = await screen.findByRole('dialog', {}, LAZY_DIALOG)
+      expect(within(dialog).getByText('THR-002')).toBeInTheDocument()
+    })
+
+    it('accepts the legacy ?threat= alias that old Endorse/Flag links carry', async () => {
+      render(
+        <MemoryRouter initialEntries={['/threats?threat=THR-002']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const dialog = await screen.findByRole('dialog', {}, LAZY_DIALOG)
+      expect(within(dialog).getByText('THR-002')).toBeInTheDocument()
+    })
+
+    // jsdom has no scrollIntoView; install a recording stub per test.
+    function stubScrollIntoView() {
+      const original = Element.prototype.scrollIntoView
+      const scrolled: string[] = []
+      Element.prototype.scrollIntoView = function (this: Element) {
+        scrolled.push(this.id)
+      }
+      return { scrolled, restore: () => (Element.prototype.scrollIntoView = original) }
+    }
+
+    it('?view=horizon scrolls to the CRQC Threat Horizon section', () => {
+      const stub = stubScrollIntoView()
+      render(
+        <MemoryRouter initialEntries={['/threats?view=horizon']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      expect(stub.scrolled).toContain('crqc-threat-horizon')
+      stub.restore()
+    })
+
+    it('every per-threat Endorse/Flag link (table rows and cards) uses ?id=, never ?threat=', () => {
+      render(
+        <MemoryRouter>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const perThreat = [
+        ...vi.mocked(endorsement.buildEndorsementUrl).mock.calls,
+        ...vi.mocked(endorsement.buildFlagUrl).mock.calls,
+      ]
+        .map(([opts]) => opts.pageUrl)
+        .filter((u): u is string => !!u && u !== '/threats')
+      expect(perThreat.length).toBeGreaterThan(0)
+      for (const url of perThreat) expect(url).toMatch(/^\/threats\?id=/)
+    })
+
+    it('does not scroll to the Horizon without ?view=horizon', () => {
+      const stub = stubScrollIntoView()
+      render(
+        <MemoryRouter initialEntries={['/threats']}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      expect(stub.scrolled).not.toContain('crqc-threat-horizon')
+      stub.restore()
+    })
   })
 
   describe('Phase 3 — semantic search supplement', () => {

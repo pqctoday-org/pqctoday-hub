@@ -17,7 +17,7 @@ import {
   CRQC_MODALITY_TRACKS,
   CRQC_QUBIT_THRESHOLDS,
   CRQC_TRAJECTORY,
-  getCrqcConsensus,
+  getCrqcForecast,
 } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
 /**
@@ -39,10 +39,13 @@ const X_MIN = 2020
 const X_MAX = 2035
 const TODAY = 2026
 
-// Q-Day window — derived from CRQC_ESTIMATES via getCrqcConsensus() (Threats #1)
-// rather than a separately hardcoded guess, so it agrees with the hero's stated
-// window and the economics calculator's default Z.
-const { qdayLow: QDAY_LOW, qdayHigh: QDAY_HIGH } = getCrqcConsensus()
+// The CRQC window — the one expert forecast from getCrqcForecast() (ruling R5),
+// the same value the capability strip, hero and mobile screen state. The
+// shaded band is clipped at the chart's right edge when the forecast runs past
+// X_MAX; the legend states the full window.
+const FORECAST = getCrqcForecast()
+const QDAY_LOW = FORECAST.low
+const QDAY_HIGH = Math.min(FORECAST.high, X_MAX)
 
 const AXIS_ORDER = [
   'Hardware',
@@ -146,7 +149,7 @@ export const CrqcTrajectoryChart: React.FC = () => {
             x2={QDAY_HIGH}
             fill="var(--color-destructive)"
             fillOpacity={0.07}
-            ifOverflow="extendDomain"
+            ifOverflow="hidden"
           />
           <XAxis
             dataKey="year"
@@ -243,7 +246,8 @@ export const CrqcTrajectoryChart: React.FC = () => {
             className="inline-block h-2 w-3 rounded-sm"
             style={{ background: 'var(--color-destructive)', opacity: 0.2 }}
           />
-          Q-Day window ~{QDAY_LOW}–{QDAY_HIGH}
+          {FORECAST.label}
+          {FORECAST.high > X_MAX && ' — shaded to the chart edge'}
         </span>
       </div>
 

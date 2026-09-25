@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'entropy-randomness',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-20',
+  lastEdited: '2026-09-25',
   // Added 2026-08-22: relatedStandards asserts a date or version for this document,
   // so nothing could check the claim without it (the prose calls it a draft, which is right — Rev 3 is Initial Public Draft). The list stays short enough
   // that accuracy_spotcheck.py's four-document stride still opens every entry.
@@ -18,6 +18,9 @@ export const content: ModuleContent = {
   standards: [
     getStandard('NIST-SP-800-131A-Rev3'),
     getStandard('FIPS 203'),
+    // FIPS 205 declared 2026-09-24: the PQC random-input matrix (utils/pqcRandomInputs.ts)
+    // cites FIPS 205 §3.1, §9.2 and §10.2 for SLH-DSA's random inputs.
+    getStandard('FIPS 205'),
     getStandard('FIPS 204'), // Repointed 2026-08-22: this declared the DEPRECATED row `NIST SP 800-90A`,
     // whose superseded_by names this one. A module pointing the accuracy check at a
     // retired row is worse than pointing it nowhere — the check runs, reads a
@@ -72,8 +75,8 @@ export const content: ModuleContent = {
     keyConcepts:
       'Entropy fundamentals: Why entropy quality determines cryptographic strength; historical failures like the 2008 Debian OpenSSL bug (PID-only seeding produced only ~32,768 possible keys). NIST SP 800-90 family: SP 800-90A (DRBG mechanisms), SP 800-90B (entropy source validation), SP 800-90C (RBG constructions combining sources with DRBGs).',
     workshopSummary:
-      'Random Byte Generation: Generate and compare random bytes from Web Crypto API and OpenSSL WASM. Entropy Testing: Run simplified SP 800-90B statistical tests on generated random data. ESV Validation Walkthrough: Step through the NIST Entropy Source Validation process (source description, noise model, raw samples, health tests, conditioning). QRNG Exploration: Compare pre-fetched quantum random data (ANU QRNG) with local TRNG output.',
+      'Random Byte Generation: compare Web Crypto API and OpenSSL WASM with deliberately weak generators — random-looking is not unpredictable. Entropy Testing: visualizations, SP 800-90B health tests, estimators and known-answer tests shown as separate groups with no combined pass count. ESV Validation Walkthrough: the NIST Entropy Source Validation process and the separate Entropy and RBG Validation Certificates. DRBG State Machine: an SP 800-90A HMAC_DRBG-SHA-256 checked against NIST known-answer vectors. Combining Sources: raw-boundary health tests and an assumption-driven verdict that can end in "not enough evidence" or "construction is unsafe". Entropy Evidence Lab: NIST\'s SP 800-90B estimator tool in WebAssembly on real CPU-jitter recordings (KV260, i.MX 95, Mac), a DRBG-output contrast set and synthetic failures — estimator output for one dataset, never a validation. The TRNG-vs-QRNG comparison is a Playground simulation: its "QRNG" sample comes from crypto.getRandomValues(), and no QRNG hardware is involved.',
     relatedStandards:
-      'NIST SP 800-90A Rev. 1 and the Rev. 2 pre-draft (DRBG Mechanisms). NIST SP 800-90B (Entropy Source Validation). NIST SP 800-90C (RBG Constructions). NIST SP 800-131A Rev. 3 draft (Security Strength Requirements). FIPS 203 (ML-KEM) and FIPS 204 (ML-DSA) seed requirements. NIST ESV Program (Entropy Source Validation under CMVP)',
+      'NIST SP 800-90A Rev. 1 (DRBG Mechanisms; current final version). SP 800-90A Rev. 2 is only a pre-draft call for comments (2025-09-04, comments closed 2025-11-04) with no draft text. NIST SP 800-90B (Entropy Sources). NIST SP 800-90C (RBG Constructions). NIST SP 800-131A Rev. 3 draft (Security Strength Requirements). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA) random-input and RBG security-strength requirements. CMVP Entropy Validation Certificates (SP 800-90B) and Random Bit Generator Validation Certificates (SP 800-90C, IG D.T)',
   },
 }

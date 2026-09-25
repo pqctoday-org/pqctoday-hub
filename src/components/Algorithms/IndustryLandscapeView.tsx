@@ -56,6 +56,8 @@ import { PROTOCOL_MATRIX } from '../../data/pqcProtocolMatrix'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from './landscapeIcons'
 import { Button } from '../ui/button'
 import { libraryHref } from './libraryRef'
+import { threatsData } from '../../data/threatsData'
+import { threatsIndustryHref } from '../Threats/threatsUrlParams'
 import { learnHref } from './learnHref'
 import { MANIFEST_BY_ID } from '../PKILearning/manifest/registry'
 import { softwareData } from '../../data/migrateData'
@@ -541,6 +543,11 @@ function UseCaseCard({
       ? MANIFEST_BY_ID[uc.learnModuleId]
       : undefined
   const tools = toolsForUseCase(uc)
+  // the cited document in the Library, else this sector's threats — or no
+  // link when every threat of the sector is drafted (awaiting a source)
+  const sourceHref = uc.sourceLibraryRef
+    ? libraryHref(uc.sourceLibraryRef)
+    : threatsIndustryHref(uc.industry, threatsData)
   const workshopTools = tools.filter((t) => !t.sandbox)
   const sandboxTools = tools.filter((t) => t.sandbox)
   // Show the arrow only when the migration actually moves protocols —
@@ -673,22 +680,30 @@ function UseCaseCard({
             it, otherwise the sector's threats evidence — these citations ARE
             threats-corpus rows. Never an outbound link. */}
         <span className="inline-flex max-w-[75%] min-w-0 items-center gap-1">
-          <Link
-            to={
-              uc.sourceLibraryRef
-                ? libraryHref(uc.sourceLibraryRef)
-                : `/threats?industry=${encodeURIComponent(uc.industry)}`
-            }
-            className="inline-flex min-w-0 items-center gap-1 truncate hover:text-primary"
-            title={
-              uc.sourceLibraryRef
-                ? `${uc.mainSource} — open the Library entry`
-                : `${uc.mainSource} — not yet a Library entry; opens this sector's threat evidence`
-            }
-          >
-            <BookMarked size={10} className="shrink-0 opacity-60" />
-            <span className="truncate">{uc.mainSource}</span>
-          </Link>
+          {sourceHref ? (
+            <Link
+              to={sourceHref}
+              className="inline-flex min-w-0 items-center gap-1 truncate hover:text-primary"
+              title={
+                uc.sourceLibraryRef
+                  ? `${uc.mainSource} — open the Library entry`
+                  : `${uc.mainSource} — not yet a Library entry; opens this sector's threat evidence`
+              }
+            >
+              <BookMarked size={10} className="shrink-0 opacity-60" />
+              <span className="truncate">{uc.mainSource}</span>
+            </Link>
+          ) : (
+            // no Library entry, and every threat of this sector is awaiting a
+            // source: name the document, link nowhere
+            <span
+              className="inline-flex min-w-0 items-center gap-1 truncate"
+              title={`${uc.mainSource} — not yet a Library entry`}
+            >
+              <BookMarked size={10} className="shrink-0 opacity-60" />
+              <span className="truncate">{uc.mainSource}</span>
+            </span>
+          )}
           {/* 2026-08-15: "if there is no specific crypto requirements, mention
               it" — this document does not itself name the row's mechanisms;
               the proof is a different document in mechanismRefs. Same role as
@@ -1269,6 +1284,7 @@ export function IndustryLandscapeView() {
             const IndIcon = INDUSTRY_ICONS[selectedIndustry] ?? Globe
             const market = marketByIndustry.get(selectedIndustry)
             const cases = useCasesByIndustry.get(selectedIndustry) ?? []
+            const selectedThreatsHref = threatsIndustryHref(selectedIndustry, threatsData)
             if (cases.length === 0) {
               return (
                 <p className="text-sm text-muted-foreground">
@@ -1300,12 +1316,14 @@ export function IndustryLandscapeView() {
                     </span>
                   )}
                   <CyberOpportunityBadge industry={selectedIndustry} />
-                  <Link
-                    to={`/threats?industry=${encodeURIComponent(selectedIndustry)}`}
-                    className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
-                  >
-                    <LandmarkIcon size={12} /> Quantum threats for this industry
-                  </Link>
+                  {selectedThreatsHref && (
+                    <Link
+                      to={selectedThreatsHref}
+                      className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+                    >
+                      <LandmarkIcon size={12} /> Quantum threats for this industry
+                    </Link>
+                  )}
                 </div>
 
                 <IndustryCrossRefs

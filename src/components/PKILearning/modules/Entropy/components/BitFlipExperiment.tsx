@@ -3,13 +3,17 @@ import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { ToggleLeft, RotateCcw, Shuffle, CheckCircle, XCircle, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getRandomBytes } from '@/utils/webCrypto'
-import { runAllTests, type TestResult } from '../utils/entropyTests'
+import {
+  groupResults,
+  runAllTests,
+  TEST_GROUP_STATUS,
+  type TestResult,
+} from '../utils/entropyTests'
 import { BitMatrixGrid } from './BitMatrixGrid'
 
-// 64 bytes is enough for Frequency/Runs/Chi-Squared, but NOT for Min-Entropy —
-// its SP 800-90B confidence-bound correction dominates below ~1,000 bytes, so
-// Min-Entropy reads as inconclusive here even on unflipped, genuinely random
-// data (see EntropyTestingDemo's allFailuresAreSmallSampleArtifacts handling).
+// 64 bytes: enough for the visual checks to react, far too few for any entropy
+// estimate. The Adaptive Proportion health test runs on a partial window here
+// (64 of the 512 samples SP 800-90B §4.4.2 specifies for 8-bit samples).
 const SAMPLE_SIZE = 64
 
 function createInitialSample() {
@@ -25,8 +29,8 @@ export const BitFlipExperiment: React.FC = () => {
   const [data, setData] = useState<Uint8Array>(() => new Uint8Array(original))
   const [flippedBits, setFlippedBits] = useState<Set<number>>(() => new Set())
 
-  const testResults = useMemo(() => runAllTests(data), [data])
-  const passCount = testResults.filter((r) => r.passed).length
+  // Results stay in their groups (Entropy remediation P0.4): no count across groups.
+  const groups = useMemo(() => groupResults(runAllTests(data)), [data])
 
   const totalBits = SAMPLE_SIZE * 8
   const flipCount = flippedBits.size
@@ -119,8 +123,8 @@ export const BitFlipExperiment: React.FC = () => {
         <div>
           <h3 className="text-base font-semibold text-foreground">Bit Flipping Experiment</h3>
           <p className="text-xs text-muted-foreground">
-            Click individual bits to toggle them. Watch how test results change in real time. Which
-            test fails first?
+            Click individual bits to toggle them and watch each group of checks react. Which kind of
+            corruption do they notice, and which do they miss?
           </p>
         </div>
       </div>
@@ -206,30 +210,25 @@ export const BitFlipExperiment: React.FC = () => {
           />
         </div>
 
-        {/* Live test results */}
-        <div className="glass-panel p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              Live Test Results
-            </h4>
-            <span
-              className={`text-xs font-bold ${
-                passCount === testResults.length
-                  ? 'text-success'
-                  : passCount === 0
-                    ? 'text-destructive'
-                    : 'text-warning'
-              }`}
-            >
-              {passCount}/{testResults.length} Pass
-            </span>
-          </div>
-
-          <div className="space-y-2">
-            {testResults.map((result) => (
-              <TestResultRow key={result.name} result={result} />
-            ))}
-          </div>
+        {/* Live results, one block per group — never totalled across groups */}
+        <div className="glass-panel p-4 space-y-4">
+          {groups.map((g) => (
+            <div key={g.group} className="space-y-2">
+              <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                {g.label}
+              </h4>
+              <div className="space-y-2">
+                {g.results.map((result) => (
+                  <TestResultRow key={result.name} result={result} />
+                ))}
+              </div>
+            </div>
+          ))}
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            Visual checks describe these 64 bytes only and give no security verdict. The health
+            tests treat each byte as a raw noise-source sample at an assumed H = 8 bits/sample; on
+            browser output they are a demonstration only.
+          </p>
         </div>
       </div>
 
@@ -239,13 +238,17 @@ export const BitFlipExperiment: React.FC = () => {
           <strong className="text-foreground">Try these experiments:</strong>
         </p>
         <ul className="list-disc list-inside space-y-0.5 ml-1">
-          <li>Flip a few random bits — do any tests fail?</li>
           <li>
-            Click &quot;All Zeros&quot; — notice every test fails. The min-entropy drops to 0.
+            Use &quot;Flip 10%&quot; a few times: random flips on random data leave random-looking
+            data, so the checks rarely react.
           </li>
-          <li>Use &quot;Flip 10%&quot; repeatedly — which test breaks first?</li>
           <li>
-            The frequency test is most sensitive to bias; the runs test catches clumping patterns.
+            Click &quot;All Zeros&quot;: every visual check lands outside range and both health
+            tests signal a failure — a stuck source is what the Repetition Count Test is for.
+          </li>
+          <li>
+            Output checks only see structure. A degraded source that still emits unstructured output
+            looks the same as a healthy one to them.
           </li>
         </ul>
       </div>
@@ -253,7 +256,7 @@ export const BitFlipExperiment: React.FC = () => {
   )
 }
 
-/** Compact test result row with live pass/fail indicator */
+/** Compact result row, worded for the result's own group */
 const TestResultRow: React.FC<{ result: TestResult }> = ({ result }) => (
   <div
     className={`flex items-center gap-3 rounded-lg px-3 py-2 border transition-colors duration-200 ${
@@ -269,6 +272,9 @@ const TestResultRow: React.FC<{ result: TestResult }> = ({ result }) => (
     )}
     <div className="flex-1 min-w-0">
       <span className="text-xs font-medium text-foreground">{result.name}</span>
+      <span className="text-[10px] text-muted-foreground ml-2">
+        {result.passed ? TEST_GROUP_STATUS[result.group].ok : TEST_GROUP_STATUS[result.group].bad}
+      </span>
     </div>
     <div className="text-[10px] font-mono text-muted-foreground shrink-0">
       {result.value.toFixed(3)}

@@ -1,0 +1,1741 @@
+{
+  "schema": "pqctoday.entropy.device-datasets/1",
+  "truthBoundary": "Real measurements taken for teaching (plan §1 item 9). Not a validated entropy source, not an ESV submission, and no min-entropy claim about these devices beyond what the estimator output shows for each dataset under its recorded conditions.",
+  "generatedBy": "scripts/entropy-90b/package-device-datasets.ts",
+  "sourceManifest": {
+    "path": "pqctoday-priv/local-evidence-cache/entropy/0924/datasets.json (not published)",
+    "sha256": "c3a2af3a0d7f1c94d9e7a9def2ca08f2ff7ab1265ff802ba640cdcefeef92902",
+    "generatedUtc": "2026-09-25T03:20:12Z"
+  },
+  "recorderTool": {
+    "repo": "https://github.com/smuellerDD/jitterentropy-library",
+    "tag": "v3.7.0",
+    "tag_object_sha": "8b3874a980f5f43bb79390bbf94885fa8d18103d",
+    "commit": "e783cf1c450bce4d72f95c9f9c84546a6094976a",
+    "commit_date": "2026-05-04T14:40:39+02:00",
+    "recorder_source": "tests/raw-entropy/recording_userspace/jitterentropy-hashtime.c (built with Makefile.hashtime, upstream flags incl. -O0 -DJENT_CONF_ENABLE_INTERNAL_TIMER)"
+  },
+  "sampleFormat": {
+    "gcdReduction": "none: the recorder does not call jent_entropy_init(), so jent_gcd_get() reports no GCD and jent_entropy_collector_alloc_internal() sets jent_common_timer_gcd = 1 (src/jitterentropy-base.c:652-658); values are undivided timer deltas",
+    "restartSemantics": "jitterentropy-hashtime <1000> <1000> loops 1000 times in ONE process, each time calling jent_one_test(), which allocates a new entropy collector, primes it with one jent_measure_jitter() call, records 1000 deltas and frees it. It is upstream's restart procedure (invoke_testing_helper.sh raw_entropy_restart), not a power cycle or process restart.",
+    "restartMatrixLayout": "row-major 1000 × 1000: byte (r-1)*1000 + (c-1) = restart r, sample c (0-based offset)"
+  },
+  "sizeBudgetBytes": 8000000,
+  "totalBytes": 7000000,
+  "datasets": [
+    {
+      "id": "kv260-idle-sequential",
+      "label": "KV260 (4× Cortex-A53) — idle, sequential",
+      "kind": "sequential",
+      "provenance": "device-raw-noise",
+      "evidenceLabel": "RAW noise-source samples (jitterentropy time deltas), unconditioned",
+      "device": "kv260",
+      "deviceDescription": "AMD/Xilinx Kria KV260 (K26 SOM, CACP appliance image)",
+      "environmentKind": "physical device (native Linux)",
+      "environmentSummary": {
+        "os": "AMD Embedded Development Framework Linux 26.06 (scarthgap), ID=amd-edf; /etc/version 20180309123456 (reproducible-build placeholder)",
+        "kernel": "Linux 6.18.10-xilinx-g4f7afe14f724 #1 SMP Tue May 26 15:23:35 UTC 2026 aarch64",
+        "cpu": "Zynq UltraScale+ (DT model 'ZynqMP KV260 revB'): 4x Arm Cortex-A53 r0p4 (MIDR 0x410fd034); cache sizes not exposed in sysfs",
+        "timer": "cntvct_el0 (Arm generic timer) ticks; CNTFRQ_EL0 = 99,999,000 Hz (~10 ns/tick), read with the cntfrq helper (boot dmesg had rotated out)",
+        "cpufreq": "cpufreq-dt driver, governor 'userspace', all cores at 1333.333 MHz (available 333/444/667/1333 MHz)"
+      },
+      "environmentRecordSha256": "263af5540edf3535c692a954d836c562b7a81d55441fc1a3b19dfe364d6dc95a",
+      "condition": "idle",
+      "conditionLabel": "idle (appliance services running)",
+      "conditionDetail": "No load added by the collector. CACP appliance services running as normal.",
+      "caveats": [
+        "No hardware RNG is reachable from Linux on this image (no hw_random class, CONFIG_HW_RANDOM not set)."
+      ],
+      "tool": {
+        "repo": "https://github.com/smuellerDD/jitterentropy-library",
+        "tag": "v3.7.0",
+        "commit": "e783cf1c450bce4d72f95c9f9c84546a6094976a",
+        "binary": "tools/jitterentropy-hashtime-linux-arm64-static",
+        "binary_sha256": "edcb21deab456bd0d310a55f321ee564432adae124c3253dcd4653929eadb8a2"
+      },
+      "command": "/tmp/entropy-0924/bin/jitterentropy-hashtime 1000000 1 /tmp/entropy-0924/run/idle/jent-raw-noise --max-mem 0",
+      "startUtc": "2026-09-25T03:10:25Z",
+      "endUtc": "2026-09-25T03:12:12Z",
+      "wallSeconds": 107,
+      "loadBefore": "0.48 0.44 0.41 2/177 318232",
+      "loadAfter": "1.13 0.71 0.51 1/175 318590",
+      "temperatureBefore": {
+        "sensor": "ams Temp_FPD (hwmon1 temp2_input; full-power domain containing the Cortex-A53 APU)",
+        "valueC": 36.417,
+        "note": null
+      },
+      "temperatureAfter": {
+        "sensor": "ams Temp_FPD (hwmon1 temp2_input; full-power domain containing the Cortex-A53 APU)",
+        "valueC": 36.572,
+        "note": null
+      },
+      "sampleUnit": "one raw jitterentropy time delta (unsigned 64-bit timer difference of jent_measure_jitter), reduced to its 8 least-significant bits",
+      "timer": "cntvct_el0 (Arm generic timer) ticks; CNTFRQ_EL0 = 99,999,000 Hz (~10 ns/tick), read with the cntfrq helper (boot dmesg had rotated out)",
+      "bitsPerSymbol": 8,
+      "alphabet": "at most 256 symbols (one byte per sample)",
+      "reduction": {
+        "method": "extractlsb",
+        "mask": "FF",
+        "keptBits": 8,
+        "description": "upstream jitterentropy extractlsb.c with mask FF (processdata_helper.sh default MASK_LIST=\"FF:8\"): output byte = sample & 0xFF, the 8 least-significant bits of each 64-bit delta. The mask is the analyst's choice; FF is only upstream's default.",
+        "source": "https://github.com/smuellerDD/jitterentropy-library/blob/e783cf1c450bce4d72f95c9f9c84546a6094976a/tests/raw-entropy/validation-runtime/extractlsb.c"
+      },
+      "sampleCount": 1000000,
+      "matrix": null,
+      "file": "data/entropy/kv260-idle-sequential.bin",
+      "bytes": 1000000,
+      "sha256": "5d9e7dc34e4ab4489f48248fac1cd51ef58c473003b7330bb89cc954f6ef29ec",
+      "sourceFile": "kv260/idle/kv260-idle-sequential-jent-raw-noise.data",
+      "sourceBytes": 6000002,
+      "sourceSha256": "bce33c32c07c09ede16e96f5640e989f36209b864de28aa303409c0f36ffd63b",
+      "parityId": "real-kv260-idle-sequential-jent-raw-noise",
+      "pairedRestartId": "kv260-idle-restart"
+    },
+    {
+      "id": "kv260-idle-restart",
+      "label": "KV260 (4× Cortex-A53) — idle, 1000 × 1000 restart matrix",
+      "kind": "restart",
+      "provenance": "device-raw-noise",
+      "evidenceLabel": "RAW noise-source samples (jitterentropy time deltas), unconditioned; restart matrix",
+      "device": "kv260",
+      "deviceDescription": "AMD/Xilinx Kria KV260 (K26 SOM, CACP appliance image)",
+      "environmentKind": "physical device (native Linux)",
+      "environmentSummary": {
+        "os": "AMD Embedded Development Framework Linux 26.06 (scarthgap), ID=amd-edf; /etc/version 20180309123456 (reproducible-build placeholder)",
+        "kernel": "Linux 6.18.10-xilinx-g4f7afe14f724 #1 SMP Tue May 26 15:23:35 UTC 2026 aarch64",
+        "cpu": "Zynq UltraScale+ (DT model 'ZynqMP KV260 revB'): 4x Arm Cortex-A53 r0p4 (MIDR 0x410fd034); cache sizes not exposed in sysfs",
+        "timer": "cntvct_el0 (Arm generic timer) ticks; CNTFRQ_EL0 = 99,999,000 Hz (~10 ns/tick), read with the cntfrq helper (boot dmesg had rotated out)",
+        "cpufreq": "cpufreq-dt driver, governor 'userspace', all cores at 1333.333 MHz (available 333/444/667/1333 MHz)"
+      },
+      "environmentRecordSha256": "263af5540edf3535c692a954d836c562b7a81d55441fc1a3b19dfe364d6dc95a",
+      "condition": "idle",
+      "conditionLabel": "idle (appliance services running)",
+      "conditionDetail": "No load added by the collector. CACP appliance services running as normal.",
+      "caveats": [
+        "Each 'restart' is a fresh jitterentropy collector allocation inside ONE process (upstream's raw_entropy_restart procedure), not a reboot or power cycle."
+      ],
+      "tool": {
+        "repo": "https://github.com/smuellerDD/jitterentropy-library",
+        "tag": "v3.7.0",
+        "commit": "e783cf1c450bce4d72f95c9f9c84546a6094976a",
+        "binary": "tools/jitterentropy-hashtime-linux-arm64-static",
+        "binary_sha256": "edcb21deab456bd0d310a55f321ee564432adae124c3253dcd4653929eadb8a2"
+      },
+      "command": "/tmp/entropy-0924/bin/jitterentropy-hashtime 1000 1000 /tmp/entropy-0924/run/idle/restart/jent-raw-noise-restart --max-mem 0",
+      "startUtc": "2026-09-25T03:12:12Z",
+      "endUtc": "2026-09-25T03:14:00Z",
+      "wallSeconds": 108,
+      "loadBefore": "1.13 0.71 0.51 1/175 318590",
+      "loadAfter": "1.62 1.02 0.65 1/175 318971",
+      "temperatureBefore": {
+        "sensor": "ams Temp_FPD (hwmon1 temp2_input; full-power domain containing the Cortex-A53 APU)",
+        "valueC": 36.572,
+        "note": null
+      },
+      "temperatureAfter": {
+        "sensor": "ams Temp_FPD (hwmon1 temp2_input; full-power domain containing the Cortex-A53 APU)",
+        "valueC": 36.106,
+        "note": null
+      },
+      "sampleUnit": "one raw jitterentropy time delta (unsigned 64-bit timer difference of jent_measure_jitter), reduced to its 8 least-significant bits",
+      "timer": "cntvct_el0 (Arm generic timer) ticks; CNTFRQ_EL0 = 99,999,000 Hz (~10 ns/tick), read with the cntfrq helper (boot dmesg had rotated out)",
+      "bitsPerSymbol": 8,
+      "alphabet": "at most 256 symbols (one byte per sample)",
+      "reduction": {
+        "method": "extractlsb",
+        "mask": "FF",
+        "keptBits": 8,
+        "description": "upstream jitterentropy extractlsb.c with mask FF (processdata_helper.sh default MASK_LIST=\"FF:8\"): output byte = sample & 0xFF, the 8 least-significant bits of each 64-bit delta. The mask is the analyst's choice; FF is only upstream's default.",
+        "source": "https://github.com/smuellerDD/jitterentropy-library/blob/e783cf1c450bce4d72f95c9f9c84546a6094976a/tests/raw-entropy/validation-runtime/extractlsb.c"
+      },
+      "sampleCount": 1000000,
+      "matrix": { "restarts": 1000, "samplesPerRestart": 1000 },
+      "file": "data/entropy/kv260-idle-restart.bin",
+      "bytes": 1000000,
+      "sha256": "7895b9c59a125e80860de2621742ecdb7d002d24148a939579de1085294ea2ea",
+      "sourceFile": "kv260/idle/kv260-idle-restart-matrix.data",
+      "sourceBytes": 6000002,
+      "sourceSha256": "a3b9fcf27b15ae14fec542e5bcdda0506c40e60b3f5e03a498b08ee8aa38dfee",
+      "parityId": "real-kv260-idle-restart-matrix",
+      "pairedSequentialId": "kv260-idle-sequential"
+    },
+    {
+      "id": "imx95-idle-sequential",
+      "label": "i.MX 95 (6× Cortex-A55) — idle, sequential",
+      "kind": "sequential",
+      "provenance": "device-raw-noise",
+      "evidenceLabel": "RAW noise-source samples (jitterentropy time deltas), unconditioned",
+      "device": "frdm-imx95",
+      "deviceDescription": "NXP FRDM-IMX95 board (CACP appliance image, microSD)",
+      "environmentKind": "physical device (native Linux)",
+      "environmentSummary": {
+        "os": "NXP i.MX Distro with Wayland 6.18-wrynose (ID=fsl-imx-wayland), BusyBox 1.37.0 userland; /etc/version 20180309123456 (reproducible-build placeholder, no build id on board)",
+        "kernel": "Linux 6.18.20-2.0.0-gb096ce610e95 #1 SMP PREEMPT Tue Jun 9 02:25:20 UTC 2026 aarch64",
+        "cpu": "NXP i.MX 95 (DT model 'NXP FRDM-IMX95'): 6x Arm Cortex-A55 r2p0 (MIDR 0x412fd050); L1d 32K, L2 64K, L3 512K",
+        "timer": "cntvct_el0 (Arm generic timer) ticks; CNTFRQ_EL0 = 24,000,000 Hz (41.67 ns/tick); dmesg 'arch_timer: cp15 timer running at 24.00MHz (phys)'",
+        "cpufreq": "scmi driver, governor 'ondemand', available 500/900/1404/1800 MHz, all cores at 1800 MHz when probed"
+      },
+      "environmentRecordSha256": "55f0bbc9149163c7bd71c5a67a42e392742efef802e4524da2b45a5961d33ffa",
+      "condition": "idle",
+      "conditionLabel": "idle (appliance services running)",
+      "conditionDetail": "No load added by the collector. CACP appliance services (health collector, NPU behaviour monitor, KMIP/gRPC/REST daemons, etc.) were running as normal.",
+      "caveats": [
+        "The i.MX 95 hardware TRNG (ELE) does not expose raw pre-conditioning samples to Linux; only its /dev/hwrng output is readable.",
+        "PMIC temperature zones (pf09, pf53_*) are banded comparators: a reading of 105 °C means \"below 105 °C\". The a55-thermal sensor is used instead."
+      ],
+      "tool": {
+        "repo": "https://github.com/smuellerDD/jitterentropy-library",
+        "tag": "v3.7.0",
+        "commit": "e783cf1c450bce4d72f95c9f9c84546a6094976a",
+        "binary": "tools/jitterentropy-hashtime-linux-arm64-static",
+        "binary_sha256": "edcb21deab456bd0d310a55f321ee564432adae124c3253dcd4653929eadb8a2"
+      },
+      "command": "/tmp/entropy-0924/bin/jitterentropy-hashtime 1000000 1 /tmp/entropy-0924/run/idle/jent-raw-noise --max-mem 0",
+      "startUtc": "2026-09-25T03:07:22Z",
+      "endUtc": "2026-09-25T03:08:31Z",
+      "wallSeconds": 69,
+      "loadBefore": "0.74 0.66 0.64 1/226 1083099",
+      "loadAfter": "1.37 0.85 0.71 2/226 1083342",
+      "temperatureBefore": {
+        "sensor": "a55-thermal (thermal_zone1, real SoC sensor)",
+        "valueC": 52.59,
+        "note": null
+      },
+      "temperatureAfter": {
+        "sensor": "a55-thermal (thermal_zone1, real SoC sensor)",
+        "valueC": 55.21,
+        "note": null
+      },
+      "sampleUnit": "one raw jitterentropy time delta (unsigned 64-bit timer difference of jent_measure_jitter), reduced to its 8 least-significant bits",
+      "timer": "cntvct_el0 (Arm generic timer) ticks; CNTFRQ_EL0 = 24,000,000 Hz (41.67 ns/tick); dmesg 'arch_timer: cp15 timer running at 24.00MHz (phys)'",
+      "bitsPerSymbol": 8,
+      "alphabet": "at most 256 symbols (one byte per sample)",
+      "reduction": {
+        "method": "extractlsb",
+        "mask": "FF",
+        "keptBits": 8,
+        "description": "upstream jitterentropy extractlsb.c with mask FF (processdata_helper.sh default MASK_LIST=\"FF:8\"): output byte = sample & 0xFF, the 8 least-significant bits of each 64-bit delta. The mask is the analyst's choice; FF is only upstream's default.",
+        "source": "https://github.com/smuellerDD/jitterentropy-library/blob/e783cf1c450bce4d72f95c9f9c84546a6094976a/tests/raw-entropy/validation-runtime/extractlsb.c"
+      },
+      "sampleCount": 1000000,
+      "matrix": null,
+      "file": "data/entropy/imx95-idle-sequential.bin",
+      "bytes": 1000000,
+      "sha256": "42ed98d11733478587eb90a83d30104ebe632d3ec464d2bac0d4873ef9eac0e8",
+      "sourceFile": "frdm-imx95/idle/frdm-imx95-idle-sequential-jent-raw-noise.data",
+      "sourceBytes": 5000003,
+      "sourceSha256": "32f1cdb5792e45a371d9bbc3ab146b52fc4d914bc63683b196e504a8ef4c2b83",
+      "parityId": "real-frdm-imx95-idle-sequential-jent-raw-noise",
+      "pairedRestartId": "imx95-idle-restart"
+    },
+    {
+      "id": "imx95-idle-restart",
+      "label": "i.MX 95 (6× Cortex-A55) — idle, 1000 × 1000 restart matrix",
+      "kind": "restart",
+      "provenance": "device-raw-noise",
+      "evidenceLabel": "RAW noise-source samples (jitterentropy time deltas), unconditioned; restart matrix",
+      "device": "frdm-imx95",
+      "deviceDescription": "NXP FRDM-IMX95 board (CACP appliance image, microSD)",
+      "environmentKind": "physical device (native Linux)",
+      "environmentSummary": {
+        "os": "NXP i.MX Distro with Wayland 6.18-wrynose (ID=fsl-imx-wayland), BusyBox 1.37.0 userland; /etc/version 20180309123456 (reproducible-build placeholder, no build id on board)",
+        "kernel": "Linux 6.18.20-2.0.0-gb096ce610e95 #1 SMP PREEMPT Tue Jun 9 02:25:20 UTC 2026 aarch64",
+        "cpu": "NXP i.MX 95 (DT model 'NXP FRDM-IMX95'): 6x Arm Cortex-A55 r2p0 (MIDR 0x412fd050); L1d 32K, L2 64K, L3 512K",
+        "timer": "cntvct_el0 (Arm generic timer) ticks; CNTFRQ_EL0 = 24,000,000 Hz (41.67 ns/tick); dmesg 'arch_timer: cp15 timer running at 24.00MHz (phys)'",
+        "cpufreq": "scmi driver, governor 'ondemand', available 500/900/1404/1800 MHz, all cores at 1800 MHz when probed"
+      },
+      "environmentRecordSha256": "55f0bbc9149163c7bd71c5a67a42e392742efef802e4524da2b45a5961d33ffa",
+      "condition": "idle",
+      "conditionLabel": "idle (appliance services running)",
+      "conditionDetail": "No load added by the collector. CACP appliance services (health collector, NPU behaviour monitor, KMIP/gRPC/REST daemons, etc.) were running as normal.",
+      "caveats": [
+        "Each 'restart' is a fresh jitterentropy collector allocation inside ONE process (upstream's raw_entropy_restart procedure), not a reboot or power cycle."
+      ],
+      "tool": {
+        "repo": "https://github.com/smuellerDD/jitterentropy-library",
+        "tag": "v3.7.0",
+        "commit": "e783cf1c450bce4d72f95c9f9c84546a6094976a",
+        "binary": "tools/jitterentropy-hashtime-linux-arm64-static",
+        "binary_sha256": "edcb21deab456bd0d310a55f321ee564432adae124c3253dcd4653929eadb8a2"
+      },
+      "command": "/tmp/entropy-0924/bin/jitterentropy-hashtime 1000 1000 /tmp/entropy-0924/run/idle/restart/jent-raw-noise-restart --max-mem 0",
+      "startUtc": "2026-09-25T03:08:32Z",
+      "endUtc": "2026-09-25T03:09:43Z",
+      "wallSeconds": 71,
+      "loadBefore": "1.37 0.85 0.71 2/226 1083342",
+      "loadAfter": "1.25 0.93 0.75 1/225 1083615",
+      "temperatureBefore": {
+        "sensor": "a55-thermal (thermal_zone1, real SoC sensor)",
+        "valueC": 55.21,
+        "note": null
+      },
+      "temperatureAfter": {
+        "sensor": "a55-thermal (thermal_zone1, real SoC sensor)",
+        "valueC": 55.67,
+        "note": null
+      },
+      "sampleUnit": "one raw jitterentropy time delta (unsigned 64-bit timer difference of jent_measure_jitter), reduced to its 8 least-significant bits",
+      "timer": "cntvct_el0 (Arm generic timer) ticks; CNTFRQ_EL0 = 24,000,000 Hz (41.67 ns/tick); dmesg 'arch_timer: cp15 timer running at 24.00MHz (phys)'",
+      "bitsPerSymbol": 8,
+      "alphabet": "at most 256 symbols (one byte per sample)",
+      "reduction": {
+        "method": "extractlsb",
+        "mask": "FF",
+        "keptBits": 8,
+        "description": "upstream jitterentropy extractlsb.c with mask FF (processdata_helper.sh default MASK_LIST=\"FF:8\"): output byte = sample & 0xFF, the 8 least-significant bits of each 64-bit delta. The mask is the analyst's choice; FF is only upstream's default.",
+        "source": "https://github.com/smuellerDD/jitterentropy-library/blob/e783cf1c450bce4d72f95c9f9c84546a6094976a/tests/raw-entropy/validation-runtime/extractlsb.c"
+      },
+      "sampleCount": 1000000,
+      "matrix": { "restarts": 1000, "samplesPerRestart": 1000 },
+      "file": "data/entropy/imx95-idle-restart.bin",
+      "bytes": 1000000,
+      "sha256": "da79f25366f720977fa096f71194bfad78ea3f16a7598e45880aa72ab0e69d5f",
+      "sourceFile": "frdm-imx95/idle/frdm-imx95-idle-restart-matrix.data",
+      "sourceBytes": 5000001,
+      "sourceSha256": "3c87e29335e60844401b9bb87100ca2774815310803e93397fca645d9eff1f32",
+      "parityId": "real-frdm-imx95-idle-restart-matrix",
+      "pairedSequentialId": "imx95-idle-sequential"
+    },
+    {
+      "id": "mac-native-baseline-sequential",
+      "label": "Mac M5 Max, native macOS — shared-host baseline, sequential",
+      "kind": "sequential",
+      "provenance": "device-raw-noise",
+      "evidenceLabel": "RAW noise-source samples (jitterentropy time deltas), unconditioned",
+      "device": "mac-m5max-native",
+      "deviceDescription": "Apple MacBook (Mac17,6, Apple M5 Max) — the macOS host itself is the device under test",
+      "environmentKind": "physical device (native macOS)",
+      "environmentSummary": {
+        "os": "macOS 26.6.2 (25G83)",
+        "kernel": "Darwin 25.6.0 xnu-12377.161.14~5/RELEASE_ARM64_T6050 arm64",
+        "cpu": "Apple M5 Max, 18 cores: perflevel0 'Super' x6 (L1d 128K, L2 16M per 6 cores), perflevel1 'Performance' x12 (L1d 64K, L2 8M per 6 cores); recorder not pinned (macOS scheduler chooses the core)",
+        "timer": "clock_gettime_nsec_np(CLOCK_UPTIME_RAW) in nanoseconds (jitterentropy-base-user.h __aarch64__ && __MACH__ path); hw.tbfrequency = 24,000,000 Hz",
+        "cpufreq": "no userspace frequency/governor interface on macOS; not recorded"
+      },
+      "environmentRecordSha256": "f41f63a48a567f1d58f78ffae1a777edb2254c5c39b445aaae5fef0ad916134f",
+      "condition": "idle",
+      "conditionLabel": "shared-host baseline (not idle)",
+      "conditionDetail": "No load added by the collector, but the host was NOT idle: load average 41.4 at the start (other sessions' workloads, OrbStack VMs). Treat as 'baseline, shared host'.",
+      "caveats": [
+        "Shared-host baseline, NOT idle: other work kept the Mac load average at 33–60 during collection; no load was added by the collector.",
+        "No SoC temperature was recorded: reading it on macOS needs root, which the collector did not have."
+      ],
+      "tool": {
+        "repo": "https://github.com/smuellerDD/jitterentropy-library",
+        "tag": "v3.7.0",
+        "commit": "e783cf1c450bce4d72f95c9f9c84546a6094976a",
+        "binary": "tools/jitterentropy-hashtime-macos-arm64",
+        "binary_sha256": "e03d9d062cc80f11af0b0cd2bbf769f0fea2cc13bc18ec481c95ab748063fabf"
+      },
+      "command": "/private/tmp/claude-501/-Users-pqctoday-Antigravity/fad562f7-6211-4a2c-a83b-22206d58d59f/scratchpad/build/out-macos-arm64/jitterentropy-hashtime 1000000 1 /private/tmp/claude-501/-Users-pqctoday-Antigravity/fad562f7-6211-4a2c-a83b-22206d58d59f/scratchpad/run-mac-native/idle/jent-raw-noise --max-mem 0",
+      "startUtc": "2026-09-25T03:13:36Z",
+      "endUtc": "2026-09-25T03:13:46Z",
+      "wallSeconds": 10,
+      "loadBefore": "{ 41.37 35.02 41.83 }",
+      "loadAfter": "{ 40.53 35.05 41.76 }",
+      "temperatureBefore": {
+        "sensor": null,
+        "valueC": null,
+        "note": "unavailable: no unprivileged temperature sensor on macOS; sudo not available to collector"
+      },
+      "temperatureAfter": {
+        "sensor": null,
+        "valueC": null,
+        "note": "unavailable: no unprivileged temperature sensor on macOS; sudo not available to collector"
+      },
+      "sampleUnit": "one raw jitterentropy time delta (unsigned 64-bit timer difference of jent_measure_jitter), reduced to its 8 least-significant bits",
+      "timer": "clock_gettime_nsec_np(CLOCK_UPTIME_RAW) in nanoseconds (jitterentropy-base-user.h __aarch64__ && __MACH__ path); hw.tbfrequency = 24,000,000 Hz",
+      "bitsPerSymbol": 8,
+      "alphabet": "at most 256 symbols (one byte per sample)",
+      "reduction": {
+        "method": "extractlsb",
+        "mask": "FF",
+        "keptBits": 8,
+        "description": "upstream jitterentropy extractlsb.c with mask FF (processdata_helper.sh default MASK_LIST=\"FF:8\"): output byte = sample & 0xFF, the 8 least-significant bits of each 64-bit delta. The mask is the analyst's choice; FF is only upstream's default.",
+        "source": "https://github.com/smuellerDD/jitterentropy-library/blob/e783cf1c450bce4d72f95c9f9c84546a6094976a/tests/raw-entropy/validation-runtime/extractlsb.c"
+      },
+      "sampleCount": 1000000,
+      "matrix": null,
+      "file": "data/entropy/mac-native-baseline-sequential.bin",
+      "bytes": 1000000,
+      "sha256": "1022b752d3527c8a9a6f4eb2986ab818a891842d501a3b7ff9640cd74031ec22",
+      "sourceFile": "mac-m5max-native/idle/mac-m5max-native-idle-sequential-jent-raw-noise.data",
+      "sourceBytes": 5009456,
+      "sourceSha256": "0f1e6a574a71eac32eccf1e5035cef0776b9ee648c19c93909db6a9eef521cc4",
+      "parityId": "real-mac-m5max-native-idle-sequential-jent-raw-noise"
+    },
+    {
+      "id": "mac-vm-baseline-sequential",
+      "label": "Mac OrbStack Linux VM (virtualized environment) — shared-host baseline, sequential",
+      "kind": "sequential",
+      "provenance": "device-raw-noise",
+      "evidenceLabel": "RAW noise-source samples (jitterentropy time deltas), unconditioned",
+      "device": "mac-orbstack-linux-vm",
+      "deviceDescription": "Virtualized environment: OrbStack Linux VM on the same Mac (M5 Max), recorder run inside a docker container (debian:bookworm-slim, linux/arm64)",
+      "environmentKind": "virtualized environment",
+      "environmentSummary": {
+        "os": "Debian GNU/Linux 12 (bookworm) container userland on the OrbStack VM kernel",
+        "kernel": "Linux 7.0.14-orbstack-00380-ga7e0a2dc9535 #1 SMP PREEMPT Fri Aug 7 03:48:40 UTC 2026 aarch64",
+        "cpu": "18 vCPUs presented by the hypervisor, MIDR 0x610f0000 (implementer 0x61 Apple, part 0x000 as virtualized); cache sysfs reports L1d 128K, L2 16M, L3 64M",
+        "timer": "cntvct_el0 ticks as seen by the guest (virtualized counter); CNTFRQ_EL0 = 24,000,000 Hz",
+        "cpufreq": "dummy-cpufreq, governor 'performance', 2000 MHz fixed (synthetic values from the VM)"
+      },
+      "environmentRecordSha256": "e929df27330df12900826a0909a0b7b56be6aac5e37d90e43b78aabef2072129",
+      "condition": "idle",
+      "conditionLabel": "shared-host baseline (not idle), virtualized environment",
+      "conditionDetail": "No load added by the collector; the OrbStack VM and the host were NOT idle (VM load average ~54, other sessions' containers).",
+      "caveats": [
+        "Virtualized environment: the timer is the guest view of a virtualized counter; this is a different operating environment from the Mac host.",
+        "Shared-host baseline, NOT idle: other work kept the Mac load average at 33–60 during collection; no load was added by the collector.",
+        "No SoC temperature was recorded: reading it on macOS needs root, which the collector did not have."
+      ],
+      "tool": {
+        "repo": "https://github.com/smuellerDD/jitterentropy-library",
+        "tag": "v3.7.0",
+        "commit": "e783cf1c450bce4d72f95c9f9c84546a6094976a",
+        "binary": "tools/jitterentropy-hashtime-linux-arm64-static",
+        "binary_sha256": "edcb21deab456bd0d310a55f321ee564432adae124c3253dcd4653929eadb8a2"
+      },
+      "command": "/ent/bin/jitterentropy-hashtime 1000000 1 /ent/out/run/idle/jent-raw-noise --max-mem 0",
+      "startUtc": "2026-09-25T03:15:50Z",
+      "endUtc": "2026-09-25T03:16:02Z",
+      "wallSeconds": 12,
+      "loadBefore": "54.63 34.16 32.92 64/1335 287",
+      "loadAfter": "56.51 35.57 33.40 56/1330 332",
+      "temperatureBefore": {
+        "sensor": null,
+        "valueC": null,
+        "note": "no temperature sensor visible"
+      },
+      "temperatureAfter": {
+        "sensor": null,
+        "valueC": null,
+        "note": "no temperature sensor visible"
+      },
+      "sampleUnit": "one raw jitterentropy time delta (unsigned 64-bit timer difference of jent_measure_jitter), reduced to its 8 least-significant bits",
+      "timer": "cntvct_el0 ticks as seen by the guest (virtualized counter); CNTFRQ_EL0 = 24,000,000 Hz",
+      "bitsPerSymbol": 8,
+      "alphabet": "at most 256 symbols (one byte per sample)",
+      "reduction": {
+        "method": "extractlsb",
+        "mask": "FF",
+        "keptBits": 8,
+        "description": "upstream jitterentropy extractlsb.c with mask FF (processdata_helper.sh default MASK_LIST=\"FF:8\"): output byte = sample & 0xFF, the 8 least-significant bits of each 64-bit delta. The mask is the analyst's choice; FF is only upstream's default.",
+        "source": "https://github.com/smuellerDD/jitterentropy-library/blob/e783cf1c450bce4d72f95c9f9c84546a6094976a/tests/raw-entropy/validation-runtime/extractlsb.c"
+      },
+      "sampleCount": 1000000,
+      "matrix": null,
+      "file": "data/entropy/mac-vm-baseline-sequential.bin",
+      "bytes": 1000000,
+      "sha256": "cca4fb2b9ac4453dd6459b8dfeeb8dcc65e1ef7a2c4f9b6cc3c7ef4b8b8c6f27",
+      "sourceFile": "mac-orbstack-linux-vm/idle/mac-orbstack-linux-vm-idle-sequential-jent-raw-noise.data",
+      "sourceBytes": 4004446,
+      "sourceSha256": "711007923b50a6960a8be7c9f496687c3b5f7c7afe4a53c670a1ea8787d2a1ae",
+      "parityId": "real-mac-orbstack-linux-vm-idle-sequential-jent-raw-noise"
+    },
+    {
+      "id": "imx95-contrast-getrandom",
+      "label": "i.MX 95 getrandom() output — contrast (conditioned/DRBG output)",
+      "kind": "contrast",
+      "provenance": "conditioned-output-contrast",
+      "evidenceLabel": "conditioned/DRBG output — NOT raw noise",
+      "device": "frdm-imx95",
+      "deviceDescription": "NXP FRDM-IMX95 board (CACP appliance image, microSD)",
+      "environmentKind": "physical device (native Linux)",
+      "environmentSummary": {
+        "os": "NXP i.MX Distro with Wayland 6.18-wrynose (ID=fsl-imx-wayland), BusyBox 1.37.0 userland; /etc/version 20180309123456 (reproducible-build placeholder, no build id on board)",
+        "kernel": "Linux 6.18.20-2.0.0-gb096ce610e95 #1 SMP PREEMPT Tue Jun 9 02:25:20 UTC 2026 aarch64",
+        "cpu": "NXP i.MX 95 (DT model 'NXP FRDM-IMX95'): 6x Arm Cortex-A55 r2p0 (MIDR 0x412fd050); L1d 32K, L2 64K, L3 512K",
+        "timer": "cntvct_el0 (Arm generic timer) ticks; CNTFRQ_EL0 = 24,000,000 Hz (41.67 ns/tick); dmesg 'arch_timer: cp15 timer running at 24.00MHz (phys)'",
+        "cpufreq": "scmi driver, governor 'ondemand', available 500/900/1404/1800 MHz, all cores at 1800 MHz when probed"
+      },
+      "environmentRecordSha256": "55f0bbc9149163c7bd71c5a67a42e392742efef802e4524da2b45a5961d33ffa",
+      "condition": "none (collected after the loaded run; see load_before/temperature_before)",
+      "conditionLabel": "no defined condition (collected after the loaded run)",
+      "conditionDetail": null,
+      "caveats": [
+        "Conditioned/DRBG output of the Linux kernel CRNG, not raw noise. Estimator output on it says nothing about any noise source.",
+        "Collected shortly after the loaded run, so it falls under neither the idle nor the loaded condition."
+      ],
+      "tool": {
+        "binary": "tools/getrandom-dump-linux-arm64-static",
+        "binary_sha256": "22fe372641012a43627a86f822a3f5961864411aed6a076ed4b705ce8a721fc5",
+        "source": "tools/getrandom-dump.c"
+      },
+      "command": "/tmp/entropy-0924/bin/getrandom-dump 1000000 /tmp/entropy-0924/run/contrast/getrandom.bin",
+      "startUtc": "2026-09-25T03:12:24Z",
+      "endUtc": "2026-09-25T03:12:24Z",
+      "wallSeconds": 0,
+      "loadBefore": "6.55 3.35 1.70 1/224 1084304",
+      "loadAfter": "6.55 3.35 1.70 1/224 1084358",
+      "temperatureBefore": {
+        "sensor": "a55-thermal (thermal_zone1, real SoC sensor)",
+        "valueC": 67.6,
+        "note": null
+      },
+      "temperatureAfter": {
+        "sensor": "a55-thermal (thermal_zone1, real SoC sensor)",
+        "valueC": 65.17,
+        "note": null
+      },
+      "sampleUnit": "one byte of generator output (getrandom(2), flags=0 (Linux kernel CRNG output))",
+      "timer": null,
+      "bitsPerSymbol": 8,
+      "alphabet": "at most 256 symbols (one byte per sample)",
+      "reduction": {
+        "method": "none",
+        "description": "bytes of generator output used as 8-bit samples"
+      },
+      "sampleCount": 1000000,
+      "matrix": null,
+      "file": "data/entropy/imx95-contrast-getrandom.bin",
+      "bytes": 1000000,
+      "sha256": "658583c7aa59e7e21f1107e6dab4bd4d5ac36f17124ac8205d6b88c5c2435903",
+      "sourceFile": "frdm-imx95/contrast/frdm-imx95-contrast-getrandom.bin",
+      "sourceBytes": 1000000,
+      "sourceSha256": "658583c7aa59e7e21f1107e6dab4bd4d5ac36f17124ac8205d6b88c5c2435903",
+      "parityId": "real-frdm-imx95-contrast-getrandom"
+    }
+  ],
+  "comparisonOnly": [
+    {
+      "parityId": "real-frdm-imx95-loaded-sequential-jent-raw-noise",
+      "device": "frdm-imx95",
+      "kind": "sequential",
+      "condition": "loaded",
+      "label": "RAW noise-source samples (jitterentropy time deltas), unconditioned",
+      "source": null,
+      "sourceFile": "frdm-imx95/loaded/frdm-imx95-loaded-sequential-jent-raw-noise.data",
+      "sourceSha256": "b2a4b8f74e63000205233068561f56d51278868bf30d79422ad4757534c77887",
+      "reducedSha256": "d01a9a61e1a028cf0bffb6876925bec9d18104b8876e3044051124e1cd3c54df",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only."
+    },
+    {
+      "parityId": "real-frdm-imx95-loaded-restart-matrix",
+      "device": "frdm-imx95",
+      "kind": "restart",
+      "condition": "loaded",
+      "label": "RAW noise-source samples (jitterentropy time deltas), unconditioned; restart matrix",
+      "source": null,
+      "sourceFile": "frdm-imx95/loaded/frdm-imx95-loaded-restart-matrix.data",
+      "sourceSha256": "789ded873878b7f384504117ccdbf2dae10d4c0602ecfb4f77cad791be2ee7c7",
+      "reducedSha256": "766ba8dd12576d570dd663071e31f5ae2526c40dbb87f7e8d1307c3020c1ba8f",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only."
+    },
+    {
+      "parityId": "real-frdm-imx95-contrast-hwrng",
+      "device": "frdm-imx95",
+      "kind": "contrast",
+      "condition": "none (collected after the loaded run; see load_before/temperature_before)",
+      "label": "conditioned/DRBG output — NOT raw noise",
+      "source": "/dev/hwrng with rng_current=ele-trng (i.MX 95 EdgeLock Enclave TRNG as delivered by the kernel hwrng driver), read with 'sudo -n dd bs=1000 count=1000 iflag=fullblock'. Whether and how the enclave conditions its output is not visible from Linux; it is output, not raw noise.",
+      "sourceFile": "frdm-imx95/contrast/frdm-imx95-contrast-hwrng.bin",
+      "sourceSha256": "fd37a63cef201d8a97ab629aa00af25e8ac0cceefffe2acd527accb216fd5c97",
+      "reducedSha256": "fd37a63cef201d8a97ab629aa00af25e8ac0cceefffe2acd527accb216fd5c97",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only. Falls under neither the idle nor the loaded condition."
+    },
+    {
+      "parityId": "real-kv260-loaded-sequential-jent-raw-noise",
+      "device": "kv260",
+      "kind": "sequential",
+      "condition": "loaded",
+      "label": "RAW noise-source samples (jitterentropy time deltas), unconditioned",
+      "source": null,
+      "sourceFile": "kv260/loaded/kv260-loaded-sequential-jent-raw-noise.data",
+      "sourceSha256": "efb79c299c7e79e6ae5876c6fbbf9b9fe52a5c775b2c57cd80b44e8e1031c17f",
+      "reducedSha256": "570f1995af0d82bb0ffd6c3dcac497dfcbf5ab3ac8011ea4fd072f305517336b",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only."
+    },
+    {
+      "parityId": "real-kv260-loaded-restart-matrix",
+      "device": "kv260",
+      "kind": "restart",
+      "condition": "loaded",
+      "label": "RAW noise-source samples (jitterentropy time deltas), unconditioned; restart matrix",
+      "source": null,
+      "sourceFile": "kv260/loaded/kv260-loaded-restart-matrix.data",
+      "sourceSha256": "fe221777dabf8ab37be59e4992c39a13797d4ffaf84ceaefb2d4e6ce025fd9d2",
+      "reducedSha256": "350ca12c102f000ee5fa6b59a3373fa523052d79867ef5fb8bde38c9ba7d7574",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only."
+    },
+    {
+      "parityId": "real-kv260-contrast-getrandom",
+      "device": "kv260",
+      "kind": "contrast",
+      "condition": "none (collected after the loaded run; see load_before/temperature_before)",
+      "label": "conditioned/DRBG output — NOT raw noise",
+      "source": "getrandom(2), flags=0 (Linux kernel CRNG output)",
+      "sourceFile": "kv260/contrast/kv260-contrast-getrandom.bin",
+      "sourceSha256": "8506530d8ff3494485b6d7f792f0b6954c6f864519e7d23677e8cbe201f1f4bf",
+      "reducedSha256": "8506530d8ff3494485b6d7f792f0b6954c6f864519e7d23677e8cbe201f1f4bf",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only. Falls under neither the idle nor the loaded condition."
+    },
+    {
+      "parityId": "real-mac-m5max-native-idle-restart-matrix",
+      "device": "mac-m5max-native",
+      "kind": "restart",
+      "condition": "shared-host baseline (not idle)",
+      "label": "RAW noise-source samples (jitterentropy time deltas), unconditioned; restart matrix",
+      "source": null,
+      "sourceFile": "mac-m5max-native/idle/mac-m5max-native-idle-restart-matrix.data",
+      "sourceSha256": "6e0720ee94744ff3ef405612bb1e824d6b8073497f76a215b439084364e7fa14",
+      "reducedSha256": "e18dd93f6adbe1d99337f8eceea214fa8d4f4ec7e08b1805178865fe4b200aa1",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only. other work kept the Mac load average at 33–60 during collection; no load was added by the collector."
+    },
+    {
+      "parityId": "real-mac-m5max-native-loaded-sequential-jent-raw-noise",
+      "device": "mac-m5max-native",
+      "kind": "sequential",
+      "condition": "loaded",
+      "label": "RAW noise-source samples (jitterentropy time deltas), unconditioned",
+      "source": null,
+      "sourceFile": "mac-m5max-native/loaded/mac-m5max-native-loaded-sequential-jent-raw-noise.data",
+      "sourceSha256": "fa65f75dd29051d28bc722c60b1adb9fe1c43bbb5ee16c39c1dff07020737648",
+      "reducedSha256": "2bd2930b5e22017bb6d1a55305c346bfbf888ffc8c72b938cec1ddbc5e0fbff7",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only. other work kept the Mac load average at 33–60 during collection; no load was added by the collector."
+    },
+    {
+      "parityId": "real-mac-m5max-native-loaded-restart-matrix",
+      "device": "mac-m5max-native",
+      "kind": "restart",
+      "condition": "loaded",
+      "label": "RAW noise-source samples (jitterentropy time deltas), unconditioned; restart matrix",
+      "source": null,
+      "sourceFile": "mac-m5max-native/loaded/mac-m5max-native-loaded-restart-matrix.data",
+      "sourceSha256": "8ab96a35c846ffa4460eb760067ed613ee413ba5b2e71e3be1f4e9b5d60905a7",
+      "reducedSha256": "c38a09fe1f3dfb2385f1efd985ddce7bda43e2818141c688193468bb6dd76a64",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only. other work kept the Mac load average at 33–60 during collection; no load was added by the collector."
+    },
+    {
+      "parityId": "real-mac-m5max-native-contrast-urandom",
+      "device": "mac-m5max-native",
+      "kind": "contrast",
+      "condition": "none (collected after the loaded run; see load_before/temperature_before)",
+      "label": "conditioned/DRBG output — NOT raw noise",
+      "source": "/dev/urandom on macOS (kernel CSPRNG output), read with 'dd bs=1000 count=1000'",
+      "sourceFile": "mac-m5max-native/contrast/mac-m5max-native-contrast-urandom.bin",
+      "sourceSha256": "075b87d1627406983deedc8724eaf71dd87f59601e794353e8fd1f0713500776",
+      "reducedSha256": "075b87d1627406983deedc8724eaf71dd87f59601e794353e8fd1f0713500776",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only. other work kept the Mac load average at 33–60 during collection; no load was added by the collector. Falls under neither the idle nor the loaded condition."
+    },
+    {
+      "parityId": "real-mac-orbstack-linux-vm-idle-restart-matrix",
+      "device": "mac-orbstack-linux-vm",
+      "kind": "restart",
+      "condition": "shared-host baseline (not idle)",
+      "label": "RAW noise-source samples (jitterentropy time deltas), unconditioned; restart matrix",
+      "source": null,
+      "sourceFile": "mac-orbstack-linux-vm/idle/mac-orbstack-linux-vm-idle-restart-matrix.data",
+      "sourceSha256": "895b0bdb71095563136f76182b9742fa465a962c4e5d33a71aaac5bbaab81096",
+      "reducedSha256": "e43c3761b15c2e85823f41d964e53546461c4534229bc8ae3f3492e0074457b1",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only. other work kept the Mac load average at 33–60 during collection; no load was added by the collector."
+    },
+    {
+      "parityId": "real-mac-orbstack-linux-vm-loaded-sequential-jent-raw-noise",
+      "device": "mac-orbstack-linux-vm",
+      "kind": "sequential",
+      "condition": "loaded",
+      "label": "RAW noise-source samples (jitterentropy time deltas), unconditioned",
+      "source": null,
+      "sourceFile": "mac-orbstack-linux-vm/loaded/mac-orbstack-linux-vm-loaded-sequential-jent-raw-noise.data",
+      "sourceSha256": "c6b1dbaa14e1f534cbbb22dbc837a4983fe17f7339fb47e7f968407826a3a10f",
+      "reducedSha256": "7339da5a5d1d3103ba890df9a280190fe8d41cb9f4e2ef4a82e2cc9d7a26c5bc",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only. other work kept the Mac load average at 33–60 during collection; no load was added by the collector."
+    },
+    {
+      "parityId": "real-mac-orbstack-linux-vm-loaded-restart-matrix",
+      "device": "mac-orbstack-linux-vm",
+      "kind": "restart",
+      "condition": "loaded",
+      "label": "RAW noise-source samples (jitterentropy time deltas), unconditioned; restart matrix",
+      "source": null,
+      "sourceFile": "mac-orbstack-linux-vm/loaded/mac-orbstack-linux-vm-loaded-restart-matrix.data",
+      "sourceSha256": "cc41f2133d57c5a31b595d02a0c25ae9f3983797be393c91f6f63686708c10b4",
+      "reducedSha256": "c5672666108c39fdb5c86857c6b44a6bc86584448cfb3808faf4cb06f9df000b",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only. other work kept the Mac load average at 33–60 during collection; no load was added by the collector."
+    },
+    {
+      "parityId": "real-mac-orbstack-linux-vm-contrast-getrandom",
+      "device": "mac-orbstack-linux-vm",
+      "kind": "contrast",
+      "condition": "none (collected after the loaded run; see load_before/temperature_before)",
+      "label": "conditioned/DRBG output — NOT raw noise",
+      "source": "getrandom(2), flags=0, inside the OrbStack VM (guest Linux kernel CRNG output)",
+      "sourceFile": "mac-orbstack-linux-vm/contrast/mac-orbstack-linux-vm-contrast-getrandom.bin",
+      "sourceSha256": "4da1011b4b6c6b6cddcd9f6b6c2c3813cba4c040adc1ac64a65719b9d0d36753",
+      "reducedSha256": "4da1011b4b6c6b6cddcd9f6b6c2c3813cba4c040adc1ac64a65719b9d0d36753",
+      "note": "Dataset not shipped in the Hub (size budget); precomputed native reference result only. other work kept the Mac load average at 33–60 during collection; no load was added by the collector. Falls under neither the idle nor the loaded condition."
+    }
+  ],
+  "notCollected": [
+    {
+      "what": "KV260 /dev/hwrng contrast",
+      "why": "No hardware RNG is exposed to Linux on the KV260 image: /sys/class/misc/hw_random and /dev/hwrng are absent and CONFIG_HW_RANDOM is not set."
+    },
+    {
+      "what": "Raw (pre-conditioning) hardware TRNG samples on any device",
+      "why": "No reachable interface on any of the three devices (i.MX 95 ELE TRNG: /dev/hwrng output only; KV260: none; Mac: none). Per the user decision, no new noise source was built."
+    },
+    {
+      "what": "OrbStack /dev/hwrng (virtio_rng.0) contrast",
+      "why": "/dev/hwrng is not present inside the docker container; not pursued (it would be host-supplied output anyway)."
+    },
+    {
+      "what": "Mac SoC temperature",
+      "why": "Needs root (powermetrics); sudo not available to the collector. pmset thermal-warning state recorded instead."
+    },
+    {
+      "what": "A truly idle Mac baseline",
+      "why": "The Mac was running other sessions' workloads throughout (load average 33-60 before the run). The 'idle' Mac and OrbStack datasets are a shared-host baseline and are labelled as such."
+    },
+    {
+      "what": "First i.MX 95 /dev/hwrng attempt",
+      "why": "Failed because BusyBox 'head' has no -c option (0-byte file). Retried at 03:13:03Z with dd; the failed files are not shipped. The retry ran about 40 s after the loaded run ended (a55-thermal 62.5 C), not under a defined idle/loaded condition."
+    }
+  ],
+  "nativeReference": {
+    "tool": "usnistgov/SP800-90B_EntropyAssessment",
+    "commit": "87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289",
+    "platform": "native-arm64-strict: linux/arm64, Debian trixie, g++ 14.2, upstream flags + -ffp-contract=off (the W1 parity reference)",
+    "parityRunAt": "2026-09-25T04:25:02.482Z",
+    "parityReport": "scripts/entropy-90b/results/parity-report-0924.md",
+    "wasmSha256": {
+      "ea_iid.wasm": "6c06533b3985e4fb75183461f3ca69cbe4bcc468b7dfb6627287745496a6e2a6",
+      "ea_non_iid.wasm": "d0c2a5faca24319c97ac3dafb3de3a1c4469647f8e5047cce14f5eabf92c78cc",
+      "ea_restart.wasm": "7b5b1eacf512581ed452cbbd052b2202fe2b468eb4aa4096e3de8bacaaee2de5"
+    },
+    "notes": [
+      "non-IID values: every estimator field of the tool JSON; native-arm64-strict produced identical JSON and stdout to the WASM build.",
+      "IID values: only the deterministic fields. The permutation test is seeded by the tool from /dev/urandom, so its counters vary run to run; verdicts are those seen over the unseeded parity runs.",
+      "restart values: runs with a pinned /dev/urandom. The sanity-check cutoff X_cutoff is a Monte-Carlo quantile, so a learner run may print a different X_cutoff."
+    ],
+    "bySha256": {
+      "c9443b93e2f390ba1e4f362d437a927af66e3fa7aa6e7d8be6e7df5daaa47f04": {
+        "parityId": "kat-markov-1bit-20k",
+        "source": "kat",
+        "bits": 1,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hOriginal": 0.959159016531773,
+            "Most Common Value / mcvEstimateMode": 10105,
+            "Most Common Value / mcvEstimatePHat": 0.50525,
+            "Most Common Value / mcvEstimatePU": 0.5143566574744197,
+            "Collision Test (for bit strings only) / hOriginal": 0.2748248562298956,
+            "Markov Test (for bit strings only) / hOriginal": 0.5220577322278712,
+            "Compression Test (for bit strings only) / hOriginal": 0.3416613008703955,
+            "T-Tuple Test / tTupleRes": 0.5001803103643944,
+            "LRS Test / lrsRes": 0.7770158293454122,
+            "Multi Most Common in Window Test / hOriginal": 0.900522962326061,
+            "Lag Prediction Test / hOriginal": 0.508354637992731,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 0.5083853022418827,
+            "LZ78Y Test / hOriginal": 0.5078266994786679,
+            "Overall / dataWordSize": 1,
+            "Overall / hAssessed": 0.2748248562298956,
+            "Overall / hOriginal": 0.2748248562298956
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 298
+        },
+        "iid": {
+          "values": {
+            " / binary": true,
+            " / hAssessed": 0.959159016531773,
+            " / hBitstring": 1,
+            " / hOriginal": 0.959159016531773,
+            " / mean": 0.50525,
+            " / median": 0.5
+          },
+          "verdicts": ["chi2=false lrs=true perm=false"],
+          "runs": 25
+        }
+      },
+      "81c1c7f99eda513a0fe7ebdff3c2962933da61a69ac8d9ee257275f7be6d8fe3": {
+        "parityId": "kat-biased-1bit-20k",
+        "source": "kat",
+        "bits": 1,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hOriginal": 0.3954321122196466,
+            "Most Common Value / mcvEstimateMode": 15048,
+            "Most Common Value / mcvEstimatePHat": 0.7524,
+            "Most Common Value / mcvEstimatePU": 0.7602616309535842,
+            "Collision Test (for bit strings only) / hOriginal": 0.3876102213516465,
+            "Markov Test (for bit strings only) / hOriginal": 0.41439912503706855,
+            "Compression Test (for bit strings only) / hOriginal": 0.24148095080836415,
+            "T-Tuple Test / tTupleRes": 0.38530729773701555,
+            "LRS Test / lrsRes": 0.6477045272045873,
+            "Multi Most Common in Window Test / hOriginal": 0.39499418493681704,
+            "Lag Prediction Test / hOriginal": 0.6620992653609734,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 0.3954778564417162,
+            "LZ78Y Test / hOriginal": 0.39610323709028045,
+            "Overall / dataWordSize": 1,
+            "Overall / hAssessed": 0.24148095080836415,
+            "Overall / hOriginal": 0.24148095080836415
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 210
+        },
+        "iid": {
+          "values": {
+            " / binary": true,
+            " / hAssessed": 0.3954321122196466,
+            " / hBitstring": 1,
+            " / hOriginal": 0.3954321122196466,
+            " / mean": 0.7524,
+            " / median": 0.5
+          },
+          "verdicts": ["chi2=true lrs=true perm=true"],
+          "runs": 25
+        }
+      },
+      "d29751f2649b32ff572b5e0a9f541ea660a50f94ff0beedfb0b692b924cc8025": {
+        "parityId": "d4-stuck-8bit",
+        "source": "synthetic-d4",
+        "bits": 8,
+        "nonIid": {
+          "values": { "error": "Symbol alphabet consists of 1 symbol. No entropy awarded..." },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 40
+        },
+        "iid": {
+          "values": { "error": "Symbol alphabet consists of 1 symbol. No entropy awarded..." },
+          "verdicts": ["error:Symbol alphabet consists of 1 symbol. No entropy awarded..."],
+          "runs": 25
+        }
+      },
+      "d7bebe423cb6e3c70629e47243906a11319312f19f6b75039272bd9dfe8742eb": {
+        "parityId": "d4-biased-1bit",
+        "source": "synthetic-d4",
+        "bits": 1,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hOriginal": 0.41322924813933704,
+            "Most Common Value / mcvEstimateMode": 749825,
+            "Most Common Value / mcvEstimatePHat": 0.749825,
+            "Most Common Value / mcvEstimatePU": 0.7509406274949888,
+            "Collision Test (for bit strings only) / hOriginal": 0.4125160540159102,
+            "Markov Test (for bit strings only) / hOriginal": 0.415600216293067,
+            "Compression Test (for bit strings only) / hOriginal": 0.24986677682420314,
+            "T-Tuple Test / tTupleRes": 0.41094083185733465,
+            "LRS Test / lrsRes": 0.6497111443162181,
+            "Multi Most Common in Window Test / hOriginal": 0.41323831443950754,
+            "Lag Prediction Test / hOriginal": 0.6768118664138895,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 0.4132417158880351,
+            "LZ78Y Test / hOriginal": 0.41323738868975957,
+            "Overall / dataWordSize": 1,
+            "Overall / hAssessed": 0.24986677682420314,
+            "Overall / hOriginal": 0.24986677682420314
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 3607
+        },
+        "iid": {
+          "values": {
+            " / binary": true,
+            " / hAssessed": 0.41322924813933704,
+            " / hBitstring": 1,
+            " / hOriginal": 0.41322924813933704,
+            " / mean": 0.749825,
+            " / median": 0.5
+          },
+          "verdicts": ["chi2=true lrs=true perm=true"],
+          "runs": 25
+        }
+      },
+      "974dbc8bb0253ef6a18b8277150f146bef3ae68ab9513aee640b6335b99f5e47": {
+        "parityId": "d4-markov-1bit",
+        "source": "synthetic-d4",
+        "bits": 1,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hOriginal": 0.995428381947596,
+            "Most Common Value / mcvEstimateMode": 500299,
+            "Most Common Value / mcvEstimatePHat": 0.500299,
+            "Most Common Value / mcvEstimatePU": 0.5015869150654505,
+            "Collision Test (for bit strings only) / hOriginal": 0.29269606813553806,
+            "Markov Test (for bit strings only) / hOriginal": 0.5199480566752913,
+            "Compression Test (for bit strings only) / hOriginal": 0.3518473042356598,
+            "T-Tuple Test / tTupleRes": 0.5416636076646117,
+            "LRS Test / lrsRes": 0.7734910461161928,
+            "Multi Most Common in Window Test / hOriginal": 0.7913772777262754,
+            "Lag Prediction Test / hOriginal": 0.5141112409754742,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 0.514118033257503,
+            "LZ78Y Test / hOriginal": 0.5141149575464082,
+            "Overall / dataWordSize": 1,
+            "Overall / hAssessed": 0.29269606813553806,
+            "Overall / hOriginal": 0.29269606813553806
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 3768
+        }
+      },
+      "603ce2d3d7429242a88ff9cea83869ffd40665b0e9aec19723d41ad745cf6968": {
+        "parityId": "d4-healthy-iid-8bit",
+        "source": "synthetic-d4",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.9980011706723845,
+            "Most Common Value / hOriginal": 7.876484395264145,
+            "Most Common Value / mcvEstimateMode": 4091,
+            "Most Common Value / mcvEstimatePHat": 0.004091,
+            "Most Common Value / mcvEstimatePU": 0.004255415162114699,
+            "Collision Test (for bit strings only) / hBitstring": 0.9343910450165258,
+            "Markov Test (for bit strings only) / hBitstring": 0.9991085676707075,
+            "Compression Test (for bit strings only) / hBitstring": 0.9271106655903032,
+            "T-Tuple Test / binTTupleRes": 0.9294675887066989,
+            "T-Tuple Test / tTupleRes": 7.876484395264145,
+            "LRS Test / binLrsRes": 0.996353663389543,
+            "LRS Test / lrsRes": 7.864200611802139,
+            "Multi Most Common in Window Test / hBitstring": 0.998771965028285,
+            "Multi Most Common in Window Test / hOriginal": 7.960796322957976,
+            "Lag Prediction Test / hBitstring": 0.9984624474823383,
+            "Lag Prediction Test / hOriginal": 7.972673992696105,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.99800405173457,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.918949773687415,
+            "LZ78Y Test / hBitstring": 0.9993403801874724,
+            "LZ78Y Test / hOriginal": 7.91892813474644,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 7.416885324722426,
+            "Overall / hBitstring": 0.9271106655903032,
+            "Overall / hOriginal": 7.864200611802139
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 16685
+        },
+        "iid": {
+          "values": {
+            " / hAssessed": 7.876484395264145,
+            " / hBitstring": 0.9980011706723845,
+            " / hOriginal": 7.876484395264145,
+            " / mean": 127.403681,
+            " / median": 127
+          },
+          "verdicts": ["chi2=true lrs=true perm=true"],
+          "runs": 25
+        }
+      },
+      "9f2c1502f6e888d7e1212f89f46ce314a08a5bd54257cf3a408c4b0034e899ff": {
+        "parityId": "d4-healthy-iid-8bit-restart",
+        "source": "synthetic-d4",
+        "bits": 8,
+        "restart": {
+          "hI": 7.416885324722426,
+          "values": {
+            "Most Common Value / dataWordSize": 8,
+            "Most Common Value / h_c": 7.883069951369399,
+            "Most Common Value / h_r": 7.883069951369399,
+            "T-Tuple Test / dataWordSize": 8,
+            "T-Tuple Test / h_c": 7.883069951369399,
+            "T-Tuple Test / h_r": 7.883069951369399,
+            "LRS Test / dataWordSize": 8,
+            "LRS Test / h_c": 7.718814129976409,
+            "LRS Test / h_r": 7.922391446194899,
+            "Multi Most Common in Window Test / dataWordSize": 8,
+            "Multi Most Common in Window Test / h_c": 7.968890262803326,
+            "Multi Most Common in Window Test / h_r": 7.929948391875881,
+            "Lag Prediction Test / dataWordSize": 8,
+            "Lag Prediction Test / h_c": 7.932553222374486,
+            "Lag Prediction Test / h_r": 7.956855937538419,
+            "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_c": 7.969347262138781,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_r": 7.9484650642969354,
+            "LZ78Y Test / dataWordSize": 8,
+            "LZ78Y Test / h_c": 7.9704331921872535,
+            "LZ78Y Test / h_r": 7.947716233800193,
+            "Overall / h_c": 7.718814129976409,
+            "Overall / h_i": 7.416885324722426,
+            "Overall / h_r": 7.883069951369399
+          },
+          "nativeArm64StrictIdentical": true,
+          "verdicts": ["passed"],
+          "wasmMs": 75361
+        }
+      },
+      "ec0af63b4c24594df49b908fcc99d177a08b6ae4741860be5385d1789a4b4f60": {
+        "parityId": "d4-restart-correlated-8bit",
+        "source": "synthetic-d4",
+        "bits": 8,
+        "restart": {
+          "hI": 7.416885324722426,
+          "values": { "error": "Restart Sanity Check Failed." },
+          "nativeArm64StrictIdentical": true,
+          "verdicts": ["failed: Restart Sanity Check Failed."],
+          "wasmMs": 6576
+        }
+      },
+      "07435bb8db483643a74516697f9980493498d7b82561abb0d6e2546412395ccb": {
+        "parityId": "d4-sha256-conditioned-stuck-8bit",
+        "source": "synthetic-d4",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.9983242831813781,
+            "Most Common Value / hOriginal": 7.8688967585902265,
+            "Most Common Value / mcvEstimateMode": 4113,
+            "Most Common Value / mcvEstimatePHat": 0.004113,
+            "Most Common Value / mcvEstimatePU": 0.004277854832758939,
+            "Collision Test (for bit strings only) / hBitstring": 0.9472269682317923,
+            "Markov Test (for bit strings only) / hBitstring": 0.9994609450921483,
+            "Compression Test (for bit strings only) / hBitstring": 0.9296184351387166,
+            "T-Tuple Test / binTTupleRes": 0.9335692443037781,
+            "T-Tuple Test / tTupleRes": 7.8688967585902265,
+            "LRS Test / binLrsRes": 0.9963210414594342,
+            "LRS Test / lrsRes": 7.908302533028919,
+            "Multi Most Common in Window Test / hBitstring": 0.9986678219359711,
+            "Multi Most Common in Window Test / hOriginal": 7.954573190648349,
+            "Lag Prediction Test / hBitstring": 0.998607651493025,
+            "Lag Prediction Test / hOriginal": 7.949922001947857,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.9988103489789407,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.960884323447434,
+            "LZ78Y Test / hBitstring": 0.999086243178289,
+            "LZ78Y Test / hOriginal": 7.961229597139845,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 7.4369474811097325,
+            "Overall / hBitstring": 0.9296184351387166,
+            "Overall / hOriginal": 7.8688967585902265
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 16388
+        },
+        "iid": {
+          "values": {
+            " / hAssessed": 7.8688967585902265,
+            " / hBitstring": 0.9983242831813781,
+            " / hOriginal": 7.8688967585902265,
+            " / mean": 127.565145,
+            " / median": 128
+          },
+          "verdicts": ["chi2=true lrs=true perm=true"],
+          "runs": 25
+        }
+      },
+      "658583c7aa59e7e21f1107e6dab4bd4d5ac36f17124ac8205d6b88c5c2435903": {
+        "parityId": "real-frdm-imx95-contrast-getrandom",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.9986063904451192,
+            "Most Common Value / hOriginal": 7.882722585054418,
+            "Most Common Value / mcvEstimateMode": 4073,
+            "Most Common Value / mcvEstimatePHat": 0.004073,
+            "Most Common Value / mcvEstimatePU": 0.004237054540587136,
+            "Collision Test (for bit strings only) / hBitstring": 0.9466701610048351,
+            "Markov Test (for bit strings only) / hBitstring": 0.9994416139386699,
+            "Compression Test (for bit strings only) / hBitstring": 0.8946279007921792,
+            "T-Tuple Test / binTTupleRes": 0.9237031354634258,
+            "T-Tuple Test / tTupleRes": 7.333765872584084,
+            "LRS Test / binLrsRes": 0.9382564317573393,
+            "LRS Test / lrsRes": 7.940072467840486,
+            "Multi Most Common in Window Test / hBitstring": 0.9991860893443608,
+            "Multi Most Common in Window Test / hOriginal": 7.953477800874841,
+            "Lag Prediction Test / hBitstring": 0.9986912495186472,
+            "Lag Prediction Test / hOriginal": 8,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.999305591481398,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.9616182430791405,
+            "LZ78Y Test / hBitstring": 0.9505661679344829,
+            "LZ78Y Test / hOriginal": 7.960862684480493,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 7.157023206337434,
+            "Overall / hBitstring": 0.8946279007921792,
+            "Overall / hOriginal": 7.333765872584084
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 20127
+        }
+      },
+      "fd37a63cef201d8a97ab629aa00af25e8ac0cceefffe2acd527accb216fd5c97": {
+        "parityId": "real-frdm-imx95-contrast-hwrng",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.9977130600745439,
+            "Most Common Value / hOriginal": 7.878560765856192,
+            "Most Common Value / mcvEstimateMode": 4085,
+            "Most Common Value / mcvEstimatePHat": 0.004085,
+            "Most Common Value / mcvEstimatePU": 0.004249295044342793,
+            "Collision Test (for bit strings only) / hBitstring": 0.9438369441138743,
+            "Markov Test (for bit strings only) / hBitstring": 0.9994521328562412,
+            "Compression Test (for bit strings only) / hBitstring": 0.9127164436779164,
+            "T-Tuple Test / binTTupleRes": 0.9294675887066989,
+            "T-Tuple Test / tTupleRes": 7.878560765856192,
+            "LRS Test / binLrsRes": 0.9728721070769432,
+            "LRS Test / lrsRes": 7.941577186734111,
+            "Multi Most Common in Window Test / hBitstring": 0.9986588133715518,
+            "Multi Most Common in Window Test / hOriginal": 7.889944193688296,
+            "Lag Prediction Test / hBitstring": 0.9982747488376594,
+            "Lag Prediction Test / hOriginal": 7.962721272943603,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.9989782942529364,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.9404862539904,
+            "LZ78Y Test / hBitstring": 0.9982279158233464,
+            "LZ78Y Test / hOriginal": 7.939741474570171,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 7.301731549423331,
+            "Overall / hBitstring": 0.9127164436779164,
+            "Overall / hOriginal": 7.878560765856192
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 16563
+        }
+      },
+      "42ed98d11733478587eb90a83d30104ebe632d3ec464d2bac0d4873ef9eac0e8": {
+        "parityId": "real-frdm-imx95-idle-sequential-jent-raw-noise",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.8133560930541404,
+            "Most Common Value / hOriginal": 3.4899739385518087,
+            "Most Common Value / mcvEstimateMode": 88274,
+            "Most Common Value / mcvEstimatePHat": 0.088274,
+            "Most Common Value / mcvEstimatePU": 0.08900474502933195,
+            "Collision Test (for bit strings only) / hBitstring": 0.7267214571912685,
+            "Markov Test (for bit strings only) / hBitstring": 0.8074583392324108,
+            "Compression Test (for bit strings only) / hBitstring": 0.32779474316800844,
+            "T-Tuple Test / binTTupleRes": 0.36887334398627397,
+            "T-Tuple Test / tTupleRes": 2.66074109826624,
+            "LRS Test / binLrsRes": 0.4391155874707676,
+            "LRS Test / lrsRes": 3.227836995271567,
+            "Multi Most Common in Window Test / hBitstring": 0.7736609555295091,
+            "Multi Most Common in Window Test / hOriginal": 3.517728026462738,
+            "Lag Prediction Test / hBitstring": 0.4962037844781436,
+            "Lag Prediction Test / hOriginal": 3.7798743187804753,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.44608878970105176,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 3.301738046784277,
+            "LZ78Y Test / hBitstring": 0.8133634855099882,
+            "LZ78Y Test / hOriginal": 3.301735302980927,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 2.6223579453440675,
+            "Overall / hBitstring": 0.32779474316800844,
+            "Overall / hOriginal": 2.66074109826624
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 13614
+        }
+      },
+      "d01a9a61e1a028cf0bffb6876925bec9d18104b8876e3044051124e1cd3c54df": {
+        "parityId": "real-frdm-imx95-loaded-sequential-jent-raw-noise",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.8413965391478402,
+            "Most Common Value / hOriginal": 3.8661918266130786,
+            "Most Common Value / mcvEstimateMode": 67926,
+            "Most Common Value / mcvEstimatePHat": 0.067926,
+            "Most Common Value / mcvEstimatePU": 0.0685741275969853,
+            "Collision Test (for bit strings only) / hBitstring": 0.7458680426965668,
+            "Markov Test (for bit strings only) / hBitstring": 0.8143312781593529,
+            "Compression Test (for bit strings only) / hBitstring": 0.3776631615935377,
+            "T-Tuple Test / binTTupleRes": 0.4372744721819089,
+            "T-Tuple Test / tTupleRes": 3.1488065698994605,
+            "LRS Test / binLrsRes": 0.5438955767973503,
+            "LRS Test / lrsRes": 3.872577932559578,
+            "Multi Most Common in Window Test / hBitstring": 0.8108892254817852,
+            "Multi Most Common in Window Test / hOriginal": 3.779861395177073,
+            "Lag Prediction Test / hBitstring": 0.6699896298932339,
+            "Lag Prediction Test / hOriginal": 4.416496938375501,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.4871053325850518,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 3.301738046784277,
+            "LZ78Y Test / hBitstring": 0.8414021984546025,
+            "LZ78Y Test / hOriginal": 3.301735302980927,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 3.0213052927483015,
+            "Overall / hBitstring": 0.3776631615935377,
+            "Overall / hOriginal": 3.1488065698994605
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 11225
+        }
+      },
+      "8506530d8ff3494485b6d7f792f0b6954c6f864519e7d23677e8cbe201f1f4bf": {
+        "parityId": "real-kv260-contrast-getrandom",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.9984302020405313,
+            "Most Common Value / hOriginal": 7.885503884082155,
+            "Most Common Value / mcvEstimateMode": 4065,
+            "Most Common Value / mcvEstimatePHat": 0.004065,
+            "Most Common Value / mcvEstimatePU": 0.004228894005442876,
+            "Collision Test (for bit strings only) / hBitstring": 0.9382859097767847,
+            "Markov Test (for bit strings only) / hBitstring": 0.9994624788938282,
+            "Compression Test (for bit strings only) / hBitstring": 0.8815704116200852,
+            "T-Tuple Test / binTTupleRes": 0.9294675887066989,
+            "T-Tuple Test / tTupleRes": 7.885503884082155,
+            "LRS Test / binLrsRes": 0.998146656112768,
+            "LRS Test / lrsRes": 7.718814129976409,
+            "Multi Most Common in Window Test / hBitstring": 0.9989330593037271,
+            "Multi Most Common in Window Test / hOriginal": 7.947286415367585,
+            "Lag Prediction Test / hBitstring": 0.9987211586106199,
+            "Lag Prediction Test / hOriginal": 7.916815325448953,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.998148489167379,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.926092571028164,
+            "LZ78Y Test / hBitstring": 0.9998837708823042,
+            "LZ78Y Test / hOriginal": 7.926070932082738,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 7.052563292960682,
+            "Overall / hBitstring": 0.8815704116200852,
+            "Overall / hOriginal": 7.718814129976409
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 14818
+        }
+      },
+      "5d9e7dc34e4ab4489f48248fac1cd51ef58c473003b7330bb89cc954f6ef29ec": {
+        "parityId": "real-kv260-idle-sequential-jent-raw-noise",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.9981308392322152,
+            "Most Common Value / hOriginal": 4.244717427899894,
+            "Most Common Value / mcvEstimateMode": 52176,
+            "Most Common Value / mcvEstimatePHat": 0.052176,
+            "Most Common Value / mcvEstimatePU": 0.0527488178437305,
+            "Collision Test (for bit strings only) / hBitstring": 1,
+            "Markov Test (for bit strings only) / hBitstring": 0.9073391855152779,
+            "Compression Test (for bit strings only) / hBitstring": 0.35245175917941923,
+            "T-Tuple Test / binTTupleRes": 0.521533484570088,
+            "T-Tuple Test / tTupleRes": 3.6776417964560992,
+            "LRS Test / binLrsRes": 0.5892331866620389,
+            "LRS Test / lrsRes": 4.320454572501267,
+            "Multi Most Common in Window Test / hBitstring": 1,
+            "Multi Most Common in Window Test / hOriginal": 4.283668188507438,
+            "Lag Prediction Test / hBitstring": 0.7638512571586495,
+            "Lag Prediction Test / hOriginal": 4.416496938375501,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.5630405912356486,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 4.25165930470689,
+            "LZ78Y Test / hBitstring": 0.9053910763927447,
+            "LZ78Y Test / hOriginal": 4.263036686578234,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 2.819614073435354,
+            "Overall / hBitstring": 0.35245175917941923,
+            "Overall / hOriginal": 3.6776417964560992
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 16628
+        }
+      },
+      "570f1995af0d82bb0ffd6c3dcac497dfcbf5ab3ac8011ea4fd072f305517336b": {
+        "parityId": "real-kv260-loaded-sequential-jent-raw-noise",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.9942408185157176,
+            "Most Common Value / hOriginal": 4.2834765957153,
+            "Most Common Value / mcvEstimateMode": 50785,
+            "Most Common Value / mcvEstimatePHat": 0.050785,
+            "Most Common Value / mcvEstimatePU": 0.05135054520088968,
+            "Collision Test (for bit strings only) / hBitstring": 1,
+            "Markov Test (for bit strings only) / hBitstring": 0.9033458458690451,
+            "Compression Test (for bit strings only) / hBitstring": 0.36294733304160404,
+            "T-Tuple Test / binTTupleRes": 0.5440793829196592,
+            "T-Tuple Test / tTupleRes": 3.959264214521601,
+            "LRS Test / binLrsRes": 0.6111899669789106,
+            "LRS Test / lrsRes": 4.51311260208928,
+            "Multi Most Common in Window Test / hBitstring": 1,
+            "Multi Most Common in Window Test / hOriginal": 4.3197093093911585,
+            "Lag Prediction Test / hBitstring": 0.7016045366636763,
+            "Lag Prediction Test / hOriginal": 4.816667509126807,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.5499407446052432,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 4.287631449761541,
+            "LZ78Y Test / hBitstring": 0.9013864148656346,
+            "LZ78Y Test / hOriginal": 4.287524843433781,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 2.9035786643328323,
+            "Overall / hBitstring": 0.36294733304160404,
+            "Overall / hOriginal": 3.959264214521601
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 19683
+        }
+      },
+      "075b87d1627406983deedc8724eaf71dd87f59601e794353e8fd1f0713500776": {
+        "parityId": "real-mac-m5max-native-contrast-urandom",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.9974631707711649,
+            "Most Common Value / hOriginal": 7.878907121291836,
+            "Most Common Value / mcvEstimateMode": 4084,
+            "Most Common Value / mcvEstimatePHat": 0.004084,
+            "Most Common Value / mcvEstimatePU": 0.00424827501603375,
+            "Collision Test (for bit strings only) / hBitstring": 0.9452930793515494,
+            "Markov Test (for bit strings only) / hBitstring": 0.9990725318316316,
+            "Compression Test (for bit strings only) / hBitstring": 0.9119446733094926,
+            "T-Tuple Test / binTTupleRes": 0.9357063477806017,
+            "T-Tuple Test / tTupleRes": 7.878907121291836,
+            "LRS Test / binLrsRes": 0.9845018196574385,
+            "LRS Test / lrsRes": 7.937063691751974,
+            "Multi Most Common in Window Test / hBitstring": 0.9998267927622018,
+            "Multi Most Common in Window Test / hOriginal": 6.638382735456088,
+            "Lag Prediction Test / hBitstring": 0.9979999098952496,
+            "Lag Prediction Test / hOriginal": 7.943383926252729,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.9978646707283947,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.977860663566709,
+            "LZ78Y Test / hBitstring": 0.9978464809568007,
+            "LZ78Y Test / hOriginal": 7.977839024589366,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 6.638382735456088,
+            "Overall / hBitstring": 0.9119446733094926,
+            "Overall / hOriginal": 6.638382735456088
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 13130
+        }
+      },
+      "1022b752d3527c8a9a6f4eb2986ab818a891842d501a3b7ff9640cd74031ec22": {
+        "parityId": "real-mac-m5max-native-idle-sequential-jent-raw-noise",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.9068022762256892,
+            "Most Common Value / hOriginal": 3.6327275296775796,
+            "Most Common Value / mcvEstimateMode": 79921,
+            "Most Common Value / mcvEstimatePHat": 0.079921,
+            "Most Common Value / mcvEstimatePU": 0.08061949018932042,
+            "Collision Test (for bit strings only) / hBitstring": 0.63851093591685,
+            "Markov Test (for bit strings only) / hBitstring": 0.8837615808948268,
+            "Compression Test (for bit strings only) / hBitstring": 0.36636662852613777,
+            "T-Tuple Test / binTTupleRes": 0.2364616607454963,
+            "T-Tuple Test / tTupleRes": 1.5641523532665877,
+            "LRS Test / binLrsRes": 0.2682358898386038,
+            "LRS Test / lrsRes": 1.9170218890015367,
+            "Multi Most Common in Window Test / hBitstring": 0.9083039938406767,
+            "Multi Most Common in Window Test / hOriginal": 2.6314157003027816,
+            "Lag Prediction Test / hBitstring": 0.30180926137119957,
+            "Lag Prediction Test / hOriginal": 2.1841357396080743,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.237600299299741,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 1.8646447932056422,
+            "LZ78Y Test / hBitstring": 0.9068103690195491,
+            "LZ78Y Test / hOriginal": 1.8646432044707664,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 1.5641523532665877,
+            "Overall / hBitstring": 0.2364616607454963,
+            "Overall / hOriginal": 1.5641523532665877
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 12314
+        }
+      },
+      "2bd2930b5e22017bb6d1a55305c346bfbf888ffc8c72b938cec1ddbc5e0fbff7": {
+        "parityId": "real-mac-m5max-native-loaded-sequential-jent-raw-noise",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.8972652580862597,
+            "Most Common Value / hOriginal": 3.1695106361923946,
+            "Most Common Value / mcvEstimateMode": 110336,
+            "Most Common Value / mcvEstimatePHat": 0.110336,
+            "Most Common Value / mcvEstimatePU": 0.11114302859502191,
+            "Collision Test (for bit strings only) / hBitstring": 0.606808107550809,
+            "Markov Test (for bit strings only) / hBitstring": 0.8797767488240918,
+            "Compression Test (for bit strings only) / hBitstring": 0.3493678125186544,
+            "T-Tuple Test / binTTupleRes": 0.2087929632094109,
+            "T-Tuple Test / tTupleRes": 1.3861930693786795,
+            "LRS Test / binLrsRes": 0.2056405877245641,
+            "LRS Test / lrsRes": 1.489731140659631,
+            "Multi Most Common in Window Test / hBitstring": 0.8981247167491575,
+            "Multi Most Common in Window Test / hOriginal": 2.1841281058948794,
+            "Lag Prediction Test / hBitstring": 0.25667601429417697,
+            "Lag Prediction Test / hOriginal": 1.8646448991204507,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.2332549398200404,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 1.625180705105821,
+            "LZ78Y Test / hBitstring": 0.8972934292551303,
+            "LZ78Y Test / hOriginal": 1.6251793107457748,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 1.3861930693786795,
+            "Overall / hBitstring": 0.2056405877245641,
+            "Overall / hOriginal": 1.3861930693786795
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 12172
+        }
+      },
+      "4da1011b4b6c6b6cddcd9f6b6c2c3813cba4c040adc1ac64a65719b9d0d36753": {
+        "parityId": "real-mac-orbstack-linux-vm-contrast-getrandom",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.9985332462229612,
+            "Most Common Value / hOriginal": 7.880640159507053,
+            "Most Common Value / mcvEstimateMode": 4079,
+            "Most Common Value / mcvEstimatePHat": 0.004079,
+            "Most Common Value / mcvEstimatePU": 0.0042431748372323995,
+            "Collision Test (for bit strings only) / hBitstring": 0.9615476648204596,
+            "Markov Test (for bit strings only) / hBitstring": 0.9993765621468911,
+            "Compression Test (for bit strings only) / hBitstring": 0.8914006695081245,
+            "T-Tuple Test / binTTupleRes": 0.9335692443037781,
+            "T-Tuple Test / tTupleRes": 7.880640159507053,
+            "LRS Test / binLrsRes": 0.9986765575843884,
+            "LRS Test / lrsRes": 7.941812249902919,
+            "Multi Most Common in Window Test / hBitstring": 0.999149321537492,
+            "Multi Most Common in Window Test / hOriginal": 7.954573190648349,
+            "Lag Prediction Test / hBitstring": 0.9993558821672546,
+            "Lag Prediction Test / hOriginal": 7.9118439687548,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.9985714391017299,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.930036392287813,
+            "LZ78Y Test / hBitstring": 0.9187775279241779,
+            "LZ78Y Test / hOriginal": 7.930373823243518,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 7.131205356064996,
+            "Overall / hBitstring": 0.8914006695081245,
+            "Overall / hOriginal": 7.880640159507053
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 12884
+        }
+      },
+      "cca4fb2b9ac4453dd6459b8dfeeb8dcc65e1ef7a2c4f9b6cc3c7ef4b8b8c6f27": {
+        "parityId": "real-mac-orbstack-linux-vm-idle-sequential-jent-raw-noise",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.933302215951196,
+            "Most Common Value / hOriginal": 4.406876155817153,
+            "Most Common Value / mcvEstimateMode": 46598,
+            "Most Common Value / mcvEstimatePHat": 0.046598,
+            "Most Common Value / mcvEstimatePU": 0.04714092390556691,
+            "Collision Test (for bit strings only) / hBitstring": 1,
+            "Markov Test (for bit strings only) / hBitstring": 0.8570578714290946,
+            "Compression Test (for bit strings only) / hBitstring": 0.25608579266353565,
+            "T-Tuple Test / binTTupleRes": 0.3247838034598323,
+            "T-Tuple Test / tTupleRes": 2.350836467390609,
+            "LRS Test / binLrsRes": 0.3687997567211933,
+            "LRS Test / lrsRes": 2.7669759391292668,
+            "Multi Most Common in Window Test / hBitstring": 0.8867556035849632,
+            "Multi Most Common in Window Test / hOriginal": 2.3874615188025254,
+            "Lag Prediction Test / hBitstring": 0.3371036254451017,
+            "Lag Prediction Test / hOriginal": 2.9294621054159617,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.30901592619140844,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 2.3874696951630847,
+            "LZ78Y Test / hBitstring": 0.7435818797815416,
+            "LZ78Y Test / hOriginal": 2.3874676846289806,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 2.048686341308285,
+            "Overall / hBitstring": 0.25608579266353565,
+            "Overall / hOriginal": 2.350836467390609
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 11303
+        }
+      },
+      "7339da5a5d1d3103ba890df9a280190fe8d41cb9f4e2ef4a82e2cc9d7a26c5bc": {
+        "parityId": "real-mac-orbstack-linux-vm-loaded-sequential-jent-raw-noise",
+        "source": "real",
+        "bits": 8,
+        "nonIid": {
+          "values": {
+            "Most Common Value / hBitstring": 0.9881130852630722,
+            "Most Common Value / hOriginal": 4.771393145305838,
+            "Most Common Value / mcvEstimateMode": 36135,
+            "Most Common Value / mcvEstimatePHat": 0.036135,
+            "Most Common Value / mcvEstimatePU": 0.036615716945463554,
+            "Collision Test (for bit strings only) / hBitstring": 1,
+            "Markov Test (for bit strings only) / hBitstring": 0.8202209264683611,
+            "Compression Test (for bit strings only) / hBitstring": 0.28185555308061033,
+            "T-Tuple Test / binTTupleRes": 0.355350584516543,
+            "T-Tuple Test / tTupleRes": 2.7728579349591294,
+            "LRS Test / binLrsRes": 0.4275285571698583,
+            "LRS Test / lrsRes": 3.158902871496054,
+            "Multi Most Common in Window Test / hBitstring": 0.9260241821235538,
+            "Multi Most Common in Window Test / hOriginal": 3.3017268883934836,
+            "Lag Prediction Test / hBitstring": 0.3870535935351544,
+            "Lag Prediction Test / hOriginal": 2.9294621054159617,
+            "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.37062268395495185,
+            "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 2.9294619423778574,
+            "LZ78Y Test / hBitstring": 0.7049199822911671,
+            "LZ78Y Test / hOriginal": 2.929459496786682,
+            "Overall / dataWordSize": 8,
+            "Overall / hAssessed": 2.2548444246448827,
+            "Overall / hBitstring": 0.28185555308061033,
+            "Overall / hOriginal": 2.7728579349591294
+          },
+          "nativeArm64StrictIdentical": true,
+          "wasmMs": 10372
+        }
+      },
+      "da79f25366f720977fa096f71194bfad78ea3f16a7598e45880aa72ab0e69d5f": {
+        "parityId": "real-frdm-imx95-idle-restart-matrix",
+        "source": "real",
+        "bits": 8,
+        "restart": {
+          "hI": 2.6223579453440675,
+          "values": {
+            "Most Common Value / dataWordSize": 8,
+            "Most Common Value / h_c": 4.861178488316306,
+            "Most Common Value / h_r": 4.861178488316306,
+            "T-Tuple Test / dataWordSize": 8,
+            "T-Tuple Test / h_c": 4.128809509093441,
+            "T-Tuple Test / h_r": 3.532083786115518,
+            "LRS Test / dataWordSize": 8,
+            "LRS Test / h_c": 5.301003233404144,
+            "LRS Test / h_r": 4.550045553956011,
+            "Multi Most Common in Window Test / dataWordSize": 8,
+            "Multi Most Common in Window Test / h_c": 4.765603519738691,
+            "Multi Most Common in Window Test / h_r": 3.779861395177073,
+            "Lag Prediction Test / dataWordSize": 8,
+            "Lag Prediction Test / h_c": 5.30624875805084,
+            "Lag Prediction Test / h_r": 4.416496938375501,
+            "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_c": 4.946471100063534,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_r": 3.7798741103416282,
+            "LZ78Y Test / dataWordSize": 8,
+            "LZ78Y Test / h_c": 4.946449464427151,
+            "LZ78Y Test / h_r": 3.7798709837338627,
+            "Overall / h_c": 4.128809509093441,
+            "Overall / h_i": 2.6223579453440675,
+            "Overall / h_r": 3.532083786115518
+          },
+          "nativeArm64StrictIdentical": true,
+          "verdicts": [],
+          "wasmMs": 32653
+        }
+      },
+      "766ba8dd12576d570dd663071e31f5ae2526c40dbb87f7e8d1307c3020c1ba8f": {
+        "parityId": "real-frdm-imx95-loaded-restart-matrix",
+        "source": "real",
+        "bits": 8,
+        "restart": {
+          "hI": 3.0213052927483015,
+          "values": {
+            "Most Common Value / dataWordSize": 8,
+            "Most Common Value / h_c": 4.607286591438465,
+            "Most Common Value / h_r": 4.607286591438465,
+            "T-Tuple Test / dataWordSize": 8,
+            "T-Tuple Test / h_c": 4.042048987160313,
+            "T-Tuple Test / h_r": 3.639821415354496,
+            "LRS Test / dataWordSize": 8,
+            "LRS Test / h_c": 5.155162790939231,
+            "LRS Test / h_r": 4.444705497915046,
+            "Multi Most Common in Window Test / dataWordSize": 8,
+            "Multi Most Common in Window Test / h_c": 4.416481906898158,
+            "Multi Most Common in Window Test / h_r": 4.416481906898158,
+            "Lag Prediction Test / dataWordSize": 8,
+            "Lag Prediction Test / h_c": 5.30624875805084,
+            "Lag Prediction Test / h_r": 4.972825002295752,
+            "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_c": 4.416496695939723,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_r": 4.416496695939723,
+            "LZ78Y Test / dataWordSize": 8,
+            "LZ78Y Test / h_c": 4.416493059373925,
+            "LZ78Y Test / h_r": 4.416493059373925,
+            "Overall / h_c": 4.042048987160313,
+            "Overall / h_i": 3.0213052927483015,
+            "Overall / h_r": 3.639821415354496
+          },
+          "nativeArm64StrictIdentical": true,
+          "verdicts": [],
+          "wasmMs": 17346
+        }
+      },
+      "7895b9c59a125e80860de2621742ecdb7d002d24148a939579de1085294ea2ea": {
+        "parityId": "real-kv260-idle-restart-matrix",
+        "source": "real",
+        "bits": 8,
+        "restart": {
+          "hI": 2.819614073435354,
+          "values": {
+            "Most Common Value / dataWordSize": 8,
+            "Most Common Value / h_c": 4.252574110430856,
+            "Most Common Value / h_r": 4.252574110430856,
+            "T-Tuple Test / dataWordSize": 8,
+            "T-Tuple Test / h_c": 3.935746641929024,
+            "T-Tuple Test / h_r": 3.630957405193705,
+            "LRS Test / dataWordSize": 8,
+            "LRS Test / h_c": 4.753014740183944,
+            "LRS Test / h_r": 4.302037832570723,
+            "Multi Most Common in Window Test / dataWordSize": 8,
+            "Multi Most Common in Window Test / h_c": 4.286807210585217,
+            "Multi Most Common in Window Test / h_r": 4.297577060481744,
+            "Lag Prediction Test / dataWordSize": 8,
+            "Lag Prediction Test / h_c": 4.949027819895825,
+            "Lag Prediction Test / h_r": 4.764074508575957,
+            "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_c": 4.282654894595966,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_r": 4.261694561132298,
+            "LZ78Y Test / dataWordSize": 8,
+            "LZ78Y Test / h_c": 4.282576807413357,
+            "LZ78Y Test / h_r": 4.272619383729565,
+            "Overall / h_c": 3.935746641929024,
+            "Overall / h_i": 2.819614073435354,
+            "Overall / h_r": 3.630957405193705
+          },
+          "nativeArm64StrictIdentical": true,
+          "verdicts": [],
+          "wasmMs": 52198
+        }
+      },
+      "350ca12c102f000ee5fa6b59a3373fa523052d79867ef5fb8bde38c9ba7d7574": {
+        "parityId": "real-kv260-loaded-restart-matrix",
+        "source": "real",
+        "bits": 8,
+        "restart": {
+          "hI": 2.9035786643328323,
+          "values": {
+            "Most Common Value / dataWordSize": 8,
+            "Most Common Value / h_c": 4.323280240267859,
+            "Most Common Value / h_r": 4.323280240267859,
+            "T-Tuple Test / dataWordSize": 8,
+            "T-Tuple Test / h_c": 4.078683402055553,
+            "T-Tuple Test / h_r": 3.97433255531275,
+            "LRS Test / dataWordSize": 8,
+            "LRS Test / h_c": 4.890474486458975,
+            "LRS Test / h_r": 4.425820945404257,
+            "Multi Most Common in Window Test / dataWordSize": 8,
+            "Multi Most Common in Window Test / h_c": 4.35364866620749,
+            "Multi Most Common in Window Test / h_r": 4.362215392999674,
+            "Lag Prediction Test / dataWordSize": 8,
+            "Lag Prediction Test / h_c": 5.0435101700261775,
+            "Lag Prediction Test / h_r": 4.8682008697763814,
+            "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_c": 4.361676990167737,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_r": 4.352313808529274,
+            "LZ78Y Test / dataWordSize": 8,
+            "LZ78Y Test / h_c": 4.361625534681335,
+            "LZ78Y Test / h_r": 4.352262546583656,
+            "Overall / h_c": 4.078683402055553,
+            "Overall / h_i": 2.9035786643328323,
+            "Overall / h_r": 3.97433255531275
+          },
+          "nativeArm64StrictIdentical": true,
+          "verdicts": [],
+          "wasmMs": 24173
+        }
+      },
+      "e18dd93f6adbe1d99337f8eceea214fa8d4f4ec7e08b1805178865fe4b200aa1": {
+        "parityId": "real-mac-m5max-native-idle-restart-matrix",
+        "source": "real",
+        "bits": 8,
+        "restart": {
+          "hI": 1.5641523532665877,
+          "values": {
+            "Most Common Value / dataWordSize": 8,
+            "Most Common Value / h_c": 3.978121361081935,
+            "Most Common Value / h_r": 3.978121361081935,
+            "T-Tuple Test / dataWordSize": 8,
+            "T-Tuple Test / h_c": 3.488320523715848,
+            "T-Tuple Test / h_r": 1.717100868975375,
+            "LRS Test / dataWordSize": 8,
+            "LRS Test / h_c": 4.805790274489225,
+            "LRS Test / h_r": 2.06437267659048,
+            "Multi Most Common in Window Test / dataWordSize": 8,
+            "Multi Most Common in Window Test / h_c": 3.9544696289359855,
+            "Multi Most Common in Window Test / h_r": 2.9294519967444796,
+            "Lag Prediction Test / dataWordSize": 8,
+            "Lag Prediction Test / h_c": 4.416496938375501,
+            "Lag Prediction Test / h_r": 2.1841357396080743,
+            "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_c": 3.987399037409642,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_r": 2.012086970093582,
+            "LZ78Y Test / dataWordSize": 8,
+            "LZ78Y Test / h_c": 3.990230872513923,
+            "LZ78Y Test / h_r": 1.8646432044707664,
+            "Overall / h_c": 3.488320523715848,
+            "Overall / h_i": 1.5641523532665877,
+            "Overall / h_r": 1.717100868975375
+          },
+          "nativeArm64StrictIdentical": true,
+          "verdicts": [],
+          "wasmMs": 18701
+        }
+      },
+      "c38a09fe1f3dfb2385f1efd985ddce7bda43e2818141c688193468bb6dd76a64": {
+        "parityId": "real-mac-m5max-native-loaded-restart-matrix",
+        "source": "real",
+        "bits": 8,
+        "restart": {
+          "hI": 1.3861930693786795,
+          "values": {
+            "Most Common Value / dataWordSize": 8,
+            "Most Common Value / h_c": 3.735273795967888,
+            "Most Common Value / h_r": 3.735273795967888,
+            "T-Tuple Test / dataWordSize": 8,
+            "T-Tuple Test / h_c": 3.2513767605201638,
+            "T-Tuple Test / h_r": 1.4560510312679416,
+            "LRS Test / dataWordSize": 8,
+            "LRS Test / h_c": 4.181820429118964,
+            "LRS Test / h_r": 1.9032182034213767,
+            "Multi Most Common in Window Test / dataWordSize": 8,
+            "Multi Most Common in Window Test / h_c": 3.7163792716594237,
+            "Multi Most Common in Window Test / h_r": 2.9199140167262296,
+            "Lag Prediction Test / dataWordSize": 8,
+            "Lag Prediction Test / h_c": 4.416496938375501,
+            "Lag Prediction Test / h_r": 2.1841357396080743,
+            "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_c": 3.715382196307981,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_r": 1.625180705105821,
+            "LZ78Y Test / dataWordSize": 8,
+            "LZ78Y Test / h_c": 3.717722071381537,
+            "LZ78Y Test / h_r": 1.8646432044707664,
+            "Overall / h_c": 3.2513767605201638,
+            "Overall / h_i": 1.3861930693786795,
+            "Overall / h_r": 1.4560510312679416
+          },
+          "nativeArm64StrictIdentical": true,
+          "verdicts": [],
+          "wasmMs": 20091
+        }
+      },
+      "e43c3761b15c2e85823f41d964e53546461c4534229bc8ae3f3492e0074457b1": {
+        "parityId": "real-mac-orbstack-linux-vm-idle-restart-matrix",
+        "source": "real",
+        "bits": 8,
+        "restart": {
+          "hI": 2.048686341308285,
+          "values": {
+            "Most Common Value / dataWordSize": 8,
+            "Most Common Value / h_c": 4.481431974931621,
+            "Most Common Value / h_r": 4.481431974931621,
+            "T-Tuple Test / dataWordSize": 8,
+            "T-Tuple Test / h_c": 4.238165520680903,
+            "T-Tuple Test / h_r": 2.355234227365574,
+            "LRS Test / dataWordSize": 8,
+            "LRS Test / h_c": 5.243585772270153,
+            "LRS Test / h_r": 2.7669759391292668,
+            "Multi Most Common in Window Test / dataWordSize": 8,
+            "Multi Most Common in Window Test / h_c": 4.385949467816507,
+            "Multi Most Common in Window Test / h_r": 2.9294519967444796,
+            "Lag Prediction Test / dataWordSize": 8,
+            "Lag Prediction Test / h_c": 5.30624875805084,
+            "Lag Prediction Test / h_r": 2.6314248208948783,
+            "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_c": 4.550339456710497,
+            "Multi Markov Model with Counting Test (MultiMMC) / h_r": 2.184135616487433,
+            "LZ78Y Test / dataWordSize": 8,
+            "LZ78Y Test / h_c": 4.700990558497917,
+            "LZ78Y Test / h_r": 2.929459496786682,
+            "Overall / h_c": 4.238165520680903,
+            "Overall / h_i": 2.048686341308285,
+            "Overall / h_r": 2.184135616487433
+          },
+          "nativeArm64StrictIdentical": true,
+          "verdicts": [],
+          "wasmMs": 16876
+        }
+      },
+      "c5672666108c39fdb5c86857c6b44a6bc86584448cfb3808faf4cb06f9df000b": {
+        "parityId": "real-mac-orbstack-linux-vm-loaded-restart-matrix",
+        "source": "real",
+        "bits": 8,
+        "restart": {
+          "hI": 2.2548444246448827,
+          "values": { "error": "Restart Sanity Check Failed." },
+          "nativeArm64StrictIdentical": true,
+          "verdicts": [],
+          "wasmMs": 7077
+        }
+      }
+    }
+  }
+}
