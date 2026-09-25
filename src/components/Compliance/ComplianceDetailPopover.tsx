@@ -19,6 +19,7 @@ import {
   formatIsoDate,
   isSecurityTargetType,
   pqcCoverageState,
+  pqcUnknownReason,
   pqcEvidenceLabel,
   pqcNames,
   recordTypeDescription,
@@ -200,9 +201,11 @@ const PqcSection = ({ record }: { record: ComplianceRecord }) => {
       <div className="space-y-1">
         <FieldLabel>PQC mechanisms</FieldLabel>
         <p className="text-sm text-muted-foreground italic">
-          {record.type === 'FIPS 140-3'
-            ? "Not read — the certificate page's Approved Algorithms list could not be read, so PQC status is unknown."
-            : 'Not read — PQC status is unknown.'}
+          {pqcUnknownReason(record) === 'source-lists-none'
+            ? 'Unknown — NIST publishes this certificate page without an Approved Algorithms list, so it does not say which algorithms the module approves.'
+            : record.type === 'FIPS 140-3'
+              ? "Unknown — the certificate page's Approved Algorithms list could not be read."
+              : 'Unknown — the source page could not be read.'}
         </p>
       </div>
     )

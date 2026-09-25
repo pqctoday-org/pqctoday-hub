@@ -5,6 +5,7 @@ import {
   isCurrentStatus,
   pqcCoverageState,
   pqcCoverageSummary,
+  pqcUnknownReason,
   recordTypeLabel,
   scopeNotice,
   snapshotRetrievalEntries,
@@ -79,7 +80,26 @@ describe('pqcCoverage semantics', () => {
     expect(pqcCoverageSummary(rec({ type: 'CSPN', pqcCoverage: 'ML-DSA' }))).toBe(
       'Named in the Security Target: ML-DSA'
     )
-    expect(pqcCoverageSummary(rec({ pqcCoverage: '' }))).toMatch(/^Not read/)
+    expect(pqcCoverageSummary(rec({ pqcCoverage: '' }))).toMatch(/^Unknown/)
+  })
+
+  it('distinguishes "the page lists no algorithms" from "we could not read it"', () => {
+    // NIST publishes some certificate pages (every "Classified Module", the AMD
+    // ASP CoProcessors) with no Approved Algorithms section at all. Those pages
+    // were read; saying they "could not be read" about them is wrong.
+    const readNoList = {
+      type: 'FIPS 140-3',
+      cmvpDetailsFetchedAt: '2026-09-25T02:40:28+00:00',
+    } as Parameters<typeof pqcUnknownReason>[0]
+    const neverRead = { type: 'FIPS 140-3' } as Parameters<typeof pqcUnknownReason>[0]
+    expect(pqcUnknownReason(readNoList)).toBe('source-lists-none')
+    expect(pqcUnknownReason(neverRead)).toBe('source-not-read')
+    expect(pqcCoverageSummary({ ...readNoList, pqcCoverage: '' })).toBe(
+      'Unknown (the certificate page lists no algorithms)'
+    )
+    expect(pqcCoverageSummary({ ...neverRead, pqcCoverage: '' })).toBe(
+      'Unknown (source page could not be read)'
+    )
   })
 })
 

@@ -273,7 +273,7 @@ export const ComplianceView = ({
   const [drawerPillar, setDrawerPillar] = useState<PillarId>('comply')
 
   const tierFilter = useTrustTierFilter()
-  const { data, loading, error, refresh, lastUpdated, meta, enrichRecord } = useComplianceRefresh()
+  const { data, loading, error, refresh, lastUpdated, meta } = useComplianceRefresh()
   // Page-wide loading/error state — shared across every tab (Landscape,
   // Product Records, For You, CSWP.39 Agility all read the same `data`), not
   // duplicated per tab. Only the very first load shows the skeleton; a
@@ -847,7 +847,6 @@ export const ComplianceView = ({
               meta={meta}
               recordScope={recScope}
               onRecordScopeChange={handleRecScopeChange}
-              onEnrich={enrichRecord}
               certType={rtab}
               onCertTypeChange={handleRtabChange}
               filterText={recSearchInput}

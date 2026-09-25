@@ -38,9 +38,9 @@ function renderRow(
 }
 
 describe('ComplianceRow pqcCoverage rendering (ACCURACY-0705)', () => {
-  it('renders an empty string (page not read) as "Not read"', () => {
+  it('renders an empty string (PQC status unknown) as "Unknown"', () => {
     renderRow('')
-    expect(screen.getByText(/^not read$/i)).toBeInTheDocument()
+    expect(screen.getByText(/^unknown$/i)).toBeInTheDocument()
   })
 
   it('does NOT render the empty-string case as the analyzed-clean icon/state', () => {

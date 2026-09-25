@@ -128,6 +128,24 @@ export function pqcCoverageState(
   return 'named'
 }
 
+/**
+ * Why a record shows no PQC algorithms: did we fail to read the source, or did
+ * we read it and find no algorithm list at all?
+ *
+ * NIST publishes some certificate pages with no "Approved Algorithms" section —
+ * every "Classified Module", and the AMD ASP CoProcessors, 6 records as of
+ * 2026-09-25. Those pages WERE read (they carry cmvpDetailsFetchedAt); the page
+ * simply does not list algorithms. Saying "could not be read" about them is
+ * wrong, and the honest blank is the same either way.
+ */
+export function pqcUnknownReason(
+  record: Pick<ComplianceRecord, 'type' | 'cmvpDetailsFetchedAt'>
+): 'source-lists-none' | 'source-not-read' {
+  return record.type === 'FIPS 140-3' && record.cmvpDetailsFetchedAt
+    ? 'source-lists-none'
+    : 'source-not-read'
+}
+
 /** PQC algorithm names on the record, split from the ', '-joined string. */
 export function pqcNames(pqcCoverage: ComplianceRecord['pqcCoverage'] | undefined): string[] {
   if (pqcCoverageState(pqcCoverage) !== 'named') return []
@@ -146,9 +164,15 @@ export function pqcEvidenceLabel(type: string): string {
 }
 
 /** One-line text describing a record's PQC coverage, for exports and tooltips. */
-export function pqcCoverageSummary(record: Pick<ComplianceRecord, 'type' | 'pqcCoverage'>) {
+export function pqcCoverageSummary(
+  record: Pick<ComplianceRecord, 'type' | 'pqcCoverage' | 'cmvpDetailsFetchedAt'>
+) {
   const state = pqcCoverageState(record.pqcCoverage)
-  if (state === 'not-read') return 'Not read (source page could not be read)'
+  if (state === 'not-read') {
+    return pqcUnknownReason(record) === 'source-lists-none'
+      ? 'Unknown (the certificate page lists no algorithms)'
+      : 'Unknown (source page could not be read)'
+  }
   if (state === 'none') return 'None listed'
   if (state === 'pending') return 'Pending check'
   if (state === 'heuristic') return 'Unconfirmed (name match only)'

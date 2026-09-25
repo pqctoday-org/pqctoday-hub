@@ -26,7 +26,6 @@ import { complianceFrameworks } from '@/data/complianceData'
 import { MobileFilterDrawer } from '../Migrate/MobileFilterDrawer'
 import { matchesTrustTierFilter } from '../common/TrustTierFilter'
 import type { TrustTier } from '@/data/trustScore'
-import { canLiveRefreshComplianceData } from './services'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { buildComplianceCsv } from './recordsExport'
 import {
@@ -34,6 +33,7 @@ import {
   formatIsoDate,
   isSecurityTargetType,
   pqcCoverageState,
+  pqcUnknownReason,
   pqcEvidenceLabel,
   pqcNames,
   recordTypeDescription,
@@ -68,7 +68,6 @@ interface ComplianceTableProps {
   onRefresh?: () => void
   isRefreshing?: boolean
   lastUpdated?: Date | null
-  onEnrich?: (r: ComplianceRecord) => void
   /** @deprecated Use filterText prop for controlled mode */
   initialFilter?: string
   /** @deprecated Use selectedRecordId prop for controlled mode */
@@ -115,40 +114,12 @@ const PQC_ALGOS = ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS', 'XMSS', 'HSS', 'FN-DSA'
 export const ComplianceRow = ({
   record,
   index,
-  onEnrich,
   autoOpen,
 }: {
   record: ComplianceRecord
   index: number
-  onEnrich?: (record: ComplianceRecord) => void
   autoOpen?: boolean
 }) => {
-  const rowRef = React.useRef<HTMLTableRowElement>(null)
-
-  React.useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          // If this record needs detailed PQC info (Pending), trigger enrich
-          if (
-            onEnrich &&
-            (record.pqcCoverage === 'Pending Check...' || record.pqcCoverage === 'Potentially PQC')
-          ) {
-            onEnrich(record)
-            observer.disconnect() // Only trigger once per view
-          }
-        }
-      },
-      { threshold: 0.1 } // 10% visible
-    )
-
-    if (rowRef.current) {
-      observer.observe(rowRef.current)
-    }
-
-    return () => observer.disconnect()
-  }, [record, onEnrich])
-
   const [showDetailsPopup, setShowDetailsPopup] = useState(autoOpen === true)
   const [showPqcTooltip, setShowPqcTooltip] = useState(false)
   const [showClassicalTooltip, setShowClassicalTooltip] = useState(false)
@@ -226,9 +197,13 @@ export const ComplianceRow = ({
         {pqcState === 'not-read' ? (
           <span
             className="text-xs text-muted-foreground italic"
-            title="The source page could not be read — PQC status is unknown, not 'none'."
+            title={
+              pqcUnknownReason(record) === 'source-lists-none'
+                ? 'NIST publishes this certificate page without an Approved Algorithms list — unknown, not "none".'
+                : "The source page could not be read — PQC status is unknown, not 'none'."
+            }
           >
-            Not read
+            Unknown
           </span>
         ) : pqcState !== 'none' ? (
           <div className="flex items-center">
@@ -399,7 +374,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   onRefresh,
   isRefreshing,
   lastUpdated,
-  onEnrich,
   initialFilter,
   initialSelectedId,
   filterText: filterTextProp,
@@ -426,9 +400,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   recordScope: recordScopeProp,
   onRecordScopeChange,
 }) => {
-  // Static production build has no live-scrape backend — refresh can only do
-  // something meaningfully different from re-reading the bundled snapshot in dev.
-  const canLiveRefresh = useMemo(() => canLiveRefreshComplianceData(), [])
   // Local state fallbacks (used when not in controlled mode)
   const [localFilterText, setLocalFilterText] = useState(initialFilter ?? '')
   const [localPqcFilters, setLocalPqcFilters] = useState<string[]>([])
@@ -910,36 +881,25 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             <Download size={14} />
             Export CSV
           </Button>
-          {onRefresh &&
-            (canLiveRefresh ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onRefresh}
-                disabled={isRefreshing}
-                className="gap-2"
-              >
-                <RefreshCw size={14} className={clsx(isRefreshing && 'animate-spin')} />
-                Refresh Data
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                disabled
-                className="gap-2"
-                title={
-                  retrieval.length > 0
-                    ? `Refresh requires a dev environment — showing the snapshot published with this site (${retrieval.map((e) => `${e.label} retrieved ${e.date}`).join(', ')}).`
-                    : newestRecordDate
-                      ? `Refresh requires a dev environment — showing the snapshot published with this site (newest record dated ${newestRecordDate}).`
-                      : 'Refresh requires a dev environment — showing the snapshot published with this site.'
-                }
-              >
-                <RefreshCw size={14} />
-                Refresh Data
-              </Button>
-            ))}
+          {onRefresh && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className="gap-2"
+              title={
+                retrieval.length > 0
+                  ? `Reload the published snapshot (${retrieval.map((e) => `${e.label} retrieved ${e.date}`).join(', ')}). Certificate data is not fetched live from the certification bodies.`
+                  : newestRecordDate
+                    ? `Reload the published snapshot (newest record dated ${newestRecordDate}). Certificate data is not fetched live from the certification bodies.`
+                    : 'Reload the published snapshot. Certificate data is not fetched live from the certification bodies.'
+              }
+            >
+              <RefreshCw size={14} className={clsx(isRefreshing && 'animate-spin')} />
+              Reload Snapshot
+            </Button>
+          )}
         </div>
       </div>
 
@@ -1651,7 +1611,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                     key={record.id}
                     record={record}
                     index={virtualRow.index}
-                    onEnrich={onEnrich}
                     autoOpen={record.id === autoOpenId}
                   />
                 )

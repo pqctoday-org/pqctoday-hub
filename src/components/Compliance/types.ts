@@ -14,7 +14,9 @@ export type ComplianceType = 'FIPS 140-3' | 'ACVP' | 'Common Criteria' | 'EUCC' 
  * Statuses the sources publish verbatim. FIPS 140-3 (CMVP): Active / Historical
  * / Revoked. CAVP: Validated (no lifecycle — NIST shows "First Validated").
  * CC Portal / ANSSI / EUCC: Active / Archived / Expired / Withdrawn.
- * 'Pending' and 'In Process' are kept for the dev-only live-scrape fixtures.
+ * 'Pending' and 'In Process' are legacy values kept only so an older cached
+ * copy still renders; no current source writes them (the in-browser scrape that
+ * did was removed 2026-09-25).
  *
  * The union is open (`string & {}`) on purpose: an unknown status string must
  * render as-is and be treated as NOT current — see `isCurrentStatus()`.
