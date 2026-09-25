@@ -13,6 +13,8 @@ import {
   countNistReferenceFiles,
   listFiles,
   runAudit,
+  countWorkbenchGroups,
+  scanWorkbenchCountDrift,
 } from './audit-validation-claims'
 
 const tmpDirs: string[] = []
@@ -213,6 +215,49 @@ describe('presentation count drift (A-5)', () => {
     expect(
       scanCountDrift('The Demo 2 vectors are selected public NIST ACVP-Server samples', 'd', 15)
     ).toEqual([])
+  })
+})
+
+describe('workbench test-group count drift (A-5 / J-6)', () => {
+  it('derives groups and families from the CATEGORIES table', () => {
+    const w = countWorkbenchGroups()
+    expect(w.families).toBe(w.categories.length)
+    expect(w.groups).toBe(w.categories.reduce((n, c) => n + c.groups, 0))
+    expect(w.families).toBeGreaterThan(0)
+  })
+
+  it('accepts the live figures in the deck/script/README shapes, flags stale ones', () => {
+    const w = countWorkbenchGroups()
+    const live = `runs every check on both. ${w.groups} test groups, ${w.families} families.`
+    expect(scanWorkbenchCountDrift(live, 'deck.html', w)).toEqual([])
+    const stale = [
+      '"36 test sections in seven families. The badge tells you what kind of evidence it is."',
+      'runs ~36 test sections of mixed evidence',
+      `There are ${w.groups} test groups in six algorithm families.`,
+    ].join('\n')
+    const f = scanWorkbenchCountDrift(stale, 'script.md', {
+      ...w,
+      groups: w.groups === 36 ? 37 : w.groups,
+      families: w.families === 6 ? 7 : w.families,
+    })
+    expect(f.map((x) => `${x.line}:${x.rule}`)).toEqual(
+      expect.arrayContaining([
+        '1:workbench-group-count-drift',
+        '2:workbench-group-count-drift',
+        '3:workbench-family-count-drift',
+      ])
+    )
+  })
+
+  it('SABOTAGE: an unreadable CATEGORIES table is an error, never a silent pass', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'claims-wb-'))
+    tmpDirs.push(dir)
+    const f = path.join(dir, 'useAcvpSuite.ts')
+    fs.writeFileSync(
+      f,
+      "export const CATEGORIES = [\n  { id: 'a', label: 'A', groups: 2 },\n  { id: 'b', groups: 3 },\n]\n"
+    )
+    expect(() => countWorkbenchGroups(f)).toThrow(/read 1 of 2/)
   })
 })
 
