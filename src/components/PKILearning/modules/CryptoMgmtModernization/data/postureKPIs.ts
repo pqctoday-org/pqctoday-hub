@@ -202,9 +202,9 @@ export const POSTURE_KPIS: PostureKPI[] = [
   {
     id: 'acvp-backlog',
     pillar: 'assurance',
-    name: 'ACVP re-cert backlog',
+    name: 'CAVP re-validation backlog',
     description:
-      'Modules awaiting ACVP algorithm re-certification after firmware or IG-update change.',
+      'Modules awaiting CAVP algorithm re-validation after firmware or IG-update change.',
     unit: 'count',
     audience: ['architect', 'ops'],
     example: '3 (target 0)',

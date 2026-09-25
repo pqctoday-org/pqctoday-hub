@@ -57,6 +57,9 @@ export const content: ModuleContent = {
     getStandard('EU-NIS-CG-Roadmap-v1.1'), // m-pqc-testing-validation: 11 Jun 2025
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('RFC-6928'), // m-pqc-testing-validation: wave 4c
+    // 2026-09-24 (ACVP remediation WS-I): the FIPS 140-3 & ACVP section now cites the
+    // ACVP JSON specification by section; the Library row already lists this module.
+    getStandard('NIST-ACVP'),
   ],
 
   algorithms: [

@@ -87,6 +87,91 @@ describe('legitimate uses are not flagged', () => {
   })
 })
 
+describe('ACVP / CAVP / CMVP role confusions (WS-I Learn sweep)', () => {
+  it.each([
+    ['ACVP (Automated Cryptographic Validation Program) grants IDs.', 'acvp-as-program'],
+    [
+      'ACVP (Cryptographic Algorithm Validation Program) handles algorithm testing.',
+      'acvp-as-program',
+    ],
+    ['The NIST CAVP/ACVP program validates algorithms.', 'acvp-as-program'],
+    ['Modules await ACVP re-certification after the IG update.', 'acvp-as-certificate'],
+    ['A separate ACVP certificate is pending.', 'acvp-as-certificate'],
+    ['Use modules with CAVP/ACVP certification.', 'acvp-as-certificate'],
+    ['ACVP grants per-algorithm validation IDs that CMVP references.', 'acvp-as-certificate'],
+    [
+      'The implementation must pass ACVP. NIST provides JSON files (<code>.req</code>) of inputs.',
+      'req-rsp-as-acvp',
+    ],
+    ['ACVP results are written back to a response file (<em>.rsp</em>).', 'req-rsp-as-acvp'],
+    [
+      'Functional correctness is legally enforced via the <InlineTooltip term="ACVP">Automated Cryptographic Validation Protocol</InlineTooltip>.',
+      'legally-enforced-validation',
+    ],
+    ['Passing the NIST KATs means the module is FIPS validated.', 'kat-equals-validation'],
+    ['An engine that passes the ACVP sample vectors is CAVP certified.', 'kat-equals-validation'],
+  ])('flags %j', (text, rule) => {
+    expect(rules(text)).toContain(rule)
+  })
+
+  it.each([
+    // correct statements of the same facts
+    'ACVP is the Automated Cryptographic Validation Protocol spoken by NIST’s ACVTS.',
+    'The CAVP (Cryptographic Algorithm Validation Program) issues algorithm certificates.',
+    'Modules await CAVP algorithm re-validation after the IG update.',
+    'CAVP A5631 covers ML-KEM, ML-DSA, SLH-DSA and LMS.',
+    // the legacy CAVS file format, named as such
+    'The .req/.rsp files belong to ACVP’s predecessor, the CAVS tool.',
+    'Those are not the <code>.req</code>/<code>.rsp</code> files of the older CAVS tool.',
+    // .req/.rsp with no ACVP or JSON context at all
+    'SHAVS writes a REQUEST file (SHA256ShortMsg.req) for the lab.',
+    // negated and historical uses
+    'ACVP is not a program and does not issue certificates.',
+    'A passing KAT is not FIPS validated evidence.',
+    // identifiers are not copy
+    "id: 'acvp-cert',",
+    // a question asserts nothing
+    'What PQC-related certification does ACVP provide?',
+  ])('passes %j', (text) => {
+    expect(rules(text)).toEqual([])
+  })
+
+  it('sabotage: a temp copy of a real Learn file fails once the pre-fix wording is put back', () => {
+    const real = path.join(
+      __dirname,
+      '..',
+      'src/components/PKILearning/modules/PQCTestingValidation/components/PQCTestingIntroduction.tsx'
+    )
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'claims-acvp-sabotage-'))
+    tmpDirs.push(dir)
+    const copy = path.join(dir, 'PQCTestingIntroduction.tsx')
+    fs.copyFileSync(real, copy)
+    const scan = () =>
+      listFiles(dir, dir).flatMap((f) => scanText(fs.readFileSync(f, 'utf8'), f).map((x) => x.rule))
+    expect(scan()).toEqual([])
+
+    // The exact sentences this module shipped before the WS-I fix.
+    const original = fs.readFileSync(copy, 'utf8')
+    fs.writeFileSync(
+      copy,
+      original.replace(
+        '<ReadingCompleteButton />',
+        `<p>In regulated environments (Federal, Financial, Healthcare), functional correctness is legally enforced via the{' '}
+          <InlineTooltip term="ACVP">Automated Cryptographic Validation Protocol</InlineTooltip> to
+          achieve a FIPS 140-3 certificate.</p>
+        <p className="text-xs">NIST provides JSON files (<em>.req</em>) containing thousands of inputs, keys, and seeds
+          for specific algorithms, writing them back to a response file (<em>.rsp</em>).</p>
+        <ReadingCompleteButton />`
+      )
+    )
+    expect(scan()).toEqual(
+      expect.arrayContaining(['legally-enforced-validation', 'req-rsp-as-acvp'])
+    )
+    // The real file is untouched.
+    expect(fs.readFileSync(real, 'utf8')).not.toContain('legally enforced')
+  })
+})
+
 describe('presentation count drift (A-5)', () => {
   it('takes the NIST ACVP-Server file count from the generated manifest counts', () => {
     const n = countNistReferenceFiles()

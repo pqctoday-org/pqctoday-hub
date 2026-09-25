@@ -78,7 +78,7 @@ export const PILLARS: PillarDef[] = [
     indicators: {
       1: 'Unknown whether modules are validated. No tracking.',
       2: 'Annual audit checks CMVP status for production modules.',
-      3: 'Automated monthly CMVP/ACVP status sync with inventory.',
+      3: 'Automated monthly CMVP/CAVP status sync with inventory.',
       4: 'Continuous validation monitoring with IG-delta impact analysis and attestation export.',
     },
   },

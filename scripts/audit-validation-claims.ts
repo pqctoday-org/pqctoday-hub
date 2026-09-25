@@ -25,6 +25,11 @@
  *   - context-free phrases that are wrong wherever they appear unless negated
  *     ("ACVP validated", "complete ACVP", "all mechanisms covered", "NIST
  *     validated", the suite-level "NIST ACVP Known Answer Tests", ...);
+ *   - role confusions (WS-I Learn sweep): ACVP called a program or an issuer
+ *     of certificates, .req/.rsp (legacy CAVS files) presented as ACVP,
+ *     "legally enforced" attached to ACVP/KAT testing, and a KAT/sample pass
+ *     presented as validated/certified. Some of these read the sentence with
+ *     markup blanked out, or a window around the match (`contextChars`);
  *   - self-claims: a certification/validation word in the same sentence as a
  *     reference to PQC Today's own engine/suite/playground. This is what lets
  *     Learn prose say "a FIPS 140-3 certified HSM" about a real vendor product
@@ -54,6 +59,21 @@ export interface ClaimRule {
   pattern: RegExp
   /** Self-claim rules only fire when the sentence also names PQC Today's own stack. */
   requiresSelfReference?: boolean
+  /** Fire only when the sentence also matches this (e.g. names ACVP). */
+  sentenceRequires?: RegExp
+  /** Never fire when the sentence matches this (e.g. names the legacy CAVS tool). */
+  sentenceExempt?: RegExp
+  /**
+   * Apply sentenceRequires/sentenceExempt to this many characters either side
+   * of the match instead of the sentence (ACVP is often named one sentence
+   * before the file format it is wrongly given).
+   */
+  contextChars?: number
+  /**
+   * Match against the text with HTML/JSX tags blanked out, so a sentence split
+   * by markup (`files (<em>.req</em>) containing ...`) is read as one sentence.
+   */
+  stripTags?: boolean
 }
 
 export interface ClaimFinding {
@@ -127,6 +147,53 @@ export const RULES: ClaimRule[] = [
       /\b(?:FIPS(?: 140-[23])?[- ](?:certified|validated|compliant)|CMVP[- ](?:certified|validated)|CAVP[- ](?:certified|validated))\b/i,
     requiresSelfReference: true,
   },
+  // ── ACVP / CAVP / CMVP role confusions (WS-I Learn sweep, 2026-09-24) ──────
+  // ACVP is the Automated Cryptographic Validation *Protocol* (JSON over HTTPS,
+  // draft-ietf-acvp-spec-01 §1, §6, §8), spoken by NIST's ACVTS. CAVP issues
+  // algorithm validation certificates; CMVP validates modules to FIPS 140-3.
+  {
+    id: 'acvp-as-program',
+    description:
+      'ACVP described as a program ("Automated Cryptographic Validation Program", "ACVP program") — ACVP is a protocol; the program is CAVP',
+    pattern:
+      /\bAutomated Cryptographic Validation Program(?:me)?\b|\bACVP\s*\(\s*Cryptographic Algorithm Validation Program(?:me)?\s*\)|\bACVP (?:program(?:me)?|validation program(?:me)?)\b/i,
+  },
+  {
+    id: 'acvp-as-certificate',
+    description:
+      'ACVP described as issuing a certificate/certification ("ACVP certificate", "ACVP re-certification", "ACVP issues validation IDs") — CAVP issues algorithm certificates',
+    pattern:
+      // Case-sensitive on "ACVP" so identifiers such as the 'acvp-cert' role id do not match.
+      /\bACVP[- ](?:[Rr]e-?)?(?:[Cc]ertificates?|[Cc]erts?|[Cc]ertification|[Rr]ecertification)\b|\bACVP\b[^.!?]{0,40}?\b(?:grants|issues|awards)\b[^.!?]{0,40}?\b(?:certificates?|validation (?:IDs?|numbers?)|validations)\b/,
+  },
+  {
+    id: 'req-rsp-as-acvp',
+    description:
+      '.req/.rsp files described as ACVP — those are the legacy CAVS tool files (e.g. SHAVS §6.2.1); ACVP exchanges JSON over HTTPS',
+    pattern: /(?<![\w/])\.(?:req|rsp)\b/i,
+    // ACVP named nearby, or the .req called JSON (it never was).
+    sentenceRequires: /\bACVP\b|Automated Cryptographic Validation Protocol|\bJSON\b/i,
+    sentenceExempt: /\bCAVS\b/,
+    contextChars: 300,
+    stripTags: true,
+  },
+  {
+    id: 'legally-enforced-validation',
+    description:
+      '"legally enforced/required/mandated" attached to ACVP/CAVP/KAT testing — FIPS 140-3 applies to US federal agencies (§6 Applicability); ACVP is a test protocol, not a law',
+    pattern: /\blegally (?:enforced|required|mandated|binding)\b/i,
+    sentenceRequires:
+      /\b(?:ACVP|ACVTS|CAVP|KATs?|known[- ]answer)\b|Automated Cryptographic Validation/i,
+    stripTags: true,
+  },
+  {
+    id: 'kat-equals-validation',
+    description:
+      'Passing KATs/sample vectors presented as being validated/certified — a KAT or public sample pass is test evidence, not a CAVP/CMVP validation',
+    pattern:
+      /\bpass(?:es|ed|ing)?\b[^.!?]{0,40}?\b(?:KATs?|known[- ]answer tests?|(?:reference |sample |test )?vectors?)\b[^.!?]{0,40}?\b(?:is|are|means|makes?|proves?)\b(?:(?!\b(?:not|never|no)\b)[^.!?]){0,20}?\b(?:(?:FIPS(?: 140-[23])?|CAVP|CMVP|NIST|ACVP)[- ])?(?:validated|certified)\b/i,
+    stripTags: true,
+  },
 ]
 
 /** Negation within the same sentence, before the match, clears it. */
@@ -194,6 +261,14 @@ function normalise(text: string): { flat: string; lineAt: (i: number) => number 
   return { flat, lineAt: (i) => lines[Math.min(i, lines.length - 1)] ?? 1 }
 }
 
+/**
+ * Blank out HTML/JSX tags (keeping length and newlines, so line numbers hold)
+ * for rules that must read a sentence across inline markup.
+ */
+function stripMarkup(text: string): string {
+  return text.replace(/<\/?[A-Za-z][^<>]*>/g, (m) => m.replace(/[^\n]/g, ' '))
+}
+
 /** Sentence/string boundary: end punctuation, a quote that is not an apostrophe, or a tag edge. */
 const BOUNDARY = /[.!?](?=\s)|["`<>]|(?<![A-Za-z])'|'(?![A-Za-z])/g
 
@@ -223,10 +298,13 @@ export function scanText(
   allow: AllowEntry[] = [],
   rules: ClaimRule[] = RULES
 ): ClaimFinding[] {
-  const { flat, lineAt } = normalise(text)
+  const plain = normalise(text)
+  let untagged: ReturnType<typeof normalise> | null = null
   const original = text.split('\n')
   const findings: ClaimFinding[] = []
   for (const rule of rules) {
+    if (rule.stripTags && !untagged) untagged = normalise(stripMarkup(text))
+    const { flat, lineAt } = rule.stripTags && untagged ? untagged : plain
     const re = new RegExp(
       rule.pattern.source,
       rule.pattern.flags.includes('g') ? rule.pattern.flags : rule.pattern.flags + 'g'
@@ -240,6 +318,11 @@ export function scanText(
       // A question ("Is SoftHSMv3 FIPS validated?") asserts nothing.
       if (sentence.endsWith('?')) continue
       if (rule.requiresSelfReference && !SELF_REFERENCE.test(sentence)) continue
+      const context = rule.contextChars
+        ? flat.slice(Math.max(0, start - rule.contextChars), end + rule.contextChars)
+        : sentence
+      if (rule.sentenceRequires && !rule.sentenceRequires.test(context)) continue
+      if (rule.sentenceExempt?.test(context)) continue
       const line = lineAt(start)
       if (inlineAllowed(original, line)) continue
       if (allow.some((a) => a.file === file && sentence.includes(a.match))) continue

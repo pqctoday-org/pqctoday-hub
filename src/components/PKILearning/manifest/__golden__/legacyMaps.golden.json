@@ -1676,7 +1676,7 @@
       },
       {
         "id": "fips-acvp",
-        "label": "FIPS ACVP Validation"
+        "label": "FIPS 140-3 & ACVP Testing"
       }
     ],
     "platform-eng-pqc": [

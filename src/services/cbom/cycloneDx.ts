@@ -79,7 +79,7 @@ export interface CbomAlgorithm {
   hybridRole?: 'classical' | 'post-quantum'
 }
 
-/** A FIPS/ACVP certification surfaced as component evidence. */
+/** A FIPS 140-3 (CMVP) or CAVP algorithm certificate surfaced as component evidence (the catalog's certType "ACVP" is a CAVP record). */
 export interface CbomCertification {
   certType: string
   certId: string

@@ -18,7 +18,7 @@ workshop_steps: 4
 - Side-channel attack surfaces (NTT power analysis, EM emanation, fault injection, ML-DSA hedged signing)
 - HSM firmware migration (upgrade paths, dual-partition strategy, FIPS re-validation)
 - Stateful signature state management (LMS/HSS NVRAM persistence, CNSA 2.0)
-- FIPS 140-3 and ACVP/CAVP PQC validation tracking
+- FIPS 140-3 (CMVP) and CAVP PQC validation tracking
 
 ## Workshop
 
