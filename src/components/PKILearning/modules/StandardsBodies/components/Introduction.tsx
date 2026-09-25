@@ -92,7 +92,10 @@ const Step1ThreeRoles: React.FC = () => (
               <div>
                 &bull; <InlineTooltip term="CMVP">CMVP</InlineTooltip> → FIPS 140-3 certs
               </div>
-              <div>&bull; ACVP → algorithm-level validation</div>
+              <div>
+                &bull; <InlineTooltip term="CAVP">CAVP</InlineTooltip> → algorithm validation
+                (tested via ACVP)
+              </div>
               <div>
                 &bull; <InlineTooltip term="Common Criteria">Common Criteria</InlineTooltip> → CC
                 certificates
@@ -428,7 +431,7 @@ const Step3GlobalRegional: React.FC = () => (
               'NIST — FIPS 203/204/205 algorithm standards (globally followed)',
               'NSA — CNSA 2.0 mandate for National Security Systems',
               'CISA — federal procurement guidance',
-              'CMVP/ACVP — module & algorithm certification',
+              'CMVP/CAVP — module & algorithm validation',
             ],
           },
           {
@@ -625,8 +628,8 @@ const Step4AppPagesGuide: React.FC = () => (
         <div className="bg-muted/50 rounded-lg p-3 border border-border">
           <p className="text-xs text-muted-foreground">
             <strong className="text-foreground">Also shown:</strong> CC certification badges (Common
-            Criteria CCRA / EUCC) and ACVP algorithm validation (algorithm-level, below
-            module-level). These link back to ENISA (EUCC) and NIST CAVP (ACVP) respectively.
+            Criteria CCRA / EUCC) and CAVP algorithm validation (algorithm-level, below
+            module-level). These link back to ENISA (EUCC) and NIST CAVP respectively.
           </p>
         </div>
         <Link
@@ -662,9 +665,9 @@ const Step4AppPagesGuide: React.FC = () => (
           },
           {
             n: 2,
-            title: 'ACVP test vectors released',
+            title: 'CAVP algorithm validation (via ACVP)',
             body: 'NIST CAVP (algorithm testing)',
-            desc: 'Automated test vectors for FIPS 203 allow vendors to run conformance tests against NIST reference implementations.',
+            desc: 'An accredited lab tests the ML-KEM implementation through NIST’s ACVTS: ACVP delivers FIPS 203 test vector sets, the implementation returns its answers, and NIST issues a CAVP algorithm certificate once they are accepted.',
           },
           {
             n: 3,
