@@ -160,6 +160,7 @@ import { runEcdsaSigVerAcvpSection, runEddsaSigVerAcvpSection } from './sections
 import { runRsaSigVerAcvpSection } from './sections/rsaSigVerAcvp'
 import { runKmacAcvpSection, runPbkdf2AcvpSection } from './sections/kdfMacAcvp'
 import { runHkdfAcvpSection, runKbkdfAcvpSection } from './sections/kdfDeriveAcvp'
+import { runAesCbcMctFullSection, runShaMctFullSection } from './sections/mctFullAcvp'
 import {
   runEcKeyVerAcvpSection,
   runEcdsaSigGenAcvpSection,
@@ -196,8 +197,8 @@ export type CategoryId =
   'symmetric' | 'hashing_mac' | 'kdf' | 'classical' | 'ml_dsa' | 'slh_stateful' | 'ml_kem'
 
 export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
-  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 9 },
-  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 8 },
+  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 10 },
+  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 9 },
   { id: 'kdf', label: 'KDF', groups: 8 },
   { id: 'classical', label: 'Classical Asymmetric', groups: 16 },
   { id: 'ml_dsa', label: 'ML-DSA', groups: 8 },
@@ -1909,6 +1910,19 @@ export function useAcvpSuite() {
             pushResult,
             addLog,
           })
+
+          // ── 10g. SHA MCT, all 100 outer iterations — standard and alternate
+          // version (gap-closure P5). sections/mctFullAcvp.ts.
+          await runShaMctFullSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.sha256,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 11. AES-CBC-256 Decrypt KAT (NIST ACVP-AES-CBC) ────────────────
@@ -2087,6 +2101,19 @@ export function useAcvpSuite() {
         if (activeCategories.has('symmetric')) {
           currentCategory = 'symmetric'
           await runAesCbcCtrAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.aescbc,
+            pushResult,
+            addLog,
+          })
+
+          // ── 12d. AES-CBC MCT, all 100 outer iterations (AESAVS §6.4,
+          // gap-closure P5). sections/mctFullAcvp.ts.
+          await runAesCbcMctFullSection({
             M,
             hSession,
             eName,

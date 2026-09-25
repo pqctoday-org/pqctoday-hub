@@ -203,7 +203,7 @@ export async function runShaAcvpSection(ctx: ClassicalSectionCtx): Promise<void>
       },
       why:
         ne.why === 'alternate-mct-not-implemented'
-          ? 'the alternate-version MCT (message truncated/padded to the seed length) is not implemented in the workbench'
+          ? 'this boundary subset carries no alternate-version MCT case; the alternate-version MCT runs in full (all 100 outer iterations) in section 10g from sha_mct_full_test.json'
           : 'the LDT expands a message to 1 GiB — not run in the browser workbench',
     })
   }
