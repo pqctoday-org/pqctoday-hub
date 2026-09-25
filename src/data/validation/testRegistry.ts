@@ -1235,6 +1235,23 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     }),
     'MCT cases check the first of the 100 upstream outer iterations only (1000 chained C_Digest calls). Alternate-version MCT and LDT groups are notExecuted skip rows.'
   ),
+  acvp(
+    '10g',
+    '§10g (sections/mctFullAcvp.ts)',
+    'SHA-2 / SHA-3 NIST MCT, all 100 outer iterations: standard version (SHA2-224/384/512-224, SHA-3) and alternate version (SHA2-256/512/512-256)',
+    casesOf('sha_mct_full_test').map((c) => {
+      const hashAlg = param(c, 'hashAlg')
+      const mech = DIGEST_MECH[hashAlg]
+      if (!mech) throw new Error(`testRegistry: no digest mechanism for ${hashAlg}`)
+      return mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x(mech, 'digest')],
+        `sha-mct-full-${hashSlug(hashAlg)}-${upstreamIds(c)}-{engine}`
+      )
+    })
+  ),
   acvp('11', '§11', 'AES-CBC-256 decrypt (raw CKM_AES_CBC)', [
     mc(
       'aescbc_test#/testGroups/0/tests/0',
@@ -1268,6 +1285,23 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       )
     }),
     'MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only.'
+  ),
+  acvp(
+    '12d',
+    '§12d (sections/mctFullAcvp.ts)',
+    'AES-CBC NIST MCT, all 100 outer iterations (AESAVS §6.4), AES-128/192/256 encrypt and decrypt',
+    casesOf('aescbc_mct_full_test').map((c) => {
+      const kl = param(c, 'keyLen')
+      const dir = param(c, 'direction')
+      return mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_AES_CBC', dir, `AES-${kl}`)],
+        `aescbc-mct-full-k${kl}-${dir}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    'Each outer iteration imports the next key and restarts the multi-part operation with the next IV, both derived from the engine outputs as AESAVS §6.4 specifies.'
   ),
   acvp(
     '12b.probes',
