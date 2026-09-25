@@ -46,6 +46,16 @@ import {
   runMechanismCoverageProbes,
 } from '@/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
 import {
+  captureProbeInventory,
+  runErrorPathProbes,
+} from '@/wasm/pkcs11ConformanceRunner/errorPathProbes'
+import {
+  ERROR_PATH_OPS,
+  OP_SPECS,
+  PROBE_KINDS,
+  expandErrorPathCases,
+} from '@/wasm/pkcs11ConformanceRunner/errorPathCatalog'
+import {
   captureMechanismInventory,
   compareToGenerated,
   type EngineArtifactFile,
@@ -61,7 +71,7 @@ export type RowStatus = 'pass' | 'fail' | 'not-claimed'
 export interface RunnerRow {
   id: string
   engine: string
-  tier: 'A' | 'B' | 'Coverage'
+  tier: 'A' | 'B' | 'Coverage' | 'ErrorPath'
   name: string
   citation: string
   status: RowStatus
@@ -216,6 +226,12 @@ export const tierBGroups = (): { id: ProfileClaim; label: string; probes: number
 /** Product mechanism probes defined in mechanismCoverageProbes.ts (counted, not written). */
 export const mechanismProbeCount = (): number => mechanismProbes().length
 
+/** Error-path probe table size (kinds × operation families) — counted, not written. */
+export const errorPathProbeSummary = () => ({
+  kinds: PROBE_KINDS.length,
+  families: new Set(ERROR_PATH_OPS.map((op) => OP_SPECS[op].family)).size, // eslint-disable-line security/detect-object-injection
+})
+
 /**
  * WS-G G-4: what each tier's rows ARE, so no view or report summarizes the
  * three together as "OASIS test cases". Only Tier A replays test cases OASIS
@@ -246,9 +262,16 @@ export const CONFORMANCE_TIER_LABELS: Record<
     source: 'PQC Today-authored PKCS#11 v3.2 mechanism probe — not an OASIS test case',
     evidenceClass: 'product-mechanism-probe',
   },
+  ErrorPath: {
+    label: 'Error-path probe',
+    short: 'Error-path probe',
+    source:
+      'PQC Today-authored PKCS#11 v3.2 error-path / required-operation probe (WS-G G-8/G-2): asserts the exact CK_RV the cited specification section requires — behaviour only, not an OASIS test case',
+    evidenceClass: 'product-mechanism-probe',
+  },
 }
 
-const TIER_ORDER: RunnerRow['tier'][] = ['A', 'B', 'Coverage']
+const TIER_ORDER: RunnerRow['tier'][] = ['A', 'B', 'Coverage', 'ErrorPath']
 
 /** Per-tier pass/fail/not-claimed tallies — the only way results are summarized. */
 export const tallyByTier = (rows: RunnerRow[]) =>
@@ -268,6 +291,8 @@ export interface ConformanceSelection {
   tierA: Set<string>
   tierB: boolean
   coverage: boolean
+  /** Error-path probes (G-8/G-2): ~2,300 per engine, opt-in — they take about a minute. */
+  errorPaths?: boolean
 }
 
 export const FULL_SELECTION = (): ConformanceSelection => ({
@@ -320,6 +345,10 @@ export function usePkcs11Conformance() {
   )
   const setCoverage = useCallback(
     (on: boolean) => setSelection((prev) => ({ ...prev, coverage: on })),
+    []
+  )
+  const setErrorPaths = useCallback(
+    (on: boolean) => setSelection((prev) => ({ ...prev, errorPaths: on })),
     []
   )
 
@@ -506,6 +535,36 @@ export function usePkcs11Conformance() {
             hsm_finalize(M, mechCovSession)
           }
 
+          if (use.errorPaths) {
+            // Error-path / required-operation probes (WS-G G-8/G-2), expanded
+            // from THIS engine's advertised inventory; run in batches so the
+            // page stays responsive.
+            hsm_initialize(M)
+            const epSlot0 = hsm_getFirstSlot(M)
+            const epSlot = hsm_initToken(M, epSlot0, '12345678', 'SoftHSM3')
+            const epSession = hsm_openUserSession(M, epSlot, '12345678', 'user1234')
+            const cases = expandErrorPathCases([captureProbeInventory(M, epSlot)])
+            for (let i = 0; i < cases.length; i += 40) {
+              const batch = runErrorPathProbes(M, epSession, epSlot, {
+                cases: cases.slice(i, i + 40),
+              })
+              for (const p of batch) {
+                newRows.push({
+                  id: `${p.caseId}-${eName}`,
+                  engine: eName,
+                  tier: 'ErrorPath',
+                  name: `${p.mechanism} · ${p.op} · ${p.kind}`,
+                  citation: p.citation,
+                  status: p.status,
+                  detail: `${p.title} — ${p.detail}`,
+                })
+              }
+              setRows(newRows.slice())
+              await new Promise((r) => setTimeout(r, 0))
+            }
+            hsm_finalize(M, epSession)
+          }
+
           if (inventory.inventorySha256) {
             for (let i = rowsBefore; i < newRows.length; i++) {
               newRows[i] = { ...newRows[i], inventorySha256: inventory.inventorySha256 }
@@ -574,6 +633,7 @@ export function usePkcs11Conformance() {
     toggleCase,
     setTierB,
     setCoverage,
+    setErrorPaths,
     claims,
     inventories,
     run,
