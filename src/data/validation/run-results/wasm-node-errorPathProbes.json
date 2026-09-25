@@ -9,9 +9,37 @@
     "platform": "darwin",
     "arch": "arm64"
   },
-  "hubCommit": "b7007e6ebcc85da798c8951a9da1705a1f9256f0",
+  "hubCommit": "3c7f2dcaaedc060e8fe29a4d33dd27d6c3184f66",
   "recordedAt": "2026-09-25",
   "results": [
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "errpath.decapsulate.null-handle-pointer#local:errpath.decapsulate.null-handle-pointer/CKM_ECDH1_DERIVE",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "errpath.decapsulate.null-handle-pointer#local:errpath.decapsulate.null-handle-pointer/CKM_ECDH1_DERIVE",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+      "registryCase": "errpath.decapsulate.null-handle-pointer#local:errpath.decapsulate.null-handle-pointer/CKM_ML_KEM",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+      "registryCase": "errpath.decapsulate.null-handle-pointer#local:errpath.decapsulate.null-handle-pointer/CKM_ML_KEM",
+      "status": "pass"
+    },
     {
       "engine": "cpp",
       "artifactKind": "wasm",

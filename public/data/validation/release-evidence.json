@@ -8,11 +8,11 @@
     "evidence/acvp-xplat/2026-09-24/targets.json": "68d23bd0090e0a104fd365f60175ccb11b85c53d2eb7aca2f45d103fe69ec775",
     "evidence/acvp-xplat/2026-09-24b/matrix.json": "b3370d4bf4518c7c4519244e921977eeae4a0f07223869397185f1112f3baba8",
     "evidence/acvp-xplat/2026-09-24b/targets.json": "6413cac2139288ae126c4e31035f0110b8b72dc1c0a97e80722841a992715ccd",
-    "public/data/validation/coverage-matrix.json": "35c41ed4e06c503f287420f974f65bf7bc4888934192e2663b4071dfb0be164f",
+    "public/data/validation/coverage-matrix.json": "32683b8f462e16eab0e9129afb24a7d0d7d72abe0cf5ea7e3d27e5a3d25d6c34",
     "src/data/validation/coverage-waivers.json": "abd4e8d218862bd023721caeb2ce09edcb6217941d4fbf5af06c4238306c8b8c",
     "src/data/validation/native-conformance.generated.json": "4896b6b29fe12e8d66d807ab82fd051b7fe79683a13123c42fa7a7f8ff903fc1",
     "src/data/validation/open-gaps.json": "d2c55c75ec7a5b71bc31c578df2b47304e4dc50d89fe343894ad046a489ad5b1",
-    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "bb2fe9e396a411ec7697e593c178778413781f051e3d6b4812c54361ec9ae09e",
+    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "21ae1240ae3d62989caf83a3ec25c4a37a895ed4f1c7edc283ac21f20e518a2d",
     "src/data/validation/run-results/wasm-node-katRunner.json": "64433a7f1a77adbed09e8e0eb3bf0c43fc39c53a4f30816e8202376ab0c247c2",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "3ab5d11967de93a4a52f98736cf2f8bc64939d16893636e37fe0bdf65c5d6591",
     "src/data/validation/validation-counts.generated.json": "782f68b73f39f323654d07a1a6c0dbee664bf27ade3e263096b39450ed8344e1",
@@ -325,7 +325,7 @@
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4580 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub b7007e6eb); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b); 520 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4584 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 3c7f2dcaa); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b); 520 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -481,18 +481,18 @@
       "runner": "errorPathProbes (every registered error-path case, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "b7007e6ebcc85da798c8951a9da1705a1f9256f0",
+      "hubCommit": "3c7f2dcaaedc060e8fe29a4d33dd27d6c3184f66",
       "recordedAt": "2026-09-25",
-      "results": 4580,
+      "results": 4584,
       "byEngine": {
         "cpp": {
-          "pass": 2022,
+          "pass": 2024,
           "fail": 230,
           "skip": 38
         },
         "rust": {
+          "pass": 1369,
           "fail": 326,
-          "pass": 1367,
           "skip": 597
         }
       },
@@ -4277,7 +4277,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 2660 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 2662 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,
