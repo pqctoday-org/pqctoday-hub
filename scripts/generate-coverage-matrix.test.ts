@@ -59,17 +59,48 @@ describe('generate-coverage-matrix (committed inputs)', () => {
 
   it('the ECDSA P-521 NIST sample passes on both engines since the hub DER fix (was a recorded C++ fail)', () => {
     const r = matrix.rows.find((x) => x.key === 'CKM_ECDSA_SHA512|verify|P-521|*')!
-    // C++: the §33 workbench case + the 7 WS-E NIST SigVer cases (§4b, P-521 / SHA2-512).
-    expect(r.engines.cpp.run).toEqual({ pass: 8, fail: 0 })
-    // Rust: the same 8 plus the Algorithms (katRunner) case, all passing.
-    expect(r.engines.rust.run).toEqual({ pass: 9, fail: 0 })
+    // C++: the §33 workbench case + the 7 WS-E NIST SigVer cases (§4b, P-521 / SHA2-512)
+    // = 8 passes, plus the 5 G-8 error-path verify probes for CKM_ECDSA_SHA512
+    // (4 pass; key-type-inconsistent fails — open gap g8-cpp-init-accepts-wrong-key-type).
+    expect(r.engines.cpp.run).toEqual({ pass: 12, fail: 1 })
+    // Rust: the same 8 plus the Algorithms (katRunner) case, plus the same 5 probes
+    // (key-type-inconsistent fails — open gap g8-rust-init-accepts-wrong-key-type).
+    expect(r.engines.rust.run).toEqual({ pass: 13, fail: 1 })
+    // The row's only recorded fail is that API error-path probe: every NIST SigVer
+    // sample on it passes on both engines.
+    const rowFails = (inputs.runResults ?? []).filter(
+      (x) =>
+        x.status === 'fail' &&
+        x.registryCase.startsWith('errpath.verify.') &&
+        x.registryCase.endsWith('/CKM_ECDSA_SHA512')
+    )
+    expect(rowFails.map((x) => `${x.engine}:${x.registryCase.split('#')[0]}`).sort()).toEqual([
+      'cpp:errpath.verify.key-type-inconsistent',
+      'rust:errpath.verify.key-type-inconsistent',
+    ])
     expect(r.parity.positive).toBe('parity')
     expect(matrix.openGaps.some((g) => g.id.startsWith('recorded-fail:acvp.33#'))).toBe(false)
   })
 
   it('every recorded fail is a documented engine defect and becomes an open gap', () => {
-    const fails = (inputs.runResults ?? []).filter((r) => r.status === 'fail')
-    expect(fails.length).toBeGreaterThan(0)
+    const allFails = (inputs.runResults ?? []).filter((r) => r.status === 'fail')
+    expect(allFails.length).toBeGreaterThan(0)
+    // G-8 error-path probes (errpath.*): the PKCS #11 v3.2 CK_RV findings are the
+    // curated g8-<engine>-* open gaps (one per finding class, not per case); each
+    // recorded fail must still become its own generated recorded-fail gap.
+    const curatedIds = new Set(inputs.openGaps.gaps.map((g) => g.id))
+    const errpathFails = allFails.filter((r) => r.registryCase.startsWith('errpath.'))
+    for (const f of errpathFails) {
+      expect(
+        [...curatedIds].some((id) => id.startsWith(`g8-${f.engine}-`)),
+        `no curated g8-${f.engine}-* gap for ${f.registryCase}`
+      ).toBe(true)
+      expect(
+        matrix.openGaps.some((g) => g.id === `recorded-fail:${f.registryCase}:${f.engine}`),
+        f.registryCase
+      ).toBe(true)
+    }
+    const fails = allFails.filter((r) => !r.registryCase.startsWith('errpath.'))
     for (const f of fails) {
       // Each prefix is an engine defect with a curated open gap: 07b.keycheck
       // rust-mlkem-no-key-input-checks; 09c cpp-hashslhdsa-double-wrap; WS-E —

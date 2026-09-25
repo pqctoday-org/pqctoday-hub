@@ -151,14 +151,60 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // finding, reported for pqctoday-hsm; not a harness defect. Matched by
     // exact row identity, and asserted to STILL be red below so the entry is
     // removed when the engine is fixed.
-    const KNOWN_RED_ROWS: { match: RegExp; why: string }[] = [
+    //
+    // 2026-09-25 (gap-closure P1): WS-E (merged in P0) added NIST ACVP-Server
+    // samples that the Rust engine fails. Each is a documented engine finding
+    // with a curated open gap in src/data/validation/open-gaps.json, recorded
+    // identically (83 Rust fails = the sum of the counts below) in
+    // run-results/wasm-node-useAcvpSuite.json on the same wasm bytes
+    // (softhsmrustv3_bg.wasm a4582ff0, hsm ac8b40fd0). Each entry matches the
+    // row identity AND its observed failure mode, and must stay red exactly
+    // `count` times — a change in either count or failure mode fails the spec.
+    const KNOWN_RED_ROWS: { match: RegExp; why: string; count: number }[] = [
       {
         match:
           /ML-KEM-(512|768|1024) \(Rust\) (Decapsulation-key check \(FIPS 203 §7\.3\)|Encapsulation-key check \(FIPS 203 §7\.2\)) · NIST VAL tg\d+\/tc\d+ · (modified H|noisy linear system values too large) · expect rejected/,
-        why: 'Rust engine: no FIPS 203 §7.2/§7.3 key check',
+        why: 'Rust engine: no FIPS 203 §7.2/§7.3 key check (open gap rust-mlkem-no-key-input-checks)',
+        count: 6,
+      },
+      {
+        match:
+          /^Symmetric \/ AEAD AES-128-GCM \(Rust\) (Encrypt|Decrypt) · NIST AES-GCM tg(2|4)\/tc\d+ · IV 120b · .*CKR_MECHANISM_PARAM_INVALID/,
+        why: 'Rust engine: AES-GCM IVs other than 96 bits refused (open gap rust-gcm-iv-96-only)',
+        count: 30,
+      },
+      {
+        match:
+          /^Classical Asymmetric ECDSA P-224 \(Rust\) SigVer · NIST ECDSA sigVer tg\d+\/tc\d+ · P-224 · .*C_Verify → CKR_SIGNATURE_LEN_RANGE/,
+        why: 'Rust engine: cannot verify P-224 ECDSA (open gap rust-ecdsa-p224-unsupported)',
+        count: 28,
+      },
+      {
+        match:
+          /^Classical Asymmetric RSA-(4096 PKCS#1 v1\.5|2048 PSS) \(Rust\) SigVer · NIST RSA sigVer tg(13|25)\/tc\d+ · .*C_Verify → CKR_KEY_TYPE_INCONSISTENT/,
+        why: 'Rust engine: public exponent > 2^33 - 1 (open gap rust-rsa-public-exponent-limit)',
+        count: 12,
+      },
+      {
+        match:
+          /^Symmetric \/ AEAD AES-128-CBC \(Rust\) Invalid IV · product-authored probe · C_EncryptInit\(CKM_AES_CBC\) with a 15-byte IV .*observed CKR_ARGUMENTS_BAD/,
+        why: 'Rust engine: wrong-length CBC IV answered with CKR_ARGUMENTS_BAD (open gap rust-cbc-iv-length-arguments-bad)',
+        count: 1,
+      },
+      {
+        match:
+          /^KDF PBKDF2-HMAC-SHA2-224 \(Rust\) Derive · NIST PBKDF tg1\/tc\d+ · .*C_DeriveKey → CKR_ARGUMENTS_BAD/,
+        why: 'Rust engine: PBKDF2 PRF limited to HMAC-SHA-256/384/512 (open gap rust-pbkdf2-prf-limited)',
+        count: 5,
+      },
+      {
+        match:
+          /^Hashing & MAC KMAC-128 \(Rust\) MAC verify · NIST KMAC-128 MVT tg8\/tc799 · .*C_Verify → CKR_SIGNATURE_LEN_RANGE/,
+        why: 'KMAC C_Verify ignores ulOutputLen (open gap kmac-verify-ignores-output-length)',
+        count: 1,
       },
     ]
-    const knownRedSeen: string[] = []
+    const knownRedSeen = KNOWN_RED_ROWS.map(() => 0)
 
     const resultRows = page.locator('table tbody tr')
     const rowCount = await resultRows.count()
@@ -175,8 +221,9 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
       const rowText = (await row.innerText()).replace(/\s+/g, ' ').trim()
       const failCell = row.locator('td', { hasText: /^fail$/i })
       const failed = (await failCell.count()) > 0
-      if (KNOWN_RED_ROWS.some((k) => k.match.test(rowText))) {
-        if (failed) knownRedSeen.push(rowText)
+      const knownIdx = KNOWN_RED_ROWS.findIndex((k) => k.match.test(rowText))
+      if (knownIdx >= 0) {
+        if (failed) knownRedSeen[knownIdx] += 1 // eslint-disable-line security/detect-object-injection
         continue
       }
       if (failed) {
@@ -184,10 +231,13 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
       }
     }
     expect(failingRows, `Unexpected failing ACVP rows:\n${failingRows.join('\n')}`).toEqual([])
-    // The known-red finding is still present (3 decapsulation-key + 3
-    // encapsulation-key checks). If this drops, the engine was fixed: delete
-    // the KNOWN_RED_ROWS entry above.
-    expect(knownRedSeen, 'KNOWN_RED_ROWS entry is stale').toHaveLength(6)
+    // Every known-red finding is still present at exactly its recorded count.
+    // If one drops, the engine was fixed: narrow or delete its KNOWN_RED_ROWS
+    // entry and close its open gap with the bundle commit as evidence.
+    expect(
+      Object.fromEntries(KNOWN_RED_ROWS.map((k, i) => [k.why, knownRedSeen[i]])), // eslint-disable-line security/detect-object-injection
+      'KNOWN_RED_ROWS entry is stale'
+    ).toEqual(Object.fromEntries(KNOWN_RED_ROWS.map((k) => [k.why, k.count])))
   })
 
   test('running a single category runs only that category, and a helper shared across two categories stays in scope', async ({
