@@ -67,6 +67,8 @@ then `npm run gate:cacp` (see GitHub `gate-cacp`; here it runs against the real 
   - `audit:migrate-proof` — no product claim without evidence.
   - `audit:enrichment-freshness` — enrichment `verify:` steps ran within their window.
   - `gen:timeline-facts:check` — `timelineFacts.generated.ts` matches the CSV.
+  - `audit:validation-manifest` — every `src/data/acvp` vector file is registered in `src/data/validation/vector-manifest.json` with a matching SHA-256, a known evidence class, NIST upstream commit/path/date/hash, registered cases and lineage, and every in-hub copy of a vector (templates, snapshots, `kat/`) is declared and still equal. Local only: `--cross-repo ../pqctoday-hsm` reports sibling-repo copies.
+  - `gen:validation-counts:check` — `validation-counts.generated.json` (the numbers the deck and UI quote) matches the manifest.
   - `validate:data:without-priv` — the unified validator minus the checks that need gitignored evidence caches (N18/N22/MP-2/TP-1). Carries TP-2/TP-3.
 - `verify-attestations` — signatures on shipped trust artifacts.
 - `build` — clean-checkout `tsc -b` + vite + Playwright prerender + precache/TLA budgets; on main its `dist/` is uploaded for deploy.
