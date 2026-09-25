@@ -670,7 +670,7 @@ const Step4AppPagesGuide: React.FC = () => (
             n: 3,
             title: 'CMVP lab validates module',
             body: 'Certification body',
-            desc: 'An NVLAP-accredited lab tests the HSM firmware; CMVP (NIST/CSE) issues a FIPS 140-3 certificate. Takes 18–36 months.',
+            desc: 'An NVLAP-accredited lab tests the HSM against FIPS 140-3; CMVP (NIST/CSE) reviews the report and issues the certificate. The time this takes varies; the CMVP Modules in Process list shows where a submission is.',
           },
           {
             n: 4,
@@ -682,7 +682,7 @@ const Step4AppPagesGuide: React.FC = () => (
             n: 5,
             title: 'Agency procurement requires CMVP certificate',
             body: 'Procurement',
-            desc: 'Federal agency buyers verify the vendor product has a current CMVP certificate and the certificate covers FIPS 203 (ML-KEM) at the required security level.',
+            desc: 'Federal agency buyers verify the product uses a module with an active CMVP certificate whose approved-algorithm list includes ML-KEM (with the parameter set they need, e.g. ML-KEM-1024 for CNSA 2.0), used in its validated configuration. The certificate states one overall security level for the module; it does not assign a level to each algorithm.',
           },
         ].map((step) => (
           <div key={step.n} className="flex gap-3 bg-muted/50 rounded-lg p-3">
@@ -700,8 +700,10 @@ const Step4AppPagesGuide: React.FC = () => (
           <p className="text-xs text-muted-foreground">
             <AlertTriangle size={12} className="inline text-status-warning mr-1" />
             <strong className="text-foreground">CMVP backlog warning:</strong> FIPS 140-3 validation
-            takes 18–36 months. PQC-first certificates only began appearing in late 2024. Plan
-            procurement timelines accounting for this certification lag.
+            can take a long time, and a place in the Modules in Process queue is not evidence of the
+            outcome. Module certificates that list ML-KEM or ML-DSA as approved algorithms exist,
+            but most active certificates list none. Plan procurement timelines around this
+            certification lag.
           </p>
         </div>
       </div>

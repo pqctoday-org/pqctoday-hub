@@ -51,7 +51,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 ### Certification Bodies
 
-**CMVP** — Joint NIST/CSE (Canada) program. Validates cryptographic module implementations against FIPS 140-3. Required for US federal procurement under FISMA. Validation takes 18–36 months. ACVP handles individual algorithm testing (FIPS 203/204/205 test vectors).
+**CMVP** — Joint NIST/CSE (Canada) program. Validates cryptographic module implementations against FIPS 140-3. Required for US federal procurement under FISMA. Validation time varies by module and queue (the public Modules in Process list shows each submission's status; a queue position is not evidence of the outcome). CAVP, tested through ACVP, handles individual algorithm testing (FIPS 203/204/205 test vectors); an algorithm certificate is not a module certificate.
 
 **ENISA** — EU Agency for Cybersecurity. Manages EUCC (EU Cybersecurity Certification Scheme — the EU adaptation of Common Criteria). Issues certificates valid across all EU member states. Maintains the Agreed Cryptographic Mechanisms (ACM) list specifying approved PQC algorithms.
 
@@ -108,7 +108,7 @@ Each framework's `enforcement_body` column maps to organizations in this module:
 
 ### Procurement Pipeline
 
-NIST FIPS 203 → ACVP test vectors → CMVP module certificate → CNSA 2.0 mandate → federal procurement. Note: CMVP backlog = 18–36 months.
+NIST FIPS 203 → ACVP test vectors → CMVP module certificate → CNSA 2.0 mandate → federal procurement. Note: the CMVP backlog is a critical-path dependency; a module certificate states one overall security level and lists its approved algorithms — it does not assign a level to each algorithm.
 
 ---
 
