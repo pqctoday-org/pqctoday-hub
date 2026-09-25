@@ -1,0 +1,144 @@
+// SPDX-License-Identifier: GPL-3.0-only
+import { describe, expect, it } from 'vitest'
+import fs from 'fs'
+import path from 'path'
+import {
+  MATRIX_REL,
+  PUBLIC_DIR_REL,
+  baselineWaivers,
+  loadInputs,
+  renderOutputs,
+} from './generate-coverage-matrix'
+import { buildCoverageMatrix, ENGINES } from '../src/data/validation/coverageModel'
+import { TEST_REGISTRY } from '../src/data/validation/testRegistry'
+import { VALIDATION_DISCLAIMER } from '../src/data/validationDisclaimer'
+
+const REPO = process.cwd()
+const inputs = loadInputs()
+const { matrix, gate, files } = renderOutputs(inputs)
+
+describe('generate-coverage-matrix (committed inputs)', () => {
+  it('the committed outputs are exactly what the inputs generate (the --check contract)', () => {
+    for (const [rel, text] of Object.entries(files)) {
+      expect(fs.readFileSync(path.join(REPO, rel), 'utf8'), rel).toBe(text)
+    }
+    expect(Object.keys(files).sort()).toEqual(
+      [
+        MATRIX_REL,
+        `${PUBLIC_DIR_REL}/coverage-matrix.html`,
+        `${PUBLIC_DIR_REL}/coverage-matrix.json`,
+        `${PUBLIC_DIR_REL}/coverage-matrix.md`,
+      ].sort()
+    )
+  })
+
+  it('passes the coverage-diff gate', () => {
+    expect(gate.errors).toEqual([])
+  })
+
+  it('has one capability row set per engine inventory and a denominator that partitions', () => {
+    for (const e of ENGINES) {
+      const t = matrix.totals.byEngine[e] // eslint-disable-line security/detect-object-injection
+      expect(t.advertisedCells + t.unsupportedCells).toBe(matrix.rows.length)
+      expect(t.overall.covered + t.overall.sampled + t.overall.untested).toBe(t.advertisedCells)
+      expect(matrix.engines[e].mechanismCount).toBe(
+        inputs.inventory.engines[e].inventory.mechanismCount // eslint-disable-line security/detect-object-injection
+      )
+    }
+  })
+
+  it('every export carries the §2.2 disclaimer and the numerator/denominator definitions', () => {
+    for (const ext of ['md', 'html']) {
+      const text = files[`${PUBLIC_DIR_REL}/coverage-matrix.${ext}`]
+      expect(text).toContain(VALIDATION_DISCLAIMER)
+      expect(text).toMatch(/Denominator \(per engine\) = advertised capability cells/)
+      expect(text).toMatch(/Numerators \(per engine, per polarity\)/)
+    }
+    expect(files[`${PUBLIC_DIR_REL}/coverage-matrix.html`]).not.toMatch(/<script/i)
+  })
+
+  it('the recorded C++ ECDSA P-521 failure is an open gap, never a pass', () => {
+    const r = matrix.rows.find((x) => x.key === 'CKM_ECDSA_SHA512|verify|P-521|*')!
+    expect(r.engines.cpp.run).toEqual({ pass: 0, fail: 1 })
+    expect(r.engines.rust.run).toEqual({ pass: 1, fail: 0 })
+    expect(r.parity.positive).toBe('divergent')
+    expect(matrix.openGaps.some((g) => g.id.startsWith('recorded-fail:acvp.33#'))).toBe(true)
+  })
+
+  it('native and hardware are never counted as pass', () => {
+    for (const e of ENGINES) {
+      const a = matrix.totals.byEngine[e].byArtifact // eslint-disable-line security/detect-object-injection
+      expect(a.native).toMatchObject({ status: 'not-run', passedCells: 0 })
+      expect(a.hardware).toMatchObject({ status: 'not-run', passedCells: 0 })
+    }
+  })
+
+  it('does not register katRunner kinds observed to fail on the engine that runs them', () => {
+    const ids = TEST_REGISTRY.map((t) => t.id)
+    for (const k of [
+      'aescbc-decrypt',
+      'hmac-verify',
+      'hmac-generate',
+      'pbkdf2-derive',
+      'aes-kwp-wrap',
+    ]) {
+      expect(ids).not.toContain(`kat.${k}`)
+    }
+  })
+
+  it('every waiver has reason, owner and date, and none is an unreviewed approval', () => {
+    for (const w of inputs.waivers.waivers) {
+      expect(w.reason.length).toBeGreaterThan(10)
+      expect(w.owner).toBeTruthy()
+      expect(w.date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+      expect(['approved', 'baseline-pending-review']).toContain(w.status)
+    }
+  })
+
+  it('the baseline-waiver printer reproduces the committed waivers (no silent widening)', () => {
+    const printed = baselineWaivers(inputs, '2026-09-24')
+    const cells = (f: typeof printed) =>
+      f.waivers
+        .flatMap((w) => w.engines.flatMap((e) => w.cells.map((c) => `${e}|${w.mechanism}|${c}`)))
+        .sort()
+    expect(cells(printed)).toEqual(cells(inputs.waivers))
+  })
+})
+
+describe('generate-coverage-matrix — sabotage on a copy of the real inventory', () => {
+  it('adding one advertised mechanism without a test or waiver fails the gate', () => {
+    const copy = structuredClone(inputs)
+    copy.inventory.engines.rust.inventory.mechanisms.push({
+      typeHex: '0x80009999',
+      name: 'CKM_SABOTAGE_FAKE',
+      family: 'symmetric',
+      ulMinKeySize: 16,
+      ulMaxKeySize: 32,
+      flagNames: ['CKF_SIGN'],
+      requiredOperations: ['sign'],
+    })
+    copy.registry = inputs.registry
+    copy.manifestCases = inputs.manifestCases
+    const { gate: g } = buildCoverageMatrix(copy)
+    expect(g.errors).toContain(
+      'rust: advertised mechanism CKM_SABOTAGE_FAKE is not in capability-map.json'
+    )
+    expect(g.errors).toContain(
+      'rust: advertised capability CKM_SABOTAGE_FAKE|sign|*|* has no registered test and no approved waiver'
+    )
+  })
+
+  it('adding one declared parameter set inside an advertised range fails the gate', () => {
+    const copy = structuredClone(inputs)
+    copy.registry = inputs.registry
+    copy.manifestCases = inputs.manifestCases
+    copy.capabilityMap.parameterSetGroups['ML-DSA'].sets.push({
+      id: 'ML-DSA-SABOTAGE',
+      keySize: 2000,
+    })
+    const { gate: g } = buildCoverageMatrix(copy)
+    expect(g.errors).toContain(
+      'cpp: advertised capability CKM_ML_DSA|verify|ML-DSA-SABOTAGE|* has no registered test and no approved waiver'
+    )
+  })
+})
