@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "12e957ba8246680f070e258e6169d2a941ae75cf5f781315f6ae0e2b8d5ea770",
-    "registrySha256": "fcc654401cc9d90b44fdb117aec31d8d7c862f0b14504b9f3005aab3a4d2da40"
+    "manifestSha256": "5caa0c62d14c7e80fb8892a6ef9e9219208169ca892dee8b9c5bc1a67d8e5f3b",
+    "registrySha256": "5438ea086a8f2c1f007dbcb51034dfad479c1f35cdd9ef00e59ae0a01970fa22"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
@@ -3426,6 +3426,7 @@
     "acvp/aesctr_test.json": "published-standard-kat",
     "acvp/aesgcm_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/aesgcm_test.json": "independent-oracle",
+    "acvp/aeskw_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/aeskw_test.json": "published-standard-kat",
     "acvp/composite-sigs-jose-kat.json": "functional-round-trip",
     "acvp/cose-dilithium-11-jose-kat.json": "published-standard-kat",
@@ -3456,6 +3457,7 @@
     "acvp/pbkdf2_test.json": "independent-oracle",
     "acvp/rsa_oaep_test.json": "independent-oracle",
     "acvp/rsapss_test.json": "independent-oracle",
+    "acvp/sha_acvp_boundary_test.json": "nist-acvp-reference-sample",
     "acvp/sha256_test.json": "nist-acvp-reference-sample",
     "acvp/sha3_256_test.json": "nist-acvp-reference-sample",
     "acvp/sha3_512_test.json": "nist-acvp-reference-sample",

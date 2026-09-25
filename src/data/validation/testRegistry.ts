@@ -191,6 +191,19 @@ const ECDSA_MECH: Record<string, string> = {
 /** Curves in the capability map's EC parameter-set group (P-224 is not one). */
 const EC_DECLARED = new Set(['P-256', 'P-384', 'P-521', 'secp256k1'])
 const hashSlug = (h: string) => h.toLowerCase().replace('/', '-')
+/** WS-E: ACVP hashAlg → CKM_<hash> digest (mirrors sections/shaAcvp.ts). */
+const DIGEST_MECH: Record<string, string> = {
+  'SHA2-224': 'CKM_SHA224',
+  'SHA2-256': 'CKM_SHA256',
+  'SHA2-384': 'CKM_SHA384',
+  'SHA2-512': 'CKM_SHA512',
+  'SHA2-512/224': 'CKM_SHA512_224',
+  'SHA2-512/256': 'CKM_SHA512_256',
+  'SHA3-224': 'CKM_SHA3_224',
+  'SHA3-256': 'CKM_SHA3_256',
+  'SHA3-384': 'CKM_SHA3_384',
+  'SHA3-512': 'CKM_SHA3_512',
+}
 const eddsaScheme = (curve: string, preHash: boolean) =>
   `${curve === 'ED-25519' ? 'Ed25519' : 'Ed448'}${preHash ? 'ph' : ''}`
 
@@ -881,6 +894,25 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     'SHA3-512 digest',
     digestCases('sha3_512_test', sha3_512V, 'CKM_SHA3_512', 'sha3-512')
   ),
+  acvp(
+    '10f',
+    '§10f (sections/shaAcvp.ts)',
+    'SHA-2 / SHA-3 NIST digests at the empty, shortest, block-boundary and longest message lengths, plus standard MCT (outer iteration 0 of 100)',
+    casesOf('sha_acvp_boundary_test').map((c) => {
+      const hashAlg = param(c, 'hashAlg')
+      const mech = DIGEST_MECH[hashAlg]
+      if (!mech) throw new Error(`testRegistry: no digest mechanism for ${hashAlg}`)
+      const mct = c.testType === 'MCT'
+      return mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x(mech, 'digest')],
+        `sha-${mct ? 'mct' : 'nist'}-${hashSlug(hashAlg)}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    'MCT cases check the first of the 100 upstream outer iterations only (1000 chained C_Digest calls). Alternate-version MCT and LDT groups are notExecuted skip rows.'
+  ),
   acvp('11', '§11', 'AES-CBC-256 decrypt (raw CKM_AES_CBC)', [
     mc(
       'aescbc_test#/testGroups/0/tests/0',
@@ -985,6 +1017,23 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       { rowId: 'aeskwp-func-{engine}' }
     ),
   ]),
+  acvp(
+    '20b',
+    '§20b (sections/aesKwAcvp.ts)',
+    'AES-KW / AES-KWP NIST reference samples: wrap byte-match, unwrap byte-match, upstream integrity failures (C_UnwrapKey refused), AES-128/192/256',
+    casesOf('aeskw_acvp_test').map((c) => {
+      const mode = param(c, 'mode')
+      const mech = mode === 'KW' ? 'CKM_AES_KEY_WRAP' : 'CKM_AES_KEY_WRAP_KWP'
+      return mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x(mech, c.operation, `AES-${param(c, 'keyLen')}`)],
+        `aes${mode.toLowerCase()}-nist-k${param(c, 'keyLen')}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    'kwCipher=inverse groups are notExecuted skip rows (no PKCS #11 mechanism).'
+  ),
   acvp('21', '§21', 'SLH-DSA-SHA2-128s context binding', [
     lc(
       'acvp.21',
