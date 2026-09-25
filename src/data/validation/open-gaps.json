@@ -139,8 +139,8 @@
     },
     {
       "id": "rust-mlkem-no-key-input-checks",
-      "title": "Rust engine accepts all 6 invalid NIST ML-KEM encapsulation/decapsulation keys",
-      "detail": "The NIST ACVP ML-KEM encapDecap VAL key-check cases (mlkem_encapdecap_val_test: modified H, ek values too large) are accepted by the Rust engine: its C_EncapsulateKey / C_DecapsulateKey paths perform no FIPS 203 §7.2 encapsulation-key or §7.3 decapsulation-key input checks (bundle 417c47a2; unchanged on pqctoday-hsm origin/main). The workbench rows stay failing on Rust (acvp.07b.keycheck). Engine defect — not patched in the hub.",
+      "title": "Rust engine accepts every invalid NIST ML-KEM encapsulation/decapsulation key (18 of 18)",
+      "detail": "The NIST ACVP ML-KEM encapDecap VAL key-check cases (mlkem_encapdecap_val_test: modified H, ek values too large) are accepted by the Rust engine: its C_EncapsulateKey / C_DecapsulateKey paths perform no FIPS 203 §7.2 encapsulation-key or §7.3 decapsulation-key input checks (bundle 417c47a2; unchanged on pqctoday-hsm origin/main). The workbench rows stay failing on Rust (acvp.07b.keycheck). Since gap-closure P5 the 12 further invalid encapsulation keys of mlkem_ekcheck_depth_test (every remaining testPassed=false case of the upstream encapsulationKeyCheck groups) are accepted as well (acvp.07c.ekcheck-depth); the C++ engine rejects all 18. The fix is on pqctoday-hsm fix/mlkem-input-checks-0925 and reaches these rows with the next WASM rebuild. Engine defect — not patched in the hub.",
       "planItem": "D1-5",
       "owner": "unassigned",
       "status": "open",
