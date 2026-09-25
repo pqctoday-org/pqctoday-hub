@@ -213,6 +213,30 @@ const DIGEST_MECH: Record<string, string> = {
 const eddsaScheme = (curve: string, preHash: boolean) =>
   `${curve === 'ED-25519' ? 'Ed25519' : 'Ed448'}${preHash ? 'ph' : ''}`
 
+/** P5: ACVP hashAlg → CKM_ECDSA_<hash> for the sigGen verify-back rows (mirrors sections/ecKeyVerSigGenAcvp.ts). */
+const ECDSA_SIGGEN_MECH: Record<string, string> = {
+  'SHA2-224': 'CKM_ECDSA_SHA224',
+  'SHA2-256': 'CKM_ECDSA_SHA256',
+  'SHA2-384': 'CKM_ECDSA_SHA384',
+  'SHA2-512': 'CKM_ECDSA_SHA512',
+  'SHA3-224': 'CKM_ECDSA_SHA3_224',
+  'SHA3-256': 'CKM_ECDSA_SHA3_256',
+  'SHA3-384': 'CKM_ECDSA_SHA3_384',
+  'SHA3-512': 'CKM_ECDSA_SHA3_512',
+}
+const edCurve = (curve: string) => (curve === 'ED-25519' ? 'Ed25519' : 'Ed448')
+/** P5: ACVP KDF 1.0 kdfMode → PKCS#11 KBKDF mechanism (mirrors sections/kdfDeriveAcvp.ts). */
+const KBKDF_MECH: Record<string, string> = {
+  counter: 'CKM_SP800_108_COUNTER_KDF',
+  feedback: 'CKM_SP800_108_FEEDBACK_KDF',
+  'double pipeline iteration': 'CKM_SP800_108_DOUBLE_PIPELINE_KDF',
+}
+const NOBLE_CURVES = {
+  citation:
+    '@noble/curves 2.x (package.json dependency) p256/p384/p521 ECDSA verify over a @noble/hashes digest, FIPS 186-5 §6.4.2',
+  url: 'https://github.com/paulmillr/noble-curves',
+}
+
 const MLDSA_SETS = ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'] as const
 const MLKEM_SETS = ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024'] as const
 const SLH_SETS = [
@@ -452,6 +476,76 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       )
     }),
     'SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF).'
+  ),
+  acvp(
+    '04e.keyver',
+    '§4e.1 (sections/ecKeyVerSigGenAcvp.ts)',
+    'ECDSA / EdDSA NIST keyVer: the key is used (sign with the upstream d, verify with the point) — a valid key must verify, an invalid point must be refused with a key error',
+    [...casesOf('ecdsa_keyver_acvp_test'), ...casesOf('eddsa_keyver_acvp_test')].map((c) => {
+      const curve = param(c, 'curve')
+      const ec = c.caseId.startsWith('ecdsa_')
+      const mech = ec ? 'CKM_ECDSA_SHA256' : 'CKM_EDDSA'
+      const ps = ec ? curve : edCurve(curve)
+      return mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        c.expectation === 'positive'
+          ? [x(mech, 'sign', ps), x(mech, 'verify', ps)]
+          : [x(mech, 'verify', ps)],
+        `${ec ? 'ecdsa' : 'eddsa'}-keyver-nist-${curve}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    'A negative passes when the invalid point is refused at C_CreateObject, C_VerifyInit or C_Verify with a code other than CKR_SIGNATURE_INVALID / CKR_SIGNATURE_LEN_RANGE.'
+  ),
+  acvp(
+    '04e.ecdsa-siggen',
+    '§4e.2 (sections/ecKeyVerSigGenAcvp.ts)',
+    'ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)',
+    casesOf('ecdsa_siggen_acvp_test').flatMap((c) => {
+      const curve = param(c, 'curve')
+      const hashAlg = param(c, 'hashAlg')
+      const mech = ECDSA_SIGGEN_MECH[hashAlg]
+      if (!mech) throw new Error(`testRegistry: no CKM_ECDSA_<hash> for ${hashAlg}`)
+      const base = `ecdsa-siggen-${curve}-${hashAlg.toLowerCase()}-${upstreamIds(c)}`
+      return [
+        mc(
+          c.caseId,
+          RT,
+          'positive',
+          [x(mech, 'sign', curve), x(mech, 'verify', curve)],
+          `${base}-rt-{engine}`
+        ),
+        lc(
+          'acvp.04e.ecdsa-siggen',
+          `${curve}-${hashAlg}-oracle`,
+          ORACLE,
+          'positive',
+          [x(mech, 'sign', curve)],
+          {
+            rowId: `${base}-oracle-{engine}`,
+            parameters: { messageBytes: Number(param(c, 'messageBytes')) },
+            source: NOBLE_CURVES,
+            note: `The engine signature over ${c.caseId} (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.`,
+          }
+        ),
+      ]
+    }),
+    'The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped).'
+  ),
+  acvp(
+    '04e.eddsa-siggen',
+    '§4e.3 (sections/ecKeyVerSigGenAcvp.ts)',
+    'EdDSA NIST sigGen byte-match (deterministic): Ed25519 / Ed448, pure and preHash, with the upstream contexts',
+    casesOf('eddsa_siggen_acvp_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_EDDSA', 'sign', edCurve(param(c, 'curve')))],
+        `eddsa-siggen-nist-${eddsaScheme(param(c, 'curve'), c.parameters.preHash === true)}-${upstreamIds(c)}-{engine}`
+      )
+    )
   ),
   acvp(
     '05',
@@ -1294,6 +1388,45 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       )
     ),
     'The Rust engine implements only the HMAC-SHA-256/384/512 PRFs and refuses fewer than 1000 iterations (open gaps rust-pbkdf2-prf-limited, pbkdf2-min-iterations-divergence); its rows are recorded as fails.'
+  ),
+  acvp(
+    '18c.hkdf',
+    '§18c.1 (sections/kdfDeriveAcvp.ts)',
+    'HKDF NIST reference samples (KDA-HKDF-Sp800-56Cr2): IKM = Z‖T, salt, constructed fixedInfo; AFT byte-match and VAL testPassed=false (output must differ)',
+    casesOf('hkdf_acvp_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x('CKM_HKDF_DERIVE', 'derive')],
+        `hkdf-nist-${param(c, 'hmacAlg').toLowerCase().replace('/', '-')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
+  acvp(
+    '18c.kbkdf',
+    '§18c.2 (sections/kdfDeriveAcvp.ts)',
+    'SP 800-108 KBKDF NIST reference samples (KDF 1.0): counter / feedback / double pipeline × every Table 196 PRF, every counter location for HMAC-SHA2-256 and CMAC-AES128; keyOut byte-match',
+    casesOf('kbkdf_acvp_test').map((c) => {
+      const mode = param(c, 'kdfMode')
+      const mech = KBKDF_MECH[mode]
+      if (!mech) throw new Error(`testRegistry: no KBKDF mechanism for ${mode}`)
+      return mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x(mech, 'derive')],
+        `kbkdf-nist-${mode.split(' ')[0]}-${param(c, 'macMode').toLowerCase().replace('/', '-')}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    'The CK_PRF_DATA_PARAM layout follows PKCS#11 v3.2 §6.42.3–6.42.5 (ITERATION_VARIABLE is mandatory in every mode). Open gaps cpp-kbkdf-counter-position-ignored and rust-kbkdf-iteration-variable-rejected record the engine rows that fail.'
+  ),
+  acvp(
+    '18c.skips',
+    '§18c.3 (sections/kdfDeriveAcvp.ts)',
+    'ANSI X9.63 KDF on a caller-supplied shared secret — honest unsupported row',
+    [],
+    'Skip rows are evidence of nothing; the capability stands as the capability-map declaredUnreachable row x963-kdf-caller-z (shown as unsupported).'
   ),
   acvp('19', '§19', 'AES-KW-256 wrap', [
     mc(

@@ -1587,6 +1587,15 @@
       "parameterSets": "ML-DSA",
       "reason": "No PKCS #11 v3.2 mechanism exposes the internal interface on a raw M′ (CKM_ML_DSA always applies the external domain-separation prefix); NIST groups with signatureInterface=internal and externalMu=false are listed in the vector files notExecuted.",
       "openGap": "mldsa-internal-interface"
+    },
+    {
+      "id": "x963-kdf-caller-z",
+      "algorithm": "ANSI X9.63 KDF on a caller-supplied shared secret Z",
+      "revision": "ANSI X9.63 / NIST ACVP kdf-components-ansix9.63-1.0",
+      "operations": ["derive"],
+      "parameterSets": "",
+      "reason": "PKCS #11 v3.2 applies the X9.63 KDF only as the CK_EC_KDF_TYPE of the ECDH derivations (§6.3.16, CKD_<hash>_KDF), to the Z the token computes from its own key pair and the peer point; no mechanism takes a caller-supplied Z, so the NIST (Z, sharedInfo) -> keyData cases cannot be driven (workbench skip row x963-kdf-unsupported).",
+      "openGap": "x963-kdf-caller-z-no-mechanism"
     }
   ]
 }

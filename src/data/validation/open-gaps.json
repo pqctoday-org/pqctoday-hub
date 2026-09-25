@@ -406,6 +406,60 @@
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ + Rust"
+    },
+    {
+      "id": "x963-kdf-caller-z-no-mechanism",
+      "title": "ANSI X9.63 KDF on a caller-supplied shared secret has no PKCS #11 mechanism",
+      "detail": "PKCS #11 v3.2 defines the X9.63 KDF only as the CK_EC_KDF_TYPE of CKM_ECDH1_DERIVE and related ECDH mechanisms (§6.3.16), applied to the shared secret the token derives from its own key pair; no mechanism accepts a caller-supplied Z, so the NIST kdf-components-ansix9.63-1.0 cases (Z, sharedInfo -> keyData) cannot be executed. Shown as the workbench skip row x963-kdf-unsupported and the capability-map declaredUnreachable row x963-kdf-caller-z. The KDF itself is exercised inside ECDH derivation (section 25, round-trip only).",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "accepted-limitation",
+      "scope": "C++ + Rust (specification limit)"
+    },
+    {
+      "id": "cpp-kbkdf-counter-position-ignored",
+      "title": "C++: SP 800-108 KDFs ignore where the caller places the counter in the PRF input",
+      "detail": "With the PKCS #11 v3.2 §6.42 data-parameter layout the NIST KDF 1.0 cases require, the C++ engine derives the wrong key whenever the counter is not in its fixed position: counter mode with the ITERATION_VARIABLE after or in the middle of the fixed data, and feedback / double-pipeline with a COUNTER before the chaining value or after the fixed data (kbkdf_acvp_test, 12 rows per run: HMAC-SHA2-256 and CMAC-AES128). 'Before fixed data' (and no counter) layouts byte-match NIST for every PRF. The engine appears to place the counter first (counter mode) or right after K(i-1)/A(i) (feedback / double pipeline) regardless of the CK_PRF_DATA_PARAM order. Engine defect — not patched in the hub.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)"
+    },
+    {
+      "id": "rust-kbkdf-iteration-variable-rejected",
+      "title": "Rust: feedback and double-pipeline KBKDF reject the mandatory ITERATION_VARIABLE data parameter",
+      "detail": "PKCS #11 v3.2 §6.42.4/§6.42.5 make CK_SP800_108_ITERATION_VARIABLE mandatory in feedback and double-pipeline mode (pValue NULL, ulValueLen 0; §6.42.2). The Rust engine returns CKR_MECHANISM_PARAM_INVALID for every such layout, so all 44 feedback / double-pipeline NIST KDF 1.0 rows fail. Probed 2026-09-25: without the ITERATION_VARIABLE entry the engine accepts the parameters and reproduces NIST except where the counter precedes the chaining value. Counter mode (ITERATION_VARIABLE with a counter format) is correct in every location. The hub keeps the specification layout; the existing sections 27/29 call the feedback mechanism without the ITERATION_VARIABLE. Engine defect — not patched in the hub.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)"
+    },
+    {
+      "id": "cpp-ec-public-key-not-validated",
+      "title": "C++: invalid ECDSA / EdDSA public points are imported and used without validation",
+      "detail": "The NIST keyVer cases with a point not on the curve or a coordinate out of range (ecdsa_keyver_acvp_test P-256/384/521, eddsa_keyver_acvp_test Ed25519/Ed448: 10 points) are accepted by C_CreateObject and C_VerifyInit, and C_Verify then returns CKR_SIGNATURE_INVALID as for any wrong signature — no FIPS 186-5 / SP 800-56A public-key validation happens on import or use (PKCS #11 v3.2 §4.1.1 would return CKR_ATTRIBUTE_VALUE_INVALID at creation). Engine defect — not patched in the hub.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)"
+    },
+    {
+      "id": "rust-ec-public-key-refused-late",
+      "title": "Rust: invalid public points are refused only at C_Verify, with a code C_Verify does not list",
+      "detail": "The Rust engine imports the 10 invalid NIST keyVer points (C_CreateObject CKR_OK) and accepts C_VerifyInit, then C_Verify returns CKR_KEY_TYPE_INCONSISTENT — not among the §5.15.2 C_Verify return values. The keyVer rows pass (the point is refused with a key error), but validation belongs at C_CreateObject (§4.1.1 CKR_ATTRIBUTE_VALUE_INVALID) or C_VerifyInit.",
+      "planItem": "E / G-8",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)"
+    },
+    {
+      "id": "rust-eddsa-ph-context-ignored",
+      "title": "Rust: Ed25519ph / Ed448ph signing ignores the CK_EDDSA_PARAMS context",
+      "detail": "C_Sign(CKM_EDDSA, phFlag = true, non-empty context) on the Rust engine produces the Ed25519ph / Ed448ph signature for an EMPTY context: all 8 preHash NIST EDDSA-SigGen-1.0 cases (contexts 96–248 bytes) differ from NIST, and @noble/curves ed25519ph verifies the Rust output without the context and rejects it with it. Pure Ed25519 / Ed448 with contexts byte-match. The C++ engine matches all 16 cases. Engine defect — not patched in the hub.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)"
     }
   ]
 }

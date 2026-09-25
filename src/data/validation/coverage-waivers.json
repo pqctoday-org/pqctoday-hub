@@ -947,16 +947,6 @@
       "status": "baseline-pending-review"
     },
     {
-      "id": "baseline-CKM_SP800_108_DOUBLE_PIPELINE_KDF",
-      "mechanism": "CKM_SP800_108_DOUBLE_PIPELINE_KDF",
-      "engines": ["cpp", "rust"],
-      "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
       "id": "baseline-CKM_ECDH1_DERIVE-cpp",
       "mechanism": "CKM_ECDH1_DERIVE",
       "engines": ["cpp"],
