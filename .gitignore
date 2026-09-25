@@ -802,3 +802,9 @@ src/.!*!.DS_Store
 # file-not-found for everyone else.
 !scripts/generate-coverage-matrix.ts
 !scripts/generate-coverage-matrix.test.ts
+# WS-J release evidence report (gen:release-evidence:check, in gate:data:audits)
+# and the release freeze manifest tool (release:freeze) + their tests.
+!scripts/generate-release-evidence.ts
+!scripts/generate-release-evidence.test.ts
+!scripts/release-freeze.ts
+!scripts/release-freeze.test.ts
