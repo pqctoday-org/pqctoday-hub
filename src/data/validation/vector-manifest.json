@@ -975,6 +975,298 @@
       "publishabilityGaps": []
     },
     {
+      "id": "aescbc_mct_full_test",
+      "path": "src/data/acvp/aescbc_mct_full_test.json",
+      "sha256": "c465305023f372aa9f67ccb78a91fc4043a47444d3a85ea43c6681ee507917eb",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+          "upstreamSha256": "b6d11e684b279a384f27f4f711319dc2542bbe55f568bd8f11d5567a1df4a1df",
+          "retrieved": "2026-09-25",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-25",
+          "method": "Re-fetched the upstream file at the pinned commit: its SHA-256 equals the recorded upstreamSha256, and every field of every local case equals the upstream case with the same tcId after the renames/normalizations recorded in lineage.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+              "sha256": "b6d11e684b279a384f27f4f711319dc2542bbe55f568bd8f11d5567a1df4a1df",
+              "retrieved": "2026-09-25"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/1/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/2/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/3/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/4/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/5/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "aescbc_mct_full_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "direction": "encrypt",
+            "keyLen": 128,
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 37,
+            "tcId": 2151
+          },
+          "lineage": ["aescbc-mct-full-test-1"]
+        },
+        {
+          "caseId": "aescbc_mct_full_test#/testGroups/1/tests/0",
+          "pointer": "/testGroups/1/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "direction": "encrypt",
+            "keyLen": 192,
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 38,
+            "tcId": 2152
+          },
+          "lineage": ["aescbc-mct-full-test-2"]
+        },
+        {
+          "caseId": "aescbc_mct_full_test#/testGroups/2/tests/0",
+          "pointer": "/testGroups/2/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "direction": "encrypt",
+            "keyLen": 256,
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 39,
+            "tcId": 2153
+          },
+          "lineage": ["aescbc-mct-full-test-3"]
+        },
+        {
+          "caseId": "aescbc_mct_full_test#/testGroups/3/tests/0",
+          "pointer": "/testGroups/3/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "direction": "decrypt",
+            "keyLen": 128,
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 40,
+            "tcId": 2154
+          },
+          "lineage": ["aescbc-mct-full-test-4"]
+        },
+        {
+          "caseId": "aescbc_mct_full_test#/testGroups/4/tests/0",
+          "pointer": "/testGroups/4/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "direction": "decrypt",
+            "keyLen": 192,
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 41,
+            "tcId": 2155
+          },
+          "lineage": ["aescbc-mct-full-test-5"]
+        },
+        {
+          "caseId": "aescbc_mct_full_test#/testGroups/5/tests/0",
+          "pointer": "/testGroups/5/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "direction": "decrypt",
+            "keyLen": 256,
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 42,
+            "tcId": 2156
+          },
+          "lineage": ["aescbc-mct-full-test-6"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "aescbc-mct-full-test-1",
+          "appliesTo": ["aescbc_mct_full_test#/testGroups/0/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT (encrypt, AES-128)",
+          "localOperation": "the AESAVS 6.4 MCT driven through PKCS#11 multi-part CBC; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 2151) taken from upstream tgId 37 (1 cases in that group; 2156 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of each of the six (direction x key length) MCT groups, with the full 100-entry resultsArray."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-mct-full-test-2",
+          "appliesTo": ["aescbc_mct_full_test#/testGroups/1/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT (encrypt, AES-192)",
+          "localOperation": "the AESAVS 6.4 MCT driven through PKCS#11 multi-part CBC; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 2152) taken from upstream tgId 38 (1 cases in that group; 2156 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of each of the six (direction x key length) MCT groups, with the full 100-entry resultsArray."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-mct-full-test-3",
+          "appliesTo": ["aescbc_mct_full_test#/testGroups/2/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT (encrypt, AES-256)",
+          "localOperation": "the AESAVS 6.4 MCT driven through PKCS#11 multi-part CBC; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 2153) taken from upstream tgId 39 (1 cases in that group; 2156 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of each of the six (direction x key length) MCT groups, with the full 100-entry resultsArray."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-mct-full-test-4",
+          "appliesTo": ["aescbc_mct_full_test#/testGroups/3/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT (decrypt, AES-128)",
+          "localOperation": "the AESAVS 6.4 MCT driven through PKCS#11 multi-part CBC; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 2154) taken from upstream tgId 40 (1 cases in that group; 2156 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of each of the six (direction x key length) MCT groups, with the full 100-entry resultsArray."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-mct-full-test-5",
+          "appliesTo": ["aescbc_mct_full_test#/testGroups/4/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT (decrypt, AES-192)",
+          "localOperation": "the AESAVS 6.4 MCT driven through PKCS#11 multi-part CBC; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 2155) taken from upstream tgId 41 (1 cases in that group; 2156 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of each of the six (direction x key length) MCT groups, with the full 100-entry resultsArray."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-mct-full-test-6",
+          "appliesTo": ["aescbc_mct_full_test#/testGroups/5/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT (decrypt, AES-256)",
+          "localOperation": "the AESAVS 6.4 MCT driven through PKCS#11 multi-part CBC; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 2156) taken from upstream tgId 42 (1 cases in that group; 2156 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of each of the six (direction x key length) MCT groups, with the full 100-entry resultsArray."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": []
+    },
+    {
       "id": "aescbc_test",
       "path": "src/data/acvp/aescbc_test.json",
       "sha256": "27a15b9cde4add9e70304774fd12711df31f61b7f39669a49364931857580dcb",
@@ -30774,6 +31066,576 @@
       "copies": [],
       "publishabilityGaps": [],
       "notes": "13 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): alternate-mct-not-implemented, ldt-expanded-message-too-large-for-the-workbench."
+    },
+    {
+      "id": "sha_mct_full_test",
+      "path": "src/data/acvp/sha_mct_full_test.json",
+      "sha256": "e8c6c982935f9d01db56c55878f10bd5903e5187a1c3c54a9661a7d9cf30fa05",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server SHA2-*-1.0 and SHA3-*-2.0 internalProjection.json @ 975de31e (10 files)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-256-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/SHA2-256-1.0/internalProjection.json",
+          "upstreamSha256": "a7e0bf4f5c661f1787b343bf3ae1a809b1e62f8fb2c8a627791510d03a570a6c",
+          "retrieved": "2026-09-25",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-256-1.0/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-25",
+          "method": "Fetched the upstream files at the pinned commit: SHA-256 recorded as upstreamSha256 (and per-group in _provenance.source_files); every local case was produced by a byte-copying subset script and re-compared field-by-field with the upstream case of the same tcId.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "SHA2-224-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-224-1.0/internalProjection.json",
+              "sha256": "288d0a4dbec49759c63462ca9e4bd82b794e27f50605c8fca7fad0a415649ca9",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA2-256-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-256-1.0/internalProjection.json",
+              "sha256": "a7e0bf4f5c661f1787b343bf3ae1a809b1e62f8fb2c8a627791510d03a570a6c",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA2-384-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-384-1.0/internalProjection.json",
+              "sha256": "b22d80da99444af78feecaaae49493ee6189f1e6675e49db8764fb77bf16e847",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA2-512-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-512-1.0/internalProjection.json",
+              "sha256": "2b514c517a2ef150d240efc52fdb2c4127925f0b4291b5a5b9153515e0ec7478",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA2-512-224-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-512-224-1.0/internalProjection.json",
+              "sha256": "b596a90659713c52091ea9946e80145aae016ef730c956e5ee4850cf112709a9",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA2-512-256-1.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-512-256-1.0/internalProjection.json",
+              "sha256": "fb813c4f42c748931978c4b5e6192d52ea156ff4e0797cbbebdf95458c816e5b",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA3-224-2.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-224-2.0/internalProjection.json",
+              "sha256": "9ae4b1480d15526b29498d442125dfcfe80d74fe74c1b56fa840b1fae702ae34",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA3-256-2.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-256-2.0/internalProjection.json",
+              "sha256": "dba4689436c7e440e61dc517210def3e8e09e50c0e9eff29ea66d89bdd0f2c63",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA3-384-2.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-384-2.0/internalProjection.json",
+              "sha256": "e9eae46bd676dc82e911dcc3af92ef0093e0118615b62ab431086fce47574396",
+              "retrieved": "2026-09-25"
+            },
+            {
+              "title": "SHA3-512-2.0",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-512-2.0/internalProjection.json",
+              "sha256": "b0521468a178f7fd362d63319aa69b708885d08f0c71cee99ac70729f5bdf64b",
+              "retrieved": "2026-09-25"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/1/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/2/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/3/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/4/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/5/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/6/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/7/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/8/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/9/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "sha_mct_full_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "SHA2-224",
+            "revision": "1.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA2-224",
+            "messageBytes": 28,
+            "blockBytes": 64,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 513
+          },
+          "lineage": ["sha-mct-full-test-1"]
+        },
+        {
+          "caseId": "sha_mct_full_test#/testGroups/1/tests/0",
+          "pointer": "/testGroups/1/tests/0",
+          "algorithm": {
+            "name": "SHA2-256",
+            "revision": "1.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA2-256",
+            "messageBytes": 436,
+            "blockBytes": 64,
+            "mctVersion": "alternate",
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 513
+          },
+          "lineage": ["sha-mct-full-test-2"]
+        },
+        {
+          "caseId": "sha_mct_full_test#/testGroups/2/tests/0",
+          "pointer": "/testGroups/2/tests/0",
+          "algorithm": {
+            "name": "SHA2-384",
+            "revision": "1.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA2-384",
+            "messageBytes": 48,
+            "blockBytes": 128,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 1025
+          },
+          "lineage": ["sha-mct-full-test-3"]
+        },
+        {
+          "caseId": "sha_mct_full_test#/testGroups/3/tests/0",
+          "pointer": "/testGroups/3/tests/0",
+          "algorithm": {
+            "name": "SHA2-512",
+            "revision": "1.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA2-512",
+            "messageBytes": 379,
+            "blockBytes": 128,
+            "mctVersion": "alternate",
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 1025
+          },
+          "lineage": ["sha-mct-full-test-4"]
+        },
+        {
+          "caseId": "sha_mct_full_test#/testGroups/4/tests/0",
+          "pointer": "/testGroups/4/tests/0",
+          "algorithm": {
+            "name": "SHA2-512/224",
+            "revision": "1.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA2-512/224",
+            "messageBytes": 28,
+            "blockBytes": 128,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 1025
+          },
+          "lineage": ["sha-mct-full-test-5"]
+        },
+        {
+          "caseId": "sha_mct_full_test#/testGroups/5/tests/0",
+          "pointer": "/testGroups/5/tests/0",
+          "algorithm": {
+            "name": "SHA2-512/256",
+            "revision": "1.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA2-512/256",
+            "messageBytes": 498,
+            "blockBytes": 128,
+            "mctVersion": "alternate",
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 1025
+          },
+          "lineage": ["sha-mct-full-test-6"]
+        },
+        {
+          "caseId": "sha_mct_full_test#/testGroups/6/tests/0",
+          "pointer": "/testGroups/6/tests/0",
+          "algorithm": {
+            "name": "SHA3-224",
+            "revision": "2.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA3-224",
+            "messageBytes": 28,
+            "blockBytes": 144,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 1259
+          },
+          "lineage": ["sha-mct-full-test-7"]
+        },
+        {
+          "caseId": "sha_mct_full_test#/testGroups/7/tests/0",
+          "pointer": "/testGroups/7/tests/0",
+          "algorithm": {
+            "name": "SHA3-256",
+            "revision": "2.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA3-256",
+            "messageBytes": 32,
+            "blockBytes": 136,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 1195
+          },
+          "lineage": ["sha-mct-full-test-8"]
+        },
+        {
+          "caseId": "sha_mct_full_test#/testGroups/8/tests/0",
+          "pointer": "/testGroups/8/tests/0",
+          "algorithm": {
+            "name": "SHA3-384",
+            "revision": "2.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA3-384",
+            "messageBytes": 48,
+            "blockBytes": 104,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 939
+          },
+          "lineage": ["sha-mct-full-test-9"]
+        },
+        {
+          "caseId": "sha_mct_full_test#/testGroups/9/tests/0",
+          "pointer": "/testGroups/9/tests/0",
+          "algorithm": {
+            "name": "SHA3-512",
+            "revision": "2.0"
+          },
+          "operation": "digest-mct",
+          "parameters": {
+            "hashAlg": "SHA3-512",
+            "messageBytes": 64,
+            "blockBytes": 72,
+            "mctVersion": "standard",
+            "outerIterationsChecked": 100
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 683
+          },
+          "lineage": ["sha-mct-full-test-10"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "sha-mct-full-test-1",
+          "appliesTo": ["sha_mct_full_test#/testGroups/0/tests/0"],
+          "upstreamOperation": "SHA2-224 MCT (standard version), SHA2-224-1.0",
+          "localOperation": "the ACVP MCT loop driven through C_Digest; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 513) taken from upstream tgId 2 of gen-val/json-files/SHA2-224-1.0/internalProjection.json (sha256 288d0a4dbec49759c63462ca9e4bd82b794e27f50605c8fca7fad0a415649ca9)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of every SHA-2 (1.0) and SHA-3 (2.0) sample, with the full 100-entry resultsArray: standard-version MCT for SHA2-224/384/512-224 and all SHA-3, alternate-version MCT for SHA2-256/512/512-256 (the only MCT version those samples register)."
+            }
+          ]
+        },
+        {
+          "id": "sha-mct-full-test-2",
+          "appliesTo": ["sha_mct_full_test#/testGroups/1/tests/0"],
+          "upstreamOperation": "SHA2-256 MCT (alternate version), SHA2-256-1.0",
+          "localOperation": "the ACVP MCT loop driven through C_Digest; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 513) taken from upstream tgId 2 of gen-val/json-files/SHA2-256-1.0/internalProjection.json (sha256 a7e0bf4f5c661f1787b343bf3ae1a809b1e62f8fb2c8a627791510d03a570a6c)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of every SHA-2 (1.0) and SHA-3 (2.0) sample, with the full 100-entry resultsArray: standard-version MCT for SHA2-224/384/512-224 and all SHA-3, alternate-version MCT for SHA2-256/512/512-256 (the only MCT version those samples register)."
+            }
+          ]
+        },
+        {
+          "id": "sha-mct-full-test-3",
+          "appliesTo": ["sha_mct_full_test#/testGroups/2/tests/0"],
+          "upstreamOperation": "SHA2-384 MCT (standard version), SHA2-384-1.0",
+          "localOperation": "the ACVP MCT loop driven through C_Digest; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 1025) taken from upstream tgId 2 of gen-val/json-files/SHA2-384-1.0/internalProjection.json (sha256 b22d80da99444af78feecaaae49493ee6189f1e6675e49db8764fb77bf16e847)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of every SHA-2 (1.0) and SHA-3 (2.0) sample, with the full 100-entry resultsArray: standard-version MCT for SHA2-224/384/512-224 and all SHA-3, alternate-version MCT for SHA2-256/512/512-256 (the only MCT version those samples register)."
+            }
+          ]
+        },
+        {
+          "id": "sha-mct-full-test-4",
+          "appliesTo": ["sha_mct_full_test#/testGroups/3/tests/0"],
+          "upstreamOperation": "SHA2-512 MCT (alternate version), SHA2-512-1.0",
+          "localOperation": "the ACVP MCT loop driven through C_Digest; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 1025) taken from upstream tgId 2 of gen-val/json-files/SHA2-512-1.0/internalProjection.json (sha256 2b514c517a2ef150d240efc52fdb2c4127925f0b4291b5a5b9153515e0ec7478)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of every SHA-2 (1.0) and SHA-3 (2.0) sample, with the full 100-entry resultsArray: standard-version MCT for SHA2-224/384/512-224 and all SHA-3, alternate-version MCT for SHA2-256/512/512-256 (the only MCT version those samples register)."
+            }
+          ]
+        },
+        {
+          "id": "sha-mct-full-test-5",
+          "appliesTo": ["sha_mct_full_test#/testGroups/4/tests/0"],
+          "upstreamOperation": "SHA2-512/224 MCT (standard version), SHA2-512-224-1.0",
+          "localOperation": "the ACVP MCT loop driven through C_Digest; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 1025) taken from upstream tgId 2 of gen-val/json-files/SHA2-512-224-1.0/internalProjection.json (sha256 b596a90659713c52091ea9946e80145aae016ef730c956e5ee4850cf112709a9)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of every SHA-2 (1.0) and SHA-3 (2.0) sample, with the full 100-entry resultsArray: standard-version MCT for SHA2-224/384/512-224 and all SHA-3, alternate-version MCT for SHA2-256/512/512-256 (the only MCT version those samples register)."
+            }
+          ]
+        },
+        {
+          "id": "sha-mct-full-test-6",
+          "appliesTo": ["sha_mct_full_test#/testGroups/5/tests/0"],
+          "upstreamOperation": "SHA2-512/256 MCT (alternate version), SHA2-512-256-1.0",
+          "localOperation": "the ACVP MCT loop driven through C_Digest; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 1025) taken from upstream tgId 2 of gen-val/json-files/SHA2-512-256-1.0/internalProjection.json (sha256 fb813c4f42c748931978c4b5e6192d52ea156ff4e0797cbbebdf95458c816e5b)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of every SHA-2 (1.0) and SHA-3 (2.0) sample, with the full 100-entry resultsArray: standard-version MCT for SHA2-224/384/512-224 and all SHA-3, alternate-version MCT for SHA2-256/512/512-256 (the only MCT version those samples register)."
+            }
+          ]
+        },
+        {
+          "id": "sha-mct-full-test-7",
+          "appliesTo": ["sha_mct_full_test#/testGroups/6/tests/0"],
+          "upstreamOperation": "SHA3-224 MCT (standard version), SHA3-224-2.0",
+          "localOperation": "the ACVP MCT loop driven through C_Digest; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 1259) taken from upstream tgId 2 of gen-val/json-files/SHA3-224-2.0/internalProjection.json (sha256 9ae4b1480d15526b29498d442125dfcfe80d74fe74c1b56fa840b1fae702ae34)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of every SHA-2 (1.0) and SHA-3 (2.0) sample, with the full 100-entry resultsArray: standard-version MCT for SHA2-224/384/512-224 and all SHA-3, alternate-version MCT for SHA2-256/512/512-256 (the only MCT version those samples register)."
+            }
+          ]
+        },
+        {
+          "id": "sha-mct-full-test-8",
+          "appliesTo": ["sha_mct_full_test#/testGroups/7/tests/0"],
+          "upstreamOperation": "SHA3-256 MCT (standard version), SHA3-256-2.0",
+          "localOperation": "the ACVP MCT loop driven through C_Digest; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 1195) taken from upstream tgId 2 of gen-val/json-files/SHA3-256-2.0/internalProjection.json (sha256 dba4689436c7e440e61dc517210def3e8e09e50c0e9eff29ea66d89bdd0f2c63)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of every SHA-2 (1.0) and SHA-3 (2.0) sample, with the full 100-entry resultsArray: standard-version MCT for SHA2-224/384/512-224 and all SHA-3, alternate-version MCT for SHA2-256/512/512-256 (the only MCT version those samples register)."
+            }
+          ]
+        },
+        {
+          "id": "sha-mct-full-test-9",
+          "appliesTo": ["sha_mct_full_test#/testGroups/8/tests/0"],
+          "upstreamOperation": "SHA3-384 MCT (standard version), SHA3-384-2.0",
+          "localOperation": "the ACVP MCT loop driven through C_Digest; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 939) taken from upstream tgId 2 of gen-val/json-files/SHA3-384-2.0/internalProjection.json (sha256 e9eae46bd676dc82e911dcc3af92ef0093e0118615b62ab431086fce47574396)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of every SHA-2 (1.0) and SHA-3 (2.0) sample, with the full 100-entry resultsArray: standard-version MCT for SHA2-224/384/512-224 and all SHA-3, alternate-version MCT for SHA2-256/512/512-256 (the only MCT version those samples register)."
+            }
+          ]
+        },
+        {
+          "id": "sha-mct-full-test-10",
+          "appliesTo": ["sha_mct_full_test#/testGroups/9/tests/0"],
+          "upstreamOperation": "SHA3-512 MCT (standard version), SHA3-512-2.0",
+          "localOperation": "the ACVP MCT loop driven through C_Digest; all 100 outer results byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 683) taken from upstream tgId 2 of gen-val/json-files/SHA3-512-2.0/internalProjection.json (sha256 b0521468a178f7fd362d63319aa69b708885d08f0c71cee99ac70729f5bdf64b)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. The single MCT case of every SHA-2 (1.0) and SHA-3 (2.0) sample, with the full 100-entry resultsArray: standard-version MCT for SHA2-224/384/512-224 and all SHA-3, alternate-version MCT for SHA2-256/512/512-256 (the only MCT version those samples register)."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": []
     },
     {
       "id": "slhdsa_ctx_test",
