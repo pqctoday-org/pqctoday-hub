@@ -14,7 +14,7 @@ import { cpeByProduct } from '@/data/cpeXrefData'
 import { purlByProduct } from '@/data/purlXrefData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { enrichmentByVendorId, enrichmentForRoadmap } from '@/data/vendorRoadmapEnrichmentData'
-import { vendorMap } from '@/data/migrateData'
+import { softwareData, vendorMap } from '@/data/migrateData'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { VendorRoadmapPanel } from '../VendorRoadmapPanel'
 import { CertBadges, EvidenceWarnings } from '../migrateHelpers'
@@ -63,6 +63,13 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
     .trim()
 
   const verification = productVerificationBadge(product)
+  // Other rows of the same product line (family_id) — releases, editions or
+  // certified configurations — so five rows of one product read as one line.
+  const familyMembers = product.familyId
+    ? softwareData.filter(
+        (p) => p.familyId === product.familyId && p.productId !== product.productId
+      )
+    : []
 
   // ADDED (Bug 2 remediation): learningModules was curated on 749/907 catalog
   // rows (semicolon-separated module ids, e.g. "tls-basics;hybrid-crypto")
@@ -127,6 +134,26 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
           </p>
         )}
       </div>
+
+      {(product.latestVersion || product.releaseDate || familyMembers.length > 0) && (
+        <div>
+          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+            Release
+          </p>
+          {(product.latestVersion || product.releaseDate) && (
+            <p className="text-foreground/80">
+              {product.latestVersion && <>Latest version recorded: {product.latestVersion}</>}
+              {product.latestVersion && product.releaseDate && ' · '}
+              {product.releaseDate && <>released {product.releaseDate}</>}
+            </p>
+          )}
+          {familyMembers.length > 0 && (
+            <p className="mt-0.5 text-muted-foreground">
+              Same product line: {familyMembers.map((m) => m.softwareName).join(' · ')}
+            </p>
+          )}
+        </div>
+      )}
 
       {certs.length > 0 && (
         <div>

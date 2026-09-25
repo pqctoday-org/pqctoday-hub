@@ -5,6 +5,10 @@ import type { SoftwareItem } from '@/types/MigrateTypes'
 /** Counts of catalogue rows per canonical PQC status bucket. */
 export interface CatalogScopeCounts {
   total: number
+  /** Rows tagged catalogue_population=pqc_relevant (0 when the column is absent). */
+  pqcRelevant: number
+  /** Rows tagged catalogue_population=migration_baseline. */
+  baseline: number
   available: number
   partial: number
   planned: number
@@ -20,6 +24,8 @@ export interface CatalogScopeCounts {
 export function catalogScopeCounts(items: SoftwareItem[]): CatalogScopeCounts {
   const counts: CatalogScopeCounts = {
     total: items.length,
+    pqcRelevant: 0,
+    baseline: 0,
     available: 0,
     partial: 0,
     planned: 0,
@@ -27,6 +33,8 @@ export function catalogScopeCounts(items: SoftwareItem[]): CatalogScopeCounts {
     unknown: 0,
   }
   for (const item of items) {
+    if (item.cataloguePopulation === 'pqc_relevant') counts.pqcRelevant += 1
+    else if (item.cataloguePopulation === 'migration_baseline') counts.baseline += 1
     const s = (item.pqcStatusCanonical || '').toLowerCase()
     if (s === 'available') counts.available += 1
     else if (s === 'partial') counts.partial += 1
@@ -45,11 +53,23 @@ export function catalogScopeCounts(items: SoftwareItem[]): CatalogScopeCounts {
  */
 export function CatalogScopeNote({ items }: { items: SoftwareItem[] }) {
   const c = useMemo(() => catalogScopeCounts(items), [items])
+  const hasPopulations = c.pqcRelevant + c.baseline > 0
   return (
     <p className="mb-4 text-xs text-muted-foreground">
-      A curated catalogue of {c.total} products — not an exhaustive list of the market. PQC support
-      in this catalogue: {c.available} available · {c.partial} partial · {c.planned} planned or on a
-      roadmap · {c.none} none · {c.unknown} not yet determined.
+      A curated catalogue of {c.total} products — not an exhaustive list of the market.{' '}
+      {hasPopulations ? (
+        <>
+          {c.pqcRelevant} products with PQC capability or a PQC plan ({c.available} available ·{' '}
+          {c.partial} partial · {c.planned} planned or on a roadmap), and {c.baseline}{' '}
+          migration-baseline products tracked because they matter to a PQC migration but have no
+          confirmed PQC support yet. The two groups are counted separately.
+        </>
+      ) : (
+        <>
+          PQC support in this catalogue: {c.available} available · {c.partial} partial · {c.planned}{' '}
+          planned or on a roadmap · {c.none} none · {c.unknown} not yet determined.
+        </>
+      )}
     </p>
   )
 }

@@ -63,6 +63,15 @@ export interface SoftwareItem {
   softwareName: string
   /** Earlier display names (from the catalogue's former_names column). */
   formerNames?: string[]
+  /** What the product is (library, sdk, application, cloud_service, appliance, hsm,
+   *  semiconductor, firmware, protocol_implementation, tool, reference_implementation, other). */
+  productKind?: string
+  /** 'pqc_relevant' | 'migration_baseline' — reported separately, never one denominator. */
+  cataloguePopulation?: string
+  /** "<segment>: <why>" for a migration-baseline product. */
+  baselineRationale?: string
+  /** Product line this row belongs to; '' for a singleton. */
+  familyId?: string
   categoryId: string
   categoryName: string
   infrastructureLayer: string

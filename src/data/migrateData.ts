@@ -16,6 +16,14 @@ interface RawSoftwareItem {
   software_name: string
   /** Earlier display names of this product (semicolon list), kept when a name is corrected. */
   former_names?: string
+  /** What the product is (library, hsm, cloud_service, …) — drives its freshness class. */
+  product_kind?: string
+  /** pqc_relevant | migration_baseline (owner decision, migrate remediation r2 R3). */
+  catalogue_population?: string
+  /** Why a no-PQC product belongs in the catalogue ("<segment>: <why>"). */
+  baseline_rationale?: string
+  /** Product line this row is a release/edition/configuration of; blank for a singleton. */
+  family_id?: string
   category_id: string
   category_name: string
   infrastructure_layer: string
@@ -159,6 +167,10 @@ const {
     return {
       productId: row.product_id || '',
       softwareName: row.software_name,
+      productKind: row.product_kind || '',
+      cataloguePopulation: row.catalogue_population || '',
+      baselineRationale: row.baseline_rationale || '',
+      familyId: row.family_id || '',
       formerNames: (row.former_names || '')
         .split(';')
         .map((n) => n.trim())
