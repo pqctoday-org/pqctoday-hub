@@ -796,7 +796,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       whatYouWillDo:
         'Generate random bytes from Web Crypto, OpenSSL WASM, Math.random() and a linear congruential generator, and run the same statistical tests on each.',
       workedExample:
-        'Generate from the LCG source, then predict its next output from the bytes it already produced — the prediction matches even though the LCG usually lands within range on the visual checks.',
+        'Generate from the LCG source, then predict its next output from its internal state after generation — the prediction matches even though the LCG usually lands within range on the visual checks.',
     },
   },
   {
