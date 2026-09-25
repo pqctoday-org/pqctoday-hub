@@ -6,27 +6,36 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import {
+  HUB_CONTRACT_PATH,
   NATIVE_CONSTANTS_PATH,
+  renderHubContract,
   renderNativeConstants,
 } from '../src/services/acvp-xplat/nativeConstants'
 
-const target = path.join(process.cwd(), NATIVE_CONSTANTS_PATH)
-const want = renderNativeConstants()
-if (process.argv.includes('--check')) {
-  let have = ''
-  try {
-    have = readFileSync(target, 'utf8')
-  } catch {
-    // missing file is drift
+const outputs: Array<[string, string]> = [
+  [NATIVE_CONSTANTS_PATH, renderNativeConstants()],
+  [HUB_CONTRACT_PATH, renderHubContract()],
+]
+const check = process.argv.includes('--check')
+let stale = 0
+for (const [rel, want] of outputs) {
+  const target = path.join(process.cwd(), rel)
+  if (check) {
+    let have = ''
+    try {
+      have = readFileSync(target, 'utf8')
+    } catch {
+      // missing file is drift
+    }
+    if (have !== want) {
+      stale++
+      console.error(
+        `[gen-acvp-native-constants] ${rel} is stale — run npm run gen:acvp-native-constants`
+      )
+    } else console.warn(`[gen-acvp-native-constants] ${rel} is current`)
+  } else {
+    writeFileSync(target, want)
+    console.warn(`[gen-acvp-native-constants] wrote ${rel}`)
   }
-  if (have !== want) {
-    console.error(
-      `[gen-acvp-native-constants] ${NATIVE_CONSTANTS_PATH} is stale — run npm run gen:acvp-native-constants`
-    )
-    process.exit(1)
-  }
-  console.warn(`[gen-acvp-native-constants] ${NATIVE_CONSTANTS_PATH} is current`)
-} else {
-  writeFileSync(target, want)
-  console.warn(`[gen-acvp-native-constants] wrote ${NATIVE_CONSTANTS_PATH}`)
 }
+if (stale > 0) process.exit(1)
