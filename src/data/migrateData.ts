@@ -152,6 +152,13 @@ export function deriveVerificationStatus(
 // visible rather than silently dropping rows from the catalog.
 let deprecatedRowCount = 0
 
+// A row deprecated as a duplicate ("duplicate of <id>" / "re-issued as <id>")
+// names the same product as the row it was merged into, so its display name is
+// a former name of that row: saved selections, share links and search chunks
+// that carry the old name resolve to the kept product (migrate remediation r2).
+const duplicateSuccessors: Array<[string, string]> = []
+const DUPLICATE_OF = /^(?:duplicate of|re-issued as) ([A-Za-z0-9._-]+)/
+
 const {
   data: currentItems,
   previousData: previousItems,
@@ -162,6 +169,10 @@ const {
   (row) => {
     if (row.status && row.status !== 'active') {
       deprecatedRowCount += 1
+      const successor = DUPLICATE_OF.exec((row.deprecated_reason || '').trim())?.[1]
+      if (successor && row.software_name) {
+        duplicateSuccessors.push([row.software_name, successor.replace(/[:.,]+$/, '')])
+      }
       return null
     }
     return {
@@ -257,6 +268,13 @@ export const softwareData: SoftwareItem[] = currentItems.map((item) => ({
   ...item,
   status: statusMap.get(item.productId),
 }))
+
+for (const [name, successorId] of duplicateSuccessors) {
+  const kept = softwareData.find((p) => p.productId === successorId)
+  if (kept && kept.softwareName !== name && !(kept.formerNames ?? []).includes(name)) {
+    kept.formerNames = [...(kept.formerNames ?? []), name]
+  }
+}
 
 // Compute productCount for each vendor
 softwareData.forEach((item) => {

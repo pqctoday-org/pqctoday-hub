@@ -86,3 +86,10 @@ describe('migrateData', () => {
     })
   })
 })
+
+describe('duplicate successors (migrate remediation r2)', () => {
+  it("folds a deprecated duplicate's name into the kept product's formerNames", () => {
+    const kept = softwareData.find((i) => i.productId === 'mbed-tls')
+    expect(kept?.formerNames).toContain('mbedTLS')
+  })
+})

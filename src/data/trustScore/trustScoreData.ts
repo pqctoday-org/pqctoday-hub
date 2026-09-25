@@ -362,6 +362,9 @@ function computeAllScores(): Map<string, TrustScore> {
   for (const item of softwareData ?? []) {
     const key = `migrate:${item.productId}`
     if (item.softwareName) migrateNameAliases.set(item.softwareName, item.productId)
+    for (const former of item.formerNames ?? []) {
+      if (!migrateNameAliases.has(former)) migrateNameAliases.set(former, item.productId)
+    }
     // Derive vetting/peer-review signals from FIPS validation + certification xref.
     // Government cryptographic validation (FIPS CMVP, ACVP, Common Criteria) is a
     // formal peer-review process, so a product with any such certificate counts as
