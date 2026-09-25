@@ -8,28 +8,28 @@
     "evidence/acvp-xplat/2026-09-24/targets.json": "68d23bd0090e0a104fd365f60175ccb11b85c53d2eb7aca2f45d103fe69ec775",
     "evidence/acvp-xplat/2026-09-24b/matrix.json": "b3370d4bf4518c7c4519244e921977eeae4a0f07223869397185f1112f3baba8",
     "evidence/acvp-xplat/2026-09-24b/targets.json": "6413cac2139288ae126c4e31035f0110b8b72dc1c0a97e80722841a992715ccd",
-    "public/data/validation/coverage-matrix.json": "de63e3e33ee410272046fc51cb998d5b460398148d0c3cc2825025016c262b15",
-    "src/data/validation/coverage-waivers.json": "abd4e8d218862bd023721caeb2ce09edcb6217941d4fbf5af06c4238306c8b8c",
+    "public/data/validation/coverage-matrix.json": "6fa921bb68f4e58ff319b6a9c8fc811454e095845c4790f37c5b2cf899cfb249",
+    "src/data/validation/coverage-waivers.json": "f9a0cbbed5b0108a11578cb972ccc24828e079b93bcf1e5ad9619fe6c4aa2f9d",
     "src/data/validation/native-conformance.generated.json": "3c54c9aeeb3c6900ae98a3efe11bc3632ec30c52d0b2f6bf08f9ea070b467281",
-    "src/data/validation/open-gaps.json": "3ca1bb4b39fe88205df763fd807a52b0ad2161f33b8d1dcfb8ec1fe6d605ff0e",
+    "src/data/validation/open-gaps.json": "e9602f2e4cc66b3b5b3d2bfb652b590006c200c77a14132e96b979a1e3f2970c",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "21ae1240ae3d62989caf83a3ec25c4a37a895ed4f1c7edc283ac21f20e518a2d",
     "src/data/validation/run-results/wasm-node-katRunner.json": "64433a7f1a77adbed09e8e0eb3bf0c43fc39c53a4f30816e8202376ab0c247c2",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "350ce697eeb3c30100bc336af78ea6d90c24f030c48ed01211a794a9945201a4",
-    "src/data/validation/validation-counts.generated.json": "2f005d1472d229ae1bb14710364f8205e747f0e3d094b0fdee24cd7d0d4dd08e",
-    "src/data/validation/vector-manifest.json": "740cb44d020ab3ae82db1cc4fb6eb127fa3221365edefa3929251e1aa56cbf7d"
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "51fbab03284ce1f998abd378274c97a6ab63752d220d5a13d31b7b66d095aee4",
+    "src/data/validation/validation-counts.generated.json": "8fc10dbf20f54fcfc7c77772d0ad9824578713d295a6e390a53e75cc68235436",
+    "src/data/validation/vector-manifest.json": "92253b10e8b04c09db0de7211f08a8f0f11a1c328bbc9f80a891d1162384f7d5"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "b27482b9c35439bf8a66aae148f8a8aaa40c67bbb726cd62b0371f0d95cc21c4",
-    "nistReferenceSampleFiles": 36,
-    "nistReferenceSampleCases": 552,
+    "manifestCanonicalSha256": "75bc6bc14211a330334c614418e27a9874b22d53549b86e02568b0ab73d12e01",
+    "nistReferenceSampleFiles": 48,
+    "nistReferenceSampleCases": 776,
     "vectorFiles": {
-      "total": 51,
-      "active": 51,
+      "total": 63,
+      "active": 63,
       "quarantined": 0
     },
     "filesByClass": {
-      "nist-acvp-reference-sample": 36,
+      "nist-acvp-reference-sample": 48,
       "acvts-issued-vector": 0,
       "published-standard-kat": 9,
       "independent-oracle": 4,
@@ -40,24 +40,24 @@
       "unverified": 0
     },
     "cases": {
-      "total": 584,
-      "active": 583,
+      "total": 832,
+      "active": 831,
       "quarantined": 1
     },
     "activeCasesByClass": {
-      "nist-acvp-reference-sample": 552,
+      "nist-acvp-reference-sample": 776,
       "acvts-issued-vector": 0,
       "published-standard-kat": 16,
       "independent-oracle": 11,
       "cross-implementation-differential": 0,
-      "functional-round-trip": 2,
+      "functional-round-trip": 26,
       "oasis-profile-case": 0,
       "product-mechanism-probe": 2,
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 396,
-      "negative": 187
+      "positive": 578,
+      "negative": 253
     },
     "filesWithPublishabilityGap": {
       "generator-script-not-in-repo": 1,
@@ -85,67 +85,67 @@
       "unsupported"
     ],
     "polarities": ["positive", "negative", "boundary", "state-error"],
-    "matrixRows": 1662,
+    "matrixRows": 1663,
     "byEngine": {
       "cpp": {
         "label": "C++",
         "mechanismCount": 165,
         "advertisedCells": 1635,
-        "unsupportedCells": 27,
+        "unsupportedCells": 28,
         "overall": {
-          "covered": 3,
-          "sampled": 923,
-          "untested": 709
+          "covered": 15,
+          "sampled": 912,
+          "untested": 708
         },
         "byPolarity": {
           "positive": {
-            "covered": 98,
-            "sampled": 708,
-            "untested": 829,
+            "covered": 170,
+            "sampled": 627,
+            "untested": 838,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 144,
-              "standard-kat": 2,
-              "oracle": 3,
+              "nist-reference": 172,
+              "standard-kat": 1,
+              "oracle": 33,
               "differential": 0,
-              "round-trip": 52,
-              "behavior-only": 605,
-              "untested": 829,
+              "round-trip": 42,
+              "behavior-only": 549,
+              "untested": 838,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 35,
-            "sampled": 25,
-            "untested": 1575,
+            "covered": 63,
+            "sampled": 39,
+            "untested": 1533,
+            "denominator": 1635,
+            "byStatus": {
+              "acvts-issued": 0,
+              "nist-reference": 69,
+              "standard-kat": 0,
+              "oracle": 0,
+              "differential": 0,
+              "round-trip": 0,
+              "behavior-only": 33,
+              "untested": 1533,
+              "unsupported": 0
+            }
+          },
+          "boundary": {
+            "covered": 39,
+            "sampled": 15,
+            "untested": 1581,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 45,
               "standard-kat": 0,
-              "oracle": 0,
+              "oracle": 9,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 15,
-              "untested": 1575,
-              "unsupported": 0
-            }
-          },
-          "boundary": {
-            "covered": 18,
-            "sampled": 22,
-            "untested": 1595,
-            "denominator": 1635,
-            "byStatus": {
-              "acvts-issued": 0,
-              "nist-reference": 39,
-              "standard-kat": 0,
-              "oracle": 0,
-              "differential": 0,
-              "round-trip": 1,
               "behavior-only": 0,
-              "untested": 1595,
+              "untested": 1581,
               "unsupported": 0
             }
           },
@@ -170,9 +170,9 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 926,
-            "passedCells": 922,
-            "failedCells": 438,
+            "registeredCells": 927,
+            "passedCells": 923,
+            "failedCells": 441,
             "skippedCells": 0
           },
           "native": {
@@ -195,61 +195,61 @@
         "label": "Rust",
         "mechanismCount": 172,
         "advertisedCells": 1025,
-        "unsupportedCells": 637,
+        "unsupportedCells": 638,
         "overall": {
-          "covered": 3,
-          "sampled": 639,
-          "untested": 383
+          "covered": 15,
+          "sampled": 628,
+          "untested": 382
         },
         "byPolarity": {
           "positive": {
-            "covered": 102,
-            "sampled": 430,
-            "untested": 493,
+            "covered": 173,
+            "sampled": 347,
+            "untested": 505,
             "denominator": 1025,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 144,
-              "standard-kat": 4,
-              "oracle": 3,
+              "nist-reference": 172,
+              "standard-kat": 3,
+              "oracle": 33,
               "differential": 0,
-              "round-trip": 61,
-              "behavior-only": 320,
-              "untested": 493,
+              "round-trip": 48,
+              "behavior-only": 264,
+              "untested": 505,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 35,
-            "sampled": 25,
-            "untested": 965,
+            "covered": 63,
+            "sampled": 39,
+            "untested": 923,
             "denominator": 1025,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 45,
+              "nist-reference": 69,
               "standard-kat": 0,
               "oracle": 0,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 15,
-              "untested": 965,
+              "behavior-only": 33,
+              "untested": 923,
               "unsupported": 0
             }
           },
           "boundary": {
-            "covered": 19,
-            "sampled": 22,
-            "untested": 984,
+            "covered": 40,
+            "sampled": 15,
+            "untested": 970,
             "denominator": 1025,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 39,
+              "nist-reference": 45,
               "standard-kat": 1,
-              "oracle": 0,
+              "oracle": 9,
               "differential": 0,
-              "round-trip": 1,
+              "round-trip": 0,
               "behavior-only": 0,
-              "untested": 984,
+              "untested": 970,
               "unsupported": 0
             }
           },
@@ -274,9 +274,9 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 642,
+            "registeredCells": 643,
             "passedCells": 641,
-            "failedCells": 554,
+            "failedCells": 556,
             "skippedCells": 0
           },
           "native": {
@@ -298,34 +298,34 @@
     },
     "parity": {
       "positive": {
-        "parity": 461,
-        "divergent": 38,
-        "not-established": 514,
-        "single-engine": 649
+        "parity": 449,
+        "divergent": 41,
+        "not-established": 523,
+        "single-engine": 650
       },
       "negative": {
-        "parity": 51,
-        "divergent": 9,
-        "not-established": 953,
-        "single-engine": 649
+        "parity": 88,
+        "divergent": 14,
+        "not-established": 911,
+        "single-engine": 650
       },
       "boundary": {
-        "parity": 38,
+        "parity": 52,
         "divergent": 2,
-        "not-established": 973,
-        "single-engine": 649
+        "not-established": 959,
+        "single-engine": 650
       },
       "state-error": {
         "parity": 140,
         "divergent": 440,
         "not-established": 433,
-        "single-engine": 649
+        "single-engine": 650
       }
     },
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4584 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 3c7f2dcaa); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b); 1356 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub ea5aa8f64). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4584 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 3c7f2dcaa); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b); 2044 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 2dbf87684). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -371,15 +371,15 @@
   },
   "waivers": {
     "source": "src/data/validation/coverage-waivers.json",
-    "entries": 43,
+    "entries": 42,
     "byStatus": {
-      "baseline-pending-review": 43
+      "baseline-pending-review": 42
     },
     "approvedEntries": 0,
-    "waivedCells": 1092,
-    "pendingReviewCells": 1092,
+    "waivedCells": 1090,
+    "pendingReviewCells": 1090,
     "staleCells": 0,
-    "statement": "All 43 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
+    "statement": "All 42 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
   },
   "nativeSuites": {
     "source": "src/data/validation/native-conformance.generated.json",
@@ -2745,17 +2745,17 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "ea5aa8f648cdfe3ed9b26b2e427621cc1ce35cf4",
+      "hubCommit": "2dbf87684e02c075c091f4e99c678c9e432df8bf",
       "recordedAt": "2026-09-25",
-      "results": 1356,
+      "results": 2044,
       "byEngine": {
         "cpp": {
-          "pass": 670,
-          "fail": 8
+          "pass": 992,
+          "fail": 30
         },
         "rust": {
-          "pass": 595,
-          "fail": 83
+          "pass": 875,
+          "fail": 147
         }
       },
       "failures": [
@@ -3041,6 +3041,102 @@
         },
         {
           "engine": "rust",
+          "registryCase": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/0/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/16/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/8/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-224-oracle"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-224-oracle"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-224-oracle"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/1/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/1/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/3/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/3/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/6/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/6/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/7/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/7/tests/1"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/0/tests/1"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/0/tests/2"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/1/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/1/tests/2"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/2/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/2/tests/1"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.04e.keyver#eddsa_keyver_acvp_test#/testGroups/0/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.04e.keyver#eddsa_keyver_acvp_test#/testGroups/0/tests/3"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.04e.keyver#eddsa_keyver_acvp_test#/testGroups/1/tests/1"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.04e.keyver#eddsa_keyver_acvp_test#/testGroups/1/tests/3"
+        },
+        {
+          "engine": "rust",
           "registryCase": "acvp.07b.keycheck#mlkem_encapdecap_val_test#/testGroups/3/tests/0"
         },
         {
@@ -3062,6 +3158,54 @@
         {
           "engine": "rust",
           "registryCase": "acvp.07b.keycheck#mlkem_encapdecap_val_test#/testGroups/8/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/0/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/0/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/0/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/0/tests/3"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/1/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/1/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/1/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/1/tests/3"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/2/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/2/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/2/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/2/tests/3"
         },
         {
           "engine": "cpp",
@@ -3114,6 +3258,206 @@
         {
           "engine": "rust",
           "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/4"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/12/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/13/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/15/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/16/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/18/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/19/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/20/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/21/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/22/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/23/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/24/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/25/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/26/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/27/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/28/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/29/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/30/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/31/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/31/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/32/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/32/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/33/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/34/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/35/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/35/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/36/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/36/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/37/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/38/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/39/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/40/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/41/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/42/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/43/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/44/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/45/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/46/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/47/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/48/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/49/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/50/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/51/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/51/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/52/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/52/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/53/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/54/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/54/tests/0"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/55/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/55/tests/0"
         },
         {
           "engine": "cpp",
@@ -3662,17 +4006,17 @@
   },
   "openGaps": {
     "source": "public/data/validation/coverage-matrix.json (openGaps; curated entries from src/data/validation/open-gaps.json)",
-    "total": 726,
+    "total": 815,
     "byStatus": {
-      "open": 723,
-      "accepted-limitation": 2,
+      "open": 811,
+      "accepted-limitation": 3,
       "in-progress": 1
     },
     "byOrigin": {
-      "curated": 45,
-      "generated": 681
+      "curated": 51,
+      "generated": 764
     },
-    "unassignedOwner": 726,
+    "unassignedOwner": 815,
     "curated": [
       {
         "id": "d2-4-hedged-rnd",
@@ -3781,7 +4125,7 @@
       },
       {
         "id": "rust-mlkem-no-key-input-checks",
-        "title": "Rust engine accepts all 6 invalid NIST ML-KEM encapsulation/decapsulation keys",
+        "title": "Rust engine accepts every invalid NIST ML-KEM encapsulation/decapsulation key (18 of 18)",
         "status": "open",
         "planItem": "D1-5",
         "owner": "unassigned"
@@ -3984,7 +4328,49 @@
       },
       {
         "id": "wse-remaining-classical-acvp",
-        "title": "Classical families still without NIST ACVP-Server cases after WS-E",
+        "title": "Classical families still without NIST ACVP-Server cases after WS-E and gap-closure P5",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "x963-kdf-caller-z-no-mechanism",
+        "title": "ANSI X9.63 KDF on a caller-supplied shared secret has no PKCS #11 mechanism",
+        "status": "accepted-limitation",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "cpp-kbkdf-counter-position-ignored",
+        "title": "C++: SP 800-108 KDFs ignore where the caller places the counter in the PRF input",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "rust-kbkdf-iteration-variable-rejected",
+        "title": "Rust: feedback and double-pipeline KBKDF reject the mandatory ITERATION_VARIABLE data parameter",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "cpp-ec-public-key-not-validated",
+        "title": "C++: invalid ECDSA / EdDSA public points are imported and used without validation",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "rust-ec-public-key-refused-late",
+        "title": "Rust: invalid public points are refused only at C_Verify, with a code C_Verify does not list",
+        "status": "open",
+        "planItem": "E / G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "rust-eddsa-ph-context-ignored",
+        "title": "Rust: Ed25519ph / Ed448ph signing ignores the CK_EDDSA_PARAMS context",
         "status": "open",
         "planItem": "E",
         "owner": "unassigned"
@@ -3995,42 +4381,42 @@
     "source": "src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)",
     "note": "Test groups per family as declared in the workbench CATEGORIES table; the file itself is not hashed here (it changes with every section edit), its parsed table is.",
     "families": 7,
-    "groups": 52,
+    "groups": 62,
     "categories": [
       {
         "id": "symmetric",
         "label": "Symmetric / AEAD",
-        "groups": 9
+        "groups": 10
       },
       {
         "id": "hashing_mac",
         "label": "Hashing & MAC",
-        "groups": 8
+        "groups": 9
       },
       {
         "id": "kdf",
         "label": "KDF",
-        "groups": 6
+        "groups": 8
       },
       {
         "id": "classical",
         "label": "Classical Asymmetric",
-        "groups": 13
+        "groups": 16
       },
       {
         "id": "ml_dsa",
         "label": "ML-DSA",
-        "groups": 7
+        "groups": 8
       },
       {
         "id": "slh_stateful",
         "label": "SLH-DSA & Stateful",
-        "groups": 6
+        "groups": 7
       },
       {
         "id": "ml_kem",
         "label": "ML-KEM",
-        "groups": 3
+        "groups": 4
       }
     ]
   },
@@ -4038,11 +4424,11 @@
     "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-065 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
     "validRecords": 0,
     "statusCounts": {
-      "awaiting-review": 96
+      "awaiting-review": 107
     },
     "awaiting": {
-      "vector-source": 49,
-      "coverage-waiver": 43,
+      "vector-source": 61,
+      "coverage-waiver": 42,
       "public-claim": 3,
       "learn-module-practitioner": 1
     },
@@ -4051,6 +4437,13 @@
         "id": "vector-source:aescbc_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/aescbc_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:aescbc_mct_full_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/aescbc_mct_full_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -4118,6 +4511,13 @@
         "status": "awaiting-review"
       },
       {
+        "id": "vector-source:ecdsa_keyver_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/ecdsa_keyver_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ECDSA-KeyVer-FIPS186-5/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
         "id": "vector-source:ecdsa_p384_test",
         "kind": "vector-source",
         "title": "src/data/acvp/ecdsa_p384_test.json — published-standard-kat (RFC 6979 Appendix A.2.6 (P-384))",
@@ -4128,6 +4528,13 @@
         "id": "vector-source:ecdsa_p521_test",
         "kind": "vector-source",
         "title": "src/data/acvp/ecdsa_p521_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ECDSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:ecdsa_siggen_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/ecdsa_siggen_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ECDSA-SigGen-FIPS186-5/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -4153,6 +4560,20 @@
         "status": "awaiting-review"
       },
       {
+        "id": "vector-source:eddsa_keyver_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/eddsa_keyver_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/EDDSA-KeyVer-1.0/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:eddsa_siggen_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/eddsa_siggen_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/EDDSA-SigGen-1.0/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
         "id": "vector-source:eddsa_sigver_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/eddsa_sigver_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/EDDSA-SigVer-1.0/internalProjection.json @ 975de31e)",
@@ -4163,6 +4584,13 @@
         "id": "vector-source:eddsa_test",
         "kind": "vector-source",
         "title": "src/data/acvp/eddsa_test.json — published-standard-kat (RFC 8032 Section 7.1 (Ed25519 TEST 1, TEST 2))",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:hkdf_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/hkdf_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/KDA-HKDF-Sp800-56Cr2/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -4198,6 +4626,13 @@
         "id": "vector-source:hmac_test",
         "kind": "vector-source",
         "title": "src/data/acvp/hmac_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:kbkdf_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/kbkdf_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/KDF-1.0/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -4251,6 +4686,13 @@
         "status": "awaiting-review"
       },
       {
+        "id": "vector-source:mldsa_sigver_depth_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/mldsa_sigver_depth_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
         "id": "vector-source:mldsa_sigver_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_sigver_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e)",
@@ -4261,6 +4703,13 @@
         "id": "vector-source:mldsa_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:mlkem_ekcheck_depth_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/mlkem_ekcheck_depth_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -4363,9 +4812,30 @@
         "status": "awaiting-review"
       },
       {
+        "id": "vector-source:sha_mct_full_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/sha_mct_full_test.json — nist-acvp-reference-sample (NIST ACVP-Server SHA2-*-1.0 and SHA3-*-2.0 internalProjection.json @ 975de31e (10 files))",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
         "id": "vector-source:slhdsa_ctx_test",
         "kind": "vector-source",
         "title": "src/data/acvp/slhdsa_ctx_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:slhdsa_keygen_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/slhdsa_keygen_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-keyGen-FIPS205/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:slhdsa_siggen_ctx0_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/slhdsa_siggen_ctx0_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -4552,13 +5022,6 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_SP800_108_DOUBLE_PIPELINE_KDF",
-        "kind": "coverage-waiver",
-        "title": "CKM_SP800_108_DOUBLE_PIPELINE_KDF (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_ECDH1_DERIVE-cpp",
         "kind": "coverage-waiver",
         "title": "CKM_ECDH1_DERIVE (cpp): 2 cell pattern(s), status baseline-pending-review",
@@ -4731,7 +5194,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 3054 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 3383 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,
@@ -4741,7 +5204,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "51 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1."
+      "basis": "63 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1."
     },
     {
       "n": 3,
@@ -4779,7 +5242,7 @@
         "src/data/validation/coverage-matrix.generated.json",
         "e2e/acvp-mldsa-evidence.spec.ts"
       ],
-      "basis": "43 NIST ACVP-Server reference-sample positive and 15 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly)."
+      "basis": "52 NIST ACVP-Server reference-sample positive and 49 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly)."
     },
     {
       "n": 6,
