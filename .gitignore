@@ -759,6 +759,7 @@ src/.!*!.DS_Store
 # read by commit), public output.
 !scripts/generate-mechanism-inventory.ts
 !scripts/analyze-mechanism-dispatch.ts
+!scripts/analyze-mechanism-dispatch.test.ts
 
 # Local-gate receipts: `.gate-ok-<short sha>` is written by `npm run
 # gate:release` / .husky/pre-push only when every step passed on that commit,
