@@ -1,0 +1,150 @@
+{
+  "$comment": "Open-gaps register (plan J-7). Reviewed, curated entries; the generator appends entries derived from the matrix (untested mechanisms, per-polarity gaps, unsupported cells). Every entry needs an owner (\"unassigned\" when none is named) and a status: open | in-progress | accepted-limitation.",
+  "schema": "pqctoday.open-gaps/v1",
+  "gaps": [
+    {
+      "id": "d2-4-hedged-rnd",
+      "title": "ML-DSA hedged signing with a caller-supplied rnd is not reachable through PKCS #11",
+      "detail": "CK_SIGN_ADDITIONAL_CONTEXT carries hedgeVariant and context only; there is no parameter for an explicit rnd, so NIST hedged sigGen expected signatures cannot be reproduced on either engine. Shown in the workbench as an explicit skip (mldsa-skip-hedged-rnd-*) and here as unsupported rows.",
+      "planItem": "D2-4",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust (wasm)"
+    },
+    {
+      "id": "mldsa-hash-sha512t-no-mechanism",
+      "title": "HashML-DSA with SHA2-512/224 or SHA2-512/256 has no PKCS #11 mechanism",
+      "detail": "PKCS #11 v3.2 §6.67.7 defines no CKM_HASH_ML_DSA_<hash> for these two hashes; the NIST sigVer groups for them are listed as notExecuted in mldsa_sigver_test.json.",
+      "planItem": "D2-6",
+      "owner": "unassigned",
+      "status": "accepted-limitation",
+      "scope": "C++ + Rust (specification limit)"
+    },
+    {
+      "id": "mldsa-internal-interface",
+      "title": "ML-DSA internal interface (raw M′) is not expressible through PKCS #11",
+      "detail": "No PKCS #11 v3.2 mechanism exposes Sign_internal/Verify_internal on a caller-supplied M′; the NIST internal-interface groups without external mu are listed as notExecuted.",
+      "planItem": "D2-5",
+      "owner": "unassigned",
+      "status": "accepted-limitation",
+      "scope": "C++ + Rust (specification limit)"
+    },
+    {
+      "id": "kmac256-quarantined",
+      "title": "KMAC256 vector case quarantined",
+      "detail": "kmac_test.json tg0/tc0: the expected MAC does not match the cited NIST KMAC Sample #4 (63 bytes for a 512-bit macLen). Quarantined in the manifest; it cannot count as evidence, so CKM_KMAC_256 has no registered test.",
+      "planItem": "B-2 / E (KMAC)",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust"
+    },
+    {
+      "id": "mechanism-info-disagreements",
+      "title": "106 C++/Rust C_GetMechanismInfo disagreements",
+      "detail": "The two engines list the same 165 shared mechanisms but report different key-size ranges and/or CKF_ flags for 106 of them (mechanism-inventory.generated.json crossEngine.sameTypeDifferentInfo). Treated as findings, not verdicts; cells one engine does not advertise are unsupported for that engine.",
+      "planItem": "G-9",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ vs Rust (wasm)"
+    },
+    {
+      "id": "rust-only-mechanisms",
+      "title": "7 mechanisms advertised by Rust only",
+      "detail": "CKM_RIPEMD160, CKM_RIPEMD160_HMAC, CKM_RIPEMD160_HMAC_GENERAL, CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN, CKM_PQCTODAY_FRODOKEM_ENCAPSULATE, CKM_KECCAK_256 and CKM_EC_MONTGOMERY_KEY_DERIVE are listed by the Rust engine only; their C++ cells are unsupported.",
+      "planItem": "G-9",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++"
+    },
+    {
+      "id": "rust-hpke-dispatched-not-advertised",
+      "title": "Rust dispatches CKM_HPKE / CKM_HPKE_KEM_KEY_PAIR_GEN without advertising them",
+      "detail": "The dispatch report (mechanism-dispatch-report.generated.json) finds 0x80000013/0x80000014 on Rust dispatch paths but not in C_GetMechanismList, so they are outside every denominator here. Also dispatched-not-advertised: Rust CKM_BIP32_*_LEGACY and C++ CKM_RIPEMD160*.",
+      "planItem": "G-7",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (and C++ RIPEMD160)"
+    },
+    {
+      "id": "native-targets-not-run",
+      "title": "Native targets not run",
+      "detail": "macOS, Linux x86-64 and Linux Arm64 native builds have not executed these registered tests; the native artifact column is \"not run\" and never counts as pass.",
+      "planItem": "H-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "native"
+    },
+    {
+      "id": "hardware-targets-not-run",
+      "title": "Hardware targets not run",
+      "detail": "i.MX 95 and KV260 have not executed these registered tests; no frozen evidence bundle exists. The hardware artifact column is \"not run\" and never counts as pass.",
+      "planItem": "H-3 / Q3",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "hardware"
+    },
+    {
+      "id": "run-results-partial",
+      "title": "Run results recorded only for the workbench suite, on the wasm engines, in Node",
+      "detail": "src/data/validation/run-results/ holds one recorded run of useAcvpSuite (all categories, both engines) executed in Node against the shipped .wasm bytes. katRunner, the mechanism probes and the conformance cases have no recorded results, so their cells are never reported as passed and C++/Rust parity is only established where a useAcvpSuite case passed on both. A browser-host run and a signed evidence bundle (H-1, H-7) do not exist yet.",
+      "planItem": "C-4 / H-1 / H-7",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust (wasm)"
+    },
+    {
+      "id": "native-suites-not-imported",
+      "title": "Native 976/815-check engine suites not in the evidence pipeline",
+      "detail": "The larger native C++/Rust conformance suites are not imported, so none of their cases appear in this matrix.",
+      "planItem": "G-6",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust"
+    },
+    {
+      "id": "api-behavior-matrix",
+      "title": "PKCS #11 API-behavior matrix not built",
+      "detail": "OASIS Tier A cases and the generated Tier B profile-condition probes that exercise sessions, login, objects and attributes are registered (testRegistry oasis.api-only, profile.api-only) but are outside this algorithm × operation matrix.",
+      "planItem": "G-3 / G-4",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust"
+    },
+    {
+      "id": "slhdsa-siggen-not-executed",
+      "title": "SLH-DSA NIST sigGen cases registered but not executed",
+      "detail": "slhdsa_ctx_test.json /sigGen cases are in the manifest for identity but no runner executes them (deterministic sigGen byte-match), so SLH-DSA sign has round-trip evidence only.",
+      "planItem": "D3-4",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust"
+    },
+    {
+      "id": "acvp-test-types-not-declared",
+      "title": "Supported ACVP test types (AFT/MCT/LDT/VAL) not declared per algorithm",
+      "detail": "The capability map declares parameter sets, variants and boundaries, but not which ACVP test types each capability should support; the matrix lists only the test types its registered NIST cases exercise.",
+      "planItem": "C-1",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "all"
+    },
+    {
+      "id": "other-surfaces-not-registered",
+      "title": "Some test surfaces are not in the test registry",
+      "detail": "Not registered: the katRunner suci-profile-b chain (3GPP TS 33.501 Annex C), Learn-module demos outside KatValidationPanel, and the *.local.test.ts engine suites (local gate only, no committed results). Their evidence does not appear in this matrix.",
+      "planItem": "C-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust"
+    },
+    {
+      "id": "katrunner-failing-kinds",
+      "title": "katRunner kinds that fail on the engine they run on",
+      "detail": "Observed 2026-09-24 in a local Node run of both shipped wasm engines: aescbc-decrypt (CKM_AES_CBC_PAD applied to a raw NIST CBC vector: Rust CKR_FUNCTION_FAILED, C++ 0x40), hmac-verify ×3 and hmac-generate ×3 (non-GENERAL CKM_SHA*_HMAC against 160-bit truncated NIST MACs: fail on both), pbkdf2-derive (Rust CKR_ARGUMENTS_BAD; C++ passes), aes-kwp-wrap (Rust C_CreateObject 0x13; C++ C_WrapKey CKR_ARGUMENTS_BAD). These run on the /algorithms KAT view and Learn KatValidationPanel (Rust engine). They are NOT registered as evidence in this matrix.",
+      "planItem": "A-3 / E",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (katRunner surfaces); also C++"
+    }
+  ]
+}

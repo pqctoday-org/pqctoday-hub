@@ -784,3 +784,8 @@ src/.!*!.DS_Store
 !scripts/audit-validation-manifest.test.ts
 !scripts/generate-validation-counts.ts
 !scripts/generate-validation-counts.test.ts
+# WS-C coverage matrix generator + coverage-diff gate (gen:coverage-matrix:check,
+# run by gate:data:audits) and its tests — must be tracked or the gate is
+# file-not-found for everyone else.
+!scripts/generate-coverage-matrix.ts
+!scripts/generate-coverage-matrix.test.ts
