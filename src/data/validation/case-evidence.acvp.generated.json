@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "5caa0c62d14c7e80fb8892a6ef9e9219208169ca892dee8b9c5bc1a67d8e5f3b",
-    "registrySha256": "5438ea086a8f2c1f007dbcb51034dfad479c1f35cdd9ef00e59ae0a01970fa22"
+    "manifestSha256": "fd504a5616ca9d9e18eba28b034b06d19cbf462baa4981ca2a03bb13fadb3892",
+    "registrySha256": "ea394cf0e9508ea7f7ebde44e2d2b8ac52284782014a76f5c464169a8dce819a"
   },
   "records": {
     "acvp.01#aesgcm_test#/testGroups/0/tests/0": {
@@ -2634,7 +2634,7 @@
       ],
       "caseId": "local:acvp.02b.invalid-mac/sha-1-short",
       "evidenceClass": "product-mechanism-probe",
-      "polarity": "negative",
+      "polarity": "positive",
       "parameters": {
         "hashAlg": "SHA-1",
         "mutation": "truncated-by-1-byte"
@@ -2680,7 +2680,7 @@
       ],
       "caseId": "local:acvp.02b.invalid-mac/sha2-224-short",
       "evidenceClass": "product-mechanism-probe",
-      "polarity": "negative",
+      "polarity": "positive",
       "parameters": {
         "hashAlg": "SHA2-224",
         "mutation": "truncated-by-1-byte"
@@ -2726,7 +2726,7 @@
       ],
       "caseId": "local:acvp.02b.invalid-mac/sha2-256-short",
       "evidenceClass": "product-mechanism-probe",
-      "polarity": "negative",
+      "polarity": "positive",
       "parameters": {
         "hashAlg": "SHA2-256",
         "mutation": "truncated-by-1-byte"
@@ -2772,7 +2772,7 @@
       ],
       "caseId": "local:acvp.02b.invalid-mac/sha2-384-short",
       "evidenceClass": "product-mechanism-probe",
-      "polarity": "negative",
+      "polarity": "positive",
       "parameters": {
         "hashAlg": "SHA2-384",
         "mutation": "truncated-by-1-byte"
@@ -2818,7 +2818,7 @@
       ],
       "caseId": "local:acvp.02b.invalid-mac/sha2-512-224-short",
       "evidenceClass": "product-mechanism-probe",
-      "polarity": "negative",
+      "polarity": "positive",
       "parameters": {
         "hashAlg": "SHA2-512/224",
         "mutation": "truncated-by-1-byte"
@@ -2864,7 +2864,7 @@
       ],
       "caseId": "local:acvp.02b.invalid-mac/sha2-512-256-short",
       "evidenceClass": "product-mechanism-probe",
-      "polarity": "negative",
+      "polarity": "positive",
       "parameters": {
         "hashAlg": "SHA2-512/256",
         "mutation": "truncated-by-1-byte"
@@ -2910,7 +2910,7 @@
       ],
       "caseId": "local:acvp.02b.invalid-mac/sha2-512-short",
       "evidenceClass": "product-mechanism-probe",
-      "polarity": "negative",
+      "polarity": "positive",
       "parameters": {
         "hashAlg": "SHA2-512",
         "mutation": "truncated-by-1-byte"
@@ -2956,7 +2956,7 @@
       ],
       "caseId": "local:acvp.02b.invalid-mac/sha3-224-short",
       "evidenceClass": "product-mechanism-probe",
-      "polarity": "negative",
+      "polarity": "positive",
       "parameters": {
         "hashAlg": "SHA3-224",
         "mutation": "truncated-by-1-byte"
@@ -3002,7 +3002,7 @@
       ],
       "caseId": "local:acvp.02b.invalid-mac/sha3-256-short",
       "evidenceClass": "product-mechanism-probe",
-      "polarity": "negative",
+      "polarity": "positive",
       "parameters": {
         "hashAlg": "SHA3-256",
         "mutation": "truncated-by-1-byte"
@@ -3048,7 +3048,7 @@
       ],
       "caseId": "local:acvp.02b.invalid-mac/sha3-384-short",
       "evidenceClass": "product-mechanism-probe",
-      "polarity": "negative",
+      "polarity": "positive",
       "parameters": {
         "hashAlg": "SHA3-384",
         "mutation": "truncated-by-1-byte"
@@ -3094,7 +3094,7 @@
       ],
       "caseId": "local:acvp.02b.invalid-mac/sha3-512-short",
       "evidenceClass": "product-mechanism-probe",
-      "polarity": "negative",
+      "polarity": "positive",
       "parameters": {
         "hashAlg": "SHA3-512",
         "mutation": "truncated-by-1-byte"
@@ -21166,6 +21166,1284 @@
         "field-drop: Per-block counter/input/output blocks not carried; the 4 ciphertext and plaintext blocks are concatenated."
       ]
     },
+    "acvp.12b.probes#local:acvp.12b.probes/decLen17": {
+      "id": "acvp.12b.probes#local:acvp.12b.probes/decLen17",
+      "test": "acvp.12b.probes",
+      "title": "AES-CBC product-authored length / IV probes: 15-byte plaintext, 17-byte ciphertext, 15-byte IV — exact CK_RV pinned per engine",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.12b.probes/decLen17",
+      "evidenceClass": "product-mechanism-probe",
+      "polarity": "positive",
+      "parameters": {
+        "probe": "decLen17"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-128"
+      ],
+      "limitations": [
+        "C_Decrypt of 17 bytes: CKR_ENCRYPTED_DATA_LEN_RANGE on both engines."
+      ]
+    },
+    "acvp.12b.probes#local:acvp.12b.probes/encLen15": {
+      "id": "acvp.12b.probes#local:acvp.12b.probes/encLen15",
+      "test": "acvp.12b.probes",
+      "title": "AES-CBC product-authored length / IV probes: 15-byte plaintext, 17-byte ciphertext, 15-byte IV — exact CK_RV pinned per engine",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.12b.probes/encLen15",
+      "evidenceClass": "product-mechanism-probe",
+      "polarity": "positive",
+      "parameters": {
+        "probe": "encLen15"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-128"
+      ],
+      "limitations": [
+        "C_Encrypt of 15 bytes: CKR_DATA_LEN_RANGE on both engines."
+      ]
+    },
+    "acvp.12b.probes#local:acvp.12b.probes/iv15": {
+      "id": "acvp.12b.probes#local:acvp.12b.probes/iv15",
+      "test": "acvp.12b.probes",
+      "title": "AES-CBC product-authored length / IV probes: 15-byte plaintext, 17-byte ciphertext, 15-byte IV — exact CK_RV pinned per engine",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.12b.probes/iv15",
+      "evidenceClass": "product-mechanism-probe",
+      "polarity": "positive",
+      "parameters": {
+        "probe": "iv15"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-128"
+      ],
+      "limitations": [
+        "C_EncryptInit with a 15-byte IV: CKR_MECHANISM_PARAM_INVALID expected (§5.8.1); the Rust engine returns CKR_ARGUMENTS_BAD, which C_EncryptInit does not list — open gap rust-cbc-iv-length-arguments-bad."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/0/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/0/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 1,
+        "direction": "encrypt",
+        "internalTestType": "GFSBox",
+        "keyLen": 128
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 1
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-128"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT encrypt (keyLen 128, GFSBox) → executed here: C_Encrypt (CKM_AES_CBC) byte-compared",
+        "subset: 1 case(s) (upstream tcId 1) taken from upstream tgId 1 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/1/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/1/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/1/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 1,
+        "direction": "encrypt",
+        "internalTestType": "MMT",
+        "keyLen": 128
+      },
+      "upstream": {
+        "tgId": 25,
+        "tcId": 2079
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-128"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT encrypt (keyLen 128, MMT) → executed here: C_Encrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2079, 2088) taken from upstream tgId 25 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/1/tests/1": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/1/tests/1",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/1/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 10,
+        "direction": "encrypt",
+        "internalTestType": "MMT",
+        "keyLen": 128
+      },
+      "upstream": {
+        "tgId": 25,
+        "tcId": 2088
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-128"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT encrypt (keyLen 128, MMT) → executed here: C_Encrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2079, 2088) taken from upstream tgId 25 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/10/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/10/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/10/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 1,
+        "direction": "decrypt",
+        "internalTestType": "MMT",
+        "keyLen": 192
+      },
+      "upstream": {
+        "tgId": 29,
+        "tcId": 2119
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-192"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT decrypt (keyLen 192, MMT) → executed here: C_Decrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2119, 2128) taken from upstream tgId 29 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/10/tests/1": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/10/tests/1",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/10/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 10,
+        "direction": "decrypt",
+        "internalTestType": "MMT",
+        "keyLen": 192
+      },
+      "upstream": {
+        "tgId": 29,
+        "tcId": 2128
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-192"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT decrypt (keyLen 192, MMT) → executed here: C_Decrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2119, 2128) taken from upstream tgId 29 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/11/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/11/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/11/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt-mct",
+      "testType": "MCT",
+      "parameters": {
+        "direction": "decrypt",
+        "keyLen": 192,
+        "outerIterationsChecked": 1
+      },
+      "upstream": {
+        "tgId": 41,
+        "tcId": 2155
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-192"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 MCT decrypt (keyLen 192) → executed here: MCT outer iteration 0 via 1000 single-block C_DecryptUpdate calls",
+        "subset: 1 case(s) (upstream tcId 2155) taken from upstream tgId 41 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "subset: resultsArray truncated to its first element (outer iteration 0 of 100)",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/12/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/12/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/12/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 1,
+        "direction": "encrypt",
+        "internalTestType": "GFSBox",
+        "keyLen": 256
+      },
+      "upstream": {
+        "tgId": 9,
+        "tcId": 635
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT encrypt (keyLen 256, GFSBox) → executed here: C_Encrypt (CKM_AES_CBC) byte-compared",
+        "subset: 1 case(s) (upstream tcId 635) taken from upstream tgId 9 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/13/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/13/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/13/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 1,
+        "direction": "encrypt",
+        "internalTestType": "MMT",
+        "keyLen": 256
+      },
+      "upstream": {
+        "tgId": 27,
+        "tcId": 2099
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT encrypt (keyLen 256, MMT) → executed here: C_Encrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2099, 2108) taken from upstream tgId 27 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/13/tests/1": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/13/tests/1",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/13/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 10,
+        "direction": "encrypt",
+        "internalTestType": "MMT",
+        "keyLen": 256
+      },
+      "upstream": {
+        "tgId": 27,
+        "tcId": 2108
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT encrypt (keyLen 256, MMT) → executed here: C_Encrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2099, 2108) taken from upstream tgId 27 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/14/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/14/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/14/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt-mct",
+      "testType": "MCT",
+      "parameters": {
+        "direction": "encrypt",
+        "keyLen": 256,
+        "outerIterationsChecked": 1
+      },
+      "upstream": {
+        "tgId": 39,
+        "tcId": 2153
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 MCT encrypt (keyLen 256) → executed here: MCT outer iteration 0 via 1000 single-block C_EncryptUpdate calls",
+        "subset: 1 case(s) (upstream tcId 2153) taken from upstream tgId 39 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "subset: resultsArray truncated to its first element (outer iteration 0 of 100)",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/15/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/15/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/15/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 1,
+        "direction": "decrypt",
+        "internalTestType": "GFSBox",
+        "keyLen": 256
+      },
+      "upstream": {
+        "tgId": 21,
+        "tcId": 1674
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT decrypt (keyLen 256, GFSBox) → executed here: C_Decrypt (CKM_AES_CBC) byte-compared",
+        "subset: 1 case(s) (upstream tcId 1674) taken from upstream tgId 21 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/16/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/16/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/16/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 2,
+        "direction": "decrypt",
+        "internalTestType": "MMT",
+        "keyLen": 256
+      },
+      "upstream": {
+        "tgId": 30,
+        "tcId": 2130
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT decrypt (keyLen 256, MMT) → executed here: C_Decrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2130, 2138) taken from upstream tgId 30 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/16/tests/1": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/16/tests/1",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/16/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 10,
+        "direction": "decrypt",
+        "internalTestType": "MMT",
+        "keyLen": 256
+      },
+      "upstream": {
+        "tgId": 30,
+        "tcId": 2138
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT decrypt (keyLen 256, MMT) → executed here: C_Decrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2130, 2138) taken from upstream tgId 30 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/17/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/17/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/17/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt-mct",
+      "testType": "MCT",
+      "parameters": {
+        "direction": "decrypt",
+        "keyLen": 256,
+        "outerIterationsChecked": 1
+      },
+      "upstream": {
+        "tgId": 42,
+        "tcId": 2156
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 MCT decrypt (keyLen 256) → executed here: MCT outer iteration 0 via 1000 single-block C_DecryptUpdate calls",
+        "subset: 1 case(s) (upstream tcId 2156) taken from upstream tgId 42 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "subset: resultsArray truncated to its first element (outer iteration 0 of 100)",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/2/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/2/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/2/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt-mct",
+      "testType": "MCT",
+      "parameters": {
+        "direction": "encrypt",
+        "keyLen": 128,
+        "outerIterationsChecked": 1
+      },
+      "upstream": {
+        "tgId": 37,
+        "tcId": 2151
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-128"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 MCT encrypt (keyLen 128) → executed here: MCT outer iteration 0 via 1000 single-block C_EncryptUpdate calls",
+        "subset: 1 case(s) (upstream tcId 2151) taken from upstream tgId 37 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "subset: resultsArray truncated to its first element (outer iteration 0 of 100)",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/3/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/3/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/3/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 1,
+        "direction": "decrypt",
+        "internalTestType": "GFSBox",
+        "keyLen": 128
+      },
+      "upstream": {
+        "tgId": 13,
+        "tcId": 1040
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-128"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT decrypt (keyLen 128, GFSBox) → executed here: C_Decrypt (CKM_AES_CBC) byte-compared",
+        "subset: 1 case(s) (upstream tcId 1040) taken from upstream tgId 13 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/4/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/4/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/4/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 1,
+        "direction": "decrypt",
+        "internalTestType": "MMT",
+        "keyLen": 128
+      },
+      "upstream": {
+        "tgId": 28,
+        "tcId": 2109
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-128"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT decrypt (keyLen 128, MMT) → executed here: C_Decrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2109, 2118) taken from upstream tgId 28 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/4/tests/1": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/4/tests/1",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/4/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 10,
+        "direction": "decrypt",
+        "internalTestType": "MMT",
+        "keyLen": 128
+      },
+      "upstream": {
+        "tgId": 28,
+        "tcId": 2118
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-128"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT decrypt (keyLen 128, MMT) → executed here: C_Decrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2109, 2118) taken from upstream tgId 28 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/5/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/5/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/5/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt-mct",
+      "testType": "MCT",
+      "parameters": {
+        "direction": "decrypt",
+        "keyLen": 128,
+        "outerIterationsChecked": 1
+      },
+      "upstream": {
+        "tgId": 40,
+        "tcId": 2154
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-128"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 MCT decrypt (keyLen 128) → executed here: MCT outer iteration 0 via 1000 single-block C_DecryptUpdate calls",
+        "subset: 1 case(s) (upstream tcId 2154) taken from upstream tgId 40 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "subset: resultsArray truncated to its first element (outer iteration 0 of 100)",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/6/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/6/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/6/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 1,
+        "direction": "encrypt",
+        "internalTestType": "GFSBox",
+        "keyLen": 192
+      },
+      "upstream": {
+        "tgId": 5,
+        "tcId": 285
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-192"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT encrypt (keyLen 192, GFSBox) → executed here: C_Encrypt (CKM_AES_CBC) byte-compared",
+        "subset: 1 case(s) (upstream tcId 285) taken from upstream tgId 5 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/7/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/7/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/7/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 1,
+        "direction": "encrypt",
+        "internalTestType": "MMT",
+        "keyLen": 192
+      },
+      "upstream": {
+        "tgId": 26,
+        "tcId": 2089
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-192"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT encrypt (keyLen 192, MMT) → executed here: C_Encrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2089, 2098) taken from upstream tgId 26 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/7/tests/1": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/7/tests/1",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/7/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 10,
+        "direction": "encrypt",
+        "internalTestType": "MMT",
+        "keyLen": 192
+      },
+      "upstream": {
+        "tgId": 26,
+        "tcId": 2098
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-192"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT encrypt (keyLen 192, MMT) → executed here: C_Encrypt (CKM_AES_CBC) byte-compared",
+        "subset: 2 case(s) (upstream tcId 2089, 2098) taken from upstream tgId 26 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/8/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/8/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/8/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "encrypt-mct",
+      "testType": "MCT",
+      "parameters": {
+        "direction": "encrypt",
+        "keyLen": 192,
+        "outerIterationsChecked": 1
+      },
+      "upstream": {
+        "tgId": 38,
+        "tcId": 2152
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC encrypt AES-192"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 MCT encrypt (keyLen 192) → executed here: MCT outer iteration 0 via 1000 single-block C_EncryptUpdate calls",
+        "subset: 1 case(s) (upstream tcId 2152) taken from upstream tgId 38 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "subset: resultsArray truncated to its first element (outer iteration 0 of 100)",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12b#aescbc_acvp_test#/testGroups/9/tests/0": {
+      "id": "acvp.12b#aescbc_acvp_test#/testGroups/9/tests/0",
+      "test": "acvp.12b",
+      "title": "AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aescbc_acvp_test#/testGroups/9/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CBC 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "blocks": 1,
+        "direction": "decrypt",
+        "internalTestType": "GFSBox",
+        "keyLen": 192
+      },
+      "upstream": {
+        "tgId": 17,
+        "tcId": 1324
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CBC decrypt AES-192"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CBC 1.0 AFT decrypt (keyLen 192, GFSBox) → executed here: C_Decrypt (CKM_AES_CBC) byte-compared",
+        "subset: 1 case(s) (upstream tcId 1324) taken from upstream tgId 17 (2156 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried.",
+        "MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only."
+      ]
+    },
+    "acvp.12c#aesctr_acvp_test#/testGroups/0/tests/0": {
+      "id": "acvp.12c#aesctr_acvp_test#/testGroups/0/tests/0",
+      "test": "acvp.12c",
+      "title": "AES-CTR NIST reference samples (RFC 3686 test mode): decrypt byte-match, then encrypt of the same tuple byte-match, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aesctr_acvp_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CTR 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "counterBits": 32,
+        "direction": "decrypt",
+        "keyLen": 128,
+        "payloadLen": 96
+      },
+      "upstream": {
+        "tgId": 4,
+        "tcId": 83
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CTR decrypt AES-128",
+        "CKM_AES_CTR encrypt AES-128"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CTR 1.0 AFT decrypt (keyLen 128, RFC 3686 test mode) → executed here: C_Decrypt (CKM_AES_CTR) byte-compared, then C_Encrypt of the plaintext byte-compared to ct",
+        "subset: 2 case(s) (upstream tcId 83, 100) taken from upstream tgId 4 (150 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV.",
+        "operation-change: In addition to the upstream decryption, the same (key, counter block, pt, ct) tuple is run as an encryption: CTR encryption and decryption are the same keystream XOR, so ct is the expected encryption output.",
+        "The upstream encrypt groups (IV chosen by the implementation, deferred) are notExecuted skip rows; encryption is exercised on the decrypt groups' tuples (operation-change recorded in the manifest lineage)."
+      ]
+    },
+    "acvp.12c#aesctr_acvp_test#/testGroups/0/tests/1": {
+      "id": "acvp.12c#aesctr_acvp_test#/testGroups/0/tests/1",
+      "test": "acvp.12c",
+      "title": "AES-CTR NIST reference samples (RFC 3686 test mode): decrypt byte-match, then encrypt of the same tuple byte-match, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aesctr_acvp_test#/testGroups/0/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CTR 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "counterBits": 32,
+        "direction": "decrypt",
+        "keyLen": 128,
+        "payloadLen": 1920
+      },
+      "upstream": {
+        "tgId": 4,
+        "tcId": 100
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CTR decrypt AES-128",
+        "CKM_AES_CTR encrypt AES-128"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CTR 1.0 AFT decrypt (keyLen 128, RFC 3686 test mode) → executed here: C_Decrypt (CKM_AES_CTR) byte-compared, then C_Encrypt of the plaintext byte-compared to ct",
+        "subset: 2 case(s) (upstream tcId 83, 100) taken from upstream tgId 4 (150 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV.",
+        "operation-change: In addition to the upstream decryption, the same (key, counter block, pt, ct) tuple is run as an encryption: CTR encryption and decryption are the same keystream XOR, so ct is the expected encryption output.",
+        "The upstream encrypt groups (IV chosen by the implementation, deferred) are notExecuted skip rows; encryption is exercised on the decrypt groups' tuples (operation-change recorded in the manifest lineage)."
+      ]
+    },
+    "acvp.12c#aesctr_acvp_test#/testGroups/1/tests/0": {
+      "id": "acvp.12c#aesctr_acvp_test#/testGroups/1/tests/0",
+      "test": "acvp.12c",
+      "title": "AES-CTR NIST reference samples (RFC 3686 test mode): decrypt byte-match, then encrypt of the same tuple byte-match, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aesctr_acvp_test#/testGroups/1/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CTR 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "counterBits": 32,
+        "direction": "decrypt",
+        "keyLen": 192,
+        "payloadLen": 8
+      },
+      "upstream": {
+        "tgId": 5,
+        "tcId": 101
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CTR decrypt AES-192",
+        "CKM_AES_CTR encrypt AES-192"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CTR 1.0 AFT decrypt (keyLen 192, RFC 3686 test mode) → executed here: C_Decrypt (CKM_AES_CTR) byte-compared, then C_Encrypt of the plaintext byte-compared to ct",
+        "subset: 2 case(s) (upstream tcId 101, 125) taken from upstream tgId 5 (150 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV.",
+        "operation-change: In addition to the upstream decryption, the same (key, counter block, pt, ct) tuple is run as an encryption: CTR encryption and decryption are the same keystream XOR, so ct is the expected encryption output.",
+        "The upstream encrypt groups (IV chosen by the implementation, deferred) are notExecuted skip rows; encryption is exercised on the decrypt groups' tuples (operation-change recorded in the manifest lineage)."
+      ]
+    },
+    "acvp.12c#aesctr_acvp_test#/testGroups/1/tests/1": {
+      "id": "acvp.12c#aesctr_acvp_test#/testGroups/1/tests/1",
+      "test": "acvp.12c",
+      "title": "AES-CTR NIST reference samples (RFC 3686 test mode): decrypt byte-match, then encrypt of the same tuple byte-match, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aesctr_acvp_test#/testGroups/1/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CTR 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "counterBits": 32,
+        "direction": "decrypt",
+        "keyLen": 192,
+        "payloadLen": 1920
+      },
+      "upstream": {
+        "tgId": 5,
+        "tcId": 125
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CTR decrypt AES-192",
+        "CKM_AES_CTR encrypt AES-192"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CTR 1.0 AFT decrypt (keyLen 192, RFC 3686 test mode) → executed here: C_Decrypt (CKM_AES_CTR) byte-compared, then C_Encrypt of the plaintext byte-compared to ct",
+        "subset: 2 case(s) (upstream tcId 101, 125) taken from upstream tgId 5 (150 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV.",
+        "operation-change: In addition to the upstream decryption, the same (key, counter block, pt, ct) tuple is run as an encryption: CTR encryption and decryption are the same keystream XOR, so ct is the expected encryption output.",
+        "The upstream encrypt groups (IV chosen by the implementation, deferred) are notExecuted skip rows; encryption is exercised on the decrypt groups' tuples (operation-change recorded in the manifest lineage)."
+      ]
+    },
+    "acvp.12c#aesctr_acvp_test#/testGroups/2/tests/0": {
+      "id": "acvp.12c#aesctr_acvp_test#/testGroups/2/tests/0",
+      "test": "acvp.12c",
+      "title": "AES-CTR NIST reference samples (RFC 3686 test mode): decrypt byte-match, then encrypt of the same tuple byte-match, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aesctr_acvp_test#/testGroups/2/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CTR 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "counterBits": 32,
+        "direction": "decrypt",
+        "keyLen": 256,
+        "payloadLen": 112
+      },
+      "upstream": {
+        "tgId": 6,
+        "tcId": 134
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CTR decrypt AES-256",
+        "CKM_AES_CTR encrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CTR 1.0 AFT decrypt (keyLen 256, RFC 3686 test mode) → executed here: C_Decrypt (CKM_AES_CTR) byte-compared, then C_Encrypt of the plaintext byte-compared to ct",
+        "subset: 2 case(s) (upstream tcId 134, 150) taken from upstream tgId 6 (150 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV.",
+        "operation-change: In addition to the upstream decryption, the same (key, counter block, pt, ct) tuple is run as an encryption: CTR encryption and decryption are the same keystream XOR, so ct is the expected encryption output.",
+        "The upstream encrypt groups (IV chosen by the implementation, deferred) are notExecuted skip rows; encryption is exercised on the decrypt groups' tuples (operation-change recorded in the manifest lineage)."
+      ]
+    },
+    "acvp.12c#aesctr_acvp_test#/testGroups/2/tests/1": {
+      "id": "acvp.12c#aesctr_acvp_test#/testGroups/2/tests/1",
+      "test": "acvp.12c",
+      "title": "AES-CTR NIST reference samples (RFC 3686 test mode): decrypt byte-match, then encrypt of the same tuple byte-match, AES-128/192/256",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "aesctr_acvp_test#/testGroups/2/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "ACVP-AES-CTR 1.0",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "counterBits": 32,
+        "direction": "decrypt",
+        "keyLen": 256,
+        "payloadLen": 1920
+      },
+      "upstream": {
+        "tgId": 6,
+        "tcId": 150
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_AES_CTR decrypt AES-256",
+        "CKM_AES_CTR encrypt AES-256"
+      ],
+      "limitations": [
+        "Upstream: ACVP-AES-CTR 1.0 AFT decrypt (keyLen 256, RFC 3686 test mode) → executed here: C_Decrypt (CKM_AES_CTR) byte-compared, then C_Encrypt of the plaintext byte-compared to ct",
+        "subset: 2 case(s) (upstream tcId 134, 150) taken from upstream tgId 6 (150 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV.",
+        "operation-change: In addition to the upstream decryption, the same (key, counter block, pt, ct) tuple is run as an encryption: CTR encryption and decryption are the same keystream XOR, so ct is the expected encryption output.",
+        "The upstream encrypt groups (IV chosen by the implementation, deferred) are notExecuted skip rows; encryption is exercised on the decrypt groups' tuples (operation-change recorded in the manifest lineage)."
+      ]
+    },
     "acvp.13#hmac_sha384_test#/testGroups/0/tests/0": {
       "id": "acvp.13#hmac_sha384_test#/testGroups/0/tests/0",
       "test": "acvp.13",
@@ -23278,8 +24556,107 @@
     "aescbc-acvp-{engine}": [
       "acvp.11#aescbc_test#/testGroups/0/tests/0"
     ],
+    "aescbc-mct-k128-tg37-tc2151-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/2/tests/0"
+    ],
+    "aescbc-mct-k128-tg40-tc2154-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/5/tests/0"
+    ],
+    "aescbc-mct-k192-tg38-tc2152-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/8/tests/0"
+    ],
+    "aescbc-mct-k192-tg41-tc2155-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/11/tests/0"
+    ],
+    "aescbc-mct-k256-tg39-tc2153-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/14/tests/0"
+    ],
+    "aescbc-mct-k256-tg42-tc2156-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/17/tests/0"
+    ],
+    "aescbc-nist-k128-tg1-tc1-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/0/tests/0"
+    ],
+    "aescbc-nist-k128-tg13-tc1040-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/3/tests/0"
+    ],
+    "aescbc-nist-k128-tg25-tc2079-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/1/tests/0"
+    ],
+    "aescbc-nist-k128-tg25-tc2088-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/1/tests/1"
+    ],
+    "aescbc-nist-k128-tg28-tc2109-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/4/tests/0"
+    ],
+    "aescbc-nist-k128-tg28-tc2118-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/4/tests/1"
+    ],
+    "aescbc-nist-k192-tg17-tc1324-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/9/tests/0"
+    ],
+    "aescbc-nist-k192-tg26-tc2089-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/7/tests/0"
+    ],
+    "aescbc-nist-k192-tg26-tc2098-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/7/tests/1"
+    ],
+    "aescbc-nist-k192-tg29-tc2119-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/10/tests/0"
+    ],
+    "aescbc-nist-k192-tg29-tc2128-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/10/tests/1"
+    ],
+    "aescbc-nist-k192-tg5-tc285-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/6/tests/0"
+    ],
+    "aescbc-nist-k256-tg21-tc1674-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/15/tests/0"
+    ],
+    "aescbc-nist-k256-tg27-tc2099-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/13/tests/0"
+    ],
+    "aescbc-nist-k256-tg27-tc2108-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/13/tests/1"
+    ],
+    "aescbc-nist-k256-tg30-tc2130-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/16/tests/0"
+    ],
+    "aescbc-nist-k256-tg30-tc2138-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/16/tests/1"
+    ],
+    "aescbc-nist-k256-tg9-tc635-{engine}": [
+      "acvp.12b#aescbc_acvp_test#/testGroups/12/tests/0"
+    ],
+    "aescbc-probe-decLen17-{engine}": [
+      "acvp.12b.probes#local:acvp.12b.probes/decLen17"
+    ],
+    "aescbc-probe-encLen15-{engine}": [
+      "acvp.12b.probes#local:acvp.12b.probes/encLen15"
+    ],
+    "aescbc-probe-iv15-{engine}": [
+      "acvp.12b.probes#local:acvp.12b.probes/iv15"
+    ],
     "aesctr-acvp-{engine}": [
       "acvp.12#aesctr_test#/testGroups/0/tests/0"
+    ],
+    "aesctr-nist-k128-tg4-tc100-{engine}": [
+      "acvp.12c#aesctr_acvp_test#/testGroups/0/tests/1"
+    ],
+    "aesctr-nist-k128-tg4-tc83-{engine}": [
+      "acvp.12c#aesctr_acvp_test#/testGroups/0/tests/0"
+    ],
+    "aesctr-nist-k192-tg5-tc101-{engine}": [
+      "acvp.12c#aesctr_acvp_test#/testGroups/1/tests/0"
+    ],
+    "aesctr-nist-k192-tg5-tc125-{engine}": [
+      "acvp.12c#aesctr_acvp_test#/testGroups/1/tests/1"
+    ],
+    "aesctr-nist-k256-tg6-tc134-{engine}": [
+      "acvp.12c#aesctr_acvp_test#/testGroups/2/tests/0"
+    ],
+    "aesctr-nist-k256-tg6-tc150-{engine}": [
+      "acvp.12c#aesctr_acvp_test#/testGroups/2/tests/1"
     ],
     "aesgcm-nist-k128-tg1-tc1-{engine}": [
       "acvp.01b#aesgcm_acvp_test#/testGroups/0/tests/0"

@@ -226,6 +226,15 @@
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ + Rust"
+    },
+    {
+      "id": "rust-cbc-iv-length-arguments-bad",
+      "title": "Rust engine answers a wrong-length AES-CBC IV with CKR_ARGUMENTS_BAD",
+      "detail": "Product-authored probe aescbc-probe-iv15 (workbench §12b): C_EncryptInit(CKM_AES_CBC) with a 15-byte IV. The C++ engine returns CKR_MECHANISM_PARAM_INVALID; the Rust engine returns CKR_ARGUMENTS_BAD, which PKCS#11 v3.2 §5.8.1 does not list for C_EncryptInit (CKR_MECHANISM_PARAM_INVALID is the listed code for a bad mechanism parameter). The Rust row stays red; the probe pins the spec code for both engines.",
+      "planItem": "G-8 / G-9",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)"
     }
   ]
 }

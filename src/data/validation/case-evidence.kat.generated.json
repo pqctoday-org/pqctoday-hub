@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "5caa0c62d14c7e80fb8892a6ef9e9219208169ca892dee8b9c5bc1a67d8e5f3b",
-    "registrySha256": "5438ea086a8f2c1f007dbcb51034dfad479c1f35cdd9ef00e59ae0a01970fa22"
+    "manifestSha256": "fd504a5616ca9d9e18eba28b034b06d19cbf462baa4981ca2a03bb13fadb3892",
+    "registrySha256": "ea394cf0e9508ea7f7ebde44e2d2b8ac52284782014a76f5c464169a8dce819a"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
@@ -3421,8 +3421,10 @@
     ]
   },
   "files": {
+    "acvp/aescbc_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/aescbc_test.json": "nist-acvp-reference-sample",
     "acvp/aescmac_test.json": "published-standard-kat",
+    "acvp/aesctr_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/aesctr_test.json": "published-standard-kat",
     "acvp/aesgcm_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/aesgcm_test.json": "independent-oracle",

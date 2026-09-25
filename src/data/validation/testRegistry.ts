@@ -316,7 +316,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
           parameters: { hashAlg, mutation: 'bit-flip' },
           note: "Key/message/MAC from the digest's longest-MAC hmac_acvp_matrix_test case with the last MAC bit flipped; asserts CKR_SIGNATURE_INVALID.",
         }),
-        lc('acvp.02b.invalid-mac', `${slug}-short`, PROBE, 'negative', [x(mech, 'verify')], {
+        lc('acvp.02b.invalid-mac', `${slug}-short`, PROBE, 'state-error', [x(mech, 'verify')], {
           rowId: `hmac-probe-short-${slug}-{engine}`,
           parameters: { hashAlg, mutation: 'truncated-by-1-byte' },
           note: 'MAC one byte shorter than the CK_MAC_GENERAL_PARAMS length; asserts the CK_RV pinned per engine (both CKR_SIGNATURE_LEN_RANGE).',
@@ -931,6 +931,64 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       'aesctr-acvp-{engine}'
     ),
   ]),
+  acvp(
+    '12b',
+    '§12b.1 (sections/aesCbcCtrAcvp.ts)',
+    'AES-CBC NIST reference samples: GFSBox and 1/10-block MMT encrypt/decrypt byte-match, MCT outer iteration 0 of 100, AES-128/192/256',
+    casesOf('aescbc_acvp_test').map((c) => {
+      const kl = param(c, 'keyLen')
+      return mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_AES_CBC', param(c, 'direction'), `AES-${kl}`)],
+        `aescbc-${c.testType === 'MCT' ? 'mct' : 'nist'}-k${kl}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    'MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only.'
+  ),
+  acvp(
+    '12b.probes',
+    '§12b.2 (sections/aesCbcCtrAcvp.ts)',
+    'AES-CBC product-authored length / IV probes: 15-byte plaintext, 17-byte ciphertext, 15-byte IV — exact CK_RV pinned per engine',
+    (
+      [
+        ['encLen15', 'encrypt', 'C_Encrypt of 15 bytes: CKR_DATA_LEN_RANGE on both engines.'],
+        [
+          'decLen17',
+          'decrypt',
+          'C_Decrypt of 17 bytes: CKR_ENCRYPTED_DATA_LEN_RANGE on both engines.',
+        ],
+        [
+          'iv15',
+          'encrypt',
+          'C_EncryptInit with a 15-byte IV: CKR_MECHANISM_PARAM_INVALID expected (§5.8.1); the Rust engine returns CKR_ARGUMENTS_BAD, which C_EncryptInit does not list — open gap rust-cbc-iv-length-arguments-bad.',
+        ],
+      ] as const
+    ).map(([key, op, note]) =>
+      lc('acvp.12b.probes', key, PROBE, 'state-error', [x('CKM_AES_CBC', op, 'AES-128')], {
+        rowId: `aescbc-probe-${key}-{engine}`,
+        parameters: { probe: key },
+        note,
+      })
+    )
+  ),
+  acvp(
+    '12c',
+    '§12b.3 (sections/aesCbcCtrAcvp.ts)',
+    'AES-CTR NIST reference samples (RFC 3686 test mode): decrypt byte-match, then encrypt of the same tuple byte-match, AES-128/192/256',
+    casesOf('aesctr_acvp_test').map((c) => {
+      const kl = param(c, 'keyLen')
+      return mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_AES_CTR', 'decrypt', `AES-${kl}`), x('CKM_AES_CTR', 'encrypt', `AES-${kl}`)],
+        `aesctr-nist-k${kl}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    "The upstream encrypt groups (IV chosen by the implementation, deferred) are notExecuted skip rows; encryption is exercised on the decrypt groups' tuples (operation-change recorded in the manifest lineage)."
+  ),
   acvp('13', '§13', 'HMAC-SHA2-384 verify (truncated MAC)', [
     mc(
       'hmac_sha384_test#/testGroups/0/tests/0',
