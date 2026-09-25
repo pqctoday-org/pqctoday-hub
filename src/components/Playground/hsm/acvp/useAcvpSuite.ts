@@ -146,6 +146,9 @@ import {
 import type { SoftHSMModule, SLHDSASignOptions } from '@/wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
 import { runMldsaAcvpSection, type AcvpCaseMeta } from './sections/mldsaAcvp'
+import { runMldsaDepthSection } from './sections/mldsaDepth'
+import { runMlkemAcvpSection } from './sections/mlkemAcvp'
+import { runSlhdsaAcvpSection } from './sections/slhdsaAcvp'
 import type { HsmKey } from '../HsmContext'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -219,9 +222,9 @@ export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'hashing_mac', label: 'Hashing & MAC', groups: 5 },
   { id: 'kdf', label: 'KDF', groups: 5 },
   { id: 'classical', label: 'Classical Asymmetric', groups: 10 },
-  { id: 'ml_dsa', label: 'ML-DSA', groups: 6 },
-  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 5 },
-  { id: 'ml_kem', label: 'ML-KEM', groups: 2 },
+  { id: 'ml_dsa', label: 'ML-DSA', groups: 7 },
+  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 6 },
+  { id: 'ml_kem', label: 'ML-KEM', groups: 3 },
 ]
 
 export const ALL_CATEGORY_IDS: Set<CategoryId> = new Set(CATEGORIES.map((c) => c.id))
@@ -1109,6 +1112,22 @@ export function useAcvpSuite() {
             evidenceTierFor: deriveEvidenceTier,
           })
 
+          // ── 5e. ML-DSA context / message-length / pre-hash depth — NIST
+          // deterministic SigGen at ctx 0/255, 8192-byte messages and the
+          // remaining HashML-DSA functions, plus product-authored 1-byte and
+          // 256-byte context probes. Self-contained in sections/mldsaDepth.ts
+          // (WS-D D2-6).
+          await runMldsaDepthSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mldsa,
+            pushResult,
+            addLog,
+            evidenceTierFor: deriveEvidenceTier,
+          })
+
           // ── 6. ML-DSA Functional Sign+Verify (FIPS 204) — all variants ──
           for (const dsaVariant of [44, 65, 87] as const) {
             const dsaAlgo = `ML-DSA-${dsaVariant}`
@@ -1171,7 +1190,12 @@ export function useAcvpSuite() {
           }
         }
 
-        // ── 7. ML-KEM Decapsulation KAT (FIPS 203) ──────────────────────
+        // ── 7. ML-KEM Decapsulation from upstream encapsulation AFT (FIPS 203) ──
+        // D1-1 (2026-09-24): mlkem_test.json holds cases from the upstream
+        // ENCAPSULATION group (ek, m -> c, k). The hub imports dk and runs
+        // C_DecapsulateKey on c, comparing against k: a transformation, not a
+        // NIST decapsulation case. Row text and caseMeta say so; dedicated
+        // decapsulation VAL cases live in section 7b (sections/mlkemAcvp.ts).
         if (activeCategories.has('ml_kem')) {
           currentCategory = 'ml_kem'
           for (const group of mlkemTestVectors.testGroups) {
@@ -1179,6 +1203,26 @@ export function useAcvpSuite() {
             const algo = group.parameterSet
             const variantNum = (parseInt(algo.split('-')[2]) || 768) as 512 | 768 | 1024
             const id7 = `test-${algo}-decap-${eName}`
+            const testCase7 = `Decapsulate · upstream encapsulation AFT tg${group.tgId}/tc${test.tcId} → local decapsulation`
+            const lineage7 =
+              'NIST encapsulation-group output (dk, c, k) re-used as a decapsulation KAT; upstream m → c not executed ' +
+              '(ACVP-Server@975de31e ML-KEM-encapDecap-FIPS203)'
+            const caseMeta7: AcvpCaseMeta = {
+              origin: 'nist-acvp-server',
+              upstreamOperation: 'encapsulation',
+              localOperation: 'decapsulation',
+              parameterSet: algo,
+              expected: 'byte-match',
+              expectedRv: 'CKR_OK',
+              tgId: group.tgId,
+              tcId: test.tcId,
+              source: {
+                repo: 'https://github.com/usnistgov/ACVP-Server',
+                commit: mlkemTestVectors._provenance.source_release,
+                path: 'gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json',
+                sha256: mlkemTestVectors._provenance.source_sha256,
+              },
+            }
             addLog(`[${eName}] Testing ${algo} Decapsulate KAT...`)
             addLog(
               `  ACVP SK: ${test.sk.slice(0, 32)}… | CT[${test.ct.length / 2}B]: ${test.ct.slice(0, 32)}…`
@@ -1218,11 +1262,12 @@ export function useAcvpSuite() {
                 await pushResult({
                   id: id7,
                   algorithm: `${algo} (${eName})`,
-                  testCase: 'Decapsulate KAT',
+                  testCase: testCase7,
+                  caseMeta: caseMeta7,
                   referenceUrl: REF.mlkem,
                   evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
                   status: 'pass',
-                  details: `SS[${recoveredSs.length}B]: ${ssHex}`,
+                  details: `SS[${recoveredSs.length}B]: ${ssHex} · ${lineage7}`,
                 })
                 addLog(`[${eName}] [id:${id7}] ${algo} Decapsulate: PASS | SS: ${ssHex}`)
               } else {
@@ -1235,11 +1280,12 @@ export function useAcvpSuite() {
                 await pushResult({
                   id: id7,
                   algorithm: `${algo} (${eName})`,
-                  testCase: 'Decapsulate KAT',
+                  testCase: testCase7,
+                  caseMeta: caseMeta7,
                   referenceUrl: REF.mlkem,
                   evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
                   status: 'fail',
-                  details: `SS mismatch: got ${gotHex}... expected ${expHex}...`,
+                  details: `SS mismatch: got ${gotHex}... expected ${expHex}... · ${lineage7}`,
                 })
                 addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Decapsulate: SS mismatch`)
                 // The PKCS#11 call itself succeeded (CKR_OK) — the recovered
@@ -1263,11 +1309,12 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `test-${algo}-err-${eName}`,
                 algorithm: `${algo} (${eName})`,
-                testCase: 'Decapsulate KAT',
+                testCase: testCase7,
+                caseMeta: caseMeta7,
                 referenceUrl: REF.mlkem,
                 evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
                 status: 'fail',
-                details: errorMessage,
+                details: `${errorMessage} · ${lineage7}`,
               })
               addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Error: ${errorMessage}`)
               addHsmLog({
@@ -1282,6 +1329,21 @@ export function useAcvpSuite() {
               })
             }
           }
+
+          // ── 7b. ML-KEM reference-sample depth — keyGen from seed, VAL
+          // decapsulation (incl. implicit rejection) and key checks, honest
+          // encapsulation skip, product-authored boundary probes. Self-
+          // contained in sections/mlkemAcvp.ts (WS-D D1-2..D1-5).
+          await runMlkemAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mlkem,
+            pushResult,
+            addLog,
+            evidenceTierFor: deriveEvidenceTier,
+          })
 
           // ── 8. ML-KEM Encap+Decap Round-Trip (FIPS 203) ─────────────────
           for (const kemVariant of [512, 768, 1024] as const) {
@@ -1444,7 +1506,12 @@ export function useAcvpSuite() {
             }
           }
 
-          // ── 9b. SLH-DSA SigVer KAT (FIPS 205) — NIST ACVP vectors, all 12 sets ──
+          // ── 9b. SLH-DSA SigVer from upstream sigGen output (FIPS 205), all 12 sets ──
+          // D3-1 (2026-09-24): each tuple is NIST ACVP-Server *sigGen* output
+          // (pk, msg, ctx, signature) re-used locally as a positive SigVer input —
+          // a transformation, not a dedicated NIST SigVer case. Dedicated sigVer
+          // cases (positive + negative), deterministic sigGen byte-match and
+          // product-authored negatives live in section 9c (sections/slhdsaAcvp.ts).
           // True known-answer test: import the NIST public key and verify the
           // embedded signature over the binary message+context, asserting the
           // result matches the vector's testPassed. (The functional test above
@@ -1473,6 +1540,28 @@ export function useAcvpSuite() {
               >
             )[slhParam.name]
             const id9b = `slhdsa-sigver-kat-${slhParam.name}-${eName}`
+            const tg9b = Number(/tgId=(\d+)/.exec(tv.comment)?.[1] ?? NaN)
+            const testCase9b = `SigVer · upstream sigGen tg${tg9b}/tc${tv.tcId} → local SigVer · pure · ctx ${tv.context.length / 2}B`
+            const lineage9b =
+              'NIST sigGen output re-used as a positive SigVer tuple (ACVP-Server@975de31e SLH-DSA-sigGen-FIPS205)'
+            const caseMeta9b: AcvpCaseMeta = {
+              origin: 'nist-acvp-server',
+              upstreamOperation: 'sigGen',
+              localOperation: 'sigVer',
+              parameterSet: tv.parameterSet,
+              mode: 'pure',
+              contextBytes: tv.context.length / 2,
+              messageBytes: tv.message.length / 2,
+              expected: 'valid',
+              tgId: tg9b,
+              tcId: tv.tcId,
+              source: {
+                repo: 'https://github.com/usnistgov/ACVP-Server',
+                commit: slhdsaCtxTestVectors._provenance.source_release,
+                path: 'gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json',
+                sha256: slhdsaCtxTestVectors._provenance.source_sha256,
+              },
+            }
             addLog(
               `[${eName}] Testing ${tv.parameterSet} SigVer KAT (FIPS 205, NIST ACVP tcId=${tv.tcId})...`
             )
@@ -1498,36 +1587,54 @@ export function useAcvpSuite() {
                 context: ctxBytes,
               })
               const pass = isValid === tv.testPassed
-              newResults.push({
+              await pushResult({
                 id: id9b,
                 algorithm: `${tv.parameterSet} (${eName})`,
-                testCase: 'SigVer KAT (NIST ACVP)',
+                testCase: testCase9b,
                 referenceUrl: REF.slhdsa,
                 evidenceTier: deriveEvidenceTier(slhdsaCtxTestVectors._provenance),
+                caseMeta: caseMeta9b,
                 status: pass ? 'pass' : 'fail',
-                details: pass
-                  ? `NIST vector: verify=${isValid} matches testPassed=${tv.testPassed} ✓`
-                  : `verify=${isValid}, expected testPassed=${tv.testPassed}`,
-                category: currentCategory,
+                details:
+                  (pass
+                    ? `verify=${isValid} matches testPassed=${tv.testPassed}`
+                    : `verify=${isValid}, expected testPassed=${tv.testPassed}`) +
+                  ` · ${lineage9b}`,
               })
               addLog(
                 `[${eName}] [id:${id9b}] ${tv.parameterSet} SigVer KAT: ${pass ? 'PASS' : 'FAIL'} | verify=${isValid}`
               )
             } catch (e: unknown) {
               const errMessage = e instanceof Error ? e.message : String(e)
-              newResults.push({
+              await pushResult({
                 id: `slhdsa-sigver-kat-err-${slhParam.name}-${eName}`,
                 algorithm: `${tv.parameterSet} (${eName})`,
-                testCase: 'SigVer KAT (NIST ACVP)',
+                testCase: testCase9b,
                 referenceUrl: REF.slhdsa,
                 evidenceTier: deriveEvidenceTier(slhdsaCtxTestVectors._provenance),
+                caseMeta: caseMeta9b,
                 status: 'fail',
-                details: errMessage,
-                category: currentCategory,
+                details: `${errMessage} · ${lineage9b}`,
               })
               addLog(`[DISCREPANCY] [${eName}] [id:${id9b}] SLH-DSA SigVer KAT: ${errMessage}`)
             }
           }
+
+          // ── 9c. SLH-DSA reference-sample depth — dedicated NIST SigVer
+          // (pure + pre-hash, positive + negative), deterministic SigGen
+          // byte-match for all 12 sets, product-authored negatives and
+          // probes, honest skips. Self-contained in sections/slhdsaAcvp.ts
+          // (WS-D D3-2..D3-4).
+          await runSlhdsaAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.slhdsa,
+            pushResult,
+            addLog,
+            evidenceTierFor: deriveEvidenceTier,
+          })
         }
 
         // ── 10. SHA-256 Digest KAT (FIPS 180-4) ─────────────────────────

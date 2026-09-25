@@ -71,7 +71,7 @@ import type { EvidenceTier, TestResult } from '../useAcvpSuite'
 /** Vendor-defined (NOT PKCS#11 v3.2) — pqctoday-hsm src/lib/vendor_mechanisms.h,
  * rust/src/constants.rs. µ travels as the C_Sign/C_Verify data argument. */
 export const CKM_ML_DSA_EXTERNAL_MU_VENDOR = 0x0000403c
-const CKR_OK = 0x00000000
+export const CKR_OK = 0x00000000
 export const CKR_SIGNATURE_INVALID = 0x000000c0
 
 /** ACVP hashAlg → PKCS#11 v3.2 Table 284 CKM_HASH_ML_DSA_<hash>. SHA2-512/224 and
@@ -93,23 +93,46 @@ export const ACVP_HASH_TO_MECH: Readonly<Record<string, number>> = {
 /** Structured identity of one executed (or skipped) case — the same facts the
  * row's text shows, in machine-readable form for evidence export. */
 export interface AcvpCaseMeta {
-  origin: 'nist-acvp-server' | 'product-authored-mutation' | 'not-executed'
-  upstreamOperation: 'sigVer' | 'sigGen' | 'keyGen'
-  localOperation: 'sigVer' | 'sigGen-deterministic' | 'keyGen-from-seed' | 'none'
+  /** product-authored-mutation: a NIST case with a PQC Today-made change;
+   * product-authored-probe: a PQC Today-authored PKCS#11 behaviour check. */
+  origin:
+    'nist-acvp-server' | 'product-authored-mutation' | 'product-authored-probe' | 'not-executed'
+  upstreamOperation:
+    | 'sigVer'
+    | 'sigGen'
+    | 'keyGen'
+    | 'encapsulation'
+    | 'decapsulation'
+    | 'decapsulationKeyCheck'
+    | 'encapsulationKeyCheck'
+    | 'none'
+  localOperation:
+    | 'sigVer'
+    | 'sigGen-deterministic'
+    | 'sigGen-hedged'
+    | 'keyGen-from-seed'
+    | 'encapsulation'
+    | 'decapsulation'
+    | 'key-import'
+    | 'none'
   parameterSet: string
   mode?: 'pure' | 'preHash' | 'externalMu' | 'internal'
   hashAlg?: string
   contextBytes?: number
   messageBytes?: number
-  expected: 'valid' | 'invalid' | 'byte-match' | 'not-run'
+  /** rejected/accepted: a VAL case whose upstream disposition is a boolean;
+   * return-code: a boundary probe asserting an exact CK_RV (see expectedRv). */
+  expected: 'valid' | 'invalid' | 'byte-match' | 'not-run' | 'rejected' | 'accepted' | 'return-code'
   expectedReason?: string
+  /** Exact CK_RV name the row asserts, when it asserts one. */
+  expectedRv?: string
   tgId?: number
   tcId?: number
   source: { repo: string; commit: string; path: string; sha256: string }
   observed?: string
 }
 
-interface Provenance {
+export interface Provenance {
   producer?: string
   source_repo: string
   source_commit: string
@@ -184,19 +207,19 @@ interface NotExecuted {
 const SV_PROV = sigVerVectors._provenance as Provenance
 const SG_PROV = sigGenDetVectors._provenance as Provenance
 const KG_PROV = keyGenVectors._provenance as Provenance
-const srcOf = (p: Provenance) => ({
+export const srcOf = (p: Provenance) => ({
   repo: p.source_repo,
   commit: p.source_commit,
   path: p.source_path,
   sha256: p.source_sha256,
 })
 /** "ACVP-Server@975de31e ML-DSA-sigVer-FIPS204" — short visible source tag. */
-const srcTag = (p: Provenance) =>
+export const srcTag = (p: Provenance) =>
   `ACVP-Server@${p.source_commit.slice(0, 8)} ${p.source_path.split('/').slice(-2, -1)[0]}`
 
 const variantOf = (ps: string) => parseInt(ps.split('-')[2], 10) as 44 | 65 | 87
-const nBytes = (hex: string | undefined) => (hex ? hex.length / 2 : 0)
-const hexOf = (b: Uint8Array) =>
+export const nBytes = (hex: string | undefined) => (hex ? hex.length / 2 : 0)
+export const hexOf = (b: Uint8Array) =>
   Array.from(b)
     .map((x) => x.toString(16).padStart(2, '0'))
     .join('')
@@ -207,7 +230,7 @@ const hexOf = (b: Uint8Array) =>
 // assert the exact code, so these call C_* directly.
 
 /** CK_MECHANISM (+ optional CK_SIGN_ADDITIONAL_CONTEXT) in WASM memory. */
-function allocMech(
+export function allocMech(
   M: SoftHSMModule,
   mechType: number,
   param: { hedge: number; context: Uint8Array } | null
@@ -269,7 +292,7 @@ export function verifyRv(
 }
 
 /** C_SignInit(hedgeVariant = CKH_DETERMINISTIC_REQUIRED) + C_Sign (size query, then sign). */
-function signDeterministic(
+export function signDeterministic(
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
@@ -395,12 +418,12 @@ function generateFromSeed(
   }
 }
 
-const destroy = (M: SoftHSMModule, hSession: number, h: number) => {
+export const destroy = (M: SoftHSMModule, hSession: number, h: number) => {
   if (h) M._C_DestroyObject(hSession, h)
 }
 
 /** First differing byte, for a byte-match failure message. */
-const firstDiff = (a: Uint8Array, b: Uint8Array): string => {
+export const firstDiff = (a: Uint8Array, b: Uint8Array): string => {
   if (a.length !== b.length) return `length ${a.length} ≠ expected ${b.length}`
   const i = a.findIndex((x, k) => x !== b[k]) // eslint-disable-line security/detect-object-injection
   return i < 0 ? 'identical' : `first difference at byte ${i}`
@@ -422,7 +445,7 @@ const mechFor = (g: { preHash: string; externalMu: boolean }, hashAlg: string) =
 
 /** Why a mechanism can't run on this engine, or null when it can. Mirrors the
  * rest of the suite: an empty list means the probe itself failed, so run. */
-const unsupportedReason = (mechs: Set<number>, mech: number | undefined, label: string) => {
+export const unsupportedReason = (mechs: Set<number>, mech: number | undefined, label: string) => {
   if (mech === undefined) return `${label}: no PKCS#11 v3.2 mechanism exists`
   if (mechs.size > 0 && !mechs.has(mech))
     return `${label} (0x${mech.toString(16)}) is not advertised by C_GetMechanismList on this engine`
