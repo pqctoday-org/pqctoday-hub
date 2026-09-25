@@ -40,7 +40,7 @@ export const CONCEPT_CHECKS: ConceptCheck[] = [
       'Every vector set in your ACVTS Demo test session comes back “passed”. What can you now say publicly?',
     options: [
       'That the implementation is on the CAVP algorithm validation list.',
-      'That the implementation passed ACVTS Demo testing for those capabilities — Demo is a sandbox; only the Production ACVTS, available to accredited laboratories, creates the certificates listed on the Algorithm Validation page.',
+      'That the implementation’s Demo test session reported “passed” for those capabilities — Demo is a sandbox; only the Production ACVTS, available to accredited laboratories, creates the certificates listed on the Algorithm Validation page.',
       'That the implementation is validated, because Demo and Prod run the same test generators.',
       'Nothing at all: Demo results are discarded immediately.',
     ],

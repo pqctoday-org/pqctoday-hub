@@ -52,6 +52,7 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
     answer: 'nist-acvp-reference-sample',
     rung: 6,
     why: 'The expected values come from the public NIST ACVP-Server repository with an immutable source identity (commit + file hash). That is rung 6 — nothing was issued to an ACVTS session, so rungs 7–9 are not reached.',
+    // claims-lint-allow: quotes the overclaim this exercise teaches learners to avoid
     trap: 'Calling this “ACVP validated”. A public sample is not an issued vector set and carries no verdict.',
   },
   {
