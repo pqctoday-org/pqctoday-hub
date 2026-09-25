@@ -24,7 +24,7 @@ const CORE = ['four-questions', 'scope-before-level']
 
 const manifest: ModuleManifest = {
   id: 'crypto-product-certification',
-  contentVersion: 1,
+  contentVersion: 2,
   lm_id: 'LM-065',
   title: 'Cryptographic Product Certification',
   description:

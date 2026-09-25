@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'crypto-mgmt-modernization',
   version: '1.1.3',
   lastReviewed: '2026-08-29',
-  lastEdited: '2026-09-24',
+  lastEdited: '2026-09-25',
 
   // ORDERED FOR A READER. It used to be ordered for the SAMPLER, and that constraint is
   // gone: accuracy_spotcheck.py opened four entries by even stride, so which four a

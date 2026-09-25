@@ -27,7 +27,7 @@ export const content: ModuleContent = {
   // No lastReviewed: nobody has reviewed this module's claims via
   // record_module_review.py yet (moduleReviewHonesty.test.ts). v1 ships as
   // "practitioner orientation", not reviewed by a lab or certification body.
-  lastEdited: '2026-09-24',
+  lastEdited: '2026-09-25',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──
