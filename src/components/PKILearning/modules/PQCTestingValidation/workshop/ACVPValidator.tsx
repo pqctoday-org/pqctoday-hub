@@ -149,9 +149,7 @@ export const ACVPValidator: React.FC = () => {
   const consoleRef = useRef<HTMLDivElement>(null)
   const activeAlg = ALG_DATA[selectedAlg]
   const vectorEvidence = (alg: (typeof ALG_DATA)[AlgorithmFamily]) =>
-    KAT_EVIDENCE_META[
-      evidenceForVectorFile({ file: alg.file, producer: alg.data?._provenance?.producer })
-    ]
+    KAT_EVIDENCE_META[evidenceForVectorFile({ file: alg.file })]
 
   // Flatten tests to mock stream them
   const flattenedTests = useMemo(() => {
