@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // KAT for the WS-E classical / symmetric / MAC reference-sample sections
-// (sections/aesGcmAcvp.ts, hmacAcvp.ts, ecSigVerAcvp.ts, shaAcvp.ts, aesKwAcvp.ts), driven through the
+// (sections/aesGcmAcvp.ts, hmacAcvp.ts, ecSigVerAcvp.ts, shaAcvp.ts, aesKwAcvp.ts, aesCbcCtrAcvp.ts), driven through the
 // REAL useAcvpSuite hook in dual-engine mode (C++ Emscripten engine in Node +
 // Rust wasm-bindgen).
 //
@@ -21,6 +21,11 @@
 //    standard-MCT first outer iteration byte-match on both engines;
 //  - AES-KW/KWP: wrap and unwrap byte-match, upstream integrity failures are
 //    refused with CKR_WRAPPED_KEY_INVALID on both engines;
+//  - AES-CBC / AES-CTR: AFT and the MCT first outer iteration byte-match on
+//    both engines; the product-authored CBC length probes return the pinned
+//    codes; a 15-byte IV gets CKR_MECHANISM_PARAM_INVALID on C++ but
+//    CKR_ARGUMENTS_BAD on Rust (not a C_EncryptInit return value — red row,
+//    open gap rust-cbc-iv-length-arguments-bad);
 //  - the literal mechanism numbers the sections use equal the generated
 //    mechanism inventory's;
 //  - sabotage on a COPY of the vectors (vi.doMock) turns exactly those rows red.
@@ -298,6 +303,42 @@ describe('WS-E classical reference samples — both engines, real vectors', () =
         (g) => g.mode === 'KWP' && Number(g.payloadLen) % 64 !== 0 && Number(g.payloadLen) > 8
       )
     ).toBe(true)
+  })
+
+  it('AES-CBC/CTR: AFT and MCT outer iteration byte-match; length/IV probes pinned (Rust IV finding)', () => {
+    const cbc = readVectors('aescbc_acvp_test.json') as Vec
+    for (const g of cbc.testGroups)
+      for (const t of g.tests)
+        for (const e of ENGINES) {
+          const kind = g.testType === 'MCT' ? 'mct' : 'nist'
+          const r = row(`aescbc-${kind}-k${g.keyLen}-tg${g.tgId}-tc${t.tcId}-${e}`)!
+          expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
+          expect(r.caseMeta?.observed).toBe('byte-equal')
+          expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
+        }
+    expect(new Set(cbc.testGroups.map((g) => g.keyLen))).toEqual(new Set([128, 192, 256]))
+    expect(cbc.testGroups.filter((g) => g.testType === 'MCT')).toHaveLength(6)
+    const ctr = readVectors('aesctr_acvp_test.json') as Vec
+    for (const g of ctr.testGroups)
+      for (const t of g.tests)
+        for (const e of ENGINES) {
+          const r = row(`aesctr-nist-k${g.keyLen}-tg${g.tgId}-tc${t.tcId}-${e}`)!
+          expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
+          expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
+        }
+    const want: Record<string, Record<string, string>> = {
+      encLen15: { 'C++': 'CKR_DATA_LEN_RANGE', Rust: 'CKR_DATA_LEN_RANGE' },
+      decLen17: { 'C++': 'CKR_ENCRYPTED_DATA_LEN_RANGE', Rust: 'CKR_ENCRYPTED_DATA_LEN_RANGE' },
+      iv15: { 'C++': 'CKR_MECHANISM_PARAM_INVALID', Rust: 'CKR_ARGUMENTS_BAD' },
+    }
+    for (const [key, byEngine] of Object.entries(want))
+      for (const e of ENGINES) {
+        const r = row(`aescbc-probe-${key}-${e}`)!
+        expect(r.caseMeta?.observed, r.id).toBe(byEngine[e])
+        // Rust's CKR_ARGUMENTS_BAD is not a C_EncryptInit return value: the row stays red
+        expect(r.status, r.details).toBe(key === 'iv15' && e === 'Rust' ? 'fail' : 'pass')
+        expect(classesOf(r.id)).toEqual(['product-mechanism-probe'])
+      }
   })
 })
 

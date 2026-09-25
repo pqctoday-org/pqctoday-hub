@@ -204,6 +204,55 @@ export function cryptRv(
   }
 }
 
+/** A multi-part C_Encrypt/C_Decrypt operation: init once, then one call per chunk. */
+export function multipartRv(
+  M: SoftHSMModule,
+  h: number,
+  op: 'encrypt' | 'decrypt',
+  mech: RawMech,
+  key: number
+): {
+  initRv: number
+  update: (chunk: Uint8Array) => RvOut
+  final: () => RvOut
+} {
+  const initRv =
+    op === 'encrypt'
+      ? M._C_EncryptInit(h, mech.ptr, key) >>> 0
+      : M._C_DecryptInit(h, mech.ptr, key) >>> 0
+  const name = op === 'encrypt' ? 'C_EncryptUpdate' : 'C_DecryptUpdate'
+  return {
+    initRv,
+    update: (chunk) => {
+      const dp = M._malloc(Math.max(1, chunk.length))
+      M.HEAPU8.set(chunk, dp)
+      const lenPtr = M._malloc(4)
+      const outPtr = M._malloc(chunk.length + 32)
+      try {
+        M.setValue(lenPtr, chunk.length + 32, 'i32')
+        const rv =
+          (op === 'encrypt'
+            ? M._C_EncryptUpdate(h, dp, chunk.length, outPtr, lenPtr)
+            : M._C_DecryptUpdate(h, dp, chunk.length, outPtr, lenPtr)) >>> 0
+        if (rv !== CKR_OK) return { rv, step: name, out: null }
+        return {
+          rv,
+          step: name,
+          out: M.HEAPU8.slice(outPtr, outPtr + (M.getValue(lenPtr, 'i32') >>> 0)),
+        }
+      } finally {
+        M._free(dp)
+        M._free(lenPtr)
+        M._free(outPtr)
+      }
+    },
+    final: () =>
+      twoCall(M, op === 'encrypt' ? 'C_EncryptFinal' : 'C_DecryptFinal', (o, l) =>
+        op === 'encrypt' ? M._C_EncryptFinal(h, o, l) : M._C_DecryptFinal(h, o, l)
+      ),
+  }
+}
+
 /** C_SignInit + single-part C_Sign. */
 export function signRaw(
   M: SoftHSMModule,

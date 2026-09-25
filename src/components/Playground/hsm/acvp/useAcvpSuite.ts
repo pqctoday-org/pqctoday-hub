@@ -150,6 +150,7 @@ import { runMlkemAcvpSection } from './sections/mlkemAcvp'
 import { runSlhdsaAcvpSection } from './sections/slhdsaAcvp'
 import { runAesGcmAcvpSection } from './sections/aesGcmAcvp'
 import { runAesKwAcvpSection } from './sections/aesKwAcvp'
+import { runAesCbcCtrAcvpSection } from './sections/aesCbcCtrAcvp'
 import { runHmacAcvpSection } from './sections/hmacAcvp'
 import { runShaAcvpSection } from './sections/shaAcvp'
 import { runEcdsaSigVerAcvpSection, runEddsaSigVerAcvpSection } from './sections/ecSigVerAcvp'
@@ -184,7 +185,7 @@ export type CategoryId =
   'symmetric' | 'hashing_mac' | 'kdf' | 'classical' | 'ml_dsa' | 'slh_stateful' | 'ml_kem'
 
 export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
-  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 8 },
+  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 9 },
   { id: 'hashing_mac', label: 'Hashing & MAC', groups: 7 },
   { id: 'kdf', label: 'KDF', groups: 5 },
   { id: 'classical', label: 'Classical Asymmetric', groups: 12 },
@@ -1984,6 +1985,24 @@ export function useAcvpSuite() {
               addLog(`[DISCREPANCY] [${eName}] [id:${id12}] AES-CTR: ${errMessage}`)
             }
           }
+        }
+
+        // ── 12b. AES-CBC / AES-CTR NIST reference samples (WS-E) — CBC AFT
+        // (GFSBox + 1/10-block MMT) and MCT outer iteration 0 for AES-128/
+        // 192/256 both directions, product-authored CBC length/IV probes,
+        // CTR RFC 3686 decrypt + encrypt. sections/aesCbcCtrAcvp.ts.
+        if (activeCategories.has('symmetric')) {
+          currentCategory = 'symmetric'
+          await runAesCbcCtrAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.aescbc,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 13. HMAC-SHA384 Verify KAT (NIST ACVP, truncated) ──────────────
