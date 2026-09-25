@@ -75,9 +75,10 @@ describe('CryptoProductCertification render parity', () => {
     expect(notes[0]).toHaveTextContent(PRACTITIONER_DISCLAIMER)
   })
 
-  it('renders a visible draft marker while owner files are stubs', () => {
+  it('ships no draft placeholder — every owner file has real content', () => {
     renderModule()
-    expect(screen.getAllByTestId('draft-pending').length).toBeGreaterThan(0)
+    expect(screen.queryByTestId('draft-pending')).not.toBeInTheDocument()
+    expect(screen.queryByText(/content pending/i)).not.toBeInTheDocument()
   })
 
   it('hides the other paths’ sections on a chosen path (offPathSections: hide)', () => {

@@ -1273,6 +1273,59 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 2,
     why: 'eIDAS is law: it defines QSCDs and requires their certification. It is not a Protection Profile. The evaluable requirements are in the PPs (EN 419221-5, EN 419241-2), and EUCC is the scheme that runs the evaluation.',
   },
+
+  // ── crypto-product-certification (Shared author: core + shared steps) ──
+  'crypto-product-certification/scheme-selector': {
+    prompt:
+      'A payment processor already holds a FIPS 140-3 Level 3 validation for its HSM. Which question does that validation still leave unanswered?',
+    options: [
+      'Whether the module meets FIPS 140-3 requirements in its validated configuration',
+      'Whether the device is an approved PCI PTS HSM',
+      'Whether the module’s algorithms were tested under CAVP / ACVP',
+    ],
+    answer: 1,
+    why: 'Each scheme answers its own question about its own object: the CMVP validates a module, PCI SSC approves a payment device. PIN Security may accept the FIPS Level 3 HSM for the entity’s requirement, but that never makes it a PTS-approved device.',
+  },
+  'crypto-product-certification/boundary-drawer': {
+    prompt:
+      'Orrin N7’s cloud front end runs on the provider’s servers, outside every HSM. What does a FIPS 140-3 validation of the HSM module say about that front end?',
+    options: [
+      'It covers the front end at the same security level, because it is part of the product',
+      'It covers the front end only when the service runs in approved mode',
+      'Nothing — it is outside the module boundary, so a claim about the service must not borrow the certificate',
+    ],
+    answer: 2,
+    why: 'Scope comes before level: a certificate applies only to the named boundary, version and configuration. The security level describes that boundary, so a component outside it inherits no level and no validation.',
+  },
+  'crypto-product-certification/capstone': {
+    prompt:
+      'Firmware 5.0.0 has passed ACVP testing for ML-KEM and sits in the CMVP Modules-in-Process queue as a federal PQC deadline approaches. What should the release matrix show for its FIPS status?',
+    options: [
+      'In evaluation — not covered; the certified lane stays on the validated 4.2.1',
+      'Covered — algorithm testing passed and the module is in process',
+      'Provisionally covered, because the deadline makes the PQC release mandatory',
+    ],
+    answer: 0,
+    why: 'Coverage follows the authority’s published record. An ACVP pass is algorithm evidence, a MIP entry is a queue position, and a market deadline is urgency — none of them is certification, so the candidate stays claim-distinct from the certified baseline.',
+  },
+  'crypto-product-certification/change-analyzer': {
+    prompt:
+      'The vendor adds ML-KEM to the Orrin N7 firmware to meet a federal PQC deadline. Which CMVP revalidation route is ruled out?',
+    options: ['UPDT (update)', 'TRNS (algorithm transition)', 'FS (full submission)'],
+    answer: 1,
+    why: 'TRNS is only for changes made solely in response to a published CMVP algorithm transition that would move modules to the Historical list. A policy or market deadline is not one, so the addition goes through UPDT or a full submission.',
+  },
+  'crypto-product-certification/evidence-exchange': {
+    prompt:
+      'The submission endpoint answers “payload received, schema valid” for your evidence package. What has that established?',
+    options: [
+      'That the evidence is sufficient for validation',
+      'That the lab has attested the results',
+      'Only that the data arrived and was well-formed',
+    ],
+    answer: 2,
+    why: 'An acknowledgement is an automated result about the payload. Sufficiency needs evaluator judgement, attestation is the lab’s act, and only the authority decides — machine-readable exchange removes round trips, not those roles.',
+  },
 }
 
 export function stepExerciseFor(moduleId: string, stepId: string): StepExercise | undefined {

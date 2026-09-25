@@ -305,6 +305,107 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     asOf: '2026-09-24',
     recheck: 'https://certification.enisa.europa.eu/certificates/eucc-3110-2025-12-2500098-01_en',
   },
+
+  // ── crypto-product-certification (Shared author), checked 2026-09-24 ──
+  {
+    id: 'cert-shared-fips-140-2-historical',
+    claim:
+      'Crypto Product Certification: all FIPS 140-2 certificates moved to the CMVP Historical list on 21/22 September 2026 (scheme clock)',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
+    asOf: '2026-09-24',
+    recheck: 'https://csrc.nist.gov/Projects/FIPS-140-3-Transition-Effort',
+  },
+  {
+    id: 'cert-shared-eo-14412-cmvp-revision',
+    claim:
+      'Crypto Product Certification: EO 14412 §6(b) CMVP process revision is due ≈ 19 December 2026 and has not yet changed the CMVP',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
+    asOf: '2026-09-24',
+    recheck: 'https://www.federalregister.gov/d/2026-12909',
+  },
+  {
+    id: 'cert-shared-pts-hsm-v4-transition',
+    claim:
+      'Crypto Product Certification: PTS HSM v4 new approvals until 30 June 2027; v4 device approvals expire April 2033; v3 expiry April 2028',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
+    asOf: '2026-09-24',
+    recheck:
+      'https://www.pcisecuritystandards.org/wp-content/uploads/2026/03/UPDATED2-Extension-of-Expiration-of-the-PCI-PTS-HSM-v4v3.pdf',
+  },
+  {
+    id: 'cert-shared-cc31-sunset',
+    claim:
+      'Crypto Product Certification: EUCC CC 3.1 R5 certificates (CIR 2024/3144) and CC:2022 ST claims of CC 3.1 PPs (CCMC-2023-04-001) end 31 December 2027',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
+    asOf: '2026-09-24',
+    recheck: 'https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024R3144',
+  },
+  {
+    id: 'cert-shared-sp-1800-40b-status',
+    claim:
+      'Crypto Product Certification: SP 1800-40B is an Initial Public Draft (15 April 2026, comments closed 1 June 2026) covering first submissions only',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
+    asOf: '2026-09-24',
+    recheck: 'https://www.nccoe.nist.gov/sites/default/files/2026-04/nist-sp-1800-40b-ipd.pdf',
+  },
+  {
+    id: 'cert-shared-pqc-level3-certificates',
+    claim:
+      'Crypto Product Certification: four active FIPS 140-3 Level 3 certificates approve ML-KEM and ML-DSA (#5282, #5450, #5497, #5503)',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
+    asOf: '2026-09-24',
+    recheck:
+      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search',
+  },
+  {
+    id: 'cert-shared-eucc-acm-v2',
+    claim:
+      'Crypto Product Certification: ECCG ACM v2 is the applicable EUCC cryptography (lists ML-KEM, ML-DSA and more; lattice KEMs hybridised); ACM v3 is still a draft',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
+    asOf: '2026-09-24',
+    recheck: 'https://certification.enisa.europa.eu/',
+  },
+  {
+    id: 'cert-shared-pci-pqc-no-requirement',
+    claim:
+      'Crypto Product Certification: public PCI material names no PQC algorithm, parameter set or deadline; the PTS listing PQC notation marks only that PQC support exists',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
+    asOf: '2026-09-24',
+    recheck: 'https://listings.pcisecuritystandards.org/popups/pts_device.php?appnum=4-80032',
+  },
+  {
+    id: 'cert-shared-cmvp-routes-manual-v2-7',
+    claim:
+      'Crypto Product Certification: CMVP revalidation route conditions (ALG, UPDT 30% per category, CVE, TRNS, INTU) quoted from Management Manual v2.7 (9 April 2026)',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
+    asOf: '2026-09-24',
+    recheck:
+      'https://csrc.nist.gov/csrc/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS-140-3-CMVP%20Management%20Manual.pdf',
+  },
+  {
+    id: 'cert-shared-eucc-2025-2462-continuity',
+    claim:
+      'Crypto Product Certification: under CIR 2025/2462 a minor EUCC change yields a maintenance report and no new certificate',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
+    asOf: '2026-09-24',
+    recheck: 'https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R2462',
+  },
+  {
+    id: 'cert-core-eucc-sogis-status',
+    claim:
+      'Crypto Product Certification: national EU CC schemes ceased under 2024/482; SOG-IS stopped issuing certificates on 27 February 2026; EUCC certificates can carry the CCRA mark (CCMC-011)',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/coreData.ts',
+    asOf: '2026-09-24',
+    recheck: 'https://www.commoncriteriaportal.org/',
+  },
+  {
+    id: 'cert-core-pci-fips-l3-nuance',
+    claim:
+      'Crypto Product Certification: PIN v3.1 Req 1-3 and P2PE v3.1 4A-1.1 accept FIPS 140 Level 3+ or PCI-approved HSMs (P2PE excludes historical/revoked certificates); P2PE v3.2 is current',
+    source: 'src/components/PKILearning/modules/CryptoProductCertification/data/coreData.ts',
+    asOf: '2026-09-24',
+    recheck: 'https://www.pcisecuritystandards.org/standards/point-to-point-encryption-p2pe/',
+  },
 ].sort((a, b) => a.id.localeCompare(b.id))
 
 /** Every claim's asOf is a well-formed ISO date — guards typos at test time. */

@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { useLearnPathFilter } from '@/components/PKILearning/common/useLearnPath'
 import { OptionalReferenceBadge } from '@/components/PKILearning/common/LearnPathPicker'
 import { ALL_EXERCISES } from '../data/allExercises'
-import { DraftPending } from './DraftPending'
+import { EmptyState } from '@/components/ui/empty-state'
 
 interface CertExercisesProps {
   onOpenStep: (stepId: string, config?: Record<string, unknown>) => void
@@ -33,7 +33,10 @@ export const CertExercises = ({ onOpenStep }: CertExercisesProps) => {
       </div>
 
       {visible.length === 0 ? (
-        <DraftPending owner="All" />
+        <EmptyState
+          title="No exercises on this path"
+          description="Pick “All sections” in the path picker to see every exercise."
+        />
       ) : (
         <div className="space-y-4">
           {visible.map((exercise, i) => (
