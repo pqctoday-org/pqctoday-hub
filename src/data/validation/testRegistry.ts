@@ -167,6 +167,33 @@ const lengthsOf = (c: CaseRecord): CaseParams => ({
 
 const upstreamIds = (c: CaseRecord) => `tg${c.upstream?.tgId ?? '?'}-tc${c.upstream?.tcId ?? '?'}`
 
+/** WS-E: ACVP hashAlg → CKM_<hash>_HMAC_GENERAL (mirrors sections/hmacAcvp.ts). */
+const HMAC_GENERAL: Record<string, string> = {
+  'SHA-1': 'CKM_SHA_1_HMAC_GENERAL',
+  'SHA2-224': 'CKM_SHA224_HMAC_GENERAL',
+  'SHA2-256': 'CKM_SHA256_HMAC_GENERAL',
+  'SHA2-384': 'CKM_SHA384_HMAC_GENERAL',
+  'SHA2-512': 'CKM_SHA512_HMAC_GENERAL',
+  'SHA2-512/224': 'CKM_SHA512_224_HMAC_GENERAL',
+  'SHA2-512/256': 'CKM_SHA512_256_HMAC_GENERAL',
+  'SHA3-224': 'CKM_SHA3_224_HMAC_GENERAL',
+  'SHA3-256': 'CKM_SHA3_256_HMAC_GENERAL',
+  'SHA3-384': 'CKM_SHA3_384_HMAC_GENERAL',
+  'SHA3-512': 'CKM_SHA3_512_HMAC_GENERAL',
+}
+/** WS-E: ACVP hashAlg → CKM_ECDSA_<hash> (mirrors sections/ecSigVerAcvp.ts). */
+const ECDSA_MECH: Record<string, string> = {
+  'SHA2-256': 'CKM_ECDSA_SHA256',
+  'SHA2-512': 'CKM_ECDSA_SHA512',
+  'SHA3-256': 'CKM_ECDSA_SHA3_256',
+  'SHA3-512': 'CKM_ECDSA_SHA3_512',
+}
+/** Curves in the capability map's EC parameter-set group (P-224 is not one). */
+const EC_DECLARED = new Set(['P-256', 'P-384', 'P-521', 'secp256k1'])
+const hashSlug = (h: string) => h.toLowerCase().replace('/', '-')
+const eddsaScheme = (curve: string, preHash: boolean) =>
+  `${curve === 'ED-25519' ? 'Ed25519' : 'Ed448'}${preHash ? 'ph' : ''}`
+
 const MLDSA_SETS = ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'] as const
 const MLKEM_SETS = ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024'] as const
 const SLH_SETS = [
@@ -224,6 +251,20 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       'aes-acvp-{engine}'
     ),
   ]),
+  acvp(
+    '01b',
+    '§1b (sections/aesGcmAcvp.ts)',
+    'AES-GCM NIST reference samples: encrypt byte-match, decrypt byte-match, upstream authentication failures (AES-128; IV 96/120, tag 128/32 bits)',
+    casesOf('aesgcm_acvp_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x('CKM_AES_GCM', param(c, 'direction'), `AES-${param(c, 'keyLen')}`)],
+        `aesgcm-nist-k${param(c, 'keyLen')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
   acvp('02', '§2', 'HMAC-SHA2-256 verify (truncated MAC)', [
     mc(
       'hmac_test#/testGroups/0/tests/0',
@@ -233,6 +274,43 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       'hmac-acvp-{engine}'
     ),
   ]),
+  acvp(
+    '02b',
+    '§2b.1 (sections/hmacAcvp.ts)',
+    'HMAC key / message / tag-length matrix: NIST HMAC 2.0 AFT for 11 digests (C_Sign CKM_<hash>_HMAC_GENERAL byte-match, then C_Verify)',
+    casesOf('hmac_acvp_matrix_test').map((c) => {
+      const mech = HMAC_GENERAL[param(c, 'hashAlg')]
+      if (!mech)
+        throw new Error(`testRegistry: no HMAC_GENERAL mechanism for ${param(c, 'hashAlg')}`)
+      return mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x(mech, 'sign'), x(mech, 'verify')],
+        `hmac-nist-${hashSlug(param(c, 'hashAlg'))}-tc${c.upstream?.tcId}-{engine}`
+      )
+    })
+  ),
+  acvp(
+    '02b.invalid-mac',
+    '§2b.2 (sections/hmacAcvp.ts)',
+    "HMAC invalid MACs (product-authored mutations of each digest's longest-MAC NIST case): bit-flipped MAC and a MAC one byte shorter than CK_MAC_GENERAL_PARAMS",
+    Object.entries(HMAC_GENERAL).flatMap(([hashAlg, mech]) => {
+      const slug = hashSlug(hashAlg)
+      return [
+        lc('acvp.02b.invalid-mac', `${slug}-flip`, PROBE, 'negative', [x(mech, 'verify')], {
+          rowId: `hmac-probe-flip-${slug}-{engine}`,
+          parameters: { hashAlg, mutation: 'bit-flip' },
+          note: "Key/message/MAC from the digest's longest-MAC hmac_acvp_matrix_test case with the last MAC bit flipped; asserts CKR_SIGNATURE_INVALID.",
+        }),
+        lc('acvp.02b.invalid-mac', `${slug}-short`, PROBE, 'negative', [x(mech, 'verify')], {
+          rowId: `hmac-probe-short-${slug}-{engine}`,
+          parameters: { hashAlg, mutation: 'truncated-by-1-byte' },
+          note: 'MAC one byte shorter than the CK_MAC_GENERAL_PARAMS length; asserts the CK_RV pinned per engine (both CKR_SIGNATURE_LEN_RANGE).',
+        }),
+      ]
+    })
+  ),
   acvp('03', '§3', 'RSA-PSS-2048 SHA-256 verify', [
     mc(
       'rsapss_test#/testGroups/0/tests/0',
@@ -251,6 +329,41 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       'ecdsa-acvp-{engine}'
     ),
   ]),
+  acvp(
+    '04b',
+    '§4b (sections/ecSigVerAcvp.ts)',
+    'ECDSA dedicated NIST SigVer: P-224/256/384/521 x SHA2-256/512, SHA3-256/512, every upstream valid/invalid case',
+    casesOf('ecdsa_sigver_acvp_test').map((c) => {
+      const curve = param(c, 'curve')
+      const mech = ECDSA_MECH[param(c, 'hashAlg')]
+      if (!mech) throw new Error(`testRegistry: no CKM_ECDSA_<hash> for ${param(c, 'hashAlg')}`)
+      return mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        // P-224 is outside the capability map's EC curve set: the case runs and
+        // records its result, but maps to no capability cell.
+        EC_DECLARED.has(curve) ? [x(mech, 'verify', curve)] : [],
+        `ecdsa-sigver-nist-${curve}-${param(c, 'hashAlg')}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    'P-224 cases exercise no capability cell (P-224 is not in the capability map EC parameter-set group); their results are still recorded. SHA2-512/256 and SHAKE groups are notExecuted skip rows (no CKM_ECDSA_<hash> in PKCS #11 v3.2).'
+  ),
+  acvp(
+    '04c',
+    '§4c (sections/ecSigVerAcvp.ts)',
+    'EdDSA dedicated NIST SigVer: Ed25519/Ed448, pure and preHash (CK_EDDSA_PARAMS.phFlag), every upstream valid/invalid case',
+    casesOf('eddsa_sigver_acvp_test').map((c) => {
+      const ps = param(c, 'curve') === 'ED-25519' ? 'Ed25519' : 'Ed448'
+      return mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x('CKM_EDDSA', 'verify', ps)],
+        `eddsa-sigver-nist-${eddsaScheme(param(c, 'curve'), c.parameters.preHash === true)}-${upstreamIds(c)}-{engine}`
+      )
+    })
+  ),
   acvp(
     '05',
     '§5',

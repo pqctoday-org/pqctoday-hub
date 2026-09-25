@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "a90dac21efe7430a7a6383464f93d6393ec70d1898575425f22f525884b3d662",
-    "registrySha256": "bb0afcacf287bfa854925393a23b21f5f3de961aeba75d6e03a58599deb62bab"
+    "manifestSha256": "12e957ba8246680f070e258e6169d2a941ae75cf5f781315f6ae0e2b8d5ea770",
+    "registrySha256": "fcc654401cc9d90b44fdb117aec31d8d7c862f0b14504b9f3005aab3a4d2da40"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
@@ -3424,16 +3424,20 @@
     "acvp/aescbc_test.json": "nist-acvp-reference-sample",
     "acvp/aescmac_test.json": "published-standard-kat",
     "acvp/aesctr_test.json": "published-standard-kat",
+    "acvp/aesgcm_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/aesgcm_test.json": "independent-oracle",
     "acvp/aeskw_test.json": "published-standard-kat",
     "acvp/composite-sigs-jose-kat.json": "functional-round-trip",
     "acvp/cose-dilithium-11-jose-kat.json": "published-standard-kat",
     "acvp/ecdsa_p384_test.json": "published-standard-kat",
     "acvp/ecdsa_p521_test.json": "nist-acvp-reference-sample",
+    "acvp/ecdsa_sigver_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/ecdsa_test.json": "published-standard-kat",
     "acvp/eddsa_ed448_test.json": "nist-acvp-reference-sample",
+    "acvp/eddsa_sigver_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/eddsa_test.json": "published-standard-kat",
     "acvp/hkdf_test.json": "published-standard-kat",
+    "acvp/hmac_acvp_matrix_test.json": "nist-acvp-reference-sample",
     "acvp/hmac_sha384_test.json": "nist-acvp-reference-sample",
     "acvp/hmac_sha512_test.json": "nist-acvp-reference-sample",
     "acvp/hmac_test.json": "nist-acvp-reference-sample",
