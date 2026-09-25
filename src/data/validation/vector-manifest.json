@@ -4050,7 +4050,37 @@
           ]
         }
       ],
-      "copies": [],
+      "copies": [
+        {
+          "path": "src/services/acvp/__fixtures__/nist-acvp-server/ML-DSA-sigVer-FIPS204/prompt.json",
+          "kind": "embedded-values",
+          "cases": [
+            "mldsa_sigver_test#/testGroups/0/tests/0",
+            "mldsa_sigver_test#/testGroups/0/tests/1",
+            "mldsa_sigver_test#/testGroups/0/tests/2",
+            "mldsa_sigver_test#/testGroups/0/tests/3",
+            "mldsa_sigver_test#/testGroups/0/tests/4",
+            "mldsa_sigver_test#/testGroups/1/tests/0",
+            "mldsa_sigver_test#/testGroups/1/tests/1",
+            "mldsa_sigver_test#/testGroups/1/tests/2",
+            "mldsa_sigver_test#/testGroups/1/tests/3",
+            "mldsa_sigver_test#/testGroups/1/tests/4",
+            "mldsa_sigver_test#/testGroups/2/tests/0",
+            "mldsa_sigver_test#/testGroups/2/tests/1",
+            "mldsa_sigver_test#/testGroups/2/tests/2",
+            "mldsa_sigver_test#/testGroups/2/tests/3",
+            "mldsa_sigver_test#/testGroups/2/tests/4",
+            "mldsa_sigver_test#/testGroups/3/tests/0",
+            "mldsa_sigver_test#/testGroups/3/tests/1",
+            "mldsa_sigver_test#/testGroups/4/tests/0",
+            "mldsa_sigver_test#/testGroups/4/tests/1",
+            "mldsa_sigver_test#/testGroups/5/tests/0",
+            "mldsa_sigver_test#/testGroups/5/tests/1"
+          ],
+          "fields": ["pk", "signature"],
+          "note": "WS-F ACVP-format prototype fixture: the full pinned upstream NIST ACVP-Server file (usnistgov/ACVP-Server@975de31e, see PROVENANCE.json beside it); this curated vector file is a subset of it."
+        }
+      ],
       "publishabilityGaps": [],
       "notes": "11 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): no-pkcs11-hash-ml-dsa-mechanism, no-pkcs11-internal-interface."
     },
@@ -4518,6 +4548,28 @@
           "cases": ["mlkem_test#/testGroups/1/tests/0"],
           "fields": ["ct", "pk", "sk", "ss"],
           "note": "Playground pipeline template embeds this case as literals."
+        },
+        {
+          "path": "src/services/acvp/__fixtures__/nist-acvp-server/ML-KEM-encapDecap-FIPS203/expectedResults.json",
+          "kind": "embedded-values",
+          "cases": [
+            "mlkem_test#/testGroups/0/tests/0",
+            "mlkem_test#/testGroups/1/tests/0",
+            "mlkem_test#/testGroups/2/tests/0"
+          ],
+          "fields": ["ct", "ss"],
+          "note": "WS-F ACVP-format prototype fixture: the full pinned upstream NIST ACVP-Server file (usnistgov/ACVP-Server@975de31e, see PROVENANCE.json beside it); this curated vector file is a subset of it."
+        },
+        {
+          "path": "src/services/acvp/__fixtures__/nist-acvp-server/ML-KEM-encapDecap-FIPS203/prompt.json",
+          "kind": "embedded-values",
+          "cases": [
+            "mlkem_test#/testGroups/0/tests/0",
+            "mlkem_test#/testGroups/1/tests/0",
+            "mlkem_test#/testGroups/2/tests/0"
+          ],
+          "fields": ["pk"],
+          "note": "WS-F ACVP-format prototype fixture: the full pinned upstream NIST ACVP-Server file (usnistgov/ACVP-Server@975de31e, see PROVENANCE.json beside it); this curated vector file is a subset of it."
         }
       ],
       "publishabilityGaps": []
