@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pqctoday.com/schemas/acvp/ml-kem-encapdecap-fips203.prompt.schema.json",
+  "title": "ML-KEM / encapDecap / FIPS203 — ACVP test vector set (prompt)",
+  "$comment": "Pinned transcription of draft-celi-acvp-ml-kem at usnistgov/ACVP commit bccef3648f6c05b224a051188ffe66f447cfdb6d: src/ml-kem/sections/06-test-vectors.adoc (Top Level Test Vector JSON Elements), 06-ml-kem-encapdecap-test-vectors.adoc [[ML-KEM_encapDecap_vs_tg_table]] and [[ML-KEM_encapDecap_vs_tc_table]], 04-testtypes.adoc (AFT = encapsulation, VAL = decapsulation and key checks). FIPS203-tr1 (keyFormat/seed, added in 4baf105ede16) is a DIFFERENT revision and is rejected, not coerced. Validates the vector-set object only; the [{acvVersion},{…}] envelope is unwrapped by parser.ts first. isSample is not in the spec table but is emitted by ACVP-Server on every vector set, so it is accepted as an optional boolean.",
+  "type": "object",
+  "required": ["vsId", "algorithm", "mode", "revision", "testGroups"],
+  "additionalProperties": false,
+  "properties": {
+    "vsId": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "algorithm": {
+      "const": "ML-KEM"
+    },
+    "mode": {
+      "const": "encapDecap"
+    },
+    "revision": {
+      "const": "FIPS203"
+    },
+    "isSample": {
+      "type": "boolean"
+    },
+    "testGroups": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/testGroup"
+      }
+    }
+  },
+  "$defs": {
+    "hex": {
+      "type": "string",
+      "pattern": "^([0-9A-Fa-f]{2})*$"
+    },
+    "testGroup": {
+      "type": "object",
+      "required": ["tgId", "testType", "parameterSet", "function", "tests"],
+      "additionalProperties": false,
+      "properties": {
+        "tgId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "testType": {
+          "enum": ["AFT", "VAL"]
+        },
+        "parameterSet": {
+          "enum": ["ML-KEM-512", "ML-KEM-768", "ML-KEM-1024"]
+        },
+        "function": {
+          "enum": [
+            "encapsulation",
+            "decapsulation",
+            "encapsulationKeyCheck",
+            "decapsulationKeyCheck"
+          ]
+        },
+        "tests": {
+          "type": "array",
+          "minItems": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["function"],
+            "properties": {
+              "function": {
+                "const": "encapsulation"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "testType": {
+                "const": "AFT"
+              },
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/encapsulationTest"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["function"],
+            "properties": {
+              "function": {
+                "const": "decapsulation"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "testType": {
+                "const": "VAL"
+              },
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/decapsulationTest"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["function"],
+            "properties": {
+              "function": {
+                "const": "encapsulationKeyCheck"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "testType": {
+                "const": "VAL"
+              },
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/encapsulationKeyCheckTest"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["function"],
+            "properties": {
+              "function": {
+                "const": "decapsulationKeyCheck"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "testType": {
+                "const": "VAL"
+              },
+              "tests": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/decapsulationKeyCheckTest"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "encapsulationTest": {
+      "type": "object",
+      "required": ["tcId", "ek", "m"],
+      "additionalProperties": false,
+      "properties": {
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ek": {
+          "$ref": "#/$defs/hex"
+        },
+        "m": {
+          "$ref": "#/$defs/hex"
+        }
+      }
+    },
+    "decapsulationTest": {
+      "type": "object",
+      "required": ["tcId", "dk", "c"],
+      "additionalProperties": false,
+      "properties": {
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dk": {
+          "$ref": "#/$defs/hex"
+        },
+        "c": {
+          "$ref": "#/$defs/hex"
+        }
+      }
+    },
+    "encapsulationKeyCheckTest": {
+      "type": "object",
+      "required": ["tcId", "ek"],
+      "additionalProperties": false,
+      "properties": {
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ek": {
+          "$ref": "#/$defs/hex"
+        }
+      }
+    },
+    "decapsulationKeyCheckTest": {
+      "type": "object",
+      "required": ["tcId", "dk"],
+      "additionalProperties": false,
+      "properties": {
+        "tcId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dk": {
+          "$ref": "#/$defs/hex"
+        }
+      }
+    }
+  }
+}

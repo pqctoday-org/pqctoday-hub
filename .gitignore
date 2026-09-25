@@ -307,6 +307,8 @@ docs/pqctoday-investor*
 scripts/*
 # CI scripts are public — they run in GitHub Actions and must be tracked
 !scripts/ci/
+# WS-F ACVP-format prototype CLI (thin entry; logic in src/services/acvp/node/cli.ts)
+!scripts/acvp-respond.ts
 # Unified data-integrity validator — runs in the local gate (npm run
 # validate:data / gate:data, see TESTING.md); its check modules and their
 # tests must be tracked or new files silently can't be added (existing

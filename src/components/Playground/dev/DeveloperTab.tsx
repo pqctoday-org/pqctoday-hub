@@ -4,6 +4,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { PkcsDevWorkbench } from './pipeline/PkcsDevWorkbench'
 import { AcvpSuiteWorkbench } from './pipeline/suites/AcvpSuiteWorkbench'
 import { ConformanceSuiteWorkbench } from './pipeline/suites/ConformanceSuiteWorkbench'
+import { AcvpFormatPrototypePanel } from '../acvpio/AcvpFormatPrototypePanel'
 
 /**
  * Which content set the shared Builder/Code workbench (PkcsDevWorkbench)
@@ -63,6 +64,7 @@ export const DeveloperTab = ({ activeSubTab, onSubTabChange }: DeveloperTabProps
       {showWorkbenchTabs && (
         <TabsContent value="acvp">
           <AcvpSuiteWorkbench />
+          <AcvpFormatPrototypePanel />
         </TabsContent>
       )}
       {showWorkbenchTabs && (

@@ -1,0 +1,33 @@
+{
+  "_comment": "Goldens for the WS-F ACVP-format prototype, portable to non-JS runners. irCanonicalSha256/planCanonicalSha256/responseCanonicalSha256 are SHA-256 over canonical JSON (keys sorted, no whitespace, non-ASCII \\uXXXX-escaped == Python json.dumps(o, sort_keys=True, separators=(',', ':'))). The response golden was produced by BOTH the C++ and Rust engines (identical) and matches NIST expectedResults.json for every answered test. Regenerate a full bundle with: npx tsx scripts/acvp-respond.ts --prompt <fixture>/prompt.json --engine cpp --out <dir> --emit-bundle <dir>.",
+  "fixtures": {
+    "ML-KEM-encapDecap-FIPS203": {
+      "schemaId": "ML-KEM/encapDecap/FIPS203",
+      "vsId": 42,
+      "irCanonicalSha256": "4f399a4264a71fe9ddc6e6ee02cbf28c05388a6438307158067f297fe5937715",
+      "planCanonicalSha256": "7e482ef08b1619f9941a931fb40769345eeeb5d466e35878e34d8e8e6efbbd4c",
+      "responseCanonicalSha256": "6110c774fbbafc21aa559fb7099b2a8dcd619cb9a95aa20236f21426eca805ed",
+      "responseFile": "ML-KEM-encapDecap-FIPS203.response.json",
+      "counts": {
+        "testGroups": 12,
+        "testCases": 165,
+        "planExecute": 30,
+        "planUnsupported": 135
+      }
+    },
+    "ML-DSA-sigVer-FIPS204": {
+      "schemaId": "ML-DSA/sigVer/FIPS204",
+      "vsId": 42,
+      "irCanonicalSha256": "342cba821659c89200b3e790400b863954dcd43d9c253f478564392b80fa458b",
+      "planCanonicalSha256": "4952cd8d431937931a27b4c37e1e6c8386b03fe05102284c794b84128d3505a2",
+      "responseCanonicalSha256": "730c0264680c10f04d9a105231158f7c1df1324704ecfea872f831d2ee1c94ef",
+      "responseFile": "ML-DSA-sigVer-FIPS204.response.json",
+      "counts": {
+        "testGroups": 12,
+        "testCases": 180,
+        "planExecute": 82,
+        "planUnsupported": 98
+      }
+    }
+  }
+}
