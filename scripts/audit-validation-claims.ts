@@ -237,6 +237,8 @@ export function scanText(
       const { text: sentence, offset } = sentenceAround(flat, start, end)
       const prefix = flat.slice(offset, start)
       if (NEGATION.test(prefix)) continue
+      // A question ("Is SoftHSMv3 FIPS validated?") asserts nothing.
+      if (sentence.endsWith('?')) continue
       if (rule.requiresSelfReference && !SELF_REFERENCE.test(sentence)) continue
       const line = lineAt(start)
       if (inlineAllowed(original, line)) continue
@@ -278,9 +280,13 @@ const NUMBER_WORDS: Record<string, number> = {
 
 /** Presentation drift: "<N> ... NIST ACVP-Server" must equal the live count. */
 export function scanCountDrift(text: string, file: string, expected: number): ClaimFinding[] {
-  const { flat, lineAt } = normalise(text)
+  // Tags become spaces so `<span class="c">13</span><b>NIST ACVP …` reads as
+  // "13 NIST ACVP …"; the number may sit up to 8 words before "NIST" (as in
+  // "Thirteen of the thirty vector files come from the NIST ACVP-Server
+  // repository") and a bare "13 NIST / 7 standard KAT" table cell counts too.
+  const { flat, lineAt } = normalise(text.replace(/<[^>\n]*>/g, (m) => ' '.repeat(m.length)))
   const re =
-    /\b(\d{1,3}|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\b((?:\s+[\w-]+){0,5}?)\s+NIST ACVP-Server\b/gi
+    /(?<![\w-])(?<!(?:Demo|[Ss]lide|[Ss]tep|Level|Layer|FIPS|SP|IR|§) )(\d{1,3}|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\b((?:\s+[^\s\d|]+){0,8}?)\s+NIST(?:\s+ACVP(?:-Server)?\b|(?=\s+\/))/gi
   const out: ClaimFinding[] = []
   for (const m of flat.matchAll(re)) {
     const raw = m[1].toLowerCase()

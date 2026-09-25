@@ -67,6 +67,12 @@ describe('legitimate uses are not flagged', () => {
     expect(rules('Pick a FIPS 140-3 certified module from the catalog.')).toEqual([])
   })
 
+  it('does not treat a question as a claim', () => {
+    expect(rules('| Is SoftHSMv3 FIPS validated? | No, and the site never says it is. |')).toEqual(
+      []
+    )
+  })
+
   it('honours an inline claims-lint-allow comment on the same or previous line', () => {
     expect(rules('// claims-lint-allow: quoting a vendor\nOur engine is ACVP validated.')).toEqual(
       []
@@ -95,6 +101,25 @@ describe('presentation count drift (A-5)', () => {
     const stale = scanCountDrift('13 selected public NIST ACVP-Server reference samples', 'd', n)
     expect(stale).toHaveLength(n === 13 ? 0 : 1)
     expect(scanCountDrift('thirteen NIST ACVP-Server files', 'd', 15)).toHaveLength(1)
+    // The three shapes the 22-Sep deck actually used for its stale "13":
+    expect(
+      scanCountDrift('<span class="c">13</span><span><b>NIST ACVP reference vector</b>', 'd', 15)
+    ).toHaveLength(1)
+    expect(scanCountDrift('| 13 NIST / 7 standard KAT |', 'd', 15)).toHaveLength(1)
+    expect(
+      scanCountDrift(
+        'Thirteen of the thirty vector files come from the NIST ACVP-Server repo',
+        'd',
+        15
+      )
+    ).toHaveLength(1)
+    // …and numbers that are not counts do not trip it.
+    expect(
+      scanCountDrift('checks ML-DSA-65 SigVer against a NIST ACVP-Server sample', 'd', 15)
+    ).toEqual([])
+    expect(
+      scanCountDrift('The Demo 2 vectors are selected public NIST ACVP-Server samples', 'd', 15)
+    ).toEqual([])
   })
 })
 
