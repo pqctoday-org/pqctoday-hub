@@ -146,6 +146,7 @@ import {
 import type { SoftHSMModule, SLHDSASignOptions } from '@/wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
 import { runMldsaAcvpSection, type AcvpCaseMeta } from './sections/mldsaAcvp'
+import { runMldsaDepthSection } from './sections/mldsaDepth'
 import { runMlkemAcvpSection } from './sections/mlkemAcvp'
 import { runSlhdsaAcvpSection } from './sections/slhdsaAcvp'
 import type { HsmKey } from '../HsmContext'
@@ -221,7 +222,7 @@ export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'hashing_mac', label: 'Hashing & MAC', groups: 5 },
   { id: 'kdf', label: 'KDF', groups: 5 },
   { id: 'classical', label: 'Classical Asymmetric', groups: 10 },
-  { id: 'ml_dsa', label: 'ML-DSA', groups: 6 },
+  { id: 'ml_dsa', label: 'ML-DSA', groups: 7 },
   { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 6 },
   { id: 'ml_kem', label: 'ML-KEM', groups: 3 },
 ]
@@ -1101,6 +1102,22 @@ export function useAcvpSuite() {
           // skips for upstream groups PKCS#11 cannot express. Self-contained
           // in sections/mldsaAcvp.ts (WS-D D2-2/D2-3/D2-5, D4).
           await runMldsaAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mldsa,
+            pushResult,
+            addLog,
+            evidenceTierFor: deriveEvidenceTier,
+          })
+
+          // ── 5e. ML-DSA context / message-length / pre-hash depth — NIST
+          // deterministic SigGen at ctx 0/255, 8192-byte messages and the
+          // remaining HashML-DSA functions, plus product-authored 1-byte and
+          // 256-byte context probes. Self-contained in sections/mldsaDepth.ts
+          // (WS-D D2-6).
+          await runMldsaDepthSection({
             M,
             hSession,
             eName,
