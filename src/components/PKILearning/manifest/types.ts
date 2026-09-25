@@ -31,9 +31,21 @@ export interface TabItem {
  * reason to study POS key injection.
  *
  * When a module declares `learnPaths`, completion is evaluated against the
- * learner's active path rather than every section (see useModuleStore), and
- * the catalogue card advertises per-path durations rather than one total.
- * Modules without `learnPaths` behave exactly as before.
+ * learner's active path rather than every section (see useModuleStore and
+ * ./learnPathScope). The learner picks a path with the in-module
+ * `LearnPathPicker` (WS-0, 2026-09-24), which shows each path's `duration`,
+ * or arrives with `?path=<id>`; the two stay in sync. Modules without
+ * `learnPaths` behave exactly as before.
+ *
+ * What a path scopes (see ./learnPathScope for the exact rules):
+ *  - Learn sections: `sections` lists the sections on this path. Sections on
+ *    the path that are also marked `optional` render but are never required.
+ *    A section listed in NO path's `sections` and marked `optional` is a
+ *    module-wide reference, visible on every path.
+ *  - Workshop steps: tag the step in `workshopSteps` with `paths`. Untagged
+ *    steps are shared by every path.
+ *  - Exercises and any other content: tag items with {@link PathScoped} and
+ *    filter with `useLearnPathFilter` / `<PathScopedContent>`.
  */
 export interface LearnPath {
   /** slug used in `?path=` */
@@ -41,12 +53,56 @@ export interface LearnPath {
   label: string
   /** section the learner lands on when arriving via this path */
   entrySection: string
-  /** sections required to complete the module *via this path* */
+  /**
+   * sections on this path. Non-optional ones are required to complete the
+   * module via this path; `optional` ones render as "Optional reference" and
+   * are never required.
+   */
   sections: string[]
-  /** human duration for this path alone, e.g. '45 min' */
+  /**
+   * human duration for this path alone, e.g. '45 min'. Timed content only:
+   * optional reference sections/steps are NOT included in this figure.
+   */
   duration: string
   /** one line on who this path is for; shown in the path picker */
   audience?: string
+}
+
+/**
+ * Content that can be scoped to one or more learn paths (WS-0, 2026-09-24).
+ * Used for workshop steps (on the manifest) and for module-authored lists such
+ * as exercises (in the module's own content).
+ */
+export interface PathScoped {
+  /**
+   * `LearnPath.id`s this item belongs to. Omitted or empty ⇒ shared: shown on
+   * every path and when no path is active. When a path is active, items tagged
+   * with other paths are hidden and do not count toward completion.
+   */
+  paths?: string[]
+  /**
+   * Optional reference material: rendered with an "Optional reference" label,
+   * never required for completion, and not included in `duration`.
+   */
+  optional?: boolean
+}
+
+/** One Learn-tab section. Path membership lives on {@link LearnPath.sections}. */
+export interface LearnSectionDef {
+  id: string
+  label: string
+  /**
+   * Optional reference section: rendered (labelled "Optional reference") but
+   * excluded from completion and from the module's and every path's
+   * `duration`.
+   */
+  optional?: boolean
+}
+
+/** One Workshop step. `paths` tags scope it; untagged steps are shared. */
+export interface WorkshopStepDef extends PathScoped {
+  id: string
+  label: string
 }
 
 export interface ModuleManifest {
@@ -69,15 +125,31 @@ export interface ModuleManifest {
   trackOrder?: number
 
   /** ordered Learn-tab sections (absent for custom/special modules) */
-  learnSections?: { id: string; label: string }[]
+  learnSections?: LearnSectionDef[]
   /**
    * Named routes through `learnSections` for multi-audience modules. When
    * present, `duration` remains the whole-module total and each path
    * advertises its own. See {@link LearnPath}.
    */
   learnPaths?: LearnPath[]
-  /** ordered Workshop steps; their length is the canonical step count */
-  workshopSteps?: { id: string; label: string }[]
+  /**
+   * How a Learn section that is NOT on the active path renders (only when
+   * `learnPaths` is declared and a path is active):
+   *  - 'mark' (default): still rendered, with an "Outside the <path> path"
+   *    label. What the EMV module does, so its numbered sections keep reading
+   *    in order.
+   *  - 'hide': not rendered at all (unless the URL deep-links to it). For
+   *    modules whose paths are alternative curricula, where showing the other
+   *    paths' lessons is noise.
+   * Requires the sections to be rendered with the shared `LearnSection`.
+   */
+  offPathSections?: 'mark' | 'hide'
+  /**
+   * ordered Workshop steps; their length is the canonical step count. A step
+   * may carry `paths` (scoped to those learn paths) and `optional` (reference
+   * step, excluded from completion) — see {@link WorkshopStepDef}.
+   */
+  workshopSteps?: WorkshopStepDef[]
   /** step count for modules with no workshopSteps (quiz/assess only) */
   stepCountOverride?: number
 

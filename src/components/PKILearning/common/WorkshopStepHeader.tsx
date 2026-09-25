@@ -13,6 +13,10 @@ interface WorkshopStepHeaderProps {
   stepDescription: string
   stepIndex: number
   totalSteps: number
+  /** `?step=` value for this step's share links when it differs from
+   *  stepIndex — i.e. when a learn path hides some steps, so the displayed
+   *  position is not the module's step index. Defaults to stepIndex. */
+  deepLinkStep?: number
   cswp39Step?: string
   /** Full step definitions — enables labeled WorkshopStepper. When omitted, an
    *  anonymous dot indicator is rendered using stepIndex / totalSteps. */
@@ -30,6 +34,7 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
   stepDescription,
   stepIndex,
   totalSteps,
+  deepLinkStep,
   cswp39Step,
   steps,
   completedSteps,
@@ -43,7 +48,7 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
     `**Workshop Step:** ${stepTitle} (${stepIndex + 1} of ${totalSteps})`,
     `**Description:** ${stepDescription}`,
   ].join('\n')
-  const pageUrl = `/learn/${moduleId}?tab=workshop&step=${stepIndex}`
+  const pageUrl = `/learn/${moduleId}?tab=workshop&step=${deepLinkStep ?? stepIndex}`
 
   const endorseUrl = buildEndorsementUrl({
     category: 'learn-module-endorsement',
