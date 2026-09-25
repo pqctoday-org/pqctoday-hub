@@ -580,6 +580,12 @@ public/data/rag-index-freshness.json
 # build (broke it outright on 2026-07-26). Pure read-only against src/data/.
 !scripts/audit-csv-archival.ts
 !scripts/audit-csv-archival.test.ts
+# Banned validation-claims gate (ACVP remediation WS-A A-6) — runs in
+# gate:data:audits, so the script, its fixtures test and its allowlist must be
+# tracked or CI fails ERR_MODULE_NOT_FOUND.
+!scripts/audit-validation-claims.ts
+!scripts/audit-validation-claims.test.ts
+!scripts/audit-validation-claims.allowlist.json
 
 # CSV copy-forward gate: dated generations are different FILENAMES, so two
 # sessions each writing one merge cleanly with no conflict while the loader

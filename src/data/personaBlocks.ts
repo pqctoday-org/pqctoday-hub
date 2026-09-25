@@ -48,7 +48,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       'Set the KEK algorithm to RSA-2048 and then ML-KEM-768 and run the five steps for each: the Artifact Sizes by Step chart shows what the three-step encapsulate, KDF and AES-wrap flow costs against a one-step RSA-OAEP wrap.',
     researcher:
-      'Choose AES-KW, AES-KWP or AES-GCM as the wrap mechanism and compare the wrapped-key sizes in the Envelope Encryption Flow; Run NIST KAT confirms the ML-KEM and wrap implementations against the published vectors.',
+      'Choose AES-KW, AES-KWP or AES-GCM as the wrap mechanism and compare the wrapped-key sizes in the Envelope Encryption Flow; the KMS PQC Known Answer Tests panel checks the ML-KEM and wrap implementations and labels each result with its evidence class.',
     ops: 'Run the ML-KEM-768 / AES-KW flow with Execute (Live WASM): the PKCS#11 call log is the sequence of calls a KMS makes for every data key, which is what a migration changes on your HSM partitions.',
   },
   '/playground/token-migration': {
@@ -57,7 +57,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       'Use the Size Impact Analysis and the CBOR Token Encoding (CWT / COSE) alternative to decide whether a PQC token still fits your headers, cookies and gateways before choosing the algorithm.',
     researcher:
-      'Run NIST KAT under IAM PQC Known Answer Tests, then compare the same payload signed with each algorithm to measure the exact signature and header overhead.',
+      'Run the IAM PQC Known Answer Tests panel, then compare the same payload signed with each algorithm to measure the exact signature and header overhead.',
     ops: 'The Verification Flow — Relying Party Perspective panel shows what every service that validates tokens must be able to parse after the switch; use it to list which relying parties need updating first.',
   },
   '/playground/firmware-signing': {
@@ -66,7 +66,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       'The side-by-side keys, signatures and CMS output show the size a firmware image grows by under ML-DSA-65, which is the number your boot ROM and update channel must have room for.',
     researcher:
-      'Run NIST KAT under Secure Boot PQC Known Answer Tests, then compare the classical and post-quantum CMS structures produced from the same manifest.',
+      'Run the Secure Boot PQC Known Answer Tests panel, then compare the classical and post-quantum CMS structures produced from the same manifest.',
     ops: 'Sign the mock UEFI manifest with both algorithms and keep the two CMS outputs: they are what a signing service and a verifier on the device exchange, and the difference between them is your update-pipeline change.',
   },
   '/playground/slh-dsa': {
@@ -75,7 +75,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       'Compare SHA2-128s against the f variants and the 192/256 levels: the same message signs to very different signature sizes, and the Stateful vs Stateless comparison panel says when a stateless scheme is worth that size over LMS or XMSS.',
     researcher:
-      'Run NIST KAT under Stateful Signatures Known Answer Tests to see the in-browser implementation byte-match the FIPS 205 vectors, then switch between Pure and pre-hash mode to see what changes on the wire.',
+      'Run the Stateful Signatures Known Answer Tests panel to see SLH-DSA sign and verify round-trips (no external expected value) and a SHA-256 NIST reference sample run in-browser, then switch between Pure and pre-hash mode to see what changes on the wire.',
   },
   '/playground/lms-hss': {
     developer:
@@ -99,7 +99,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       'Read KBKDF vs HKDF — Choosing the Right KDF before the run: it says when SP 800-108 counter mode and when HKDF is the right choice for splitting one master secret into encryption, MAC and IV keys.',
     researcher:
-      'Open What runs live vs. simulated? to see that the QKD retrieval is a modelled REST exchange while the derivation runs in the PKCS#11 log; Run NIST KAT checks the KDF against the QKD/HSM PQC Known Answer Tests.',
+      'Open What runs live vs. simulated? to see that the QKD retrieval is a modelled REST exchange while the derivation runs in the PKCS#11 log; the QKD/HSM PQC Known Answer Tests panel runs the KDF checks and labels each result with its evidence class.',
   },
   '/playground/tee-channel': {
     architect:
@@ -139,7 +139,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       'Switch between Operator view and IMSI-catcher view: the catcher sees only ephemeral ciphertext, never the SUPI, which is the property a PQC profile has to preserve when Curve25519 is replaced; Customize… changes the profile and identifiers.',
     researcher:
-      'Run NIST KAT under 5G PQC Known Answer Tests and use Plain English beside each step to check the construction against the 3GPP profile; the live HSM mode runs the key agreement in softhsmv3.',
+      'Run the 5G PQC Known Answer Tests panel and use Plain English beside each step to check the construction against the 3GPP profile; the live HSM mode runs the key agreement in softhsmv3.',
   },
   '/playground/mls-group-messaging': {
     developer:
@@ -178,7 +178,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       'Use the Bit Flipper and the Live Monitor to see how small biases change the test results; the point for a design is that ML-KEM and ML-DSA key generation depends on the same entropy quality.',
     developer:
-      "Paste Hex from your own generator's output and run the static tests; Run NIST KAT under Entropy Testing Known Answer Tests shows the implementations against the published vectors.",
+      "Paste Hex from your own generator's output and run the static tests; the Entropy Testing Known Answer Tests panel checks the hash and HMAC implementations against public NIST ACVP-Server reference samples.",
   },
   '/playground/drbg-demo': {
     architect:
@@ -228,7 +228,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     developer:
       'Load 8 sample certs or add your own Subject CN leaves, Build Merkle Tree, then walk Inclusion Proof, Verify Proof, Size Comparison and CT Log: the proof for one leaf is the structure a Merkle Tree Certificate carries.',
     researcher:
-      'Run NIST KAT under Merkle Tree Certificates Known Answer Tests, then use the Size Comparison step to measure a proof against an ML-DSA-44 signature on the same leaf.',
+      'Run the Merkle Tree Certificates Known Answer Tests panel, then use the Size Comparison step to measure a proof against an ML-DSA-44 signature on the same leaf.',
     curious:
       'Add a few certificate names, build the tree at Slow speed, and click a node: you can see how one small proof shows that a certificate is in the tree without listing all the others.',
   },
@@ -273,7 +273,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       "Step 3 offers two hybrid patterns, a Nested JWT and a Composite MLDSA65-Ed25519 signature: which verifiers accept each is the migration decision, and Step 4's ML-KEM-768 JWE shows encrypted tokens.",
     researcher:
-      'Run NIST KAT under API Security JWT Known Answer Tests, then sign the same payload with each algorithm and backend to compare signature sizes and the composite encoding against the JOSE drafts.',
+      'Run the API Security JWT Known Answer Tests panel, then sign the same payload with each algorithm and backend to compare signature sizes and the composite encoding against the JOSE drafts.',
   },
   '/playground/pki-enrollment': {
     developer:
@@ -840,7 +840,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/learn/pqc-testing-validation': {
     developer:
-      'Run an active PQC readiness scan against simulated endpoints, build the interoperability matrix of client and server combinations and run the NIST KATs against the SoftHSMv3 WASM engine.',
+      'Run an active PQC readiness scan against simulated endpoints, build the interoperability matrix of client and server combinations and run the known-answer and functional tests against the SoftHSMv3 WASM engine.',
     architect:
       "Design the performance test plan comparing classical, hybrid and PQC, then compose the complete validation programme from your migration scope: what 'PQC-working' rather than 'PQC-capable' has to prove.",
     researcher:

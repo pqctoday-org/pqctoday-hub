@@ -1,0 +1,7 @@
+[
+  {
+    "file": "src/components/PKILearning/modules/Entropy/workshop/EntropyTestingDemo.tsx",
+    "match": "provide NIST-validated entropy for production use",
+    "reason": "Describes third-party hardware entropy sources/HSMs that hold real NIST ESV/CMVP validations, tracked in the Migrate catalog — not a claim about PQC Today's own engines or tests."
+  }
+]

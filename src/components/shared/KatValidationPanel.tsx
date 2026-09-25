@@ -2,8 +2,11 @@
 /**
  * KatValidationPanel — Inline KAT validation panel for learn module workshop steps.
  *
- * Self-manages its own HSM lifecycle via useHSM(). Runs use-case-specific KATs
- * against NIST FIPS 203/204 ACVP test vectors and displays results inline.
+ * Self-manages its own HSM lifecycle via useHSM(). Runs use-case-specific
+ * tests and displays results inline. Each row carries the evidence class of
+ * its expected value (derived from the vector file's provenance by
+ * katEvidence.ts), and the run button names that class only when every spec
+ * shares it — a mixed set gets the neutral "Run validation tests".
  */
 import { useState } from 'react'
 import { ShieldCheck, Loader2, CheckCircle, XCircle } from 'lucide-react'
@@ -16,6 +19,8 @@ import {
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { ErrorAlert } from '@/components/ui/error-alert'
+import { KatEvidenceChip } from '@/components/shared/ValidationDisclaimer'
+import { KAT_EVIDENCE_META, evidenceClassesFor, katActionLabel } from '@/utils/katEvidence'
 
 interface KatValidationPanelProps {
   specs: KatTestSpec[]
@@ -109,6 +114,9 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
   const passCount = results.filter((r) => r.status === 'pass').length
   const failCount = results.filter((r) => r.status !== 'pass').length
   const done = results.length === specs.length && !running
+  const actionLabel = katActionLabel(specs)
+  const evidenceClasses = evidenceClassesFor(specs)
+  const hasReferenceSample = evidenceClasses.includes('nist-acvp-reference-sample')
 
   return (
     <div className="glass-panel p-5 space-y-4 border border-border">
@@ -136,7 +144,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
           ) : (
             <>
               <ShieldCheck size={14} />
-              Run NIST KAT
+              {actionLabel}
             </>
           )}
         </Button>
@@ -173,6 +181,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
                 <th className="px-3 py-2 font-semibold">Use Case</th>
                 <th className="px-3 py-2 font-semibold">Algorithm</th>
                 <th className="px-3 py-2 font-semibold">Standard</th>
+                <th className="px-3 py-2 font-semibold">Evidence</th>
                 <th className="px-3 py-2 font-semibold">Status</th>
                 <th className="px-3 py-2 font-semibold">Details</th>
               </tr>
@@ -207,6 +216,9 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
                     </span>
                   </td>
                   <td className="px-3 py-2">
+                    <KatEvidenceChip evidence={r.evidence} />
+                  </td>
+                  <td className="px-3 py-2">
                     <span
                       className={
                         r.status === 'pass'
@@ -229,23 +241,29 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
       {/* Empty state */}
       {results.length === 0 && !running && !error && (
         <p className="text-xs text-muted-foreground italic">
-          Click <strong>Run NIST KAT</strong> to validate {specs.length} use-case scenario
-          {specs.length !== 1 ? 's' : ''} against NIST ACVP test vectors.
+          Click <strong>{actionLabel}</strong> to run {specs.length} use-case scenario
+          {specs.length !== 1 ? 's' : ''}. Evidence in this set:{' '}
+          {evidenceClasses.map((c) => KAT_EVIDENCE_META[c].label).join('; ')}.
         </p>
       )}
 
       {/* Authority footnote */}
       <p className="text-[10px] text-muted-foreground border-t border-border pt-3">
-        Test vectors from{' '}
-        <a
-          href="https://github.com/usnistgov/ACVP-Server"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary hover:underline"
-        >
-          NIST ACVP Server
-        </a>{' '}
-        · {authorityNote} · Generated keys are for educational use only.
+        {hasReferenceSample && (
+          <>
+            Reference samples from the public{' '}
+            <a
+              href="https://github.com/usnistgov/ACVP-Server"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              NIST ACVP-Server
+            </a>{' '}
+            repository ·{' '}
+          </>
+        )}
+        {authorityNote} · Generated keys are for educational use only.
       </p>
     </div>
   )

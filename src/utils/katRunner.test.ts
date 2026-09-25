@@ -620,12 +620,12 @@ describe('runKAT', () => {
   // ── aesgcm-decrypt ──────────────────────────────────────────────────────────
 
   describe('aesgcm-decrypt', () => {
-    it('returns pass when decrypted plaintext matches ACVP vector', async () => {
+    it('returns pass when decrypted plaintext matches the published GCM example', async () => {
       // hexToBytes('00') → Uint8Array(1) = [0]; aesDecrypt returns Uint8Array(1) = [0] → match
       vi.mocked(softhsm.hsm_aesDecrypt).mockReturnValue(new Uint8Array(1))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aesgcm-decrypt' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('plaintext matches expected value')
+      expect(result.details).toContain('plaintext matches its expected value')
     })
 
     it('returns fail when decrypted plaintext does not match', async () => {
@@ -692,7 +692,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_aesCtrDecrypt).mockReturnValue(new Uint8Array(1))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aesctr-roundtrip' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('plaintext matches original')
+      expect(result.details).toContain('decrypted back to the original')
     })
 
     it('returns fail when ciphertext does not match expected', async () => {
@@ -729,12 +729,12 @@ describe('runKAT', () => {
   // ── aeskw-wrap ──────────────────────────────────────────────────────────────
 
   describe('aeskw-wrap', () => {
-    it('returns pass when wrapped output matches ACVP vector', async () => {
+    it('returns pass when wrapped output matches the RFC 3394 example', async () => {
       // hexToBytes('0000') → Uint8Array(2) = [0,0]; aesWrapKey returns Uint8Array(2) = [0,0] → match
       vi.mocked(softhsm.hsm_aesWrapKey).mockReturnValue(new Uint8Array(2))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aeskw-wrap' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('ciphertext matches ACVP expected value')
+      expect(result.details).toContain("output matches the RFC's expected value")
     })
 
     it('returns fail when wrapped output does not match', async () => {
@@ -919,7 +919,7 @@ describe('runKAT', () => {
         spec({ type: 'ecdsa-sigver', curve: 'P-256' })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('verified ACVP reference signature')
+      expect(result.details).toContain('verified its published signature')
     })
 
     it('returns fail when P-256 signature verification fails', async () => {
@@ -972,7 +972,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_eddsaVerify).mockReturnValue(true)
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'eddsa-sigver' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('verified ACVP reference Ed25519 signature')
+      expect(result.details).toContain('verified its published Ed25519 signature')
     })
 
     it('returns fail when Ed25519 signature verification fails', async () => {
@@ -1004,7 +1004,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_rsaVerify).mockReturnValue(true)
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'rsapss-sigver' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('verified ACVP reference RSA-PSS signature')
+      expect(result.details).toContain("verified the oracle's RSA-PSS signature")
     })
 
     it('returns fail when RSA-PSS signature verification fails', async () => {

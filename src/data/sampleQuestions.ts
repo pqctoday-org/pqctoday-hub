@@ -159,7 +159,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What cryptographic operations can you perform in the Playground?',
     'How can you test ML-KEM key encapsulation in the browser?',
     'What PQC signature algorithms are available in the Playground?',
-    'What does the ACVP Testing tab do?',
+    'What does the Cryptographic Validation Workbench do?',
     'How are execution times displayed?',
     'What symmetric encryption algorithms are available?',
     'Can you generate and manage multiple key pairs?',

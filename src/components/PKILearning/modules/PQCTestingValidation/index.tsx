@@ -66,9 +66,9 @@ const PARTS: WorkshopPart[] = [
   },
   {
     id: 'acvp-validator',
-    title: 'Step 7: NIST ACVP Validation',
+    title: 'Step 7: ACVP Workflow & Validation Tests',
     description:
-      'Run NIST Known Answer Tests (KATs) against the SoftHSMv3 WASM engine to simulate FIPS 140-3 algorithmic validation.',
+      'Watch a simulated ACVP run, then execute real known-answer and functional tests against the SoftHSMv3 WASM engine — each result labelled with its evidence class. Not an ACVTS verdict or a CAVP/CMVP certificate.',
     icon: FileCheck,
   },
 ]

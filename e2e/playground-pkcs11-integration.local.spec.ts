@@ -89,7 +89,7 @@ const TOOLS: Tool[] = [
     // The two middle steps are where the PKCS#11 work happens
     // (C_CreateObject then C_DeriveKey); an earlier list skipped straight from
     // the fetch to the KAT and so never touched the engine.
-    steps: ['Fetch QKD Key', 'Import into HSM', 'Run KDF', 'Run NIST KAT'],
+    steps: ['Fetch QKD Key', 'Import into HSM', 'Run KDF', 'Run validation tests'],
   },
   {
     id: 'hybrid-sigs',
@@ -141,7 +141,7 @@ const TOOLS: Tool[] = [
       'Execute Step',
       'Execute Step',
       'Execute Step',
-      'Run NIST KAT',
+      'Run validation tests',
     ],
   },
 ]
@@ -149,7 +149,8 @@ const TOOLS: Tool[] = [
 const ACTION =
   /^(generate|run|execute|sign|verify|derive|encaps|decaps|start|create|wrap|unwrap|build|issue|mint|step\s*\d|\d\s*\.)/i
 // Buttons that look like actions but navigate away, reset, or open docs.
-// "Run NIST KAT" is deliberately NOT excluded — a KAT run drives the real
+// The KAT panel's run button ("Run validation tests" for a mixed-evidence set,
+// formerly "Run NIST KAT") is deliberately NOT excluded — a KAT run drives the real
 // engine, and excluding it left two tools with zero drivable actions.
 const NOT_ACTION = /(reset|start over|clear|back|docs|learn more|copy|download|export|what runs)/i
 

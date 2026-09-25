@@ -24,10 +24,11 @@ Test your PQC readiness with this interactive web application visualizing the gl
     HQC, Classic McEliece, FrodoKEM, NTRU+, SLH-DSA, LMS/XMSS, Hybrid KEM, Composite Signatures,
     cross-cutting RNG/API) with 4-tier severity ratings (Critical/High/Medium/Low), per-attack
     countermeasures, and peer-reviewed references with local archive links
-  - **KAT Validation sub-tab**: in-browser NIST Known Answer Tests via softhsmv3 WASM PKCS#11
-    — ML-KEM-512/768/1024 (ACVP Decap + Encap Round-Trip), ML-DSA-44/65/87 (ACVP SigVer +
-    Functional Round-Trip), SLH-DSA (12 variants via dropdown); collapsible PKCS#11 diagnostics
-    panel with call log and key inspector
+  - **KAT Validation sub-tab**: in-browser known-answer and functional tests via softhsmv3 WASM
+    PKCS#11, each labelled with its evidence class — ML-KEM-512/768/1024 (NIST ACVP-Server
+    reference-sample decap + functional encap round-trip), ML-DSA-44/65/87 (reference-sample
+    SigVer + functional round-trip), SLH-DSA (12 variants, functional round-trip only), plus
+    classical tiles; collapsible PKCS#11 diagnostics panel with call log and key inspector
   - **Region filter**: filter algorithms by standardisation body — NIST (US), IETF (Global), BSI/ANSSI (Europe), ETSI, KpqC (Korea), CACR (China); sortable Region column
   - **Status filter**: filter by certification status — Certified, Candidate, To Be Checked; sortable Status column; Multivariate and Isogeny added to crypto-family filter
   - **Algorithm Implementations Modal**: click the code icon on any PQC algorithm to see its open-source reference implementations; backed by `algo_product_xref` CSV; smart family-prefix fallback (SLH-DSA covers all SLH-DSA-\* variants); deep-links to `/migrate` catalog and `/library` entries
@@ -93,7 +94,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     (RSA, ML-KEM, ML-DSA, SLH-DSA, SHA-1/2/3, AES, EC/ECDSA/EdDSA, ECDH, PBKDF2, HKDF, SP 800-108
     KBKDFs); decodes CKF\_ flag bitmasks to human-readable names; groups by algorithm family
     (PQC, asymmetric, symmetric, hash, kdf)
-  - **ACVP Testing**: validates 34 test categories against NIST/RFC/PKCS#11 reference vectors —
+  - **Cryptographic Validation Workbench** (Build › Validation; formerly "ACVP Testing"): runs
+    ~36 test sections of mixed evidence — selected public NIST ACVP-Server reference samples,
+    published-standard KATs, OpenSSL-oracle comparisons and functional round-trips, each row
+    tagged with its evidence tier. Not an ACVTS session or a CAVP/CMVP certificate —
     symmetric (AES-GCM-256, AES-CBC-256, AES-CTR-256, AES Key Wrap/KWP, ChaCha20-Poly1305),
     hashing/MAC (SHA-256, HMAC-SHA-256/384/512), KDFs (PBKDF2, HKDF, SP 800-108 KBKDF counter +
     feedback mode, X9.63-KDF w/ SHA3-256/512), classical asymmetric (RSA-PSS-2048, ECDSA
@@ -101,9 +105,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     (ML-KEM-512/768/1024 decapsulation + encap/decap round-trip, ML-DSA-44/65/87 SigVer +
     functional sign/verify + pre-hash Hash-ML-DSA, SLH-DSA — all 12 parameter sets, plus SigVer
     KAT, context-binding, and deterministic-mode checks — XMSS and HSS/LMS stateful signatures);
-    ML-DSA-65 signature verification (FIPS 204) runs against a real NIST ACVP vector — ML-DSA
-    SigGen and the other functional sign/verify categories are self-consistency checks (sign with
-    a freshly generated key, verify with the same key), not independently vector-proven; runs on
+    ML-DSA-44/65/87 verification runs against sigGen-derived NIST ACVP-Server reference samples —
+    ML-DSA signing and the other functional sign/verify categories are self-consistency checks
+    (sign with a freshly generated key, verify with the same key), not independently
+    vector-proven; runs on
     both C++ and Rust engines in Dual Mode simultaneously; a mechanism the running engine doesn't
     advertise renders as a visible `skip` row with the reason, not a silently dropped test
   - **Key size display**: Software Key Store and HSM Key Registry both show per-key material
@@ -543,10 +548,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     infographic and a fully rewritten "In Simple Terms" summary — conversational prose verified
     line-by-line against each module's source content, available at all experience levels;
     accessible via deep link (`/learn/module?tab=visual`)
-  - **Inline NIST KAT validation**: seven modules (5G Security, Code Signing, Email Signing,
-    IoT/OT, Digital ID, QKD, Digital Assets) embed a `KatValidationPanel` in their workshop
-    steps — click "Run NIST KAT" to execute use-case-specific Known Answer Tests against NIST
-    FIPS 203/204 ACVP vectors (ML-KEM + ML-DSA) with per-spec pass/fail results displayed inline
+  - **Inline KAT validation**: Learn workshops embed a `KatValidationPanel` that runs
+    use-case-specific tests with per-spec pass/fail and an evidence label per row (NIST
+    ACVP-Server reference sample, standard KAT, oracle comparison or functional round-trip); the
+    run button names the evidence class, or reads "Run validation tests" for a mixed set
   - **Persona-driven navigation**: irrelevant pages hidden from nav; always-visible pages (Home,
     Learn, Timeline, Threats, About) remain accessible to all. Each persona's nav is tuned:
     Executive includes Compliance and Migrate; Developer includes Assess; Architect includes

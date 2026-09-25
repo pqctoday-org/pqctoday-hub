@@ -55,7 +55,10 @@ export const DeveloperTab = ({ activeSubTab, onSubTabChange }: DeveloperTabProps
     <Tabs value={activeSubTab} onValueChange={(v) => onSubTabChange(v as TestSuite)}>
       <TabsList>
         <TabsTrigger value="standard">Standard</TabsTrigger>
-        {showWorkbenchTabs && <TabsTrigger value="acvp">ACVP</TabsTrigger>}
+        {/* Tab value stays `acvp` (URL `?dtab=acvp` compatibility); the label
+            names the mixed-evidence suite, not ACVP — most rows are not
+            ACVP-backed (remediation plan WS-A, A-1). */}
+        {showWorkbenchTabs && <TabsTrigger value="acvp">Validation</TabsTrigger>}
         {showWorkbenchTabs && <TabsTrigger value="conformance">Conformance</TabsTrigger>}
       </TabsList>
       <TabsContent value="standard">

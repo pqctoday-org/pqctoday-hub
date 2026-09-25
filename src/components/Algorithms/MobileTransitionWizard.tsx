@@ -20,7 +20,11 @@ interface MobileTransitionWizardProps {
 const PRIORITY_OPTS: Array<{ id: Priority; label: string; description: string }> = [
   { id: 'speed', label: 'Speed', description: 'Fastest key gen & signing' },
   { id: 'keysize', label: 'Smaller keys', description: 'Lowest bandwidth overhead' },
-  { id: 'standardization', label: 'Standardization', description: 'FIPS / NIST certified' },
+  {
+    id: 'standardization',
+    label: 'Standardization',
+    description: 'Published as a NIST FIPS standard',
+  },
 ]
 
 function functionIcon(fn: AlgorithmTransition['function']) {

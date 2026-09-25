@@ -21,6 +21,7 @@ import {
   TIER_B_GROUPS,
   type RowStatus,
 } from '../../../hsm/conformance/usePkcs11Conformance'
+import { VALIDATION_DISCLAIMER_TEXT } from '@/data/validationDisclaimer'
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
 import { emitConformanceSuite } from './suiteCodegen'
 import { createConformanceBridge, runSuiteScript } from './suiteBridges'
@@ -319,7 +320,9 @@ export const ConformanceSuiteWorkbench = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => void navigator.clipboard.writeText(reportText())}
+            onClick={() =>
+              void navigator.clipboard.writeText(`${VALIDATION_DISCLAIMER_TEXT}\n\n${reportText()}`)
+            }
             className="h-8 w-8 text-muted-foreground hover:text-primary"
             title="Copy report"
           >

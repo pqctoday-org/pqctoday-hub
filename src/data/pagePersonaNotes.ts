@@ -228,11 +228,11 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       'A banner at the top says this is a hands-on engineering workbench and points you to Command Center, Compliance landscape and Migration framework; for your role the engine stays Rust and the test suites are not shown.',
     grc: 'The same engineering-workbench banner appears for your role; if you stay, Inspect › Log lists every call with Function, Arguments and Return Value, and "Beginner" adds a "Plain English" column.',
     developer:
-      'Build › Standard is a pipeline builder with Builder and Code views, Run (⌘/Ctrl+Enter) and "Export .py"; Build also carries ACVP and Conformance suites, and the Engine switch offers C++, Rust or Dual Parity.',
+      'Build › Standard is a pipeline builder with Builder and Code views, Run (⌘/Ctrl+Enter) and "Export .py"; Build also carries Validation and Conformance suites, and the Engine switch offers C++, Rust or Dual Parity.',
     architect:
       'Operate walks "1. Initialize HSM", "2. Create Token", "3. Open Session & Login", then a Primitives rail — KEM, Symmetric Encrypt, Key Wrap / Unwrap, Hashing, Sign & Verify, Key Agreement, KDF; Inspect › Keys lists what the token holds.',
     researcher:
-      'Build › ACVP replays NIST ACVP reference vectors against the WASM engine ("ACVP Known-Answer Tests"); Build › Conformance is a "PKCS#11 v3.2 Conformance Runner"; the WIP badge opens the test methodology.',
+      'Build › Validation is the "Cryptographic Validation Workbench": NIST ACVP-Server reference samples, standard KATs, oracle and functional tests, each row tagged with its evidence tier; Build › Conformance is a "PKCS#11 v3.2 Conformance Runner"; the WIP badge opens the methodology.',
     ops: 'The Learn lessons "The Cryptoki model — slots, tokens, sessions, login" and "Mechanism discovery" cover token setup; Inspect › Mechanisms\' "Query Slot" enumerates what the token supports, and the Log filters by origin.',
     curious:
       'Open the Learn tab, pick a lesson and press "Run all" to watch each step run; the "New to PKCS#11?" strip explains the terms on hover, and the engine is preset to Rust.',
