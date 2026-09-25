@@ -1,23 +1,83 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Simplified educational implementations of entropy tests.
- * These are NOT full NIST SP 800-90B implementations — production entropy
- * validation requires the NIST EntropyAssessment tool with > 1M samples.
+ * Simplified educational checks for the Entropy module.
+ *
+ * Results belong to one of four groups that must never be merged into a single
+ * "entropy tests passed" verdict (Entropy remediation plan P0.4, 2026-09-24):
+ *
+ *   1. 'visualization' — SP 800-22-style output statistics (monobit/frequency,
+ *      runs, chi-squared). They describe a buffer; they cannot show that its
+ *      source is unpredictable. A seeded LCG passes them.
+ *   2. 'health' — the two approved SP 800-90B §4.4 continuous health tests
+ *      (Repetition Count §4.4.1, Adaptive Proportion §4.4.2). They are defined
+ *      on raw noise-source samples, before conditioning (§4.3 item 6).
+ *   3. 'estimator' — SP 800-90B entropy estimators. NOT run here: one
+ *      re-implemented estimator on a small buffer is not an SP 800-90B
+ *      assessment. The module's evidence workshop runs the NIST tool.
+ *   4. 'kat' — algorithm known-answer tests (e.g. the HMAC_DRBG vectors in
+ *      hmacDrbg.test.ts, the SHA-256/HMAC self-checks). They show an algorithm
+ *      is computed correctly and say nothing about entropy.
+ *
+ * Every result carries `sampleLimit`: what that result cannot show at the
+ * sample size it was computed on.
  */
+
+export type TestGroup = 'visualization' | 'health' | 'estimator' | 'kat'
+
+export const TEST_GROUP_LABELS: Record<TestGroup, string> = {
+  visualization: 'Visual checks (SP 800-22-style output statistics)',
+  health: 'SP 800-90B health tests (§4.4)',
+  estimator: 'SP 800-90B entropy estimators',
+  kat: 'Algorithm known-answer tests',
+}
 
 export interface TestResult {
   name: string
   value: number
+  /** Within the check's cutoff. For group 'visualization' this is NOT a security verdict. */
   passed: boolean
   threshold: number
   description: string
   detail: string
+  group: TestGroup
+  /** What this result cannot show at this sample size — shown next to the result. */
+  sampleLimit: string
+}
+
+/** Minimum consecutive samples for SP 800-90B startup health testing (§4.3 item 4). */
+export const SP800_90B_STARTUP_SAMPLES = 1024
+
+/** Minimum sequential dataset for SP 800-90B entropy estimation (§3.1.1 item 1). */
+export const SP800_90B_MIN_SEQUENTIAL_SAMPLES = 1_000_000
+
+/** Default false-positive probability used in SP 800-90B §4.4's worked values. */
+export const SP800_90B_DEFAULT_ALPHA = 2 ** -20
+
+function visualizationLimit(nBits: number): string {
+  return (
+    `Computed on ${nBits} bits. An output-statistics check only: passing does not show ` +
+    'unpredictability (a seeded LCG or Math.random() output usually passes), and failing on ' +
+    'a sample this small can be chance. Not an SP 800-90B test.'
+  )
+}
+
+function healthLimit(n: number, H: number): string {
+  const startup =
+    n < SP800_90B_STARTUP_SAMPLES
+      ? ` This buffer has ${n} samples, fewer than the ${SP800_90B_STARTUP_SAMPLES} consecutive samples SP 800-90B §4.3 item 4 requires for startup testing.`
+      : ` This buffer has ${n} samples.`
+  return (
+    `Treats each byte as one raw noise-source sample with an assumed min-entropy of H = ${H} ` +
+    'bits/sample (a declared assumption, not a measurement). SP 800-90B health tests run on raw ' +
+    'noise-source samples before conditioning (§4.3 item 6); on DRBG or conditioned output this ' +
+    'is a demonstration only. A pass is not an entropy estimate.' +
+    startup
+  )
 }
 
 /**
- * Frequency / Monobit Test
- * Counts the proportion of 1-bits in the data.
- * For truly random data, should be close to 50%.
+ * Frequency / Monobit check (group 1, SP 800-22-style).
+ * Counts the proportion of 1-bits in the data; for uniform data it is near 0.5.
  */
 export function frequencyTest(data: Uint8Array): TestResult {
   let ones = 0
@@ -28,23 +88,25 @@ export function frequencyTest(data: Uint8Array): TestResult {
       total++
     }
   }
-  const proportion = ones / total
+  const proportion = total > 0 ? ones / total : 0
   const deviation = Math.abs(proportion - 0.5)
   const threshold = 0.05
   return {
     name: 'Frequency (Monobit)',
     value: proportion,
-    passed: deviation <= threshold,
+    passed: total > 0 && deviation <= threshold,
     threshold,
     description: 'Proportion of 1-bits should be close to 0.5',
     detail: `${ones} ones out of ${total} bits (${(proportion * 100).toFixed(1)}%). Deviation: ${(deviation * 100).toFixed(2)}%`,
+    group: 'visualization',
+    sampleLimit: visualizationLimit(total),
   }
 }
 
 /**
- * Runs Test
- * Counts runs of consecutive identical bits. Too few runs suggests
- * the bits are clumped; too many suggests alternation.
+ * Runs check (group 1, SP 800-22-style).
+ * Counts runs of consecutive identical bits. Too few runs suggests the bits are
+ * clumped; too many suggests alternation.
  */
 export function runsTest(data: Uint8Array): TestResult {
   const bits: number[] = []
@@ -62,6 +124,8 @@ export function runsTest(data: Uint8Array): TestResult {
       threshold: 0,
       description: 'Need at least 2 bits',
       detail: 'Insufficient data',
+      group: 'visualization',
+      sampleLimit: visualizationLimit(n),
     }
   }
 
@@ -84,12 +148,14 @@ export function runsTest(data: Uint8Array): TestResult {
     threshold,
     description: 'Number of runs should match expected for random data',
     detail: `${runs} runs observed (expected ~${expectedRuns.toFixed(0)}). Z-score: ${zScore.toFixed(2)}`,
+    group: 'visualization',
+    sampleLimit: visualizationLimit(n),
   }
 }
 
 /**
- * Chi-Squared Test (byte-level)
- * Tests whether byte values are uniformly distributed across 0-255.
+ * Chi-squared check (group 1, byte-level).
+ * Tests whether byte values are spread evenly across 0-255.
  * For small samples (< 128 bytes), groups into 16 bins instead of 256.
  */
 export function chiSquaredTest(data: Uint8Array): TestResult {
@@ -102,6 +168,8 @@ export function chiSquaredTest(data: Uint8Array): TestResult {
       threshold: 0,
       description: 'Need at least 16 bytes',
       detail: 'Insufficient data',
+      group: 'visualization',
+      sampleLimit: visualizationLimit(n * 8),
     }
   }
 
@@ -139,16 +207,31 @@ export function chiSquaredTest(data: Uint8Array): TestResult {
     threshold: criticalValue,
     description: `Byte distribution should be uniform across ${useBins} bins`,
     detail: `χ² = ${chiSq.toFixed(2)} (critical value: ${criticalValue.toFixed(2)}, df = ${df}, ${useBins} bins)`,
+    group: 'visualization',
+    sampleLimit: visualizationLimit(n * 8),
   }
 }
 
 /**
- * Repetition Count Test (SP 800-90B health test)
- * Finds the longest run of the same byte value.
- * Long repetitions suggest a stuck-at failure.
+ * Repetition Count Test cutoff — SP 800-90B §4.4.1:
+ *   C = 1 + ceil(-log2(alpha) / H)
+ * "the smallest integer satisfying the inequality alpha >= 2^(-H(C-1))".
  */
-export function repetitionCountTest(data: Uint8Array): TestResult {
+export function rctCutoff(assumedMinEntropy: number, alpha = SP800_90B_DEFAULT_ALPHA): number {
+  return 1 + Math.ceil(-Math.log2(alpha) / assumedMinEntropy)
+}
+
+/**
+ * Repetition Count Test — SP 800-90B §4.4.1 (group 2).
+ * Signals a failure when a sample value is repeated C or more times in a row.
+ */
+export function repetitionCountTest(
+  data: Uint8Array,
+  assumedMinEntropy = 8,
+  alpha = SP800_90B_DEFAULT_ALPHA
+): TestResult {
   const n = data.length
+  const H = Math.max(0.01, Math.min(8, assumedMinEntropy))
   if (n < 2) {
     return {
       name: 'Repetition Count',
@@ -157,9 +240,12 @@ export function repetitionCountTest(data: Uint8Array): TestResult {
       threshold: 0,
       description: 'Need at least 2 bytes',
       detail: 'Insufficient data',
+      group: 'health',
+      sampleLimit: healthLimit(n, H),
     }
   }
 
+  // §4.4.1 steps 1-5: B counts consecutive identical samples; fail when B >= C.
   let maxRun = 1
   let currentRun = 1
   let maxByte = data[0]
@@ -176,26 +262,26 @@ export function repetitionCountTest(data: Uint8Array): TestResult {
     }
   }
 
-  // SP 800-90B §4.4.1: C = ceil(-log2(alpha) / H_min) + 1
-  // Using H_min=8 (ideal 8-bit source) and alpha=2^-20 (false-positive rate):
-  // C = ceil(20 / 8) + 1 = ceil(2.5) + 1 = 3 + 1 = 4 (fixed; not sample-size-dependent)
-  const threshold = 4
+  const threshold = rctCutoff(H, alpha)
+  const log2Alpha = -Math.log2(alpha)
   return {
     name: 'Repetition Count',
     value: maxRun,
     passed: maxRun < threshold,
     threshold,
     description:
-      'SP 800-90B §4.4.1 health test: longest repeated-byte run must be < C, ' +
-      'where C = ceil(-log2(alpha)/H_min) + 1 = 4 (alpha=2^-20, H_min=8 bits).',
+      'SP 800-90B §4.4.1 health test: fails when a sample repeats C or more times in a row, ' +
+      `C = 1 + ceil(-log2(alpha)/H) = ${threshold} (alpha=2^-${log2Alpha}, H=${H} bits/sample).`,
     detail: `Longest run: ${maxRun} (byte 0x${maxByte.toString(16).padStart(2, '0')}). C threshold: ${threshold}`,
+    group: 'health',
+    sampleLimit: healthLimit(n, H),
   }
 }
 
 /**
  * Smallest C such that Pr[Binomial(w, p) >= C] <= alpha.
  *
- * SP 800-90B §4.4.2 defines the APT cutoff as CRITBINOM(W, 2^-H, 1 - alpha).
+ * SP 800-90B §4.4.2 defines the APT cutoff as 1 + CRITBINOM(W, 2^-H, 1 - alpha).
  * Computed here by summing the binomial PMF in log space: at W = 1024 the
  * direct factorial form overflows a double long before the tail gets small,
  * so the terms are built with log-gamma and exponentiated one at a time.
@@ -229,34 +315,40 @@ function binomialCutoff(w: number, p: number, alpha: number): number {
   return 1
 }
 
+/** APT window size — SP 800-90B §4.4.2: 1024 for a binary noise source, 512 otherwise. */
+export function aptWindowSize(binary: boolean): number {
+  return binary ? 1024 : 512
+}
+
+/** Adaptive Proportion Test cutoff — SP 800-90B §4.4.2 (Pr(B >= C) <= alpha). */
+export function aptCutoff(
+  windowSize: number,
+  assumedMinEntropy: number,
+  alpha = SP800_90B_DEFAULT_ALPHA
+): number {
+  return binomialCutoff(windowSize, 2 ** -assumedMinEntropy, alpha)
+}
+
 /**
- * Adaptive Proportion Test — SP 800-90B §4.4.2.
- *
- * The SECOND of the two continuous health tests SP 800-90B requires (the other
- * is the Repetition Count Test above). It was missing entirely until the
- * 2026-08-11 playground audit: the tool shipped one of the two mandated tests
- * while describing itself as an "SP 800-90B entropy test suite".
+ * Adaptive Proportion Test — SP 800-90B §4.4.2 (group 2).
  *
  * Where Repetition Count catches a source that gets *stuck* on one value, this
  * catches one that merely becomes *biased* toward a value without repeating it
- * consecutively — a failure the first test cannot see at all. It counts, within
- * a window, how often the window's first sample recurs, and fails if that count
- * reaches a cutoff drawn from the binomial distribution of an ideal source at
- * the assumed min-entropy.
+ * consecutively. It counts, within a window, how often the window's first
+ * sample recurs, and fails if that count reaches the cutoff.
  *
- * W = 1024 for non-binary (byte) data per §4.4.2; alpha = 2^-20 matches the
- * false-positive rate used by the Repetition Count cutoff above.
- *
- * Educational implementation, consistent with the rest of this file: a real
- * validation runs continuously over the live noise source, not once over a
- * captured buffer, and uses the min-entropy from a full assessment rather than
- * an assumed H.
+ * Byte samples are non-binary, so W = 512 (§4.4.2). Until 2026-09-24 this used
+ * W = 1024, the binary-source window.
  */
-export function adaptiveProportionTest(data: Uint8Array, assumedMinEntropy = 8): TestResult {
-  const W = 1024
-  const ALPHA = 2 ** -20
+export function adaptiveProportionTest(
+  data: Uint8Array,
+  assumedMinEntropy = 8,
+  alpha = SP800_90B_DEFAULT_ALPHA,
+  binary = false
+): TestResult {
+  const W = aptWindowSize(binary)
   const n = data.length
-  const H = Math.max(0.1, Math.min(8, assumedMinEntropy))
+  const H = Math.max(0.1, Math.min(binary ? 1 : 8, assumedMinEntropy))
   const window = Math.min(W, n)
 
   if (n < 2) {
@@ -267,10 +359,12 @@ export function adaptiveProportionTest(data: Uint8Array, assumedMinEntropy = 8):
       threshold: 0,
       description: 'Need at least 2 bytes',
       detail: 'Insufficient data',
+      group: 'health',
+      sampleLimit: healthLimit(n, H),
     }
   }
 
-  const cutoff = binomialCutoff(window, 2 ** -H, ALPHA)
+  const cutoff = aptCutoff(window, H, alpha)
 
   // Non-overlapping windows, each re-anchored on its own first sample (§4.4.2).
   let worstCount = 0
@@ -297,95 +391,59 @@ export function adaptiveProportionTest(data: Uint8Array, assumedMinEntropy = 8):
     windows = 1
   }
 
-  const shortSample = n < W ? ` (partial window — ${n} of ${W} bytes)` : ''
+  const shortSample =
+    n < W
+      ? ` (partial window — ${n} of ${W} samples; cutoff recomputed for ${n}, so this is not the §4.4.2 test as specified)`
+      : ''
+  const log2Alpha = -Math.log2(alpha)
   return {
     name: 'Adaptive Proportion',
     value: worstCount,
     passed: worstCount < cutoff,
     threshold: cutoff,
     description:
-      `SP 800-90B §4.4.2 health test: within a ${window}-sample window, the first ` +
-      `sample must recur fewer than C times, C = CRITBINOM(W, 2^-H, 1-alpha) ` +
-      `(H=${H} bits, alpha=2^-20).`,
+      `SP 800-90B §4.4.2 health test: within a ${window}-sample window (W = ${W} for a ` +
+      `${binary ? 'binary' : 'non-binary'} source), the first sample must recur fewer than C ` +
+      `times, C = 1 + CRITBINOM(W, 2^-H, 1-alpha) (H=${H} bits, alpha=2^-${log2Alpha}).`,
     detail:
       `Worst window: byte 0x${worstValue.toString(16).padStart(2, '0')} seen ` +
       `${worstCount}/${window} times across ${windows} window${windows === 1 ? '' : 's'}. ` +
       `C threshold: ${cutoff}${shortSample}`,
+    group: 'health',
+    sampleLimit: healthLimit(n, H),
   }
 }
 
-/**
- * Min-Entropy Estimate
- * Estimates a lower bound on min-entropy using the Most Common Value (MCV) estimator
- * from SP 800-90B Section 6.3.1, with the required upper confidence bound on p_max.
- *
- * Formula (§6.3.1): p_hat = min(1, p_max + 2.576 * sqrt(p_max*(1-p_max)/n))
- * Then H_min = -log2(p_hat)
- *
- * Note: SP 800-90B requires ≥ 1,000,000 samples for a statistically valid production
- * estimate. Small samples (< 1,000 bytes) will yield low H_min values even for
- * truly random data due to the confidence correction on p_max.
- */
-export function minEntropyEstimate(data: Uint8Array): TestResult {
-  const n = data.length
-  if (n < 1) {
-    return {
-      name: 'Min-Entropy',
-      value: 0,
-      passed: false,
-      threshold: 0,
-      description: 'Need at least 1 byte',
-      detail: 'Insufficient data',
-    }
-  }
+/** Group 1 — SP 800-22-style output statistics. */
+export function runVisualizationChecks(data: Uint8Array): TestResult[] {
+  return [frequencyTest(data), runsTest(data), chiSquaredTest(data)]
+}
 
-  const counts = new Array(256).fill(0)
-  for (const byte of data) {
-    counts[byte]++
-  }
+/** Group 2 — the two approved SP 800-90B §4.4 continuous health tests. */
+export function runHealthTests(
+  samples: Uint8Array,
+  assumedMinEntropy = 8,
+  alpha = SP800_90B_DEFAULT_ALPHA
+): TestResult[] {
+  return [
+    repetitionCountTest(samples, assumedMinEntropy, alpha),
+    adaptiveProportionTest(samples, assumedMinEntropy, alpha),
+  ]
+}
 
-  const maxCount = Math.max(...counts)
-  const pMax = maxCount / n
-  // Raw MCV estimate
-  const rawEntropy = pMax > 0 ? -Math.log2(pMax) : 8
-  // SP 800-90B §6.3.1 upper confidence bound on p_max (z = 2.576 → 99.5% one-tail)
-  const pHat = Math.min(1, pMax + 2.576 * Math.sqrt((pMax * (1 - pMax)) / n))
-  const minEntropy = pHat < 1 ? -Math.log2(pHat) : 0
-  // Production threshold: 6 bits/byte (meaningful only for large sample sets)
-  const threshold = 6.0
-  const smallSampleWarning =
-    n < 1000 ? ' (small sample — estimate unreliable below 1,000 bytes)' : ''
-  return {
-    name: 'Min-Entropy',
-    value: minEntropy,
-    passed: minEntropy >= threshold,
-    threshold,
-    description:
-      'SP 800-90B §6.3.1 MCV estimator with upper confidence bound (z=2.576). ' +
-      'Target ≥ 6 bits/byte; production assessment requires ≥ 1M samples.',
-    detail:
-      `Raw: ${rawEntropy.toFixed(2)} bits/byte → bounded: ${minEntropy.toFixed(2)} bits/byte. ` +
-      `Most common byte: ${maxCount}/${n} (p_max=${pMax.toFixed(4)}, p_hat=${pHat.toFixed(4)})` +
-      smallSampleWarning,
-  }
+/** True when any §4.4 health test in the list signalled a failure. */
+export function healthTestsFailed(results: TestResult[]): boolean {
+  return results.some((r) => r.group === 'health' && !r.passed)
 }
 
 /**
- * Run all tests on a data sample.
+ * Groups 1 and 2 on one buffer, each result tagged with its group.
  *
- * Two of these are SP 800-90B's mandated continuous health tests (Repetition
- * Count §4.4.1 and Adaptive Proportion §4.4.2) and one is its MCV min-entropy
- * estimator (§6.3.1). Frequency/Monobit, Runs and Chi-squared come from the
- * SP 800-22 statistical-test family, NOT from SP 800-90B — a distinction the
- * tool's own description used to blur.
+ * Kept for the components that show every check in one table; they must not
+ * total the results into one verdict. Group 3 (SP 800-90B estimators) is not
+ * computed anywhere in this file, on purpose, and group 4 (KATs) lives with
+ * the algorithms it checks.
  */
 export function runAllTests(data: Uint8Array): TestResult[] {
-  return [
-    frequencyTest(data),
-    runsTest(data),
-    chiSquaredTest(data),
-    repetitionCountTest(data),
-    adaptiveProportionTest(data),
-    minEntropyEstimate(data),
-  ]
+  return [...runVisualizationChecks(data), ...runHealthTests(data)]
 }

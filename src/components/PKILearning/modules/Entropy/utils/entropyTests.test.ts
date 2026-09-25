@@ -10,7 +10,16 @@
 // interleaved case below is the one that matters: it passes §4.4.1 and fails
 // §4.4.2, so it is what justifies the test existing at all.
 import { describe, it, expect } from 'vitest'
-import { adaptiveProportionTest, repetitionCountTest, runAllTests } from './entropyTests'
+import {
+  adaptiveProportionTest,
+  aptCutoff,
+  aptWindowSize,
+  rctCutoff,
+  repetitionCountTest,
+  runAllTests,
+  runHealthTests,
+  runVisualizationChecks,
+} from './entropyTests'
 
 /** Uniform random bytes — stands in for a healthy source. */
 function goodSource(n = 4096): Uint8Array {
@@ -50,13 +59,13 @@ describe('adaptiveProportionTest — SP 800-90B §4.4.2', () => {
     expect(adaptiveProportionTest(biased).passed).toBe(false) // §4.4.2 does
   })
 
-  it('derives a cutoff in the range an ideal 8-bit source implies', () => {
-    // W=1024, p=2^-8 → mean 4 recurrences. The 2^-20 tail cutoff sits well
-    // above the mean but far below the window size; a cutoff outside this band
-    // would mean the binomial maths is wrong, not merely differently rounded.
+  it('uses the non-binary window W = 512 for byte samples (§4.4.2)', () => {
+    expect(aptWindowSize(false)).toBe(512)
+    expect(aptWindowSize(true)).toBe(1024)
     const r = adaptiveProportionTest(goodSource())
-    expect(r.threshold).toBeGreaterThan(4)
-    expect(r.threshold).toBeLessThan(64)
+    expect(r.description).toContain('512-sample window')
+    // SP 800-90B Table 2: H = 8, W = 512, alpha = 2^-20 → C = 13.
+    expect(r.threshold).toBe(13)
   })
 
   it('scores a short sample instead of silently passing it', () => {
@@ -72,17 +81,89 @@ describe('adaptiveProportionTest — SP 800-90B §4.4.2', () => {
   })
 })
 
-describe('runAllTests', () => {
-  it('includes both health tests SP 800-90B requires', () => {
-    const names = runAllTests(goodSource()).map((t) => t.name)
-    expect(names).toContain('Repetition Count') // §4.4.1
-    expect(names).toContain('Adaptive Proportion') // §4.4.2
+describe('SP 800-90B cutoffs — published values', () => {
+  // SP 800-90B Table 2 "Example cutoff values of the Adaptive Proportion Test",
+  // alpha = 2^-20. Byte-for-byte the table, so a wrong window or tail formula fails.
+  const TABLE_2_BINARY_W1024: Array<[number, number]> = [
+    [0.2, 941],
+    [0.4, 840],
+    [0.6, 748],
+    [0.8, 664],
+    [1, 589],
+  ]
+  const TABLE_2_NONBINARY_W512: Array<[number, number]> = [
+    [0.5, 410],
+    [1, 311],
+    [2, 177],
+    [4, 62],
+    [8, 13],
+  ]
+
+  for (const [H, C] of TABLE_2_BINARY_W1024) {
+    it(`APT binary W=1024, H=${H} → C=${C}`, () => {
+      expect(aptCutoff(1024, H)).toBe(C)
+    })
+  }
+  for (const [H, C] of TABLE_2_NONBINARY_W512) {
+    it(`APT non-binary W=512, H=${H} → C=${C}`, () => {
+      expect(aptCutoff(512, H)).toBe(C)
+    })
+  }
+
+  it('RCT cutoff matches the §4.4.1 worked examples', () => {
+    // "for alpha = 2^-20, an entropy source with H = 2.0 bits per sample would
+    // have a repetition count test cutoff value of 1+20/2.0 = 11"
+    expect(rctCutoff(2, 2 ** -20)).toBe(11)
+    // "a noise source evaluated at eight bits of min-entropy per sample has a
+    // cutoff value of six repetitions to ensure a false-positive rate of
+    // approximately once per 10^12 samples" (alpha = 2^-40)
+    expect(rctCutoff(8, 2 ** -40)).toBe(6)
   })
 
-  it('passes every test on a healthy source', () => {
-    const failed = runAllTests(goodSource(8192))
+  it('RCT fails at exactly C repetitions and passes at C - 1', () => {
+    const C = rctCutoff(8) // 4 at alpha = 2^-20
+    const atC = new Uint8Array(64)
+    const belowC = new Uint8Array(64)
+    for (let i = 0; i < 64; i++) {
+      atC[i] = i < C ? 0x42 : i
+      belowC[i] = i < C - 1 ? 0x42 : i
+    }
+    expect(repetitionCountTest(atC).passed).toBe(false)
+    expect(repetitionCountTest(belowC).passed).toBe(true)
+  })
+})
+
+describe('result groups (P0.4)', () => {
+  it('tags every result with its group and a sample-size limit', () => {
+    for (const r of runAllTests(goodSource())) {
+      expect(['visualization', 'health']).toContain(r.group)
+      expect(r.sampleLimit.length).toBeGreaterThan(20)
+    }
+  })
+
+  it('never computes an SP 800-90B estimator or a 6-bits/byte pass mark', () => {
+    const results = runAllTests(goodSource())
+    expect(results.map((r) => r.name)).not.toContain('Min-Entropy')
+    expect(results.some((r) => r.group === 'estimator')).toBe(false)
+    expect(results.some((r) => /6 bits\/byte/.test(r.description))).toBe(false)
+  })
+
+  it('includes both approved SP 800-90B §4.4 health tests', () => {
+    const names = runHealthTests(goodSource()).map((t) => t.name)
+    expect(names).toEqual(['Repetition Count', 'Adaptive Proportion'])
+  })
+
+  it('shows the expected lesson: a predictable LCG passes the visual checks', () => {
+    // goodSource() IS a linear congruential generator — fully predictable from
+    // its state — and it passes group 1. That is why group 1 gives no verdict.
+    const failed = runVisualizationChecks(goodSource(8192))
       .filter((t) => !t.passed)
       .map((t) => `${t.name}: ${t.detail}`)
     expect(failed).toEqual([])
+  })
+
+  it('states the startup-sample shortfall on a small buffer (§4.3 item 4)', () => {
+    const [rct] = runHealthTests(goodSource(64))
+    expect(rct.sampleLimit).toContain('fewer than the 1024 consecutive samples')
   })
 })

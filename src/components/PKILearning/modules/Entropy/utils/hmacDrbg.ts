@@ -138,7 +138,7 @@ export async function hmacDrbgGenerate(
   if (additionalInput.length > 0) {
     ;({ K, V } = await hmacDrbgUpdate(additionalInput, K, V)) // step 2
   }
-  let temp = new Uint8Array(0) // step 3
+  let temp: Uint8Array = new Uint8Array(0) // step 3
   while (temp.length < requestedBytes) {
     V = await hmacSha256(K, V) // step 4.1
     temp = concatBytes(temp, V) // step 4.2
