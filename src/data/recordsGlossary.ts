@@ -22,7 +22,7 @@ export const RECORDS_GLOSSARY: GlossaryTerm[] = [
   {
     term: 'ACVP',
     short: 'algorithm testing',
-    def: 'Automated Cryptographic Validation Protocol — CAVP algorithm-level testing. Prerequisite for a FIPS 140-3 module cert.',
+    def: 'Automated Cryptographic Validation Protocol — the JSON-over-HTTPS protocol NIST’s ACVTS uses for CAVP algorithm testing. CAVP (not ACVP) issues the algorithm certificate a FIPS 140-3 module cert requires.',
   },
   {
     term: 'CC',
