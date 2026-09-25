@@ -85,7 +85,7 @@ import {
   hsm_aesWrapKey,
   hsm_generateAESKey,
   hsm_importHMACKey,
-  hsm_hmacVerify,
+  hsm_hmacVerifyGeneral,
   hsm_digest,
   hsm_importECPublicKey,
   hsm_generateECKeyPair,
@@ -101,29 +101,33 @@ import {
   hsm_rsaVerify,
   // Gap-fill HSM functions
   hsm_aesCmac,
-  hsm_hmac,
+  hsm_hmacGeneral,
   hsm_digestMultiPart,
   hsm_ecdhDerive,
   hsm_extractECPoint,
   hsm_pbkdf2,
   hsm_hkdf,
   hsm_importGenericSecret,
-  hsm_aesWrapKeyKwp,
+  hsm_wrapKeyMech,
+  hsm_unwrapKeyMech,
   hsm_createObject,
   hsm_injectTestKey,
   writeBytes,
   CKO_SECRET_KEY,
   CKK_AES,
+  CKK_GENERIC_SECRET,
+  CKM_AES_KEY_WRAP_KWP,
   CKA_CLASS,
   CKA_KEY_TYPE,
   CKA_TOKEN,
   CKA_SIGN,
+  CKA_EXTRACTABLE,
   CKA_VALUE,
   // Mechanism constants
   CKM_SHA256,
-  CKM_SHA256_HMAC,
-  CKM_SHA384_HMAC,
-  CKM_SHA512_HMAC,
+  CKM_SHA256_HMAC_GENERAL,
+  CKM_SHA384_HMAC_GENERAL,
+  CKM_SHA512_HMAC_GENERAL,
   CKM_ECDSA_SHA256,
   CKM_ECDSA_SHA384,
   CKM_SHA256_RSA_PKCS_PSS,
@@ -243,6 +247,15 @@ function toHex(bytes: Uint8Array, maxBytes = 32): string {
       .map((b) => b.toString(16).padStart(2, '0'))
       .join('') + (bytes.length > maxBytes ? '…' : '')
   )
+}
+
+/** The truncating HMAC mechanism the NIST ACVP-HMAC samples need (their macLen < digest). */
+function hmacGeneralMech(hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'): number {
+  return hashAlg === 'SHA-384'
+    ? CKM_SHA384_HMAC_GENERAL
+    : hashAlg === 'SHA-512'
+      ? CKM_SHA512_HMAC_GENERAL
+      : CKM_SHA256_HMAC_GENERAL
 }
 
 // ── NIST vector helpers ───────────────────────────────────────────────────────
@@ -499,7 +512,11 @@ async function runAESCBCDecryptKAT(
   const ctBytes = hexToBytes(test.ct)
 
   const keyHandle = hsm_importAESKey(M, hSession, keyBytes)
-  const recoveredPt = hsm_aesDecrypt(M, hSession, keyHandle, ctBytes, ivBytes, 'cbc')
+  // Raw CKM_AES_CBC ('cbc-raw'): NIST ACVP-AES-CBC tests the block-cipher mode
+  // with no PKCS#7 padding. 'cbc' is CKM_AES_CBC_PAD, whose unpad step rejects
+  // this unpadded sample (C++ CKR_ENCRYPTED_DATA_INVALID, Rust
+  // CKR_FUNCTION_FAILED) — the same mechanism the workbench's §11 uses.
+  const recoveredPt = hsm_aesDecrypt(M, hSession, keyHandle, ctBytes, ivBytes, 'cbc-raw')
 
   const matches =
     recoveredPt.length === expectedPt.length &&
@@ -637,27 +654,27 @@ async function runHMACVerifyKAT(
       : hashAlg === 'SHA-512'
         ? hmacSha512TestVectors
         : hmacTestVectors
-  const mechType =
-    hashAlg === 'SHA-384'
-      ? CKM_SHA384_HMAC
-      : hashAlg === 'SHA-512'
-        ? CKM_SHA512_HMAC
-        : CKM_SHA256_HMAC
+  const mechType = hmacGeneralMech(hashAlg)
   const test = vectors.testGroups[0].tests[testIndex] ?? vectors.testGroups[0].tests[0]
   const keyBytes = hexToBytes(test.key)
   const msgBytes = hexToBytes(test.msg)
   const macBytes = hexToBytes(test.mac)
 
   const keyHandle = hsm_importHMACKey(M, hSession, keyBytes)
-  const isValid = hsm_hmacVerify(M, hSession, keyHandle, msgBytes, macBytes, mechType)
+  // The NIST sample's MAC is truncated (macLen < digest length), so verify with
+  // the _GENERAL mechanism at that length, as the workbench's §2/§13/§14 do.
+  const isValid = hsm_hmacVerifyGeneral(M, hSession, keyHandle, msgBytes, macBytes, mechType)
 
   if (isValid) {
     return {
       status: 'pass',
-      details: `Imported NIST HMAC key → computed MAC → matches ACVP expected value (${macBytes.length}B)`,
+      details: `Imported NIST HMAC key → C_Verify(CKM_${hashAlg.replace('-', '')}_HMAC_GENERAL, ${macBytes.length}B) accepts the ACVP sample's truncated MAC (tcId ${test.tcId})`,
     }
   }
-  return { status: 'fail', details: `HMAC-${hashAlg} verification failed against ACVP vector` }
+  return {
+    status: 'fail',
+    details: `HMAC-${hashAlg} _GENERAL verification rejected the ACVP sample's ${macBytes.length}B MAC (tcId ${test.tcId})`,
+  }
 }
 
 /**
@@ -1032,7 +1049,7 @@ async function runAESCMACVerifyKAT(
 
 /**
  * HMAC Generation KAT — imports key, computes HMAC, compares with ACVP expected MAC.
- * Tests hsm_hmac (generation) rather than hsm_hmacVerify.
+ * Tests hsm_hmacGeneral (generation) rather than hsm_hmacVerifyGeneral.
  */
 async function runHMACGenerateKAT(
   M: SoftHSMModule,
@@ -1046,19 +1063,16 @@ async function runHMACGenerateKAT(
       : hashAlg === 'SHA-512'
         ? hmacSha512TestVectors
         : hmacTestVectors
-  const mechType =
-    hashAlg === 'SHA-384'
-      ? CKM_SHA384_HMAC
-      : hashAlg === 'SHA-512'
-        ? CKM_SHA512_HMAC
-        : CKM_SHA256_HMAC
+  const mechType = hmacGeneralMech(hashAlg)
   const test = vectors.testGroups[0].tests[testIndex] ?? vectors.testGroups[0].tests[0]
   const keyBytes = hexToBytes(test.key)
   const msgBytes = hexToBytes(test.msg)
   const expectedMac = hexToBytes(test.mac)
 
   const keyHandle = hsm_importHMACKey(M, hSession, keyBytes)
-  const computed = hsm_hmac(M, hSession, keyHandle, msgBytes, mechType)
+  // Generate at the sample's truncated macLen via _GENERAL; the plain mechanism
+  // always emits the full digest, which can never equal a truncated MAC.
+  const computed = hsm_hmacGeneral(M, hSession, keyHandle, msgBytes, expectedMac.length, mechType)
 
   const matches =
     computed.length === expectedMac.length &&
@@ -1067,12 +1081,12 @@ async function runHMACGenerateKAT(
   if (matches) {
     return {
       status: 'pass',
-      details: `Imported key → computed HMAC-${hashAlg} → matches ACVP expected value (${computed.length}B)`,
+      details: `Imported key → C_Sign(CKM_${hashAlg.replace('-', '')}_HMAC_GENERAL, ${computed.length}B) → matches the ACVP sample's truncated MAC (tcId ${test.tcId})`,
     }
   }
   return {
     status: 'fail',
-    details: `HMAC-${hashAlg} generation mismatch: got ${toHex(computed, 8)}… expected ${toHex(expectedMac, 8)}…`,
+    details: `HMAC-${hashAlg} generation mismatch: got ${computed.length}B ${toHex(computed, 8)} expected ${expectedMac.length}B ${toHex(expectedMac, 8)}`,
   }
 }
 
@@ -1182,7 +1196,13 @@ async function runPBKDF2DeriveKAT(
   M: SoftHSMModule,
   hSession: number,
   prf: 'SHA-256' | 'SHA-512',
-  testIndex = 0
+  // Default = the group's second case (tcId 2 / tcId 5, c = 4096), the same
+  // case the workbench's §17 runs. The first case (c = 1) is an iteration count
+  // the Rust engine refuses by policy (rust/src/ffi.rs:11125 at 417c47a2,
+  // `iterations < 1000` → CKR_ARGUMENTS_BAD) while C++ accepts it — an engine
+  // divergence tracked in open-gaps.json (pbkdf2-min-iterations-divergence),
+  // not something this runner can pass by choosing its input.
+  testIndex = 1
 ): Promise<{ status: 'pass' | 'fail'; details: string }> {
   const groupIndex = prf === 'SHA-512' ? 1 : 0
   const group = pbkdf2TestVectors.testGroups[groupIndex]
@@ -1257,38 +1277,58 @@ async function runHKDFDeriveKAT(
 }
 
 /**
- * AES Key Wrap with Padding KAT — wraps a non-aligned key, unwraps, compares.
- * Exercises CKM_AES_KEY_WRAP_KWP (RFC 5649) which pads to 8-byte boundary.
+ * AES Key Wrap with Padding — functional round-trip (RFC 5649 mechanism,
+ * no published expected value). Wraps a 20-byte generic secret (not a
+ * multiple of 8, so the padding path runs) under an AES-256 KEK with
+ * CKM_AES_KEY_WRAP_KWP, unwraps it again and compares the recovered bytes.
+ *
+ * 2026-09-24 fix: the target used to be imported as CKK_AES, but 20 bytes is
+ * not an AES key size (FIPS 197) — the Rust engine correctly refused it
+ * (CKR_ATTRIBUTE_VALUE_INVALID) and the C++ call went through the deprecated
+ * hsm_aesWrapKeyKwp, whose length pointer is the heap's last word, uninitialised
+ * (CKR_ARGUMENTS_BAD). It also only checked the wrapped LENGTH. A 20-byte
+ * secret is a CKK_GENERIC_SECRET, and the check is now the unwrapped bytes.
  */
 async function runAESKWPWrapKAT(
   M: SoftHSMModule,
   hSession: number
 ): Promise<{ status: 'pass' | 'fail'; details: string }> {
-  // Use a 20-byte key (non-aligned) to exercise the padding
   const keyData = hexToBytes('0011223344556677889900112233445566778899')
   const kekBytes = hexToBytes('000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f')
 
   const kekHandle = hsm_importAESKey(M, hSession, kekBytes, false, false, true, true)
-  const dataHandle = hsm_importAESKey(M, hSession, keyData)
+  const dataHandle = hsm_importGenericSecret(M, hSession, keyData)
 
-  // Wrap with KWP
-  const wrapped = hsm_aesWrapKeyKwp(M, hSession, kekHandle, dataHandle)
-
-  // Verify wrapped output is non-empty and longer than plaintext (includes AIV + padding)
-  if (wrapped.length === 0) {
-    return { status: 'fail', details: 'AES-KWP produced empty wrapped output' }
-  }
-  if (wrapped.length < keyData.length) {
+  const wrapped = hsm_wrapKeyMech(M, hSession, CKM_AES_KEY_WRAP_KWP, kekHandle, dataHandle)
+  // RFC 5649 §4.1: output = 8-byte AIV block + plaintext padded to a multiple of 8.
+  const expectedLen = 8 + Math.ceil(keyData.length / 8) * 8
+  if (wrapped.length !== expectedLen) {
     return {
       status: 'fail',
-      details: `AES-KWP wrapped length (${wrapped.length}) shorter than input (${keyData.length})`,
+      details: `AES-KWP wrapped length ${wrapped.length}B, RFC 5649 §4.1 requires ${expectedLen}B for a ${keyData.length}B key`,
     }
   }
 
-  return {
-    status: 'pass',
-    details: `AES-KWP wrap succeeded: ${keyData.length}B key → ${wrapped.length}B wrapped (includes RFC 5649 AIV + padding)`,
-  }
+  const unwrappedHandle = hsm_unwrapKeyMech(M, hSession, CKM_AES_KEY_WRAP_KWP, kekHandle, wrapped, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+  ])
+  const recovered = hsm_extractKeyValue(M, hSession, unwrappedHandle)
+  const matches =
+    recovered.length === keyData.length &&
+    recovered.every((b: number, i: number) => b === keyData[i])
+
+  return matches
+    ? {
+        status: 'pass',
+        details: `AES-KWP round-trip: ${keyData.length}B secret → ${wrapped.length}B wrapped (AIV + padding) → unwrapped bytes match (no published expected value)`,
+      }
+    : {
+        status: 'fail',
+        details: `AES-KWP round-trip mismatch: unwrapped ${recovered.length}B ${toHex(recovered, 8)} ≠ original ${toHex(keyData, 8)}`,
+      }
 }
 
 // ── Algorithm name derivation ────────────────────────────────────────────────

@@ -5664,6 +5664,44 @@ export const hsm_hmacVerify = (
 }
 
 /**
+ * Compute a truncated HMAC via CKM_*_HMAC_GENERAL (PKCS#11 v3.2 §6.31 —
+ * CK_MAC_GENERAL_PARAMS gives the output length in bytes). The generation
+ * counterpart of hsm_hmacVerifyGeneral: NIST's ACVP-HMAC samples carry a
+ * truncated macLen, which the non-GENERAL mechanism (full-length output) can
+ * never reproduce. `mechType` must be the `_GENERAL` variant.
+ */
+export const hsm_hmacGeneral = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  data: Uint8Array,
+  macLenBytes: number,
+  mechType: number
+): Uint8Array => {
+  const paramPtr = allocUlong(M)
+  writeUlong(M, paramPtr, macLenBytes)
+  const mech = buildMech(M, mechType, paramPtr, 4)
+  const dataPtr = writeBytes(M, data)
+  const macLenPtr = allocUlong(M)
+  let macPtr = 0
+  try {
+    checkRV(M._C_SignInit(hSession, mech, keyHandle), 'C_SignInit(HMAC_GENERAL)')
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, 0, macLenPtr), 'C_Sign(HMAC_GENERAL,len)')
+    const macLen = readUlong(M, macLenPtr)
+    macPtr = M._malloc(macLen)
+    writeUlong(M, macLenPtr, macLen)
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, macPtr, macLenPtr), 'C_Sign(HMAC_GENERAL)')
+    return M.HEAPU8.slice(macPtr, macPtr + readUlong(M, macLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(macLenPtr)
+    M._free(paramPtr)
+    if (macPtr) M._free(macPtr)
+  }
+}
+
+/**
  * Verify a truncated HMAC via CKM_*_HMAC_GENERAL (PKCS#11 §6.31/§2.5.2 —
  * CK_MAC_GENERAL_PARAMS, a single CK_ULONG giving the desired MAC length in
  * bytes). NIST's ACVP-HMAC reference vectors deliberately test SP 800-107
