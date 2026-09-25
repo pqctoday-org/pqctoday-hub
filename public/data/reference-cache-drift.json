@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-09-18T03:03:34.699Z",
+  "generatedAt": "2026-09-24T22:47:51.699Z",
   "totalEntries": 1417,
-  "fetched": 1191,
+  "fetched": 1219,
   "classifications": {
-    "ok": 905,
-    "drift": 284,
-    "fetch-error": 109,
-    "size-mismatch": 2,
+    "ok": 920,
+    "drift": 296,
+    "fetch-error": 100,
+    "size-mismatch": 3,
     "no-stored-hash": 0,
-    "blocked": 47,
+    "blocked": 39,
     "url-type-mismatch": null
   },
   "findings": [
@@ -16259,11 +16259,13 @@
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "storedSha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
       "storedSizeBytes": 586858,
-      "checkedAt": "2026-09-18T03:03:01.458Z",
-      "classification": "fetch-error",
-      "observedSha256": null,
-      "observedSizeBytes": null,
-      "errorMessage": "HTTP 403 Forbidden"
+      "checkedAt": "2026-09-24T22:46:57.028Z",
+      "classification": "ok",
+      "observedSha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "observedSizeBytes": 586858,
+      "errorMessage": "HTTP 403 Forbidden",
+      "stealthOutcome": "recovered-ok",
+      "stealthTier": "bytes"
     },
     {
       "collection": "threats",
@@ -16272,7 +16274,7 @@
       "url": "https://www.icao.int/sites/default/files/sp-files/aviationcybersecurity/Documents/A41-19.pdf",
       "storedSha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28",
       "storedSizeBytes": 124245,
-      "checkedAt": "2026-09-18T03:03:01.458Z",
+      "checkedAt": "2026-09-24T22:46:57.049Z",
       "classification": "ok",
       "observedSha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28",
       "observedSizeBytes": 124245
@@ -16284,11 +16286,13 @@
       "url": "https://www.iso.org/standard/70918.html",
       "storedSha256": "fcf28063bbfad129941c44d45f14ff59fe4fdb03c0341777f16b2e07b3433b2d",
       "storedSizeBytes": 96747,
-      "checkedAt": "2026-09-18T03:03:01.458Z",
-      "classification": "fetch-error",
-      "observedSha256": null,
-      "observedSizeBytes": null,
-      "errorMessage": "HTTP 403 Forbidden"
+      "checkedAt": "2026-09-24T22:46:57.050Z",
+      "classification": "drift",
+      "observedSha256": "ed69b917e74c6deb213cfc2b0759847afecefb05b42b1b86e066b5734b518668",
+      "observedSizeBytes": 98281,
+      "errorMessage": "HTTP 403 Forbidden",
+      "stealthOutcome": "recovered-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -16297,11 +16301,11 @@
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A42021X0387",
       "storedSha256": "7706e00dabda13027ccc6912afd11eede2d6049a4ac23bb93106133a5bf6bd4b",
       "storedSizeBytes": 565909,
-      "checkedAt": "2026-09-18T03:03:01.458Z",
+      "checkedAt": "2026-09-24T22:46:57.050Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "2dffc435363787eec2f9e383b6c4a7aa6e1fcec4281494a6bc2d4e9bfddca69e",
-      "observedSizeBytes": 565909
+      "observedSha256": "2e282645aad74e693b9f0d23c34c86ddf75f2d8c7789712284991a840a072577",
+      "observedSizeBytes": 565907
     },
     {
       "collection": "threats",
@@ -16310,11 +16314,13 @@
       "url": "https://www.iso.org/standard/70918.html",
       "storedSha256": "fcf28063bbfad129941c44d45f14ff59fe4fdb03c0341777f16b2e07b3433b2d",
       "storedSizeBytes": 96747,
-      "checkedAt": "2026-09-18T03:03:01.530Z",
-      "classification": "fetch-error",
-      "observedSha256": null,
-      "observedSizeBytes": null,
-      "errorMessage": "HTTP 403 Forbidden"
+      "checkedAt": "2026-09-24T22:46:57.193Z",
+      "classification": "drift",
+      "observedSha256": "ed69b917e74c6deb213cfc2b0759847afecefb05b42b1b86e066b5734b518668",
+      "observedSizeBytes": 98281,
+      "errorMessage": "HTTP 403 Forbidden",
+      "stealthOutcome": "recovered-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -16323,11 +16329,11 @@
       "url": "https://cloudsecurityalliance.org/artifacts/post-quantum-cryptography-key-management",
       "storedSha256": "e9ac6aa530c8c5edef0f871c85204d516958c7695001ea0aa4e12f1db15275f7",
       "storedSizeBytes": 163997,
-      "checkedAt": "2026-09-18T03:03:01.581Z",
-      "classification": "drift",
-      "textComparison": "differs",
-      "observedSha256": "5bd47442bd76bf8a336be0cd6b772647df9f1f2b1bc42f26c1b252b3e8eb90c3",
-      "observedSizeBytes": 165353
+      "checkedAt": "2026-09-24T22:46:57.301Z",
+      "classification": "ok",
+      "okVia": "normalized-text",
+      "observedSha256": "969e9d81740c7b18ee05e38b6d293944b2aab13d945d13ad5db14cffc6778462",
+      "observedSizeBytes": 165081
     },
     {
       "collection": "threats",
@@ -16336,11 +16342,13 @@
       "url": "https://cloudsecurityalliance.org/artifacts/post-quantum-cryptography-key-management",
       "storedSha256": "81749d20a553423163414f4bd0c6787d85d52a67a8aedf87c60caf91bde4ac0d",
       "storedSizeBytes": 163997,
-      "checkedAt": "2026-09-18T03:03:01.582Z",
-      "classification": "ok",
-      "okVia": "normalized-text",
-      "observedSha256": "c145fab03e296e5a310da7bcf5a422f22d4590aa75a4c5ffbabe897e3ff1279f",
-      "observedSizeBytes": 165353
+      "checkedAt": "2026-09-24T22:46:57.393Z",
+      "classification": "drift",
+      "textComparison": "differs",
+      "observedSha256": "1f3602d6246ab8a0ee9c669eac66e2f707b52c74e75d13cb7060add106fc8f08",
+      "observedSizeBytes": 165081,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -16349,7 +16357,7 @@
       "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
       "storedSha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
       "storedSizeBytes": 722379,
-      "checkedAt": "2026-09-18T03:03:01.601Z",
+      "checkedAt": "2026-09-24T22:46:57.645Z",
       "classification": "ok",
       "observedSha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
       "observedSizeBytes": 722379
@@ -16361,7 +16369,7 @@
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-210.pdf",
       "storedSha256": "147271600180dfd048c21da0892a1228f574bdf7b69f5982710a3aa6ebf79a95",
       "storedSizeBytes": 1289805,
-      "checkedAt": "2026-09-18T03:03:01.946Z",
+      "checkedAt": "2026-09-24T22:46:58.092Z",
       "classification": "ok",
       "observedSha256": "147271600180dfd048c21da0892a1228f574bdf7b69f5982710a3aa6ebf79a95",
       "observedSizeBytes": 1289805
@@ -16373,7 +16381,7 @@
       "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
       "storedSha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
       "storedSizeBytes": 722379,
-      "checkedAt": "2026-09-18T03:03:02.212Z",
+      "checkedAt": "2026-09-24T22:46:58.382Z",
       "classification": "ok",
       "observedSha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
       "observedSizeBytes": 722379
@@ -16385,11 +16393,11 @@
       "url": "https://globalriskinstitute.org/publication/2024-quantum-threat-timeline-report/",
       "storedSha256": "d995ec99296bc13d91358c59e15ebdbe7c97554e8149eb30905f0cd228598eb1",
       "storedSizeBytes": 254361,
-      "checkedAt": "2026-09-18T03:03:02.229Z",
+      "checkedAt": "2026-09-24T22:46:58.553Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "02af23265cb6eb62d3eb6892abe15ee7decf1b8178825bc32983af7f4bba0029",
-      "observedSizeBytes": 254654
+      "observedSha256": "b20a7290f3050f38280eccd24216a716d304617520533a7ca27d79ca5dbd293a",
+      "observedSizeBytes": 255672
     },
     {
       "collection": "threats",
@@ -16398,7 +16406,7 @@
       "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
       "storedSha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
       "storedSizeBytes": 722379,
-      "checkedAt": "2026-09-18T03:03:02.256Z",
+      "checkedAt": "2026-09-24T22:46:58.997Z",
       "classification": "ok",
       "observedSha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
       "observedSizeBytes": 722379
@@ -16410,22 +16418,22 @@
       "url": "https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography",
       "storedSha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
       "storedSizeBytes": 553179,
-      "checkedAt": "2026-09-18T03:03:02.287Z",
+      "checkedAt": "2026-09-24T22:46:59.530Z",
       "classification": "url-type-mismatch",
-      "observedSha256": "920ae023e19609e9f5f3eba919b62301aa49e5ab741a3b419020b36d929b7b4f",
-      "observedSizeBytes": 52883
+      "observedSha256": "cddb3632ffe58bd550d1e06b92b3c79e601efcb0e7ace9fc102f771b4e6da8cf",
+      "observedSizeBytes": 52865
     },
     {
       "collection": "threats",
       "refId": "CROSS-008",
       "title": "",
-      "url": "https://csrc.nist.gov/pubs/sp/800/227/final",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-227.pdf",
       "storedSha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614",
       "storedSizeBytes": 902987,
-      "checkedAt": "2026-09-18T03:03:02.307Z",
-      "classification": "url-type-mismatch",
-      "observedSha256": "60e179f55ba7893ad22c5cf0c3efb34999df0a0928246c5bcf5f0882ea4ce313",
-      "observedSizeBytes": 43592
+      "checkedAt": "2026-09-24T22:47:00.051Z",
+      "classification": "ok",
+      "observedSha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614",
+      "observedSizeBytes": 902987
     },
     {
       "collection": "threats",
@@ -16434,7 +16442,7 @@
       "url": "https://www.federalreserve.gov/econres/feds/files/2025093pap.pdf",
       "storedSha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
       "storedSizeBytes": 397965,
-      "checkedAt": "2026-09-18T03:03:02.460Z",
+      "checkedAt": "2026-09-24T22:47:00.437Z",
       "classification": "ok",
       "observedSha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
       "observedSizeBytes": 397965
@@ -16446,7 +16454,7 @@
       "url": "https://www.federalreserve.gov/econres/feds/files/2025093pap.pdf",
       "storedSha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
       "storedSizeBytes": 397965,
-      "checkedAt": "2026-09-18T03:03:02.532Z",
+      "checkedAt": "2026-09-24T22:47:00.531Z",
       "classification": "ok",
       "observedSha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
       "observedSizeBytes": 397965
@@ -16458,11 +16466,13 @@
       "url": "https://webstore.iec.ch/publication/6912",
       "storedSha256": "6ae150250e02f574fb8c60b826dfec3496f4d7447711620d1c05e9c71c37cbaa",
       "storedSizeBytes": 429896,
-      "checkedAt": "2026-09-18T03:03:02.550Z",
+      "checkedAt": "2026-09-24T22:47:00.647Z",
       "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "9cd50653e336aaff6651839db3af388572b0970fde5e23593ced64d4d79bde53",
-      "observedSizeBytes": 432662
+      "observedSha256": "59e1aa74019df594be638e18bc1b2e5603d643e3f8cb8f2313377a0cc10cb03f",
+      "observedSizeBytes": 432662,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -16471,22 +16481,24 @@
       "url": "https://www.ecfr.gov/current/title-10/chapter-I/part-73/section-73.54",
       "storedSha256": "842bffff3960c379fcb457e3343c7e790dd278621005f0b157913dd15a5c8473",
       "storedSizeBytes": 81586,
-      "checkedAt": "2026-09-18T03:03:02.581Z",
-      "classification": "blocked",
-      "observedSha256": "09b3344acb56fdd241bf1043714af90d4bead0b40d9d6c8bed9577a8da2b8dd2",
-      "observedSizeBytes": 10596
+      "checkedAt": "2026-09-24T22:47:00.741Z",
+      "classification": "size-mismatch",
+      "observedSha256": "36298f81ac3e22d1d70e55b97794873dd1bcf9c589e818d0a68426e512caea6a",
+      "observedSizeBytes": 81586,
+      "stealthOutcome": "recovered-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
       "refId": "ENERGY-004",
       "title": "",
-      "url": "https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards",
+      "url": "https://21577316.fs1.hubspotusercontent-na1.net/hubfs/21577316/2023%20ISA%20Website%20Redesigns/ISAGCA/PDFs/ISAGCA%20Quick%20Start%20Guide%20FINAL.pdf",
       "storedSha256": "06c9d5e440eaf2fe03d3e22dc348c9e0842ad3ed445ea2ba4e97df179c2d81c4",
       "storedSizeBytes": 798435,
-      "checkedAt": "2026-09-18T03:03:02.687Z",
-      "classification": "url-type-mismatch",
-      "observedSha256": "5b2a54c2c23da541fc3c9de8f75bfc36a0f21c72241fd270692ac9c0cb2cdcf1",
-      "observedSizeBytes": 92768
+      "checkedAt": "2026-09-24T22:47:00.743Z",
+      "classification": "ok",
+      "observedSha256": "06c9d5e440eaf2fe03d3e22dc348c9e0842ad3ed445ea2ba4e97df179c2d81c4",
+      "observedSizeBytes": 798435
     },
     {
       "collection": "threats",
@@ -16495,7 +16507,7 @@
       "url": "https://www.bis.org/publications/project-leap-phase-2-quantum-proofing-payment-systems",
       "storedSha256": "86ae1261da72c5fd656a802e91ded80f50fc0ecd722e0b5616893a6d1adc1d61",
       "storedSizeBytes": 121657,
-      "checkedAt": "2026-09-18T03:03:02.688Z",
+      "checkedAt": "2026-09-24T22:47:00.778Z",
       "classification": "ok",
       "okVia": "normalized-text",
       "observedSha256": "363bfb131195e51910a05fb52cb81ecf44be8b868a67d27622397c29ab0f92dd",
@@ -16508,7 +16520,7 @@
       "url": "https://www.federalreserve.gov/econres/feds/files/2025093pap.pdf",
       "storedSha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
       "storedSizeBytes": 397965,
-      "checkedAt": "2026-09-18T03:03:02.969Z",
+      "checkedAt": "2026-09-24T22:47:01.003Z",
       "classification": "ok",
       "observedSha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
       "observedSizeBytes": 397965
@@ -16517,13 +16529,13 @@
       "collection": "threats",
       "refId": "FIN-003",
       "title": "",
-      "url": "https://www.bis.org/publ/bppdf/bispap149.pdf",
+      "url": "https://www.bis.org/publications/paper-149-quantum-computing-and-financial-system-opportunities-and-risks.pdf",
       "storedSha256": "7662ed9e1a1173031085cac9323a35507e32d0a85b64ca80795377fa71a7d3f6",
       "storedSizeBytes": 1097369,
-      "checkedAt": "2026-09-18T03:03:03.028Z",
-      "classification": "url-type-mismatch",
-      "observedSha256": "6c7bc062130a8ace60adafd840b75235666383993081e913d8fde6d75ec4ad79",
-      "observedSizeBytes": 128542
+      "checkedAt": "2026-09-24T22:47:01.065Z",
+      "classification": "ok",
+      "observedSha256": "7662ed9e1a1173031085cac9323a35507e32d0a85b64ca80795377fa71a7d3f6",
+      "observedSizeBytes": 1097369
     },
     {
       "collection": "threats",
@@ -16532,11 +16544,13 @@
       "url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
       "storedSha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614",
       "storedSizeBytes": 902987,
-      "checkedAt": "2026-09-18T03:03:03.164Z",
+      "checkedAt": "2026-09-24T22:47:01.121Z",
       "classification": "drift",
       "textComparison": "differs",
       "observedSha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
-      "observedSizeBytes": 4458346
+      "observedSizeBytes": 4458346,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "bytes"
     },
     {
       "collection": "threats",
@@ -16545,7 +16559,7 @@
       "url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
       "storedSha256": "ddcef7b1f5780c26a7e79ecfb35ce41bee8b65f78a8cdb605c7508c2f604bee5",
       "storedSizeBytes": 274706,
-      "checkedAt": "2026-09-18T03:03:03.469Z",
+      "checkedAt": "2026-09-24T22:47:01.509Z",
       "classification": "ok",
       "observedSha256": "ddcef7b1f5780c26a7e79ecfb35ce41bee8b65f78a8cdb605c7508c2f604bee5",
       "observedSizeBytes": 274706
@@ -16557,11 +16571,13 @@
       "url": "https://www.bis.org/publ/othp107.htm",
       "storedSha256": "ceb92bcc2bf4e758165aa099f85e14882e233a0e5bd06ca40acea9ff7969ff42",
       "storedSizeBytes": 26352,
-      "checkedAt": "2026-09-18T03:03:03.473Z",
+      "checkedAt": "2026-09-24T22:47:01.634Z",
       "classification": "drift",
       "textComparison": "differs",
       "observedSha256": "363bfb131195e51910a05fb52cb81ecf44be8b868a67d27622397c29ab0f92dd",
-      "observedSizeBytes": 121665
+      "observedSizeBytes": 121665,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -16570,11 +16586,13 @@
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "storedSha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
       "storedSizeBytes": 586858,
-      "checkedAt": "2026-09-18T03:03:03.476Z",
-      "classification": "fetch-error",
-      "observedSha256": null,
-      "observedSizeBytes": null,
-      "errorMessage": "HTTP 403 Forbidden"
+      "checkedAt": "2026-09-24T22:47:01.962Z",
+      "classification": "ok",
+      "observedSha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "observedSizeBytes": 586858,
+      "errorMessage": "HTTP 403 Forbidden",
+      "stealthOutcome": "recovered-ok",
+      "stealthTier": "bytes"
     },
     {
       "collection": "threats",
@@ -16583,11 +16601,13 @@
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "storedSha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
       "storedSizeBytes": 586858,
-      "checkedAt": "2026-09-18T03:03:03.556Z",
-      "classification": "fetch-error",
-      "observedSha256": null,
-      "observedSizeBytes": null,
-      "errorMessage": "HTTP 403 Forbidden"
+      "checkedAt": "2026-09-24T22:47:02.049Z",
+      "classification": "ok",
+      "observedSha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "observedSizeBytes": 586858,
+      "errorMessage": "HTTP 403 Forbidden",
+      "stealthOutcome": "recovered-ok",
+      "stealthTier": "bytes"
     },
     {
       "collection": "threats",
@@ -16596,11 +16616,13 @@
       "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
       "storedSha256": "862b0770a481b5d27e9350508c9cfa0cdb71f8b7d6faceb13569e692014f85b8",
       "storedSizeBytes": 471296,
-      "checkedAt": "2026-09-18T03:03:03.638Z",
-      "classification": "blocked",
+      "checkedAt": "2026-09-24T22:47:02.129Z",
+      "classification": "drift",
       "textComparison": "unavailable",
-      "observedSha256": "7d3caf973aa0fb8ab5827137074f425514f692495b77b964a80a7f6647efafa1",
-      "observedSizeBytes": 72384
+      "observedSha256": "1ea38ebed8aac584d31c82d519846df570f7cc8ec6ea9dbe3966e38731d48675",
+      "observedSizeBytes": 72749,
+      "stealthOutcome": "recovered-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -16609,11 +16631,13 @@
       "url": "https://www.idmanagement.gov/fpki/",
       "storedSha256": "e83cdaf49a573c5b4df9dd2d6aae28763087054258dbba464362c900cfc9184d",
       "storedSizeBytes": 157041,
-      "checkedAt": "2026-09-18T03:03:03.776Z",
-      "classification": "blocked",
+      "checkedAt": "2026-09-24T22:47:02.428Z",
+      "classification": "drift",
       "textComparison": "differs",
       "observedSha256": "363049cf9240c45ba049c349e24662171ee9f23521349fa09d009f86e9f6f1f0",
-      "observedSizeBytes": 161012
+      "observedSizeBytes": 161012,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -16622,11 +16646,13 @@
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "storedSha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
       "storedSizeBytes": 586858,
-      "checkedAt": "2026-09-18T03:03:03.791Z",
-      "classification": "fetch-error",
-      "observedSha256": null,
-      "observedSizeBytes": null,
-      "errorMessage": "HTTP 403 Forbidden"
+      "checkedAt": "2026-09-24T22:47:03.077Z",
+      "classification": "ok",
+      "observedSha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "observedSizeBytes": 586858,
+      "errorMessage": "HTTP 403 Forbidden",
+      "stealthOutcome": "recovered-ok",
+      "stealthTier": "bytes"
     },
     {
       "collection": "threats",
@@ -16635,11 +16661,13 @@
       "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
       "storedSha256": "a496b941bce32f5adc3335a9f56fb7a01a87d6b323d8e7d172fb3b79c3f64333",
       "storedSizeBytes": 482469,
-      "checkedAt": "2026-09-18T03:03:03.853Z",
-      "classification": "fetch-error",
-      "observedSha256": null,
-      "observedSizeBytes": null,
-      "errorMessage": "This operation was aborted"
+      "checkedAt": "2026-09-24T22:47:03.159Z",
+      "classification": "drift",
+      "observedSha256": "dc024fcc04a4612b2edda5ad59b190dfea302d080b0f9d6e5963d316df668719",
+      "observedSizeBytes": 486137,
+      "errorMessage": "This operation was aborted",
+      "stealthOutcome": "recovered-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -16648,10 +16676,12 @@
       "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C",
       "storedSha256": "b997385afc728e37059371a0d560b0ba4f6b0760db180756c45edf5ee335ba9a",
       "storedSizeBytes": 145863,
-      "checkedAt": "2026-09-18T03:03:04.063Z",
-      "classification": "blocked",
-      "observedSha256": "09b3344acb56fdd241bf1043714af90d4bead0b40d9d6c8bed9577a8da2b8dd2",
-      "observedSizeBytes": 10596
+      "checkedAt": "2026-09-24T22:47:03.375Z",
+      "classification": "drift",
+      "observedSha256": "ebfc8e1fe8863abd5adb3f8094493745195329e6dbb74df8792057a401cd7904",
+      "observedSizeBytes": 145944,
+      "stealthOutcome": "recovered-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -16660,11 +16690,13 @@
       "url": "https://cpl.thalesgroup.com/healthcare-lifesciences-data-threat-report",
       "storedSha256": "6129643c6a6a6f5f07e1829c1e99e3318b64fd3820874daa8f26e18a7f6e916f",
       "storedSizeBytes": 1067591,
-      "checkedAt": "2026-09-18T03:03:04.208Z",
+      "checkedAt": "2026-09-24T22:47:03.479Z",
       "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "12f44388a032c2e8bf0ea08aa2e11f062d7e53d3162582d6ec85c3790477f9c9",
-      "observedSizeBytes": 235256
+      "observedSha256": "8d84cd7d309e55faa6fab76ebf2330ed714fc582dc62dcb560c89b8666b3de74",
+      "observedSizeBytes": 957859,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "playwright-stealth"
     },
     {
       "collection": "threats",
@@ -16673,7 +16705,7 @@
       "url": "https://www.fda.gov/media/119933/download",
       "storedSha256": "d046fa836048933e1a8795bcf2f8224bcfa08789c2f3ef6f46ae53c2eb096c54",
       "storedSizeBytes": 1195625,
-      "checkedAt": "2026-09-18T03:03:04.214Z",
+      "checkedAt": "2026-09-24T22:47:03.576Z",
       "classification": "ok",
       "observedSha256": "d046fa836048933e1a8795bcf2f8224bcfa08789c2f3ef6f46ae53c2eb096c54",
       "observedSizeBytes": 1195625
@@ -16685,7 +16717,7 @@
       "url": "https://www.fda.gov/media/171796/download",
       "storedSha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
       "storedSizeBytes": 242831,
-      "checkedAt": "2026-09-18T03:03:04.491Z",
+      "checkedAt": "2026-09-24T22:47:03.862Z",
       "classification": "ok",
       "observedSha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
       "observedSizeBytes": 242831
@@ -16694,25 +16726,25 @@
       "collection": "threats",
       "refId": "HLTH-005",
       "title": "",
-      "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/dscsa-standards-interoperable-exchange-information-tracing-certain-human-finished-prescription-drugs",
+      "url": "https://www.fda.gov/media/171796/download",
       "storedSha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
       "storedSizeBytes": 242831,
-      "checkedAt": "2026-09-18T03:03:04.663Z",
-      "classification": "url-type-mismatch",
-      "observedSha256": "c1ed2145c1ac3d808af7b27e7e7ec03ee4f10261542b664938b7f96d39ead820",
-      "observedSizeBytes": 35689
+      "checkedAt": "2026-09-24T22:47:04.035Z",
+      "classification": "ok",
+      "observedSha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
+      "observedSizeBytes": 242831
     },
     {
       "collection": "threats",
       "refId": "IOT-002",
       "title": "",
-      "url": "https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards",
+      "url": "https://isagca.org/hubfs/2022%20ISA%20Website%20Redesigns/ISASecure/PDFs/Miscellaneous%20PDFs/Documents-Articles-and-Technical-Papers/ISAGCA-Security-Lifecycles-whitepaper.pdf",
       "storedSha256": "9d0d1947752781220fc4498885aea100f39cd18841ff375fdff80b2d0b650866",
       "storedSizeBytes": 919601,
-      "checkedAt": "2026-09-18T03:03:04.714Z",
-      "classification": "url-type-mismatch",
-      "observedSha256": "5b2a54c2c23da541fc3c9de8f75bfc36a0f21c72241fd270692ac9c0cb2cdcf1",
-      "observedSizeBytes": 92768
+      "checkedAt": "2026-09-24T22:47:04.038Z",
+      "classification": "ok",
+      "observedSha256": "9d0d1947752781220fc4498885aea100f39cd18841ff375fdff80b2d0b650866",
+      "observedSizeBytes": 919601
     },
     {
       "collection": "threats",
@@ -16721,7 +16753,7 @@
       "url": "https://www.rfc-editor.org/rfc/rfc9019.html",
       "storedSha256": "c841af39dd2164e0b73fd91ab3df0e817872276521352b741189060b396bac5c",
       "storedSizeBytes": 127548,
-      "checkedAt": "2026-09-18T03:03:04.798Z",
+      "checkedAt": "2026-09-24T22:47:04.091Z",
       "classification": "ok",
       "observedSha256": "c841af39dd2164e0b73fd91ab3df0e817872276521352b741189060b396bac5c",
       "observedSizeBytes": 127548
@@ -16733,7 +16765,7 @@
       "url": "https://openssl-library.org/post/2025-04-08-openssl-35-final-release/",
       "storedSha256": "09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91",
       "storedSizeBytes": 34496,
-      "checkedAt": "2026-09-18T03:03:04.964Z",
+      "checkedAt": "2026-09-24T22:47:04.316Z",
       "classification": "ok",
       "observedSha256": "09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91",
       "observedSizeBytes": 34496
@@ -16745,11 +16777,11 @@
       "url": "https://www.nist.gov/news-events/news/2024/08/nist-releases-first-3-finalized-post-quantum-encryption-standards",
       "storedSha256": "b98b60db14db876eb3108baa089e7987ea9e1df404322e5f82711ffa70d71f39",
       "storedSizeBytes": 101434,
-      "checkedAt": "2026-09-18T03:03:05.226Z",
+      "checkedAt": "2026-09-24T22:47:04.326Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "4186c4f18bcae71093b1dedccf31994d6365c6ccea9989bcca23bcf503faf274",
-      "observedSizeBytes": 101073
+      "observedSha256": "2aa8c04280be3c0483dc234469777064b297919a675d6ae5ca3ed5727b468529",
+      "observedSizeBytes": 100676
     },
     {
       "collection": "threats",
@@ -16758,7 +16790,7 @@
       "url": "https://slsa.dev/spec/v1.0/levels",
       "storedSha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a",
       "storedSizeBytes": 25607,
-      "checkedAt": "2026-09-18T03:03:05.423Z",
+      "checkedAt": "2026-09-24T22:47:04.505Z",
       "classification": "ok",
       "observedSha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a",
       "observedSizeBytes": 25607
@@ -16770,7 +16802,7 @@
       "url": "https://www.etsi.org/deliver/etsi_ts/119300_119399/119312/01.04.03_60/ts_119312v010403p.pdf",
       "storedSha256": "df74e5d5f79f21fb0c86ae8e8df6c170cd7b987d207e550f0fa107c89e73e13f",
       "storedSizeBytes": 170568,
-      "checkedAt": "2026-09-18T03:03:05.878Z",
+      "checkedAt": "2026-09-24T22:47:04.598Z",
       "classification": "ok",
       "observedSha256": "df74e5d5f79f21fb0c86ae8e8df6c170cd7b987d207e550f0fa107c89e73e13f",
       "observedSizeBytes": 170568
@@ -16782,11 +16814,11 @@
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1183",
       "storedSha256": "15f26715a4e48c580090016cceed0c9f57d27719dff2e13674e996942fcc5b18",
       "storedSizeBytes": 835956,
-      "checkedAt": "2026-09-18T03:03:05.880Z",
+      "checkedAt": "2026-09-24T22:47:04.878Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "ec6e0162c6ee6ef73715f5c77a86ee413efbf1b75b7322b77bb9f28d15b349f6",
-      "observedSizeBytes": 835957
+      "observedSha256": "ac2dfa0409eb8d07e1c83fcd4937c0bd939130e5c03f82986c46c7c6246529e8",
+      "observedSizeBytes": 835956
     },
     {
       "collection": "threats",
@@ -16795,7 +16827,7 @@
       "url": "https://www.etsi.org/deliver/etsi_en/319400_319499/319422/01.01.01_60/en_319422v010101p.pdf",
       "storedSha256": "b8dce6e415c906877ce36fd3d91b41e0543eda332f400cb444116ec760b5a4bf",
       "storedSizeBytes": 70119,
-      "checkedAt": "2026-09-18T03:03:06.658Z",
+      "checkedAt": "2026-09-24T22:47:04.979Z",
       "classification": "ok",
       "observedSha256": "b8dce6e415c906877ce36fd3d91b41e0543eda332f400cb444116ec760b5a4bf",
       "observedSizeBytes": 70119
@@ -16807,7 +16839,7 @@
       "url": "https://aacsla.com/wp-content/uploads/2019/02/AACS_Spec_Common_0.91.pdf",
       "storedSha256": "70b509fc00ba82aee71ecc9434f5759411c6c2b4258e2d9ecdcd7be12fccbfd4",
       "storedSizeBytes": 549667,
-      "checkedAt": "2026-09-18T03:03:06.741Z",
+      "checkedAt": "2026-09-24T22:47:05.693Z",
       "classification": "ok",
       "observedSha256": "70b509fc00ba82aee71ecc9434f5759411c6c2b4258e2d9ecdcd7be12fccbfd4",
       "observedSizeBytes": 549667
@@ -16819,7 +16851,7 @@
       "url": "https://arxiv.org/abs/2308.00437",
       "storedSha256": "b8f4455f8ce1300549dce9107b6b5812c07c6633ca6d11e6a1a78b43d360b800",
       "storedSizeBytes": 41479,
-      "checkedAt": "2026-09-18T03:03:06.747Z",
+      "checkedAt": "2026-09-24T22:47:06.467Z",
       "classification": "ok",
       "observedSha256": "b8f4455f8ce1300549dce9107b6b5812c07c6633ca6d11e6a1a78b43d360b800",
       "observedSizeBytes": 41479
@@ -16831,7 +16863,7 @@
       "url": "https://www.etsi.org/deliver/etsi_ts/103100_103199/103197/01.05.01_60/ts_103197v010501p.pdf",
       "storedSha256": "d8a4c6590d72f55a94bba961944dc341d211fb633c9451ddb08ac929fc890dcb",
       "storedSizeBytes": 1632263,
-      "checkedAt": "2026-09-18T03:03:06.784Z",
+      "checkedAt": "2026-09-24T22:47:06.595Z",
       "classification": "ok",
       "observedSha256": "d8a4c6590d72f55a94bba961944dc341d211fb633c9451ddb08ac929fc890dcb",
       "observedSizeBytes": 1632263
@@ -16843,7 +16875,7 @@
       "url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
       "storedSha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
       "storedSizeBytes": 4458346,
-      "checkedAt": "2026-09-18T03:03:06.978Z",
+      "checkedAt": "2026-09-24T22:47:10.391Z",
       "classification": "ok",
       "observedSha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
       "observedSizeBytes": 4458346
@@ -16855,7 +16887,7 @@
       "url": "https://listings.pcisecuritystandards.org/documents/PCI_PIN_v3.1_ROC_Reporting_Template.pdf",
       "storedSha256": "efb109b980b10ca728cce8462f18eaedb587537e71a155c6b1db614966b2c0a6",
       "storedSizeBytes": 2986027,
-      "checkedAt": "2026-09-18T03:03:07.135Z",
+      "checkedAt": "2026-09-24T22:47:10.398Z",
       "classification": "ok",
       "observedSha256": "efb109b980b10ca728cce8462f18eaedb587537e71a155c6b1db614966b2c0a6",
       "observedSizeBytes": 2986027
@@ -16867,7 +16899,7 @@
       "url": "https://www.era.europa.eu/system/files/2023-09/index083_-_SUBSET-137_v400.pdf",
       "storedSha256": "aa8871417f3b8ee4620abeff2dc27e3e54e340209928e8c0fafe1e53001f0ed6",
       "storedSizeBytes": 447147,
-      "checkedAt": "2026-09-18T03:03:07.282Z",
+      "checkedAt": "2026-09-24T22:47:10.471Z",
       "classification": "ok",
       "observedSha256": "aa8871417f3b8ee4620abeff2dc27e3e54e340209928e8c0fafe1e53001f0ed6",
       "observedSizeBytes": 447147
@@ -16879,7 +16911,7 @@
       "url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
       "storedSha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
       "storedSizeBytes": 4458346,
-      "checkedAt": "2026-09-18T03:03:07.543Z",
+      "checkedAt": "2026-09-24T22:47:10.632Z",
       "classification": "ok",
       "observedSha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
       "observedSizeBytes": 4458346
@@ -16888,13 +16920,13 @@
       "collection": "threats",
       "refId": "SUPPLY-001",
       "title": "",
-      "url": "https://www.imo.org/en/OurWork/Security/Pages/Cyber-security.aspx",
+      "url": "https://wwwcdn.imo.org/localresources/en/OurWork/Security/Documents/MSC-FAL.1-Circ.3-Rev.3.pdf",
       "storedSha256": "28e350371138921eaf41da6820fc44bb7d05cc5ecf4c9bb08c99d39fee80d1c6",
       "storedSizeBytes": 197536,
-      "checkedAt": "2026-09-18T03:03:07.695Z",
-      "classification": "url-type-mismatch",
-      "observedSha256": "4a91d38942e5e625a33153d4b4aadc2fd4e4a93432209e6e91bbe7d2fabbf977",
-      "observedSizeBytes": 57115
+      "checkedAt": "2026-09-24T22:47:10.863Z",
+      "classification": "ok",
+      "observedSha256": "28e350371138921eaf41da6820fc44bb7d05cc5ecf4c9bb08c99d39fee80d1c6",
+      "observedSizeBytes": 197536
     },
     {
       "collection": "threats",
@@ -16903,10 +16935,10 @@
       "url": "https://dcsa.org/standards/bill-of-lading",
       "storedSha256": "474852fd42f7d427a5c3ced7b9ee4a588b7e3614b24fe680c66a7bf6f00b67aa",
       "storedSizeBytes": 320052,
-      "checkedAt": "2026-09-18T03:03:07.722Z",
+      "checkedAt": "2026-09-24T22:47:11.000Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "2b1059de3fb1c6037970536ad4050f3f5884df9f03364177c8dd43734ce4fb39",
+      "observedSha256": "7dff7d9fee52d8c4f537101a92e0f4e662cb8702761aae3e358f6041fde91228",
       "observedSizeBytes": 320038
     },
     {
@@ -16916,7 +16948,7 @@
       "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/facilitation/instruments-and-tools/tools/safe-package/safe-framework-2025_en.pdf?la=en",
       "storedSha256": "100d60c0c3bafdae296bac2eab878acf72361e7da14a61b808791998a4289366",
       "storedSizeBytes": 3453262,
-      "checkedAt": "2026-09-18T03:03:08.253Z",
+      "checkedAt": "2026-09-24T22:47:11.851Z",
       "classification": "ok",
       "observedSha256": "100d60c0c3bafdae296bac2eab878acf72361e7da14a61b808791998a4289366",
       "observedSizeBytes": 3453262
@@ -16928,7 +16960,7 @@
       "url": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-v1.0.pdf",
       "storedSha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
       "storedSizeBytes": 1756788,
-      "checkedAt": "2026-09-18T03:03:08.443Z",
+      "checkedAt": "2026-09-24T22:47:12.052Z",
       "classification": "ok",
       "observedSha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
       "observedSizeBytes": 1756788
@@ -16940,7 +16972,7 @@
       "url": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-v1.0.pdf",
       "storedSha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
       "storedSizeBytes": 1756788,
-      "checkedAt": "2026-09-18T03:03:08.752Z",
+      "checkedAt": "2026-09-24T22:47:12.090Z",
       "classification": "ok",
       "observedSha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
       "observedSizeBytes": 1756788
@@ -16952,7 +16984,7 @@
       "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/18.09.00_60/ts_133501v180900p.pdf",
       "storedSha256": "35a1c4b948f5d8df1c38de24cf780b4cb065159f5922ad91351a49f8108fb5a2",
       "storedSizeBytes": 3874483,
-      "checkedAt": "2026-09-18T03:03:09.290Z",
+      "checkedAt": "2026-09-24T22:47:12.263Z",
       "classification": "ok",
       "observedSha256": "35a1c4b948f5d8df1c38de24cf780b4cb065159f5922ad91351a49f8108fb5a2",
       "observedSizeBytes": 3874483
@@ -16964,7 +16996,7 @@
       "url": "https://www.gsma.com/esim/wp-content/uploads/2023/12/SGP.22-v3.1.pdf",
       "storedSha256": "c325410ed8f2f9b5ec44d1ace49619d227a4a4093e14021f817054561fa57a75",
       "storedSizeBytes": 5887929,
-      "checkedAt": "2026-09-18T03:03:09.292Z",
+      "checkedAt": "2026-09-24T22:47:12.293Z",
       "classification": "ok",
       "observedSha256": "c325410ed8f2f9b5ec44d1ace49619d227a4a4093e14021f817054561fa57a75",
       "observedSizeBytes": 5887929
@@ -16976,7 +17008,7 @@
       "url": "https://www.gsma.com/solutions-and-impact/technologies/security/wp-content/uploads/2019/03/PQ.05-Post-Quantum-Cryptography-for-5G-Roaming-use-case-1.pdf",
       "storedSha256": "87543ef079c822f132caff42c4b7ad8b717ff4c56d86f705fa9238d02dfadfbe",
       "storedSizeBytes": 546730,
-      "checkedAt": "2026-09-18T03:03:10.448Z",
+      "checkedAt": "2026-09-24T22:47:12.481Z",
       "classification": "ok",
       "observedSha256": "87543ef079c822f132caff42c4b7ad8b717ff4c56d86f705fa9238d02dfadfbe",
       "observedSizeBytes": 546730
@@ -16988,10 +17020,10 @@
       "url": "https://www.epa.gov/waterresilience/awia-section-2013",
       "storedSha256": "7f14acd9b18e1f733420f96dc3d04106871621e9a030a730cc02c6d15a963499",
       "storedSizeBytes": 75363,
-      "checkedAt": "2026-09-18T03:03:10.699Z",
+      "checkedAt": "2026-09-24T22:47:12.534Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "6952885005869ea70244a561979ffc2c8dfe69a1f10c8f9af8d91beb78da833f",
+      "observedSha256": "ba2e3cc5298dfccdfce9458e26ed2fdbd07a60247ff2c95e00ac321c7a0b3b63",
       "observedSizeBytes": 75435
     },
     {
@@ -17001,10 +17033,10 @@
       "url": "https://studentprivacy.ed.gov/ferpa",
       "storedSha256": "fc8a093ed69e8464a441b3532df4446aff06b5830fb8d41fa63642335507417b",
       "storedSizeBytes": 133312,
-      "checkedAt": "2026-09-18T03:03:10.786Z",
+      "checkedAt": "2026-09-24T22:47:12.799Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "d6232e423a1a9169c60a37f97c9f4fe0eeaca718af30504d879d91b1705655e5",
+      "observedSha256": "aaa562fd79fa01b18cfb23ab2cbab03b8a18ced1eaed1e0a99da14b6a57781ec",
       "observedSizeBytes": 133321
     },
     {
@@ -17014,11 +17046,13 @@
       "url": "https://spaces.at.internet2.edu/spaces/InCFederation/pages/46498202/Metadata+Signing+Certificate",
       "storedSha256": "1a771d36117f80a4bef451919e3f9360dd291ede6e0b8de649f71f83960cd050",
       "storedSizeBytes": 59911,
-      "checkedAt": "2026-09-18T03:03:10.867Z",
-      "classification": "fetch-error",
-      "observedSha256": null,
-      "observedSizeBytes": null,
-      "errorMessage": "HTTP 403 Forbidden"
+      "checkedAt": "2026-09-24T22:47:12.977Z",
+      "classification": "drift",
+      "observedSha256": "f112c2059ef0788214ae2eac6b4bff109f99516c31357513d54aa848e7c3a32b",
+      "observedSizeBytes": 59810,
+      "errorMessage": "HTTP 403 Forbidden",
+      "stealthOutcome": "recovered-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -17027,7 +17061,7 @@
       "url": "https://www.w3.org/TR/vc-data-model-2.0/",
       "storedSha256": "a9196a3d0b6601356c4e127bad24f8c7f2c17f6ed22e41b35755a910104156f8",
       "storedSizeBytes": 1023165,
-      "checkedAt": "2026-09-18T03:03:11.322Z",
+      "checkedAt": "2026-09-24T22:47:13.274Z",
       "classification": "ok",
       "observedSha256": "a9196a3d0b6601356c4e127bad24f8c7f2c17f6ed22e41b35755a910104156f8",
       "observedSizeBytes": 1023165
@@ -17036,13 +17070,13 @@
       "collection": "threats",
       "refId": "EDU-004",
       "title": "",
-      "url": "https://csrc.nist.gov/pubs/sp/800/171/r3/final",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171r3.pdf",
       "storedSha256": "3e4631df8b5d61f40a6e542b52779ef30ddbbfff31e09214fa94ad6e6f5e6d08",
       "storedSizeBytes": 1593213,
-      "checkedAt": "2026-09-18T03:03:11.490Z",
-      "classification": "url-type-mismatch",
-      "observedSha256": "39bcae533defc30b65d8cd8b24099cbd08aa916e89cf56d262a7ec2d15e36d12",
-      "observedSizeBytes": 51231
+      "checkedAt": "2026-09-24T22:47:13.415Z",
+      "classification": "ok",
+      "observedSha256": "3e4631df8b5d61f40a6e542b52779ef30ddbbfff31e09214fa94ad6e6f5e6d08",
+      "observedSizeBytes": 1593213
     },
     {
       "collection": "threats",
@@ -17051,11 +17085,13 @@
       "url": "https://blog.checkpoint.com/security/from-classrooms-to-code-red-3000-cyber-threats-hit-u-s-schools-and-universities-weekly/",
       "storedSha256": "eb456fe022a040b22c410a9e7e3496e927cd1eee637dfffad31ecfc22c4f726b",
       "storedSizeBytes": 123998,
-      "checkedAt": "2026-09-18T03:03:11.508Z",
+      "checkedAt": "2026-09-24T22:47:13.511Z",
       "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "52419b286b8e01f26ab73e18b285885d89ff0b0929568bc720d678627636be39",
-      "observedSizeBytes": 122817
+      "observedSha256": "b2a6a8c430f5a11a59b2c059aab838d8fe1fbffd699df4c9de01655273f88ba9",
+      "observedSizeBytes": 123178,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -17064,10 +17100,10 @@
       "url": "https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/",
       "storedSha256": "8e45c4909b2eb481bc627aff3eccd57d0d5597a8b4bf84d8d68db37969203d6c",
       "storedSizeBytes": 56718,
-      "checkedAt": "2026-09-18T03:03:11.890Z",
+      "checkedAt": "2026-09-24T22:47:13.801Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "cf354e043cb167ac7ba1c9f69407d0f808cb3f616538c70f34d2ddbe64d81cf8",
+      "observedSha256": "49cb79b804184c011165756fab0fb29402f914cd3173e698b13de742d0159dc4",
       "observedSizeBytes": 56708
     },
     {
@@ -17077,11 +17113,13 @@
       "url": "https://blog.apnic.net/2025/07/22/how-can-rpki-can-be-made-quantum-safe/",
       "storedSha256": "b4ec7dcdbcacca53c211d083cb47c024d654c5607a5aa94a15d1658838a60e80",
       "storedSizeBytes": 347373,
-      "checkedAt": "2026-09-18T03:03:11.977Z",
+      "checkedAt": "2026-09-24T22:47:14.068Z",
       "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "9a3d4a61c3286b838079604122ce0bff566e91ce1945838cb28ca744d100b8c5",
-      "observedSizeBytes": 348038
+      "observedSha256": "9dd50ead252322dc39a28e68a475d4d8301a5cfa1ffe73dec15709f036cef0a3",
+      "observedSizeBytes": 352386,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -17090,7 +17128,7 @@
       "url": "https://www.openssh.com/txt/release-10.0",
       "storedSha256": "483c8097e5f0760d6d41bcf7e0f2dbf1942ab8eb136ea715623658d07ffde872",
       "storedSizeBytes": 11334,
-      "checkedAt": "2026-09-18T03:03:12.104Z",
+      "checkedAt": "2026-09-24T22:47:14.100Z",
       "classification": "ok",
       "observedSha256": "483c8097e5f0760d6d41bcf7e0f2dbf1942ab8eb136ea715623658d07ffde872",
       "observedSizeBytes": 11334
@@ -17102,7 +17140,7 @@
       "url": "https://docs.sigstore.dev/cosign/signing/signing_with_containers/",
       "storedSha256": "3a060b675e7294bef0d103a5580e9849987f0121ac4bf5146cabde62ceb0fee5",
       "storedSizeBytes": 66677,
-      "checkedAt": "2026-09-18T03:03:12.478Z",
+      "checkedAt": "2026-09-24T22:47:14.753Z",
       "classification": "ok",
       "okVia": "normalized-text",
       "observedSha256": "400b5fdc6626bc3898d0d2f62a2d155adb9c8877dedff67d90516abb6b51e12a",
@@ -17115,11 +17153,13 @@
       "url": "https://www.quantinuum.com/press-releases/quantinuums-quantum-origin-becomes-first-software-quantum-random-number-generator-to-achieve-nist-validation",
       "storedSha256": "0f1c3943541a3a7a4cecb2906c84ccbfbac3abe8a6176d5602691c20c5991a73",
       "storedSizeBytes": 172257,
-      "checkedAt": "2026-09-18T03:03:13.074Z",
+      "checkedAt": "2026-09-24T22:47:15.401Z",
       "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "4fa9b9dc0f95c5708003bd8b47c611c3535ff8d58986bf4e0604e44dd6d26264",
-      "observedSizeBytes": 166190
+      "observedSha256": "9d4f92cf6e3ee093439670abb6d4a72e4b633d26ef2d725470ec2567abaeb9a0",
+      "observedSizeBytes": 166190,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -17128,7 +17168,7 @@
       "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/103764/01.01.01_60/ts_103764v010101p.pdf",
       "storedSha256": "a976832b02827c536d5ef226520abca563a8934f9123417316df38a91e517b85",
       "storedSizeBytes": 765307,
-      "checkedAt": "2026-09-18T03:03:13.211Z",
+      "checkedAt": "2026-09-24T22:47:15.604Z",
       "classification": "ok",
       "observedSha256": "a976832b02827c536d5ef226520abca563a8934f9123417316df38a91e517b85",
       "observedSizeBytes": 765307
@@ -17140,10 +17180,12 @@
       "url": "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-II/part-236/subpart-I",
       "storedSha256": "6303878d24e41bd8a0536fc16ff6ef39af19f894f732bbc05a4d39a2f5ebae6f",
       "storedSizeBytes": 353605,
-      "checkedAt": "2026-09-18T03:03:13.268Z",
-      "classification": "blocked",
-      "observedSha256": "ea5e1c641e13f4f06aa728647eb3906ddd95a53cd47cb268f8efaa393d6b5cb1",
-      "observedSizeBytes": 10596
+      "checkedAt": "2026-09-24T22:47:16.095Z",
+      "classification": "drift",
+      "observedSha256": "85af02fee08670695975fd06f5fea00257b24585fbd2be545d501804acdd3cbb",
+      "observedSizeBytes": 353686,
+      "stealthOutcome": "recovered-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -17152,11 +17194,13 @@
       "url": "https://www.ferc.gov/dam-safety-and-inspections/security-program-hydropower-projects",
       "storedSha256": "ae5a3a8f85dc297668492df6dfb997b4e0de75cb190d2e7db8417dfadc8fe49c",
       "storedSizeBytes": 273250,
-      "checkedAt": "2026-09-18T03:03:13.605Z",
-      "classification": "fetch-error",
-      "observedSha256": null,
-      "observedSizeBytes": null,
-      "errorMessage": "HTTP 403 Forbidden"
+      "checkedAt": "2026-09-24T22:47:16.396Z",
+      "classification": "drift",
+      "observedSha256": "164c1c8b400388145310c3d870780a6fc7e87c7c04ca506c0cc6080bc4a6fd3e",
+      "observedSizeBytes": 268551,
+      "errorMessage": "HTTP 403 Forbidden",
+      "stealthOutcome": "recovered-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -17165,7 +17209,7 @@
       "url": "https://www.epa.gov/system/files/documents/2024-08/epa-guidance-on-improving-cybersecurity-at-drinking-water-and-wastewater-systems-1.pdf",
       "storedSha256": "a2e9460d901436eb94a7bb8675520e621aabab35c5eb8712f2faaf82f2de5eff",
       "storedSizeBytes": 458249,
-      "checkedAt": "2026-09-18T03:03:13.679Z",
+      "checkedAt": "2026-09-24T22:47:16.513Z",
       "classification": "ok",
       "observedSha256": "a2e9460d901436eb94a7bb8675520e621aabab35c5eb8712f2faaf82f2de5eff",
       "observedSizeBytes": 458249
@@ -17177,7 +17221,7 @@
       "url": "https://www.nccoe.nist.gov/sites/default/files/2023-06/securing-water-and-wastewater-utilities-project-description-final.pdf",
       "storedSha256": "87538d72ba40a0283c094c4a8fd09c39bfcc440df524f8d32f5eade0a0b081dc",
       "storedSizeBytes": 1178202,
-      "checkedAt": "2026-09-18T03:03:13.826Z",
+      "checkedAt": "2026-09-24T22:47:17.036Z",
       "classification": "ok",
       "observedSha256": "87538d72ba40a0283c094c4a8fd09c39bfcc440df524f8d32f5eade0a0b081dc",
       "observedSizeBytes": 1178202
@@ -17189,11 +17233,13 @@
       "url": "https://www.cisa.gov/quantum",
       "storedSha256": "f7d6f6583f882b73c9471a87f3cc242ffd27234e0b20b5606d46e005d6c71b0d",
       "storedSizeBytes": 69692,
-      "checkedAt": "2026-09-18T03:03:14.066Z",
-      "classification": "blocked",
+      "checkedAt": "2026-09-24T22:47:17.374Z",
+      "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "2f667b4628fa562212f145a1a63e90182f708f35635285398f62a4cbf2428d93",
-      "observedSizeBytes": 70457
+      "observedSha256": "6d665e181c86326410c29ea753b856eeb36c4ddf38a83b8c31e4f07264a02746",
+      "observedSizeBytes": 70822,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -17202,7 +17248,7 @@
       "url": "https://www.tsa.gov/sites/default/files/pipeline_security_guidelines.pdf",
       "storedSha256": "611a70018a677d95dbe668dfa9f23177db624dfba8a5c1d0e159908a865de99e",
       "storedSizeBytes": 1004392,
-      "checkedAt": "2026-09-18T03:03:14.306Z",
+      "checkedAt": "2026-09-24T22:47:17.578Z",
       "classification": "ok",
       "observedSha256": "611a70018a677d95dbe668dfa9f23177db624dfba8a5c1d0e159908a865de99e",
       "observedSizeBytes": 1004392
@@ -17214,7 +17260,7 @@
       "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
       "storedSha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
       "storedSizeBytes": 722379,
-      "checkedAt": "2026-09-18T03:03:14.347Z",
+      "checkedAt": "2026-09-24T22:47:17.661Z",
       "classification": "ok",
       "observedSha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
       "observedSizeBytes": 722379
@@ -17223,25 +17269,25 @@
       "collection": "threats",
       "refId": "CROSS-015",
       "title": "",
-      "url": "https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf",
       "storedSha256": "cc32391022c1382ac7c91490f6bcc8838e0f889925270da23ef4e800e2ecb7ad",
       "storedSizeBytes": 1688080,
-      "checkedAt": "2026-09-18T03:03:14.535Z",
-      "classification": "url-type-mismatch",
-      "observedSha256": "409da8b6f071199a5c2afd6d7886cc322960da99f33ded83147e9db1d3cad344",
-      "observedSizeBytes": 47027
+      "checkedAt": "2026-09-24T22:47:17.760Z",
+      "classification": "ok",
+      "observedSha256": "cc32391022c1382ac7c91490f6bcc8838e0f889925270da23ef4e800e2ecb7ad",
+      "observedSizeBytes": 1688080
     },
     {
       "collection": "threats",
       "refId": "CROSS-016",
       "title": "",
-      "url": "https://csrc.nist.gov/pubs/sp/800/90/a/r1/final",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf",
       "storedSha256": "d58e3dac4aaa5971c9a6a20a9bd5c13e2f1930cd1a199c0c00f768e7327355e2",
       "storedSizeBytes": 2417007,
-      "checkedAt": "2026-09-18T03:03:14.573Z",
-      "classification": "url-type-mismatch",
-      "observedSha256": "624667f3b8070fa4ddafcdde8c2c0f882134ae28d4df9f89b31ed73793f24300",
-      "observedSizeBytes": 40638
+      "checkedAt": "2026-09-24T22:47:17.841Z",
+      "classification": "ok",
+      "observedSha256": "d58e3dac4aaa5971c9a6a20a9bd5c13e2f1930cd1a199c0c00f768e7327355e2",
+      "observedSizeBytes": 2417007
     },
     {
       "collection": "threats",
@@ -17250,7 +17296,7 @@
       "url": "https://csrc.nist.gov/csrc/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS%20140-3%20IG.pdf",
       "storedSha256": "15ebdd396a31129f9d75137ace99be56b1085feb25a95c990f8b6558440aeb02",
       "storedSizeBytes": 3138012,
-      "checkedAt": "2026-09-18T03:03:14.604Z",
+      "checkedAt": "2026-09-24T22:47:17.868Z",
       "classification": "ok",
       "observedSha256": "15ebdd396a31129f9d75137ace99be56b1085feb25a95c990f8b6558440aeb02",
       "observedSizeBytes": 3138012
@@ -17262,9 +17308,9 @@
       "url": "https://csrc.nist.gov/pubs/sp/800/208/final",
       "storedSha256": "ba91afac81e3bccb0fabdb5cf94d49a6deba5fbcdbcaff75fdbf0dea282205ac",
       "storedSizeBytes": 884808,
-      "checkedAt": "2026-09-18T03:03:14.695Z",
+      "checkedAt": "2026-09-24T22:47:18.142Z",
       "classification": "url-type-mismatch",
-      "observedSha256": "9895f540f8a4b7bce3be835e124187e98e7b27e65686a927f221533a5e4541f5",
+      "observedSha256": "4ee22aa6a9b7d04e40ba7e8db4f036bc920fc612e4862a9f9b8f804cf16bab14",
       "observedSizeBytes": 42004
     },
     {
@@ -17274,23 +17320,25 @@
       "url": "https://csrc.nist.gov/csrc/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS%20140-3%20IG.pdf",
       "storedSha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee",
       "storedSizeBytes": 2588488,
-      "checkedAt": "2026-09-18T03:03:14.920Z",
-      "classification": "blocked",
+      "checkedAt": "2026-09-24T22:47:18.172Z",
+      "classification": "drift",
       "textComparison": "differs",
       "observedSha256": "15ebdd396a31129f9d75137ace99be56b1085feb25a95c990f8b6558440aeb02",
-      "observedSizeBytes": 3138012
+      "observedSizeBytes": 3138012,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "bytes"
     },
     {
       "collection": "threats",
       "refId": "IOT-005",
       "title": "",
-      "url": "https://csrc.nist.gov/pubs/sp/800/213/final",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-213.pdf",
       "storedSha256": "8f90d1fc02a3436444dca859b2f66e97942f443c07109798aeaee1315a6c60ae",
       "storedSizeBytes": 2386815,
-      "checkedAt": "2026-09-18T03:03:14.955Z",
-      "classification": "url-type-mismatch",
-      "observedSha256": "aa7316c04b3c70d6fadc2b0b2745a29e83fdf755f9a730dd436a801f682b296d",
-      "observedSizeBytes": 47448
+      "checkedAt": "2026-09-24T22:47:18.300Z",
+      "classification": "ok",
+      "observedSha256": "8f90d1fc02a3436444dca859b2f66e97942f443c07109798aeaee1315a6c60ae",
+      "observedSizeBytes": 2386815
     },
     {
       "collection": "threats",
@@ -17299,7 +17347,7 @@
       "url": "https://www.legislation.gov.au/F2023L00112/2026-06-10/2026-06-10/text/original/pdf",
       "storedSha256": "e0b7ea6b0c7b9ba5b57117c4e3390d3e83dabedcace3d923c73119a9c8f25dca",
       "storedSizeBytes": 396130,
-      "checkedAt": "2026-09-18T03:03:15.086Z",
+      "checkedAt": "2026-09-24T22:47:18.396Z",
       "classification": "ok",
       "observedSha256": "e0b7ea6b0c7b9ba5b57117c4e3390d3e83dabedcace3d923c73119a9c8f25dca",
       "observedSizeBytes": 396130
@@ -17311,7 +17359,7 @@
       "url": "https://arxiv.org/abs/2510.02162",
       "storedSha256": "11871a3fbce3d9a58c4d659e07d69183a8e5690938f0769eb781f82231b97a8b",
       "storedSizeBytes": 40713,
-      "checkedAt": "2026-09-18T03:03:15.119Z",
+      "checkedAt": "2026-09-24T22:47:18.544Z",
       "classification": "ok",
       "observedSha256": "11871a3fbce3d9a58c4d659e07d69183a8e5690938f0769eb781f82231b97a8b",
       "observedSizeBytes": 40713
@@ -17323,10 +17371,10 @@
       "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/cs01/pkcs11-spec-v3.2-cs01.html",
       "storedSha256": "0ef7e14bc9b8c915ae63623b83de724b654dcc82fc7f89cfd4e72743457f3681",
       "storedSizeBytes": 18963192,
-      "checkedAt": "2026-09-18T03:03:15.261Z",
+      "checkedAt": "2026-09-24T22:47:18.626Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "13362fc8a530696903e0236686e6a0beab59999d6a1e75ae926828ec6d71a00a",
+      "observedSha256": "4f767de743a22b7aa1bcf6d80d8b6f8184956331da2262b140b3faaba3130ae5",
       "observedSizeBytes": 18913542
     },
     {
@@ -17336,7 +17384,7 @@
       "url": "https://www.epw.senate.gov/public/_cache/files/5/3/53d93dfe-ed8c-4e48-b705-0b16cb92c90a/FA38A32EE48D7F3D4B0C069FDC08A69E6327376EB85838A03310B2E91C8582C1.02-04-2026-dr.-simonton-testimony.pdf",
       "storedSha256": "f01c037047d7baaf5cfc7275803d9b82256c561d9c8d0fb411806095cb48004d",
       "storedSizeBytes": 235296,
-      "checkedAt": "2026-09-18T03:03:15.262Z",
+      "checkedAt": "2026-09-24T22:47:18.722Z",
       "classification": "ok",
       "observedSha256": "f01c037047d7baaf5cfc7275803d9b82256c561d9c8d0fb411806095cb48004d",
       "observedSizeBytes": 235296
@@ -17348,7 +17396,7 @@
       "url": "https://www.hkma.gov.hk/media/eng/doc/key-information/press-release/2026/20260203e3a1.pdf",
       "storedSha256": "3a4c18893d54c21557ec4ef3e5c9bb6079cf505e5b0475b7046c858ea61ff807",
       "storedSizeBytes": 4451297,
-      "checkedAt": "2026-09-18T03:03:16.740Z",
+      "checkedAt": "2026-09-24T22:47:19.487Z",
       "classification": "ok",
       "observedSha256": "3a4c18893d54c21557ec4ef3e5c9bb6079cf505e5b0475b7046c858ea61ff807",
       "observedSizeBytes": 4451297
@@ -17360,7 +17408,7 @@
       "url": "https://wwwcdn.imo.org/localresources/en/OurWork/Security/Documents/IAPH%20Cyber%20resilience%20guidelines%20for%20emerging%20technologies%20in%20the%20maritime%20supply%20chain%20ENG.pdf",
       "storedSha256": "af5079f06124542ccdfacdfe742479daf37dea8e06f63e9af2f21c8c8157de01",
       "storedSizeBytes": 12089813,
-      "checkedAt": "2026-09-18T03:03:16.742Z",
+      "checkedAt": "2026-09-24T22:47:19.488Z",
       "classification": "ok",
       "observedSha256": "af5079f06124542ccdfacdfe742479daf37dea8e06f63e9af2f21c8c8157de01",
       "observedSizeBytes": 12089813
@@ -17372,7 +17420,7 @@
       "url": "https://www.cisa.gov/sites/default/files/2024-10/Post-Quantum%20Considerations%20for%20Operational%20Technology%20%28508%29.pdf",
       "storedSha256": "dba4051cf19460d862419f1ca895602d88619ceb07644ce140bc11b312fcf492",
       "storedSizeBytes": 1354180,
-      "checkedAt": "2026-09-18T03:03:17.203Z",
+      "checkedAt": "2026-09-24T22:47:20.053Z",
       "classification": "ok",
       "observedSha256": "dba4051cf19460d862419f1ca895602d88619ceb07644ce140bc11b312fcf492",
       "observedSizeBytes": 1354180
@@ -17381,13 +17429,13 @@
       "collection": "threats",
       "refId": "FINA-002",
       "title": "",
-      "url": "https://www.bis.org/publ/bppdf/bispap158.pdf",
+      "url": "https://www.bis.org/publications/paper-158-quantum-readiness-financial-system-roadmap.pdf",
       "storedSha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c",
       "storedSizeBytes": 2159075,
-      "checkedAt": "2026-09-18T03:03:17.389Z",
-      "classification": "url-type-mismatch",
-      "observedSha256": "0d48bae30a929995345430aa160a2640791f3358b69341c3d6f27f438785cdb0",
-      "observedSizeBytes": 128853
+      "checkedAt": "2026-09-24T22:47:20.204Z",
+      "classification": "ok",
+      "observedSha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c",
+      "observedSizeBytes": 2159075
     },
     {
       "collection": "threats",
@@ -17396,7 +17444,7 @@
       "url": "https://www.etsi.org/deliver/etsi_tr/104000_104099/104005/01.01.01_60/tr_104005v010101p.pdf",
       "storedSha256": "a1df6f8dc4918705b76e504f58709ea7c8a6e2c24aa971ead049b0e40121e4aa",
       "storedSizeBytes": 81922,
-      "checkedAt": "2026-09-18T03:03:18.454Z",
+      "checkedAt": "2026-09-24T22:47:21.078Z",
       "classification": "ok",
       "observedSha256": "a1df6f8dc4918705b76e504f58709ea7c8a6e2c24aa971ead049b0e40121e4aa",
       "observedSizeBytes": 81922
@@ -17408,7 +17456,7 @@
       "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile&v=14",
       "storedSha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
       "storedSizeBytes": 568388,
-      "checkedAt": "2026-09-18T03:03:19.183Z",
+      "checkedAt": "2026-09-24T22:47:21.586Z",
       "classification": "ok",
       "observedSha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
       "observedSizeBytes": 568388
@@ -17420,7 +17468,7 @@
       "url": "https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-mecanismes-crypto-3.00.pdf",
       "storedSha256": "1baf13e8ae81bd476f09aed12885587850429a6925a182b6b8d5c76b31b288ec",
       "storedSizeBytes": 1365473,
-      "checkedAt": "2026-09-18T03:03:20.425Z",
+      "checkedAt": "2026-09-24T22:47:22.938Z",
       "classification": "ok",
       "observedSha256": "1baf13e8ae81bd476f09aed12885587850429a6925a182b6b8d5c76b31b288ec",
       "observedSizeBytes": 1365473
@@ -17432,7 +17480,7 @@
       "url": "https://www.nerc.com/globalassets/our-work/reports/special-reports/nerc_cip_roadmap_01122026.pdf",
       "storedSha256": "7366767bd44a0c3fdb07bb4b986e51e8fe57746803e9b7bbe1cbc86c068b2037",
       "storedSizeBytes": 871081,
-      "checkedAt": "2026-09-18T03:03:21.120Z",
+      "checkedAt": "2026-09-24T22:47:23.162Z",
       "classification": "ok",
       "observedSha256": "7366767bd44a0c3fdb07bb4b986e51e8fe57746803e9b7bbe1cbc86c068b2037",
       "observedSizeBytes": 871081
@@ -17444,7 +17492,7 @@
       "url": "https://healthsectorcouncil.org/wp-content/uploads/2026/04/HSCC-Cyber-Working-Group-Q1-2026-Progress-Report.pdf",
       "storedSha256": "d2ca3890adefea10cafa18e0da42684252b2db12ae0c26b8c39f298b58f6f92a",
       "storedSizeBytes": 919857,
-      "checkedAt": "2026-09-18T03:03:21.614Z",
+      "checkedAt": "2026-09-24T22:47:23.342Z",
       "classification": "ok",
       "observedSha256": "d2ca3890adefea10cafa18e0da42684252b2db12ae0c26b8c39f298b58f6f92a",
       "observedSizeBytes": 919857
@@ -17456,7 +17504,7 @@
       "url": "https://www.fsisac.com/hubfs/Knowledge/PQC/TheImpactOfQuantumComputingOnThePaymentCardIndustry.pdf",
       "storedSha256": "1144cffc4ee871f503917b2ffad01bfc12c23a4cb35fb2306750fb37759c759b",
       "storedSizeBytes": 478488,
-      "checkedAt": "2026-09-18T03:03:21.918Z",
+      "checkedAt": "2026-09-24T22:47:23.660Z",
       "classification": "ok",
       "observedSha256": "1144cffc4ee871f503917b2ffad01bfc12c23a4cb35fb2306750fb37759c759b",
       "observedSizeBytes": 478488
@@ -17468,7 +17516,7 @@
       "url": "https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/4dokumentation/finma-aufsichtsmitteilungen/20260709-finma-aufsichtsmitteilung-05-2026.pdf?sc_lang=en&hash=0C6FDB12F5427E073560E67D88CCEB96",
       "storedSha256": "9e65246094de6dd21b4d190fdb21311e4a4cf64a1c59f1638b852b965c282f20",
       "storedSizeBytes": 280746,
-      "checkedAt": "2026-09-18T03:03:22.043Z",
+      "checkedAt": "2026-09-24T22:47:23.913Z",
       "classification": "ok",
       "observedSha256": "9e65246094de6dd21b4d190fdb21311e4a4cf64a1c59f1638b852b965c282f20",
       "observedSizeBytes": 280746
@@ -17480,11 +17528,13 @@
       "url": "https://www.csa.gov.sg/news-events/press-releases/csa-releases-a-quantum-safe-handbook-and-quantum-readiness-index/",
       "storedSha256": "99c010440384444e11296708152e6f81f63cc680bdb255c2fe496d277e6b7f64",
       "storedSizeBytes": 429362,
-      "checkedAt": "2026-09-18T03:03:22.269Z",
+      "checkedAt": "2026-09-24T22:47:23.937Z",
       "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "7a00eb05461d6f55f0954494f61763ce450fc9cb08aa59bcf77cd5106a995937",
-      "observedSizeBytes": 429639
+      "observedSha256": "4bd13ec99c8aa44f1d2c87542d4a537476870dd76c7bb850e63a4e2f660f66ce",
+      "observedSizeBytes": 429639,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -17493,11 +17543,13 @@
       "url": "https://www.osfi-bsif.gc.ca/en/risks/risks-arising-digital-innovations-canadian-financial-industry",
       "storedSha256": "c011bee9d10ac62524cae030e401ff0311e6cbbd048894f1aa962f52b9cff51d",
       "storedSizeBytes": 170658,
-      "checkedAt": "2026-09-18T03:03:23.640Z",
+      "checkedAt": "2026-09-24T22:47:23.964Z",
       "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "c0405b27b693f55a36eacac0ae7041c7f5082e673fb9ce213c433a014d84ce61",
-      "observedSizeBytes": 84701
+      "observedSha256": "91fedccb27f1639730e0f5d96653b11e6af33d15911094d2a2768329a528d2d5",
+      "observedSizeBytes": 205809,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "playwright-stealth"
     },
     {
       "collection": "threats",
@@ -17506,7 +17558,7 @@
       "url": "https://www.fsa.go.jp/singi/pqc/houkokusyo.pdf",
       "storedSha256": "42fcd4328fbdabf466a8545ff73fb4e3115332d845e998ed6900368d4980c762",
       "storedSizeBytes": 2660860,
-      "checkedAt": "2026-09-18T03:03:23.855Z",
+      "checkedAt": "2026-09-24T22:47:24.627Z",
       "classification": "ok",
       "observedSha256": "42fcd4328fbdabf466a8545ff73fb4e3115332d845e998ed6900368d4980c762",
       "observedSizeBytes": 2660860
@@ -17518,7 +17570,7 @@
       "url": "https://www.ccn.cni.es/gl/docman/documentos-publicos/boletines-pytec/499-ccn-tec-009-recomendaciones-transicion-postcuantica-segura-english/file",
       "storedSha256": "49dd74e588ded9b4635386a4aa7faf883028f78e5ff6073c91c65eac165e1354",
       "storedSizeBytes": 844313,
-      "checkedAt": "2026-09-18T03:03:24.123Z",
+      "checkedAt": "2026-09-24T22:47:24.635Z",
       "classification": "ok",
       "observedSha256": "49dd74e588ded9b4635386a4aa7faf883028f78e5ff6073c91c65eac165e1354",
       "observedSizeBytes": 844313
@@ -17530,10 +17582,10 @@
       "url": "https://www.mas.gov.sg/-/media/mas-media-library/regulation/circulars/trpd/mas-quantum-advisory/mas-quantum-advisory.pdf",
       "storedSha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
       "storedSizeBytes": 138500,
-      "checkedAt": "2026-09-18T03:03:24.499Z",
+      "checkedAt": "2026-09-24T22:47:25.426Z",
       "classification": "url-type-mismatch",
-      "observedSha256": "57687711174f25889d45ffd79ace7587c5db8935cdbcc6442de34d1915c99881",
-      "observedSizeBytes": 854854
+      "observedSha256": "18fa3e0398d5c7ab5ce98ac79d20fadf330f148b9c5eef8287996b3921498e7b",
+      "observedSizeBytes": 853816
     },
     {
       "collection": "threats",
@@ -17542,7 +17594,7 @@
       "url": "https://messervices.cyber.gouv.fr/documents-guides/transition_post_quantique_ipsec.pdf",
       "storedSha256": "a2985867e8e10162327be34a6f3dc98c940e2735313547bd5e0699d765019ebf",
       "storedSizeBytes": 1480897,
-      "checkedAt": "2026-09-18T03:03:24.524Z",
+      "checkedAt": "2026-09-24T22:47:26.171Z",
       "classification": "ok",
       "observedSha256": "a2985867e8e10162327be34a6f3dc98c940e2735313547bd5e0699d765019ebf",
       "observedSizeBytes": 1480897
@@ -17554,11 +17606,11 @@
       "url": "https://bisi.org.uk/reports/assessing-quantums-risk-on-critical-infrastructure",
       "storedSha256": "9bad2cd46e74ca537b5ba66491d44d06cbd91d259f0484a6984686e76e631ab5",
       "storedSizeBytes": 209080,
-      "checkedAt": "2026-09-18T03:03:25.065Z",
+      "checkedAt": "2026-09-24T22:47:26.392Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "e1842032a5cc1a6c196f3594fa52f61651f1eb3dbdcf1806b01ff6331870d4cd",
-      "observedSizeBytes": 289491
+      "observedSha256": "3084ab880ca96f2e378ff757319713ec82704b904bf9f941629359dda4dc1e40",
+      "observedSizeBytes": 208659
     },
     {
       "collection": "threats",
@@ -17567,11 +17619,11 @@
       "url": "https://www.rstreet.org/research/post-quantum-cryptography-migration-in-the-united-states-managing-risk-and-advancing-cyber-readiness-in-critical-infrastructure/",
       "storedSha256": "41f76a58bb802346b33fc309ac1446ac72b1d74c0a79764de886a14fc375cd78",
       "storedSizeBytes": 212301,
-      "checkedAt": "2026-09-18T03:03:25.470Z",
+      "checkedAt": "2026-09-24T22:47:26.416Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "ad4282e970c6590e1f61ed2778965968d57334cf4cb8deac9675dbbd4b7db1a3",
-      "observedSizeBytes": 221663
+      "observedSha256": "e88f49aa822169177175f40940fc574505b315a8360542a21ffbd0f03074453c",
+      "observedSizeBytes": 221675
     },
     {
       "collection": "threats",
@@ -17580,11 +17632,11 @@
       "url": "https://www.munichre.com/en/insights/cyber/cyber-insurance-risks-and-trends-2025.html",
       "storedSha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df",
       "storedSizeBytes": 134588,
-      "checkedAt": "2026-09-18T03:03:25.673Z",
+      "checkedAt": "2026-09-24T22:47:26.564Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "8775dbb90443cc4fe71cb783032fe3f2fc17bc169961577ccd08bdb9aa08dd21",
-      "observedSizeBytes": 134426
+      "observedSha256": "2fab97b68162cadcc0a1ff8129734c70eb43d3cc58d1748554109fbf48e25b46",
+      "observedSizeBytes": 134698
     },
     {
       "collection": "threats",
@@ -17593,11 +17645,13 @@
       "url": "https://cloudsecurityalliance.org/artifacts/post-quantum-cryptography-key-management",
       "storedSha256": "b47bb3a4b591aad7ecb1aa2490764589c05d6602b75fc1e56239204af1122629",
       "storedSizeBytes": 165031,
-      "checkedAt": "2026-09-18T03:03:25.716Z",
+      "checkedAt": "2026-09-24T22:47:26.795Z",
       "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "e49b090687d4621fdb691e42e71e8499da00391d04d6fa554976059a05adb933",
-      "observedSizeBytes": 165353
+      "observedSha256": "9c6a8e5d27c2d2b1323d2518618be63ba421b9bb546905657e1713f9226429a2",
+      "observedSizeBytes": 165081,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -17606,7 +17660,7 @@
       "url": "https://www.gov.il/BlobFolder/reports/alert_1855/he/ALERT-CERT-IL-W-1855.pdf",
       "storedSha256": "6ed12447abf9b0a3c0470f57e20d8314323d9f3c02ebc11a7bc3eb87dae2eb3a",
       "storedSizeBytes": 289568,
-      "checkedAt": "2026-09-18T03:03:25.825Z",
+      "checkedAt": "2026-09-24T22:47:26.894Z",
       "classification": "ok",
       "observedSha256": "6ed12447abf9b0a3c0470f57e20d8314323d9f3c02ebc11a7bc3eb87dae2eb3a",
       "observedSizeBytes": 289568
@@ -17618,10 +17672,10 @@
       "url": "https://www.cisa.gov/resources-tools/resources/quantum-readiness-migration-post-quantum-cryptography",
       "storedSha256": "b650ceef5a3d56bda9c3d0a77f483c714c9392b63fc149968e3770388ab63206",
       "storedSizeBytes": 49598,
-      "checkedAt": "2026-09-18T03:03:26.021Z",
+      "checkedAt": "2026-09-24T22:47:26.947Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "82fe9935e8194ddcc585fcd75ff6c56b073dea3392363eb8a55f2f2e7a55b444",
+      "observedSha256": "bb01b14890f0ebb30abcd4dd9a448698f8b85b3484b17eae684446f46f8d5b8b",
       "observedSizeBytes": 49233
     },
     {
@@ -17631,11 +17685,11 @@
       "url": "https://x9.org/new-x9-report-migrating-to-post-quantum-cryptography/",
       "storedSha256": "d4a71a4aec61915cc0f561296c5d982530d11698225095c9ce72f95a9aab9395",
       "storedSizeBytes": 215695,
-      "checkedAt": "2026-09-18T03:03:26.048Z",
+      "checkedAt": "2026-09-24T22:47:27.041Z",
       "classification": "ok",
       "okVia": "normalized-text",
-      "observedSha256": "87a6c592bfdc6dd572c1cdb33ceab10bc4fe3ded5c8a88606dad0066e360115c",
-      "observedSizeBytes": 219980
+      "observedSha256": "f2db205ec8feeafb0c52e16348a10a8d45adbf1903df66f9c68c96d247cafa8c",
+      "observedSizeBytes": 219990
     },
     {
       "collection": "threats",
@@ -17644,11 +17698,13 @@
       "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/07/20260727-3/",
       "storedSha256": "8ed6f27d2f3335336eec60f79d9005f9723311286bbadb83e466b59ed039bdf8",
       "storedSizeBytes": 82037,
-      "checkedAt": "2026-09-18T03:03:26.194Z",
+      "checkedAt": "2026-09-24T22:47:27.124Z",
       "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "eef39a5b779513a1c577e37146721be3612e0df2c3e85445b75f29f96e82b16b",
-      "observedSizeBytes": 81691
+      "observedSha256": "dae220d702bd12dd579e6e03bcb4c2f0f1234ab2bebd1ad3eaa3b2f7dad12160",
+      "observedSizeBytes": 81869,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -17657,7 +17713,7 @@
       "url": "https://www.finma.ch/en/news/2026/07/20260709-mm-am-05-26/",
       "storedSha256": "44cb39d17d6972b6e0047a201150afff3e9596c6248c668f011299f9708a145a",
       "storedSizeBytes": 67809,
-      "checkedAt": "2026-09-18T03:03:26.753Z",
+      "checkedAt": "2026-09-24T22:47:27.148Z",
       "classification": "ok",
       "observedSha256": "44cb39d17d6972b6e0047a201150afff3e9596c6248c668f011299f9708a145a",
       "observedSizeBytes": 67809
@@ -17669,7 +17725,7 @@
       "url": "https://www.fsa.go.jp/news/r6/singi/20241126.html",
       "storedSha256": "50e449ba20b6a3437dfe85fa55b12e2f588155205cbe7f7fdea8034412130427",
       "storedSizeBytes": 35551,
-      "checkedAt": "2026-09-18T03:03:27.623Z",
+      "checkedAt": "2026-09-24T22:47:27.698Z",
       "classification": "ok",
       "okVia": "normalized-text",
       "observedSha256": "68b9c6301a8a829b3c67cade53d007e86f56c2cc61a7a5a4da3f36dd108d0c35",
@@ -17682,11 +17738,13 @@
       "url": "https://pqcframework.com/",
       "storedSha256": "64e2ef47275b7512c98ece4f09f6b9a580035a0943d032e046a098c4f6988c46",
       "storedSizeBytes": 175318,
-      "checkedAt": "2026-09-18T03:03:27.658Z",
+      "checkedAt": "2026-09-24T22:47:27.784Z",
       "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "6f13b2fa1ccc0bbd06e584d6d7bff1c695fb02c5a72d6b41f50b21aca381c77a",
-      "observedSizeBytes": 183149
+      "observedSha256": "6cbc6aac1139c2bdeb5db6e867b65434750e232b46bf1277868532ec9b6f0ad8",
+      "observedSizeBytes": 183149,
+      "stealthOutcome": "confirmed-drift",
+      "stealthTier": "curl_cffi:chrome124"
     },
     {
       "collection": "threats",
@@ -17695,11 +17753,13 @@
       "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
       "storedSha256": "bc7ae4a852339c5bfadf6925ff5cc172f35b29d2a970e9e5eedb688371ca13f4",
       "storedSizeBytes": 83969,
-      "checkedAt": "2026-09-18T03:03:28.180Z",
-      "classification": "blocked",
+      "checkedAt": "2026-09-24T22:47:27.991Z",
+      "classification": "drift",
       "textComparison": "differs",
-      "observedSha256": "7d3caf973aa0fb8ab5827137074f425514f692495b77b964a80a7f6647efafa1",
-      "observedSizeBytes": 72384
+      "observedSha256": "1ea38ebed8aac584d31c82d519846df570f7cc8ec6ea9dbe3966e38731d48675",
+      "observedSizeBytes": 72749,
+      "stealthOutcome": "recovered-drift",
+      "stealthTier": "curl_cffi:chrome124"
     }
   ]
 }

@@ -11,7 +11,8 @@
  *         previous generation — a key present in the previous file must still
  *         exist in the latest one (active or deprecated). Rows are never
  *         silently dropped; retirement is an explicit status change.
- *   DS19  Status column integrity: status ∈ {active, deprecated}; a
+ *   DS19  Status column integrity: status ∈ {active, deprecated} (threats
+ *         also accepts draft — a not-yet-filled add-row stub); a
  *         deprecated row must carry deprecated_at + deprecated_reason.
  *   DS19-VOCAB  Controlled vocabularies on shared provenance columns:
  *         peer_reviewed ∈ {yes, no, partial, ''} and source_url_quality ∈
@@ -50,6 +51,7 @@ import path from 'path'
 import Papa from 'papaparse'
 import { getDataDir } from './data-loader.js'
 import type { CheckResult, Finding } from './types.js'
+import { DRAFT_THREAT_STATUS } from '../../src/data/threatRowRules.js'
 
 type Row = Record<string, string>
 
@@ -59,12 +61,22 @@ interface Family {
   key: string[]
   /** Column holding proof/source evidence, for the DS20 restore rule. */
   proofColumns?: string[]
+  /** Statuses this family accepts beyond active|deprecated (DS19). */
+  extraStatuses?: readonly string[]
 }
 
 const FAMILIES: Family[] = [
   { prefix: 'library_', key: ['reference_id'], proofColumns: ['local_file', 'url'] },
   { prefix: 'compliance_', key: ['id'], proofColumns: ['url'] },
-  { prefix: 'quantum_threats_hsm_industries_', key: ['threat_id'], proofColumns: ['local_file'] },
+  {
+    prefix: 'quantum_threats_hsm_industries_',
+    key: ['threat_id'],
+    proofColumns: ['local_file'],
+    // 'draft': a new row from the private add-row tool whose substance fields
+    // are not filled yet. The page and the RAG corpus hide it
+    // (src/data/threatRowRules.ts); DS19 must not reject it.
+    extraStatuses: [DRAFT_THREAT_STATUS],
+  },
   {
     // Keyed on the composite Country+OrgName+Title until 2026-07-16 (timeline
     // maintainer-process remediation Phase 3) — meaning a Title correction (or
@@ -197,13 +209,14 @@ export function runStatusColumnChecks(): CheckResult[] {
     if (!latest || latest.rows.length === 0 || !('status' in latest.rows[0])) continue
     latest.rows.forEach((r, i) => {
       const status = (r.status ?? '').trim()
-      if (!VALID_STATUS.has(status)) {
+      if (!VALID_STATUS.has(status) && !(fam.extraStatuses ?? []).includes(status)) {
+        const allowed = ['active', 'deprecated', ...(fam.extraStatuses ?? [])]
         findings.push({
           csv: latest.file,
           row: i + 2,
           field: 'status',
           value: status,
-          message: `status must be 'active' or 'deprecated'`,
+          message: `status must be one of: ${allowed.map((a) => `'${a}'`).join(', ')}`,
         })
         return
       }
