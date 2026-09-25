@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'automotive-pqc',
-  version: '1.0.1',
+  version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-20',
+  lastEdited: '2026-09-24',
 
   standards: [
     getStandard('FIPS 203'),

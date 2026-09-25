@@ -164,7 +164,11 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     apiSecurity:
       'Vault TLS — hybrid ML-KEM-768 for API channels in 2025; CyberArk Conjur PQC secrets delivery planned',
     roadmapYear: 2025,
-    certifications: ['FIPS 140-2 Level 1-3', 'Common Criteria EAL4+', 'SOC 2 Type II'],
+    certifications: [
+      'FIPS 140-2 Level 1-3',
+      'Common Criteria: PAM v14 components certified against the NIAP Application Software PP v1.4 (NSCIB, 2024; PP-based, no EAL)',
+      'SOC 2 Type II',
+    ],
     notes:
       'PAM vaults holding privileged credentials are critical HNDL targets. CyberArk is developing PQC transit encryption for vault-to-agent channels. Conjur (secrets manager) PQC transit encryption under active development.',
   },

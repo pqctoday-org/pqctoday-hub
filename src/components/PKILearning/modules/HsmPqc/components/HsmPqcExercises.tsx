@@ -95,7 +95,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'FIPS',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'LMS has the most ACVP validations across vendors (Thales, Entrust, Utimaco, AWS). Module-level FIPS 140-3 validation covering a PQC algorithm is no longer a single-vendor story: alongside Thales Luna T7, our own CMVP snapshot lists hardware HSMs from other vendors (e.g. ASI-HSM AHX5 kNET, LS2 HSM Family) plus a growing set of software modules (AWS-LC, Microsoft SymCrypt, Apple corecrypto, the Go crypto modules). Use the FIPS Validation Tracker for the current list rather than a memorised vendor name — that is the point of the exercise. Algorithm-level ACVP validation is a prerequisite for module-level FIPS 140-3.',
+        'ML-KEM and ML-DSA carry the most validations in the tracker, across both algorithm (CAVP) and module (CMVP) certificates. Several Level 3 HSM module certificates list ML-KEM and ML-DSA as approved (Thales Luna T7 #5450, Kryptus #5282, Crypto4A #5497, Sansec #5503), while others from the same vendors list none (Luna K7 #4684, Luna M7 #5300 lists only LMS). Read the approved-algorithm list of the exact certificate rather than a vendor name — that is the point of the exercise. An algorithm certificate is a prerequisite for listing an approved algorithm on a module certificate, but it is not a module certificate.',
       config: { step: 3 },
     },
   ]

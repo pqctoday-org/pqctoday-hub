@@ -234,9 +234,9 @@ export const ORGANIZATIONS: OrgEntry[] = [
     region: 'US',
     founded: '1995',
     mission:
-      'NIST/CSE (Communications Security Establishment Canada) joint program validating cryptographic module implementations against FIPS 140-3. Required for US federal procurement (FISMA). PQC-first FIPS 140-3 certificates began appearing in late 2024.',
+      'NIST/CSE (Communications Security Establishment Canada) joint program validating cryptographic module implementations against FIPS 140-3. Required for US federal procurement (FISMA). Module certificates that list ML-KEM or ML-DSA as approved algorithms now exist (for example Level 3 HSM certificates #5282 and #5450, 2026).',
     decisionMaking:
-      'NVLAP-accredited testing labs perform validation testing → CMVP issues official certificate. ACVP (Cryptographic Algorithm Validation Program) handles individual algorithm testing (e.g., FIPS 203/204/205 test vectors). CMVP validation typically takes 18–36 months, creating a critical path dependency.',
+      'NVLAP-accredited testing labs perform validation testing → CMVP issues official certificate. The Cryptographic Algorithm Validation Program (CAVP), tested through the NIST ACVP service, handles individual algorithm testing (e.g., FIPS 203/204/205 test vectors). CMVP validation time varies by module and queue; the public Modules in Process list shows the status of each submission, and the wait is a critical-path dependency.',
     keyPqcOutputs: [
       'FIPS 140-3 certificates for PQC-enabled modules',
       'FIPS 203/204/205 ACVP algorithm test vectors',
@@ -475,7 +475,7 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'CMVP Validation',
         body: 'NIST/CSE',
         description:
-          'The CMVP (Cryptographic Module Validation Program) certifies that a specific HSM implementation correctly implements FIPS 203. An NVLAP-accredited lab tests the module; CMVP issues the certificate. Validation typically takes 18–36 months.',
+          'The CMVP (Cryptographic Module Validation Program) validates a defined module, such as an HSM, against FIPS 140-3. An NVLAP-accredited lab tests the module; CMVP issues the certificate. Correct ML-KEM behaviour is shown by a CAVP algorithm certificate for FIPS 203, which the module certificate then lists among its approved algorithms. Validation time varies by module and queue.',
       },
       {
         id: 'cnsa-2',
