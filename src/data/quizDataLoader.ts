@@ -247,6 +247,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'PKCS#11 v3.2, HSM vendor comparison, firmware migration, and FIPS 140-3 validation.',
       icon: 'HardDrive',
     },
+    'crypto-product-certification': {
+      label: 'Cryptographic Product Certification',
+      description:
+        'FIPS 140-3 and the CMVP, Common Criteria, EUCC and eIDAS, PCI PTS HSM, and adding PQC to a certified product.',
+      icon: 'Award',
+    },
     'entropy-randomness': {
       label: 'Entropy & Randomness',
       description:
@@ -531,13 +537,19 @@ for (const q of questions) {
   categoryCounts.set(q.category, (categoryCounts.get(q.category) || 0) + 1)
 }
 
-export const quizCategories: QuizCategoryMeta[] = (
-  Object.keys(CATEGORY_CONFIG) as QuizCategory[]
-).map((id) => ({
-  id,
-  ...CATEGORY_CONFIG[id],
-  questionCount: categoryCounts.get(id) || 0,
-}))
+// A category is registered (QUIZ_CATEGORIES + CATEGORY_CONFIG) BEFORE its
+// questions exist — add-quiz-question validates --category against that
+// vocabulary, so a new module's category has to land first. Until its first
+// question does, it must not be offered: no 0-question topic tile, no
+// ?category= that starts an empty quiz. Same rule UnderstandingCheckCard
+// already applies (questionCount === 0 → render nothing).
+export const quizCategories: QuizCategoryMeta[] = (Object.keys(CATEGORY_CONFIG) as QuizCategory[])
+  .map((id) => ({
+    id,
+    ...CATEGORY_CONFIG[id],
+    questionCount: categoryCounts.get(id) || 0,
+  }))
+  .filter((c) => c.questionCount > 0)
 
 // ─── Persona question counts (precomputed for awareness score) ───
 

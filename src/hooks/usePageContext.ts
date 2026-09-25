@@ -181,6 +181,7 @@ const MODULE_NAMES: Record<string, string> = {
   'pki-workshop': 'PKI Workshop',
   'kms-pqc': 'KMS & PQC Key Management',
   'hsm-pqc': 'HSM & PQC Operations',
+  'crypto-product-certification': 'Cryptographic Product Certification',
   'stateful-signatures': 'Stateful Signatures',
   'digital-assets': 'Digital Assets',
   '5g-security': '5G Security',
@@ -268,6 +269,11 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'What PKCS#11 v3.2 mechanisms support PQC algorithms?',
     'Which HSM vendors have FIPS 140-3 PQC validation?',
     'How does HSM firmware migration work for PQC?',
+  ],
+  'crypto-product-certification': [
+    'What is the difference between ACVP algorithm validation and a FIPS 140-3 certificate?',
+    'Why does "EAL4+" mean nothing without its augmentations?',
+    'Does a PQC flag on a PCI PTS HSM listing approve a specific algorithm?',
   ],
   'stateful-signatures': [
     'Compare LMS and XMSS stateful signature schemes',
