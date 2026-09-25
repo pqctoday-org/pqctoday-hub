@@ -865,6 +865,25 @@ export function evaluateDod(d: DodInputs): DodItem[] {
 
 // ── assemble ─────────────────────────────────────────────────────────────────
 
+/** The figure sections of a report — what a claims review signs and a freeze binds. */
+export const CLAIM_SECTIONS = [
+  'vectors',
+  'coverage',
+  'waivers',
+  'nativeSuites',
+  'recordedRuns',
+  'crossTarget',
+  'openGaps',
+] as const
+
+/**
+ * SHA-256 over the canonical JSON of the figure sections only. Review status
+ * and the §10.1 checklist are excluded on purpose: recording a review, or a
+ * freeze, must not change the claims that were reviewed or frozen.
+ */
+export const claimsSha256 = (r: Partial<Record<(typeof CLAIM_SECTIONS)[number], unknown>>) =>
+  sha256(canonical(Object.fromEntries(CLAIM_SECTIONS.map((k) => [k, r[k]]))))
+
 export function buildReleaseEvidence(root: string = ROOT): {
   report: ReleaseEvidence
   reviewItems: ReviewItem[]
@@ -897,9 +916,15 @@ export function buildReleaseEvidence(root: string = ROOT): {
   const openGaps = buildOpenGaps(matrix)
 
   // The claims matrix a reviewer signs off = every figure section.
-  const claimsSha = sha256(
-    canonical({ vectors, coverage, waivers, nativeSuites, recordedRuns, crossTarget, openGaps })
-  )
+  const claimsSha = claimsSha256({
+    vectors,
+    coverage,
+    waivers,
+    nativeSuites,
+    recordedRuns,
+    crossTarget,
+    openGaps,
+  })
   const reviewItems = buildReviewItems(ctx, manifest, waiverFile, claimsSha)
   const records = readReviewRecords(root)
   const today = new Date().toISOString().slice(0, 10)
@@ -912,7 +937,7 @@ export function buildReleaseEvidence(root: string = ROOT): {
     statusCounts[s] = (statusCounts[s] ?? 0) + 1
     if (s !== 'approved') awaiting[it.kind] = (awaiting[it.kind] ?? 0) + 1
   }
-  const lmState = REVIEW_STATE_RE.exec(readText(ctx, IN.lm065Status) ?? '')?.[1] ?? null
+  const lmState = REVIEW_STATE_RE.exec(readText(ctx, IN.lm065Status, false) ?? '')?.[1] ?? null
 
   const report: ReleaseEvidence = {
     $comment:

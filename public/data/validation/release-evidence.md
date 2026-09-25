@@ -209,17 +209,16 @@ Machine-evaluated. A human item is never marked PASS.
 
 ## Inputs
 
-| File                                                                      | SHA-256                                                            |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `evidence/acvp-xplat/2026-09-24/matrix.json`                              | `5ad41ba0a8b2c9c214985241c8b24520669f0a95bc6e3d33645e38b570bfa271` |
-| `evidence/acvp-xplat/2026-09-24/targets.json`                             | `68d23bd0090e0a104fd365f60175ccb11b85c53d2eb7aca2f45d103fe69ec775` |
-| `evidence/acvp-xplat/2026-09-24b/matrix.json`                             | `b3370d4bf4518c7c4519244e921977eeae4a0f07223869397185f1112f3baba8` |
-| `evidence/acvp-xplat/2026-09-24b/targets.json`                            | `6413cac2139288ae126c4e31035f0110b8b72dc1c0a97e80722841a992715ccd` |
-| `public/data/validation/coverage-matrix.json`                             | `ff8bbaed28746d2653067f85dc8f67b271c5ea0832b28f6c2fb19b6fdcbaa7c6` |
-| `src/components/PKILearning/modules/AcvpLabWorkflow/data/reviewStatus.ts` | `d8ef39efe10e4bb4b1afe5a2913bae710f8364183b53381ef458bb3b86ae46df` |
-| `src/data/validation/coverage-waivers.json`                               | `ab55b9c9f9b27f4ba36d1e100cfd768bb2e722b066303699b8812e38d3c4dfa7` |
-| `src/data/validation/native-conformance.generated.json`                   | `4896b6b29fe12e8d66d807ab82fd051b7fe79683a13123c42fa7a7f8ff903fc1` |
-| `src/data/validation/open-gaps.json`                                      | `05819752ef114b16d5cb0ae38f43e1ad6a885e78dfd8a9bb9a91f90db91a86e0` |
-| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`             | `4fbc71c09e90cd1cb67b5116a2233ab30ac9b009c298b029d3eeb2c86959e8e6` |
-| `src/data/validation/validation-counts.generated.json`                    | `cbc47b85c3ea8de33a796f62d835296b9ed86831c77943b764f1b62a23967548` |
-| `src/data/validation/vector-manifest.json`                                | `1689072a5a62f462930a68fce7be1824994e779b25dfc959830b8da1d972f9b8` |
+| File                                                          | SHA-256                                                            |
+| ------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `evidence/acvp-xplat/2026-09-24/matrix.json`                  | `5ad41ba0a8b2c9c214985241c8b24520669f0a95bc6e3d33645e38b570bfa271` |
+| `evidence/acvp-xplat/2026-09-24/targets.json`                 | `68d23bd0090e0a104fd365f60175ccb11b85c53d2eb7aca2f45d103fe69ec775` |
+| `evidence/acvp-xplat/2026-09-24b/matrix.json`                 | `b3370d4bf4518c7c4519244e921977eeae4a0f07223869397185f1112f3baba8` |
+| `evidence/acvp-xplat/2026-09-24b/targets.json`                | `6413cac2139288ae126c4e31035f0110b8b72dc1c0a97e80722841a992715ccd` |
+| `public/data/validation/coverage-matrix.json`                 | `ff8bbaed28746d2653067f85dc8f67b271c5ea0832b28f6c2fb19b6fdcbaa7c6` |
+| `src/data/validation/coverage-waivers.json`                   | `ab55b9c9f9b27f4ba36d1e100cfd768bb2e722b066303699b8812e38d3c4dfa7` |
+| `src/data/validation/native-conformance.generated.json`       | `4896b6b29fe12e8d66d807ab82fd051b7fe79683a13123c42fa7a7f8ff903fc1` |
+| `src/data/validation/open-gaps.json`                          | `05819752ef114b16d5cb0ae38f43e1ad6a885e78dfd8a9bb9a91f90db91a86e0` |
+| `src/data/validation/run-results/wasm-node-useAcvpSuite.json` | `4fbc71c09e90cd1cb67b5116a2233ab30ac9b009c298b029d3eeb2c86959e8e6` |
+| `src/data/validation/validation-counts.generated.json`        | `cbc47b85c3ea8de33a796f62d835296b9ed86831c77943b764f1b62a23967548` |
+| `src/data/validation/vector-manifest.json`                    | `1689072a5a62f462930a68fce7be1824994e779b25dfc959830b8da1d972f9b8` |
