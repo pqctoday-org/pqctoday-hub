@@ -165,7 +165,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
       'Vault TLS — hybrid ML-KEM-768 for API channels in 2025; CyberArk Conjur PQC secrets delivery planned',
     roadmapYear: 2025,
     certifications: [
-      'FIPS 140-2 Level 1-3',
+      'FIPS 140-3 Level 1: CyberArk Cryptographic Module #5205 and CyberArk Cryptographic Module for Java #5122 (software modules; earlier certificates #4949, #4693, #4377 are Historical; CMVP, checked 2026-09-24)',
       'Common Criteria: PAM v14 components certified against the NIAP Application Software PP v1.4 (NSCIB, 2024; PP-based, no EAL)',
       'SOC 2 Type II',
     ],
