@@ -51,6 +51,10 @@ export const content: ModuleContent = {
     getStandard('NIST-SP-1800-40A-PD'),
     getStandard('NIST-CSWP-37A'),
     getStandard('NIST IR 8547'),
+    // Algorithm standards the shared PQC section cites (sharedData.ts SHARED_SOURCES)
+    getStandard('FIPS 203'),
+    getStandard('FIPS 204'),
+    getStandard('FIPS 205'),
 
     // ── Common Criteria / CCRA (Path B) ──
     getStandard('CCMC-2023-04-001-CC2022-Transition-Policy'),
@@ -66,7 +70,9 @@ export const content: ModuleContent = {
     getStandard('CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme'),
     getStandard('CIR-EU-2024-3144-EUCC-Amendment'),
     getStandard('CIR-EU-2025-2462-EUCC-Amendment'),
-    getStandard('EUCC v2.0 ACM'),
+    getStandard('EUCC v2.0 ACM'), // not the duplicate row ECCG-ACM-v2 (same PDF)
+    getStandard('ENISA-Hybridization-Standardisation-Status'),
+    getStandard('EU-NIS-CG-Roadmap-v1.1'),
     getStandard('eIDAS-2-Regulation'),
     getStandard('CIR-EU-2025-1567-Remote-QSCD-Management'),
     getStandard('CIR-EU-2025-1570-QSCD-Certification-Notification'),
@@ -86,6 +92,7 @@ export const content: ModuleContent = {
     getStandard('PCI-SSC-P2PE-Program-Page'),
     getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
     getStandard('PCI-SSC-Blog-Authentication-Cryptography-Guidance'),
+    getStandard('PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures'),
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The

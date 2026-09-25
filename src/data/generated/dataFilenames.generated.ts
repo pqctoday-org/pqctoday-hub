@@ -25,7 +25,7 @@ export interface GeneratedDataFilenames {
 }
 
 export const DATA_FILENAMES: GeneratedDataFilenames = {
-  library: 'library_09242026_r1.csv',
+  library: 'library_09242026_r2.csv',
   timeline: 'timeline_09162026.csv',
   migrate: 'pqc_product_catalog_09222026_r1.csv',
   threats: 'quantum_threats_hsm_industries_09162026_r1.csv',
@@ -34,5 +34,5 @@ export const DATA_FILENAMES: GeneratedDataFilenames = {
   algorithms: 'algorithms_transitions_07282026.csv',
   authoritativeSources: 'pqc_authoritative_sources_reference_09182026.csv',
   certificationXref: 'migrate_certification_xref_09222026.csv',
-  quiz: 'pqcquiz_09192026.csv',
+  quiz: 'pqcquiz_09242026.csv',
 }
