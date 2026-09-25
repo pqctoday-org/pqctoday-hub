@@ -67,9 +67,22 @@ const byName = (fixtures: FixtureRef[], name: string) => fixtures.find((f) => f.
 const target = (inputs: TargetInput[], id: string) => inputs.find((i) => i.target.id === id)!
 
 describe('acvp-xplat comparator (WS-H)', () => {
-  it('the committed matrix and divergence set are exactly what the committed evidence produces', async () => {
-    const rendered = await generateRun(repo, RUN, '2026-09-24')
-    expect(checkRun(RUN, rendered)).toEqual([])
+  it.each(['2026-09-24', '2026-09-24b'])(
+    'frozen run %s: the committed matrix and divergence set are exactly what its evidence produces',
+    async (runId) => {
+      const dir = path.join(repo, 'evidence/acvp-xplat', runId)
+      expect(checkRun(dir, await generateRun(repo, dir, runId))).toEqual([])
+    }
+  )
+
+  it('each frozen run is judged under its own pinned formats', async () => {
+    const v1 = await generateRun(repo, RUN, '2026-09-24')
+    const dirB = path.join(repo, 'evidence/acvp-xplat/2026-09-24b')
+    const v2 = await generateRun(repo, dirB, '2026-09-24b')
+    expect(v1.output.matrix.comparatorPolicyVersion).toBe('pqctoday.acvp-comparator-policy/1')
+    expect(v2.output.matrix.comparatorPolicyVersion).toBe('pqctoday.acvp-comparator-policy/2')
+    expect(v1.output.matrix.totals['linux-arm64-cpp'].pass).toBe(112)
+    expect(v2.output.matrix.totals['linux-arm64-cpp'].pass).toBe(157)
   })
 
   it('keeps all five statuses separate in every total', async () => {
