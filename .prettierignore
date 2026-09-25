@@ -108,3 +108,7 @@ src/data/validation/coverage-matrix.generated.json
 public/data/validation/coverage-matrix.json
 public/data/validation/coverage-matrix.md
 public/data/validation/coverage-matrix.html
+# WS-H: generated JSON read by the Python runner (byte-exact --check) and the
+# frozen cross-target evidence (hash-addressed; reformatting breaks envId/SHA-256s).
+tools/acvp-native/hub_contract.json
+evidence/

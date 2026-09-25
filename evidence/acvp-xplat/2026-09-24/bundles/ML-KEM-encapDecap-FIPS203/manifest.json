@@ -1,0 +1,28 @@
+{
+  "bundleVersion": "pqctoday.acvp-bundle/1",
+  "schemaId": "ML-KEM/encapDecap/FIPS203",
+  "vsId": 42,
+  "producedBy": {
+    "engine": "cpp",
+    "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be"
+  },
+  "files": {
+    "prompt.json": "998e22dfb12efb14ce9fdff911ca634b13612819a1806f25da69adba7e16db91",
+    "ir.json": "76bcf73faf6d95d4bd020ba76623f925d49162f6d45383ff7c999f5619ea4ef7",
+    "plan.json": "489768902ef60b16761f1af2c22c16580d522a8fe69bf901eb082ac71ab76e47",
+    "response.json": "b967f5795d5b91ce5c56cabd77ed2512813e15a2659c974fbc84914c93639821",
+    "expectedResults.json": "9089ec6ff2424da9f2782b89b2f831a329a3e28d6e5e24b802b78ff36ac61cdf"
+  },
+  "canonicalSha256": {
+    "ir": "4f399a4264a71fe9ddc6e6ee02cbf28c05388a6438307158067f297fe5937715",
+    "plan": "7e482ef08b1619f9941a931fb40769345eeeb5d466e35878e34d8e8e6efbbd4c",
+    "response": "6110c774fbbafc21aa559fb7099b2a8dcd619cb9a95aa20236f21426eca805ed"
+  },
+  "canonicalJson": "keys sorted, no whitespace — Python: json.dumps(o, sort_keys=True, separators=(\",\", \":\"))",
+  "rules": {
+    "promptToIr": "src/services/acvp/ir.ts P1–P6",
+    "irToPlan": "src/services/acvp/dispatch.ts D1–D7",
+    "response": "src/services/acvp/response.ts R1–R5"
+  },
+  "note": "A conforming runner must reproduce ir.json/plan.json from prompt.json and, executing plan.json on its engine, produce a response.json whose canonical SHA-256 equals canonicalSha256.response."
+}
