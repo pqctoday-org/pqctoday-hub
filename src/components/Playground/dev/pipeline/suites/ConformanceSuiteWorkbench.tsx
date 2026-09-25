@@ -18,9 +18,13 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import {
   usePkcs11Conformance,
   TIER_A_CASES,
-  TIER_B_GROUPS,
+  CONFORMANCE_TIER_LABELS,
+  tierBGroups,
+  mechanismProbeCount,
+  tallyByTier,
   type RowStatus,
 } from '../../../hsm/conformance/usePkcs11Conformance'
+import { mechanismProbes } from '@/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
 import { emitConformanceSuite } from './suiteCodegen'
 import { createConformanceBridge, runSuiteScript } from './suiteBridges'
@@ -74,13 +78,20 @@ export const ConformanceSuiteWorkbench = () => {
 
   const running = loading || codeRunning
   const nothingSelected = selection.tierA.size === 0 && !selection.tierB && !selection.coverage
+  // WS-G G-4: every count below is counted from the case/probe definitions.
+  const TIER_B_GROUPS = tierBGroups()
   const tierBCount = TIER_B_GROUPS.reduce((n, g) => n + g.probes, 0)
+  const mechCount = mechanismProbeCount()
+  const mechFamilies = [...new Set(mechanismProbes().map((p) => p.family))].join(', ')
 
   const palette = (
     <>
       <div>
-        <div className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">
-          Tier A · mandatory
+        <div className="text-xs font-semibold uppercase text-muted-foreground">
+          Tier A · OASIS published cases
+        </div>
+        <div className="text-[10.5px] text-muted-foreground mb-1.5">
+          {TIER_A_CASES.length} mandatory XML test cases published by OASIS
         </div>
         <div className="space-y-1">
           {TIER_A_CASES.map((tc) => {
@@ -135,9 +146,12 @@ export const ConformanceSuiteWorkbench = () => {
             onChange={(e) => setTierB(e.target.checked)}
           />
           <span className="flex-1 min-w-0">
-            <span className="block font-medium text-foreground">Tier B · condition probes</span>
+            <span className="block font-medium text-foreground">
+              Tier B · generated condition probes
+            </span>
             <span className="block text-[10.5px] text-muted-foreground">
-              up to {tierBCount} checks, per claimed profile
+              up to {tierBCount} PQC Today-authored probes of OASIS Profiles conditions, per claimed
+              profile — not OASIS test cases
             </span>
           </span>
         </label>
@@ -162,9 +176,11 @@ export const ConformanceSuiteWorkbench = () => {
           onChange={(e) => setCoverage(e.target.checked)}
         />
         <span className="flex-1 min-w-0">
-          <span className="block font-medium text-foreground">Mechanism Coverage</span>
+          <span className="block font-medium text-foreground">
+            Mechanism Coverage · product probes
+          </span>
           <span className="block text-[10.5px] text-muted-foreground">
-            CKA_SEED determinism — §6.67.4 / §6.68.4 / §6.69.2
+            {mechCount} PQC Today-authored mechanism probes — {mechFamilies}
           </span>
         </span>
       </label>
@@ -181,10 +197,12 @@ export const ConformanceSuiteWorkbench = () => {
     <div className="space-y-3" data-testid="pkcs11-conformance-runner">
       <div>
         <h3 className="text-base font-bold">PKCS#11 v3.2 Conformance Runner</h3>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Runs OASIS&apos;s own published mandatory Profiles v3.2 test cases (Tier A) plus a probe
-          of every numbered condition of the profiles each engine actually claims (Tier B) —
-          entirely in-browser, against the raw WASM ABI.
+        <p className="text-xs text-muted-foreground mt-0.5" data-testid="pkcs11-conformance-scope">
+          Three kinds of rows, reported separately: {TIER_A_CASES.length} mandatory test cases OASIS
+          published for PKCS#11 Profiles v3.2 (Tier A); up to {tierBCount} probes PQC Today
+          generated from the numbered conditions of the profiles each engine claims (Tier B — not
+          OASIS test cases); and {mechCount} product-authored mechanism probes. All run in this
+          browser, against the raw WASM ABI.
         </p>
       </div>
 
@@ -203,6 +221,21 @@ export const ConformanceSuiteWorkbench = () => {
           {notClaimed > 0 && ` — ${notClaimed} not claimed by either engine`}
         </div>
       )}
+      {ran && !loading && rows.length > 0 && (
+        <ul
+          className="text-[11px] text-muted-foreground space-y-0.5"
+          data-testid="pkcs11-conformance-tier-breakdown"
+        >
+          {tallyByTier(rows).map((t) => (
+            <li key={t.tier} title={t.source}>
+              <span className="font-medium text-foreground">{t.label}s:</span> {t.pass}/{t.rows}{' '}
+              pass
+              {t.fail > 0 && `, ${t.fail} fail`}
+              {t.notClaimed > 0 && `, ${t.notClaimed} not claimed`}
+            </li>
+          ))}
+        </ul>
+      )}
 
       {rows.length > 0 ? (
         <div className="bg-background border border-border rounded-lg overflow-hidden divide-y divide-border/50 max-h-[50vh] overflow-y-auto">
@@ -219,8 +252,11 @@ export const ConformanceSuiteWorkbench = () => {
                   <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
                     {r.engine}
                   </span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
-                    {r.tier === 'Coverage' ? 'Mechanism Coverage' : `Tier ${r.tier}`}
+                  <span
+                    className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0"
+                    title={CONFORMANCE_TIER_LABELS[r.tier].source}
+                  >
+                    {CONFORMANCE_TIER_LABELS[r.tier].short}
                   </span>
                   <span className="text-xs font-medium truncate">{r.name}</span>
                   <span className="text-[10px] text-muted-foreground ml-auto shrink-0">
@@ -290,14 +326,15 @@ export const ConformanceSuiteWorkbench = () => {
           not-claimed only for a profile the engine genuinely publishes no CKO_PROFILE for.
         </p>
         <p>
-          Tier B probes every numbered condition of each claimed profile (Baseline 17, Extended 6,
-          Auth Token 8, Cert Token 5, HKDF TLS 6) plus one Complete Provider union check; unclaimed
-          profiles render no row.
+          Tier B probes are generated here, one per numbered condition of each claimed profile (
+          {TIER_B_GROUPS.map((g) => `${g.label} ${g.probes}`).join(', ')}), plus a derived Complete
+          Provider union row when an engine claims that profile; unclaimed profiles render no row.
+          They test OASIS&apos;s conditions but are not OASIS-published test cases.
         </p>
         <p>
-          Mechanism Coverage is gated only on C_GetMechanismList — deterministic PQC key generation
-          from CKA_SEED (ML-DSA, ML-KEM, SLH-DSA), the two-calls-same-seed-same-key check the spec
-          requires and no other suite here tests.
+          Mechanism Coverage runs {mechCount} PQC Today-authored probes ({mechFamilies}) of
+          mechanisms no other suite here exercises, each gated only on C_GetMechanismList
+          advertising it.
         </p>
       </Card>
     </>
@@ -306,7 +343,7 @@ export const ConformanceSuiteWorkbench = () => {
   return (
     <SuiteShell
       title="PKCS#11 v3.2 Conformance Runner"
-      subtitle="OASIS Profiles v3.2 — Tier A mandatory cases · Tier B condition probes · Mechanism Coverage"
+      subtitle="PKCS#11 Profiles v3.2 — Tier A OASIS cases · Tier B generated probes · product mechanism probes"
       actions={
         ran && !loading ? (
           <Button
