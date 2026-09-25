@@ -250,6 +250,9 @@ function buildScoringContext(): ScoringContext {
 // Compute all scores
 // ---------------------------------------------------------------------------
 
+/** Display name → product_id for migrate rows (filled by computeAllScores). */
+const migrateNameAliases = new Map<string, string>()
+
 function computeAllScores(): Map<string, TrustScore> {
   const ctx = buildScoringContext()
   const scores = new Map<string, TrustScore>()
@@ -352,9 +355,13 @@ function computeAllScores(): Map<string, TrustScore> {
     })
   }
 
-  // Migrate products
+  // Migrate products — keyed by product_id, the row's immutable identity
+  // (migrate remediation r2 W-B1). Callers that only know the display name
+  // (search chunks titled by name, catalog document enrichments) resolve
+  // through migrateNameAliases in getTrustScore.
   for (const item of softwareData ?? []) {
-    const key = `migrate:${item.softwareName}`
+    const key = `migrate:${item.productId}`
+    if (item.softwareName) migrateNameAliases.set(item.softwareName, item.productId)
     // Derive vetting/peer-review signals from FIPS validation + certification xref.
     // Government cryptographic validation (FIPS CMVP, ACVP, Common Criteria) is a
     // formal peer-review process, so a product with any such certificate counts as
@@ -374,7 +381,7 @@ function computeAllScores(): Map<string, TrustScore> {
       .filter(Boolean)
       .sort()
       .at(-1)
-    score('migrate', item.softwareName, {
+    score('migrate', item.productId, {
       peerReviewed: derivedPeerReviewed,
       vettingBody: Array.from(derivedVetting),
       localFile: undefined, // Products have docs in public/products/
@@ -575,7 +582,10 @@ export function getTrustScore(
   resourceType: ScoredResourceType,
   resourceId: string
 ): TrustScore | undefined {
-  return trustScores.get(`${resourceType}:${resourceId}`)
+  const direct = trustScores.get(`${resourceType}:${resourceId}`)
+  if (direct || resourceType !== 'migrate') return direct
+  const productId = migrateNameAliases.get(resourceId)
+  return productId ? trustScores.get(`migrate:${productId}`) : undefined
 }
 
 /** Get all scores for a given resource type. */

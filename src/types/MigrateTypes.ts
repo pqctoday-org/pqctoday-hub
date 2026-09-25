@@ -61,6 +61,8 @@ export type CisaCategoryType = (typeof CISA_CATEGORIES)[number]
 export interface SoftwareItem {
   productId: string
   softwareName: string
+  /** Earlier display names (from the catalogue's former_names column). */
+  formerNames?: string[]
   categoryId: string
   categoryName: string
   infrastructureLayer: string

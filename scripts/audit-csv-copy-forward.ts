@@ -167,7 +167,7 @@ const XREF_SOURCE_OF: Record<string, { prefix: string; idField: string }> = {
   timeline: { prefix: 'timeline_', idField: 'Title' },
   leaders: { prefix: 'leaders_', idField: 'Name' },
   compliance: { prefix: 'compliance_', idField: 'id' },
-  migrate: { prefix: 'pqc_product_catalog_', idField: 'software_name' },
+  migrate: { prefix: 'pqc_product_catalog_', idField: 'product_id' },
   algorithm: { prefix: 'pqc_complete_algorithm_reference_', idField: 'Algorithm' },
 }
 

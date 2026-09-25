@@ -4,6 +4,7 @@ import {
   checkNoPqcConsistency,
   checkProductIdUniqueness,
   checkReleaseDates,
+  checkRenamesKeepFormerNames,
 } from '../migrate-catalog-integrity'
 
 describe('MC-1 product_id uniqueness', () => {
@@ -68,5 +69,23 @@ describe('MC-3 no-PQC consistency', () => {
       'c'
     )
     expect(f.map((x) => x.value)).toEqual(['roadmap'])
+  })
+})
+
+describe('MC-4 renames keep former names', () => {
+  const prev = [{ product_id: 'x', software_name: 'GitHub - aws/aws-lc-rs' }]
+  it('fails a rename without former_names', () => {
+    expect(
+      checkRenamesKeepFormerNames(prev, [{ product_id: 'x', software_name: 'aws-lc-rs' }], 'c')
+    ).toHaveLength(1)
+  })
+  it('passes when the old name is kept', () => {
+    expect(
+      checkRenamesKeepFormerNames(
+        prev,
+        [{ product_id: 'x', software_name: 'aws-lc-rs', former_names: 'GitHub - aws/aws-lc-rs' }],
+        'c'
+      )
+    ).toHaveLength(0)
   })
 })

@@ -24,11 +24,19 @@
  *       two fields is wrong, and the UI shows the no-PQC badge next to a PQC
  *       status.
  *
- * Severity: MC-1 ERROR (identity). MC-2 and MC-3 WARNING: legacy rows are
- * reported, and the row-level fix goes through review.
+ * MC-4  A product whose software_name changed since the previous catalogue
+ *       generation carries its old name in former_names. Saved selections,
+ *       share links and search chunks store names; the loader resolves every
+ *       former name to the product_id, so a correction never detaches them.
+ *       (Plan r2 W-B1: no rename before the name joins are safe.)
+ *
+ * Severity: MC-1 and MC-4 ERROR (identity). MC-2 and MC-3 WARNING: legacy
+ * rows are reported, and the row-level fix goes through review.
  */
 
-import { loadCSV } from './data-loader.js'
+import fs from 'fs'
+import path from 'path'
+import { getDataDir, loadCSV, readCSV } from './data-loader.js'
 import type { CheckResult, CsvRow, Finding } from './types.js'
 
 const PQC_CLAIMING = new Set(['available', 'partial', 'roadmap', 'planned'])
@@ -139,6 +147,56 @@ export function checkNoPqcConsistency(rows: CsvRow[], file: string): Finding[] {
   return findings
 }
 
+/** MC-4 — a changed software_name must appear in the new row's former_names. */
+export function checkRenamesKeepFormerNames(
+  previous: CsvRow[],
+  current: CsvRow[],
+  file: string
+): Finding[] {
+  const before = new Map(
+    previous.filter((r) => r.product_id).map((r) => [r.product_id, (r.software_name || '').trim()])
+  )
+  const findings: Finding[] = []
+  current.forEach((row, i) => {
+    if (!isActive(row)) return
+    const old = before.get(row.product_id)
+    const now = (row.software_name || '').trim()
+    if (!old || old === now) return
+    const former = (row.former_names || '').split(';').map((n) => n.trim())
+    if (!former.includes(old)) {
+      findings.push({
+        csv: file,
+        row: i + 2,
+        field: 'former_names',
+        value: row.former_names || '',
+        message: `${row.product_id}: software_name changed from "${old}" to "${now}" but "${old}" is not in former_names`,
+      })
+    }
+  })
+  return findings
+}
+
+/** The generation before the latest pqc_product_catalog file, by date then _rN. */
+function previousCatalog(): CsvRow[] {
+  const prefix = 'pqc_product_catalog_'
+  const dir = getDataDir()
+  const gens = fs
+    .readdirSync(dir)
+    .filter((f) => f.startsWith(prefix) && f.endsWith('.csv'))
+    .map((f) => {
+      const [date, rev = ''] = f.slice(prefix.length, -'.csv'.length).split('_r')
+      return { f, date, rev }
+    })
+    .filter(({ date, rev }) => /^\d{8}$/.test(date) && /^\d*$/.test(rev))
+    .map(({ f, date, rev }) => ({
+      f,
+      key: `${date.slice(4)}${date.slice(0, 4)}-${rev.padStart(3, '0')}`,
+    }))
+    .sort((a, b) => a.key.localeCompare(b.key))
+  const prev = gens.at(-2)
+  return prev ? readCSV(path.join(dir, prev.f)) : []
+}
+
 export function runMigrateCatalogIntegrity(
   today: string = new Date().toISOString().slice(0, 10)
 ): CheckResult[] {
@@ -157,6 +215,13 @@ export function runMigrateCatalogIntegrity(
       'WARNING',
       file,
       checkReleaseDates(rows, file, today)
+    ),
+    result(
+      'MC-4',
+      'A renamed migrate product keeps its old name in former_names',
+      'ERROR',
+      file,
+      checkRenamesKeepFormerNames(previousCatalog(), rows, file)
     ),
     result(
       'MC-3',

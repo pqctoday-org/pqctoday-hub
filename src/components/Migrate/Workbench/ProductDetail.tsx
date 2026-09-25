@@ -87,7 +87,7 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
             evidence fetched {product.lastVerifiedDate}
           </span>
         )}
-        <TrustScoreBadge resourceType="migrate" resourceId={product.softwareName} size="sm" />
+        <TrustScoreBadge resourceType="migrate" resourceId={product.productId} size="sm" />
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <span onClick={(e) => e.stopPropagation()}>
           <ReviewedBadge

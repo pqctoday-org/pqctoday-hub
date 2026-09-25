@@ -14,6 +14,8 @@ const modules = import.meta.glob('./pqc_product_catalog_*.csv', {
 interface RawSoftwareItem {
   product_id?: string
   software_name: string
+  /** Earlier display names of this product (semicolon list), kept when a name is corrected. */
+  former_names?: string
   category_id: string
   category_name: string
   infrastructure_layer: string
@@ -157,6 +159,10 @@ const {
     return {
       productId: row.product_id || '',
       softwareName: row.software_name,
+      formerNames: (row.former_names || '')
+        .split(';')
+        .map((n) => n.trim())
+        .filter(Boolean),
       categoryId: row.category_id,
       categoryName: row.category_name,
       infrastructureLayer: row.infrastructure_layer,
@@ -223,9 +229,11 @@ const {
   true // withPrevious for status badges
 )
 
-// Compute status map if previous data exists
+// Compute status map if previous data exists. Keyed by product_id — the row's
+// immutable identity — so a display-name correction reads as "Updated", not as
+// one product vanishing and a "New" one appearing.
 const statusMap = previousItems
-  ? compareDatasets(currentItems, previousItems, 'softwareName')
+  ? compareDatasets(currentItems, previousItems, 'productId')
   : new Map<string, ItemStatus>()
 
 export const softwareMetadata = metadata
@@ -235,7 +243,7 @@ export const deprecatedProductCount = deprecatedRowCount
 
 export const softwareData: SoftwareItem[] = currentItems.map((item) => ({
   ...item,
-  status: statusMap.get(item.softwareName),
+  status: statusMap.get(item.productId),
 }))
 
 // Compute productCount for each vendor
