@@ -29,6 +29,12 @@
  * is the Rust engine.
  */
 import manifestJson from './vector-manifest.json'
+import inventoryJson from './mechanism-inventory.generated.json'
+import {
+  expandErrorPathCases,
+  probeKind,
+  type InventoryMechLike,
+} from '../../wasm/pkcs11ConformanceRunner/errorPathCatalog'
 import sha256V from '../acvp/sha256_test.json'
 import sha384V from '../acvp/sha384_test.json'
 import sha512V from '../acvp/sha512_test.json'
@@ -1753,6 +1759,63 @@ const CONFORMANCE: RegisteredTest[] = [
   },
 ]
 
+// ── Error-path / required-operation probes (errorPathProbes.ts, plan G-8 / G-2) ──
+//
+// Expanded from the committed mechanism inventory by the SAME catalog function
+// the runtime runner uses (errorPathCatalog.expandErrorPathCases), never
+// written by hand: one test per (operation, probe kind), one case per
+// mechanism, exercising every probed parameter set × sign variant. G-2
+// "executes" cases are generated only for (mechanism, operation) pairs no other
+// registered test drives.
+
+const exercisedPairs = (tests: RegisteredTest[]): Set<string> =>
+  new Set(
+    tests.flatMap((t) =>
+      t.cases.flatMap((c) =>
+        c.exercises.map((e) => `${e.capability.mechanism}|${e.capability.operation}`)
+      )
+    )
+  )
+
+const inventoryRecords = (): InventoryMechLike[][] => {
+  const inv = inventoryJson as unknown as {
+    engines: Record<string, { inventory: { mechanisms: InventoryMechLike[] } }>
+  }
+  return Object.values(inv.engines).map((e) => e.inventory.mechanisms)
+}
+
+const errorPathTests = (existing: RegisteredTest[]): RegisteredTest[] => {
+  const byTest = new Map<string, RegisteredTest>()
+  for (const c of expandErrorPathCases(inventoryRecords(), {
+    skipExecutes: exercisedPairs(existing),
+  })) {
+    const kind = probeKind(c.kind)
+    let t = byTest.get(c.testId)
+    if (!t) {
+      t = {
+        id: c.testId,
+        runner: 'errorPathProbes',
+        ref: `errorPathCatalog PROBE_KINDS '${c.kind}' × operation '${c.op}'`,
+        title: kind.title(c.op),
+        engines: BOTH,
+        cases: [],
+        note: `${kind.probeClass}. Asserts: ${kind.steps(c.op)}. Cites ${kind.citation(c.op)}. Why no existing test covers it (G-5): ${kind.whyNotCovered}`,
+      }
+      byTest.set(c.testId, t)
+    }
+    t.cases.push(
+      lc(
+        c.testId,
+        c.mechanism,
+        PROBE,
+        kind.polarity,
+        c.cells.map((cell) => x(c.mechanism, c.op, cell.parameterSet, cell.variant))
+      )
+    )
+  }
+  return [...byTest.values()]
+}
+
 /** Every registered test, in runner order. */
 /**
  * The skip row each workbench section emits (pushSkip) when the engine does
@@ -1799,12 +1862,14 @@ const withSkipRows = (tests: RegisteredTest[]): RegisteredTest[] =>
     SKIP_ROW_PREFIX[t.id] ? { ...t, skipRowId: `${SKIP_ROW_PREFIX[t.id]}-skip-{engine}` } : t
   )
 
-export const TEST_REGISTRY: RegisteredTest[] = [
+const BASE_REGISTRY: RegisteredTest[] = [
   ...withSkipRows(USE_ACVP_SUITE),
   ...KAT_RUNNER,
   ...MECHANISM_PROBES,
   ...CONFORMANCE,
 ]
+
+export const TEST_REGISTRY: RegisteredTest[] = [...BASE_REGISTRY, ...errorPathTests(BASE_REGISTRY)]
 
 /** Exposed for the registry's own consistency test. */
 export const __registryInternals = { manifestCase, hashMlDsaMech }
