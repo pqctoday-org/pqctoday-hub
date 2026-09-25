@@ -2499,7 +2499,7 @@
     {
       "id": "mldsa_siggen_ctxmsg_test",
       "path": "src/data/acvp/mldsa_siggen_ctxmsg_test.json",
-      "sha256": "3d360bf4c76f1a60c98409acdb32988bf393d136c23221c6ad375a1a40958196",
+      "sha256": "dccbe1140a67df3647f57e7134448be9b317f92a75b181410414f4caa42820a6",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -2796,7 +2796,7 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, pk"
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
@@ -2816,7 +2816,7 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, pk"
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
@@ -2836,7 +2836,7 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, pk"
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
@@ -2856,7 +2856,7 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, pk"
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
@@ -2876,7 +2876,7 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, pk"
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
@@ -2896,7 +2896,7 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, pk"
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
@@ -2916,7 +2916,7 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, pk"
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
@@ -2936,7 +2936,7 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, pk"
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
@@ -2956,7 +2956,7 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, pk"
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
@@ -2970,14 +2970,14 @@
           "path": "src/components/Playground/dev/pipeline/__snapshots__/pipelineCodegen.test.ts.snap",
           "kind": "embedded-values",
           "cases": ["mldsa_siggen_ctxmsg_test#/testGroups/0/tests/1"],
-          "fields": ["signature"],
+          "fields": ["pk", "signature"],
           "note": "Vitest snapshot of generated pipeline code that embeds this case."
         },
         {
           "path": "src/components/Playground/dev/pipeline/pipelineTemplates.ts",
           "kind": "embedded-values",
           "cases": ["mldsa_siggen_ctxmsg_test#/testGroups/0/tests/1"],
-          "fields": ["signature"],
+          "fields": ["pk", "signature"],
           "note": "Playground pipeline template embeds this case as literals."
         }
       ],
