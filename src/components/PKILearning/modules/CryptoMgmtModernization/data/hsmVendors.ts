@@ -2,9 +2,10 @@
 /**
  * HSM vendor FIPS 140-3 Level 3 posture data.
  *
- * NOTE: Cert numbers, firmware bindings, and PQC support are illustrative
- * for educational use. Verify live against csrc.nist.gov/projects/
- * cryptographic-module-validation-program and the vendor's official pages.
+ * NOTE: Firmware bindings and PQC support are illustrative for educational use.
+ * CMVP certificate numbers, standards, statuses and approved PQC algorithms were
+ * re-checked against the CMVP certificate pages on 2026-09-24. Verify live against
+ * csrc.nist.gov/projects/cryptographic-module-validation-program before relying on them.
  */
 
 import type { EsvStatus, FipsStatus, RiskColor } from './cryptoLibraries'
@@ -36,15 +37,16 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     product: 'Luna Network HSM 7',
     firmwareRev: '7.13.3',
     fipsLevel: 3,
-    fipsStatus: 'active-pqc',
+    fipsStatus: 'active',
     cmvpCertNumber: '#4962 (Luna G7)',
     esvStatus: 'active',
-    pqcSupport: 'ML-KEM-768/1024, ML-DSA-65/87 (FIPS 203/204)',
+    pqcSupport:
+      'ML-KEM-768/1024, ML-DSA-65/87 in firmware; not in the approved-algorithm list of #4962 or the K7 module #4684',
     platformBinding: 'Luna Network appliance; K7 crypto module',
-    lastVerified: '2026-04-18',
+    lastVerified: '2026-09-24',
     posture: 'green',
     notes:
-      'First major HSM with FIPS 140-3 L3 PQC coverage in production. Firmware-bound cert; upgrade requires re-validation path.',
+      "Thales's Luna T7 module certificate #5450 (29 Jul 2026) does list ML-KEM and ML-DSA as approved; check which module certificate your appliance and firmware map to. Firmware-bound cert; upgrade requires re-validation path.",
   },
   {
     id: 'entrust-nshield-5',
@@ -53,15 +55,16 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     product: 'nShield 5c',
     firmwareRev: '13.6.2',
     fipsLevel: 3,
-    fipsStatus: 'active-pqc',
-    cmvpCertNumber: '#4765 (nShield 5s)',
+    fipsStatus: 'active',
+    cmvpCertNumber: '#5329 (nShield 5s; replaces #4765, now historical)',
     esvStatus: 'active',
-    pqcSupport: 'ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s',
+    pqcSupport:
+      'ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s (CAVP A7285); not in the approved-algorithm list of #5329',
     platformBinding: 'nShield 5c network appliance / nShield 5s PCIe',
-    lastVerified: '2026-04-22',
+    lastVerified: '2026-09-24',
     posture: 'green',
     notes:
-      'SLH-DSA coverage distinguishes nShield 5 from Luna 7. CodeSafe apps for PQC workloads. CMVP cert #4765 covers the 5s form factor; verify 5c cert status separately at csrc.nist.gov.',
+      'SLH-DSA coverage distinguishes nShield 5 from Luna 7. CodeSafe apps for PQC workloads. CMVP cert #5329 covers the 5s form factor; another nShield 5s entry is on the Modules in Process list (Review, 30 Jul 2026), which is not evidence of the outcome. Verify 5c cert status separately at csrc.nist.gov.',
   },
   {
     id: 'utimaco-cp5',
@@ -87,17 +90,17 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     product: 'QxHSM (QASM core)',
     firmwareRev: 'QxOS 5 (v5.0)',
     fipsLevel: 3,
-    fipsStatus: 'in-mip',
+    fipsStatus: 'active-pqc',
     cmvpCertNumber:
-      '#4250 = FIPS 140-2 Level 3 (2022, QASM core); FIPS 140-3 v5.0 PQC submission in MIP',
+      '#5497 = FIPS 140-3 Level 3 (19 Aug 2026, QASM Cryptographic Module); #4250 (FIPS 140-2) historical',
     esvStatus: 'active',
     pqcSupport:
       'ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 param sets), LMS/HSS (CAVP A4204 = LMS; A5631 = LMS/ML-DSA/ML-KEM/SLH-DSA)',
     platformBinding: 'QxBMC-1/3/12 chassis (desktop/1U/4U); FPGA-based QASM core',
-    lastVerified: '2026-06-06',
+    lastVerified: '2026-09-24',
     posture: 'green',
     notes:
-      "First HSM submitted for FIPS 140-3 Level 3 covering all NIST PQC algorithms. FPGA-based QASM core enables in-field firmware upgrades without hardware swap. CAVP A5631 (ML-KEM, ML-DSA, SLH-DSA, LMS) and A4204 (LMS — world's first PQC CAVP cert) validated. QxOS 5. Classic McEliece on roadmap. Integrations: EJBCA v9.3+, DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
+      "CMVP certificate #5497 lists ML-KEM, ML-DSA, SLH-DSA and LMS as approved. FPGA-based QASM core enables in-field firmware upgrades without hardware swap. CAVP A5631 (ML-KEM, ML-DSA, SLH-DSA, LMS) and A4204 (LMS — world's first PQC CAVP cert) validated. QxOS 5. Classic McEliece on roadmap. Integrations: EJBCA v9.3+, DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
   },
   {
     id: 'fortanix-dsm',
@@ -106,15 +109,15 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     product: 'Data Security Manager (confidential-computing HSM)',
     firmwareRev: '4.42',
     fipsLevel: 3,
-    fipsStatus: 'active',
-    cmvpCertNumber: '#4139 (SDKMS Appliance)',
+    fipsStatus: 'historical',
+    cmvpCertNumber: '#4139 (SDKMS Appliance; FIPS 140-2, historical)',
     esvStatus: 'in-mip',
     pqcSupport: 'ML-KEM, ML-DSA via SGX-backed key objects (outside FIPS boundary)',
     platformBinding: 'Intel SGX-enabled appliance / cloud tenant',
     lastVerified: '2026-04-22',
     posture: 'yellow',
     notes:
-      'Confidential-computing architecture; product rebranded from SDKMS to DSM. CMVP cert #4139 covers the SDKMS Appliance (same hardware). PQC algorithms exposed via the API but not yet inside the CMVP boundary.',
+      'Confidential-computing architecture; product rebranded from SDKMS to DSM. CMVP cert #4139 covers the SDKMS Appliance (same hardware); it is a FIPS 140-2 certificate that CMVP moved to the Historical list at sunset (checked 2026-09-24). PQC algorithms exposed via the API but not yet inside the CMVP boundary.',
   },
   {
     id: 'yubihsm2',
@@ -124,14 +127,14 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     firmwareRev: '2.4.0',
     fipsLevel: 3,
     fipsStatus: 'active',
-    cmvpCertNumber: '#3916 (YubiHSM 2)',
+    cmvpCertNumber: '#5302 (YubiHSM 2; FIPS 140-3 L3). #3916 (FIPS 140-2) is historical',
     esvStatus: 'not-validated',
     pqcSupport: 'Ed25519, ECDSA, RSA; no PQC in FIPS boundary yet',
     platformBinding: 'YubiHSM 2 FIPS USB device',
     lastVerified: '2026-04-11',
     posture: 'yellow',
     notes:
-      'Compact FIPS 140-3 L3 device; PQC roadmap pending. Suitable for CA signing keys at branch scale.',
+      'Compact FIPS 140-3 L3 device (#5302, 3 Jun 2026; no PQC in its approved-algorithm list); PQC roadmap pending. Suitable for CA signing keys at branch scale.',
   },
   {
     id: 'aws-cloudhsm',
@@ -141,14 +144,14 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     firmwareRev: 'Cavium LiquidSecurity fw 3.4',
     fipsLevel: 3,
     fipsStatus: 'active',
-    cmvpCertNumber: '#5219 (Marvell NITROX III CNN35XX — underlying hw)',
+    cmvpCertNumber: null,
     esvStatus: 'active',
     pqcSupport: 'ML-KEM, ML-DSA on hsm2m instance family (outside FIPS boundary)',
     platformBinding: 'hsm2m.medium instance; region-bound',
     lastVerified: '2026-04-22',
     posture: 'yellow',
     notes:
-      'AWS CloudHSM uses Marvell NITROX III CNN35XX hardware; the FIPS cert belongs to Marvell (#5219), not Amazon. PQC algorithms available via PKCS#11 but pending IG-aligned re-validation.',
+      'AWS CloudHSM uses Marvell NITROX III CNN35XX hardware. The certificate number is not verified here: #5219, listed previously, is a JISA Softech NITROX III certificate, not Marvell or Amazon. PQC algorithms available via PKCS#11 but pending IG-aligned re-validation.',
   },
   {
     id: 'azure-dedicated-hsm',
@@ -159,14 +162,14 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     firmwareRev: '7.7.2',
     fipsLevel: 3,
     fipsStatus: 'historical',
-    cmvpCertNumber: '#3892 (historical)',
+    cmvpCertNumber: null,
     esvStatus: 'historical',
     pqcSupport: 'None in validated boundary',
     platformBinding: 'Luna 7 appliance hosted by Azure',
     lastVerified: '2026-03-30',
     posture: 'red',
     notes:
-      'Current Azure Dedicated HSM ships Luna 7.7.2 firmware whose CMVP cert is historical. Customers should request migration to Luna Network HSM 7.13.x for active-PQC coverage.',
+      'Current Azure Dedicated HSM ships Luna 7.7.2 firmware whose CMVP cert is historical (cert number not verified here; #3892, listed previously, is a Red Hat OpenSSH module). Customers should request migration to Luna Network HSM 7.13.x for active-PQC coverage.',
   },
   {
     id: 'gcp-cloud-hsm',
@@ -176,14 +179,14 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     firmwareRev: 'LS2 fw 3.4.5',
     fipsLevel: 3,
     fipsStatus: 'active',
-    cmvpCertNumber: '#5220 (Marvell LS2 HSM — underlying hw)',
+    cmvpCertNumber: '#4703 / #5502 (Marvell LS2 HSM Family; confirm with Google which applies)',
     esvStatus: 'in-mip',
     pqcSupport: 'No PQC in FIPS boundary; roadmap disclosed 2026H2',
     platformBinding: 'Marvell LiquidSecurity 2 HSM',
     lastVerified: '2026-04-22',
     posture: 'yellow',
     notes:
-      'GCP Cloud HSM uses Marvell LS2 (LiquidSecurity 2) hardware; the FIPS cert belongs to Marvell (#5220), not Google. PQC integration pending.',
+      'GCP Cloud HSM uses Marvell LS2 (LiquidSecurity 2) hardware; Marvell\u2019s LS2 certificates are #4703 and #5502, neither listing a PQC algorithm as approved (#5220 is a JISA Softech LS2 certificate). PQC integration pending.',
   },
 ]
 
