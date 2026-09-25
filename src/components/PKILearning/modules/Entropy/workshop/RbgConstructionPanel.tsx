@@ -16,7 +16,7 @@ const RBG_TYPES = [
     name: 'RBG2 (DRBG + Entropy)',
     title: 'DRBG Seeded by Entropy Source',
     description:
-      'The most common construction. Combined entropy sources seed a DRBG (CTR_DRBG, HMAC_DRBG, Hash_DRBG, or XOF_DRBG). The DRBG stretches the seed into an arbitrary-length random stream. Reseeding refreshes entropy periodically.',
+      'The most common construction. Combined entropy sources seed a DRBG (one of the SP 800-90A Rev. 1 mechanisms: CTR_DRBG, HMAC_DRBG or Hash_DRBG). The DRBG stretches the seed into an arbitrary-length random stream. Reseeding refreshes entropy periodically.',
     section: 'SP 800-90C §5',
     flow: 'Noise Sources → Combine → Condition → DRBG Seed → DRBG → Output',
   },
@@ -71,6 +71,12 @@ export const RbgConstructionPanel = () => {
             </span>{' '}
             component of these architectures. A complete RBG construction would additionally include
             an SP 800-90A DRBG for pseudorandom bit generation.
+          </p>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            SP 800-90A Rev. 1 is the current final DRBG recommendation. NIST&apos;s SP 800-90A Rev.
+            2 page is a pre-draft call for comments (published 2025-09-04, comments closed
+            2025-11-04) announcing a planned SHAKE/XOF-based DRBG; no draft text exists, so no such
+            mechanism is specified yet (status checked 2026-09-24).
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {RBG_TYPES.map((rbg) => (

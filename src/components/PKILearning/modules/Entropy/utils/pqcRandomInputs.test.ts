@@ -8,7 +8,12 @@
  * test must fail until someone re-reads the standard.
  */
 import { describe, it, expect } from 'vitest'
+import { createElement } from 'react'
+import { render, screen, within } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { PQC_RANDOM_INPUTS, PQC_ERRATA_STATE, type PqcRandomInput } from './pqcRandomInputs'
+import { EntropyIntroduction } from '../components/EntropyIntroduction'
+import { QRNGDemo } from '../workshop/QRNGDemo'
 
 function row(id: string): PqcRandomInput {
   const r = PQC_RANDOM_INPUTS.find((x) => x.id === id)
@@ -130,5 +135,55 @@ describe('PQC random-input matrix (FIPS 203/204/205, checked 2026-09-24)', () =>
     ])
     expect(PQC_ERRATA_STATE.entries[0].state).toContain('2025-11-17')
     expect(PQC_ERRATA_STATE.entries[1].state).toContain('2026-07-31')
+  })
+})
+
+/**
+ * Claim-consistency checks on the rendered Learn text and the QRNG tool
+ * (plan §10.2): the panel renders from the canonical data, and the removed
+ * claims (F1, F7–F12) do not come back.
+ */
+describe('Entropy Learn and QRNG surfaces: removed claims stay removed', () => {
+  function renderIntro() {
+    return render(
+      createElement(
+        MemoryRouter,
+        null,
+        createElement(EntropyIntroduction, { onNavigateToWorkshop: () => {} })
+      )
+    )
+  }
+
+  it('renders one matrix row per canonical PQC_RANDOM_INPUTS entry', () => {
+    renderIntro()
+    const panel = screen.getByTestId('pqc-random-inputs')
+    const bodyRows = within(panel).getAllByRole('row').slice(1)
+    expect(bodyRows).toHaveLength(PQC_RANDOM_INPUTS.length)
+    for (const r of PQC_RANDOM_INPUTS) {
+      expect(within(panel).getByText(r.operation)).toBeTruthy()
+    }
+  })
+
+  it('Learn text drops F1, F7, F8 and F9 wording', () => {
+    const { container } = renderIntro()
+    const text = container.textContent ?? ''
+    expect(text).not.toMatch(/full entropy/i)
+    expect(text).not.toMatch(/XOF_DRBG/)
+    expect(text).not.toMatch(/synergiz/i)
+    expect(text).not.toMatch(/~\s*6 weeks/)
+    expect(text).not.toMatch(/guaranteed by quantum physics/i)
+    expect(text).not.toMatch(/Category 5/)
+    expect(text).toContain('Pre-draft call for comments')
+  })
+
+  it('QRNG tool states it is a simulation and makes no uncited certification claim', () => {
+    const { container } = render(createElement(QRNGDemo))
+    const text = container.textContent ?? ''
+    expect(text).toContain('Simulation — no QRNG hardware involved.')
+    expect(screen.getByTestId('qrng-proves-panel')).toBeTruthy()
+    expect(text).not.toMatch(/FIPS 140-2/)
+    expect(text).not.toMatch(/AIS 31 certified/i)
+    expect(text).not.toMatch(/SP 800-90B certifies/i)
+    expect(text).not.toMatch(/guaranteed by quantum physics/i)
   })
 })
