@@ -9,7 +9,7 @@ import {
   loadInputs,
   renderOutputs,
 } from './generate-coverage-matrix'
-import { buildCoverageMatrix, ENGINES } from '../src/data/validation/coverageModel'
+import { buildCoverageMatrix, caseKeyOf, ENGINES } from '../src/data/validation/coverageModel'
 import { TEST_REGISTRY } from '../src/data/validation/testRegistry'
 import { VALIDATION_DISCLAIMER } from '../src/data/validationDisclaimer'
 
@@ -73,8 +73,13 @@ describe('generate-coverage-matrix (committed inputs)', () => {
     }
   })
 
-  it('does not register katRunner kinds observed to fail on the engine that runs them', () => {
+  it('registers the katRunner kinds fixed 2026-09-24, each with a recorded pass (katRunner.engines.local.test.ts)', () => {
     const ids = TEST_REGISTRY.map((t) => t.id)
+    const recorded = new Map(
+      (inputs.runResults ?? [])
+        .filter((r) => r.registryCase.startsWith('kat.'))
+        .map((r) => [`${r.registryCase}|${r.engine}`, r.status])
+    )
     for (const k of [
       'aescbc-decrypt',
       'hmac-verify',
@@ -82,7 +87,11 @@ describe('generate-coverage-matrix (committed inputs)', () => {
       'pbkdf2-derive',
       'aes-kwp-wrap',
     ]) {
-      expect(ids).not.toContain(`kat.${k}`)
+      expect(ids).toContain(`kat.${k}`)
+      const t = TEST_REGISTRY.find((x) => x.id === `kat.${k}`)!
+      for (const c of t.cases) {
+        expect(recorded.get(`kat.${k}#${caseKeyOf(c)}|rust`), `kat.${k}`).toBe('pass')
+      }
     }
   })
 
