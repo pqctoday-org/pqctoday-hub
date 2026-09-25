@@ -232,7 +232,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     architect:
       'Operate walks "1. Initialize HSM", "2. Create Token", "3. Open Session & Login", then a Primitives rail — KEM, Symmetric Encrypt, Key Wrap / Unwrap, Hashing, Sign & Verify, Key Agreement, KDF; Inspect › Keys lists what the token holds.',
     researcher:
-      'Build › Validation is the "Cryptographic Validation Workbench": selected public NIST ACVP-Server reference samples, published-standard KATs, oracle comparisons and functional round-trips, each row tagged with its evidence tier; Build › Conformance is a "PKCS#11 v3.2 Conformance Runner"; the WIP badge opens the test methodology.',
+      'Build › Validation is the "Cryptographic Validation Workbench": NIST ACVP-Server reference samples, standard KATs, oracle and functional tests, each row tagged with its evidence tier; Build › Conformance is a "PKCS#11 v3.2 Conformance Runner"; the WIP badge opens the methodology.',
     ops: 'The Learn lessons "The Cryptoki model — slots, tokens, sessions, login" and "Mechanism discovery" cover token setup; Inspect › Mechanisms\' "Query Slot" enumerates what the token supports, and the Log filters by origin.',
     curious:
       'Open the Learn tab, pick a lesson and press "Run all" to watch each step run; the "New to PKCS#11?" strip explains the terms on hover, and the engine is preset to Rust.',
