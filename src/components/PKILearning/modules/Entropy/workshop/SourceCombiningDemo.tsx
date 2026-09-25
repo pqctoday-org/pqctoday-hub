@@ -1,7 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback, useEffect } from 'react'
+//
+// Combining Sources workshop — Entropy remediation plan P0.3 and P0.5
+// (2026-09-24). Health tests now run on the RAW source samples, before
+// conditioning (SP 800-90B §4.3 item 6); diagnostics on the final output are
+// labelled "demonstration only — not entropy validation"; HKDF is not presented
+// as a DRBG or an SP 800-90C construction; and the old "remains secure"
+// conclusion is replaced by an assessment driven by stated assumptions that
+// can end in "not enough evidence" or "construction is unsafe".
+import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import { Link } from 'react-router'
-import { Combine, Play, ArrowRight, Shield, Loader2, ExternalLink, BookOpen } from 'lucide-react'
+import {
+  Combine,
+  Play,
+  ArrowRight,
+  Shield,
+  Loader2,
+  ExternalLink,
+  BookOpen,
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Scale,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/CopyButton'
 import { PlaygroundNextStep } from '@/components/Playground/components/PlaygroundNextStep'
@@ -10,9 +31,13 @@ import { getRandomBytes } from '@/utils/webCrypto'
 import { hkdfExpand } from '@/utils/webCrypto'
 import { useHSM } from '@/hooks/useHSM'
 import { SOFTHSM_PRODUCT_VERSION } from '@/wasm/softhsm'
-import { runAllTests, type TestResult } from '../utils/entropyTests'
-import { formatHex, binnedFrequency } from '../utils/outputFormatters'
-import { QRNG_SAMPLE_64 } from '../utils/entropyConstants'
+import {
+  runHealthTests,
+  runVisualizationChecks,
+  SP800_90B_STARTUP_SAMPLES,
+  type TestResult,
+} from '../utils/entropyTests'
+import { formatHex, binnedFrequency, xorBytes } from '../utils/outputFormatters'
 import {
   combine,
   condition,
@@ -26,9 +51,77 @@ import {
   type CombinationMode,
   type ConditioningMode,
 } from './sourceCombiningCrypto'
+import {
+  assessConstruction,
+  assessRawSource,
+  COUNTEREXAMPLES,
+  creditedEntropyBits,
+  DECLARED_MIN_ENTROPY_PER_SAMPLE,
+  fullEntropyConditioningRequirement,
+  instantiateEntropyRequirement,
+  SAMPLES_PER_REQUEST,
+  simulateRawSamples,
+  TARGET_SECURITY_STRENGTH,
+  VERDICT_LABELS,
+  type AdversaryControl,
+  type CounterexampleId,
+  type FailureHandling,
+  type Independence,
+  type InputFreshness,
+  type RawSourceCondition,
+  type RawSourceHealth,
+  type RbgClass,
+  type SourceValidation,
+} from './sourceAssessment'
 import { RbgConstructionPanel } from './RbgConstructionPanel'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
+
+const TOTAL_SAMPLES = SP800_90B_STARTUP_SAMPLES + SAMPLES_PER_REQUEST
+const REQUIRED_ENTROPY = instantiateEntropyRequirement(TARGET_SECURITY_STRENGTH)
+const FULL_ENTROPY_256 = fullEntropyConditioningRequirement(256)
+
+const CONDITION_ITEMS = [
+  { id: 'healthy', label: 'Healthy (simulated)' },
+  { id: 'stuck', label: 'Stuck at 0x00' },
+  { id: 'biased', label: 'Biased toward 0x5A' },
+]
+
+const INDEPENDENCE_ITEMS = [
+  { id: 'independent', label: 'Independent (separate security boundaries)' },
+  { id: 'correlated', label: 'Correlated / shared boundary' },
+  { id: 'unknown', label: 'Unknown' },
+]
+const ADVERSARY_ITEMS = [
+  { id: 'none', label: 'No control' },
+  { id: 'observe', label: 'Can observe its output' },
+  { id: 'choose', label: 'Can choose its output' },
+  { id: 'unknown', label: 'Unknown' },
+]
+const FAILURE_ITEMS = [
+  { id: 'detected-excluded', label: 'Detected by health tests; failed source excluded' },
+  { id: 'undetected', label: 'Not detected' },
+  { id: 'unknown', label: 'Unknown' },
+]
+const VALIDATION_ITEMS = [
+  { id: 'validated', label: 'Validated (Entropy Validation Certificate)' },
+  { id: 'not-validated', label: 'Not validated' },
+  { id: 'unknown', label: 'Unknown' },
+]
+const FRESHNESS_ITEMS = [
+  { id: 'fresh', label: 'Fresh samples for every request' },
+  { id: 'repeated', label: 'Same input reused' },
+  { id: 'stale-remote', label: 'Stale data from a remote service' },
+]
+const CLASS_ITEMS = [
+  { id: 'RBG1', label: 'RBG1' },
+  { id: 'RBG2(P)', label: 'RBG2(P)' },
+  { id: 'RBG2(NP)', label: 'RBG2(NP)' },
+  { id: 'RBG3(XOR)', label: 'RBG3(XOR)' },
+  { id: 'RBG3(RS)', label: 'RBG3(RS)' },
+  { id: 'RBGC', label: 'RBGC' },
+  { id: 'none', label: 'None named' },
+]
 
 /** Hex display for a labelled byte array */
 const HexDisplay: React.FC<{ label: string; data: Uint8Array }> = ({ label, data }) => (
@@ -47,14 +140,18 @@ const HexDisplay: React.FC<{ label: string; data: Uint8Array }> = ({ label, data
   </div>
 )
 
-/** Test result card */
-const TestCard: React.FC<{ result: TestResult }> = ({ result }) => (
+/** One check result, with the group-appropriate wording and its limit. */
+const ResultCard: React.FC<{ result: TestResult; okLabel: string; badLabel: string }> = ({
+  result,
+  okLabel,
+  badLabel,
+}) => (
   <div
     className={`glass-panel p-3 space-y-1 border ${
       result.passed ? 'border-success' : 'border-destructive'
     }`}
   >
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between gap-2">
       <span className="text-sm font-semibold text-foreground">{result.name}</span>
       <span
         className={`text-xs font-medium px-2 py-0.5 rounded-full ${
@@ -63,11 +160,14 @@ const TestCard: React.FC<{ result: TestResult }> = ({ result }) => (
             : 'bg-status-error/20 text-status-error'
         }`}
       >
-        {result.passed ? 'PASS' : 'FAIL'}
+        {result.passed ? okLabel : badLabel}
       </span>
     </div>
     <p className="text-xs text-muted-foreground">{result.description}</p>
     <p className="text-xs font-mono text-foreground">{result.detail}</p>
+    <p className="text-[10px] text-muted-foreground border-t border-border pt-1">
+      <strong>Limit:</strong> {result.sampleLimit}
+    </p>
   </div>
 )
 
@@ -97,21 +197,94 @@ const FrequencyHistogram: React.FC<{ data: Uint8Array }> = ({ data }) => {
   )
 }
 
+/** Health-test block for one simulated source. */
+const SourceHealthPanel: React.FC<{
+  name: string
+  health: RawSourceHealth
+  onDemand: TestResult[] | null
+  onRunOnDemand: () => void
+}> = ({ name, health, onDemand, onRunOnDemand }) => (
+  <div className="space-y-3 rounded-lg border border-border p-3">
+    <div className="flex items-center justify-between gap-2 flex-wrap">
+      <p className="text-sm font-semibold text-foreground">{name}</p>
+      {health.failed ? (
+        <span className="flex items-center gap-1 text-xs font-bold text-status-error">
+          <XCircle size={14} /> Failure signalled — samples excluded
+        </span>
+      ) : (
+        <span className="flex items-center gap-1 text-xs font-bold text-status-success">
+          <CheckCircle size={14} /> No failure signalled
+        </span>
+      )}
+    </div>
+    <p className="text-xs font-medium text-muted-foreground">
+      Startup test — samples 1–{SP800_90B_STARTUP_SAMPLES} (SP 800-90B §4.3 item 4)
+    </p>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+      {health.startup.map((r) => (
+        <ResultCard
+          key={`s-${r.name}`}
+          result={r}
+          okLabel="No failure"
+          badLabel="Failure signalled"
+        />
+      ))}
+    </div>
+    <p className="text-xs font-medium text-muted-foreground">
+      Continuous tests — every sample produced so far ({TOTAL_SAMPLES})
+    </p>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+      {health.continuous.map((r) => (
+        <ResultCard
+          key={`c-${r.name}`}
+          result={r}
+          okLabel="No failure"
+          badLabel="Failure signalled"
+        />
+      ))}
+    </div>
+    <div className="flex items-center gap-2 flex-wrap">
+      <Button variant="outline" size="sm" onClick={onRunOnDemand}>
+        <Activity size={14} className="mr-1" /> Run on-demand test (§4.3 item 5)
+      </Button>
+      {onDemand && (
+        <span className="text-xs text-muted-foreground">
+          On-demand rerun on {SP800_90B_STARTUP_SAMPLES} fresh samples:{' '}
+          {onDemand.every((r) => r.passed) ? 'no failure signalled' : 'failure signalled'}
+        </span>
+      )}
+    </div>
+  </div>
+)
+
 export const SourceCombiningDemo: React.FC = () => {
-  const [sourceA, setSourceA] = useState<Uint8Array | null>(null)
-  const [sourceB] = useState<Uint8Array>(() => QRNG_SAMPLE_64.slice(0, 32))
+  // Raw sources
+  const [conditionA, setConditionA] = useState<RawSourceCondition>('healthy')
+  const [conditionB, setConditionB] = useState<RawSourceCondition>('healthy')
+  const [rawA, setRawA] = useState<Uint8Array | null>(null)
+  const [rawB, setRawB] = useState<Uint8Array | null>(null)
+  const [onDemandA, setOnDemandA] = useState<TestResult[] | null>(null)
+  const [onDemandB, setOnDemandB] = useState<TestResult[] | null>(null)
+  /** Counterexample switch: feed a failed source's samples to the conditioner anyway. */
+  const [useFailedSource, setUseFailedSource] = useState(false)
+
+  // Pipeline
   const [combinedResult, setCombinedResult] = useState<Uint8Array | null>(null)
   const [conditionedResult, setConditionedResult] = useState<Uint8Array | null>(null)
   const [expandedResult, setExpandedResult] = useState<Uint8Array | null>(null)
-  const [testResults, setTestResults] = useState<TestResult[] | null>(null)
-  const [pipelineStep, setPipelineStep] = useState(0)
-  const [showCompromiseDemo, setShowCompromiseDemo] = useState(false)
-  const [compromiseResults, setCompromiseResults] = useState<TestResult[] | null>(null)
-  const [compromiseExpanded, setCompromiseExpanded] = useState<Uint8Array | null>(null)
+  const [diagnostics, setDiagnostics] = useState<TestResult[] | null>(null)
   const [isRunning, setIsRunning] = useState(false)
-  const [compromiseLoading, setCompromiseLoading] = useState(false)
 
-  // Mode selection — defaults are NIST-compliant (90C §3.1 concat, 90A §10.3.1 Hash_df)
+  // Assumptions (P0.5)
+  const [independence, setIndependence] = useState<Independence>('unknown')
+  const [adversaryControl, setAdversaryControl] = useState<AdversaryControl>('unknown')
+  const [failureHandling, setFailureHandling] = useState<FailureHandling>('detected-excluded')
+  const [sourceValidation, setSourceValidation] = useState<SourceValidation>('not-validated')
+  const [inputFreshness, setInputFreshness] = useState<InputFreshness>('fresh')
+  const [rbgClass, setRbgClass] = useState<RbgClass>('none')
+  const [activeCounterexample, setActiveCounterexample] = useState<CounterexampleId | null>(null)
+
+  // Mode selection — defaults: 90C §3.1 concatenation, 90A §10.3.1 Hash_df
   const [combinationMode, setCombinationMode] = useState<CombinationMode>('concat')
   const [conditioningMode, setConditioningMode] = useState<ConditioningMode>('hash-df')
 
@@ -125,62 +298,91 @@ export const SourceCombiningDemo: React.FC = () => {
 
   const hsmReady = hsmPhase === 'session_open'
 
-  /** Reset pipeline from a given step onwards */
-  const resetFrom = useCallback((step: number) => {
-    if (step <= 1) {
-      setCombinedResult(null)
-    }
-    if (step <= 2) {
-      setConditionedResult(null)
-    }
-    if (step <= 3) {
-      setExpandedResult(null)
-    }
-    setTestResults(null)
-    setShowCompromiseDemo(false)
-    setCompromiseResults(null)
-    setCompromiseExpanded(null)
+  const healthA = useMemo(() => (rawA ? assessRawSource(rawA) : null), [rawA])
+  const healthB = useMemo(() => (rawB ? assessRawSource(rawB) : null), [rawB])
+
+  /** The request samples (after the startup block) each source contributes. */
+  const requestA = useMemo(() => (rawA ? rawA.slice(SP800_90B_STARTUP_SAMPLES) : null), [rawA])
+  const requestB = useMemo(() => (rawB ? rawB.slice(SP800_90B_STARTUP_SAMPLES) : null), [rawB])
+
+  const includeA = !!healthA && (!healthA.failed || useFailedSource)
+  const includeB = !!healthB && (!healthB.failed || useFailedSource)
+  const failedSourceOutputUsed = (includeA && !!healthA?.failed) || (includeB && !!healthB?.failed)
+
+  const credited =
+    healthA && healthB
+      ? creditedEntropyBits([
+          { name: 'A', failed: healthA.failed, samplesUsed: SAMPLES_PER_REQUEST },
+          { name: 'B', failed: healthB.failed, samplesUsed: SAMPLES_PER_REQUEST },
+        ])
+      : 0
+
+  const resetPipeline = useCallback(() => {
+    setCombinedResult(null)
+    setConditionedResult(null)
+    setExpandedResult(null)
+    setDiagnostics(null)
   }, [])
 
-  const handleGenerateSourceA = useCallback(() => {
-    const bytes = getRandomBytes(32)
-    setSourceA(bytes)
-    setPipelineStep(1)
-    resetFrom(1)
-  }, [resetFrom])
+  const collectRaw = useCallback(
+    (a: RawSourceCondition, b: RawSourceCondition) => {
+      setRawA(simulateRawSamples(a, TOTAL_SAMPLES, getRandomBytes))
+      setRawB(simulateRawSamples(b, TOTAL_SAMPLES, getRandomBytes))
+      setOnDemandA(null)
+      setOnDemandB(null)
+      resetPipeline()
+    },
+    [resetPipeline]
+  )
+
+  const runOnDemand = useCallback(
+    (which: 'A' | 'B') => {
+      const cond = which === 'A' ? conditionA : conditionB
+      const fresh = simulateRawSamples(cond, SP800_90B_STARTUP_SAMPLES, getRandomBytes)
+      const res = runHealthTests(fresh, DECLARED_MIN_ENTROPY_PER_SAMPLE)
+      if (which === 'A') setOnDemandA(res)
+      else setOnDemandB(res)
+    },
+    [conditionA, conditionB]
+  )
+
+  const includedInputs = useMemo(() => {
+    const out: Uint8Array[] = []
+    if (includeA && requestA) out.push(requestA)
+    if (includeB && requestB) out.push(requestB)
+    return out
+  }, [includeA, includeB, requestA, requestB])
 
   const handleCombine = useCallback(() => {
-    if (!sourceA) return
-    if (combinationNeedsHsm(combinationMode) && !hsmReady) return
-    const result = combine(
-      combinationMode,
-      moduleRef.current,
-      hSessionRef.current,
-      sourceA,
-      sourceB
-    )
-    setCombinedResult(result)
-    setPipelineStep(2)
-    resetFrom(2)
-  }, [sourceA, sourceB, combinationMode, hsmReady, moduleRef, hSessionRef, resetFrom])
+    if (includedInputs.length === 0) return
+    if (includedInputs.length === 1) {
+      setCombinedResult(includedInputs[0])
+    } else {
+      if (combinationNeedsHsm(combinationMode) && !hsmReady) return
+      setCombinedResult(
+        combine(
+          combinationMode,
+          moduleRef.current,
+          hSessionRef.current,
+          includedInputs[0],
+          includedInputs[1]
+        )
+      )
+    }
+    setConditionedResult(null)
+    setExpandedResult(null)
+    setDiagnostics(null)
+  }, [includedInputs, combinationMode, hsmReady, moduleRef, hSessionRef])
 
   const handleCondition = useCallback(() => {
     if (!combinedResult || !hsmReady) return
     setIsRunning(true)
     try {
-      const result = condition(
-        conditioningMode,
-        moduleRef.current!,
-        hSessionRef.current,
-        combinedResult
+      setConditionedResult(
+        condition(conditioningMode, moduleRef.current!, hSessionRef.current, combinedResult)
       )
-      setConditionedResult(result)
-      setPipelineStep(3)
       setExpandedResult(null)
-      setTestResults(null)
-      setShowCompromiseDemo(false)
-      setCompromiseResults(null)
-      setCompromiseExpanded(null)
+      setDiagnostics(null)
     } finally {
       setIsRunning(false)
     }
@@ -191,61 +393,62 @@ export const SourceCombiningDemo: React.FC = () => {
     setIsRunning(true)
     try {
       const info = new TextEncoder().encode('entropy-demo')
-      const expanded = await hkdfExpand(conditionedResult, info, 64, 'SHA-256')
-      setExpandedResult(expanded)
-      setPipelineStep(4)
-      setTestResults(null)
-      setShowCompromiseDemo(false)
-      setCompromiseResults(null)
-      setCompromiseExpanded(null)
+      setExpandedResult(await hkdfExpand(conditionedResult, info, 64, 'SHA-256'))
+      setDiagnostics(null)
     } finally {
       setIsRunning(false)
     }
   }, [conditionedResult])
 
-  const handleRunTests = useCallback(() => {
-    if (!expandedResult) return
-    const results = runAllTests(expandedResult)
-    setTestResults(results)
-  }, [expandedResult])
+  const applyCounterexample = useCallback(
+    (id: CounterexampleId) => {
+      const cx = COUNTEREXAMPLES.find((c) => c.id === id)
+      if (!cx) return
+      setActiveCounterexample(id)
+      setConditionA(cx.sourceA)
+      setConditionB('healthy')
+      setUseFailedSource(cx.useFailedSource)
+      setIndependence(cx.assumptions.independence)
+      setAdversaryControl(cx.assumptions.adversaryControl)
+      setFailureHandling(cx.assumptions.failureHandling)
+      setSourceValidation(cx.assumptions.sourceValidation)
+      setInputFreshness(cx.assumptions.inputFreshness)
+      setRbgClass(cx.assumptions.rbgClass)
+      if (id === 'malicious-cancellation') setCombinationMode('xor')
+      collectRaw(cx.sourceA, 'healthy')
+    },
+    [collectRaw]
+  )
 
-  const handleCompromiseDemo = useCallback(async () => {
-    if (!hsmReady) return
-    setCompromiseLoading(true)
-    try {
-      const compromisedA = new Uint8Array(32).fill(0)
-      const compromisedCombined = combine(
-        combinationMode,
-        moduleRef.current,
-        hSessionRef.current,
-        compromisedA,
-        sourceB
-      )
-      const conditioned = condition(
-        conditioningMode,
-        moduleRef.current!,
-        hSessionRef.current,
-        compromisedCombined
-      )
-      const info = new TextEncoder().encode('entropy-demo')
-      const expanded = await hkdfExpand(conditioned, info, 64, 'SHA-256')
-      setCompromiseExpanded(expanded)
-      const results = runAllTests(expanded)
-      setCompromiseResults(results)
-      setShowCompromiseDemo(true)
-    } finally {
-      setCompromiseLoading(false)
-    }
-  }, [sourceB, combinationMode, conditioningMode, hsmReady, moduleRef, hSessionRef])
-
-  const stepComplete = (step: number) => pipelineStep >= step
-  const stepActive = (step: number) => pipelineStep === step
+  const assessment = healthA
+    ? assessConstruction({
+        independence,
+        adversaryControl,
+        failureHandling,
+        sourceValidation,
+        inputFreshness,
+        rbgClass,
+        creditedEntropyBits: credited,
+        failedSourceOutputUsed,
+      })
+    : null
 
   const combineLabel = COMBINATION_LABELS[combinationMode]
   const conditionLabel = CONDITIONING_LABELS[conditioningMode]
-
-  const combineDisabled = !sourceA || (combinationNeedsHsm(combinationMode) && !hsmReady)
+  const combineDisabled =
+    includedInputs.length === 0 ||
+    (includedInputs.length === 2 && combinationNeedsHsm(combinationMode) && !hsmReady)
   const conditionDisabled = !combinedResult || !hsmReady
+
+  const PIPELINE = [
+    'Noise source',
+    'Raw samples',
+    'Health tests (SP 800-90B §4.4)',
+    'Conditioning (optional)',
+    'Entropy-source output',
+    'SP 800-90C construction + DRBG',
+    'Consumer',
+  ]
 
   return (
     <div className="space-y-6">
@@ -255,8 +458,8 @@ export const SourceCombiningDemo: React.FC = () => {
         <div>
           <h2 className="text-lg font-semibold text-foreground">Source Combining Pipeline</h2>
           <p className="text-sm text-muted-foreground">
-            SP 800-90 series source assembly and conditioning. Default flow follows NIST standards
-            (90C §3.1 concatenation + 90A §10.3.1 Hash_df). Powered by{' '}
+            Where health tests, conditioning and a combined construction sit — with two simulated
+            raw sources. Hashing, HMAC, CMAC and Hash_df run in{' '}
             <a
               href="https://github.com/pqctoday-org/pqctoday-hsm"
               target="_blank"
@@ -273,292 +476,455 @@ export const SourceCombiningDemo: React.FC = () => {
             ).
           </p>
           <p className="text-sm text-muted-foreground mt-1">
-            This pipeline isn&rsquo;t a classical-only concern: ML-KEM and ML-DSA key generation
-            both depend on exactly this kind of validated, conditioned entropy. A weak or
-            compromised entropy source undermines a post-quantum key just as it would an RSA or
+            ML-KEM and ML-DSA key generation consume random seeds. If the entropy behind the RBG is
+            weak or a failed source goes unnoticed, a post-quantum key is as guessable as an RSA or
             ECDSA one.
           </p>
         </div>
       </div>
 
-      {/* Pipeline Configuration */}
-      <div className="glass-panel p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">Pipeline Configuration</h3>
-        <p className="text-xs text-muted-foreground">
-          Defaults follow NIST SP 800-90 series. Options marked &quot;educational&quot; are
-          non-standard alternatives for comparison.
-        </p>
-        <div className="flex flex-wrap gap-4 min-h-[60px]">
-          {!sourceA && (
-            <div className="text-sm text-muted-foreground italic flex items-center">
-              Generate Source A to unlock configuration options.
-            </div>
-          )}
-          {sourceA && (
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-foreground">Combination method (step 2):</p>
-              <FilterDropdown
-                items={COMBINATION_MODES}
-                selectedId={combinationMode}
-                onSelect={(id) => {
-                  setCombinationMode(id as CombinationMode)
-                  resetFrom(1)
-                }}
-                label="Assembly"
-                noContainer
-                variant="ghost"
-              />
-            </div>
-          )}
-          {combinedResult && (
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-foreground">Conditioning method (step 3):</p>
-              <FilterDropdown
-                items={CONDITIONING_MODES}
-                selectedId={conditioningMode}
-                onSelect={(id) => {
-                  setConditioningMode(id as ConditioningMode)
-                  resetFrom(2)
-                }}
-                label="Conditioning"
-                noContainer
-                variant="ghost"
-              />
-            </div>
-          )}
+      {/* Pipeline */}
+      <div className="glass-panel p-4 space-y-2">
+        <p className="text-xs font-medium text-muted-foreground">Where each check belongs</p>
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          {PIPELINE.map((label, i) => (
+            <React.Fragment key={label}>
+              <span
+                className={`rounded-md border px-2.5 py-1 font-medium ${
+                  i === 2
+                    ? 'border-primary text-primary bg-primary/10'
+                    : 'border-border text-muted-foreground'
+                }`}
+              >
+                {label}
+              </span>
+              {i < PIPELINE.length - 1 && (
+                <ArrowRight size={12} className="text-muted-foreground shrink-0" />
+              )}
+            </React.Fragment>
+          ))}
         </div>
-        {hsmPhase === 'loading' && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Loader2 size={12} className="animate-spin" />
-            Loading SoftHSMv3 WASM...
-          </div>
-        )}
-        {hsmReady && (
-          <p className="text-xs text-status-success">
-            SoftHSMv3 v{SOFTHSM_PRODUCT_VERSION} PKCS#11 session active
-          </p>
-        )}
-        {hsmError && <ErrorAlert message={translateCryptoError(`HSM error: ${hsmError}`)} />}
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          SP 800-90B §4.3 item 6: &ldquo;Health tests shall be performed on the noise source samples
+          before any conditioning is done.&rdquo; This workshop simulates the first five boxes. Its
+          last stage is an HKDF expansion used as a stand-in; it is not an SP 800-90A DRBG, and
+          nothing here is an SP 800-90C construction.
+        </p>
       </div>
 
       {/* RBG Construction Types */}
       <RbgConstructionPanel />
 
-      {/* Pipeline Visualization */}
-      <div className="glass-panel p-4">
-        <p className="text-xs font-medium text-muted-foreground mb-3">Pipeline Flow</p>
-        <div className="flex flex-col gap-2">
-          {/* Source inputs */}
-          <div className="flex items-center gap-2 text-xs">
-            <div
-              className={`rounded-md border px-3 py-1.5 font-medium transition-colors ${
-                stepComplete(1)
-                  ? 'border-success text-status-success bg-status-success/10'
-                  : 'border-border text-muted-foreground'
-              }`}
-            >
-              Source A (CSPRNG)
-            </div>
-            <span className="text-muted-foreground">+</span>
-            <div className="rounded-md border border-success text-status-success bg-status-success/10 px-3 py-1.5 font-medium">
-              Source B (QRNG)
-            </div>
-          </div>
-
-          {/* Arrow down */}
-          <div className="flex items-center pl-6">
-            <ArrowRight size={14} className="text-muted-foreground rotate-90" />
-          </div>
-
-          {/* Processing steps */}
-          <div className="flex flex-wrap items-center gap-2">
-            {[combineLabel, conditionLabel, 'Expand (HKDF)'].map((label, i) => {
-              const stepNum = i + 2
-              return (
-                <React.Fragment key={label}>
-                  <div
-                    className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
-                      stepComplete(stepNum)
-                        ? 'border-success text-status-success bg-status-success/10'
-                        : stepActive(stepNum - 1) || (stepNum === 2 && pipelineStep >= 1)
-                          ? 'border-primary text-primary bg-primary/10'
-                          : 'border-border text-muted-foreground'
-                    }`}
-                  >
-                    {label}
-                  </div>
-                  {i < 2 && (
-                    <ArrowRight
-                      size={14}
-                      className={`flex-shrink-0 ${
-                        stepComplete(stepNum) ? 'text-status-success' : 'text-muted-foreground'
-                      }`}
-                    />
-                  )}
-                </React.Fragment>
-              )
-            })}
-            <ArrowRight
-              size={14}
-              className={`flex-shrink-0 ${
-                stepComplete(4) ? 'text-status-success' : 'text-muted-foreground'
-              }`}
-            />
-            <div
-              className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
-                stepComplete(4)
-                  ? 'border-success text-status-success bg-status-success/10'
-                  : 'border-border text-muted-foreground'
-              }`}
-            >
-              Output
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Step 1: Generate Sources */}
+      {/* Step 1: Raw samples */}
       <div className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-semibold text-foreground">
-          Step 1: Entropy Sources (SP 800-90B)
+          Step 1: Raw noise-source samples (simulated)
         </h3>
-        <div className="flex flex-wrap items-center gap-3">
-          <Button variant="gradient" onClick={handleGenerateSourceA}>
-            <Play size={16} className="mr-2" />
-            Generate Source A (CSPRNG)
-          </Button>
-          <span className="text-xs text-muted-foreground">
-            Source A is browser CSPRNG output (crypto.getRandomValues) — already-conditioned
-            pseudorandom data, not a raw entropy sample. Source B (QRNG) is a pre-loaded reference
-            sample representing what a validated SP 800-90B noise source would look like. Neither is
-            a live hardware entropy source; this demo illustrates the source-combining pipeline, not
-            a certified NRBG.
-          </span>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Each source produces {TOTAL_SAMPLES} raw 8-bit samples: {SP800_90B_STARTUP_SAMPLES} for
+          the startup test and {SAMPLES_PER_REQUEST} for this entropy request. A
+          &ldquo;healthy&rdquo; source is browser CSPRNG bytes standing in for a physical noise
+          source. Both sources are declared to carry H = {DECLARED_MIN_ENTROPY_PER_SAMPLE}{' '}
+          bits/sample — an assumption, not a measurement — and that value sets the health-test
+          cutoffs.
+        </p>
+        <div className="flex flex-wrap gap-4">
+          <div className="space-y-1">
+            <p className="text-xs font-medium text-foreground">Source A condition</p>
+            <FilterDropdown
+              items={CONDITION_ITEMS}
+              selectedId={conditionA}
+              onSelect={(id) => {
+                setConditionA(id as RawSourceCondition)
+                setActiveCounterexample(null)
+              }}
+              label="Source A"
+              noContainer
+              variant="ghost"
+            />
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs font-medium text-foreground">Source B condition</p>
+            <FilterDropdown
+              items={CONDITION_ITEMS}
+              selectedId={conditionB}
+              onSelect={(id) => {
+                setConditionB(id as RawSourceCondition)
+                setActiveCounterexample(null)
+              }}
+              label="Source B"
+              noContainer
+              variant="ghost"
+            />
+          </div>
         </div>
-
-        {sourceA && <HexDisplay label="Source A (32 bytes)" data={sourceA} />}
-        <HexDisplay label="Source B (32 bytes)" data={sourceB} />
-
-        {sourceA && (
+        <Button variant="gradient" onClick={() => collectRaw(conditionA, conditionB)}>
+          <Play size={16} className="mr-2" />
+          Collect raw samples
+        </Button>
+        {requestA && requestB && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Source A frequency</p>
-              <FrequencyHistogram data={sourceA} />
+            <div className="space-y-2">
+              <HexDisplay label="Source A — request samples (64)" data={requestA} />
+              <FrequencyHistogram data={requestA} />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Source B frequency</p>
-              <FrequencyHistogram data={sourceB} />
+            <div className="space-y-2">
+              <HexDisplay label="Source B — request samples (64)" data={requestB} />
+              <FrequencyHistogram data={requestB} />
             </div>
           </div>
         )}
       </div>
 
-      {/* Step 2: Assembly (SP 800-90C §3.1) */}
-      <div className="glass-panel p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">
-          Step 2: {combineLabel} Assembly (SP 800-90C §3.1)
-        </h3>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={handleCombine} disabled={combineDisabled}>
-            <Combine size={16} className="mr-2" />
-            Assemble via {combineLabel}
-          </Button>
-          {sourceA && hsmPhase !== 'session_open' && !hsmError && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 size={14} className="animate-spin" />
-              Initializing HSM… step 2 will be ready shortly
+      {/* Step 2: Health tests at the raw boundary */}
+      {healthA && healthB && (
+        <div className="glass-panel p-4 space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">
+            Step 2: Health tests on the raw samples — before conditioning
+          </h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            The two approved SP 800-90B §4.4 tests at H = {DECLARED_MIN_ENTROPY_PER_SAMPLE}{' '}
+            bits/sample and &alpha; = 2<sup>-20</sup>: Repetition Count cutoff C = 6, Adaptive
+            Proportion W = 512 with C = 62 (SP 800-90B Table 2). A source that signals a failure is
+            excluded: SP 800-90C §3.1 (item 4.a.1) says entropy collected by a failed entropy source
+            shall not be used.
+          </p>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+            <SourceHealthPanel
+              name="Source A"
+              health={healthA}
+              onDemand={onDemandA}
+              onRunOnDemand={() => runOnDemand('A')}
+            />
+            <SourceHealthPanel
+              name="Source B"
+              health={healthB}
+              onDemand={onDemandB}
+              onRunOnDemand={() => runOnDemand('B')}
+            />
+          </div>
+          {useFailedSource && failedSourceOutputUsed && (
+            <div className="flex items-start gap-2 rounded-md border border-status-error/30 bg-status-error/10 p-2">
+              <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
+              <p className="text-xs text-foreground">
+                Counterexample active: the failed source&rsquo;s samples are fed to the conditioner
+                anyway. Watch the output diagnostics below stay within range.
+              </p>
             </div>
           )}
         </div>
+      )}
 
-        {combinedResult && (
-          <>
-            <HexDisplay
-              label={`Combined output (${combinedResult.length} bytes)`}
-              data={combinedResult}
-            />
-            <div className="rounded-lg border border-border bg-muted/30 p-3">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                {COMBINATION_DESCRIPTIONS[combinationMode]}
+      {/* Step 3: Assembly + entropy accounting */}
+      {healthA && healthB && (
+        <div className="glass-panel p-4 space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">
+            Step 3: Assemble the request samples ({combineLabel})
+          </h3>
+          <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-1 text-xs">
+            <p className="text-foreground">
+              <strong>Entropy credited:</strong> {credited} bits (only sources with no failure
+              signalled, {SAMPLES_PER_REQUEST} samples &times; {DECLARED_MIN_ENTROPY_PER_SAMPLE}{' '}
+              bits each; summing two sources assumes they are independent — SP 800-90C §2.6 item 8).
+            </p>
+            <p className="text-muted-foreground">
+              Instantiating a DRBG at security strength {TARGET_SECURITY_STRENGTH} from an entropy
+              source needs at least {REQUIRED_ENTROPY} bits (3s/2, SP 800-90C §2.6 item 11):{' '}
+              <strong
+                className={
+                  credited >= REQUIRED_ENTROPY ? 'text-status-success' : 'text-status-error'
+                }
+              >
+                {credited >= REQUIRED_ENTROPY ? 'met' : 'not met'}
+              </strong>
+              . A 256-bit full-entropy conditioned block needs {FULL_ENTROPY_256} bits (output_len +
+              64, SP 800-90C §3.2.2.2):{' '}
+              <strong
+                className={
+                  credited >= FULL_ENTROPY_256 ? 'text-status-success' : 'text-status-error'
+                }
+              >
+                {credited >= FULL_ENTROPY_256 ? 'met' : 'not met'}
+              </strong>
+              .
+            </p>
+          </div>
+          {includedInputs.length === 0 ? (
+            <div className="flex items-start gap-2 rounded-md border border-status-error/30 bg-status-error/10 p-2">
+              <XCircle size={14} className="text-status-error mt-0.5 shrink-0" />
+              <p className="text-xs text-foreground">
+                Every source signalled a failure, so there is nothing to assemble: with Method 1
+                counting, SP 800-90C §3.1 (item 4.a.3) says the RBG operation shall be terminated
+                when all physical entropy sources report failures.
               </p>
             </div>
-          </>
-        )}
-      </div>
+          ) : (
+            <>
+              {includedInputs.length === 2 && (
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-foreground">Combination method:</p>
+                  <FilterDropdown
+                    items={COMBINATION_MODES}
+                    selectedId={combinationMode}
+                    onSelect={(id) => {
+                      setCombinationMode(id as CombinationMode)
+                      resetPipeline()
+                    }}
+                    label="Assembly"
+                    noContainer
+                    variant="ghost"
+                  />
+                </div>
+              )}
+              {includedInputs.length === 1 && (
+                <p className="text-xs text-muted-foreground">
+                  Only one source is in use, so its request samples are the whole input.
+                </p>
+              )}
+              <Button variant="outline" onClick={handleCombine} disabled={combineDisabled}>
+                <Combine size={16} className="mr-2" />
+                Assemble
+              </Button>
+            </>
+          )}
+          {combinedResult && (
+            <>
+              <HexDisplay
+                label={`Assembled input (${combinedResult.length} bytes)`}
+                data={combinedResult}
+              />
+              {includedInputs.length === 2 && (
+                <div className="rounded-lg border border-border bg-muted/30 p-3">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {COMBINATION_DESCRIPTIONS[combinationMode]}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
-      {/* Step 3: Conditioning (SP 800-90C §3.2) */}
-      <div className="glass-panel p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">
-          Step 3: {conditionLabel} Conditioning (SP 800-90C §3.2)
-        </h3>
-        <Button
-          variant="outline"
-          onClick={handleCondition}
-          disabled={conditionDisabled || isRunning}
-        >
-          <Shield size={16} className="mr-2" />
-          Apply {conditionLabel}
-        </Button>
-
-        {conditionedResult && (
-          <>
-            <HexDisplay label="Conditioned output (32 bytes)" data={conditionedResult} />
-            <div className="rounded-lg border border-border bg-muted/30 p-3">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                {CONDITIONING_DESCRIPTIONS[conditioningMode]}
-              </p>
+      {/* Step 4: Conditioning */}
+      {combinedResult && (
+        <div className="glass-panel p-4 space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">
+            Step 4: Conditioning ({conditionLabel})
+          </h3>
+          <FilterDropdown
+            items={CONDITIONING_MODES}
+            selectedId={conditioningMode}
+            onSelect={(id) => {
+              setConditioningMode(id as ConditioningMode)
+              setConditionedResult(null)
+              setExpandedResult(null)
+              setDiagnostics(null)
+            }}
+            label="Conditioning"
+            noContainer
+            variant="ghost"
+          />
+          <Button
+            variant="outline"
+            onClick={handleCondition}
+            disabled={conditionDisabled || isRunning}
+          >
+            <Shield size={16} className="mr-2" />
+            Apply {conditionLabel}
+          </Button>
+          {hsmPhase === 'loading' && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Loader2 size={12} className="animate-spin" />
+              Loading SoftHSMv3 WASM...
             </div>
-          </>
-        )}
-      </div>
+          )}
+          {hsmError && <ErrorAlert message={translateCryptoError(`HSM error: ${hsmError}`)} />}
+          {conditionedResult && (
+            <>
+              <HexDisplay label="Conditioned output (32 bytes)" data={conditionedResult} />
+              <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-1">
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {CONDITIONING_DESCRIPTIONS[conditioningMode]}
+                </p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Conditioning cannot add entropy: this 256-bit block holds at most the {credited}{' '}
+                  bits credited above
+                  {failedSourceOutputUsed ? ' (the failed source adds nothing creditable)' : ''}.
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
-      {/* Step 4: Expand */}
-      <div className="glass-panel p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">Step 4: Expand (HKDF)</h3>
-        <Button variant="outline" onClick={handleExpand} disabled={!conditionedResult || isRunning}>
-          <ArrowRight size={16} className="mr-2" />
-          Expand to 64 bytes
-        </Button>
-        <p className="text-xs text-muted-foreground">
-          Uses HKDF-Expand (RFC 5869) for demonstration. In production, conditioned entropy seeds an
-          SP 800-90A DRBG (Hash_DRBG, HMAC_DRBG, or CTR_DRBG) which includes a nonce per §8.6.7.
+      {/* Step 5: Expand (demonstration only) */}
+      {conditionedResult && (
+        <div className="glass-panel p-4 space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">
+            Step 5: Expand with HKDF — demonstration only
+          </h3>
+          <p className="text-xs text-muted-foreground">
+            HKDF-Expand (RFC 5869) stretches the block to 64 bytes so the diagnostics have something
+            to look at. HKDF is not an SP 800-90A DRBG, and this pipeline is not an SP 800-90C RBG
+            construction. In a real design the conditioned entropy seeds an approved DRBG — see the
+            DRBG State Machine step.
+          </p>
+          <Button variant="outline" onClick={handleExpand} disabled={isRunning}>
+            <ArrowRight size={16} className="mr-2" />
+            Expand to 64 bytes
+          </Button>
+          {expandedResult && (
+            <>
+              <HexDisplay label="Expanded output (64 bytes)" data={expandedResult} />
+              <FrequencyHistogram data={expandedResult} />
+              <Button
+                variant="outline"
+                onClick={() => setDiagnostics(runVisualizationChecks(expandedResult))}
+              >
+                <Play size={16} className="mr-2" />
+                Run output diagnostics
+              </Button>
+            </>
+          )}
+          {diagnostics && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-status-warning">
+                Demonstration only — not entropy validation. These describe 64 output bytes; after a
+                hash they sit within range even when a source has failed.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {diagnostics.map((r) => (
+                  <ResultCard
+                    key={r.name}
+                    result={r}
+                    okLabel="Within range"
+                    badLabel="Outside range"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Step 6: Assumption-driven assessment (P0.5) */}
+      <div className="glass-panel p-4 space-y-4 border border-border">
+        <div className="flex items-center gap-2">
+          <Scale size={18} className="text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">
+            Step 6: Is the combined construction justified?
+          </h3>
+        </div>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Whether combining sources protects you when one fails depends on assumptions, not on how
+          the output looks. State them — or load a counterexample — and read the outcome. The best
+          possible outcome here is &ldquo;consistent with the stated assumptions&rdquo;; nothing in
+          this workshop is a validation.
         </p>
 
-        {expandedResult && (
-          <>
-            <HexDisplay label="Expanded output (64 bytes)" data={expandedResult} />
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Output frequency distribution</p>
-              <FrequencyHistogram data={expandedResult} />
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Run Tests */}
-      {expandedResult && (
-        <div className="flex items-center gap-3">
-          <Button variant="gradient" onClick={handleRunTests}>
-            <Play size={16} className="mr-2" />
-            Run Entropy Tests
-          </Button>
-          <span className="text-xs text-muted-foreground">
-            Run SP 800-90B health tests on the final expanded output
-          </span>
-        </div>
-      )}
-
-      {/* Test Results */}
-      {testResults && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">Test Results</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {testResults.map((result) => (
-              <TestCard key={result.name} result={result} />
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-foreground">Counterexamples</p>
+          <div className="flex flex-wrap gap-2">
+            {COUNTEREXAMPLES.map((cx) => (
+              <Button
+                key={cx.id}
+                size="sm"
+                variant={activeCounterexample === cx.id ? 'secondary' : 'outline'}
+                onClick={() => applyCounterexample(cx.id)}
+              >
+                {cx.label}
+              </Button>
             ))}
           </div>
+          {activeCounterexample && (
+            <p className="text-xs text-muted-foreground">
+              {COUNTEREXAMPLES.find((c) => c.id === activeCounterexample)?.story}
+            </p>
+          )}
         </div>
-      )}
+
+        {activeCounterexample === 'malicious-cancellation' && requestB && (
+          <HexDisplay
+            label="Attacker sets A = B: A ⊕ B (first 32 bytes)"
+            data={xorBytes(requestB.slice(0, 32), requestB.slice(0, 32))}
+          />
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <AssumptionPicker
+            label="Are the sources independent?"
+            items={INDEPENDENCE_ITEMS}
+            value={independence}
+            onChange={(v) => setIndependence(v as Independence)}
+          />
+          <AssumptionPicker
+            label="Adversary control over the compromised source"
+            items={ADVERSARY_ITEMS}
+            value={adversaryControl}
+            onChange={(v) => setAdversaryControl(v as AdversaryControl)}
+          />
+          <AssumptionPicker
+            label="How is a source failure detected and handled?"
+            items={FAILURE_ITEMS}
+            value={failureHandling}
+            onChange={(v) => setFailureHandling(v as FailureHandling)}
+          />
+          <AssumptionPicker
+            label="Are the entropy sources validated (SP 800-90B)?"
+            items={VALIDATION_ITEMS}
+            value={sourceValidation}
+            onChange={(v) => setSourceValidation(v as SourceValidation)}
+          />
+          <AssumptionPicker
+            label="Freshness of the input"
+            items={FRESHNESS_ITEMS}
+            value={inputFreshness}
+            onChange={(v) => setInputFreshness(v as InputFreshness)}
+          />
+          <AssumptionPicker
+            label="SP 800-90C construction class"
+            items={CLASS_ITEMS}
+            value={rbgClass}
+            onChange={(v) => setRbgClass(v as RbgClass)}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground">
+          From the pipeline: {credited} bits of entropy credited to the conditioner input
+          (conditioner output block 256 bits);{' '}
+          {failedSourceOutputUsed
+            ? 'a failed source’s samples ARE being used.'
+            : 'no failed source’s samples are used.'}
+        </p>
+
+        {!assessment && (
+          <p className="text-xs text-muted-foreground italic">
+            Collect raw samples in Step 1, or load a counterexample, to see the outcome.
+          </p>
+        )}
+        {assessment && (
+          <div
+            className={`rounded-lg border p-4 space-y-2 ${
+              assessment.verdict === 'unsafe'
+                ? 'border-status-error/40 bg-status-error/10'
+                : assessment.verdict === 'not-enough-evidence'
+                  ? 'border-status-warning/40 bg-status-warning/10'
+                  : 'border-primary/30 bg-primary/5'
+            }`}
+            data-testid="construction-verdict"
+          >
+            <p className="text-sm font-semibold text-foreground">
+              {VERDICT_LABELS[assessment.verdict]}
+            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              {assessment.reasons.map((r) => (
+                <li key={r} className="text-xs text-foreground/90 leading-relaxed">
+                  {r}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
 
       {/* Standards Referenced */}
       <div className="glass-panel p-4 space-y-3">
@@ -569,13 +935,23 @@ export const SourceCombiningDemo: React.FC = () => {
         <ul className="space-y-1.5 text-xs text-muted-foreground">
           <li>
             <Link
+              to="/library?ref=NIST-SP-800-90B"
+              className="text-primary hover:underline font-medium"
+            >
+              NIST SP 800-90B
+            </Link>{' '}
+            — health tests on raw samples before conditioning (§4.3), Repetition Count and Adaptive
+            Proportion tests (§4.4), conditioning components (§3.1.5)
+          </li>
+          <li>
+            <Link
               to="/library?ref=NIST-SP-800-90C"
               className="text-primary hover:underline font-medium"
             >
               NIST SP 800-90C
             </Link>{' '}
-            — RBG constructions: source assembly (§3.1), vetted conditioning functions (§3.2),
-            defense-in-depth principle
+            — entropy counting and independence (§2.3, §2.6), Get_entropy_bitstring and failure
+            handling (§3.1), external conditioning (§3.2), construction classes (Table 1)
           </li>
           <li>
             <Link
@@ -584,109 +960,35 @@ export const SourceCombiningDemo: React.FC = () => {
             >
               NIST SP 800-90A Rev. 1
             </Link>{' '}
-            — Hash_df derivation function (§10.3.1), DRBG seeding (§8.6.7)
-          </li>
-          <li>
-            <Link
-              to="/library?ref=NIST-SP-800-90B"
-              className="text-primary hover:underline font-medium"
-            >
-              NIST SP 800-90B
-            </Link>{' '}
-            — Entropy source validation; health tests (repetition count, adaptive proportion)
+            — Hash_df derivation function (§10.3.1)
           </li>
         </ul>
       </div>
 
-      {/* Defense-in-Depth Demo */}
-      {testResults && (
-        <div className="glass-panel p-4 space-y-4 border border-border">
-          <div className="flex items-center gap-2">
-            <Shield size={18} className="text-primary" />
-            <h3 className="text-sm font-semibold text-foreground">
-              Defense-in-Depth Demonstration
-            </h3>
-          </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            What happens if one entropy source is completely compromised? Click below to replace
-            Source A with all zeros and re-run the entire pipeline using the currently selected{' '}
-            {combineLabel} + {conditionLabel} modes.
-          </p>
-
-          <Button
-            variant="outline"
-            onClick={handleCompromiseDemo}
-            disabled={compromiseLoading || !hsmReady}
-          >
-            {compromiseLoading ? (
-              <>
-                <Loader2 size={14} className="mr-2 animate-spin" />
-                Running…
-              </>
-            ) : (
-              <>
-                <Shield size={16} className="mr-2" />
-                What if Source A is compromised?
-              </>
-            )}
-          </Button>
-
-          {showCompromiseDemo && compromiseExpanded && compromiseResults && (
-            <div className="space-y-4 mt-2">
-              <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
-                <p className="text-xs font-medium text-foreground">
-                  Source A replaced with 32 bytes of zeros
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {combinationMode === 'xor'
-                    ? "XOR(zeros, Source B) = Source B — Source B's entropy is fully preserved."
-                    : combinationMode === 'hash'
-                      ? "Hash(zeros || Source B) — SHA-256 still produces a uniform digest from Source B's entropy."
-                      : combinationMode === 'hmac'
-                        ? "HMAC(zeros, Source B) — the zero key is weak but Source B's entropy survives conditioning."
-                        : 'Concat(zeros, Source B) — zeros contribute no entropy; conditioning must extract from Source B alone.'}
-                </p>
-              </div>
-
-              <HexDisplay
-                label="Compromised pipeline output (64 bytes)"
-                data={compromiseExpanded}
-              />
-
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">
-                  Compromised output frequency distribution
-                </p>
-                <FrequencyHistogram data={compromiseExpanded} />
-              </div>
-
-              <h3 className="text-sm font-semibold text-foreground">
-                Compromised Pipeline Test Results
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {compromiseResults.map((result) => (
-                  <TestCard key={result.name} result={result} />
-                ))}
-              </div>
-
-              <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
-                <p className="text-sm text-foreground leading-relaxed">
-                  <span className="font-semibold">Defense-in-depth principle (SP 800-90C):</span>{' '}
-                  Even if one entropy source fails completely, the combined RBG output remains
-                  secure. The {combineLabel} combination preserves the entropy of the surviving
-                  source, and the {conditionLabel} conditioning + HKDF expansion produce
-                  cryptographically strong output from that preserved entropy.
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
       <PlaygroundNextStep
         toolId="drbg-demo"
         name="SP 800-90A DRBG"
-        description="Feed conditioned entropy into an HMAC_DRBG and visualise the Instantiate → Generate → Reseed state machine."
+        description="Seed an HMAC_DRBG and step through Instantiate → Generate → Reseed, then check the code against NIST known-answer vectors."
       />
     </div>
   )
 }
+
+const AssumptionPicker: React.FC<{
+  label: string
+  items: { id: string; label: string }[]
+  value: string
+  onChange: (id: string) => void
+}> = ({ label, items, value, onChange }) => (
+  <div className="space-y-1">
+    <p className="text-xs font-medium text-foreground">{label}</p>
+    <FilterDropdown
+      items={items}
+      selectedId={value}
+      onSelect={onChange}
+      ariaLabel={label}
+      noContainer
+      variant="ghost"
+    />
+  </div>
+)
