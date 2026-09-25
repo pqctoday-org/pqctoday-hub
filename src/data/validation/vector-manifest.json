@@ -11627,6 +11627,122 @@
       "notes": "Provenance resolved 2026-09-24 (no _provenance block): a self-pinned snapshot generated with @noble/post-quantum in Node 24 (file fields $schema, generator, generated_at 2026-05-17; added in commit 752b03369). src/components/PKILearning/modules/APISecurityJWT/jweKat.test.ts re-derives the keypair and shared secret from the pinned seeds. Same implementation family produced and checks the value, so no external correctness claim."
     },
     {
+      "id": "kmac_acvp_test",
+      "path": "src/data/acvp/kmac_acvp_test.json",
+      "sha256": "fb60c4c592c2a2e148eedc523a1aab6d44d5b8c018ce0184b815730e77cb7f98",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server gen-val/json-files/KMAC-128-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KMAC-128-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/KMAC-128-1.0/internalProjection.json",
+          "upstreamSha256": "43ee39f587abbf5c4ada9236ba0d55fd9f6ea4f03b6e73598846c5920515f476",
+          "retrieved": "2026-09-25",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KMAC-128-1.0/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-25",
+          "method": "Fetched the upstream file(s) at the pinned commit: SHA-256 recorded as upstreamSha256 (and per-group in _provenance.source_files where a file draws on several upstream files); every local case was produced by a byte-copying subset script and re-compared field-by-field with the upstream case of the same tcId.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "gen-val/json-files/KMAC-128-1.0/internalProjection.json",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KMAC-128-1.0/internalProjection.json",
+              "sha256": "43ee39f587abbf5c4ada9236ba0d55fd9f6ea4f03b6e73598846c5920515f476",
+              "retrieved": "2026-09-25"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "kmac_acvp_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "KMAC-128",
+            "revision": "1.0"
+          },
+          "operation": "mac-verify",
+          "parameters": {
+            "keyLen": 3696,
+            "msgLen": 31072,
+            "macLen": 256,
+            "customizationBytes": 5,
+            "xof": false
+          },
+          "testType": "MVT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 8,
+            "tcId": 771
+          },
+          "lineage": ["kmac-acvp-test-1"]
+        },
+        {
+          "caseId": "kmac_acvp_test#/testGroups/0/tests/1",
+          "pointer": "/testGroups/0/tests/1",
+          "algorithm": {
+            "name": "KMAC-128",
+            "revision": "1.0"
+          },
+          "operation": "mac-verify",
+          "parameters": {
+            "keyLen": 3936,
+            "msgLen": 3424,
+            "macLen": 3824,
+            "customizationBytes": 9,
+            "xof": false
+          },
+          "testType": "MVT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 8,
+            "tcId": 799
+          },
+          "lineage": ["kmac-acvp-test-1"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "kmac-acvp-test-1",
+          "appliesTo": [
+            "kmac_acvp_test#/testGroups/0/tests/0",
+            "kmac_acvp_test#/testGroups/0/tests/1"
+          ],
+          "upstreamOperation": "KMAC-128 1.0 MVT (non-XOF, hex customization)",
+          "localOperation": "C_Verify (vendor CKM_KMAC_128 with customization and output length)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 771, 799) taken from upstream tgId 8 (800 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Every byte-aligned (keyLen, msgLen and macLen all multiples of 8) non-XOF case in the pinned KMAC-128 sample: two cases, both in the MVT group with hex customization (one valid, one invalid). Every other group is listed in notExecuted: KMACXOF has no mechanism, and the remaining non-XOF cases use bit-oriented key/message/MAC lengths PKCS#11 cannot express. The KMAC-256 sample has no byte-aligned non-XOF case, so KMAC-256 has no NIST case here (the older kmac_test KMAC256 case stays quarantined)."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "7 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): bit-oriented-lengths, kmacxof-no-mechanism."
+    },
+    {
       "id": "kmac_test",
       "path": "src/data/acvp/kmac_test.json",
       "sha256": "a6fe1b1abb483368678b7a9d9766f8145eaba69dab4078aef6d84104c9519de4",
@@ -16848,6 +16964,197 @@
           "note": "WS-F ACVP-format prototype fixture: the full pinned upstream NIST ACVP-Server file (usnistgov/ACVP-Server@975de31e, see PROVENANCE.json beside it); this curated vector file is a subset of it."
         }
       ],
+      "publishabilityGaps": []
+    },
+    {
+      "id": "pbkdf2_acvp_test",
+      "path": "src/data/acvp/pbkdf2_acvp_test.json",
+      "sha256": "b3ace24d957a4fd4b6e1cecb4ca437d3e413f0d5bfe66ec7de696a3d0b2d5715",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server gen-val/json-files/PBKDF-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/PBKDF-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/PBKDF-1.0/internalProjection.json",
+          "upstreamSha256": "09d0742e01e1ddfa484eeb1cbae3d2061620ebd6dc85fdabdbb2679713a6269f",
+          "retrieved": "2026-09-25",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/PBKDF-1.0/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-25",
+          "method": "Fetched the upstream file(s) at the pinned commit: SHA-256 recorded as upstreamSha256 (and per-group in _provenance.source_files where a file draws on several upstream files); every local case was produced by a byte-copying subset script and re-compared field-by-field with the upstream case of the same tcId.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "gen-val/json-files/PBKDF-1.0/internalProjection.json",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/PBKDF-1.0/internalProjection.json",
+              "sha256": "09d0742e01e1ddfa484eeb1cbae3d2061620ebd6dc85fdabdbb2679713a6269f",
+              "retrieved": "2026-09-25"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "pbkdf2_acvp_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "PBKDF",
+            "revision": "1.0"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-224",
+            "iterationCount": 1612,
+            "keyLen": 2048,
+            "passwordBytes": 29,
+            "saltBytes": 19
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 4
+          },
+          "lineage": ["pbkdf2-acvp-test-1"]
+        },
+        {
+          "caseId": "pbkdf2_acvp_test#/testGroups/0/tests/1",
+          "pointer": "/testGroups/0/tests/1",
+          "algorithm": {
+            "name": "PBKDF",
+            "revision": "1.0"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-224",
+            "iterationCount": 1045,
+            "keyLen": 496,
+            "passwordBytes": 19,
+            "saltBytes": 34
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 7
+          },
+          "lineage": ["pbkdf2-acvp-test-1"]
+        },
+        {
+          "caseId": "pbkdf2_acvp_test#/testGroups/0/tests/2",
+          "pointer": "/testGroups/0/tests/2",
+          "algorithm": {
+            "name": "PBKDF",
+            "revision": "1.0"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-224",
+            "iterationCount": 10000,
+            "keyLen": 1008,
+            "passwordBytes": 57,
+            "saltBytes": 60
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 17
+          },
+          "lineage": ["pbkdf2-acvp-test-1"]
+        },
+        {
+          "caseId": "pbkdf2_acvp_test#/testGroups/0/tests/3",
+          "pointer": "/testGroups/0/tests/3",
+          "algorithm": {
+            "name": "PBKDF",
+            "revision": "1.0"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-224",
+            "iterationCount": 1,
+            "keyLen": 1432,
+            "passwordBytes": 44,
+            "saltBytes": 63
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 20
+          },
+          "lineage": ["pbkdf2-acvp-test-1"]
+        },
+        {
+          "caseId": "pbkdf2_acvp_test#/testGroups/0/tests/4",
+          "pointer": "/testGroups/0/tests/4",
+          "algorithm": {
+            "name": "PBKDF",
+            "revision": "1.0"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-224",
+            "iterationCount": 8444,
+            "keyLen": 112,
+            "passwordBytes": 33,
+            "saltBytes": 39
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 37
+          },
+          "lineage": ["pbkdf2-acvp-test-1"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "pbkdf2-acvp-test-1",
+          "appliesTo": [
+            "pbkdf2_acvp_test#/testGroups/0/tests/0",
+            "pbkdf2_acvp_test#/testGroups/0/tests/1",
+            "pbkdf2_acvp_test#/testGroups/0/tests/2",
+            "pbkdf2_acvp_test#/testGroups/0/tests/3",
+            "pbkdf2_acvp_test#/testGroups/0/tests/4"
+          ],
+          "upstreamOperation": "PBKDF 1.0 AFT (PBKDF2, HMAC-SHA2-224)",
+          "localOperation": "C_DeriveKey(CKM_PKCS5_PBKD2) + CKA_VALUE byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "5 case(s) (upstream tcId 4, 7, 17, 20, 37) taken from upstream tgId 1 (50 case(s) in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Among cases with iterationCount >= 1000: the fewest and the most iterations, the shortest and the longest derived key (ties by lowest tcId); plus the case with the fewest iterations overall (iterationCount 1) so the documented engine policy divergence (the Rust engine refuses fewer than 1000 iterations; open gap pbkdf2-min-iterations-divergence) stays visible. The pinned sample registers HMAC-SHA2-224 only; other PRFs are not claimed."
+            }
+          ]
+        }
+      ],
+      "copies": [],
       "publishabilityGaps": []
     },
     {
