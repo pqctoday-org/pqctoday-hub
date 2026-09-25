@@ -70,6 +70,8 @@ export interface LoadedEngine {
   identity: EngineIdentity
 }
 
+let rustInstanceCounter = 0
+
 export const loadEngineNode = async (repoRoot: string, id: EngineId): Promise<LoadedEngine> => {
   const art = ENGINE_ARTIFACTS[id]
   const gluePath = path.join(repoRoot, art.glue)
@@ -98,10 +100,14 @@ export const loadEngineNode = async (repoRoot: string, id: EngineId): Promise<Lo
     return { module, identity }
   }
 
-  const bg = (await import(/* @vite-ignore */ pathToFileURL(gluePath).href)) as Record<
-    string,
-    unknown
-  > & { __wbg_set_wasm: (exports: WebAssembly.Exports) => void }
+  // A fresh module instance per load (query-busted URL): wasm-bindgen's _bg.js
+  // keeps its wasm instance in module state, so two loads sharing one module
+  // record (e.g. under Vitest alongside getSoftHSMRustModule()) would have the
+  // second __wbg_set_wasm silently re-point the first engine at foreign memory.
+  const url = `${pathToFileURL(gluePath).href}?acvp-io-instance=${++rustInstanceCounter}`
+  const bg = (await import(/* @vite-ignore */ url)) as Record<string, unknown> & {
+    __wbg_set_wasm: (exports: WebAssembly.Exports) => void
+  }
   const instance = new WebAssembly.Instance(new WebAssembly.Module(wasmBytes), {
     './softhsmrustv3_bg.js': bg as WebAssembly.ModuleImports,
   })
