@@ -20380,6 +20380,51 @@
       "unified": "converted",
       "admittedAt": "2026-09-24T22:29:09.557363+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "refId": "NIST-SP-800-131A-Rev2",
+      "title": "Transitioning the Use of Cryptographic Algorithms and Key Lengths",
+      "url": "https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-131ar2.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-131A-Rev2.pdf",
+      "sizeBytes": 686214,
+      "contentType": "application/pdf",
+      "sha256": "5c81a1095e0eee35ce0e627b8cc672c1c2239367b0de9bb53d7271c9ab9d7d27",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-25T01:01:03.279673+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "draft-ietf-jose-pq-composite-sigs-04",
+      "title": "PQ/T Hybrid Composite Signatures for JOSE and COSE",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/04/",
+      "status": "downloaded",
+      "filename": "draft-ietf-jose-pq-composite-sigs-04.html",
+      "sizeBytes": 334166,
+      "contentType": "text/html",
+      "sha256": "27aaa89da089a8c23ca72db0845f754e6b588598ef8b275677b871a8f3c3e451",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-25T01:05:06.494610+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "GSA-FICAM-PQC-Readiness",
+      "title": "FICAM Drives Federal Quantum Readiness",
+      "url": "https://www.idmanagement.gov/pqc/",
+      "status": "downloaded",
+      "filename": "GSA-FICAM-PQC-Readiness.html",
+      "sizeBytes": 29987,
+      "contentType": "text/html",
+      "sha256": "ca1e89f9eb596556dba874f2a5866fb9aa457724a77bbd22c1b1e49a483185d9",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-25T01:08:40.165065+00:00",
+      "admittedBy": "admit.py"
     }
   ],
   "archivedEntries": [
