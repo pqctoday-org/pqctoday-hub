@@ -3,9 +3,11 @@
 /**
  * katRunner — Use-case-specific Known Answer Test runner.
  *
- * Validates industry-specific PQC scenarios against NIST FIPS 203/204 ACVP
- * test vectors. No ACVP seed injection required — import-based KATs are
- * deterministic without seeding.
+ * Runs industry-specific scenarios against pinned vectors of mixed evidence
+ * class — public NIST ACVP-Server reference samples, published-standard
+ * examples, OpenSSL-oracle values and functional round-trips. The class of
+ * each kind is derived from its vector file's _provenance in katEvidence.ts;
+ * result text must not claim more than that class supports.
  *
  * Test vector sources:
  *   ML-KEM: src/data/acvp/mlkem_test.json (NIST ACVP vsId=1, encapDecap)
@@ -133,6 +135,7 @@ import {
   CKP_PKCS5_PBKD2_HMAC_SHA512,
 } from '../wasm/softhsm'
 import type { SoftHSMModule } from '../wasm/softhsm'
+import { evidenceForKind, type KatEvidenceClass } from './katEvidence'
 
 export interface KATResult {
   id: string
@@ -144,6 +147,8 @@ export interface KATResult {
   libraryRefId?: string
   status: 'pass' | 'fail' | 'error'
   details: string
+  /** Evidence class of the expected value, derived from the vector file's provenance. */
+  evidence: KatEvidenceClass
 }
 
 export type SlhDsaVariant =
@@ -176,7 +181,7 @@ export type KatKind =
   // HMAC / Hash (FIPS 180-4, FIPS 198-1)
   | { type: 'hmac-verify'; hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'; testIndex?: number }
   | { type: 'sha256-hash'; testIndex?: number }
-  // Classical signatures — ACVP vector verification
+  // Classical signatures — vector verification (RFC 6979 / RFC 8032 examples, OpenSSL-oracle RSA-PSS)
   | { type: 'ecdsa-sigver'; curve: 'P-256' | 'P-384'; testIndex?: number }
   | { type: 'eddsa-sigver'; testIndex?: number }
   | { type: 'rsapss-sigver'; testIndex?: number }
@@ -437,7 +442,7 @@ async function runSLHDSAFunctionalKAT(
 // ── Classical algorithm KAT implementations ──────────────────────────────────
 
 /**
- * AES-256-GCM Decryption KAT — ACVP SP 800-38D vector.
+ * AES-256-GCM Decryption KAT — published GCM example (Test Case 16), not an ACVP vector.
  * Imports key, decrypts ct||tag with IV, compares against expected pt.
  */
 async function runAESGCMDecryptKAT(
@@ -467,7 +472,7 @@ async function runAESGCMDecryptKAT(
   if (matches) {
     return {
       status: 'pass',
-      details: `Imported NIST key → decrypted ACVP ciphertext+tag → plaintext matches expected value (${recoveredPt.length}B)`,
+      details: `Imported key → decrypted the published GCM example's ciphertext+tag → plaintext matches its expected value (${recoveredPt.length}B)`,
     }
   }
   return {
@@ -546,7 +551,7 @@ async function runAESCTRRoundtripKAT(
   if (ptMatches) {
     return {
       status: 'pass',
-      details: `Imported NIST key → encrypted → decrypted → plaintext matches original (${recovered.length}B)`,
+      details: `Imported SP 800-38A example key → ciphertext matches the published value → decrypted back to the original (${recovered.length}B)`,
     }
   }
   return { status: 'fail', details: `Decrypt mismatch after round-trip` }
@@ -578,7 +583,7 @@ async function runAESKWWrapKAT(
   if (matches) {
     return {
       status: 'pass',
-      details: `Imported wrapping key → wrapped NIST key material → ciphertext matches ACVP expected value (${wrapped.length}B)`,
+      details: `Imported wrapping key → wrapped RFC 3394 example key material → output matches the RFC's expected value (${wrapped.length}B)`,
     }
   }
   return {
@@ -685,7 +690,7 @@ async function runSHA256HashKAT(
 }
 
 /**
- * ECDSA SigVer KAT — imports public key from ACVP (qx,qy), verifies signature.
+ * ECDSA SigVer KAT — imports the RFC 6979 example public key (qx,qy), verifies its signature.
  */
 async function runECDSASigVerKAT(
   M: SoftHSMModule,
@@ -698,7 +703,7 @@ async function runECDSASigVerKAT(
   const test = vectors.testGroups[0].tests[testIndex] ?? vectors.testGroups[0].tests[0]
   const qxBytes = hexToBytes(test.qx)
   const qyBytes = hexToBytes(test.qy)
-  // ECDSA msg in ACVP files is stored as plain text string
+  // ECDSA msg in these vector files is stored as plain text string
   const message =
     typeof test.msg === 'string' && !/^[0-9a-fA-F]+$/.test(test.msg)
       ? test.msg
@@ -716,14 +721,17 @@ async function runECDSASigVerKAT(
   if (isValid) {
     return {
       status: 'pass',
-      details: `Imported NIST public key → verified ACVP reference signature (${curve})`,
+      details: `Imported RFC 6979 example public key → verified its published signature (${curve})`,
     }
   }
-  return { status: 'fail', details: `ECDSA-${curve} verification failed against ACVP vector` }
+  return {
+    status: 'fail',
+    details: `ECDSA-${curve} verification failed against the RFC 6979 example`,
+  }
 }
 
 /**
- * EdDSA (Ed25519) SigVer KAT — imports ACVP public key, verifies signature.
+ * EdDSA (Ed25519) SigVer KAT — imports the RFC 8032 example public key, verifies its signature.
  */
 async function runEdDSASigVerKAT(
   M: SoftHSMModule,
@@ -734,7 +742,7 @@ async function runEdDSASigVerKAT(
     eddsaTestVectors.testGroups[0].tests[testIndex] ?? eddsaTestVectors.testGroups[0].tests[0]
   const pkBytes = hexToBytes(test.pk)
   const sigBytes = hexToBytes(test.signature)
-  // EdDSA msg in ACVP files is hex-encoded text
+  // EdDSA msg in these vector files is hex-encoded text
   const message = new TextDecoder().decode(hexToBytes(test.msg))
 
   const pubHandle = hsm_importEdDSAPublicKey(M, hSession, pkBytes)
@@ -743,14 +751,14 @@ async function runEdDSASigVerKAT(
   if (isValid) {
     return {
       status: 'pass',
-      details: `Imported NIST public key → verified ACVP reference Ed25519 signature`,
+      details: `Imported RFC 8032 example public key → verified its published Ed25519 signature`,
     }
   }
-  return { status: 'fail', details: 'Ed25519 verification failed against ACVP vector' }
+  return { status: 'fail', details: 'Ed25519 verification failed against the RFC 8032 example' }
 }
 
 /**
- * RSA-PSS SigVer KAT — imports ACVP public key (n,e), verifies signature.
+ * RSA-PSS SigVer KAT — imports an OpenSSL-oracle-generated public key (n,e), verifies its signature.
  */
 async function runRSAPSSSigVerKAT(
   M: SoftHSMModule,
@@ -762,7 +770,7 @@ async function runRSAPSSSigVerKAT(
   const nBytes = hexToBytes(test.n)
   const eBytes = hexToBytes(test.e)
   const sigBytes = hexToBytes(test.signature)
-  // RSA msg in ACVP files is plain text
+  // RSA msg in these vector files is plain text
   const message =
     typeof test.msg === 'string' && !/^[0-9a-fA-F]+$/.test(test.msg)
       ? test.msg
@@ -774,10 +782,13 @@ async function runRSAPSSSigVerKAT(
   if (isValid) {
     return {
       status: 'pass',
-      details: `Imported NIST public key → verified ACVP reference RSA-PSS signature`,
+      details: `Imported OpenSSL-oracle public key → verified the oracle's RSA-PSS signature`,
     }
   }
-  return { status: 'fail', details: 'RSA-PSS verification failed against ACVP vector' }
+  return {
+    status: 'fail',
+    details: 'RSA-PSS verification failed against the OpenSSL-oracle vector',
+  }
 }
 
 /**
@@ -1008,7 +1019,7 @@ async function runAESCMACVerifyKAT(
   if (matches) {
     return {
       status: 'pass',
-      details: `Imported NIST key → computed AES-CMAC → matches SP 800-38B expected value (${computed.length}B)`,
+      details: `Imported key → computed AES-CMAC → matches the vector file's SP 800-38B expected value (${computed.length}B)`,
     }
   }
   return {
@@ -1163,7 +1174,7 @@ async function runECDHDeriveKAT(
 }
 
 /**
- * PBKDF2 Key Derivation KAT — derives key from password+salt, compares with ACVP vector.
+ * PBKDF2 Key Derivation KAT — derives key from password+salt, compares with an OpenSSL-oracle value.
  */
 async function runPBKDF2DeriveKAT(
   M: SoftHSMModule,
@@ -1188,7 +1199,7 @@ async function runPBKDF2DeriveKAT(
   if (matches) {
     return {
       status: 'pass',
-      details: `PBKDF2-HMAC-${prf} (${test.iterations} iterations) → derived key matches ACVP expected value (${derivedKey.length}B)`,
+      details: `PBKDF2-HMAC-${prf} (${test.iterations} iterations) → derived key matches the OpenSSL-oracle value (${derivedKey.length}B)`,
     }
   }
   return {
@@ -1530,6 +1541,7 @@ export async function runKAT(
       libraryRefId: spec.libraryRefId,
       status: result.status,
       details: result.details,
+      evidence: evidenceForKind(spec.kind),
     }
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err)
@@ -1542,6 +1554,7 @@ export async function runKAT(
       libraryRefId: spec.libraryRefId,
       status: 'error',
       details: msg,
+      evidence: evidenceForKind(spec.kind),
     }
   }
 }

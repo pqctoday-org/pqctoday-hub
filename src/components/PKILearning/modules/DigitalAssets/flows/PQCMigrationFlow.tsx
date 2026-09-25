@@ -780,7 +780,7 @@ export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) =>
         <KatValidationPanel
           specs={DIGITAL_ASSETS_KAT_SPECS}
           label="Digital Assets PQC Known Answer Tests"
-          authorityNote="NIST FIPS 204 (ACVP)"
+          authorityNote="NIST FIPS 204"
         />
       )}
 

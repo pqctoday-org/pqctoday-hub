@@ -59,7 +59,7 @@ export const EMV_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'emv-card-ecdsa',
     useCase: 'Card authentication (ECDSA P-256)',
-    standard: 'FIPS 186-5 ACVP',
+    standard: 'FIPS 186-5',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/186-5/final',
     kind: { type: 'ecdsa-sigver', curve: 'P-256' },
   },

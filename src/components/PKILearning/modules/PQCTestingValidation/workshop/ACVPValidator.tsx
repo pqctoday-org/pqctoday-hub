@@ -33,8 +33,8 @@ const TESTING_KAT_SPECS: KatTestSpec[] = [
   },
   {
     id: 'test-aesgcm-acvp',
-    useCase: 'AES-GCM ACVP decryption validation',
-    standard: 'SP 800-38D ACVP',
+    useCase: 'AES-GCM decryption (published example)',
+    standard: 'SP 800-38D',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
     kind: { type: 'aesgcm-decrypt' },
   },
@@ -225,9 +225,10 @@ export const ACVPValidator: React.FC = () => {
             . No cryptography executes here and every entry is marked PASS regardless of content —
             it shows what an ACVP run looks like, but it is not a real test and proves nothing about
             FIPS 140-3 correctness. For a genuine pass/fail run against the real SoftHSMv3
-            WebAssembly engine, use the &quot;Run NIST KAT&quot; panel further below, which performs
-            real PKCS#11 operations and compares results byte-for-byte against NIST reference
-            vectors.
+            WebAssembly engine, use the test panel further below, which performs real PKCS#11
+            operations and labels each result with its evidence class — a public NIST ACVP-Server
+            reference sample compared byte-for-byte, a published-standard example, or a functional
+            round-trip with no external expected value.
           </p>
           <a
             href="https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/"
@@ -452,7 +453,7 @@ export const ACVPValidator: React.FC = () => {
       <KatValidationPanel
         specs={TESTING_KAT_SPECS}
         label="PQC Testing & Validation Known Answer Tests"
-        authorityNote="NIST ACVP · FIPS 203 · FIPS 204 · SP 800-38D"
+        authorityNote="FIPS 203 · FIPS 204 · SP 800-38D"
       />
     </div>
   )
