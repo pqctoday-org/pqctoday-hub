@@ -3,7 +3,7 @@
   "schema": "pqctoday.coverage-matrix/v1",
   "inputs": {
     "src/data/validation/mechanism-inventory.generated.json": "69f2eabef2a24f1b025164c2bb5211981bace7add03a33dca92c88f053599547",
-    "src/data/validation/capability-map.json": "fc79f47ce5f6f030b60453b3350cea6144517e7fc9df119606aa2bf39380208b",
+    "src/data/validation/capability-map.json": "447439b1819b4ebeae9a1087252dede18e9fab1f1355b0567648edcda7f1382f",
     "src/data/validation/vector-manifest.json": "1689072a5a62f462930a68fce7be1824994e779b25dfc959830b8da1d972f9b8",
     "src/data/validation/coverage-waivers.json": "ab55b9c9f9b27f4ba36d1e100cfd768bb2e722b066303699b8812e38d3c4dfa7",
     "src/data/validation/open-gaps.json": "05819752ef114b16d5cb0ae38f43e1ad6a885e78dfd8a9bb9a91f90db91a86e0",
@@ -2370,7 +2370,7 @@
     "CKM_XMSSMT_KEY_PAIR_GEN": {"mechanism":"CKM_XMSSMT_KEY_PAIR_GEN","typeHex":"0x00004035","algorithm":"XMSS^MT","revision":"SP 800-208 / RFC 8391","section":"§6.66.7","family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
     "CKM_XMSS": {"mechanism":"CKM_XMSS","typeHex":"0x00004036","algorithm":"XMSS","revision":"SP 800-208 / RFC 8391","section":"§6.66.8","family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
     "CKM_XMSSMT": {"mechanism":"CKM_XMSSMT","typeHex":"0x00004037","algorithm":"XMSS^MT","revision":"SP 800-208 / RFC 8391","section":"§6.66.8","family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
-    "CKM_ML_DSA_EXTERNAL_MU_GEN": {"mechanism":"CKM_ML_DSA_EXTERNAL_MU_GEN","typeHex":"0x0000403b","algorithm":"ML-DSA external-mu computation","revision":"FIPS 204 (mu, Algorithm 7 line 6)","section":null,"family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
+    "CKM_ML_DSA_EXTERNAL_MU_GEN": {"mechanism":"CKM_ML_DSA_EXTERNAL_MU_GEN","typeHex":"0x0000403b","algorithm":"ML-DSA external-mu computation","revision":"FIPS 204 (external μ)","section":null,"family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
     "CKM_ML_DSA_EXTERNAL_MU": {"mechanism":"CKM_ML_DSA_EXTERNAL_MU","typeHex":"0x0000403c","algorithm":"ML-DSA sign/verify from external mu","revision":"FIPS 204","section":null,"family":"pqc","source":{"mechanism":"discovered","parameterSet":"declared","mapping":"reviewed"}},
     "unreachable:mldsa-hash-sha512t": {"mechanism":null,"typeHex":null,"algorithm":"HashML-DSA with SHA2-512/224 or SHA2-512/256","revision":"FIPS 204","section":null,"family":"pqc","source":{"mechanism":"declared","parameterSet":"declared","mapping":"reviewed"}},
     "unreachable:mldsa-hedged-rnd": {"mechanism":null,"typeHex":null,"algorithm":"ML-DSA hedged signing with caller-supplied rnd","revision":"FIPS 204","section":null,"family":"pqc","source":{"mechanism":"declared","parameterSet":"declared","mapping":"reviewed"}},

@@ -749,7 +749,7 @@
     },
     "CKM_ML_DSA_EXTERNAL_MU_GEN": {
       "algorithm": "ML-DSA external-mu computation",
-      "revision": "FIPS 204 (mu, Algorithm 7 line 6)",
+      "revision": "FIPS 204 (external μ)",
       "section": null,
       "vendorDefined": true
     },
