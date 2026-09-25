@@ -17,12 +17,12 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | Active cases: positive / negative                       |      152 / 38 | `src/data/validation/validation-counts.generated.json`            |
 | C++: advertised capability cells (denominator)          |         1,635 | `public/data/validation/coverage-matrix.json`                     |
 | Rust: advertised capability cells (denominator)         |         1,025 | `public/data/validation/coverage-matrix.json`                     |
-| Coverage waivers (entries; all statuses)                |           207 | `src/data/validation/coverage-waivers.json`                       |
+| Coverage waivers (entries; all statuses)                |            43 | `src/data/validation/coverage-waivers.json`                       |
 | Waivers approved                                        |             0 | `src/data/validation/coverage-waivers.json`                       |
-| Open gaps (register entries)                            |           187 | `public/data/validation/coverage-matrix.json`                     |
+| Open gaps (register entries)                            |           639 | `public/data/validation/coverage-matrix.json`                     |
 | Workbench test groups / families                        |        42 / 7 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
-**Waivers:** All 207 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5).
+**Waivers:** All 43 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5).
 
 ## Vector files and cases by evidence class
 
@@ -49,15 +49,15 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
-| positive    |      38 |     128 |    1,469 |       1,635 |
+| positive    |      38 |     748 |      849 |       1,635 |
 | negative    |      18 |       7 |    1,610 |       1,635 |
 | boundary    |      18 |      18 |    1,599 |       1,635 |
-| state-error |       2 |       3 |    1,630 |       1,635 |
-| **overall** |       0 |     167 |    1,468 |       1,635 |
+| state-error |     869 |       0 |      766 |       1,635 |
+| **overall** |       3 |     923 |      709 |       1,635 |
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |              167 |           140 |             7 |
+| wasm          | registered |              926 |           922 |           437 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
@@ -72,15 +72,15 @@ Artifacts:
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
-| positive    |      47 |     131 |      847 |       1,025 |
+| positive    |      47 |     470 |      508 |       1,025 |
 | negative    |      18 |       7 |    1,000 |       1,025 |
 | boundary    |      19 |      18 |      988 |       1,025 |
-| state-error |       2 |       3 |    1,020 |       1,025 |
-| **overall** |       0 |     179 |      846 |       1,025 |
+| state-error |     586 |       0 |      439 |       1,025 |
+| **overall** |       3 |     639 |      383 |       1,025 |
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |              179 |           163 |             6 |
+| wasm          | registered |              642 |           641 |           552 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
@@ -91,6 +91,563 @@ Artifacts:
 
 ## Recorded runs
 
+- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-25 at hub `b7007e6ebcc8`; 4,580 results: cpp 2,022 pass, 230 fail, 38 skip; rust 326 fail, 1,367 pass, 597 skip.
+  - **fail** on rust: `errpath.decapsulate.read-only-session#local:errpath.decapsulate.read-only-session/CKM_ECDH1_DERIVE`
+  - **fail** on rust: `errpath.decapsulate.read-only-session#local:errpath.decapsulate.read-only-session/CKM_ML_KEM`
+  - **fail** on rust: `errpath.decrypt.buffer-too-small#local:errpath.decrypt.buffer-too-small/CKM_AES_CBC_PAD`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CBC`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CBC_PAD`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CCM`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CFB1`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CFB128`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CFB8`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CTR`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_ECB`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_GCM`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_OFB`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_XTS`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_CHACHA20`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_CHACHA20_POLY1305`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on rust: `errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_RSA_PKCS_OAEP`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CBC`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CBC_PAD`
+  - **fail** on cpp: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CCM`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CCM`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CFB1`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CFB128`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CFB8`
+  - **fail** on cpp: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CTR`
+  - **fail** on cpp: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_GCM`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_GCM`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_OFB`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_XTS`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_CHACHA20`
+  - **fail** on cpp: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305`
+  - **fail** on cpp: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP`
+  - **fail** on rust: `errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP`
+  - **fail** on rust: `errpath.decrypt.null-mechanism-terminates#local:errpath.decrypt.null-mechanism-terminates/CKM_AES_CBC_PAD`
+  - **fail** on rust: `errpath.decrypt.terminated-after-final#local:errpath.decrypt.terminated-after-final/CKM_AES_CBC_PAD`
+  - **fail** on rust: `errpath.derive.key-handle-invalid#local:errpath.derive.key-handle-invalid/CKM_ECDH1_COFACTOR_DERIVE`
+  - **fail** on rust: `errpath.derive.key-handle-invalid#local:errpath.derive.key-handle-invalid/CKM_ECDH1_DERIVE`
+  - **fail** on rust: `errpath.derive.key-handle-invalid#local:errpath.derive.key-handle-invalid/CKM_HKDF_DERIVE`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_AES_CBC_ENCRYPT_DATA`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_AES_ECB_ENCRYPT_DATA`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_CONCATENATE_BASE_AND_DATA`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_CONCATENATE_BASE_AND_KEY`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_CONCATENATE_DATA_AND_BASE`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_ECDH1_COFACTOR_DERIVE`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_ECDH1_DERIVE`
+  - **fail** on cpp: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_HKDF_DERIVE`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_HKDF_DERIVE`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA256_KEY_DERIVATION`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA3_256_KEY_DERIVATION`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA3_384_KEY_DERIVATION`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA3_512_KEY_DERIVATION`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA384_KEY_DERIVATION`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA512_224_KEY_DERIVATION`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA512_256_KEY_DERIVATION`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA512_KEY_DERIVATION`
+  - **fail** on rust: `errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHAKE_256_KEY_DERIVATION`
+  - **fail** on cpp: `errpath.derive.mechanism-param-invalid#local:errpath.derive.mechanism-param-invalid/CKM_HKDF_DERIVE`
+  - **fail** on cpp: `errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ECDH1_DERIVE`
+  - **fail** on rust: `errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ECDH1_DERIVE`
+  - **fail** on cpp: `errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ML_KEM`
+  - **fail** on rust: `errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ML_KEM`
+  - **fail** on rust: `errpath.encapsulate.read-only-session#local:errpath.encapsulate.read-only-session/CKM_ECDH1_DERIVE`
+  - **fail** on rust: `errpath.encapsulate.read-only-session#local:errpath.encapsulate.read-only-session/CKM_ML_KEM`
+  - **fail** on rust: `errpath.encrypt.buffer-too-small#local:errpath.encrypt.buffer-too-small/CKM_AES_CBC_PAD`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CBC`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CBC_PAD`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CCM`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CFB1`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CFB128`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CFB8`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CTR`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_ECB`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_GCM`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_OFB`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_XTS`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_CHACHA20`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_CHACHA20_POLY1305`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on rust: `errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_RSA_PKCS_OAEP`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CBC`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CBC_PAD`
+  - **fail** on cpp: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CCM`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CCM`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CFB1`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CFB128`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CFB8`
+  - **fail** on cpp: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CTR`
+  - **fail** on cpp: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_GCM`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_GCM`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_OFB`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_XTS`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_CHACHA20`
+  - **fail** on cpp: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305`
+  - **fail** on cpp: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP`
+  - **fail** on rust: `errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP`
+  - **fail** on rust: `errpath.encrypt.terminated-after-final#local:errpath.encrypt.terminated-after-final/CKM_AES_CBC_PAD`
+  - **fail** on rust: `errpath.generate-key-pair.executes#local:errpath.generate-key-pair.executes/CKM_EC_KEY_PAIR_GEN_W_EXTRA_BITS`
+  - **fail** on rust: `errpath.generate-key-pair.template-inconsistent#local:errpath.generate-key-pair.template-inconsistent/CKM_EC_EDWARDS_KEY_PAIR_GEN`
+  - **fail** on rust: `errpath.generate-key-pair.template-inconsistent#local:errpath.generate-key-pair.template-inconsistent/CKM_EC_MONTGOMERY_KEY_PAIR_GEN`
+  - **fail** on rust: `errpath.message-decrypt.buffer-too-small#local:errpath.message-decrypt.buffer-too-small/CKM_AES_GCM`
+  - **fail** on rust: `errpath.message-decrypt.executes#local:errpath.message-decrypt.executes/CKM_AES_GCM`
+  - **fail** on rust: `errpath.message-decrypt.key-type-inconsistent#local:errpath.message-decrypt.key-type-inconsistent/CKM_AES_GCM`
+  - **fail** on rust: `errpath.message-decrypt.operation-active#local:errpath.message-decrypt.operation-active/CKM_AES_GCM`
+  - **fail** on rust: `errpath.message-decrypt.terminated-after-final#local:errpath.message-decrypt.terminated-after-final/CKM_AES_GCM`
+  - **fail** on rust: `errpath.message-encrypt.buffer-too-small#local:errpath.message-encrypt.buffer-too-small/CKM_AES_GCM`
+  - **fail** on rust: `errpath.message-encrypt.executes#local:errpath.message-encrypt.executes/CKM_AES_GCM`
+  - **fail** on rust: `errpath.message-encrypt.key-type-inconsistent#local:errpath.message-encrypt.key-type-inconsistent/CKM_AES_GCM`
+  - **fail** on rust: `errpath.message-encrypt.operation-active#local:errpath.message-encrypt.operation-active/CKM_AES_GCM`
+  - **fail** on rust: `errpath.message-encrypt.terminated-after-final#local:errpath.message-encrypt.terminated-after-final/CKM_AES_GCM`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA1`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA224`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA256`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_224`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_256`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_384`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_512`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA384`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA512`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA224`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA256`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_224`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_256`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_384`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_512`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA384`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA512`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHAKE128`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHAKE256`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA224`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA256`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_224`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_256`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_384`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_512`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA384`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA512`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHAKE128`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHAKE256`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_MD5_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ML_DSA`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA1_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA1_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA224_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA224_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA256_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA256_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_224_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_224_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_256_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_256_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_384_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_384_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_512_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_512_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA384_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA384_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA512_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA512_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SLH_DSA`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA1`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA224`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA256`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_224`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_256`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_384`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_512`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA384`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA512`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_MD5_RSA_PKCS`
+  - **fail** on rust: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ML_DSA`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SLH_DSA`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA1`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA224`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA256`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_224`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_256`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_384`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_512`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA384`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA512`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_MD5_RSA_PKCS`
+  - **fail** on rust: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ML_DSA`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS`
+  - **fail** on cpp: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SLH_DSA`
+  - **fail** on cpp: `errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on rust: `errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on cpp: `errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_X_509`
+  - **fail** on rust: `errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_X_509`
+  - **fail** on rust: `errpath.sign.buffer-too-small#local:errpath.sign.buffer-too-small/CKM_ECDSA`
+  - **fail** on rust: `errpath.sign.buffer-too-small#local:errpath.sign.buffer-too-small/CKM_ECDSA_SHA1`
+  - **fail** on rust: `errpath.sign.buffer-too-small#local:errpath.sign.buffer-too-small/CKM_ECDSA_SHA224`
+  - **fail** on rust: `errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA1`
+  - **fail** on rust: `errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA224`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_AES_CMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_AES_GMAC`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA1`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA1`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA224`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA224`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA256`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA256`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_224`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_224`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_256`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_256`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_384`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_384`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_512`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_512`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA384`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA384`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA512`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA512`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_EDDSA`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_EDDSA`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA224`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA256`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_224`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_256`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_384`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_512`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA384`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA512`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE128`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE256`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA224`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA256`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_224`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_256`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_384`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_512`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA384`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA512`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE128`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE256`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ML_DSA`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ML_DSA_EXTERNAL_MU`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RIPEMD160_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RIPEMD160_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_X_509`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA_1_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA_1_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_224_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_224_HMAC_GENERAL`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_256_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_256_HMAC_GENERAL`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_HMAC`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS`
+  - **fail** on cpp: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SLH_DSA`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_HASH_ML_DSA`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_HASH_SLH_DSA`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.sign.terminated-after-final#local:errpath.sign.terminated-after-final/CKM_ECDSA`
+  - **fail** on rust: `errpath.sign.terminated-after-final#local:errpath.sign.terminated-after-final/CKM_ECDSA_SHA1`
+  - **fail** on rust: `errpath.sign.terminated-after-final#local:errpath.sign.terminated-after-final/CKM_ECDSA_SHA224`
+  - **fail** on cpp: `errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC`
+  - **fail** on rust: `errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC`
+  - **fail** on cpp: `errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC_PAD`
+  - **fail** on rust: `errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC_PAD`
+  - **fail** on rust: `errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_KEY_WRAP`
+  - **fail** on rust: `errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_KEY_WRAP_KWP`
+  - **fail** on rust: `errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_KEY_WRAP_PAD`
+  - **fail** on rust: `errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on rust: `errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_RSA_PKCS_OAEP`
+  - **fail** on cpp: `errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_AES_CBC`
+  - **fail** on cpp: `errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_AES_CBC_PAD`
+  - **fail** on cpp: `errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP`
+  - **fail** on rust: `errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP`
+  - **fail** on cpp: `errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on rust: `errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on cpp: `errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_X_509`
+  - **fail** on rust: `errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_X_509`
+  - **fail** on rust: `errpath.verify.executes#local:errpath.verify.executes/CKM_ECDSA_SHA1`
+  - **fail** on rust: `errpath.verify.executes#local:errpath.verify.executes/CKM_ECDSA_SHA224`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_AES_CMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_AES_GMAC`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA1`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA1`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA224`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA224`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA256`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA256`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_224`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_224`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_256`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_256`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_384`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_384`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_512`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_512`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA384`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA384`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA512`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA512`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_EDDSA`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_EDDSA`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA224`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA256`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_224`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_256`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_384`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_512`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA384`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA512`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE128`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE256`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA224`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA256`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_224`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_256`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_384`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_512`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA384`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA512`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE128`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE256`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ML_DSA`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ML_DSA_EXTERNAL_MU`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RIPEMD160_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RIPEMD160_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_X_509`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA_1_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA_1_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_224_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_224_HMAC_GENERAL`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_256_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_256_HMAC_GENERAL`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_HMAC`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_HMAC_GENERAL`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS`
+  - **fail** on cpp: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SLH_DSA`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_HASH_ML_DSA`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_HASH_SLH_DSA`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS`
+  - **fail** on cpp: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS`
+  - **fail** on rust: `errpath.verify.null-mechanism-terminates#local:errpath.verify.null-mechanism-terminates/CKM_ECDSA`
+  - **fail** on rust: `errpath.verify.null-mechanism-terminates#local:errpath.verify.null-mechanism-terminates/CKM_ECDSA_SHA1`
+  - **fail** on rust: `errpath.verify.null-mechanism-terminates#local:errpath.verify.null-mechanism-terminates/CKM_ECDSA_SHA224`
+  - **fail** on rust: `errpath.verify.terminated-after-final#local:errpath.verify.terminated-after-final/CKM_ECDSA`
+  - **fail** on rust: `errpath.verify.terminated-after-final#local:errpath.verify.terminated-after-final/CKM_ECDSA_SHA1`
+  - **fail** on rust: `errpath.verify.terminated-after-final#local:errpath.verify.terminated-after-final/CKM_ECDSA_SHA224`
+  - **fail** on rust: `errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_CBC`
+  - **fail** on rust: `errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_CBC_PAD`
+  - **fail** on rust: `errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_KEY_WRAP`
+  - **fail** on rust: `errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_KEY_WRAP_KWP`
+  - **fail** on rust: `errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_KEY_WRAP_PAD`
+  - **fail** on rust: `errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_RSA_PKCS`
+  - **fail** on rust: `errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_RSA_PKCS_OAEP`
+  - **fail** on cpp: `errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_AES_CBC`
+  - **fail** on cpp: `errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_AES_CBC_PAD`
+  - **fail** on cpp: `errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP`
+  - **fail** on rust: `errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP`
 - `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-25 at hub `88609829b434`; 94 results: rust 94 pass.
 - `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-25 at hub `88609829b434`; 520 results: cpp 253 pass, 7 fail; rust 254 pass, 6 fail.
   - **fail** on rust: `acvp.07b.keycheck#mlkem_encapdecap_val_test#/testGroups/3/tests/0`
@@ -161,31 +718,46 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Open-gaps register
 
-187 entries — by status: open 184, accepted-limitation 2, in-progress 1; by origin: curated 21, generated 166; owner unassigned: 187.
+639 entries — by status: open 636, accepted-limitation 2, in-progress 1; by origin: curated 36, generated 603; owner unassigned: 639.
 
-| Curated gap                                                                             | Status              | Plan item       | Owner      |
-| --------------------------------------------------------------------------------------- | ------------------- | --------------- | ---------- |
-| ML-DSA hedged signing with a caller-supplied rnd is not reachable through PKCS #11      | open                | D2-4            | unassigned |
-| HashML-DSA with SHA2-512/224 or SHA2-512/256 has no PKCS #11 mechanism                  | accepted-limitation | D2-6            | unassigned |
-| ML-DSA internal interface (raw M′) is not expressible through PKCS #11                  | accepted-limitation | D2-5            | unassigned |
-| KMAC256 vector case quarantined                                                         | open                | B-2 / E (KMAC)  | unassigned |
-| 106 C++/Rust C_GetMechanismInfo disagreements                                           | open                | G-9             | unassigned |
-| 7 mechanisms advertised by Rust only                                                    | open                | G-9             | unassigned |
-| Rust dispatches CKM_HPKE / CKM_HPKE_KEM_KEY_PAIR_GEN without advertising them           | open                | G-7             | unassigned |
-| Native targets not run                                                                  | open                | H-2             | unassigned |
-| Hardware targets not run                                                                | open                | H-3 / Q3        | unassigned |
-| Run results recorded only for the workbench and katRunner, on the wasm engines, in Node | open                | C-4 / H-1 / H-7 | unassigned |
-| Native 976/815-check engine suites not in the evidence pipeline                         | open                | G-6             | unassigned |
-| PKCS #11 API-behavior matrix not built                                                  | open                | G-3 / G-4       | unassigned |
-| SLH-DSA NIST sigGen cases registered but not executed                                   | open                | D3-4            | unassigned |
-| Supported ACVP test types (AFT/MCT/LDT/VAL) not declared per algorithm                  | open                | C-1             | unassigned |
-| Some test surfaces are not in the test registry                                         | open                | C-2             | unassigned |
-| Rust engine accepts all 6 invalid NIST ML-KEM encapsulation/decapsulation keys          | open                | D1-5            | unassigned |
-| C++ HashSLH-DSA wraps M′ twice — valid NIST pre-hash signatures rejected                | open                | D3-3            | unassigned |
-| ML-KEM wrong-length inputs: return codes differ from PKCS #11 v3.2 and between engines  | open                | D1-5 / G-8      | unassigned |
-| PBKDF2 iteration floor differs between engines (Rust refuses c < 1000)                  | open                | G-9             | unassigned |
-| ECDSA P-521 NIST sample failed on C++ — hub CKA_EC_POINT encoding (fixed hub-side)      | in-progress         | E (ECDSA) / J-7 | unassigned |
-| SUCI key-injection helper is rejected by the C++ engine                                 | open                | A-3             | unassigned |
+| Curated gap                                                                                                        | Status              | Plan item       | Owner      |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------- | --------------- | ---------- |
+| ML-DSA hedged signing with a caller-supplied rnd is not reachable through PKCS #11                                 | open                | D2-4            | unassigned |
+| HashML-DSA with SHA2-512/224 or SHA2-512/256 has no PKCS #11 mechanism                                             | accepted-limitation | D2-6            | unassigned |
+| ML-DSA internal interface (raw M′) is not expressible through PKCS #11                                             | accepted-limitation | D2-5            | unassigned |
+| KMAC256 vector case quarantined                                                                                    | open                | B-2 / E (KMAC)  | unassigned |
+| 106 C++/Rust C_GetMechanismInfo disagreements                                                                      | open                | G-9             | unassigned |
+| 7 mechanisms advertised by Rust only                                                                               | open                | G-9             | unassigned |
+| Rust dispatches CKM_HPKE / CKM_HPKE_KEM_KEY_PAIR_GEN without advertising them                                      | open                | G-7             | unassigned |
+| Native targets not run                                                                                             | open                | H-2             | unassigned |
+| Hardware targets not run                                                                                           | open                | H-3 / Q3        | unassigned |
+| Run results recorded only for the workbench and katRunner, on the wasm engines, in Node                            | open                | C-4 / H-1 / H-7 | unassigned |
+| Native 976/815-check engine suites not in the evidence pipeline                                                    | open                | G-6             | unassigned |
+| PKCS #11 API-behavior matrix not built                                                                             | open                | G-3 / G-4       | unassigned |
+| SLH-DSA NIST sigGen cases registered but not executed                                                              | open                | D3-4            | unassigned |
+| Supported ACVP test types (AFT/MCT/LDT/VAL) not declared per algorithm                                             | open                | C-1             | unassigned |
+| Some test surfaces are not in the test registry                                                                    | open                | C-2             | unassigned |
+| Rust engine accepts all 6 invalid NIST ML-KEM encapsulation/decapsulation keys                                     | open                | D1-5            | unassigned |
+| C++ HashSLH-DSA wraps M′ twice — valid NIST pre-hash signatures rejected                                           | open                | D3-3            | unassigned |
+| ML-KEM wrong-length inputs: return codes differ from PKCS #11 v3.2 and between engines                             | open                | D1-5 / G-8      | unassigned |
+| PBKDF2 iteration floor differs between engines (Rust refuses c < 1000)                                             | open                | G-9             | unassigned |
+| ECDSA P-521 NIST sample failed on C++ — hub CKA_EC_POINT encoding (fixed hub-side)                                 | in-progress         | E (ECDSA) / J-7 | unassigned |
+| SUCI key-injection helper is rejected by the C++ engine                                                            | open                | A-3             | unassigned |
+| C++: sign/verify inits accept a key of the wrong type (CKR_OK instead of CKR_KEY_TYPE_INCONSISTENT)                | open                | G-8             | unassigned |
+| C++: CKR_KEY_FUNCTION_NOT_PERMITTED returned where CKR_KEY_TYPE_INCONSISTENT has priority                          | open                | G-8             | unassigned |
+| C++: C_UnwrapKey returns CKR_WRAPPING_KEY_TYPE_INCONSISTENT for a wrong unwrapping key                             | open                | G-8             | unassigned |
+| C++: C_SignMessage ends the message-signing process on CKR_BUFFER_TOO_SMALL                                        | open                | G-8             | unassigned |
+| C++: a malformed mechanism parameter returns CKR_ARGUMENTS_BAD, not CKR_MECHANISM_PARAM_INVALID                    | open                | G-8             | unassigned |
+| Rust: operation inits and C_DeriveKey accept a key of the wrong type (CKR_OK instead of CKR_KEY_TYPE_INCONSISTENT) | open                | G-8             | unassigned |
+| Rust: CKR_KEY_FUNCTION_NOT_PERMITTED returned where CKR_KEY_TYPE_INCONSISTENT has priority                         | open                | G-8             | unassigned |
+| Rust: RSA C_WrapKey / C_UnwrapKey return CKR_KEY_TYPE_INCONSISTENT instead of the (UN)WRAPPING_KEY codes           | open                | G-8             | unassigned |
+| Rust: a 1-byte mechanism parameter is accepted (CKR_OK) for RSA-PSS and RSA-OAEP                                   | open                | G-8             | unassigned |
+| Rust: malformed parameter / key handle 0 return CKR_ARGUMENTS_BAD                                                  | open                | G-8             | unassigned |
+| Rust: C_EncapsulateKey / C_DecapsulateKey create a token object in a read-only session                             | open                | G-8             | unassigned |
+| Rust: a second C_MessageEncryptInit / C_MessageDecryptInit while one is active returns CKR_OK                      | open                | G-8             | unassigned |
+| Rust: Edwards / Montgomery key-pair generation accepts an inconsistent CKA_KEY_TYPE                                | open                | G-8             | unassigned |
+| Rust: advertised cells whose operation does not execute                                                            | open                | G-8             | unassigned |
+| PKCS #11 v3.2 gives no single key-handle / key-type code for C_DecapsulateKey — not probed                         | open                | G-8             | unassigned |
 
 ## Awaiting two-person review (plan J-5)
 
@@ -196,7 +768,7 @@ Valid review records: 0.
 | Kind                      | Items not approved |
 | ------------------------- | -----------------: |
 | vector-source             |                 38 |
-| coverage-waiver           |                207 |
+| coverage-waiver           |                 43 |
 | public-claim              |                  3 |
 | learn-module-practitioner |                  1 |
 
@@ -215,11 +787,11 @@ Machine-evaluated. A human item is never marked PASS.
 
 |   # | Item                                                                                                       | Status             | Evidence                                                                                                                                                                                                                                                                                                                   | Basis                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | --: | ---------------------------------------------------------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                          | All 370 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                |
+|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                          | All 2660 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                               |
 |   2 | All active vectors have provenance or are blocked/quarantined                                              | **PASS**           | `src/data/validation/vector-manifest.json`<br>`src/data/validation/validation-counts.generated.json`                                                                                                                                                                                                                       | 40 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1.                                                                                                                                                                                                                                                  |
 |   3 | Deck, script, UI and report counts are generated from the same manifest                                    | **HUMAN-REQUIRED** | `src/data/validation/validation-counts.generated.json`<br>`public/data/validation/release-evidence.json`<br>`scripts/audit-validation-claims.ts`                                                                                                                                                                           | This report and the UI read the generated counts (validation-counts.generated.json). The deck and script live outside this repo, so a person must run `npm run gen:release-evidence:check -- <presentation dir>` on the FINAL deck; `npm run release:freeze -- --presentation <dir>` records that result in the freeze manifest.                                                                                                                                                         |
 |   4 | The disclaimer is visible in the workbench and the report                                                  | **PASS**           | `src/components/Playground/dev/pipeline/suites/AcvpSuiteWorkbench.tsx`<br>`src/components/Algorithms/KATView.tsx`<br>`src/components/Algorithms/CoverageMatrixView.tsx`<br>`public/data/validation/coverage-matrix.{md,html}`<br>`public/data/validation/release-evidence.md`<br>`e2e/validation-release-evidence.spec.ts` | Workbench, Algorithms KAT view and coverage matrix render <ValidationDisclaimer/> (the one shared constant); the coverage exports and this report carry it verbatim; e2e/validation-release-evidence.spec.ts asserts it is visible in a browser.                                                                                                                                                                                                                                         |
-|   5 | ML-DSA demo: externally expected positive and deliberately invalid negative cases pass on both engines     | **PASS**           | `src/data/validation/run-results/wasm-node-katRunner.json`<br>`src/data/validation/run-results/wasm-node-useAcvpSuite.json`<br>`src/data/validation/coverage-matrix.generated.json`<br>`e2e/acvp-mldsa-evidence.spec.ts`                                                                                                   | 43 NIST ACVP-Server reference-sample positive and 15 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly).                                                                                                    |
+|   5 | ML-DSA demo: externally expected positive and deliberately invalid negative cases pass on both engines     | **PASS**           | `src/data/validation/run-results/wasm-node-errorPathProbes.json`<br>`src/data/validation/run-results/wasm-node-katRunner.json`<br>`src/data/validation/run-results/wasm-node-useAcvpSuite.json`<br>`src/data/validation/coverage-matrix.generated.json`<br>`e2e/acvp-mldsa-evidence.spec.ts`                               | 43 NIST ACVP-Server reference-sample positive and 15 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly).                                                                                                    |
 |   6 | Dynamic mechanism inventory distinguishes advertised, tested, unsupported, skipped and untested            | **PASS**           | `public/data/validation/coverage-matrix.json`<br>`src/data/validation/mechanism-inventory.generated.json`                                                                                                                                                                                                                  | The published matrix counts advertised (denominator), tested (per-status + recorded pass/fail), unsupported, skipped and untested cells separately per engine.                                                                                                                                                                                                                                                                                                                           |
 |   7 | All demonstrated artifacts and targets have frozen hashes and reproducible evidence bundles                | **FAIL**           | `evidence/acvp-xplat/2026-09-24b/matrix.json`<br>`evidence/acvp-xplat/2026-09-24b/targets.json`<br>`evidence/release-freeze/`                                                                                                                                                                                              | Frozen and publishable: wasm-cpp, wasm-rust, linux-arm64-cpp, linux-arm64-rust. 8 plan §11 Q3 target(s) in run 2026-09-24b have no publishable frozen evidence: macos-arm64-cpp (not run), macos-arm64-rust (not run), linux-x86_64-cpp (run, non-publishable), linux-x86_64-rust (run, non-publishable), imx95-cpp (not run), imx95-rust (not run), kv260-cpp (not run), kv260-rust (not run); no release freeze manifest in evidence/release-freeze/ (plan J-4: freeze by 19 October). |
 |   8 | No slide claims ACVTS acceptance, NIST validation, exhaustive ACVP coverage or complete mechanism coverage | **HUMAN-REQUIRED** | `scripts/audit-validation-claims.ts`<br>`scripts/audit-validation-claims.allowlist.json`                                                                                                                                                                                                                                   | The banned-claims lint covers UI copy, Learn content and the root docs in every gate run; it reads the deck text only when given the presentation path (`npm run gen:release-evidence:check -- <presentation dir>`). Slide images and the spoken script still need a person to read them.                                                                                                                                                                                                |
@@ -228,17 +800,18 @@ Machine-evaluated. A human item is never marked PASS.
 
 ## Inputs
 
-| File                                                          | SHA-256                                                            |
-| ------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `evidence/acvp-xplat/2026-09-24/matrix.json`                  | `5ad41ba0a8b2c9c214985241c8b24520669f0a95bc6e3d33645e38b570bfa271` |
-| `evidence/acvp-xplat/2026-09-24/targets.json`                 | `68d23bd0090e0a104fd365f60175ccb11b85c53d2eb7aca2f45d103fe69ec775` |
-| `evidence/acvp-xplat/2026-09-24b/matrix.json`                 | `b3370d4bf4518c7c4519244e921977eeae4a0f07223869397185f1112f3baba8` |
-| `evidence/acvp-xplat/2026-09-24b/targets.json`                | `6413cac2139288ae126c4e31035f0110b8b72dc1c0a97e80722841a992715ccd` |
-| `public/data/validation/coverage-matrix.json`                 | `91ba60bf511b6d149c413e06ce3766f603233b379733a16ca849f660a3b67e90` |
-| `src/data/validation/coverage-waivers.json`                   | `e554010b48411143943757c206a4a4412ba369c3951a4ef336134ad6fa8c8969` |
-| `src/data/validation/native-conformance.generated.json`       | `4896b6b29fe12e8d66d807ab82fd051b7fe79683a13123c42fa7a7f8ff903fc1` |
-| `src/data/validation/open-gaps.json`                          | `b83e6fb1430de4bf3d6168967076106d03e0cb1b75e829b1ffbf94b08a8e575c` |
-| `src/data/validation/run-results/wasm-node-katRunner.json`    | `64433a7f1a77adbed09e8e0eb3bf0c43fc39c53a4f30816e8202376ab0c247c2` |
-| `src/data/validation/run-results/wasm-node-useAcvpSuite.json` | `3ab5d11967de93a4a52f98736cf2f8bc64939d16893636e37fe0bdf65c5d6591` |
-| `src/data/validation/validation-counts.generated.json`        | `782f68b73f39f323654d07a1a6c0dbee664bf27ade3e263096b39450ed8344e1` |
-| `src/data/validation/vector-manifest.json`                    | `95b54b52499c3a3dc17aed6b2145def51ef6db177f02c57517245c15794a118c` |
+| File                                                             | SHA-256                                                            |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `evidence/acvp-xplat/2026-09-24/matrix.json`                     | `5ad41ba0a8b2c9c214985241c8b24520669f0a95bc6e3d33645e38b570bfa271` |
+| `evidence/acvp-xplat/2026-09-24/targets.json`                    | `68d23bd0090e0a104fd365f60175ccb11b85c53d2eb7aca2f45d103fe69ec775` |
+| `evidence/acvp-xplat/2026-09-24b/matrix.json`                    | `b3370d4bf4518c7c4519244e921977eeae4a0f07223869397185f1112f3baba8` |
+| `evidence/acvp-xplat/2026-09-24b/targets.json`                   | `6413cac2139288ae126c4e31035f0110b8b72dc1c0a97e80722841a992715ccd` |
+| `public/data/validation/coverage-matrix.json`                    | `35c41ed4e06c503f287420f974f65bf7bc4888934192e2663b4071dfb0be164f` |
+| `src/data/validation/coverage-waivers.json`                      | `abd4e8d218862bd023721caeb2ce09edcb6217941d4fbf5af06c4238306c8b8c` |
+| `src/data/validation/native-conformance.generated.json`          | `4896b6b29fe12e8d66d807ab82fd051b7fe79683a13123c42fa7a7f8ff903fc1` |
+| `src/data/validation/open-gaps.json`                             | `d2c55c75ec7a5b71bc31c578df2b47304e4dc50d89fe343894ad046a489ad5b1` |
+| `src/data/validation/run-results/wasm-node-errorPathProbes.json` | `bb2fe9e396a411ec7697e593c178778413781f051e3d6b4812c54361ec9ae09e` |
+| `src/data/validation/run-results/wasm-node-katRunner.json`       | `64433a7f1a77adbed09e8e0eb3bf0c43fc39c53a4f30816e8202376ab0c247c2` |
+| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`    | `3ab5d11967de93a4a52f98736cf2f8bc64939d16893636e37fe0bdf65c5d6591` |
+| `src/data/validation/validation-counts.generated.json`           | `782f68b73f39f323654d07a1a6c0dbee664bf27ade3e263096b39450ed8344e1` |
+| `src/data/validation/vector-manifest.json`                       | `95b54b52499c3a3dc17aed6b2145def51ef6db177f02c57517245c15794a118c` |

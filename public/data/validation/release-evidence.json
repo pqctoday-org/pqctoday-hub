@@ -8,10 +8,11 @@
     "evidence/acvp-xplat/2026-09-24/targets.json": "68d23bd0090e0a104fd365f60175ccb11b85c53d2eb7aca2f45d103fe69ec775",
     "evidence/acvp-xplat/2026-09-24b/matrix.json": "b3370d4bf4518c7c4519244e921977eeae4a0f07223869397185f1112f3baba8",
     "evidence/acvp-xplat/2026-09-24b/targets.json": "6413cac2139288ae126c4e31035f0110b8b72dc1c0a97e80722841a992715ccd",
-    "public/data/validation/coverage-matrix.json": "91ba60bf511b6d149c413e06ce3766f603233b379733a16ca849f660a3b67e90",
-    "src/data/validation/coverage-waivers.json": "e554010b48411143943757c206a4a4412ba369c3951a4ef336134ad6fa8c8969",
+    "public/data/validation/coverage-matrix.json": "35c41ed4e06c503f287420f974f65bf7bc4888934192e2663b4071dfb0be164f",
+    "src/data/validation/coverage-waivers.json": "abd4e8d218862bd023721caeb2ce09edcb6217941d4fbf5af06c4238306c8b8c",
     "src/data/validation/native-conformance.generated.json": "4896b6b29fe12e8d66d807ab82fd051b7fe79683a13123c42fa7a7f8ff903fc1",
-    "src/data/validation/open-gaps.json": "b83e6fb1430de4bf3d6168967076106d03e0cb1b75e829b1ffbf94b08a8e575c",
+    "src/data/validation/open-gaps.json": "d2c55c75ec7a5b71bc31c578df2b47304e4dc50d89fe343894ad046a489ad5b1",
+    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "bb2fe9e396a411ec7697e593c178778413781f051e3d6b4812c54361ec9ae09e",
     "src/data/validation/run-results/wasm-node-katRunner.json": "64433a7f1a77adbed09e8e0eb3bf0c43fc39c53a4f30816e8202376ab0c247c2",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "3ab5d11967de93a4a52f98736cf2f8bc64939d16893636e37fe0bdf65c5d6591",
     "src/data/validation/validation-counts.generated.json": "782f68b73f39f323654d07a1a6c0dbee664bf27ade3e263096b39450ed8344e1",
@@ -92,15 +93,15 @@
         "advertisedCells": 1635,
         "unsupportedCells": 27,
         "overall": {
-          "covered": 0,
-          "sampled": 167,
-          "untested": 1468
+          "covered": 3,
+          "sampled": 923,
+          "untested": 709
         },
         "byPolarity": {
           "positive": {
             "covered": 38,
-            "sampled": 128,
-            "untested": 1469,
+            "sampled": 748,
+            "untested": 849,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
@@ -109,8 +110,8 @@
               "oracle": 4,
               "differential": 0,
               "round-trip": 54,
-              "behavior-only": 22,
-              "untested": 1469,
+              "behavior-only": 642,
+              "untested": 849,
               "unsupported": 0
             }
           },
@@ -149,9 +150,9 @@
             }
           },
           "state-error": {
-            "covered": 2,
-            "sampled": 3,
-            "untested": 1630,
+            "covered": 869,
+            "sampled": 0,
+            "untested": 766,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
@@ -160,8 +161,8 @@
               "oracle": 0,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 5,
-              "untested": 1630,
+              "behavior-only": 869,
+              "untested": 766,
               "unsupported": 0
             }
           }
@@ -169,9 +170,9 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 167,
-            "passedCells": 140,
-            "failedCells": 7,
+            "registeredCells": 926,
+            "passedCells": 922,
+            "failedCells": 437,
             "skippedCells": 0
           },
           "native": {
@@ -196,15 +197,15 @@
         "advertisedCells": 1025,
         "unsupportedCells": 637,
         "overall": {
-          "covered": 0,
-          "sampled": 179,
-          "untested": 846
+          "covered": 3,
+          "sampled": 639,
+          "untested": 383
         },
         "byPolarity": {
           "positive": {
             "covered": 47,
-            "sampled": 131,
-            "untested": 847,
+            "sampled": 470,
+            "untested": 508,
             "denominator": 1025,
             "byStatus": {
               "acvts-issued": 0,
@@ -213,8 +214,8 @@
               "oracle": 4,
               "differential": 0,
               "round-trip": 63,
-              "behavior-only": 18,
-              "untested": 847,
+              "behavior-only": 357,
+              "untested": 508,
               "unsupported": 0
             }
           },
@@ -253,9 +254,9 @@
             }
           },
           "state-error": {
-            "covered": 2,
-            "sampled": 3,
-            "untested": 1020,
+            "covered": 586,
+            "sampled": 0,
+            "untested": 439,
             "denominator": 1025,
             "byStatus": {
               "acvts-issued": 0,
@@ -264,8 +265,8 @@
               "oracle": 0,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 5,
-              "untested": 1020,
+              "behavior-only": 586,
+              "untested": 439,
               "unsupported": 0
             }
           }
@@ -273,9 +274,9 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 179,
-            "passedCells": 163,
-            "failedCells": 6,
+            "registeredCells": 642,
+            "passedCells": 641,
+            "failedCells": 552,
             "skippedCells": 0
           },
           "native": {
@@ -297,9 +298,9 @@
     },
     "parity": {
       "positive": {
-        "parity": 138,
-        "divergent": 7,
-        "not-established": 868,
+        "parity": 445,
+        "divergent": 33,
+        "not-established": 535,
         "single-engine": 649
       },
       "negative": {
@@ -315,16 +316,16 @@
         "single-engine": 649
       },
       "state-error": {
-        "parity": 5,
-        "divergent": 0,
-        "not-established": 1008,
+        "parity": 140,
+        "divergent": 440,
+        "not-established": 433,
         "single-engine": 649
       }
     },
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b); 520 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4580 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub b7007e6eb); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b); 520 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -370,15 +371,15 @@
   },
   "waivers": {
     "source": "src/data/validation/coverage-waivers.json",
-    "entries": 207,
+    "entries": 43,
     "byStatus": {
-      "baseline-pending-review": 207
+      "baseline-pending-review": 43
     },
     "approvedEntries": 0,
-    "waivedCells": 2314,
-    "pendingReviewCells": 2314,
+    "waivedCells": 1092,
+    "pendingReviewCells": 1092,
     "staleCells": 0,
-    "statement": "All 207 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
+    "statement": "All 43 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
   },
   "nativeSuites": {
     "source": "src/data/validation/native-conformance.generated.json",
@@ -475,6 +476,2253 @@
     ]
   },
   "recordedRuns": [
+    {
+      "file": "src/data/validation/run-results/wasm-node-errorPathProbes.json",
+      "runner": "errorPathProbes (every registered error-path case, dual engine)",
+      "artifactKind": "wasm",
+      "host": "Node.js via vitest local venue (not a browser)",
+      "hubCommit": "b7007e6ebcc85da798c8951a9da1705a1f9256f0",
+      "recordedAt": "2026-09-25",
+      "results": 4580,
+      "byEngine": {
+        "cpp": {
+          "pass": 2022,
+          "fail": 230,
+          "skip": 38
+        },
+        "rust": {
+          "fail": 326,
+          "pass": 1367,
+          "skip": 597
+        }
+      },
+      "failures": [
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decapsulate.read-only-session#local:errpath.decapsulate.read-only-session/CKM_ECDH1_DERIVE"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decapsulate.read-only-session#local:errpath.decapsulate.read-only-session/CKM_ML_KEM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.buffer-too-small#local:errpath.decrypt.buffer-too-small/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CBC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CFB1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CFB128"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CFB8"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CTR"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_ECB"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_OFB"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_XTS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_CHACHA20"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_CHACHA20_POLY1305"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_RSA_PKCS_OAEP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CBC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CFB1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CFB128"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CFB8"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CTR"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_OFB"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_XTS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_CHACHA20"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.null-mechanism-terminates#local:errpath.decrypt.null-mechanism-terminates/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.decrypt.terminated-after-final#local:errpath.decrypt.terminated-after-final/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-handle-invalid#local:errpath.derive.key-handle-invalid/CKM_ECDH1_COFACTOR_DERIVE"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-handle-invalid#local:errpath.derive.key-handle-invalid/CKM_ECDH1_DERIVE"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-handle-invalid#local:errpath.derive.key-handle-invalid/CKM_HKDF_DERIVE"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_AES_CBC_ENCRYPT_DATA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_AES_ECB_ENCRYPT_DATA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_CONCATENATE_BASE_AND_DATA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_CONCATENATE_BASE_AND_KEY"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_CONCATENATE_DATA_AND_BASE"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_ECDH1_COFACTOR_DERIVE"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_ECDH1_DERIVE"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_HKDF_DERIVE"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_HKDF_DERIVE"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA256_KEY_DERIVATION"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA3_256_KEY_DERIVATION"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA3_384_KEY_DERIVATION"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA3_512_KEY_DERIVATION"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA384_KEY_DERIVATION"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA512_224_KEY_DERIVATION"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA512_256_KEY_DERIVATION"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA512_KEY_DERIVATION"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHAKE_256_KEY_DERIVATION"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.derive.mechanism-param-invalid#local:errpath.derive.mechanism-param-invalid/CKM_HKDF_DERIVE"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ECDH1_DERIVE"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ECDH1_DERIVE"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ML_KEM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ML_KEM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encapsulate.read-only-session#local:errpath.encapsulate.read-only-session/CKM_ECDH1_DERIVE"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encapsulate.read-only-session#local:errpath.encapsulate.read-only-session/CKM_ML_KEM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.buffer-too-small#local:errpath.encrypt.buffer-too-small/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CBC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CFB1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CFB128"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CFB8"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CTR"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_ECB"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_OFB"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_XTS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_CHACHA20"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_CHACHA20_POLY1305"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_RSA_PKCS_OAEP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CBC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CFB1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CFB128"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CFB8"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CTR"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_OFB"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_XTS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_CHACHA20"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.encrypt.terminated-after-final#local:errpath.encrypt.terminated-after-final/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.generate-key-pair.executes#local:errpath.generate-key-pair.executes/CKM_EC_KEY_PAIR_GEN_W_EXTRA_BITS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.generate-key-pair.template-inconsistent#local:errpath.generate-key-pair.template-inconsistent/CKM_EC_EDWARDS_KEY_PAIR_GEN"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.generate-key-pair.template-inconsistent#local:errpath.generate-key-pair.template-inconsistent/CKM_EC_MONTGOMERY_KEY_PAIR_GEN"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-decrypt.buffer-too-small#local:errpath.message-decrypt.buffer-too-small/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-decrypt.executes#local:errpath.message-decrypt.executes/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-decrypt.key-type-inconsistent#local:errpath.message-decrypt.key-type-inconsistent/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-decrypt.operation-active#local:errpath.message-decrypt.operation-active/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-decrypt.terminated-after-final#local:errpath.message-decrypt.terminated-after-final/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-encrypt.buffer-too-small#local:errpath.message-encrypt.buffer-too-small/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-encrypt.executes#local:errpath.message-encrypt.executes/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-encrypt.key-type-inconsistent#local:errpath.message-encrypt.key-type-inconsistent/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-encrypt.operation-active#local:errpath.message-encrypt.operation-active/CKM_AES_GCM"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-encrypt.terminated-after-final#local:errpath.message-encrypt.terminated-after-final/CKM_AES_GCM"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHAKE128"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHAKE256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHAKE128"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHAKE256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_MD5_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ML_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA1_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA1_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA224_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA256_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_224_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_256_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_384_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_512_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA384_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA512_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SLH_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_MD5_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ML_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SLH_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_MD5_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ML_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SLH_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_X_509"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_X_509"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.buffer-too-small#local:errpath.sign.buffer-too-small/CKM_ECDSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.buffer-too-small#local:errpath.sign.buffer-too-small/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.buffer-too-small#local:errpath.sign.buffer-too-small/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_AES_CMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_AES_GMAC"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_EDDSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_EDDSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE128"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE128"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ML_DSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ML_DSA_EXTERNAL_MU"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RIPEMD160_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RIPEMD160_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_X_509"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA_1_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA_1_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_224_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_224_HMAC_GENERAL"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_256_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_256_HMAC_GENERAL"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SLH_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_HASH_ML_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_HASH_SLH_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.terminated-after-final#local:errpath.sign.terminated-after-final/CKM_ECDSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.terminated-after-final#local:errpath.sign.terminated-after-final/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.sign.terminated-after-final#local:errpath.sign.terminated-after-final/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_KEY_WRAP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_KEY_WRAP_KWP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_KEY_WRAP_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_RSA_PKCS_OAEP"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_AES_CBC"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_X_509"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_X_509"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_AES_CMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_AES_GMAC"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_224"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_256"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA384"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA512"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_EDDSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_EDDSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE128"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA384"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA512"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE128"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE256"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ML_DSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ML_DSA_EXTERNAL_MU"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RIPEMD160_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RIPEMD160_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_X_509"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA_1_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA_1_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_224_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_224_HMAC_GENERAL"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_256_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_256_HMAC_GENERAL"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_HMAC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_HMAC_GENERAL"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SLH_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_HASH_ML_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_HASH_SLH_DSA"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.null-mechanism-terminates#local:errpath.verify.null-mechanism-terminates/CKM_ECDSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.null-mechanism-terminates#local:errpath.verify.null-mechanism-terminates/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.null-mechanism-terminates#local:errpath.verify.null-mechanism-terminates/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.terminated-after-final#local:errpath.verify.terminated-after-final/CKM_ECDSA"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.terminated-after-final#local:errpath.verify.terminated-after-final/CKM_ECDSA_SHA1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.verify.terminated-after-final#local:errpath.verify.terminated-after-final/CKM_ECDSA_SHA224"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_CBC"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_KEY_WRAP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_KEY_WRAP_KWP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_KEY_WRAP_PAD"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_RSA_PKCS"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_RSA_PKCS_OAEP"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_AES_CBC"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_AES_CBC_PAD"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
+        }
+      ]
+    },
     {
       "file": "src/data/validation/run-results/wasm-node-katRunner.json",
       "runner": "katRunner (every registered KatKind)",
@@ -1100,17 +3348,17 @@
   },
   "openGaps": {
     "source": "public/data/validation/coverage-matrix.json (openGaps; curated entries from src/data/validation/open-gaps.json)",
-    "total": 187,
+    "total": 639,
     "byStatus": {
-      "open": 184,
+      "open": 636,
       "accepted-limitation": 2,
       "in-progress": 1
     },
     "byOrigin": {
-      "curated": 21,
-      "generated": 166
+      "curated": 36,
+      "generated": 603
     },
-    "unassignedOwner": 187,
+    "unassignedOwner": 639,
     "curated": [
       {
         "id": "d2-4-hedged-rnd",
@@ -1258,6 +3506,111 @@
         "status": "open",
         "planItem": "A-3",
         "owner": "unassigned"
+      },
+      {
+        "id": "g8-cpp-init-accepts-wrong-key-type",
+        "title": "C++: sign/verify inits accept a key of the wrong type (CKR_OK instead of CKR_KEY_TYPE_INCONSISTENT)",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-cpp-function-not-permitted-before-type",
+        "title": "C++: CKR_KEY_FUNCTION_NOT_PERMITTED returned where CKR_KEY_TYPE_INCONSISTENT has priority",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-cpp-unwrap-wrapping-code",
+        "title": "C++: C_UnwrapKey returns CKR_WRAPPING_KEY_TYPE_INCONSISTENT for a wrong unwrapping key",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-cpp-signmessage-buffer-too-small-terminates",
+        "title": "C++: C_SignMessage ends the message-signing process on CKR_BUFFER_TOO_SMALL",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-cpp-bad-mechanism-param-arguments-bad",
+        "title": "C++: a malformed mechanism parameter returns CKR_ARGUMENTS_BAD, not CKR_MECHANISM_PARAM_INVALID",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-rust-init-accepts-wrong-key-type",
+        "title": "Rust: operation inits and C_DeriveKey accept a key of the wrong type (CKR_OK instead of CKR_KEY_TYPE_INCONSISTENT)",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-rust-function-not-permitted-before-type",
+        "title": "Rust: CKR_KEY_FUNCTION_NOT_PERMITTED returned where CKR_KEY_TYPE_INCONSISTENT has priority",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-rust-wrap-unwrap-type-code",
+        "title": "Rust: RSA C_WrapKey / C_UnwrapKey return CKR_KEY_TYPE_INCONSISTENT instead of the (UN)WRAPPING_KEY codes",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-rust-malformed-param-accepted",
+        "title": "Rust: a 1-byte mechanism parameter is accepted (CKR_OK) for RSA-PSS and RSA-OAEP",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-rust-bad-param-or-handle-arguments-bad",
+        "title": "Rust: malformed parameter / key handle 0 return CKR_ARGUMENTS_BAD",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-rust-ro-session-token-object",
+        "title": "Rust: C_EncapsulateKey / C_DecapsulateKey create a token object in a read-only session",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-rust-message-init-not-exclusive",
+        "title": "Rust: a second C_MessageEncryptInit / C_MessageDecryptInit while one is active returns CKR_OK",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-rust-keygen-template-inconsistent",
+        "title": "Rust: Edwards / Montgomery key-pair generation accepts an inconsistent CKA_KEY_TYPE",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-rust-advertised-cells-do-not-execute",
+        "title": "Rust: advertised cells whose operation does not execute",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
+      },
+      {
+        "id": "g8-spec-decapsulate-return-codes",
+        "title": "PKCS #11 v3.2 gives no single key-handle / key-type code for C_DecapsulateKey — not probed",
+        "status": "open",
+        "planItem": "G-8",
+        "owner": "unassigned"
       }
     ]
   },
@@ -1308,11 +3661,11 @@
     "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-065 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
     "validRecords": 0,
     "statusCounts": {
-      "awaiting-review": 249
+      "awaiting-review": 85
     },
     "awaiting": {
       "vector-source": 38,
-      "coverage-waiver": 207,
+      "coverage-waiver": 43,
       "public-claim": 3,
       "learn-module-practitioner": 1
     },
@@ -1584,940 +3937,163 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_RSA_PKCS",
-        "kind": "coverage-waiver",
-        "title": "CKM_RSA_PKCS (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_RSA_X_509-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_RSA_X_509 (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_RSA_X_509-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_RSA_X_509 (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_MD5_RSA_PKCS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_MD5_RSA_PKCS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_MD5_RSA_PKCS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_MD5_RSA_PKCS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA1_RSA_PKCS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA1_RSA_PKCS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA1_RSA_PKCS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA1_RSA_PKCS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_RSA_PKCS_OAEP",
-        "kind": "coverage-waiver",
-        "title": "CKM_RSA_PKCS_OAEP (cpp, rust): 3 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_RSA_PKCS_PSS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_RSA_PKCS_PSS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_RSA_PKCS_PSS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_RSA_PKCS_PSS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA1_RSA_PKCS_PSS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA1_RSA_PKCS_PSS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA1_RSA_PKCS_PSS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA1_RSA_PKCS_PSS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ML_DSA",
-        "kind": "coverage-waiver",
-        "title": "CKM_ML_DSA (cpp, rust): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA (cpp, rust): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA224-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA224 (cpp, rust): 7 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA224-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA224 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA256-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA256 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA256-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA256 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA384-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA384 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA384-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA384 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA512-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA512 (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA512-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA512 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA3_224-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA3_224 (cpp, rust): 7 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA3_224-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA3_224 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA3_256-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA3_256 (cpp, rust): 7 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA3_256-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA3_256 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA3_384-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA3_384 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA3_384-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA3_384 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA3_512-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA3_512 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHA3_512-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHA3_512 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHAKE128-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHAKE128 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHAKE128-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHAKE128 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHAKE256-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHAKE256 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_ML_DSA_SHAKE256-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_ML_DSA_SHAKE256 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_SLH_DSA",
         "kind": "coverage-waiver",
-        "title": "CKM_SLH_DSA (cpp, rust): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_SLH_DSA (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA (cpp, rust): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA (cpp): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA224-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA224 (cpp, rust): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA224 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA224-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA224 (cpp): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA224 (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA256-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA256 (cpp, rust): 34 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA256 (cpp, rust): 29 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA256-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA256 (cpp): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA256 (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA384-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA384 (cpp, rust): 35 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA384 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA384-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA384 (cpp): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA384 (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA512-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA512 (cpp, rust): 35 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA512 (cpp, rust): 29 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA512-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA512 (cpp): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA512 (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_224-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_224 (cpp, rust): 35 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA3_224 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_224-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_224 (cpp): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA3_224 (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_256-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_256 (cpp, rust): 35 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA3_256 (cpp, rust): 29 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_256-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_256 (cpp): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA3_256 (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_384-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_384 (cpp, rust): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA3_384 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_384-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_384 (cpp): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA3_384 (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_512-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_512 (cpp, rust): 35 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA3_512 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_512-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_512 (cpp): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHA3_512 (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHAKE128-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHAKE128 (cpp, rust): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHAKE128 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHAKE128-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHAKE128 (cpp): 36 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHAKE128 (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHAKE256-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHAKE256 (cpp, rust): 35 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHAKE256 (cpp, rust): 29 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHAKE256-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHAKE256 (cpp): 36 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA256_RSA_PKCS",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA256_RSA_PKCS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA384_RSA_PKCS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA384_RSA_PKCS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA384_RSA_PKCS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA384_RSA_PKCS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_RSA_PKCS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_RSA_PKCS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_RSA_PKCS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_RSA_PKCS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA256_RSA_PKCS_PSS",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA256_RSA_PKCS_PSS (cpp): 3 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA384_RSA_PKCS_PSS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA384_RSA_PKCS_PSS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA384_RSA_PKCS_PSS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA384_RSA_PKCS_PSS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_RSA_PKCS_PSS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_RSA_PKCS_PSS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_RSA_PKCS_PSS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_RSA_PKCS_PSS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA224_RSA_PKCS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA224_RSA_PKCS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA224_RSA_PKCS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA224_RSA_PKCS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA224_RSA_PKCS_PSS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA224_RSA_PKCS_PSS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA224_RSA_PKCS_PSS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA224_RSA_PKCS_PSS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_224",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_224 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_224_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_224_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_224_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_224_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_224_KEY_DERIVATION",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_224_KEY_DERIVATION (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_256",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_256 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_256_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_256_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_256_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_256_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_256_KEY_DERIVATION",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_256_KEY_DERIVATION (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_256_RSA_PKCS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_256_RSA_PKCS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_256_RSA_PKCS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_256_RSA_PKCS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_384_RSA_PKCS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_384_RSA_PKCS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_384_RSA_PKCS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_384_RSA_PKCS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_512_RSA_PKCS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_512_RSA_PKCS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_512_RSA_PKCS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_512_RSA_PKCS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_256_RSA_PKCS_PSS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_256_RSA_PKCS_PSS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_256_RSA_PKCS_PSS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_256_RSA_PKCS_PSS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_384_RSA_PKCS_PSS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_384_RSA_PKCS_PSS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_384_RSA_PKCS_PSS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_384_RSA_PKCS_PSS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_512_RSA_PKCS_PSS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_512_RSA_PKCS_PSS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_512_RSA_PKCS_PSS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_512_RSA_PKCS_PSS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_224_RSA_PKCS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_224_RSA_PKCS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_224_RSA_PKCS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_224_RSA_PKCS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_224_RSA_PKCS_PSS-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_224_RSA_PKCS_PSS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_224_RSA_PKCS_PSS-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_224_RSA_PKCS_PSS (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_MD5",
-        "kind": "coverage-waiver",
-        "title": "CKM_MD5 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_MD5_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_MD5_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_MD5_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_MD5_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA_1",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA_1 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA_1_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA_1_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA_1_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA_1_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_RIPEMD160",
-        "kind": "coverage-waiver",
-        "title": "CKM_RIPEMD160 (rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_RIPEMD160_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_RIPEMD160_HMAC (rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_RIPEMD160_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_RIPEMD160_HMAC_GENERAL (rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA256_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA256_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA256_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA256_HMAC_GENERAL (cpp): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA224",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA224 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA224_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA224_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA224_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA224_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA384_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA384_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA384_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA384_HMAC_GENERAL (cpp): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_HMAC_GENERAL (cpp): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_256_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_256_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_256_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_256_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_224",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_224 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_224_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_224_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_224_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_224_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_384",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_384 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_384_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_384_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_384_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_384_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_512_HMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_512_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_512_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_512_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_GENERIC_SECRET_KEY_GEN",
-        "kind": "coverage-waiver",
-        "title": "CKM_GENERIC_SECRET_KEY_GEN (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_CONCATENATE_BASE_AND_DATA",
-        "kind": "coverage-waiver",
-        "title": "CKM_CONCATENATE_BASE_AND_DATA (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_CONCATENATE_DATA_AND_BASE",
-        "kind": "coverage-waiver",
-        "title": "CKM_CONCATENATE_DATA_AND_BASE (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA256_KEY_DERIVATION",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA256_KEY_DERIVATION (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA384_KEY_DERIVATION",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA384_KEY_DERIVATION (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_KEY_DERIVATION",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_KEY_DERIVATION (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_256_KEY_DERIVATION",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_256_KEY_DERIVATION (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_384_KEY_DERIVATION",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_384_KEY_DERIVATION (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_512_KEY_DERIVATION",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_512_KEY_DERIVATION (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHAKE_256_KEY_DERIVATION",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHAKE_256_KEY_DERIVATION (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA_SHAKE256 (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2529,170 +4105,16 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_EC_KEY_PAIR_GEN",
-        "kind": "coverage-waiver",
-        "title": "CKM_EC_KEY_PAIR_GEN (cpp): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA (cpp): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA1-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA1 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA1-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA1 (cpp): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA224-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA224 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA224-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA224 (cpp): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA256-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA256 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA256-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA256 (cpp, rust): 4 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA384-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA384 (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA384-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA384 (cpp): 9 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA512-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA512 (cpp, rust): 7 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA512-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA512 (cpp): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA3_224-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA3_224 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA3_224-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA3_224 (cpp): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA3_256-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA3_256 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA3_256-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA3_256 (cpp): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA3_384-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA3_384 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA3_384-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA3_384 (cpp): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA3_512-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA3_512 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDSA_SHA3_512-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA3_512 (cpp): 8 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_ECDH1_DERIVE-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_ECDH1_DERIVE (cpp): 4 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_ECDH1_DERIVE (cpp): 2 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_ECDH1_DERIVE-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_ECDH1_DERIVE (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ECDH1_COFACTOR_DERIVE",
-        "kind": "coverage-waiver",
-        "title": "CKM_ECDH1_COFACTOR_DERIVE (cpp, rust): 3 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_ECDH1_DERIVE (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2700,209 +4122,6 @@
         "id": "coverage-waiver:baseline-CKM_RSA_AES_KEY_WRAP",
         "kind": "coverage-waiver",
         "title": "CKM_RSA_AES_KEY_WRAP (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_EC_EDWARDS_KEY_PAIR_GEN-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_EC_EDWARDS_KEY_PAIR_GEN (cpp): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_EC_EDWARDS_KEY_PAIR_GEN-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_EC_EDWARDS_KEY_PAIR_GEN (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_EDDSA-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_EDDSA (cpp): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_EDDSA-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_EDDSA (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_XTS",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_XTS (cpp, rust): 4 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_XTS_KEY_GEN",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_XTS_KEY_GEN (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_KEY_GEN",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_KEY_GEN (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_ECB",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_ECB (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CBC",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CBC (cpp, rust): 11 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CBC_PAD",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CBC_PAD (cpp, rust): 10 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CTR-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CTR (cpp, rust): 3 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CTR-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CTR (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_GCM-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_GCM (cpp, rust): 10 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_GCM-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_GCM (cpp): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CCM",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CCM (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CMAC-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CMAC (cpp, rust): 5 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CMAC-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CMAC (cpp): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_GMAC",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_GMAC (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_ECB_ENCRYPT_DATA",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_ECB_ENCRYPT_DATA (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CBC_ENCRYPT_DATA",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CBC_ENCRYPT_DATA (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_CHACHA20",
-        "kind": "coverage-waiver",
-        "title": "CKM_CHACHA20 (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_EC_KEY_PAIR_GEN_W_EXTRA_BITS",
-        "kind": "coverage-waiver",
-        "title": "CKM_EC_KEY_PAIR_GEN_W_EXTRA_BITS (cpp, rust): 4 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_OFB",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_OFB (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CFB8",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CFB8 (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CFB128",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CFB128 (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CFB1",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CFB1 (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_KEY_WRAP",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_KEY_WRAP (cpp, rust): 5 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_KEY_WRAP_PAD",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_KEY_WRAP_PAD (cpp, rust): 4 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_KEY_WRAP_KWP",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_KEY_WRAP_KWP (cpp, rust): 4 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2924,13 +4143,6 @@
         "id": "coverage-waiver:baseline-CKM_ML_DSA_EXTERNAL_MU_GEN",
         "kind": "coverage-waiver",
         "title": "CKM_ML_DSA_EXTERNAL_MU_GEN (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_ML_DSA_EXTERNAL_MU",
-        "kind": "coverage-waiver",
-        "title": "CKM_ML_DSA_EXTERNAL_MU (cpp, rust): 3 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2959,13 +4171,6 @@
         "id": "coverage-waiver:baseline-CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE",
         "kind": "coverage-waiver",
         "title": "CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_KECCAK_256",
-        "kind": "coverage-waiver",
-        "title": "CKM_KECCAK_256 (rust): 1 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -3072,7 +4277,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 370 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 2660 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,
@@ -3114,6 +4319,7 @@
       "item": "ML-DSA demo: externally expected positive and deliberately invalid negative cases pass on both engines",
       "status": "PASS",
       "evidence": [
+        "src/data/validation/run-results/wasm-node-errorPathProbes.json",
         "src/data/validation/run-results/wasm-node-katRunner.json",
         "src/data/validation/run-results/wasm-node-useAcvpSuite.json",
         "src/data/validation/coverage-matrix.generated.json",
