@@ -830,12 +830,13 @@
           "caseId": "cose-dilithium-11-jose-kat#/vectors/0",
           "pointer": "/vectors/0",
           "algorithm": {
-            "name": "ML-DSA-44",
+            "name": "ML-DSA",
             "revision": "FIPS204"
           },
           "operation": "jws-verify",
           "parameters": {
-            "alg": "ML-DSA-44"
+            "alg": "ML-DSA-44",
+            "parameterSet": "ML-DSA-44"
           },
           "testType": "published-example",
           "expectation": "positive",
@@ -848,12 +849,13 @@
           "caseId": "cose-dilithium-11-jose-kat#/vectors/1",
           "pointer": "/vectors/1",
           "algorithm": {
-            "name": "ML-DSA-65",
+            "name": "ML-DSA",
             "revision": "FIPS204"
           },
           "operation": "jws-verify",
           "parameters": {
-            "alg": "ML-DSA-65"
+            "alg": "ML-DSA-65",
+            "parameterSet": "ML-DSA-65"
           },
           "testType": "published-example",
           "expectation": "positive",
@@ -866,12 +868,13 @@
           "caseId": "cose-dilithium-11-jose-kat#/vectors/2",
           "pointer": "/vectors/2",
           "algorithm": {
-            "name": "ML-DSA-87",
+            "name": "ML-DSA",
             "revision": "FIPS204"
           },
           "operation": "jws-verify",
           "parameters": {
-            "alg": "ML-DSA-87"
+            "alg": "ML-DSA-87",
+            "parameterSet": "ML-DSA-87"
           },
           "testType": "published-example",
           "expectation": "positive",
@@ -1420,7 +1423,7 @@
           "caseId": "hkdf_test#/testGroups/0/tests/0",
           "pointer": "/testGroups/0/tests/0",
           "algorithm": {
-            "name": "HKDF-SHA256",
+            "name": "HKDF",
             "revision": null
           },
           "operation": "derive",
@@ -1439,7 +1442,7 @@
           "caseId": "hkdf_test#/testGroups/0/tests/1",
           "pointer": "/testGroups/0/tests/1",
           "algorithm": {
-            "name": "HKDF-SHA256",
+            "name": "HKDF",
             "revision": null
           },
           "operation": "derive",
@@ -1458,7 +1461,7 @@
           "caseId": "hkdf_test#/testGroups/0/tests/2",
           "pointer": "/testGroups/0/tests/2",
           "algorithm": {
-            "name": "HKDF-SHA256",
+            "name": "HKDF",
             "revision": null
           },
           "operation": "derive",
@@ -1824,7 +1827,7 @@
           "caseId": "jose-pqc-kem-jwe-kat#/vector",
           "pointer": "/vector",
           "algorithm": {
-            "name": "ML-KEM-768 JWE (KMAC256 CEK, A256GCM)",
+            "name": "ML-KEM-768 JWE",
             "revision": "draft-ietf-jose-pqc-kem-05"
           },
           "operation": "jwe-decrypt",
