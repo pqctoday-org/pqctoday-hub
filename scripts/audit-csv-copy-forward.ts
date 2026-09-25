@@ -333,7 +333,258 @@ const VND_ROADMAP_URL_REFRESH_09122026 =
   'under the refreshed URL/title — verified by vendor_id lookup in the ' +
   'newest generation, not assumed.'
 
+/** algo_product_xref_ 2026-09-25 (migrate remediation r2 W-F; owner-approved
+ *  exception, r2 §7.1): 40 rows re-pointed, not removed — each row's
+ *  product_id moved from a deprecated or never-existing catalogue id to the
+ *  product it describes (bouncy-castle → bouncy-castle-java;
+ *  rustcrypto-ml-dsa-2 / -ml-kem-2 → rustcrypto-ml-dsa / -ml-kem, the
+ *  case-variant duplicates' kept rows; liboqs-bike-l1/l3/l5 → liboqs, whose
+ *  own software_name the rows already carried). The key (product_id +
+ *  algorithm_name) changes, so the old key reads as a removal. */
+const ALGO_XREF_REPOINT_09252026 =
+  'Re-pointed to the product the row describes (migrate remediation r2 W-F, owner-approved 2026-09-25): the old product_id was deprecated as a duplicate or never existed in the catalogue.'
+
 export const RECORDED_REMOVALS: RecordedRemoval[] = [
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | Classic-McEliece-348864',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | Classic-McEliece-460896',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | Classic-McEliece-8192128',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | FN-DSA-1024',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | FN-DSA-512',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | FrodoKEM-1344',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | FrodoKEM-640',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | FrodoKEM-976',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | HQC-128',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | HQC-192',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | HQC-256',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | LMS-SHA256 (H20/W8)',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | ML-DSA-44',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | ML-DSA-65',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | ML-DSA-87',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | ML-KEM-1024',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | ML-KEM-512',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | ML-KEM-768',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHA2-128f',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHA2-128s',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHA2-192f',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHA2-192s',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHA2-256f',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHA2-256s',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHAKE-128f',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHAKE-128s',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHAKE-192f',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHAKE-192s',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHAKE-256f',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | SLH-DSA-SHAKE-256s',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'bouncy-castle | XMSS-SHA2_20',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'liboqs-bike-l1 | BIKE-1',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'liboqs-bike-l3 | BIKE-3',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'liboqs-bike-l5 | BIKE-5',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'rustcrypto-ml-dsa-2 | ML-DSA-44',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'rustcrypto-ml-dsa-2 | ML-DSA-65',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'rustcrypto-ml-dsa-2 | ML-DSA-87',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'rustcrypto-ml-kem-2 | ML-KEM-1024',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'rustcrypto-ml-kem-2 | ML-KEM-512',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
+  {
+    family: 'algo_product_xref_',
+    key: 'rustcrypto-ml-kem-2 | ML-KEM-768',
+    reason: ALGO_XREF_REPOINT_09252026,
+    recorded: '2026-09-25',
+  },
   {
     family: 'migrate_vendor_roadmap_',
     key: "VND-018 | Google LLC | https://blog.google/innovation-and-ai/technology/safety-security/cryptography-migration-timeline/ | Google's timeline for PQC migration",
