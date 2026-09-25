@@ -235,6 +235,15 @@
       "owner": "unassigned",
       "status": "open",
       "scope": "Rust (wasm)"
+    },
+    {
+      "id": "rust-rsa-public-exponent-limit",
+      "title": "Rust engine cannot verify RSA signatures whose public exponent exceeds 2^33 - 1",
+      "detail": "RSA-SigVer-FIPS186-5 (rsa_sigver_acvp_test, workbench §4d): the upstream 4096-bit PKCS#1 v1.5 group (e = 0xC9986A9C84FEE9, 56 bits) and the 2048-bit PSS/SHA3-256 group (e = 0x0ACC245201D531, 52 bits) import, but every C_Verify returns CKR_KEY_TYPE_INCONSISTENT on the Rust engine — rsa::RsaPublicKey::new (rust/src/crypto/handlers.rs ~2895 at 7795799b) refuses exponents above 2^33 - 1. FIPS 186-5 §A.1.1 allows 2^16 < e < 2^256. 12 Rust rows fail (valid cases rejected, invalid ones refused for the wrong reason); C++ passes all 24. The groups were chosen by the deterministic subset policy (first group per combination), not by result.",
+      "planItem": "E (RSA) / G-9",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)"
     }
   ]
 }

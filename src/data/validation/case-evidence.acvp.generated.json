@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "fd504a5616ca9d9e18eba28b034b06d19cbf462baa4981ca2a03bb13fadb3892",
-    "registrySha256": "ea394cf0e9508ea7f7ebde44e2d2b8ac52284782014a76f5c464169a8dce819a"
+    "manifestSha256": "8380b17f9d0f90eeb5204596bef66cf737a30a4235f7b3a0946af96a42945025",
+    "registrySha256": "e77ee1324c4730e2904d0f3159fbadb33f086057e71b63b519f7249c2c727954"
   },
   "records": {
     "acvp.01#aesgcm_test#/testGroups/0/tests/0": {
@@ -11096,6 +11096,1014 @@
         "subset: 5 case(s) (upstream tcId 16, 17, 18, 19, 20) taken from upstream tgId 4 (20 case(s) in the upstream file).",
         "field-drop: upstream fields not carried: d",
         "subset: Subset policy (file _provenance.subset_policy): Every case of every group in the pinned upstream file (4 groups x 5 = 20 cases: ED-25519/ED-448 x pure/preHash, each 1 valid + modify message/key/r/s). The upstream sample carries no context string, so Ed25519ctx and non-empty Ed448 contexts are not claimed."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/0": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/0",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 2048,
+        "reason": "No modification, i.e., \"testPassed\": true expected",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 1
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 1, 2, 3, 4, 5, 6) taken from upstream tgId 1 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/1": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/1",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 2048,
+        "reason": "IR trailer modified from expected value",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 2
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 1, 2, 3, 4, 5, 6) taken from upstream tgId 1 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/2": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/2",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 2048,
+        "reason": "Message modified",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 3
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 1, 2, 3, 4, 5, 6) taken from upstream tgId 1 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/3": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/3",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/3",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 2048,
+        "reason": "Key modified",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 4
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 1, 2, 3, 4, 5, 6) taken from upstream tgId 1 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/4": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/4",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/4",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 2048,
+        "reason": "IR moved from expected location",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 5
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 1, 2, 3, 4, 5, 6) taken from upstream tgId 1 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/5": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/5",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/0/tests/5",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 2048,
+        "reason": "Signature modified",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 6
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 1, 2, 3, 4, 5, 6) taken from upstream tgId 1 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/0": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/0",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 3072,
+        "reason": "IR moved from expected location",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 7,
+        "tcId": 37
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (3072-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 37, 38, 39, 40, 41, 42) taken from upstream tgId 7 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/1": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/1",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 3072,
+        "reason": "Message modified",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 7,
+        "tcId": 38
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (3072-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 37, 38, 39, 40, 41, 42) taken from upstream tgId 7 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/2": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/2",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 3072,
+        "reason": "Key modified",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 7,
+        "tcId": 39
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (3072-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 37, 38, 39, 40, 41, 42) taken from upstream tgId 7 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/3": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/3",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/3",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 3072,
+        "reason": "Signature modified",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 7,
+        "tcId": 40
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (3072-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 37, 38, 39, 40, 41, 42) taken from upstream tgId 7 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/4": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/4",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/4",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 3072,
+        "reason": "IR trailer modified from expected value",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 7,
+        "tcId": 41
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (3072-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 37, 38, 39, 40, 41, 42) taken from upstream tgId 7 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/5": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/5",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/1/tests/5",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 3072,
+        "reason": "No modification, i.e., \"testPassed\": true expected",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 7,
+        "tcId": 42
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (3072-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 37, 38, 39, 40, 41, 42) taken from upstream tgId 7 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/0": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/0",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 4096,
+        "reason": "Key modified",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 13,
+        "tcId": 73
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (4096-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 73, 74, 75, 76, 77, 78) taken from upstream tgId 13 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/1": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/1",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 4096,
+        "reason": "Message modified",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 13,
+        "tcId": 74
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (4096-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 73, 74, 75, 76, 77, 78) taken from upstream tgId 13 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/2": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/2",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 4096,
+        "reason": "Signature modified",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 13,
+        "tcId": 75
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (4096-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 73, 74, 75, 76, 77, 78) taken from upstream tgId 13 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/3": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/3",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/3",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 4096,
+        "reason": "No modification, i.e., \"testPassed\": true expected",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 13,
+        "tcId": 76
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (4096-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 73, 74, 75, 76, 77, 78) taken from upstream tgId 13 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/4": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/4",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/4",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 4096,
+        "reason": "IR moved from expected location",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 13,
+        "tcId": 77
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (4096-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 73, 74, 75, 76, 77, 78) taken from upstream tgId 13 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/5": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/5",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/2/tests/5",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA2-256",
+        "maskFunction": "none",
+        "modulo": 4096,
+        "reason": "IR trailer modified from expected value",
+        "saltLen": 0,
+        "sigType": "pkcs1v1.5"
+      },
+      "upstream": {
+        "tgId": 13,
+        "tcId": 78
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA256_RSA_PKCS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (4096-bit, pkcs1v1.5, SHA2-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 73, 74, 75, 76, 77, 78) taken from upstream tgId 13 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/0": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/0",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA3-256",
+        "maskFunction": "mgf1",
+        "modulo": 2048,
+        "reason": "Signature modified",
+        "saltLen": 32,
+        "sigType": "pss"
+      },
+      "upstream": {
+        "tgId": 25,
+        "tcId": 145
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_256_RSA_PKCS_PSS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pss, SHA3-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 145, 146, 147, 148, 149, 150) taken from upstream tgId 25 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/1": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/1",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA3-256",
+        "maskFunction": "mgf1",
+        "modulo": 2048,
+        "reason": "No modification, i.e., \"testPassed\": true expected",
+        "saltLen": 32,
+        "sigType": "pss"
+      },
+      "upstream": {
+        "tgId": 25,
+        "tcId": 146
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_256_RSA_PKCS_PSS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pss, SHA3-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 145, 146, 147, 148, 149, 150) taken from upstream tgId 25 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/2": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/2",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA3-256",
+        "maskFunction": "mgf1",
+        "modulo": 2048,
+        "reason": "Key modified",
+        "saltLen": 32,
+        "sigType": "pss"
+      },
+      "upstream": {
+        "tgId": 25,
+        "tcId": 147
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_256_RSA_PKCS_PSS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pss, SHA3-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 145, 146, 147, 148, 149, 150) taken from upstream tgId 25 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/3": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/3",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/3",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA3-256",
+        "maskFunction": "mgf1",
+        "modulo": 2048,
+        "reason": "IR moved from expected location",
+        "saltLen": 32,
+        "sigType": "pss"
+      },
+      "upstream": {
+        "tgId": 25,
+        "tcId": 148
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_256_RSA_PKCS_PSS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pss, SHA3-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 145, 146, 147, 148, 149, 150) taken from upstream tgId 25 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/4": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/4",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/4",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA3-256",
+        "maskFunction": "mgf1",
+        "modulo": 2048,
+        "reason": "IR trailer modified from expected value",
+        "saltLen": 32,
+        "sigType": "pss"
+      },
+      "upstream": {
+        "tgId": 25,
+        "tcId": 149
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_256_RSA_PKCS_PSS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pss, SHA3-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 145, 146, 147, 148, 149, 150) taken from upstream tgId 25 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
+      ]
+    },
+    "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/5": {
+      "id": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/5",
+      "test": "acvp.04d",
+      "title": "RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_sigver_acvp_test#/testGroups/3/tests/5",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "RSA FIPS186-5",
+      "operation": "sigVer",
+      "testType": "GDT",
+      "parameters": {
+        "hashAlg": "SHA3-256",
+        "maskFunction": "mgf1",
+        "modulo": 2048,
+        "reason": "Message modified",
+        "saltLen": 32,
+        "sigType": "pss"
+      },
+      "upstream": {
+        "tgId": 25,
+        "tcId": 150
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_SHA3_256_RSA_PKCS_PSS verify"
+      ],
+      "limitations": [
+        "Upstream: RSA sigVer FIPS186-5 GDT (2048-bit, pss, SHA3-256) → executed here: SigVer via PKCS#11 C_VerifyInit/C_Verify on an imported public key",
+        "subset: 6 case(s) (upstream tcId 145, 146, 147, 148, 149, 150) taken from upstream tgId 25 (270 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them.",
+        "SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF)."
       ]
     },
     "acvp.05#mldsa_test#/testGroups/0/tests/0": {
@@ -25987,6 +26995,78 @@
     ],
     "rsa-acvp-{engine}": [
       "acvp.03#rsapss_test#/testGroups/0/tests/0"
+    ],
+    "rsa-sigver-nist-2048-pkcs1v1.5-SHA2-256-tg1-tc1-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/0"
+    ],
+    "rsa-sigver-nist-2048-pkcs1v1.5-SHA2-256-tg1-tc2-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/1"
+    ],
+    "rsa-sigver-nist-2048-pkcs1v1.5-SHA2-256-tg1-tc3-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/2"
+    ],
+    "rsa-sigver-nist-2048-pkcs1v1.5-SHA2-256-tg1-tc4-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/3"
+    ],
+    "rsa-sigver-nist-2048-pkcs1v1.5-SHA2-256-tg1-tc5-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/4"
+    ],
+    "rsa-sigver-nist-2048-pkcs1v1.5-SHA2-256-tg1-tc6-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/0/tests/5"
+    ],
+    "rsa-sigver-nist-2048-pss-SHA3-256-tg25-tc145-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/0"
+    ],
+    "rsa-sigver-nist-2048-pss-SHA3-256-tg25-tc146-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/1"
+    ],
+    "rsa-sigver-nist-2048-pss-SHA3-256-tg25-tc147-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/2"
+    ],
+    "rsa-sigver-nist-2048-pss-SHA3-256-tg25-tc148-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/3"
+    ],
+    "rsa-sigver-nist-2048-pss-SHA3-256-tg25-tc149-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/4"
+    ],
+    "rsa-sigver-nist-2048-pss-SHA3-256-tg25-tc150-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/5"
+    ],
+    "rsa-sigver-nist-3072-pkcs1v1.5-SHA2-256-tg7-tc37-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/0"
+    ],
+    "rsa-sigver-nist-3072-pkcs1v1.5-SHA2-256-tg7-tc38-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/1"
+    ],
+    "rsa-sigver-nist-3072-pkcs1v1.5-SHA2-256-tg7-tc39-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/2"
+    ],
+    "rsa-sigver-nist-3072-pkcs1v1.5-SHA2-256-tg7-tc40-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/3"
+    ],
+    "rsa-sigver-nist-3072-pkcs1v1.5-SHA2-256-tg7-tc41-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/4"
+    ],
+    "rsa-sigver-nist-3072-pkcs1v1.5-SHA2-256-tg7-tc42-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/1/tests/5"
+    ],
+    "rsa-sigver-nist-4096-pkcs1v1.5-SHA2-256-tg13-tc73-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/0"
+    ],
+    "rsa-sigver-nist-4096-pkcs1v1.5-SHA2-256-tg13-tc74-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/1"
+    ],
+    "rsa-sigver-nist-4096-pkcs1v1.5-SHA2-256-tg13-tc75-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/2"
+    ],
+    "rsa-sigver-nist-4096-pkcs1v1.5-SHA2-256-tg13-tc76-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/3"
+    ],
+    "rsa-sigver-nist-4096-pkcs1v1.5-SHA2-256-tg13-tc77-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/4"
+    ],
+    "rsa-sigver-nist-4096-pkcs1v1.5-SHA2-256-tg13-tc78-{engine}": [
+      "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/5"
     ],
     "rsaoaep-selfcheck-{engine}": [
       "acvp.36#rsa_oaep_test#/testGroups/0/tests/0"

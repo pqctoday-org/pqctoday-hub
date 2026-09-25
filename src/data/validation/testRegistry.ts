@@ -378,6 +378,22 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     })
   ),
   acvp(
+    '04d',
+    '§4d (sections/rsaSigVerAcvp.ts)',
+    'RSA dedicated NIST SigVer: PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048, every upstream valid/invalid case',
+    casesOf('rsa_sigver_acvp_test').map((c) => {
+      const pss = param(c, 'sigType') === 'pss'
+      return mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x(pss ? 'CKM_SHA3_256_RSA_PKCS_PSS' : 'CKM_SHA256_RSA_PKCS', 'verify')],
+        `rsa-sigver-nist-${param(c, 'modulo')}-${param(c, 'sigType')}-${param(c, 'hashAlg')}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    'SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF).'
+  ),
+  acvp(
     '05',
     '§5',
     'ML-DSA verify of NIST sigGen output (sigGen → local sigVer)',
