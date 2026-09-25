@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
-import { Dice5, BarChart3, ShieldCheck, Workflow, Combine } from 'lucide-react'
+import { Dice5, BarChart3, ShieldCheck, Workflow, Combine, Microscope } from 'lucide-react'
 import { EntropyIntroduction } from './components/EntropyIntroduction'
 import { EntropyExercises } from './components/EntropyExercises'
 import { RandomGenerationDemo } from './workshop/RandomGenerationDemo'
@@ -8,6 +8,7 @@ import { EntropyTestingDemo } from './workshop/EntropyTestingDemo'
 import { ESVWalkthroughDemo } from './workshop/ESVWalkthroughDemo'
 import { DrbgArchitectureDemo } from './workshop/DrbgArchitectureDemo'
 import { SourceCombiningDemo } from './workshop/SourceCombiningDemo'
+import { EntropyEvidenceLab } from './workshop/evidenceLab/EntropyEvidenceLab'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
 
@@ -45,6 +46,13 @@ const PARTS: WorkshopPart[] = [
       'Health-test raw source samples before conditioning, then judge a combined construction from stated assumptions.',
     icon: Combine,
   },
+  {
+    id: 'entropy-evidence-lab',
+    title: 'Step 6: Entropy Evidence Lab (SP 800-90B)',
+    description:
+      'Run the NIST SP 800-90B estimators on real device recordings, a DRBG-output contrast set and synthetic failures — and conclude only what the evidence supports.',
+    icon: Microscope,
+  },
 ]
 
 export const EntropyModule: FC = () => (
@@ -73,6 +81,8 @@ export const EntropyModule: FC = () => (
           return <DrbgArchitectureDemo key={`drbg-${configKey}`} />
         case 4:
           return <SourceCombiningDemo key={`combine-${configKey}`} />
+        case 5:
+          return <EntropyEvidenceLab key={`evidence-${configKey}`} />
         default:
           return null
       }

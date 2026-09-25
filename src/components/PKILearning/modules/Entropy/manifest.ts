@@ -30,6 +30,8 @@ const manifest: ModuleManifest = {
     { id: 'esv-walkthrough', label: 'ESV Validation Walkthrough' },
     { id: 'drbg-state-machine', label: 'DRBG State Machine' },
     { id: 'source-combining', label: 'Combining Sources' },
+    // Slice 1 (2026-09-24): appended LAST so existing ?step= links keep working.
+    { id: 'entropy-evidence-lab', label: 'Entropy Evidence Lab (SP 800-90B)' },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {

@@ -617,7 +617,7 @@
     "emv-payment-pqc": 8,
     "email-signing": 4,
     "energy-utilities-pqc": 6,
-    "entropy-randomness": 5,
+    "entropy-randomness": 6,
     "exec-quantum-impact": 4,
     "5g-security": 3,
     "government-defense-pqc": 3,
@@ -2552,6 +2552,10 @@
       {
         "id": "source-combining",
         "label": "Combining Sources"
+      },
+      {
+        "id": "entropy-evidence-lab",
+        "label": "Entropy Evidence Lab (SP 800-90B)"
       }
     ],
     "exec-quantum-impact": [

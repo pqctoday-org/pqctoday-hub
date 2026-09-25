@@ -41,6 +41,10 @@ self.onmessage = async (ev: MessageEvent<RunRequest>) => {
         data: req.data,
         bitsPerSymbol: req.bitsPerSymbol,
         hI: req.hI,
+        extraFlags:
+          req.tool === 'restart' && (req.trackFlag === '-i' || req.trackFlag === '-n')
+            ? [req.trackFlag]
+            : undefined,
         onStdout: (line) => {
           const stage = stageOf(line)
           if (stage && stage !== lastStage) {

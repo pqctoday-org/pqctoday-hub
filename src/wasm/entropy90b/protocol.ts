@@ -10,6 +10,11 @@ export interface RunRequest {
   data: Uint8Array
   bitsPerSymbol: number
   hI?: number
+  /**
+   * Track flag for ea_restart: '-i' (IID) or '-n' (non-IID, the tool's
+   * default). Anything else is dropped by the worker.
+   */
+  trackFlag?: '-i' | '-n'
   provenance: DatasetProvenance
   manifestId?: string
   /** Base URL of the staged artefacts, default "/wasm/entropy90b/". */
