@@ -67,6 +67,8 @@ then `npm run gate:cacp` (see GitHub `gate-cacp`; here it runs against the real 
   - `audit:migrate-proof` — no product claim without evidence.
   - `audit:enrichment-freshness` — enrichment `verify:` steps ran within their window.
   - `gen:timeline-facts:check` — `timelineFacts.generated.ts` matches the CSV.
+  <!-- claims-lint-allow: this entry quotes the phrases the gate bans -->
+  - `audit:validation-claims` — no banned validation claims ("ACVP validated", "complete ACVP", "all mechanisms covered", "NIST validated", suite-level "NIST ACVP Known Answer Tests", "Run NIST KAT", self-applied FIPS/CMVP certification) in UI copy, Learn content or the root validation docs; negated uses pass, legitimate ones go in `scripts/audit-validation-claims.allowlist.json`. Pass a path to also lint the conference deck and check its NIST ACVP-Server count (`npm run audit:validation-claims -- ../presentations/fipsandchips2026`; not in CI — the deck is not in this repo).
   - `validate:data:without-priv` — the unified validator minus the checks that need gitignored evidence caches (N18/N22/MP-2/TP-1). Carries TP-2/TP-3.
 - `verify-attestations` — signatures on shipped trust artifacts.
 - `build` — clean-checkout `tsc -b` + vite + Playwright prerender + precache/TLA budgets; on main its `dist/` is uploaded for deploy.

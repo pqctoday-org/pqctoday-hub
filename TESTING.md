@@ -241,7 +241,7 @@ for the full list and what each step guards:
 - ✅ **E2E smoke tier** (`npm run test:e2e:ci-smoke` = `playwright test --project=smoke`)
   — the explicit allowlist in `playwright.config.ts`'s `SMOKE_SPECS`: routing/title,
   accessibility, timeline freshness badge, trust-tier filtering, the compliance
-  persona deep-link, and the ACVP Validation Suite (`e2e/acvp-validator.spec.ts`,
+  persona deep-link, and the Cryptographic Validation Workbench (`e2e/acvp-validator.spec.ts`,
   the only WASM/crypto spec in the allowlist — promoted 2026-08-23 because it
   measured cheap enough to gate every PR rather than wait for nightly).
 
