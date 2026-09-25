@@ -2546,8 +2546,8 @@
         "label": "ESV Validation Walkthrough"
       },
       {
-        "id": "qrng-comparison",
-        "label": "QRNG Exploration"
+        "id": "drbg-state-machine",
+        "label": "DRBG State Machine"
       },
       {
         "id": "source-combining",

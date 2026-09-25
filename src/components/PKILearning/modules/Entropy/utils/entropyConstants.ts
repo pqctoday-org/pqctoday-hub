@@ -57,7 +57,7 @@ export const ESV_STEPS = [
     id: 'description',
     title: 'Entropy Source Description',
     description:
-      'Document the physical noise source type (thermal, shot noise, ring oscillator, etc.), its operating parameters, and expected entropy rate.',
+      "Document the noise source type (thermal, shot noise, ring oscillator, jitter, etc.), its operating conditions, and the submitter's own entropy estimate per sample.",
   },
   {
     id: 'noise-model',
@@ -69,19 +69,19 @@ export const ESV_STEPS = [
     id: 'raw-samples',
     title: 'Raw Noise Samples',
     description:
-      'Submit 1,000,000+ raw (unconditioned) noise samples to the ESV Server for SP 800-90B min-entropy assessment.',
+      'Collect at least 1,000,000 sequential raw (unconditioned) noise-source samples and a 1,000 × 1,000 restart dataset (SP 800-90B §3.1.1). The ESV Server runs the SP 800-90B Entropy Assessment Tool on them.',
   },
   {
     id: 'health-tests',
     title: 'Health Test Configuration',
     description:
-      'Specify repetition count and adaptive proportion test parameters. These run continuously to detect entropy source degradation.',
+      'Specify the continuous health tests on the raw samples (the §4.4 Repetition Count and Adaptive Proportion tests, or justified alternatives), their cutoffs and false-positive probability, and the startup and on-demand tests.',
   },
   {
     id: 'conditioning',
     title: 'Conditioning Component',
     description:
-      'Document the conditioning function (e.g., HMAC, hash, CBC-MAC) that processes raw noise into full-entropy output for the DRBG.',
+      'Document the optional conditioning component (e.g., HMAC, a hash function, CMAC) and its entropy accounting: output entropy is at most the input entropy, and full-entropy output needs enough input entropy (SP 800-90B §3.1.5; SP 800-90C §3.2.2.2).',
   },
 ] as const
 

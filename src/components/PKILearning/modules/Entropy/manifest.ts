@@ -26,7 +26,7 @@ const manifest: ModuleManifest = {
     { id: 'random-generation', label: 'Random Byte Generation' },
     { id: 'entropy-testing', label: 'Entropy Testing' },
     { id: 'esv-walkthrough', label: 'ESV Validation Walkthrough' },
-    { id: 'qrng-comparison', label: 'QRNG Exploration' },
+    { id: 'drbg-state-machine', label: 'DRBG State Machine' },
     { id: 'source-combining', label: 'Combining Sources' },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.

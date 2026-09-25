@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
-import { Dice5, BarChart3, ShieldCheck, Atom, Combine } from 'lucide-react'
+import { Dice5, BarChart3, ShieldCheck, Workflow, Combine } from 'lucide-react'
 import { EntropyIntroduction } from './components/EntropyIntroduction'
 import { EntropyExercises } from './components/EntropyExercises'
 import { RandomGenerationDemo } from './workshop/RandomGenerationDemo'
 import { EntropyTestingDemo } from './workshop/EntropyTestingDemo'
 import { ESVWalkthroughDemo } from './workshop/ESVWalkthroughDemo'
-import { QRNGDemo } from './workshop/QRNGDemo'
+import { DrbgArchitectureDemo } from './workshop/DrbgArchitectureDemo'
 import { SourceCombiningDemo } from './workshop/SourceCombiningDemo'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
@@ -21,7 +21,8 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'entropy-testing',
     title: 'Step 2: Entropy Testing',
-    description: 'Run simplified SP 800-90B statistical tests on generated random data.',
+    description:
+      'Visual checks, SP 800-90B health tests and primitive self-checks, shown as separate groups with their sample-size limits.',
     icon: BarChart3,
   },
   {
@@ -31,15 +32,17 @@ const PARTS: WorkshopPart[] = [
     icon: ShieldCheck,
   },
   {
-    id: 'qrng-comparison',
-    title: 'Step 4: QRNG Exploration',
-    description: 'Compare pre-fetched quantum random data with local TRNG output.',
-    icon: Atom,
+    id: 'drbg-state-machine',
+    title: 'Step 4: DRBG State Machine',
+    description:
+      'Instantiate, generate and reseed an SP 800-90A HMAC_DRBG, and check it against NIST known-answer vectors.',
+    icon: Workflow,
   },
   {
     id: 'source-combining',
     title: 'Step 5: Combining Sources',
-    description: 'Combine TRNG and QRNG entropy using the SP 800-90C XOR+conditioning framework.',
+    description:
+      'Health-test raw source samples before conditioning, then judge a combined construction from stated assumptions.',
     icon: Combine,
   },
 ]
@@ -67,7 +70,7 @@ export const EntropyModule: FC = () => (
         case 2:
           return <ESVWalkthroughDemo key={`esv-${configKey}`} />
         case 3:
-          return <QRNGDemo key={`qrng-${configKey}`} />
+          return <DrbgArchitectureDemo key={`drbg-${configKey}`} />
         case 4:
           return <SourceCombiningDemo key={`combine-${configKey}`} />
         default:
