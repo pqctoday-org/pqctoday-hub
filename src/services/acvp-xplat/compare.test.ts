@@ -67,7 +67,7 @@ const byName = (fixtures: FixtureRef[], name: string) => fixtures.find((f) => f.
 const target = (inputs: TargetInput[], id: string) => inputs.find((i) => i.target.id === id)!
 
 describe('acvp-xplat comparator (WS-H)', () => {
-  it.each(['2026-09-24', '2026-09-24b', '2026-09-25-boards'])(
+  it.each(['2026-09-24', '2026-09-24b', '2026-09-25-boards', '2026-09-25-native'])(
     'frozen run %s: the committed matrix and divergence set are exactly what its evidence produces',
     async (runId) => {
       const dir = path.join(repo, 'evidence/acvp-xplat', runId)
@@ -83,6 +83,29 @@ describe('acvp-xplat comparator (WS-H)', () => {
     expect(v2.output.matrix.comparatorPolicyVersion).toBe('pqctoday.acvp-comparator-policy/2')
     expect(v1.output.matrix.totals['linux-arm64-cpp'].pass).toBe(112)
     expect(v2.output.matrix.totals['linux-arm64-cpp'].pass).toBe(157)
+  })
+
+  it('run 2026-09-25-native: every run target (WASM, macOS, x86-64, Arm64) is publishable with 157 passes', async () => {
+    const dir = path.join(repo, 'evidence/acvp-xplat/2026-09-25-native')
+    const { matrix } = (await generateRun(repo, dir, '2026-09-25-native')).output
+    const run = matrix.targets.filter((t) => t.declaredStatus === 'run').map((t) => t.id)
+    expect(run.sort()).toEqual(
+      [
+        'wasm-cpp',
+        'wasm-rust',
+        'macos-arm64-cpp',
+        'macos-arm64-rust',
+        'linux-x86_64-cpp',
+        'linux-x86_64-rust',
+        'linux-arm64-cpp',
+        'linux-arm64-rust',
+      ].sort()
+    )
+    for (const t of matrix.targets.filter((x) => x.declaredStatus === 'run')) {
+      expect(t.publishable, t.id).toBe(true)
+      expect(matrix.totals[t.id], t.id).toMatchObject({ pass: 157, fail: 0, 'not comparable': 0 })
+    }
+    expect(matrix.divergences).toEqual([])
   })
 
   it('keeps all five statuses separate in every total', async () => {

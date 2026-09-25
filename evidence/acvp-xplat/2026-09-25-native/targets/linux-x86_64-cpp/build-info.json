@@ -1,0 +1,24 @@
+{
+  "engine": {
+    "implementation": "pqctoday-hsm softhsmv3 C++ (OpenSSL 3.6 backend), native shared library libsofthsmv3.so",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+    "sourceCommitEvidence": "Built from a clean detached worktree created for this run (git -C pqctoday-hsm worktree add --detach pqctoday-hsm-x86-7795799b 7795799b…; `git submodule update --init` of hash-sigs @21294a0f and xmss-reference @171ccbd2 only; liboqs not needed with WITH_LIBOQS=OFF), bind-mounted into a throwaway container. `git status --porcelain` was empty before and after the build (CMake writes only the gitignored src/vendor/pkcs11-provider/src/config.h into the tree); the worktree was removed afterwards. Same commit as the C++ WASM bundle (wasm-provenance.json softhsm-cpp-engine).",
+    "builtAt": "2026-09-25T15:29Z"
+  },
+  "build": {
+    "buildSystem": "CMake 3.28.3, out-of-tree, target softhsmv3",
+    "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 (ELF .comment: GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0)",
+    "flags": "-DCMAKE_BUILD_TYPE=Release (-O3 -DNDEBUG) -DWITH_CRYPTO_BACKEND=openssl -DBUILD_TESTS=OFF -DENABLE_STATIC=OFF -DWITH_LIBOQS=OFF -DOPENSSL_ROOT_DIR=/usr/local/ssl",
+    "profile": "Release",
+    "features": "WITH_LIBOQS=OFF (Classic McEliece only; matches the WASM build, where Emscripten forces it off)",
+    "location": "throwaway container (docker run --platform linux/amd64) from image pqc-dev-sandbox:latest sha256:cce738cdaddf38eb15661a5f9d9b91ea7c95f3d7ade7a777273fdbc25eea125f, used only for its toolchain — the shared pqc-dev-sandbox container and image were not touched; linux/amd64 under Rosetta 2 (OrbStack on Apple M5 Max), i.e. EMULATED; CMake build dir /build/cpp1 inside that container, removed with it"
+  },
+  "entropy": {
+    "source": "OpenSSL 3.6.3 default DRBG, seeded from getrandom(2)"
+  },
+  "notes": [
+    "OpenSSL: the image's /usr/local/ssl OpenSSL 3.6.3 (openssl version -a: built on Fri Sep 4 16:35:27 2026 UTC, platform linux-x86_64, gcc -O3); the module's RUNPATH is /usr/local/ssl/lib64, where it resolves libcrypto.so.3.",
+    "Reproducibility: an independent second build in a second fresh throwaway container from the same image (different build directory) produced the identical SHA-256 fad6b2ae99737aa4ef214b4f14f1891606d0140ea2073861129f290700357f1a."
+  ]
+}

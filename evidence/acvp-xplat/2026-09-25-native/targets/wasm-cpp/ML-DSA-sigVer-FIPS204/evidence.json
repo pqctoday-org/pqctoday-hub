@@ -1,0 +1,1510 @@
+{
+  "evidenceVersion": "pqctoday.acvp-evidence/2",
+  "label": "ACVP-format compatible prototype",
+  "disclaimers": [
+    "PQC Today executes selected public reference vectors, standards tests, conformance cases, and implementation probes. A passing result is evidence only for the identified test, operation, parameters, implementation build, and target. It is not an ACVTS verdict, a CAVP/CMVP certificate, or proof of exhaustive conformance.",
+    "Import and response generation do not submit results to NIST and do not establish validation. The laboratory or authorized submitter remains responsible for the ACVTS session and submission."
+  ],
+  "evidenceClass": "nist-acvp-reference-sample",
+  "generator": {
+    "name": "PQC Today Hub — ACVP-format import/response export",
+    "codePath": "cli",
+    "appVersion": "4.116.0",
+    "irVersion": "pqctoday.acvp-ir/1"
+  },
+  "prompt": {
+    "sha256": "e2cba4589389756fa0bea1a7e6837138bf0a81f9d14234c9ee8f6d33caa1654e",
+    "knownPublicFixture": {
+      "repository": "https://github.com/usnistgov/ACVP-Server",
+      "commit": "975de31eb83d87039ec88934fdc47d8c312b892d",
+      "upstreamPath": "gen-val/json-files/ML-DSA-sigVer-FIPS204/prompt.json"
+    },
+    "framing": "bare",
+    "acvVersion": null,
+    "vsId": 42,
+    "algorithm": "ML-DSA",
+    "mode": "sigVer",
+    "revision": "FIPS204",
+    "isSample": false,
+    "pinnedSchema": {
+      "id": "ML-DSA/sigVer/FIPS204",
+      "promptSchemaFile": "src/services/acvp/schemas/ml-dsa-sigver-fips204.prompt.schema.json",
+      "responseSchemaFile": "src/services/acvp/schemas/ml-dsa-sigver-fips204.response.schema.json",
+      "specRepository": "https://github.com/usnistgov/ACVP",
+      "specCommit": "892fd14710f3a7edbea230d0aecc5511e0257f8e",
+      "specDocument": "draft-celi-acvp-ml-dsa (src/draft-celi-acvp-ml-dsa.adoc)"
+    }
+  },
+  "response": {
+    "fileName": "response.json",
+    "sha256": "174268694b90404e189cc4e2215199894ca327c77040049040b375dfbc65c2cf"
+  },
+  "engine": {
+    "id": "cpp",
+    "label": "softhsmv3 C++ engine",
+    "implementation": "pqctoday-hsm softhsmv3 C++ (OpenSSL 3.6 backend), Emscripten WASM",
+    "softhsmProductVersion": "0.4.23",
+    "provenanceBundle": "softhsm-cpp-engine",
+    "hsmCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+    "builtAt": "2026-09-23",
+    "artifactPath": "src/vendor/softhsm-wasm/wasm/softhsm.wasm",
+    "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+    "artifactSha256Note": "SHA-256 of the exact src/vendor/softhsm-wasm/wasm/softhsm.wasm bytes loaded for this run; hsmCommit/builtAt from public/wasm/wasm-provenance.json bundle \"softhsm-cpp-engine\"."
+  },
+  "startedAt": "2026-09-25T15:31:08.545Z",
+  "finishedAt": "2026-09-25T15:31:08.631Z",
+  "summary": {
+    "testCases": 180,
+    "answered": 127,
+    "unsupported": 53,
+    "error": 0
+  },
+  "cases": [
+    {
+      "tgId": 1,
+      "tcId": 1,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 2,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 3,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 4,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 5,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 6,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 7,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 8,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 9,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 10,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 11,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 12,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 13,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 14,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 1,
+      "tcId": 15,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 16,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHAKE128",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 17,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_384",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 18,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_512",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 19,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA512",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 20,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA512",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 21,
+      "disposition": "unsupported",
+      "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+    },
+    {
+      "tgId": 2,
+      "tcId": 22,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA256",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 23,
+      "disposition": "unsupported",
+      "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+    },
+    {
+      "tgId": 2,
+      "tcId": 24,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_224",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 25,
+      "disposition": "answered",
+      "mechanism": "CKM_HASH_ML_DSA_SHA224",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 26,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHAKE256",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 27,
+      "disposition": "answered",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_256",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 28,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA384",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 2,
+      "tcId": 29,
+      "disposition": "unsupported",
+      "reason": "hashAlg \"SHA2-512/224\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+    },
+    {
+      "tgId": 2,
+      "tcId": 30,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHAKE256",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 31,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 32,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 33,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 34,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 35,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 36,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 37,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 38,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 39,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 40,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 41,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 42,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 43,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 44,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 3,
+      "tcId": 45,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 46,
+      "disposition": "answered",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_256",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 47,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA512",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 48,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA224",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 49,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA224",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 50,
+      "disposition": "unsupported",
+      "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+    },
+    {
+      "tgId": 4,
+      "tcId": 51,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHAKE128",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 52,
+      "disposition": "answered",
+      "mechanism": "CKM_HASH_ML_DSA_SHA384",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 53,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_512",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 54,
+      "disposition": "answered",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_224",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 55,
+      "disposition": "unsupported",
+      "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+    },
+    {
+      "tgId": 4,
+      "tcId": 56,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA256",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 57,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHAKE256",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 58,
+      "disposition": "unsupported",
+      "reason": "hashAlg \"SHA2-512/224\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+    },
+    {
+      "tgId": 4,
+      "tcId": 59,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA384",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 4,
+      "tcId": 60,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_384",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 61,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 62,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 63,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 64,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 65,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 66,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 67,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 68,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 69,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 70,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 71,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 72,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 73,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 74,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 5,
+      "tcId": 75,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 76,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_512",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 77,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_512",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 78,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA384",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 79,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA256",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 80,
+      "disposition": "answered",
+      "mechanism": "CKM_HASH_ML_DSA_SHAKE128",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 81,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA512",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 82,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA224",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 83,
+      "disposition": "unsupported",
+      "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+    },
+    {
+      "tgId": 6,
+      "tcId": 84,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_384",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 85,
+      "disposition": "answered",
+      "mechanism": "CKM_HASH_ML_DSA_SHAKE256",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 86,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA256",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 87,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA384",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 88,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_256",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 89,
+      "disposition": "answered",
+      "mechanism": "CKM_HASH_ML_DSA_SHA3_224",
+      "mechanismKind": "pkcs11-v3.2"
+    },
+    {
+      "tgId": 6,
+      "tcId": 90,
+      "disposition": "unsupported",
+      "reason": "hashAlg \"SHA2-512/224\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do)."
+    },
+    {
+      "tgId": 7,
+      "tcId": 91,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 92,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 93,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 94,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 95,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 96,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 97,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 98,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 99,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 100,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 101,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 102,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 103,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 104,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 7,
+      "tcId": 105,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 8,
+      "tcId": 106,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 107,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 108,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 109,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 110,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 111,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 112,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 113,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 114,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 115,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 116,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 117,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 118,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 119,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 8,
+      "tcId": 120,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 9,
+      "tcId": 121,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 122,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 123,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 124,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 125,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 126,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 127,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 128,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 129,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 130,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 131,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 132,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 133,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 134,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 9,
+      "tcId": 135,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 10,
+      "tcId": 136,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 137,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 138,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 139,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 140,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 141,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 142,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 143,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 144,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 145,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 146,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 147,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 148,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 149,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 10,
+      "tcId": 150,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 11,
+      "tcId": 151,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 152,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 153,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 154,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 155,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 156,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 157,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 158,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 159,
+      "disposition": "answered",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 160,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 161,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 162,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 163,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 164,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 11,
+      "tcId": 165,
+      "disposition": "answered",
+      "detail": "CKR_SIGNATURE_INVALID",
+      "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
+      "mechanismKind": "vendor-defined"
+    },
+    {
+      "tgId": 12,
+      "tcId": 166,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 167,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 168,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 169,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 170,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 171,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 172,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 173,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 174,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 175,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 176,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 177,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 178,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 179,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    },
+    {
+      "tgId": 12,
+      "tcId": 180,
+      "disposition": "unsupported",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu."
+    }
+  ],
+  "vendorDefinedMechanisms": [
+    {
+      "name": "CKM_ML_DSA_EXTERNAL_MU",
+      "value": "0x0000403c",
+      "source": "pqctoday-hsm src/lib/vendor_mechanisms.h + rust/src/constants.rs (CKM_VENDOR_DEFINED range; not a PKCS#11 v3.2 mechanism)",
+      "tgIds": [
+        7,
+        9,
+        11
+      ],
+      "answered": 45
+    }
+  ],
+  "unsupported": [
+    {
+      "tgId": 2,
+      "scope": "test",
+      "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do).",
+      "tcIds": [
+        21,
+        23
+      ]
+    },
+    {
+      "tgId": 2,
+      "scope": "test",
+      "reason": "hashAlg \"SHA2-512/224\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do).",
+      "tcIds": [
+        29
+      ]
+    },
+    {
+      "tgId": 4,
+      "scope": "test",
+      "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do).",
+      "tcIds": [
+        50,
+        55
+      ]
+    },
+    {
+      "tgId": 4,
+      "scope": "test",
+      "reason": "hashAlg \"SHA2-512/224\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do).",
+      "tcIds": [
+        58
+      ]
+    },
+    {
+      "tgId": 6,
+      "scope": "test",
+      "reason": "hashAlg \"SHA2-512/256\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do).",
+      "tcIds": [
+        83
+      ]
+    },
+    {
+      "tgId": 6,
+      "scope": "test",
+      "reason": "hashAlg \"SHA2-512/224\" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do).",
+      "tcIds": [
+        90
+      ]
+    },
+    {
+      "tgId": 8,
+      "scope": "group",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu.",
+      "tcIds": [
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120
+      ]
+    },
+    {
+      "tgId": 10,
+      "scope": "group",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu.",
+      "tcIds": [
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150
+      ]
+    },
+    {
+      "tgId": 12,
+      "scope": "group",
+      "reason": "signatureInterface \"internal\" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu.",
+      "tcIds": [
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180
+      ]
+    }
+  ],
+  "goldenComparison": {
+    "matched": 127,
+    "mismatched": 0,
+    "unanswered": 53,
+    "unexpected": 0,
+    "expectedTotal": 180
+  }
+}

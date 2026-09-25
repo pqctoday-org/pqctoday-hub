@@ -1,0 +1,65 @@
+{
+  "runId": "2026-09-25-native",
+  "note": "Every plan §11 Q3 target, run or not. 'not run' is a status, never a pass; a target whose execution-environment.json misses identity is run but NOT publishable (see matrix.md). Same fixture bundle, plan, evidence v2 and comparator policy v2 as run 2026-09-24b (bundle manifests byte-identical). New: Linux x86-64 engines built for this run at the WASM bundles' hsm commits (so x86-64 is now attributable), and native macOS arm64 engines built on the host with Xcode (acvp-gap-closure plan §P4). WASM and Linux Arm64 are re-executed so the run is self-contained; runs 2026-09-24 and 2026-09-24b stay frozen.",
+  "targets": [
+    {
+      "id": "wasm-cpp",
+      "status": "run"
+    },
+    {
+      "id": "wasm-rust",
+      "status": "run"
+    },
+    {
+      "id": "macos-arm64-cpp",
+      "status": "run",
+      "reason": "Native macOS arm64 on the host (bare metal, not emulated), engine built for this run with Xcode 27.0 / Apple clang 21.0.0 against Homebrew OpenSSL 3.6.3 from a clean detached hsm worktree at 7795799b (the C++ WASM bundle's commit); bit-reproducible."
+    },
+    {
+      "id": "macos-arm64-rust",
+      "status": "run",
+      "reason": "Native macOS arm64 on the host (bare metal, not emulated), engine built for this run with host rustc 1.96.0 from a clean detached hsm worktree at 417c47a2 (the Rust WASM bundle's commit); bit-reproducible."
+    },
+    {
+      "id": "linux-x86_64-cpp",
+      "status": "run",
+      "reason": "Emulated (Rosetta 2) in a throwaway linux/amd64 container; engine built for this run with GCC 13.3.0 against OpenSSL 3.6.3 from a clean detached hsm worktree at 7795799b (the C++ WASM bundle's commit); bit-reproducible across two fresh containers."
+    },
+    {
+      "id": "linux-x86_64-rust",
+      "status": "run",
+      "reason": "Emulated (Rosetta 2) in a throwaway linux/amd64 container; engine built for this run with rustc 1.96.0 from a clean detached hsm worktree at 417c47a2 (the Rust WASM bundle's commit); bit-reproducible across two fresh containers."
+    },
+    {
+      "id": "linux-arm64-cpp",
+      "status": "run",
+      "reason": "Native arm64 in pqc-rust, the same engine as runs 2026-09-24/24b (SHA-256 ba5d00ac…), built from a clean detached hsm worktree at 7795799b."
+    },
+    {
+      "id": "linux-arm64-rust",
+      "status": "run",
+      "reason": "Native arm64 in pqc-rust, the same engine as runs 2026-09-24/24b (SHA-256 e3cf1bd4…), built from a clean detached hsm worktree at 417c47a2."
+    },
+    {
+      "id": "imx95-cpp",
+      "status": "not run",
+      "reason": "Board target — WS-H phase 2 (H-3), not part of this run."
+    },
+    {
+      "id": "imx95-rust",
+      "status": "not run",
+      "reason": "Board target — WS-H phase 2 (H-3), not part of this run."
+    },
+    {
+      "id": "kv260-cpp",
+      "status": "not run",
+      "reason": "Board target — WS-H phase 2 (H-3), not part of this run."
+    },
+    {
+      "id": "kv260-rust",
+      "status": "not run",
+      "reason": "Board target — WS-H phase 2 (H-3), not part of this run."
+    }
+  ],
+  "comparatorPolicyVersion": "pqctoday.acvp-comparator-policy/2"
+}

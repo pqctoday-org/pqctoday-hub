@@ -1,0 +1,100 @@
+{
+  "envVersion": "pqctoday.execution-environment/1",
+  "recordedAt": "2026-09-25T15:33:21.420Z",
+  "target": {
+    "id": "macos-arm64-cpp",
+    "label": "Native macOS arm64 — C++ engine",
+    "class": "native"
+  },
+  "os": {
+    "name": "macOS 26.6.2 (build 25G83)",
+    "version": "26.6.2",
+    "kernel": "Darwin 25.6.0",
+    "image": {
+      "name": null,
+      "id": null
+    }
+  },
+  "arch": {
+    "machine": "arm64",
+    "pointerBits": 64,
+    "endianness": "little"
+  },
+  "cpu": {
+    "model": "Apple M5 Max",
+    "board": null,
+    "features": "FEAT_CRC32 FEAT_FlagM FEAT_FlagM2 FEAT_FHM FEAT_DotProd FEAT_SHA3 FEAT_RDM FEAT_LSE FEAT_SHA256 FEAT_SHA512 FEAT_SHA1 FEAT_AES FEAT_PMULL FEAT_SB FEAT_FRINTTS FEAT_PACIMP FEAT_LRCPC FEAT_LRCPC2 FEAT_FCMA FEAT_JSCVT FEAT_PAuth FEAT_PAuth2 FEAT_FPAC FEAT_FPACCOMBINE FEAT_DPB FEAT_DPB2 FEAT_BF16 FEAT_EBF16 FEAT_I8MM FEAT_WFxT FEAT_RPRES FEAT_CSSC FEAT_HBC FEAT_ECV FEAT_AFP FEAT_LSE2 FEAT_CSV2 FEAT_CSV3 FEAT_DIT AdvSIMD AdvSIMD_HPFPCvt FEAT_FP16 FEAT_BTI FEAT_SME FEAT_SME2 FEAT_SME2p1 FEAT_MTE FEAT_MTE2 FEAT_MTE4 FEAT_MTE_STORE_ONLY SME_F32F32 SME_BI32I32 SME_B16F32 SME_F16F32 SME_I8I32 SME_I16I32 FEAT_SME_F64F64 FEAT_SME_I16I64 FEAT_SME_F16F16 FEAT_SME_B16B16 FEAT_SVE_B16B16 FP_SyncExceptions FEAT_MTE_CANONICAL_TAGS FEAT_MTE_NO_ADDRESS_TAGS floatingpoint neon neon_hpfp neon_fp16 armv8_crc32 armv8_gpi armv8_1_atomics armv8_2_fhm armv8_2_sha512 armv8_2_sha3 armv8_3_compnum ucnormal_mem arm64"
+  },
+  "emulation": {
+    "emulated": false,
+    "mechanism": null,
+    "hostMachine": "arm64 (Apple M5 Max, macOS 26.6.2, bare metal — no VM, no container)",
+    "detection": "sysctl.proc_translated: 0; hw.machine: arm64"
+  },
+  "engine": {
+    "id": "cpp",
+    "implementation": "pqctoday-hsm softhsmv3 C++ (OpenSSL 3.6 backend), native macOS shared library libsofthsmv3.dylib",
+    "artifactKind": "shared-library",
+    "artifactPath": "/private/tmp/claude-501/-Users-pqctoday-Antigravity/2eec9d99-456c-46d5-b3af-4e835670dc75/scratchpad/engines-0925/macos-arm64-libsofthsmv3.dylib",
+    "artifactSha256": "3fb20289df65daf81e8f8db93e633a63326fb79efdbf7914a78d206e978981c4",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+    "sourceCommitEvidence": "Built from a clean detached worktree created for this run (git -C pqctoday-hsm worktree add --detach pqctoday-hsm-mac-7795799b 7795799b…; `git submodule update --init` of hash-sigs @21294a0f and xmss-reference @171ccbd2 only; liboqs not needed with WITH_LIBOQS=OFF). `git status --porcelain` was empty before and after the build (CMake writes only the gitignored src/vendor/pkcs11-provider/src/config.h into the tree); the worktree was removed afterwards. Same commit as the C++ WASM bundle (wasm-provenance.json softhsm-cpp-engine).",
+    "builtAt": "2026-09-25T15:27Z"
+  },
+  "build": {
+    "buildSystem": "CMake 4.3.4 (Homebrew), out-of-tree, target softhsmv3",
+    "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2), target arm64-apple-darwin25.6.0; Xcode 27.0 (27A266a); macOS SDK 27.0 (Mach-O LC_BUILD_VERSION: platform macOS, minos 26.0, sdk 27.0)",
+    "flags": "-DCMAKE_BUILD_TYPE=Release (-O3 -DNDEBUG) -DWITH_CRYPTO_BACKEND=openssl -DBUILD_TESTS=OFF -DENABLE_STATIC=OFF -DWITH_LIBOQS=OFF -DOPENSSL_ROOT_DIR=/opt/homebrew/opt/openssl@3; CMAKE_OSX_ARCHITECTURES/DEPLOYMENT_TARGET/SYSROOT unset (host defaults); environment reset to PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "profile": "Release",
+    "features": "WITH_LIBOQS=OFF (Classic McEliece only; matches the WASM and Linux builds)",
+    "location": "macOS host (Apple M5 Max, macOS 26.6.2 build 25G83), native arm64 with the Xcode toolchain — permitted for the macOS row only (acvp-gap-closure plan §P4); build directory in the session scratchpad, removed after the runs"
+  },
+  "dependencies": {
+    "openssl": {
+      "linked": true,
+      "version": "OpenSSL 3.6.3 9 Jun 2026",
+      "source": "OpenSSL_version(OPENSSL_VERSION) of /opt/homebrew/Cellar/openssl@3/3.6.3/lib/libcrypto.3.dylib, the only libcrypto newly mapped by loading the module (pre-mapped by the interpreter, not bound by it: /usr/lib/libcrypto.46.dylib)"
+    },
+    "cryptoBackend": {
+      "name": "OpenSSL libcrypto (EVP)",
+      "version": "OpenSSL 3.6.3 9 Jun 2026"
+    },
+    "runtime": [
+      {
+        "name": "python",
+        "version": "3.14.5"
+      },
+      {
+        "name": "libc",
+        "version": "libSystem.B.dylib (macOS 26.6.2)"
+      }
+    ]
+  },
+  "acceleration": {
+    "state": "none",
+    "detail": "no hardware accelerator (no FPGA/NPU/crypto offload); CPU ISA extensions only; OpenSSL CPUINFO: OPENSSL_armcap=0x87d"
+  },
+  "entropy": {
+    "source": "OpenSSL 3.6.3 default DRBG, seeded from the operating system entropy source (OpenSSL 'os' seed source on macOS)",
+    "exercisedByTestedOperations": false
+  },
+  "runner": {
+    "name": "pqctoday acvp-native (Python/ctypes)",
+    "version": "2.1.0",
+    "language": "python",
+    "languageVersion": "3.14.5"
+  },
+  "fixtureBundle": {
+    "manifestSha256": "966ec2faeba6d85fe862b3bead4f0aebf47b784cecd472c2e5fb3a30905f444f",
+    "schemaId": "ML-DSA/sigVer/FIPS204",
+    "vsId": 42
+  },
+  "notes": [
+    "OpenSSL: Homebrew openssl@3 3.6.3 (/opt/homebrew/Cellar/openssl@3/3.6.3, arm64 bottle); the dylib's load command references /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (and libssl.3.dylib). Homebrew's current stable is 3.6.4; it was NOT upgraded for this run, so the runtime OpenSSL recorded below is 3.6.3.",
+    "Reproducibility: a second build into a separate build directory (same host, same toolchain) produced the identical SHA-256 3fb20289df65daf81e8f8db93e633a63326fb79efdbf7914a78d206e978981c4.",
+    "Mach-O install name: @rpath/libsofthsmv3.dylib; other dependencies are /usr/lib/libc++.1.dylib and /usr/lib/libSystem.B.dylib.",
+    "C_GetInfo: cryptoki 3.2, manufacturer 'SoftHSM', library 'Implementation of PKCS11' 3.0"
+  ],
+  "envId": "5b0e33beed83d0c6bfc779aad7fdf577928a5ba84a61efc8159836487803dff4"
+}
