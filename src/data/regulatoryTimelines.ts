@@ -178,8 +178,10 @@ export const ANSSI_TIMELINE = {
   hybridMandatory: true,
   /** Hash-based signatures (SLH-DSA, LMS, XMSS) may be used standalone */
   hashBasedStandaloneAllowed: true,
-  /** Target year for organizations to have PQC migration plans */
-  migrationPlanTarget: 2025,
+  // migrationPlanTarget (2025) REMOVED 2026-09-25 (timeline remediation r2 W-K,
+  // user decision): no ANSSI document sets a 2025 migration-plan target for
+  // organisations. ANSSI's 2025 dates are its own guide updates (end 2025) and
+  // phase 1 lasting "until after 2025" (2022 position paper).
 } as const
 
 // ── BSI (Germany) ─────────────────────────────────────────────────────────

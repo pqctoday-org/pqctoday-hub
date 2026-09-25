@@ -2,7 +2,7 @@
   "generated": "2026-09-25",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "timeline",
-  "csv": "timeline_09252026_r2.csv",
+  "csv": "timeline_09252026_r5.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -786,18 +786,6 @@
       "verifiedAt": "2026-09-25"
     },
     {
-      "refId": "south-korea-msit-full-pqc-roadmap-complete",
-      "label": "Full PQC Roadmap Complete",
-      "url": "https://seed.kisa.or.kr/kisa/ngc/pqc.do",
-      "status": "downloaded",
-      "file": "timeline/South_Korea_MSIT_Full_PQC_Roadmap_Complete.html",
-      "filename": "South_Korea_MSIT_Full_PQC_Roadmap_Complete.html",
-      "sizeBytes": 86225,
-      "contentType": "text/html",
-      "sha256": "f174a280e4ca93110b46c6e83b53dd10d6ff7bc3537814ee87335c1a4a19e09a",
-      "verifiedAt": "2026-09-25"
-    },
-    {
       "refId": "spain-ccn-four-phase-pqc-approach",
       "label": "Five-Phase PQC Transition Approach",
       "url": "https://www.ccn.cni.es/index.php/es/docman/documentos-publicos/boletines-pytec/495-ccn-tec-009-recomendaciones-transicion-postcuantica-segura/file",
@@ -1014,7 +1002,7 @@
       "verifiedAt": "2026-09-25",
       "artefact": "SOURCE",
       "unified": "current",
-      "stampedAt": "2026-09-25T11:49:34.744149+00:00",
+      "stampedAt": "2026-09-25T12:23:53.220637+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
       "admittedAt": "2026-09-25"
@@ -2460,7 +2448,7 @@
       "verifiedAt": "2026-09-25",
       "artefact": "SOURCE",
       "unified": "current",
-      "stampedAt": "2026-09-25T11:49:34.784766+00:00",
+      "stampedAt": "2026-09-25T12:23:53.403966+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
       "admittedAt": "2026-09-25"
@@ -2468,84 +2456,23 @@
     {
       "refId": "united-states-nist-hawk-withdrawn-from-additional-signatures-round-3",
       "label": "HAWK Withdrawn from the Additional Signatures Process",
-      "url": "https://csrc.nist.gov/projects/pqc-dig-sig/round-3-additional-signatures",
+      "url": "https://hawk-sign.info/",
       "status": "downloaded",
-      "file": "timeline/United_States_NIST_HAWK_Withdrawn_Round_3.html",
-      "filename": "United_States_NIST_HAWK_Withdrawn_Round_3.html",
-      "sizeBytes": 60037,
+      "file": "timeline/HAWK_Team_HAWK_Withdrawn_From_NIST_Process.html",
+      "filename": "HAWK_Team_HAWK_Withdrawn_From_NIST_Process.html",
+      "sizeBytes": 17016,
       "contentType": "text/html",
-      "sha256": "c819ca5ae4a4c753995605ede0c1a87456b55b7853fd45e2c7babfcf7215c30f",
+      "sha256": "fbae7405efbecb95f4e20050efa316c8c0ed498d7278f26f92447a19da8607a3",
       "verifiedAt": "2026-09-25",
       "artefact": "SOURCE",
       "unified": "current",
-      "stampedAt": "2026-09-25T11:49:34.836451+00:00",
+      "stampedAt": "2026-09-25T12:23:53.595310+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "identity": "MATCH",
+      "identity": "UNCONFIRMED",
       "admittedAt": "2026-09-25"
     }
   ],
-  "archivedEntries": [
-    {
-      "refId": "united-states-nist-fips-203-204-205-published",
-      "label": "FIPS 203 Published",
-      "url": "https://csrc.nist.gov/pubs/fips/203/final",
-      "status": "downloaded",
-      "file": "timeline/United_States_NIST_FIPS_203_204_205_Published.html",
-      "filename": "United_States_NIST_FIPS_203_204_205_Published.html",
-      "sizeBytes": 46211,
-      "contentType": "text/html",
-      "sha256": "c623e242b5de65bbb5e0221d0c99f3d482908642755e5b006881c0c9d1e7b7fa",
-      "verifiedAt": "2026-09-25"
-    },
-    {
-      "refId": "united-states-nist-fips-203-204-205-published",
-      "filename": "United_States_NIST_FIPS_203_204_205_Published_Announcement.html",
-      "sizeBytes": 101036,
-      "contentType": "text/html",
-      "url": "https://www.nist.gov/news-events/news/2024/08/nist-releases-first-3-finalized-post-quantum-encryption-standards",
-      "sha256": "f984f5d6608d957e5c9754488bb8c30f2bb6c1568b55f5379ba743624c7efa2e",
-      "artefact": "SOURCE",
-      "unified": "current",
-      "admittedAt": "2026-09-25T11:45:26.407821+00:00",
-      "admittedBy": "admit.py --stamp-existing",
-      "identity": "MATCH",
-      "file": "United_States_NIST_FIPS_203_204_205_Published_Announcement.html",
-      "status": "downloaded",
-      "stampedAt": "2026-09-25T11:49:34.744149+00:00"
-    },
-    {
-      "refId": "g7-cybersecurity-working-group-preparing-for-the-post-quantum-era-call-to-action",
-      "filename": "G7_Cybersecurity_Working_Group_Preparing_for_the_Post_Quantum_Era_Call_to_Action.html",
-      "sizeBytes": 24945,
-      "contentType": "text/html",
-      "url": "https://cyber.gouv.fr/en/publications/jointly-led-international-publications/preparing-for-the-post-quantum-era-a-call-to-action/",
-      "sha256": "2bb9152011f7cff0396b70b751d300bc24e1e4116063abb567220965eb12e7ce",
-      "artefact": "SOURCE",
-      "unified": "current",
-      "admittedAt": "2026-09-25T11:45:26.554167+00:00",
-      "admittedBy": "admit.py --stamp-existing",
-      "identity": "MATCH",
-      "file": "G7_Cybersecurity_Working_Group_Preparing_for_the_Post_Quantum_Era_Call_to_Action.html",
-      "status": "downloaded",
-      "stampedAt": "2026-09-25T11:49:34.784766+00:00"
-    },
-    {
-      "refId": "united-states-nist-hawk-withdrawn-from-additional-signatures-round-3",
-      "filename": "United_States_NIST_HAWK_Withdrawn_Round_3.html",
-      "sizeBytes": 60037,
-      "contentType": "text/html",
-      "url": "https://csrc.nist.gov/projects/pqc-dig-sig/round-3-additional-signatures",
-      "sha256": "c819ca5ae4a4c753995605ede0c1a87456b55b7853fd45e2c7babfcf7215c30f",
-      "artefact": "SOURCE",
-      "unified": "current",
-      "admittedAt": "2026-09-25T11:45:26.719412+00:00",
-      "admittedBy": "admit.py --stamp-existing",
-      "identity": "MATCH",
-      "file": "United_States_NIST_HAWK_Withdrawn_Round_3.html",
-      "status": "downloaded",
-      "stampedAt": "2026-09-25T11:49:34.836451+00:00"
-    }
-  ],
+  "archivedEntries": [],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
-  "rebuiltAt": "2026-09-25T11:48:45.206028+00:00"
+  "rebuiltAt": "2026-09-25T12:23:08.860149+00:00"
 }

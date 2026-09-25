@@ -19,7 +19,8 @@
  *   planning         a planning assumption or research range, not a
  *                    regulatory deadline. Must never be shown as one.
  *   unsourced        no reviewed source found — listed for the user; do not
- *                    present it as a requirement.
+ *                    present it as a requirement. (The one such constant,
+ *                    ANSSI_TIMELINE.migrationPlanTarget, was removed 2026-09-25.)
  */
 
 export type ProvenanceKind =
@@ -126,10 +127,6 @@ export const REGULATORY_CONSTANT_PROVENANCE: Readonly<Record<string, ConstantPro
     evidence: 'OMB M-26-15 (library "OMB-M-26-15")',
   },
   // ── ANSSI / BSI ──
-  'ANSSI_TIMELINE.migrationPlanTarget': {
-    kind: 'unsourced',
-    note: 'No reviewed timeline row or library document found stating a 2025 ANSSI migration-plan target. Do not present it as an ANSSI requirement until sourced (user queue).',
-  },
   'BSI_TIMELINE.quantumSafeDefault': { kind: 'generated', country: 'DE' },
   // ── CRQC research range ──
   'CRQC_ESTIMATES.lowerBound': {

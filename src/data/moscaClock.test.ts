@@ -54,13 +54,11 @@ describe('moscaClock', () => {
   })
 
   // Deadlines are DERIVED from the timeline CSV (the is_sim_deadline-tagged row),
-  // not hardcoded. The 8 REVIEWED tagged jurisdictions resolve. AU and KR are
-  // tagged but their rows are withheld pending review (timeline remediation r2,
-  // 2026-09-24: AU's row is still Status=New; both reviewers found KR's cited
-  // page gives 2035 only as an industry forecast, not a completion target), so
-  // they fall back to the Q-Day anchor like SG (guidance-only, no tagged row).
+  // not hardcoded. The 10 REVIEWED tagged jurisdictions resolve (AU and KR were
+  // settled by the user on 2026-09-25 after the Claude + Codex review); SG
+  // (guidance-only, no tagged row) falls back to the Q-Day anchor.
   it('derives per-country deadlines from the timeline CSV (tagged rows)', () => {
-    for (const c of ['US', 'DE', 'FR', 'UK', 'EU', 'CA', 'JP', 'IN'] as const) {
+    for (const c of ['US', 'DE', 'FR', 'UK', 'EU', 'CA', 'KR', 'JP', 'AU', 'IN'] as const) {
       expect(typeof COUNTRY_DEADLINE_YEAR[c], `${c} deadline`).toBe('number')
       expect(COUNTRY_DEADLINE_PROVENANCE[c], `${c} provenance`).toBe('planning')
     }
@@ -69,7 +67,7 @@ describe('moscaClock', () => {
     // JP's deadline (2035) is after Q-Day → falls back to the Q-Day anchor.
     expect(horizonYearFor('JP')).toBe(SIM_CRQC_YEAR)
     // Guidance-only jurisdictions have no national deadline milestone → fall back to Q-Day.
-    for (const c of ['SG', 'AU', 'KR'] as const) {
+    for (const c of ['SG'] as const) {
       expect(COUNTRY_DEADLINE_YEAR[c], `${c} absent`).toBeUndefined()
       expect(horizonYearFor(c), `${c} fallback`).toBe(SIM_CRQC_YEAR)
     }

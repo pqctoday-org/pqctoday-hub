@@ -11,7 +11,7 @@
  *   node scripts/gen-timeline-facts.mjs --check    # exit 1 if stale (CI gate)
  *
  * Derivation rule (decision 2026-06-18): each country's COUNTRY_DEADLINE_YEAR =
- * the StartYear of the row a human TAGGED `is_sim_deadline=true` in the CSV (its
+ * the EndYear of the row a human TAGGED `is_sim_deadline=true` in the CSV (its
  * canonical PQC migration deadline — the flat `Category=Deadline` mixes legacy,
  * soft and protocol-specific rows, so the choice is curated in the CSV, not
  * heuristic). Untagged countries are omitted → the sim falls back to the Q-Day anchor.
@@ -86,7 +86,10 @@ function derive() {
   for (const r of active) {
     if (r.is_sim_deadline !== 'true') continue
     const code = FLAG_TO_SIM[r.FlagCode] ?? r.FlagCode
-    const yr = parseInt(r.StartYear, 10)
+    // The deadline is the END of the tagged row's window (2026-09-25): a plan row
+    // that starts in 2023 and targets 2035 is a 2035 deadline. Every point-event
+    // deadline row has StartYear === EndYear, so this changes none of them.
+    const yr = parseInt(r.EndYear || r.StartYear, 10)
     if (!code || !Number.isFinite(yr)) continue
     const mandate = (r.mandate_type ?? '').trim() || 'NONE'
     deadline[code] = { year: yr, title: r.Title, mandate }
