@@ -121,7 +121,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     lastVerified: '2026-04-22',
     posture: 'yellow',
     notes:
-      'FIPS 140-3 boundary does not yet cover PQC algorithms per NIST CMVP. PQC APIs available outside the FIPS module; verify ACVP submission status at csrc.nist.gov.',
+      'FIPS 140-3 boundary does not yet cover PQC algorithms per NIST CMVP. PQC APIs available outside the FIPS module; verify CAVP algorithm validation status at csrc.nist.gov.',
   },
   {
     id: 'bc-fips',
@@ -137,7 +137,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     lastVerified: '2026-04-10',
     posture: 'yellow',
     notes:
-      'PQC APIs available but not inside the validated module boundary; ACVP re-certification after the FIPS 140-3 IG update required.',
+      'PQC APIs available but not inside the validated module boundary; CAVP algorithm re-validation after the FIPS 140-3 IG update required.',
   },
   {
     id: 'mbedtls',
