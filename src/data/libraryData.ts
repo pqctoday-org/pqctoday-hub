@@ -702,7 +702,10 @@ export function conceptIdForLibraryItem(item: { referenceId: string }): string |
 // whenever a rename happens so `findLibraryItemByRef` keeps resolving old
 // links instead of silently opening to nothing.
 export const REFERENCE_ID_ALIASES: Record<string, string> = {
-  'NIST-IR-8547': 'NIST-IR-8547-IPD2',
+  // Was 'NIST-IR-8547-IPD2' — a fabricated "second draft" row, deprecated
+  // (no successor). The only NIST IR 8547 publication is the 2024-11-12 IPD,
+  // held as 'NIST IR 8547'.
+  'NIST-IR-8547': 'NIST IR 8547',
   'NIST-CSWP-39': 'NIST CSWP 39',
 }
 
