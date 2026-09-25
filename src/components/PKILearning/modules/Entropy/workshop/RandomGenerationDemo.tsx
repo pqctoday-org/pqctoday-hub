@@ -28,7 +28,13 @@ import {
   type LCGResult,
 } from '../utils/outputFormatters'
 import { BYTE_COUNT_OPTIONS } from '../utils/entropyConstants'
-import { runAllTests, type TestResult } from '../utils/entropyTests'
+import {
+  groupResults,
+  runAllTests,
+  TEST_GROUP_STATUS,
+  type TestGroup,
+  type TestResult,
+} from '../utils/entropyTests'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { BitMatrixGrid } from '../components/BitMatrixGrid'
 import { LagPlot } from '../components/LagPlot'
@@ -127,59 +133,93 @@ const FrequencyHistogram: React.FC<{
   )
 }
 
-/** Compact test results comparison table */
+/** What each group can and cannot say, shown under its heading. */
+const GROUP_NOTES: Partial<Record<TestGroup, string>> = {
+  visualization:
+    'Describe each buffer only. Math.random() and the LCG usually land within range here — the expected lesson: these statistics cannot tell a predictable generator from an unpredictable one.',
+  health:
+    'SP 800-90B §4.4 tests, defined on raw noise-source samples before conditioning (§4.3 item 6). Every source here is generator output, so this is a demonstration only.',
+}
+
+/**
+ * Side-by-side results, one block per group (Entropy remediation P0.4): the
+ * visual checks and the health tests are never totalled into one verdict.
+ */
 const TestComparisonTable: React.FC<{
   results: Record<SourceId, TestResult[]>
   enabledSources: SourceId[]
 }> = ({ results, enabledSources }) => {
-  const testNames = results[enabledSources[0]]?.map((t) => t.name) ?? []
+  const groups = groupResults(results[enabledSources[0]] ?? [])
   return (
-    <div className="glass-panel p-4 space-y-3">
-      <h3 className="text-sm font-semibold text-foreground">Statistical Test Comparison</h3>
-      <div className="overflow-x-auto">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="text-left py-2 pr-3 text-muted-foreground font-medium">Test</th>
-              {enabledSources.map((id) => {
-                const src = SOURCES.find((s) => s.id === id)!
-                return (
-                  <th key={id} className="text-center py-2 px-2 text-muted-foreground font-medium">
-                    {src.label}
-                  </th>
-                )
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {testNames.map((name) => (
-              <tr key={name} className="border-b border-border/50">
-                <td className="py-1.5 pr-3 font-medium text-foreground whitespace-nowrap">
-                  {name}
-                </td>
-                {enabledSources.map((id) => {
-                  const test = results[id]?.find((t) => t.name === name)
-                  if (!test)
+    <div className="glass-panel p-4 space-y-4">
+      <h3 className="text-sm font-semibold text-foreground">
+        Check comparison — read each group on its own
+      </h3>
+      {groups.map((g) => (
+        <div key={g.group} className="space-y-2">
+          <div>
+            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              {g.label}
+            </h4>
+            {GROUP_NOTES[g.group] && (
+              <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">
+                {GROUP_NOTES[g.group]}
+              </p>
+            )}
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 pr-3 text-muted-foreground font-medium">Check</th>
+                  {enabledSources.map((id) => {
+                    const src = SOURCES.find((s) => s.id === id)!
                     return (
-                      <td key={id} className="text-center py-1.5 px-2 text-muted-foreground">
-                        —
-                      </td>
+                      <th
+                        key={id}
+                        className="text-center py-2 px-2 text-muted-foreground font-medium"
+                      >
+                        {src.label}
+                      </th>
                     )
-                  return (
-                    <td key={id} className="text-center py-1.5 px-2">
-                      {test.passed ? (
-                        <CheckCircle size={14} className="text-success inline-block" />
-                      ) : (
-                        <XCircle size={14} className="text-destructive inline-block" />
-                      )}
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {g.results.map(({ name }) => (
+                  <tr key={name} className="border-b border-border/50">
+                    <td className="py-1.5 pr-3 font-medium text-foreground whitespace-nowrap">
+                      {name}
                     </td>
-                  )
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                    {enabledSources.map((id) => {
+                      const test = results[id]?.find((t) => t.name === name)
+                      if (!test)
+                        return (
+                          <td key={id} className="text-center py-1.5 px-2 text-muted-foreground">
+                            —
+                          </td>
+                        )
+                      const label = test.passed
+                        ? TEST_GROUP_STATUS[test.group].ok
+                        : TEST_GROUP_STATUS[test.group].bad
+                      return (
+                        <td key={id} className="text-center py-1.5 px-2" title={label}>
+                          {test.passed ? (
+                            <CheckCircle size={14} className="text-success inline-block" />
+                          ) : (
+                            <XCircle size={14} className="text-destructive inline-block" />
+                          )}
+                          <span className="sr-only">{label}</span>
+                        </td>
+                      )
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -415,8 +455,8 @@ export const RandomGenerationDemo: React.FC = () => {
         <div>
           <h2 className="text-lg font-semibold text-foreground">Random Byte Generation</h2>
           <p className="text-sm text-muted-foreground">
-            Compare cryptographically secure and insecure random sources side by side. See the
-            difference between true randomness and deterministic PRNGs.
+            Compare cryptographically secure and insecure random sources side by side, and see why
+            output that looks random can still be fully predictable.
           </p>
         </div>
       </div>
@@ -477,12 +517,12 @@ export const RandomGenerationDemo: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={handleCompareAll}
-              title="Run an educational subset of NIST SP 800-22 statistical tests (5 of 15) across all active sources and display a side-by-side comparison"
+              title="Run three SP 800-22-style visual checks and the two SP 800-90B health tests on every active source; results appear in separate groups"
             >
               Compare All Tests
             </Button>
             <p className="text-[10px] text-muted-foreground mt-0.5">
-              Statistical tests across all sources
+              Visual checks and health tests, grouped
             </p>
           </div>
         )}
@@ -717,8 +757,9 @@ export const RandomGenerationDemo: React.FC = () => {
           <code className="font-mono text-primary">/dev/urandom</code>).{' '}
           <strong className="text-foreground">Insecure sources</strong> (Math.random, LCG) use
           deterministic algorithms with predictable seeds — their output <em>looks</em> random but
-          is fully reproducible. This is why NIST SP 800-90A requires entropy-seeded DRBGs for all
-          cryptographic applications.
+          is fully reproducible. An SP 800-90A DRBG is deterministic too: its output is only as
+          unpredictable as its seed, which SP 800-90C expects to come from validated SP 800-90B
+          entropy sources.
         </p>
         <div className="flex flex-wrap gap-2">
           {(
@@ -746,7 +787,7 @@ export const RandomGenerationDemo: React.FC = () => {
       <PlaygroundNextStep
         toolId="entropy-test"
         name="Entropy Testing"
-        description="Test your generated bytes against NIST SP 800-90B: monobit, frequency, and min-entropy checks."
+        description="Run the visual checks and the SP 800-90B health tests on a sample as separate groups, and see what neither group can tell you."
       />
     </div>
   )

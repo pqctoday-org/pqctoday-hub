@@ -31,6 +31,38 @@ export const TEST_GROUP_LABELS: Record<TestGroup, string> = {
   kat: 'Algorithm known-answer tests',
 }
 
+/**
+ * Wording for a result's state, per group. A group-1 "pass" is only "within
+ * range" (not a security verdict); a group-2 failure is a health-test signal.
+ */
+export const TEST_GROUP_STATUS: Record<TestGroup, { ok: string; bad: string }> = {
+  visualization: { ok: 'Within range', bad: 'Outside range' },
+  health: { ok: 'No failure signalled', bad: 'Failure signalled' },
+  estimator: { ok: 'Estimate made', bad: 'Not run' },
+  kat: { ok: 'Matched', bad: 'Mismatch' },
+}
+
+export interface TestResultGroup {
+  group: TestGroup
+  label: string
+  results: TestResult[]
+}
+
+/**
+ * Split results into their groups (in TestGroup order, empty groups dropped)
+ * so a component renders each group on its own — never one combined count.
+ */
+export function groupResults(results: TestResult[]): TestResultGroup[] {
+  const order: TestGroup[] = ['visualization', 'health', 'estimator', 'kat']
+  return order
+    .map((group) => ({
+      group,
+      label: TEST_GROUP_LABELS[group],
+      results: results.filter((r) => r.group === group),
+    }))
+    .filter((g) => g.results.length > 0)
+}
+
 export interface TestResult {
   name: string
   value: number

@@ -13,6 +13,7 @@ import { describe, it, expect } from 'vitest'
 import {
   adaptiveProportionTest,
   aptCutoff,
+  groupResults,
   aptWindowSize,
   rctCutoff,
   repetitionCountTest,
@@ -165,5 +166,24 @@ describe('result groups (P0.4)', () => {
   it('states the startup-sample shortfall on a small buffer (§4.3 item 4)', () => {
     const [rct] = runHealthTests(goodSource(64))
     expect(rct.sampleLimit).toContain('fewer than the 1024 consecutive samples')
+  })
+
+  it('groupResults keeps visual checks and health tests apart, in group order', () => {
+    const groups = groupResults(runAllTests(goodSource()))
+    expect(groups.map((g) => g.group)).toEqual(['visualization', 'health'])
+    for (const g of groups) expect(g.results.every((r) => r.group === g.group)).toBe(true)
+  })
+
+  it('the exercise outcomes hold: pattern trips only APT, a counter trips no health test', () => {
+    const health = (d: Uint8Array) =>
+      Object.fromEntries(runHealthTests(d).map((r) => [r.name, r.passed]))
+    const pattern = new Uint8Array(64).map((_, i) => [0xde, 0xad, 0xbe, 0xef][i % 4])
+    const counter = new Uint8Array(64).map((_, i) => i)
+    expect(health(new Uint8Array(64))).toEqual({
+      'Repetition Count': false,
+      'Adaptive Proportion': false,
+    })
+    expect(health(pattern)).toEqual({ 'Repetition Count': true, 'Adaptive Proportion': false })
+    expect(health(counter)).toEqual({ 'Repetition Count': true, 'Adaptive Proportion': true })
   })
 })

@@ -4,7 +4,12 @@ import { Atom, Cpu, Play, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 import { getRandomBytes } from '@/utils/webCrypto'
-import { runAllTests, type TestResult } from '../utils/entropyTests'
+import {
+  groupResults,
+  runAllTests,
+  TEST_GROUP_STATUS,
+  type TestResult,
+} from '../utils/entropyTests'
 import { formatHex, binnedFrequency } from '../utils/outputFormatters'
 import { BitMatrixGrid } from '../components/BitMatrixGrid'
 import { LagPlot } from '../components/LagPlot'
@@ -59,21 +64,27 @@ const FrequencyHistogram: React.FC<{ data: Uint8Array }> = ({ data }) => {
   )
 }
 
-/** Pass/Fail icon */
-const PassFailIcon: React.FC<{ passed: boolean }> = ({ passed }) =>
-  passed ? (
-    <CheckCircle size={16} className="text-status-success" />
-  ) : (
-    <XCircle size={16} className="text-status-error" />
+/** Result icon, with the group's own wording for screen readers and hover. */
+const PassFailIcon: React.FC<{ result: TestResult }> = ({ result }) => {
+  const label = result.passed
+    ? TEST_GROUP_STATUS[result.group].ok
+    : TEST_GROUP_STATUS[result.group].bad
+  return (
+    <span title={label} className="inline-flex">
+      {result.passed ? (
+        <CheckCircle size={16} className="text-status-success" />
+      ) : (
+        <XCircle size={16} className="text-status-error" />
+      )}
+      <span className="sr-only">{label}</span>
+    </span>
   )
+}
 
 /** Format a test value for display */
 function formatTestValue(result: TestResult): string {
   if (result.name === 'Frequency (Monobit)') {
     return `${(result.value * 100).toFixed(1)}%`
-  }
-  if (result.name === 'Min-Entropy') {
-    return `${result.value.toFixed(2)} b/B`
   }
   if (result.name === 'Repetition Count') {
     return String(result.value)
@@ -400,7 +411,7 @@ export const QRNGDemo: React.FC = () => {
       <div className="flex justify-center">
         <Button variant="gradient" onClick={handleCompare} disabled={!trngData}>
           <Play size={16} className="mr-2" />
-          Run Entropy Tests on Both Samples
+          Run the Checks on All Three Samples
         </Button>
       </div>
 
@@ -408,11 +419,16 @@ export const QRNGDemo: React.FC = () => {
       {hasComparison && (
         <div className="glass-panel p-4 space-y-3">
           <h2 className="text-sm font-semibold text-foreground">Comparison Results</h2>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Read each group on its own. Visual checks describe these bytes and give no security
+            verdict. The health tests are defined on raw noise-source samples before conditioning
+            (SP 800-90B §4.3 item 6); on these generator outputs they are a demonstration only.
+          </p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-2 pr-4 text-muted-foreground font-medium">Test</th>
+                  <th className="text-left py-2 pr-4 text-muted-foreground font-medium">Check</th>
                   <th className="text-right py-2 px-3 text-muted-foreground font-medium">
                     Sim. QRNG Value
                   </th>
@@ -429,51 +445,60 @@ export const QRNGDemo: React.FC = () => {
                   <th className="text-center py-2 pl-2 text-status-error font-medium">Weak</th>
                 </tr>
               </thead>
-              <tbody>
-                {qrngResults.map((qr, i) => {
-                  const tr = trngResults[i]
-                  const wk = weakResults[i]
-                  return (
-                    <tr key={qr.name} className="border-b border-border/50">
-                      <td className="py-2 pr-4">
-                        <div className="font-medium text-foreground">{qr.name}</div>
-                        <div className="text-xs text-muted-foreground">{qr.description}</div>
-                        {/* Surfaces caveats like "small sample — estimate unreliable below
-                            1,000 bytes" next to the pass/fail verdict, same as EntropyTestingDemo —
-                            without this a Min-Entropy fail at the default 64/128-byte sizes reads
-                            as "this data has detectable patterns" with no explanation. */}
-                        <div className="text-[10px] text-muted-foreground/80 font-mono">
-                          {qr.detail}
-                        </div>
-                      </td>
-                      <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
-                        {formatTestValue(qr)}
-                      </td>
-                      <td className="text-center py-2 px-2">
-                        <div className="flex justify-center">
-                          <PassFailIcon passed={qr.passed} />
-                        </div>
-                      </td>
-                      <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
-                        {formatTestValue(tr)}
-                      </td>
-                      <td className="text-center py-2 px-2">
-                        <div className="flex justify-center">
-                          <PassFailIcon passed={tr.passed} />
-                        </div>
-                      </td>
-                      <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
-                        {formatTestValue(wk)}
-                      </td>
-                      <td className="text-center py-2 pl-2">
-                        <div className="flex justify-center">
-                          <PassFailIcon passed={wk.passed} />
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
+              {/* One block of rows per group — never totalled across groups (P0.4) */}
+              {groupResults(qrngResults).map((g) => (
+                <tbody key={g.group}>
+                  <tr className="border-b border-border bg-muted/30">
+                    <th
+                      colSpan={7}
+                      scope="colgroup"
+                      className="text-left py-2 px-2 text-xs font-bold text-muted-foreground uppercase tracking-wider"
+                    >
+                      {g.label}
+                    </th>
+                  </tr>
+                  {g.results.map((qr) => {
+                    const tr = trngResults.find((r) => r.name === qr.name)
+                    const wk = weakResults.find((r) => r.name === qr.name)
+                    if (!tr || !wk) return null
+                    return (
+                      <tr key={qr.name} className="border-b border-border/50">
+                        <td className="py-2 pr-4">
+                          <div className="font-medium text-foreground">{qr.name}</div>
+                          <div className="text-xs text-muted-foreground">{qr.description}</div>
+                          <div className="text-[10px] text-muted-foreground/80 font-mono">
+                            {qr.detail}
+                          </div>
+                        </td>
+                        <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
+                          {formatTestValue(qr)}
+                        </td>
+                        <td className="text-center py-2 px-2">
+                          <div className="flex justify-center">
+                            <PassFailIcon result={qr} />
+                          </div>
+                        </td>
+                        <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
+                          {formatTestValue(tr)}
+                        </td>
+                        <td className="text-center py-2 px-2">
+                          <div className="flex justify-center">
+                            <PassFailIcon result={tr} />
+                          </div>
+                        </td>
+                        <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
+                          {formatTestValue(wk)}
+                        </td>
+                        <td className="text-center py-2 pl-2">
+                          <div className="flex justify-center">
+                            <PassFailIcon result={wk} />
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              ))}
             </table>
           </div>
         </div>
@@ -483,16 +508,17 @@ export const QRNGDemo: React.FC = () => {
         <div className="mt-4 rounded-lg border border-border bg-muted/40 p-4">
           <p className="text-sm font-semibold text-foreground">What the three sources tell you</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            <strong className="text-status-error">Weak PRNG</strong> visibly fails the histogram,
-            chi-squared, and min-entropy tests because it only ever emits values 0&ndash;15 (the
-            high nibble is forced to zero). This is what bad entropy actually looks like &mdash; and
-            it&apos;s exactly what the statistical tests are designed to catch.
+            <strong className="text-status-error">Weak PRNG</strong> only ever emits values
+            0&ndash;15 (the high nibble is forced to zero), so its histogram is lopsided and the
+            visual checks land outside range. The health tests, whose cutoffs assume H = 8
+            bits/sample, may signal a failure too. Gross structure like this is what output checks
+            can catch.
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            <strong>Simulated QRNG</strong> and <strong>CSPRNG</strong> usually get the same
-            verdicts because they are the same kind of output &mdash; the simulated QRNG sample is
-            CSPRNG output. At 64 or 128 bytes the min-entropy line can fail for either; that is a
-            small-sample effect, not a finding about the source.
+            <strong>Simulated QRNG</strong> and <strong>CSPRNG</strong> usually get the same results
+            because they are the same kind of output &mdash; the simulated QRNG sample is CSPRNG
+            output. At 64 or 128 bytes a single check can land outside range for either by chance;
+            that is a small-sample effect, not a finding about the source.
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
             Statistical tests measure <em>output patterns</em>, not <em>source security</em>. A
