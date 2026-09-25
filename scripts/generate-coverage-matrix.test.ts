@@ -59,9 +59,10 @@ describe('generate-coverage-matrix (committed inputs)', () => {
 
   it('the ECDSA P-521 NIST sample passes on both engines since the hub DER fix (was a recorded C++ fail)', () => {
     const r = matrix.rows.find((x) => x.key === 'CKM_ECDSA_SHA512|verify|P-521|*')!
-    expect(r.engines.cpp.run).toEqual({ pass: 1, fail: 0 })
-    // Rust: the workbench case and the Algorithms (katRunner) case, both passing.
-    expect(r.engines.rust.run).toEqual({ pass: 2, fail: 0 })
+    // C++: the §33 workbench case + the 7 WS-E NIST SigVer cases (§4b, P-521 / SHA2-512).
+    expect(r.engines.cpp.run).toEqual({ pass: 8, fail: 0 })
+    // Rust: the same 8 plus the Algorithms (katRunner) case, all passing.
+    expect(r.engines.rust.run).toEqual({ pass: 9, fail: 0 })
     expect(r.parity.positive).toBe('parity')
     expect(matrix.openGaps.some((g) => g.id.startsWith('recorded-fail:acvp.33#'))).toBe(false)
   })
@@ -70,8 +71,13 @@ describe('generate-coverage-matrix (committed inputs)', () => {
     const fails = (inputs.runResults ?? []).filter((r) => r.status === 'fail')
     expect(fails.length).toBeGreaterThan(0)
     for (const f of fails) {
+      // Each prefix is an engine defect with a curated open gap: 07b.keycheck
+      // rust-mlkem-no-key-input-checks; 09c cpp-hashslhdsa-double-wrap; WS-E —
+      // 01b rust-gcm-iv-96-only, 04b rust-ecdsa-p224-unsupported, 04d
+      // rust-rsa-public-exponent-limit, 12b.probes rust-cbc-iv-length-arguments-bad,
+      // 18b rust-pbkdf2-prf-limited, 35b kmac-verify-ignores-output-length.
       expect(f.registryCase, f.registryCase).toMatch(
-        /^acvp\.(07b\.keycheck|09c\.(sigver|siggen-det))#/
+        /^acvp\.(07b\.keycheck|09c\.(sigver|siggen-det)|01b|04b|04d|12b\.probes|18b|35b)#/
       )
       expect(
         matrix.openGaps.some((g) => g.id === `recorded-fail:${f.registryCase}:${f.engine}`)

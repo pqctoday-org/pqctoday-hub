@@ -148,6 +148,14 @@ import { runMldsaAcvpSection, type AcvpCaseMeta } from './sections/mldsaAcvp'
 import { runMldsaDepthSection } from './sections/mldsaDepth'
 import { runMlkemAcvpSection } from './sections/mlkemAcvp'
 import { runSlhdsaAcvpSection } from './sections/slhdsaAcvp'
+import { runAesGcmAcvpSection } from './sections/aesGcmAcvp'
+import { runAesKwAcvpSection } from './sections/aesKwAcvp'
+import { runAesCbcCtrAcvpSection } from './sections/aesCbcCtrAcvp'
+import { runHmacAcvpSection } from './sections/hmacAcvp'
+import { runShaAcvpSection } from './sections/shaAcvp'
+import { runEcdsaSigVerAcvpSection, runEddsaSigVerAcvpSection } from './sections/ecSigVerAcvp'
+import { runRsaSigVerAcvpSection } from './sections/rsaSigVerAcvp'
+import { runKmacAcvpSection, runPbkdf2AcvpSection } from './sections/kdfMacAcvp'
 import type { HsmKey } from '../HsmContext'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -179,10 +187,10 @@ export type CategoryId =
   'symmetric' | 'hashing_mac' | 'kdf' | 'classical' | 'ml_dsa' | 'slh_stateful' | 'ml_kem'
 
 export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
-  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 6 },
-  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 5 },
-  { id: 'kdf', label: 'KDF', groups: 5 },
-  { id: 'classical', label: 'Classical Asymmetric', groups: 10 },
+  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 9 },
+  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 8 },
+  { id: 'kdf', label: 'KDF', groups: 6 },
+  { id: 'classical', label: 'Classical Asymmetric', groups: 13 },
   { id: 'ml_dsa', label: 'ML-DSA', groups: 7 },
   { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 6 },
   { id: 'ml_kem', label: 'ML-KEM', groups: 3 },
@@ -573,6 +581,24 @@ export function useAcvpSuite() {
           }
         }
 
+        // ── 1b. AES-GCM NIST ACVP-Server reference samples (WS-E) — every
+        // case of the pinned ACVP-AES-GCM-1.0 sample: encrypt byte-match,
+        // decrypt byte-match and upstream authentication failures (rejected,
+        // CK_RV pinned per engine). Self-contained in sections/aesGcmAcvp.ts.
+        if (activeCategories.has('symmetric')) {
+          currentCategory = 'symmetric'
+          await runAesGcmAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.aesgcm,
+            pushResult,
+            addLog,
+          })
+        }
+
         // ── 2. HMAC-SHA256 Verify KAT (NIST ACVP, truncated) ───────────────
         if (activeCategories.has('hashing_mac')) {
           currentCategory = 'hashing_mac'
@@ -649,6 +675,24 @@ export function useAcvpSuite() {
               addLog(`[DISCREPANCY] [${eName}] [id:${id2}] HMAC-SHA256: ${errMessage}`)
             }
           }
+        }
+
+        // ── 2b. HMAC key / message / tag-length matrix (WS-E) — NIST HMAC 2.0
+        // AFT for all 11 advertised digests (generate byte-match + verify),
+        // plus product-authored invalid MACs (bit flip, one byte short).
+        // Self-contained in sections/hmacAcvp.ts.
+        if (activeCategories.has('hashing_mac')) {
+          currentCategory = 'hashing_mac'
+          await runHmacAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.hmac,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 3. RSA-PSS-2048 SigVer KAT (FIPS 186-5) ────────────────────
@@ -790,6 +834,59 @@ export function useAcvpSuite() {
               addLog(`[DISCREPANCY] [${eName}] [id:${id4}] ECDSA: ${errMessage}`)
             }
           }
+        }
+
+        // ── 4b. ECDSA dedicated SigVer (WS-E) — NIST ECDSA-SigVer-FIPS186-5,
+        // P-224/256/384/521 x SHA2-256/512, SHA3-256/512, every upstream
+        // valid/invalid case; SHA2-512/256 and SHAKE groups shown as skips.
+        // Self-contained in sections/ecSigVerAcvp.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          await runEcdsaSigVerAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.ecdsa,
+            pushResult,
+            addLog,
+          })
+        }
+
+        // ── 4c. EdDSA dedicated SigVer (WS-E) — NIST EDDSA-SigVer-1.0,
+        // Ed25519/Ed448, pure and preHash, every upstream valid/invalid case.
+        // Self-contained in sections/ecSigVerAcvp.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          await runEddsaSigVerAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.eddsa,
+            pushResult,
+            addLog,
+          })
+        }
+
+        // ── 4d. RSA dedicated SigVer (WS-E) — NIST RSA-SigVer-FIPS186-5,
+        // PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048,
+        // every upstream valid/invalid case; SHAKE groups shown as skips.
+        // Self-contained in sections/rsaSigVerAcvp.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          await runRsaSigVerAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.rsapss,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 5. ML-DSA SigVer from upstream sigGen output (FIPS 204) ──────
@@ -1723,6 +1820,24 @@ export function useAcvpSuite() {
           }
         }
 
+        // ── 10f. SHA-2 / SHA-3 message-length boundaries + MCT (WS-E) — NIST
+        // empty / short / block-boundary / longest AFT digests for 10 digests,
+        // standard MCT (first outer iteration), LDT + alternate MCT as skips.
+        // Self-contained in sections/shaAcvp.ts.
+        if (activeCategories.has('hashing_mac')) {
+          currentCategory = 'hashing_mac'
+          await runShaAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.sha256,
+            pushResult,
+            addLog,
+          })
+        }
+
         // ── 11. AES-CBC-256 Decrypt KAT (NIST ACVP-AES-CBC) ────────────────
         if (activeCategories.has('symmetric')) {
           currentCategory = 'symmetric'
@@ -1890,6 +2005,24 @@ export function useAcvpSuite() {
               addLog(`[DISCREPANCY] [${eName}] [id:${id12}] AES-CTR: ${errMessage}`)
             }
           }
+        }
+
+        // ── 12b. AES-CBC / AES-CTR NIST reference samples (WS-E) — CBC AFT
+        // (GFSBox + 1/10-block MMT) and MCT outer iteration 0 for AES-128/
+        // 192/256 both directions, product-authored CBC length/IV probes,
+        // CTR RFC 3686 decrypt + encrypt. sections/aesCbcCtrAcvp.ts.
+        if (activeCategories.has('symmetric')) {
+          currentCategory = 'symmetric'
+          await runAesCbcCtrAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.aescbc,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 13. HMAC-SHA384 Verify KAT (NIST ACVP, truncated) ──────────────
@@ -2381,6 +2514,23 @@ export function useAcvpSuite() {
           }
         }
 
+        // ── 18b. PBKDF2 NIST reference samples (WS-E) — PBKDF 1.0, HMAC-SHA2-224
+        // PRF, derived-key byte-match; one 1-iteration case keeps the Rust
+        // iteration-floor divergence visible. sections/kdfMacAcvp.ts.
+        if (activeCategories.has('kdf')) {
+          currentCategory = 'kdf'
+          await runPbkdf2AcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.pbkdf2,
+            pushResult,
+            addLog,
+          })
+        }
+
         // ── 19. AES-KW Wrap KAT (RFC 3394) ────────────────────────────────
         if (activeCategories.has('symmetric')) {
           currentCategory = 'symmetric'
@@ -2587,6 +2737,24 @@ export function useAcvpSuite() {
               addLog(`[DISCREPANCY] [${eName}] [id:${id20}] AES-KWP: ${errMessage}`)
             }
           }
+        }
+
+        // ── 20b. AES-KW / AES-KWP NIST reference samples (WS-E) — wrap
+        // byte-match, unwrap byte-match and upstream integrity failures
+        // (C_UnwrapKey refused, CK_RV pinned per engine), AES-128/192/256,
+        // aligned / one-byte / unaligned payloads. sections/aesKwAcvp.ts.
+        if (activeCategories.has('symmetric')) {
+          currentCategory = 'symmetric'
+          await runAesKwAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.aeskw,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 21. SLH-DSA Context Binding (FIPS 205 §9.2) ───────────────────
@@ -3762,6 +3930,23 @@ export function useAcvpSuite() {
               addLog(`[DISCREPANCY] [${eName}] [id:${id34}] ECDH P-521: ${errMessage}`)
             }
           }
+        }
+
+        // ── 35b. KMAC-128 NIST reference samples (WS-E) — the two byte-aligned
+        // non-XOF MVT cases (customization + output length via the vendor
+        // parameter block). sections/kdfMacAcvp.ts.
+        if (activeCategories.has('hashing_mac')) {
+          currentCategory = 'hashing_mac'
+          await runKmacAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.kmac,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 35. KMAC128 KAT (NIST SP 800-185) ─────────────────────────────

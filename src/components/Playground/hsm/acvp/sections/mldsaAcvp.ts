@@ -109,6 +109,12 @@ export interface AcvpCaseMeta {
     | 'decapsulation'
     | 'decapsulationKeyCheck'
     | 'encapsulationKeyCheck'
+    // classical / symmetric (WS-E)
+    | 'encrypt'
+    | 'decrypt'
+    | 'mac-generate'
+    | 'mac-verify'
+    | 'digest'
     | 'none'
   localOperation:
     | 'sigVer'
@@ -118,8 +124,19 @@ export interface AcvpCaseMeta {
     | 'encapsulation'
     | 'decapsulation'
     | 'key-import'
+    // classical / symmetric (WS-E)
+    | 'encrypt'
+    | 'decrypt'
+    | 'mac-generate'
+    | 'mac-verify'
+    | 'digest'
+    | 'wrap'
+    | 'unwrap'
     | 'none'
+  /** Algorithm parameter set, curve, key length or digest the case runs with. */
   parameterSet: string
+  /** Classical-case parameters (key/IV/tag/AAD/payload/MAC lengths, curve…) — WS-E. */
+  parameters?: Record<string, string | number | boolean>
   mode?: 'pure' | 'preHash' | 'externalMu' | 'internal'
   hashAlg?: string
   contextBytes?: number

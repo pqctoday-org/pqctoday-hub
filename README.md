@@ -95,7 +95,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     KBKDFs); decodes CKF\_ flag bitmasks to human-readable names; groups by algorithm family
     (PQC, asymmetric, symmetric, hash, kdf)
   - **Cryptographic Validation Workbench** (Build › Validation; formerly "ACVP Testing"): runs
-    42 test groups in 7 families, of mixed evidence — selected public NIST ACVP-Server reference samples,
+    52 test groups in 7 families, of mixed evidence — selected public NIST ACVP-Server reference samples,
     published-standard KATs, OpenSSL-oracle comparisons and functional round-trips, each row
     tagged with its evidence tier. Not an ACVTS session or a CAVP/CMVP certificate —
     symmetric (AES-GCM-256, AES-CBC-256, AES-CTR-256, AES Key Wrap/KWP, ChaCha20-Poly1305),
