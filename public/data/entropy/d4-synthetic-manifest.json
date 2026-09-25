@@ -1,0 +1,149 @@
+{
+  "schema": "pqctoday.entropy.synthetic-datasets/1",
+  "label": "SYNTHETIC — generated data, not a measurement of any device or noise source",
+  "generator": "src/wasm/entropy90b/syntheticDatasets.ts",
+  "prng": "xoshiro128** seeded by splitmix32 (32-bit integer ops; byte-identical in Node and browsers)",
+  "baseSeed": "0x90b00924",
+  "sampleFormat": "one sample per byte, value in the least-significant bitsPerSymbol bits (NIST SP800-90B_EntropyAssessment input format); restart matrices are 1000 rows (restarts) x 1000 samples, row-major",
+  "datasets": [
+    {
+      "id": "d4-stuck-8bit",
+      "kind": "sequential",
+      "bitsPerSymbol": 8,
+      "provenance": "synthetic",
+      "intendedTrack": "non-iid",
+      "generator": "genStuck",
+      "seed": null,
+      "parameters": {
+        "samples": 1000000,
+        "value": 0
+      },
+      "teachingNote": "A stuck source emits one symbol forever. The NIST tool refuses to award any entropy (alphabet of one symbol).",
+      "file": "d4-stuck-8bit.bin",
+      "bytes": 1000000,
+      "sha256": "d29751f2649b32ff572b5e0a9f541ea660a50f94ff0beedfb0b692b924cc8025"
+    },
+    {
+      "id": "d4-biased-1bit",
+      "kind": "sequential",
+      "bitsPerSymbol": 1,
+      "provenance": "synthetic",
+      "intendedTrack": "iid",
+      "generator": "genBiasedBits",
+      "seed": -1850733897,
+      "parameters": {
+        "samples": 1000000,
+        "p1": 0.75
+      },
+      "teachingNote": "Independent but biased bits, P(1)=0.75: the true min-entropy is -log2(0.75) ≈ 0.415 bit/sample. The estimators should land near, and not above, that value.",
+      "file": "d4-biased-1bit.bin",
+      "bytes": 1000000,
+      "sha256": "d7bebe423cb6e3c70629e47243906a11319312f19f6b75039272bd9dfe8742eb"
+    },
+    {
+      "id": "d4-markov-1bit",
+      "kind": "sequential",
+      "bitsPerSymbol": 1,
+      "provenance": "synthetic",
+      "intendedTrack": "non-iid",
+      "generator": "genMarkovBits",
+      "seed": -1833956278,
+      "parameters": {
+        "samples": 1000000,
+        "pStay": 0.7
+      },
+      "teachingNote": "Balanced bits (mean ≈ 0.5) that repeat the previous bit 70% of the time. Most Common Value alone looks near 1 bit/sample; the Markov and predictor estimators expose the correlation (true per-sample min-entropy −log2(0.7) ≈ 0.515).",
+      "file": "d4-markov-1bit.bin",
+      "bytes": 1000000,
+      "sha256": "974dbc8bb0253ef6a18b8277150f146bef3ae68ab9513aee640b6335b99f5e47"
+    },
+    {
+      "id": "d4-healthy-iid-8bit",
+      "kind": "sequential",
+      "bitsPerSymbol": 8,
+      "provenance": "synthetic",
+      "intendedTrack": "iid",
+      "generator": "genUniform",
+      "seed": -1817178659,
+      "parameters": {
+        "samples": 1000000,
+        "prng": "xoshiro128**"
+      },
+      "teachingNote": "Deterministic PRNG output that passes the statistics. It is NOT an entropy source: anyone with the seed predicts every sample. Passing tests is not evidence of unpredictability.",
+      "file": "d4-healthy-iid-8bit.bin",
+      "bytes": 1000000,
+      "sha256": "603ce2d3d7429242a88ff9cea83869ffd40665b0e9aec19723d41ad745cf6968"
+    },
+    {
+      "id": "d4-healthy-iid-8bit-restart",
+      "kind": "restart",
+      "bitsPerSymbol": 8,
+      "provenance": "synthetic",
+      "intendedTrack": "restart",
+      "generator": "genRestartIndependent",
+      "seed": -1800401040,
+      "parameters": {
+        "rows": 1000,
+        "cols": 1000,
+        "prng": "xoshiro128**"
+      },
+      "teachingNote": "Restart matrix where every restart starts from an independent PRNG state: the restart sanity test has nothing to find. (Still synthetic PRNG output — see d4-healthy-iid-8bit.)",
+      "pairedSequentialId": "d4-healthy-iid-8bit",
+      "file": "d4-healthy-iid-8bit-restart.bin",
+      "bytes": 1000000,
+      "sha256": "9f2c1502f6e888d7e1212f89f46ce314a08a5bd54257cf3a408c4b0034e899ff"
+    },
+    {
+      "id": "d4-restart-correlated-8bit",
+      "kind": "restart",
+      "bitsPerSymbol": 8,
+      "provenance": "synthetic",
+      "intendedTrack": "restart",
+      "generator": "genRestartCorrelated",
+      "seed": -1783623421,
+      "parameters": {
+        "rows": 1000,
+        "cols": 1000,
+        "pNoise": 0.02
+      },
+      "teachingNote": "Every restart replays the same internal state (98% of each row identical to one base row). A single long run looks healthy; only the restart test shows that power-cycling the device repeats its output.",
+      "pairedSequentialId": "d4-healthy-iid-8bit",
+      "file": "d4-restart-correlated-8bit.bin",
+      "bytes": 1000000,
+      "sha256": "ec0af63b4c24594df49b908fcc99d177a08b6ae4741860be5385d1789a4b4f60"
+    },
+    {
+      "id": "d4-sha256-conditioned-stuck-8bit",
+      "kind": "sequential",
+      "bitsPerSymbol": 8,
+      "provenance": "synthetic",
+      "intendedTrack": "non-iid",
+      "generator": "conditionSha256(genStuck)",
+      "seed": null,
+      "parameters": {
+        "samples": 1000000,
+        "input": "d4-stuck-8bit",
+        "inBlockBytes": 64,
+        "construction": "SHA-256(be64(counter) || 64-byte input block)"
+      },
+      "teachingNote": "SHA-256 over a STUCK input (zero entropy) plus a counter. The output passes the estimators at close to 8 bits/byte, yet it carries no entropy at all: conditioning cannot create entropy, and testing conditioned output is not an entropy assessment.",
+      "file": "d4-sha256-conditioned-stuck-8bit.bin",
+      "bytes": 1000000,
+      "sha256": "07435bb8db483643a74516697f9980493498d7b82561abb0d6e2546412395ccb"
+    }
+  ],
+  "katFixture": {
+    "id": "kat-markov-1bit-20k",
+    "bitsPerSymbol": 1,
+    "bytes": 20000,
+    "sha256": "c9443b93e2f390ba1e4f362d437a927af66e3fa7aa6e7d8be6e7df5daaa47f04",
+    "note": "Small unit-test fixture (20,000 samples) — below the SP 800-90B minimum on purpose; used only for the WASM-vs-native KAT."
+  },
+  "katIidFixture": {
+    "id": "kat-biased-1bit-20k",
+    "bitsPerSymbol": 1,
+    "bytes": 20000,
+    "sha256": "81c1c7f99eda513a0fe7ebdff3c2962933da61a69ac8d9ee257275f7be6d8fe3",
+    "note": "Small IID unit-test fixture (20,000 biased independent bits) for the seeded ea_iid KAT."
+  }
+}

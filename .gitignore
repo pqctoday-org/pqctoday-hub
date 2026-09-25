@@ -758,3 +758,13 @@ src/.!*!.DS_Store
 # and read by the pre-push hook to skip a gate it already ran. Per-machine;
 # never committed. See GATES.md.
 .gate-ok-*
+
+# NIST SP 800-90B estimator tool -> WebAssembly (entropy workshop W0/W1/D4,
+# 2026-09-24). Reproducible build (Dockerfile.wasm + build/stage scripts), the
+# glibc ldbl-128 shim, the D4 synthetic-dataset generator and the W1 parity
+# harness. They build/verify the committed public/wasm/entropy90b/ artefacts,
+# so every checkout needs them. Checked with `git check-ignore -v` per the
+# habit recorded above.
+!scripts/entropy-90b/
+# A bare `build-wasm.sh` pattern above ignores every file of that name.
+!scripts/entropy-90b/build-wasm.sh
