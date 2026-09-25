@@ -147,6 +147,9 @@ import { useHsmContext } from '../HsmContext'
 import { runMldsaAcvpSection, type AcvpCaseMeta } from './sections/mldsaAcvp'
 import { runMldsaDepthSection } from './sections/mldsaDepth'
 import { runMlkemAcvpSection } from './sections/mlkemAcvp'
+import { runMldsaNegBoundarySection } from './sections/mldsaNegBoundary'
+import { runMlkemKeyCheckDepthSection } from './sections/mlkemKeyCheckDepth'
+import { runSlhdsaCoverageSection } from './sections/slhdsaCoverage'
 import { runSlhdsaAcvpSection } from './sections/slhdsaAcvp'
 import { runAesGcmAcvpSection } from './sections/aesGcmAcvp'
 import { runAesKwAcvpSection } from './sections/aesKwAcvp'
@@ -191,9 +194,9 @@ export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'hashing_mac', label: 'Hashing & MAC', groups: 8 },
   { id: 'kdf', label: 'KDF', groups: 6 },
   { id: 'classical', label: 'Classical Asymmetric', groups: 13 },
-  { id: 'ml_dsa', label: 'ML-DSA', groups: 7 },
-  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 6 },
-  { id: 'ml_kem', label: 'ML-KEM', groups: 3 },
+  { id: 'ml_dsa', label: 'ML-DSA', groups: 8 },
+  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 7 },
+  { id: 'ml_kem', label: 'ML-KEM', groups: 4 },
 ]
 
 export const ALL_CATEGORY_IDS: Set<CategoryId> = new Set(CATEGORIES.map((c) => c.id))
@@ -1169,6 +1172,21 @@ export function useAcvpSuite() {
             addLog,
           })
 
+          // ── 5f. ML-DSA negative / boundary depth — NIST sigVer at the context
+          // extremes and every HashML-DSA disposition, product-authored
+          // deterministic-sign negatives, hedged signing at ctx 0/255 checked by
+          // the engine and by an independent verifier. sections/mldsaNegBoundary.ts
+          // (gap-closure P5).
+          await runMldsaNegBoundarySection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mldsa,
+            pushResult,
+            addLog,
+          })
+
           // ── 6. ML-DSA Functional Sign+Verify (FIPS 204) — all variants ──
           for (const dsaVariant of [44, 65, 87] as const) {
             const dsaAlgo = `ML-DSA-${dsaVariant}`
@@ -1373,6 +1391,19 @@ export function useAcvpSuite() {
           // encapsulation skip, product-authored boundary probes. Self-
           // contained in sections/mlkemAcvp.ts (WS-D D1-2..D1-5).
           await runMlkemAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mlkem,
+            pushResult,
+            addLog,
+          })
+
+          // ── 7c. ML-KEM encapsulation-key check depth — every remaining
+          // invalid NIST ek of the encapsulationKeyCheck groups (FIPS 203 §7.2).
+          // sections/mlkemKeyCheckDepth.ts (gap-closure P5).
+          await runMlkemKeyCheckDepthSection({
             M,
             hSession,
             eName,
@@ -1661,6 +1692,20 @@ export function useAcvpSuite() {
           // probes, honest skips. Self-contained in sections/slhdsaAcvp.ts
           // (WS-D D3-2..D3-4).
           await runSlhdsaAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.slhdsa,
+            pushResult,
+            addLog,
+          })
+
+          // ── 9d. SLH-DSA coverage depth — NIST keyGen from seed, empty-context
+          // deterministic sigGen, and (for the "f" sets) product-authored sign
+          // negatives plus hedged signing at ctx 0/255 checked by the engine and
+          // by an independent verifier. sections/slhdsaCoverage.ts (gap-closure P5).
+          await runSlhdsaCoverageSection({
             M,
             hSession,
             eName,

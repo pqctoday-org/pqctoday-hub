@@ -69,8 +69,8 @@ import {
   type PinnedRv,
 } from './pkcs11Raw'
 
-type Variant = 512 | 768 | 1024
-const CT_LEN: Record<Variant, number> = { 512: 768, 768: 1088, 1024: 1568 }
+export type Variant = 512 | 768 | 1024
+export const CT_LEN: Record<Variant, number> = { 512: 768, 768: 1088, 1024: 1568 }
 const variantOf = (ps: string) => parseInt(ps.split('-')[2], 10) as Variant
 
 // ── JSON shapes ─────────────────────────────────────────────────────────────
@@ -118,7 +118,7 @@ const SECRET_DEFS = [
   { type: CKA_EXTRACTABLE, boolVal: true },
 ]
 
-function importPublic(M: SoftHSMModule, h: number, v: Variant, ek: Uint8Array) {
+export function importPublic(M: SoftHSMModule, h: number, v: Variant, ek: Uint8Array) {
   return createObjectRv(
     M,
     h,
