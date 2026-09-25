@@ -603,7 +603,9 @@ export const ModuleShell = ({
   }
 
   // WS-0 — the in-module path picker, only for manifests that declare paths.
-  const pathPicker = manifest.learnPaths?.length ? <LearnPathPicker manifest={manifest} /> : null
+  const pathPicker = manifest.learnPaths?.length ? (
+    <LearnPathPicker manifest={manifest} compact={activeTab === 'workshop'} />
+  ) : null
 
   const tabs = manifest.tabs ?? STANDARD_TABS
   const present = new Set(tabs.map((t) => t.value))

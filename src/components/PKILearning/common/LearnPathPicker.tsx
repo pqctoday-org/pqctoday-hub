@@ -26,9 +26,12 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
 interface LearnPathPickerProps {
   manifest: ModuleManifest
   className?: string
+  /** drop the explanatory line — used on the Workshop tab, where the shell
+   *  already folds header framing to keep the first control above the fold */
+  compact?: boolean
 }
 
-export const LearnPathPicker = ({ manifest, className }: LearnPathPickerProps) => {
+export const LearnPathPicker = ({ manifest, className, compact = false }: LearnPathPickerProps) => {
   const headingId = `${useId()}-path-heading`
   const { paths, activePath, selectPath } = useLearnPathSelection(manifest)
   if (paths.length === 0) return null
@@ -87,7 +90,10 @@ export const LearnPathPicker = ({ manifest, className }: LearnPathPickerProps) =
           <span className="font-semibold">All sections</span>
         </Button>
       </div>
-      <p className="mt-2 text-xs text-muted-foreground" aria-live="polite">
+      <p
+        className={cn('mt-2 text-xs text-muted-foreground', compact && 'sr-only')}
+        aria-live="polite"
+      >
         {activePath ? (
           <>
             {activePath.audience ? (
