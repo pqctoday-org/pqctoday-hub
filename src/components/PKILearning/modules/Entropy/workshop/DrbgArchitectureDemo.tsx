@@ -11,6 +11,9 @@ import {
   Database,
   Hash,
   AlertTriangle,
+  FlaskConical,
+  CheckCircle,
+  XCircle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,70 +21,57 @@ import { CopyableOutput } from '@/components/ui/CopyableOutput'
 import { PlaygroundNextStep } from '@/components/Playground/components/PlaygroundNextStep'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { formatHex } from '../utils/outputFormatters'
+import {
+  hmacDrbgGenerate,
+  hmacDrbgInstantiate,
+  hmacDrbgReseed,
+  runHmacDrbgKatSuite,
+  bytesToHex,
+  hexToBytes,
+  type HmacDrbgKatCase,
+  type HmacDrbgKatOutcome,
+} from '../utils/hmacDrbg'
 
-// SP 800-90A Table 2 of Section 10.1: HMAC_DRBG-SHA-256 reseed_interval = 2^48.
-// For this educational demo we use a much smaller cap so the limit is reachable.
-const MAX_REQUESTS_PER_SEED = 10
+// SP 800-90A Rev. 1 §10.1 Table 2: HMAC_DRBG reseed_interval = 2^48.
+// For this educational demo we use a much smaller interval so the limit is
+// reachable. The check is the one in §10.1.2.5 step 1: generate refuses once
+// reseed_counter > reseed_interval.
+const DEMO_RESEED_INTERVAL = 10
 
-// --- SP 800-90A HMAC_DRBG Implementation ---
+const INITIAL_K = new Uint8Array(32).fill(0x00)
+const INITIAL_V = new Uint8Array(32).fill(0x01)
 
-async function hmac(key: Uint8Array, data: Uint8Array): Promise<Uint8Array> {
-  const cryptoKey = await window.crypto.subtle.importKey(
-    'raw',
-    key as BufferSource,
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign']
-  )
-  const signature = await window.crypto.subtle.sign('HMAC', cryptoKey, data as BufferSource)
-  return new Uint8Array(signature)
+interface KatRun {
+  outcomes: HmacDrbgKatOutcome[]
+  sabotage: { flippedCaseId: string; matched: boolean }
 }
 
-function concat(...arrays: Uint8Array[]): Uint8Array {
-  const totalLength = arrays.reduce((acc, val) => acc + val.length, 0)
-  const result = new Uint8Array(totalLength)
-  let offset = 0
-  for (const array of arrays) {
-    result.set(array, offset)
-    offset += array.length
-  }
-  return result
+/** Load the pinned NIST vectors on demand (kept out of the step's main chunk). */
+async function loadKatCases(): Promise<HmacDrbgKatCase[]> {
+  const mod = await import('../utils/hmacDrbgSha256.kat.json')
+  return mod.default.cases as HmacDrbgKatCase[]
 }
 
-async function hmacDrbgUpdate(
-  providedData: Uint8Array | null,
-  K: Uint8Array,
-  V: Uint8Array
-): Promise<{ K: Uint8Array; V: Uint8Array }> {
-  // Step 1: K = HMAC(K, V || 0x00 || providedData)
-  let payload1 = concat(V, new Uint8Array([0x00]))
-  if (providedData && providedData.length > 0) {
-    payload1 = concat(payload1, providedData)
-  }
-  let newK = await hmac(K, payload1)
-
-  // Step 2: V = HMAC(K, V)
-  let newV = await hmac(newK, V)
-
-  // Step 3: If no provided_data, return KH, Vh
-  if (!providedData || providedData.length === 0) {
-    return { K: newK, V: newV }
-  }
-
-  // Step 4: K = HMAC(K, V || 0x01 || providedData)
-  const payload2 = concat(newV, new Uint8Array([0x01]), providedData)
-  newK = await hmac(newK, payload2)
-
-  // Step 5: V = HMAC(K, V)
-  newV = await hmac(newK, newV)
-
-  return { K: newK, V: newV }
+/**
+ * Run every pinned vector, then re-run one with a single bit flipped in its
+ * entropy input — the flipped run must NOT match, or the check proves nothing.
+ */
+async function runKatWithSabotage(): Promise<KatRun> {
+  const cases = await loadKatCases()
+  const outcomes = await runHmacDrbgKatSuite(cases)
+  const target = cases.find((c) => c.id === 'acvp-tg14-tc196') ?? cases[0]
+  const flipped: HmacDrbgKatCase = JSON.parse(JSON.stringify(target))
+  const e = hexToBytes(flipped.entropyInput)
+  e[0] ^= 0x01
+  flipped.entropyInput = bytesToHex(e)
+  const [sab] = await runHmacDrbgKatSuite([flipped])
+  return { outcomes, sabotage: { flippedCaseId: target.id, matched: sab.passed } }
 }
 
 export const DrbgArchitectureDemo: React.FC = () => {
   // DRBG Internal State
-  const [K, setK] = useState<Uint8Array>(new Uint8Array(32).fill(0x00))
-  const [V, setV] = useState<Uint8Array>(new Uint8Array(32).fill(0x01))
+  const [K, setK] = useState<Uint8Array>(INITIAL_K)
+  const [V, setV] = useState<Uint8Array>(INITIAL_V)
   const [reseedCounter, setReseedCounter] = useState(0)
   const [instantiated, setInstantiated] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -94,7 +84,8 @@ export const DrbgArchitectureDemo: React.FC = () => {
   const [nonceHex, setNonceHex] = useState('')
   const [persoString, setPersoString] = useState('PQC-Timeline-App')
 
-  const isReseedRequired = instantiated && reseedCounter >= MAX_REQUESTS_PER_SEED
+  // §10.1.2.5 step 1: a reseed is required once reseed_counter > reseed_interval.
+  const isReseedRequired = instantiated && reseedCounter > DEMO_RESEED_INTERVAL
 
   const [genBytesCount, setGenBytesCount] = useState(32)
   const [addlInputStr, setAddlInputStr] = useState('')
@@ -103,11 +94,16 @@ export const DrbgArchitectureDemo: React.FC = () => {
   const [lastGenerated, setLastGenerated] = useState<Uint8Array | null>(null)
   const [historyLog, setHistoryLog] = useState<string[]>([])
 
+  // Known-answer check
+  const [katRun, setKatRun] = useState<KatRun | null>(null)
+  const [katRunning, setKatRunning] = useState(false)
+  const [katError, setKatError] = useState<string | null>(null)
+
   const logAction = (action: string) => {
     setHistoryLog((prev) => [action, ...prev].slice(0, 5))
   }
 
-  // Instantiate
+  // Instantiate — SP 800-90A Rev. 1 §10.1.2.3
   const handleInstantiate = useCallback(async () => {
     setIsProcessing(true)
     try {
@@ -116,89 +112,85 @@ export const DrbgArchitectureDemo: React.FC = () => {
       if (nonceHex.trim()) {
         const cleaned = nonceHex.replace(/\s/g, '')
         if (/^[0-9a-fA-F]+$/.test(cleaned) && cleaned.length % 2 === 0) {
-          resolvedNonce = new Uint8Array(cleaned.match(/.{2}/g)!.map((b) => parseInt(b, 16)))
+          resolvedNonce = hexToBytes(cleaned)
         }
       }
 
       const persoBytes = new TextEncoder().encode(persoString)
-      const seedMaterial = concat(entropyInput, resolvedNonce, persoBytes)
+      const state = await hmacDrbgInstantiate(entropyInput, resolvedNonce, persoBytes)
 
-      const initialK = new Uint8Array(32).fill(0x00)
-      const initialV = new Uint8Array(32).fill(0x01)
-
-      const { K: nextK, V: nextV } = await hmacDrbgUpdate(seedMaterial, initialK, initialV)
-
-      setK(new Uint8Array(nextK))
-      setV(new Uint8Array(nextV))
-      // SP 800-90A §10.1.2.4: reseed_counter is set to 1 after instantiation.
-      setReseedCounter(1)
+      setK(state.K)
+      setV(state.V)
+      setReseedCounter(state.reseedCounter)
       setInstantiated(true)
-      logAction('Instantiated — reseed counter set to 1 (§10.1.2.4)')
+      logAction('Instantiated — reseed_counter set to 1 (§10.1.2.3 step 5)')
     } finally {
       setIsProcessing(false)
     }
   }, [entropyInput, nonce, nonceHex, persoString])
 
-  // Generate
+  // Generate — SP 800-90A Rev. 1 §10.1.2.5
   const handleGenerate = useCallback(async () => {
     if (!instantiated) return
     setIsProcessing(true)
     try {
-      let currentK = K
-      let currentV = V
-      const addlBytes = addlInputStr ? new TextEncoder().encode(addlInputStr) : null
-
-      if (addlBytes && addlBytes.length > 0) {
-        const state = await hmacDrbgUpdate(addlBytes, currentK, currentV)
-        currentK = state.K
-        currentV = state.V
+      const addlBytes = addlInputStr ? new TextEncoder().encode(addlInputStr) : new Uint8Array(0)
+      const res = await hmacDrbgGenerate(
+        { K, V, reseedCounter },
+        genBytesCount,
+        addlBytes,
+        DEMO_RESEED_INTERVAL
+      )
+      if (res.status === 'RESEED_REQUIRED') {
+        logAction('Generate refused — reseed required (§10.1.2.5 step 1)')
+        return
       }
-
-      let temp: Uint8Array = new Uint8Array(0)
-      while (temp.length < genBytesCount) {
-        currentV = await hmac(currentK, currentV)
-        temp = concat(temp, currentV)
-      }
-
-      const generated = new Uint8Array(temp.slice(0, genBytesCount))
-      setLastGenerated(generated)
-
-      const updateState = await hmacDrbgUpdate(addlBytes, currentK, currentV)
-      setK(new Uint8Array(updateState.K))
-      setV(new Uint8Array(updateState.V))
-      setReseedCounter((c) => c + 1)
-      logAction(`Generated ${genBytesCount} bytes. Reseed counter updated.`)
+      setLastGenerated(res.returnedBytes)
+      setK(res.state.K)
+      setV(res.state.V)
+      setReseedCounter(res.state.reseedCounter)
+      logAction(`Generated ${genBytesCount} bytes — reseed_counter now ${res.state.reseedCounter}.`)
     } finally {
       setIsProcessing(false)
     }
-  }, [instantiated, K, V, addlInputStr, genBytesCount])
+  }, [instantiated, K, V, reseedCounter, addlInputStr, genBytesCount])
 
-  // Reseed
+  // Reseed — SP 800-90A Rev. 1 §10.1.2.4
   const handleReseed = useCallback(async () => {
     if (!instantiated) return
     setIsProcessing(true)
     try {
       const newEntropy = getRandomBytes(32) as Uint8Array
-      setEntropyInput(newEntropy) // show logic that we grabbed new entropy
+      setEntropyInput(newEntropy) // show that new entropy input was obtained
 
-      const addlBytes = addlInputStr ? new TextEncoder().encode(addlInputStr) : null
-      const seedMaterial = addlBytes ? concat(newEntropy, addlBytes) : newEntropy
+      const addlBytes = addlInputStr ? new TextEncoder().encode(addlInputStr) : new Uint8Array(0)
+      const state = await hmacDrbgReseed({ K, V, reseedCounter }, newEntropy, addlBytes)
 
-      const { K: nextK, V: nextV } = await hmacDrbgUpdate(seedMaterial, K, V)
-
-      setK(new Uint8Array(nextK))
-      setV(new Uint8Array(nextV))
-      // SP 800-90A §10.1.2.4: reseed_counter is reset to 1 after reseeding.
-      setReseedCounter(1)
-      logAction('Reseeded — counter reset to 1 (§10.1.2.4)')
+      setK(state.K)
+      setV(state.V)
+      setReseedCounter(state.reseedCounter)
+      logAction('Reseeded — reseed_counter reset to 1 (§10.1.2.4 step 3)')
     } finally {
       setIsProcessing(false)
     }
-  }, [instantiated, addlInputStr, K, V])
+  }, [instantiated, addlInputStr, K, V, reseedCounter])
+
+  const handleRunKat = useCallback(async () => {
+    setKatRunning(true)
+    setKatError(null)
+    try {
+      setKatRun(await runKatWithSabotage())
+    } catch (e) {
+      setKatError(e instanceof Error ? e.message : String(e))
+      setKatRun(null)
+    } finally {
+      setKatRunning(false)
+    }
+  }, [])
 
   const handleReset = () => {
-    setK(new Uint8Array(32).fill(0x00))
-    setV(new Uint8Array(32).fill(0x01))
+    setK(INITIAL_K)
+    setV(INITIAL_V)
     setReseedCounter(0)
     setInstantiated(false)
     setLastGenerated(null)
@@ -215,19 +207,20 @@ export const DrbgArchitectureDemo: React.FC = () => {
           <h2 className="text-lg font-bold text-foreground">SP 800-90A HMAC_DRBG</h2>
         </div>
         <p className="text-sm text-foreground leading-relaxed">
-          Explore the internal lifecycle of a Deterministic Random Bit Generator. Unlike simple
-          PRNGs, a DRBG uses a cryptographic primitive (here, HMAC-SHA256) to recursively update its
-          internal state ('Key' and 'V' vectors).
+          Explore the internal lifecycle of a Deterministic Random Bit Generator. This is HMAC_DRBG
+          with SHA-256 as specified in SP 800-90A Rev. 1 &sect;10.1.2: the working state is the Key
+          and V values plus a reseed counter, and every step updates them with HMAC-SHA-256.
         </p>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          SP 800-90A mandates three core phases: <strong>Instantiate</strong> (seeding),{' '}
-          <strong>Generate</strong> (deriving random bits and ratcheting state forward), and{' '}
-          <strong>Reseed</strong> (injecting fresh entropy to prevent compromise).
+          The steps shown here are the HMAC_DRBG algorithms for <strong>Instantiate</strong>{' '}
+          (&sect;10.1.2.3), <strong>Generate</strong> (&sect;10.1.2.5) and <strong>Reseed</strong>{' '}
+          (&sect;10.1.2.4).
         </p>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          This isn&rsquo;t just a classical-crypto concern: ML-KEM and ML-DSA key generation both
-          pull directly from a DRBG like this one. A poorly-seeded or under-reseeded DRBG undermines
-          a post-quantum key exactly as it would an RSA or ECDSA one.
+          A DRBG is not an entropy source: its output is only as unpredictable as the entropy input
+          it was seeded with. Here the entropy input comes from the browser&rsquo;s{' '}
+          <code>crypto.getRandomValues()</code> as a stand-in. SP 800-90C expects seed material for
+          a DRBG to come from entropy sources validated against SP 800-90B.
         </p>
       </div>
 
@@ -370,9 +363,10 @@ export const DrbgArchitectureDemo: React.FC = () => {
                 <div className="flex items-start gap-2 rounded-md bg-status-warning/10 border border-status-warning/30 p-2">
                   <AlertTriangle size={14} className="text-status-warning mt-0.5 shrink-0" />
                   <p className="text-[10px] text-status-warning leading-relaxed">
-                    <strong>Reseed required.</strong> Limit of {MAX_REQUESTS_PER_SEED} requests
-                    reached (production: 2<sup>48</sup>, Table 2 of Section 10.1). Click Reseed to
-                    continue.
+                    <strong>Reseed required.</strong> reseed_counter ({reseedCounter}) is greater
+                    than this demo&rsquo;s reseed_interval of {DEMO_RESEED_INTERVAL}, so Generate
+                    refuses (&sect;10.1.2.5 step 1). SP 800-90A Rev. 1 Table 2 sets the HMAC_DRBG
+                    maximum at 2<sup>48</sup> requests between reseeds. Click Reseed to continue.
                   </p>
                 </div>
               )}
@@ -416,16 +410,19 @@ export const DrbgArchitectureDemo: React.FC = () => {
               </h3>
               <div
                 className="text-xs bg-muted/50 px-2 py-1 rounded font-medium text-muted-foreground cursor-help"
-                title="Starts at 1 after instantiation or reseed (SP 800-90A §10.1.2.4). Production limit: 2^48 requests."
+                title="reseed_counter: 1 after instantiate (§10.1.2.3) or reseed (§10.1.2.4); +1 per generate. Generate refuses once it exceeds reseed_interval (§10.1.2.5 step 1). SP 800-90A Rev. 1 Table 2 maximum: 2^48."
               >
-                Counter:{' '}
+                reseed_counter:{' '}
                 <span
                   className={isReseedRequired ? 'text-status-warning font-bold' : 'text-foreground'}
                 >
                   {reseedCounter}
                 </span>
                 {instantiated && (
-                  <span className="text-muted-foreground"> / {MAX_REQUESTS_PER_SEED}</span>
+                  <span className="text-muted-foreground">
+                    {' '}
+                    (limit &gt; {DEMO_RESEED_INTERVAL})
+                  </span>
                 )}
               </div>
             </div>
@@ -505,10 +502,82 @@ export const DrbgArchitectureDemo: React.FC = () => {
           </div>
         </div>
       </div>
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <FlaskConical size={16} className="text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">
+            Known-answer check (NIST HMAC_DRBG vectors)
+          </h3>
+        </div>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Runs the same HMAC_DRBG code used above on 16 pinned SHA-256 vectors — 4 from NIST&rsquo;s
+          ACVP-Server <code>hmacDRBG-1.0</code> sample set and 12 from the NIST CAVP{' '}
+          <code>HMAC_DRBG.rsp</code> files. They cover prediction resistance on and off, reseed, and
+          empty or non-empty personalization strings and additional input. Each output must equal
+          the published answer byte for byte. The check then flips one bit of one vector&rsquo;s
+          entropy input; that run must <strong>not</strong> match.
+        </p>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          <strong>What a pass shows:</strong> this browser code computes the SP 800-90A Rev. 1
+          HMAC_DRBG mechanism correctly for these inputs. <strong>What it does not show:</strong> it
+          is not a CAVP/ACVP algorithm validation, it is not an entropy-source test, and it says
+          nothing about the quality of any entropy input.
+        </p>
+        <Button variant="outline" onClick={handleRunKat} disabled={katRunning}>
+          <FlaskConical size={16} className="mr-2" />
+          {katRunning ? 'Running…' : 'Run known-answer check'}
+        </Button>
+        {katError && (
+          <p className="text-xs text-status-error">Could not run the check: {katError}</p>
+        )}
+        {katRun && (
+          <div className="space-y-2" data-testid="drbg-kat-result">
+            {(() => {
+              const passed = katRun.outcomes.filter((o) => o.passed).length
+              const total = katRun.outcomes.length
+              const allPass = passed === total && !katRun.sabotage.matched
+              return (
+                <div
+                  className={`flex items-start gap-2 rounded-md border p-2 ${
+                    allPass
+                      ? 'border-status-success/30 bg-status-success/10'
+                      : 'border-status-error/30 bg-status-error/10'
+                  }`}
+                >
+                  {allPass ? (
+                    <CheckCircle size={14} className="text-status-success mt-0.5 shrink-0" />
+                  ) : (
+                    <XCircle size={14} className="text-status-error mt-0.5 shrink-0" />
+                  )}
+                  <p className="text-xs text-foreground leading-relaxed">
+                    {passed}/{total} vectors matched byte for byte.{' '}
+                    {katRun.sabotage.matched
+                      ? `Sabotage check FAILED: flipping one entropy-input bit in ${katRun.sabotage.flippedCaseId} still matched.`
+                      : `Sabotage check passed: one flipped entropy-input bit in ${katRun.sabotage.flippedCaseId} no longer matches.`}
+                  </p>
+                </div>
+              )
+            })()}
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+              {katRun.outcomes.map((o) => (
+                <li key={o.id} className="flex items-center gap-1.5 text-[11px] font-mono">
+                  {o.passed ? (
+                    <CheckCircle size={12} className="text-status-success shrink-0" />
+                  ) : (
+                    <XCircle size={12} className="text-status-error shrink-0" />
+                  )}
+                  <span className="text-foreground break-all">{o.id}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
       <PlaygroundNextStep
-        toolId="qrng-demo"
-        name="QRNG Demo"
-        description="See how quantum random number generator output compares statistically to CSPRNG — and why the statistical profile alone doesn't prove quantum origin."
+        toolId="source-combining"
+        name="Source Combining"
+        description="See where a DRBG's entropy input comes from: health-test raw source samples, condition them, and state the assumptions a combined construction depends on."
       />
     </div>
   )

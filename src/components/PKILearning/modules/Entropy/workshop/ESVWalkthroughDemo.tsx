@@ -10,21 +10,20 @@ import {
   CheckCircle,
   ArrowRight,
   ExternalLink,
-  ChevronDown,
-  ChevronUp,
-  Cpu,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ESV_STEPS } from '../utils/entropyConstants'
-import { DRBGSimulator } from '../components/DRBGSimulator'
 
 const STEP_ICONS = [FileText, Activity, Database, Settings, Layers]
 
+// Stages as described on the NIST CMVP "Entropy Validation Server" page
+// (csrc.nist.gov/Projects/cryptographic-module-validation-program/entropy-validations/esv,
+// retrieved 2026-09-24). No NIST page states a review duration, so none is shown.
 const FLOW_STAGES = [
-  { label: 'Submit to ESV Server', icon: FileText },
-  { label: 'SP 800-90B Assessment', icon: Activity },
-  { label: 'CMVP Review (~6 weeks)', icon: ShieldCheck },
-  { label: 'ESV Certificate', icon: CheckCircle },
+  { label: 'Accredited lab submits via ESV Server', icon: FileText },
+  { label: 'ESV Server runs the SP 800-90B tool', icon: Activity },
+  { label: 'CMVP review', icon: ShieldCheck },
+  { label: 'Entropy Validation Certificate', icon: CheckCircle },
 ]
 
 const SOURCE_TYPES = ['Ring Oscillator', 'Thermal Noise', 'Shot Noise'] as const
@@ -40,17 +39,30 @@ const NOISE_MODEL_BLOCKS = [
     label: 'Health Tests',
     description: 'Continuous checks to detect source degradation or failure',
   },
-  { label: 'Conditioning', description: 'Compresses raw output to achieve full entropy per bit' },
-  { label: 'Output', description: 'Full-entropy seed material ready for the DRBG' },
+  {
+    label: 'Conditioning (optional)',
+    description:
+      'Can raise entropy per bit, never total entropy: output entropy is at most the input entropy',
+  },
+  {
+    label: 'Output',
+    description:
+      'Entropy-source output with an assessed entropy per output; full entropy only if the input entropy supports it',
+  },
 ]
 
+// SP 800-90B §3.1.5.1.1 "List of Vetted Conditioning Components".
 const CONDITIONING_FUNCTIONS = [
-  { name: 'HMAC', detail: 'HMAC-SHA-256 — keyed hash for entropy compression and conditioning' },
+  { name: 'HMAC', detail: 'Keyed: HMAC (FIPS 198) with any approved FIPS 180 or FIPS 202 hash' },
+  { name: 'CMAC (AES)', detail: 'Keyed: CMAC (SP 800-38B) with the AES block cipher' },
   {
-    name: 'Hash (SHA-256)',
-    detail: 'Approved hash-based conditioning per SP 800-90B Section 3.1.5',
+    name: 'CBC-MAC (AES)',
+    detail:
+      'Keyed: CBC-MAC as specified in SP 800-90B Appendix F — approved only as a conditioning component in an RBG',
   },
-  { name: 'CBC-MAC (AES)', detail: 'Block-cipher-based conditioning using AES-256' },
+  { name: 'Hash function', detail: 'Unkeyed: any approved FIPS 180 or FIPS 202 hash function' },
+  { name: 'Hash_df', detail: 'Unkeyed: Hash_df from SP 800-90A with an approved hash function' },
+  { name: 'Block_Cipher_df', detail: 'Unkeyed: Block_Cipher_df from SP 800-90A with AES' },
 ]
 
 const MOCK_RAW_OUTPUT = [
@@ -62,7 +74,6 @@ const MOCK_RAW_OUTPUT = [
 
 export const ESVWalkthroughDemo: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0)
-  const [showDRBG, setShowDRBG] = useState(false)
 
   const goToStep = (step: number) => {
     if (step >= 0 && step < ESV_STEPS.length) {
@@ -76,8 +87,8 @@ export const ESVWalkthroughDemo: React.FC = () => {
         return (
           <div className="space-y-4">
             <p className="text-xs text-muted-foreground">
-              The first step is to formally describe the entropy source. Below are example fields
-              from a real ESV submission.
+              The first step is to formally describe the entropy source. The fields below are
+              illustrative example values, not taken from a real submission.
             </p>
 
             <div className="space-y-3">
@@ -116,7 +127,8 @@ export const ESVWalkthroughDemo: React.FC = () => {
                     0.97 bits/sample
                   </div>
                   <span className="text-xs text-muted-foreground">
-                    (min-entropy estimate per 8-bit output)
+                    (example submitter estimate per 8-bit sample — H<sub>submitter</sub>, SP 800-90B
+                    &sect;3.1.3)
                   </span>
                 </div>
               </div>
@@ -164,22 +176,29 @@ export const ESVWalkthroughDemo: React.FC = () => {
         return (
           <div className="space-y-4">
             <p className="text-xs text-muted-foreground">
-              Raw noise samples are submitted to the ESV Server for automated SP 800-90B min-entropy
-              assessment. Samples must be unconditioned.
+              The ESV Server runs the SP 800-90B Entropy Assessment Tool on outputs provided by the
+              entropy source. The estimate is made from raw samples taken directly from the noise
+              source, before any conditioning.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
                 <span className="text-2xl font-bold text-primary block">1,000,000</span>
-                <span className="text-xs text-muted-foreground">raw samples required</span>
+                <span className="text-xs text-muted-foreground">
+                  sequential raw samples, at least (SP 800-90B &sect;3.1.1 item 1)
+                </span>
               </div>
               <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-                <span className="text-2xl font-bold text-primary block">8-bit</span>
-                <span className="text-xs text-muted-foreground">output per sample</span>
+                <span className="text-2xl font-bold text-primary block">1,000 &times; 1,000</span>
+                <span className="text-xs text-muted-foreground">
+                  restart matrix: 1,000 restarts, 1,000 samples each (&sect;3.1.1 item 3)
+                </span>
               </div>
               <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-                <span className="text-2xl font-bold text-primary block">~1 MB</span>
-                <span className="text-xs text-muted-foreground">total submission size</span>
+                <span className="text-2xl font-bold text-primary block">&le; 256</span>
+                <span className="text-xs text-muted-foreground">
+                  symbols: larger alphabets are reduced before estimation (&sect;3.1.3, &sect;6.4)
+                </span>
               </div>
             </div>
 
@@ -201,8 +220,11 @@ export const ESVWalkthroughDemo: React.FC = () => {
         return (
           <div className="space-y-4">
             <p className="text-xs text-muted-foreground">
-              Health tests run continuously during operation to detect entropy source degradation.
-              SP 800-90B mandates two tests.
+              Health tests run on the raw noise-source samples, before any conditioning (SP 800-90B
+              &sect;4.3 item 6). &sect;4.4 provides two approved continuous tests; if both are
+              included, no other continuous tests are required. Startup tests run the continuous
+              tests over at least 1,024 consecutive samples (&sect;4.3 item 4), and the source must
+              also support on-demand testing (&sect;4.3 item 5).
             </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -257,7 +279,8 @@ export const ESVWalkthroughDemo: React.FC = () => {
                 </div>
                 <div className="space-y-2 text-xs text-foreground/80">
                   <p>
-                    <strong>W</strong> = window size (512 for 8-bit output, 64 for binary)
+                    <strong>W</strong> = window size: 1,024 for a binary noise source, 512 for a
+                    non-binary one (&sect;4.4.2)
                   </p>
                   <p>
                     <strong>C</strong> = maximum count of the most frequent value in the window
@@ -269,9 +292,10 @@ export const ESVWalkthroughDemo: React.FC = () => {
                 </div>
                 <div className="mt-3 bg-primary/5 rounded p-2 border border-primary/20">
                   <p className="text-[10px] text-muted-foreground">
-                    <strong>Example:</strong> For W=512, if a single byte value appears more than C
-                    times in 512 samples, the source fails. The cutoff C depends on H and {'\u03B1'}
-                    .
+                    <strong>Example:</strong> SP 800-90B Table 2 (&alpha; = 2<sup>-20</sup>): a
+                    non-binary source assessed at H = 8 bits/sample has W = 512 and C = 13. If the
+                    window&rsquo;s first sample value occurs 13 or more times in those 512 samples,
+                    the test signals a failure.
                   </p>
                 </div>
               </div>
@@ -283,22 +307,25 @@ export const ESVWalkthroughDemo: React.FC = () => {
         return (
           <div className="space-y-4">
             <p className="text-xs text-muted-foreground">
-              The conditioning component compresses raw noise output into full-entropy output
-              suitable for seeding a DRBG. Only NIST-approved functions may be used.
+              The conditioning component is optional. It can concentrate entropy into fewer bits,
+              but it cannot create entropy: because it is deterministic, the entropy of its output
+              is at most the entropy of its input (SP 800-90B &sect;3.1.5).
             </p>
 
             <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 mb-4">
               <p className="text-xs text-foreground/80">
-                <strong>Purpose:</strong> Conditioning compresses raw noise output into full-entropy
-                output. If the raw source provides H bits of min-entropy per sample and the output
-                is n bits, the conditioning function must ensure the output has at least n bits of
-                min-entropy.
+                <strong>When is the output full entropy?</strong> A vetted conditioning component
+                may claim full-entropy output (SP 800-90B &sect;3.1.5.1.2), but only when its input
+                carries enough entropy. SP 800-90C &sect;3.2.2.2 requires output_len + 64 bits of
+                entropy for each use of the conditioning function that produces output_len
+                full-entropy bits. With less input entropy, the output has less than full entropy
+                however random it looks.
               </p>
             </div>
 
             <div className="space-y-3">
               <span className="text-xs font-bold text-foreground">
-                Approved Conditioning Functions (SP 800-90B Section 3.1.5)
+                Vetted conditioning components (SP 800-90B &sect;3.1.5.1.1)
               </span>
               {CONDITIONING_FUNCTIONS.map((fn) => (
                 <div
@@ -322,7 +349,7 @@ export const ESVWalkthroughDemo: React.FC = () => {
               </span>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="px-3 py-1.5 rounded bg-muted text-xs text-foreground border border-border font-mono">
-                  Raw Noise (H &lt; 1.0)
+                  Raw samples: h<sub>in</sub> bits of entropy
                 </span>
                 <ArrowRight size={14} className="text-primary shrink-0" />
                 <span className="px-3 py-1.5 rounded bg-primary/10 text-xs text-primary border border-primary/20 font-mono">
@@ -330,7 +357,8 @@ export const ESVWalkthroughDemo: React.FC = () => {
                 </span>
                 <ArrowRight size={14} className="text-primary shrink-0" />
                 <span className="px-3 py-1.5 rounded bg-success/10 text-xs text-success border border-success/20 font-mono">
-                  Full-Entropy Output (H = 1.0)
+                  Output: h<sub>out</sub> &le; h<sub>in</sub>; full entropy only if h<sub>in</sub>{' '}
+                  &ge; output_len + 64
                 </span>
               </div>
             </div>
@@ -347,10 +375,19 @@ export const ESVWalkthroughDemo: React.FC = () => {
       {/* Process Overview */}
       <div className="glass-panel p-6">
         <h3 className="text-lg font-bold text-gradient mb-2">NIST Entropy Source Validation</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          The NIST Entropy Source Validation (ESV) program, part of the CMVP, provides automated
-          validation of entropy sources per SP 800-90B. Validated entropy sources are required for
-          FIPS 140-3 cryptographic modules.
+        <p className="text-sm text-muted-foreground mb-2">
+          Through the Entropy Validation Server (ESV), an accredited lab submits an entropy source
+          to the CMVP. The server runs the SP 800-90B Entropy Assessment Tool on the source&rsquo;s
+          outputs; the rest of SP 800-90B is covered by documentation, and a CMVP reviewer decides
+          whether the justification is sufficient before an{' '}
+          <strong>Entropy Validation Certificate</strong> is issued. Since 7 November 2020 the CMVP
+          has required FIPS 140-2 and FIPS 140-3 module submissions to include documentation
+          justifying SP 800-90B conformance, if applicable.
+        </p>
+        <p className="text-xs text-muted-foreground mb-4">
+          The same server accepts SP 800-90C random bit generator submissions (FIPS 140-3 IG D.T),
+          which lead to a separate <strong>Random Bit Generator Validation Certificate</strong>.
+          Neither certificate is a FIPS 140-3 module certificate. NIST states no fixed review time.
         </p>
 
         {/* Flow diagram */}
@@ -480,35 +517,6 @@ export const ESVWalkthroughDemo: React.FC = () => {
           <ExternalLink size={14} className="mr-2" />
           Visit NIST ESV Program
         </Button>
-      </div>
-
-      {/* DRBG Simulator — collapsible */}
-      <div className="glass-panel overflow-hidden">
-        <Button
-          variant="ghost"
-          onClick={() => setShowDRBG(!showDRBG)}
-          className="w-full flex items-center justify-between p-4 hover:bg-muted/30 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <Cpu size={18} className="text-primary" />
-            <div className="text-left">
-              <span className="text-sm font-semibold text-foreground block">DRBG Simulator</span>
-              <span className="text-xs text-muted-foreground">
-                See how a DRBG uses the validated entropy source
-              </span>
-            </div>
-          </div>
-          {showDRBG ? (
-            <ChevronUp size={16} className="text-muted-foreground" />
-          ) : (
-            <ChevronDown size={16} className="text-muted-foreground" />
-          )}
-        </Button>
-        {showDRBG && (
-          <div className="border-t border-border p-4">
-            <DRBGSimulator />
-          </div>
-        )}
       </div>
     </div>
   )

@@ -804,12 +804,15 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     pt_id: 'PT-012',
     version: '1.0.2',
     name: 'QRNG Demo',
+    // Entropy remediation P0.7/P0.8 (2026-09-24): the module's QRNG workshop step
+    // was removed, so this links to the module root, not a step. The description
+    // says "simulation" first so no surface implies QRNG hardware or evidence.
     description:
-      'Simulates quantum random number generation patterns using CSPRNG statistical analysis. Note: runs in-browser via Web Crypto — not a physical QRNG device.',
+      'Simulation — no QRNG hardware involved. Compares a pre-generated reference sample (produced by a classical CSPRNG, not a quantum source), live Web Crypto output and a deliberately broken PRNG on the same statistical checks, which cannot show whether any source is quantum.',
     category: 'Entropy & Random',
     algorithms: ['TRNG', 'Web Crypto'],
     icon: Dice5,
-    moduleLink: '/learn/entropy-randomness?tab=workshop&step=3',
+    moduleLink: '/learn/entropy-randomness',
     keywords: ['qrng', 'quantum random', 'trng', 'true random', 'statistics'],
     difficulty: 'beginner',
     requires: [],
@@ -833,8 +836,14 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     // families, and now runs BOTH of SP 800-90B's mandated continuous health
     // tests (§4.4.1 repetition count and §4.4.2 adaptive proportion); until
     // 2026-08-12 it shipped only the first while claiming the standard.
+    // Entropy remediation P0.4/P0.8 (2026-09-24): results are now four separate
+    // groups — SP 800-22-style visual checks, the two SP 800-90B health tests,
+    // a placeholder for the 90B estimators (not run here), and primitive
+    // SHA-256/HMAC self-checks. The MCV-only min-entropy card and its
+    // 6-bits/byte pass mark were removed: one estimator on a small buffer is
+    // not an SP 800-90B assessment.
     description:
-      'SP 800-90B health tests (repetition count, adaptive proportion) and MCV min-entropy, alongside monobit, runs and chi-squared statistical checks',
+      'Separate groups: monobit, runs and chi-squared visual checks; the SP 800-90B repetition-count and adaptive-proportion health tests (on samples treated as raw noise-source output); and SHA-256/HMAC primitive self-checks. No SP 800-90B entropy estimate is made here.',
     category: 'Entropy & Random',
     algorithms: ['SP 800-90B', 'SP 800-22', 'Web Crypto'],
     icon: Dice5,
@@ -860,9 +869,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     startHere: ['researcher'],
     intro: {
       whatYouWillDo:
-        'Load a 64-byte sample (Generate Random, All Zeros, Repeating Pattern, Incrementing, or Paste Hex), press Run All Entropy Tests, and read the six pass/fail cards plus the byte histogram and lag plot.',
+        'Load a 64-byte sample (Generate Random, All Zeros, Repeating Pattern, Incrementing, or Paste Hex), press Run the checks, and read each group separately: visual checks, health tests, estimators (not run here) and primitive self-checks.',
       workedExample:
-        'Load Repeating Pattern (deadbeef repeated over 64 bytes) and run: the summary bar reports how many of the six tests passed and each failing card shows its value against the threshold.',
+        'Load Repeating Pattern (deadbeef repeated over 64 bytes) and run: the visual checks flag the pattern, and each result shows its value, its cutoff and the limit of a 64-byte sample.',
     },
   },
   {
@@ -871,15 +880,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     version: '1.0.2',
     name: 'SP 800-90A DRBG',
     description:
-      'Interactive visualization of HMAC_DRBG internal state (Instantiate, Generate, Reseed) complying with NIST SP 800-90A.',
+      'Interactive HMAC_DRBG (SHA-256) state machine — Instantiate, Generate, Reseed as specified in NIST SP 800-90A Rev. 1 §10.1.2 — with a known-answer check against pinned NIST ACVP and CAVP vectors.',
     category: 'Entropy & Random',
     algorithms: ['HMAC_DRBG', 'SHA-256'],
     icon: Workflow,
-    // Deliberately the module root, not a workshop step: the Entropy module's
-    // renderWorkshopStep switch has no case for DrbgArchitectureDemo, so there is
-    // no step to deep-link to. The other four Entropy tools now point at their own
-    // step. If a DRBG step is ever added, point this at it.
-    moduleLink: '/learn/entropy-randomness',
+    // Entropy remediation P0.2 (2026-09-24): DrbgArchitectureDemo is now the
+    // module's workshop step 4 ('drbg-state-machine', index 3), so this links there.
+    moduleLink: '/learn/entropy-randomness?tab=workshop&step=3',
     keywords: [
       'drbg',
       'sp 800-90a',
@@ -896,9 +903,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     startHere: ['researcher'],
     intro: {
       whatYouWillDo:
-        'Instantiate HMAC_DRBG from a 32-byte entropy input, a nonce and a personalization string, then press Generate and Reseed while the Internal State Tracker shows the working key K, state value V and the counter.',
+        'Instantiate HMAC_DRBG from a 32-byte entropy input, a nonce and a personalization string, then press Generate and Reseed while the Internal State Tracker shows the working key K, state value V and reseed_counter. Run the known-answer check to compare the same code with NIST vectors.',
       workedExample:
-        'Instantiate with the default personalization string and generate 32 bytes ten times: the counter hits 10 and a Reseed required banner blocks Generate until you press Reseed, which resets it to 1.',
+        'Instantiate with the default personalization string and generate 32 bytes ten times: reseed_counter reaches 11, above the demo interval of 10, so a Reseed required banner blocks Generate until you press Reseed, which resets it to 1.',
     },
   },
 
