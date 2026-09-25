@@ -108,11 +108,30 @@ describe('threat lineage — the Evidence panel (ruling R2)', () => {
       sourceConfirmed: true,
       sourceCheckedAt: '2026-09-24',
       supported: 1,
+      supportedBySecondReader: 0,
       unconfirmed: 2,
     })
     expect(sourceIdentityText(l)).toBe('Source document: confirmed to be the cited document')
     expect(claimsCheckedText(l)).toBe(
       'Claims checked against the cited document: 1 supported · 2 could not be confirmed'
+    )
+  })
+
+  it('says when an AI second reader (the Codex claim check) confirmed a claim', () => {
+    const l = lineageFor('C-1', {
+      rows: {
+        'C-1': {
+          claims: {
+            threat_description: { verdict: 'supported', basis: 'codex-review', codexLog: 'cx-1' },
+            crypto_at_risk: { verdict: 'supported' },
+            pqc_replacement: { verdict: 'undeterminable' },
+          },
+        },
+      },
+    })
+    expect(l.supportedBySecondReader).toBe(1)
+    expect(claimsCheckedText(l)).toBe(
+      'Claims checked against the cited document: 2 supported (1 by an AI second reader) · 1 could not be confirmed'
     )
   })
 

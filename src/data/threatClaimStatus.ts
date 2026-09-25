@@ -22,6 +22,11 @@ export type ClaimVerdict = 'supported' | 'undeterminable' | 'contradicted'
 interface ClaimEntry {
   verdict?: string
   decidedAt?: string
+  /** "second-source" or "codex-review" (a verdict reached by the Codex claim
+   *  check, its quote found verbatim in the document); absent = the pipeline's
+   *  own claim check. */
+  basis?: string
+  codexLog?: string
 }
 
 export interface ThreatClaimStatusFile {
@@ -88,6 +93,9 @@ export interface ThreatLineage {
   /** When the source identity was checked (YYYY-MM-DD), if recorded. */
   sourceCheckedAt?: string
   supported: number
+  /** Of `supported`, how many an AI second reader (the Codex claim check)
+   *  confirmed, rather than the pipeline's own claim check. */
+  supportedBySecondReader: number
   unconfirmed: number
 }
 
@@ -95,17 +103,22 @@ export function lineageFor(threatId: string, status: ThreatClaimStatusFile | nul
   const claims = status?.rows?.[threatId]?.claims
   const main = claims?.main_source
   let supported = 0
+  let supportedBySecondReader = 0
   let unconfirmed = 0
   for (const col of CHECKED_CLAIM_COLUMNS) {
     // eslint-disable-next-line security/detect-object-injection -- col is from the fixed list above
-    const verdict = claims?.[col]?.verdict?.trim().toLowerCase()
-    if (verdict === 'supported') supported += 1
-    else if (verdict === 'undeterminable' || verdict === 'contradicted') unconfirmed += 1
+    const entry = claims?.[col]
+    const verdict = entry?.verdict?.trim().toLowerCase()
+    if (verdict === 'supported') {
+      supported += 1
+      if (entry?.basis === 'codex-review') supportedBySecondReader += 1
+    } else if (verdict === 'undeterminable' || verdict === 'contradicted') unconfirmed += 1
   }
   return {
     sourceConfirmed: main?.verdict?.trim().toUpperCase() === 'MATCH',
     sourceCheckedAt: main?.decidedAt?.trim() || undefined,
     supported,
+    supportedBySecondReader,
     unconfirmed,
   }
 }
@@ -122,11 +135,16 @@ export function sourceIdentityText(lineage: ThreatLineage): string {
     : 'Source document: not yet confirmed'
 }
 
-/** "Claims checked against the cited document: 2 supported · 1 could not be
- *  confirmed", or null when no claim has been checked yet. */
+/** "Claims checked against the cited document: 2 supported (1 by an AI
+ *  second reader) · 1 could not be confirmed", or null when no claim has been
+ *  checked yet. The second-reader note appears only when it applies: a reader
+ *  is told who confirmed a claim, never left to assume a person did. */
 export function claimsCheckedText(lineage: ThreatLineage): string | null {
   if (lineage.supported + lineage.unconfirmed === 0) return null
-  return `Claims checked against the cited document: ${lineage.supported} supported · ${lineage.unconfirmed} could not be confirmed`
+  const bySecond = lineage.supportedBySecondReader
+    ? ` (${lineage.supportedBySecondReader} by an AI second reader)`
+    : ''
+  return `Claims checked against the cited document: ${lineage.supported} supported${bySecond} · ${lineage.unconfirmed} could not be confirmed`
 }
 
 /**
