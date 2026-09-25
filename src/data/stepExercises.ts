@@ -1220,6 +1220,21 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 2,
     why: 'The composite score is a weighted average, so the four weights must always sum to 100%; when one slider moves, the remainder is redistributed across the other three in the same ratio they already had, and the last one absorbs any rounding.',
   },
+
+  // ── crypto-product-certification (PCI author, 2026-09-24) — keep identical to
+  //    modules/CryptoProductCertification/data/pciData.ts `stepExercises` ──
+  'crypto-product-certification/pci-evidence-review': {
+    prompt:
+      'A payment HSM’s PTS listing carries the Post Quantum Cryptography (PQC) notation. What does that notation establish?',
+    options: [
+      'That the evaluated device supports PQC; which algorithms it implements is stated in its Security Policy',
+      'That PCI has approved ML-KEM and ML-DSA for PIN processing on that device',
+      'That the device meets a PCI deadline for migrating to PQC',
+      'That the device’s FIPS 140-3 certificate also covers its PQC algorithms',
+    ],
+    answer: 0,
+    why: 'The listing field definition says the notation "is for the existence of PQC support": algorithm details sit in the Security Policy and readiness details come from the vendor. Public PCI material names no PQC algorithm, parameter set or deadline, and a FIPS certificate is separate evidence under a separate scheme.',
+  },
 }
 
 export function stepExerciseFor(moduleId: string, stepId: string): StepExercise | undefined {
