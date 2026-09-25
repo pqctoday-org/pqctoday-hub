@@ -8,6 +8,8 @@
     "evidence/acvp-xplat/2026-09-24/targets.json": "68d23bd0090e0a104fd365f60175ccb11b85c53d2eb7aca2f45d103fe69ec775",
     "evidence/acvp-xplat/2026-09-24b/matrix.json": "b3370d4bf4518c7c4519244e921977eeae4a0f07223869397185f1112f3baba8",
     "evidence/acvp-xplat/2026-09-24b/targets.json": "6413cac2139288ae126c4e31035f0110b8b72dc1c0a97e80722841a992715ccd",
+    "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
+    "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
     "public/data/validation/coverage-matrix.json": "91ba60bf511b6d149c413e06ce3766f603233b379733a16ca849f660a3b67e90",
     "src/data/validation/coverage-waivers.json": "e554010b48411143943757c206a4a4412ba369c3951a4ef336134ad6fa8c8969",
     "src/data/validation/native-conformance.generated.json": "4896b6b29fe12e8d66d807ab82fd051b7fe79683a13123c42fa7a7f8ff903fc1",
@@ -566,7 +568,7 @@
   ],
   "crossTarget": {
     "source": "evidence/acvp-xplat",
-    "latestRun": "2026-09-24b",
+    "latestRun": "2026-09-25-native",
     "runs": [
       {
         "runId": "2026-09-24",
@@ -1002,6 +1004,270 @@
             "declaredStatus": "run",
             "publishable": true,
             "reason": "Native arm64 in pqc-rust, engine built for run 2026-09-24 (same SHA-256) from a clean detached hsm worktree at 417c47a2 (the Rust WASM bundle's commit).",
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "e3cf1bd4dfd21d42c465f1d7191df063301b31ab1a983b48481325a6a04c0485",
+            "sourceCommit": "417c47a224a9859a4a02b90700ca0cdeb30cfebc",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "imx95-cpp",
+            "label": "NXP i.MX95 (CACP Yocto) — C++ engine",
+            "class": "board",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Board target — WS-H phase 2 (H-3), not part of this run.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "imx95-rust",
+            "label": "NXP i.MX95 (CACP Yocto) — Rust engine",
+            "class": "board",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Board target — WS-H phase 2 (H-3), not part of this run.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "kv260-cpp",
+            "label": "AMD KV260 (CACP Yocto) — C++ engine",
+            "class": "board",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Board target — WS-H phase 2 (H-3), not part of this run.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "kv260-rust",
+            "label": "AMD KV260 (CACP Yocto) — Rust engine",
+            "class": "board",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Board target — WS-H phase 2 (H-3), not part of this run.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          }
+        ]
+      },
+      {
+        "runId": "2026-09-25-native",
+        "dir": "evidence/acvp-xplat/2026-09-25-native",
+        "matrixSha256": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
+        "comparatorPolicyVersion": "pqctoday.acvp-comparator-policy/2",
+        "baselineTarget": "wasm-cpp",
+        "fixtures": [
+          {
+            "name": "ML-KEM-encapDecap-FIPS203",
+            "vsId": 42,
+            "bundleManifestSha256": "d2ea5cd41c49bb156a0301ce033c09a12ccf61837a8edbecd1f9fcdbf8f702fd",
+            "cases": 165
+          },
+          {
+            "name": "ML-DSA-sigVer-FIPS204",
+            "vsId": 42,
+            "bundleManifestSha256": "966ec2faeba6d85fe862b3bead4f0aebf47b784cecd472c2e5fb3a30905f444f",
+            "cases": 180
+          }
+        ],
+        "divergences": 0,
+        "targets": [
+          {
+            "id": "wasm-cpp",
+            "label": "WebAssembly (Node 22, host V8) — C++ engine",
+            "class": "wasm",
+            "engine": "cpp",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": null,
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
+            "sourceCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "wasm-rust",
+            "label": "WebAssembly (Node 22, host V8) — Rust engine",
+            "class": "wasm",
+            "engine": "rust",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": null,
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
+            "sourceCommit": "417c47a224a9859a4a02b90700ca0cdeb30cfebc",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "macos-arm64-cpp",
+            "label": "Native macOS arm64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "Native macOS arm64 on the host (bare metal, not emulated), engine built for this run with Xcode 27.0 / Apple clang 21.0.0 against Homebrew OpenSSL 3.6.3 from a clean detached hsm worktree at 7795799b (the C++ WASM bundle's commit); bit-reproducible.",
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "3fb20289df65daf81e8f8db93e633a63326fb79efdbf7914a78d206e978981c4",
+            "sourceCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "macos-arm64-rust",
+            "label": "Native macOS arm64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "Native macOS arm64 on the host (bare metal, not emulated), engine built for this run with host rustc 1.96.0 from a clean detached hsm worktree at 417c47a2 (the Rust WASM bundle's commit); bit-reproducible.",
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "0eef6de33a3d0fe3eb48a940a3f9b476fb60622ac0a37f4fe452297aaa251fe3",
+            "sourceCommit": "417c47a224a9859a4a02b90700ca0cdeb30cfebc",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-x86_64-cpp",
+            "label": "Native Linux x86-64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "Emulated (Rosetta 2) in a throwaway linux/amd64 container; engine built for this run with GCC 13.3.0 against OpenSSL 3.6.3 from a clean detached hsm worktree at 7795799b (the C++ WASM bundle's commit); bit-reproducible across two fresh containers.",
+            "unmetIdentity": [],
+            "emulated": true,
+            "artifactSha256": "fad6b2ae99737aa4ef214b4f14f1891606d0140ea2073861129f290700357f1a",
+            "sourceCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-x86_64-rust",
+            "label": "Native Linux x86-64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "Emulated (Rosetta 2) in a throwaway linux/amd64 container; engine built for this run with rustc 1.96.0 from a clean detached hsm worktree at 417c47a2 (the Rust WASM bundle's commit); bit-reproducible across two fresh containers.",
+            "unmetIdentity": [],
+            "emulated": true,
+            "artifactSha256": "4dba14a6ee677e21727af7352648981273626d90695f897a90c626e92037dc42",
+            "sourceCommit": "417c47a224a9859a4a02b90700ca0cdeb30cfebc",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-arm64-cpp",
+            "label": "Native Linux Arm64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "Native arm64 in pqc-rust, the same engine as runs 2026-09-24/24b (SHA-256 ba5d00ac…), built from a clean detached hsm worktree at 7795799b.",
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "ba5d00acf9a44a3937420e09d11700616a4ae966ce2976457ce257cf1f0ab3a9",
+            "sourceCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-arm64-rust",
+            "label": "Native Linux Arm64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "Native arm64 in pqc-rust, the same engine as runs 2026-09-24/24b (SHA-256 e3cf1bd4…), built from a clean detached hsm worktree at 417c47a2.",
             "unmetIdentity": [],
             "emulated": false,
             "artifactSha256": "e3cf1bd4dfd21d42c465f1d7191df063301b31ab1a983b48481325a6a04c0485",
@@ -3136,11 +3402,11 @@
       "item": "All demonstrated artifacts and targets have frozen hashes and reproducible evidence bundles",
       "status": "FAIL",
       "evidence": [
-        "evidence/acvp-xplat/2026-09-24b/matrix.json",
-        "evidence/acvp-xplat/2026-09-24b/targets.json",
+        "evidence/acvp-xplat/2026-09-25-native/matrix.json",
+        "evidence/acvp-xplat/2026-09-25-native/targets.json",
         "evidence/release-freeze/"
       ],
-      "basis": "Frozen and publishable: wasm-cpp, wasm-rust, linux-arm64-cpp, linux-arm64-rust. 8 plan §11 Q3 target(s) in run 2026-09-24b have no publishable frozen evidence: macos-arm64-cpp (not run), macos-arm64-rust (not run), linux-x86_64-cpp (run, non-publishable), linux-x86_64-rust (run, non-publishable), imx95-cpp (not run), imx95-rust (not run), kv260-cpp (not run), kv260-rust (not run); no release freeze manifest in evidence/release-freeze/ (plan J-4: freeze by 19 October)."
+      "basis": "Frozen and publishable: wasm-cpp, wasm-rust, macos-arm64-cpp, macos-arm64-rust, linux-x86_64-cpp, linux-x86_64-rust, linux-arm64-cpp, linux-arm64-rust. 4 plan §11 Q3 target(s) in run 2026-09-25-native have no publishable frozen evidence: imx95-cpp (not run), imx95-rust (not run), kv260-cpp (not run), kv260-rust (not run); no release freeze manifest in evidence/release-freeze/ (plan J-4: freeze by 19 October)."
     },
     {
       "n": 8,
