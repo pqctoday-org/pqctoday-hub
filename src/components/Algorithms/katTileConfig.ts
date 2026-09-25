@@ -3,9 +3,10 @@
  * Tile configuration for the Algorithms › Validation › KAT view. Moved out of
  * KATView.tsx (ACVP remediation WS-A, 2026-09-24) so the evidence-label static
  * test (src/utils/katEvidence.test.ts) can inspect every tile. Tiles carry the
- * operation and the specs only; which evidence class a spec rests on is
- * derived from its vector file's provenance, so no tile can claim "ACVP" for a
- * test that reads an RFC example, an oracle value or nothing at all.
+ * operation and the specs only; which evidence class a spec rests on comes
+ * from the generated per-case record of the exact case it runs (manifest +
+ * registry, katEvidence.ts), so no tile can claim "ACVP" for a test that reads
+ * an RFC example, an oracle value or nothing at all.
  */
 import type { KatTestSpec, SlhDsaVariant } from '@/utils/katRunner'
 
@@ -17,6 +18,7 @@ export const SP_800_38A_URL = 'https://csrc.nist.gov/pubs/sp/800/38/a/final'
 export const RFC_3394_URL = 'https://www.rfc-editor.org/rfc/rfc3394'
 export const FIPS_198_URL = 'https://csrc.nist.gov/pubs/fips/198-1/final'
 export const FIPS_180_URL = 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final'
+export const FIPS_202_URL = 'https://csrc.nist.gov/pubs/fips/202/final'
 export const FIPS_186_URL = 'https://csrc.nist.gov/pubs/fips/186-5/final'
 export const RFC_8032_URL = 'https://www.rfc-editor.org/rfc/rfc8032'
 export const RFC_8018_URL = 'https://www.rfc-editor.org/rfc/rfc8018'
@@ -120,7 +122,12 @@ export const ML_DSA_TILES: KATTileConfig[] = [
     standard: 'FIPS 204',
     fipsUrl: FIPS_204_URL,
     securityLevel: 2,
-    operations: ['Signature verification', 'Sign+verify round-trip'],
+    operations: [
+      'Signature verification',
+      'Sign+verify round-trip',
+      'Dedicated sigVer — valid signature accepted',
+      'Dedicated sigVer — modified input rejected',
+    ],
     specs: [
       {
         id: 'kat-algo-mldsa44-sigver',
@@ -136,6 +143,20 @@ export const ML_DSA_TILES: KATTileConfig[] = [
         referenceUrl: FIPS_204_URL,
         kind: { type: 'mldsa-functional', variant: 44 },
       },
+      {
+        id: 'kat-algo-mldsa44-sigver-nist-valid',
+        useCase: 'ML-DSA-44 dedicated sigVer, valid case',
+        standard: 'FIPS 204',
+        referenceUrl: FIPS_204_URL,
+        kind: { type: 'mldsa-sigver-nist', variant: 44, expect: 'valid' },
+      },
+      {
+        id: 'kat-algo-mldsa44-sigver-nist-invalid',
+        useCase: 'ML-DSA-44 dedicated sigVer, invalid case',
+        standard: 'FIPS 204',
+        referenceUrl: FIPS_204_URL,
+        kind: { type: 'mldsa-sigver-nist', variant: 44, expect: 'invalid' },
+      },
     ],
   },
   {
@@ -144,7 +165,12 @@ export const ML_DSA_TILES: KATTileConfig[] = [
     standard: 'FIPS 204',
     fipsUrl: FIPS_204_URL,
     securityLevel: 3,
-    operations: ['Signature verification', 'Sign+verify round-trip'],
+    operations: [
+      'Signature verification',
+      'Sign+verify round-trip',
+      'Dedicated sigVer — valid signature accepted',
+      'Dedicated sigVer — modified input rejected',
+    ],
     specs: [
       {
         id: 'kat-algo-mldsa65-sigver',
@@ -160,6 +186,20 @@ export const ML_DSA_TILES: KATTileConfig[] = [
         referenceUrl: FIPS_204_URL,
         kind: { type: 'mldsa-functional', variant: 65 },
       },
+      {
+        id: 'kat-algo-mldsa65-sigver-nist-valid',
+        useCase: 'ML-DSA-65 dedicated sigVer, valid case',
+        standard: 'FIPS 204',
+        referenceUrl: FIPS_204_URL,
+        kind: { type: 'mldsa-sigver-nist', variant: 65, expect: 'valid' },
+      },
+      {
+        id: 'kat-algo-mldsa65-sigver-nist-invalid',
+        useCase: 'ML-DSA-65 dedicated sigVer, invalid case',
+        standard: 'FIPS 204',
+        referenceUrl: FIPS_204_URL,
+        kind: { type: 'mldsa-sigver-nist', variant: 65, expect: 'invalid' },
+      },
     ],
   },
   {
@@ -168,7 +208,12 @@ export const ML_DSA_TILES: KATTileConfig[] = [
     standard: 'FIPS 204',
     fipsUrl: FIPS_204_URL,
     securityLevel: 5,
-    operations: ['Signature verification', 'Sign+verify round-trip'],
+    operations: [
+      'Signature verification',
+      'Sign+verify round-trip',
+      'Dedicated sigVer — valid signature accepted',
+      'Dedicated sigVer — modified input rejected',
+    ],
     specs: [
       {
         id: 'kat-algo-mldsa87-sigver',
@@ -183,6 +228,20 @@ export const ML_DSA_TILES: KATTileConfig[] = [
         standard: 'FIPS 204',
         referenceUrl: FIPS_204_URL,
         kind: { type: 'mldsa-functional', variant: 87 },
+      },
+      {
+        id: 'kat-algo-mldsa87-sigver-nist-valid',
+        useCase: 'ML-DSA-87 dedicated sigVer, valid case',
+        standard: 'FIPS 204',
+        referenceUrl: FIPS_204_URL,
+        kind: { type: 'mldsa-sigver-nist', variant: 87, expect: 'valid' },
+      },
+      {
+        id: 'kat-algo-mldsa87-sigver-nist-invalid',
+        useCase: 'ML-DSA-87 dedicated sigVer, invalid case',
+        standard: 'FIPS 204',
+        referenceUrl: FIPS_204_URL,
+        kind: { type: 'mldsa-sigver-nist', variant: 87, expect: 'invalid' },
       },
     ],
   },
@@ -354,6 +413,74 @@ export const HMAC_HASH_TILES: KATTileConfig[] = [
       },
     ],
   },
+  {
+    id: 'sha384',
+    name: 'SHA-384',
+    standard: 'FIPS 180-4',
+    fipsUrl: FIPS_180_URL,
+    securityLevel: 192,
+    operations: ['Digest'],
+    specs: [
+      {
+        id: 'kat-algo-sha384',
+        useCase: 'SHA-384 hash',
+        standard: 'FIPS 180-4',
+        referenceUrl: FIPS_180_URL,
+        kind: { type: 'sha384-hash' },
+      },
+    ],
+  },
+  {
+    id: 'sha512',
+    name: 'SHA-512',
+    standard: 'FIPS 180-4',
+    fipsUrl: FIPS_180_URL,
+    securityLevel: 256,
+    operations: ['Digest'],
+    specs: [
+      {
+        id: 'kat-algo-sha512',
+        useCase: 'SHA-512 hash',
+        standard: 'FIPS 180-4',
+        referenceUrl: FIPS_180_URL,
+        kind: { type: 'sha512-hash' },
+      },
+    ],
+  },
+  {
+    id: 'sha3-256',
+    name: 'SHA3-256',
+    standard: 'FIPS 202',
+    fipsUrl: FIPS_202_URL,
+    securityLevel: 128,
+    operations: ['Digest'],
+    specs: [
+      {
+        id: 'kat-algo-sha3-256',
+        useCase: 'SHA3-256 hash',
+        standard: 'FIPS 202',
+        referenceUrl: FIPS_202_URL,
+        kind: { type: 'sha3-256-hash' },
+      },
+    ],
+  },
+  {
+    id: 'sha3-512',
+    name: 'SHA3-512',
+    standard: 'FIPS 202',
+    fipsUrl: FIPS_202_URL,
+    securityLevel: 256,
+    operations: ['Digest'],
+    specs: [
+      {
+        id: 'kat-algo-sha3-512',
+        useCase: 'SHA3-512 hash',
+        standard: 'FIPS 202',
+        referenceUrl: FIPS_202_URL,
+        kind: { type: 'sha3-512-hash' },
+      },
+    ],
+  },
 ]
 
 // ── Classical Signature tiles ───────────────────────────────────────────────
@@ -394,6 +521,23 @@ export const CLASSICAL_SIG_TILES: KATTileConfig[] = [
     ],
   },
   {
+    id: 'ecdsa-p521',
+    name: 'ECDSA P-521',
+    standard: 'FIPS 186-5',
+    fipsUrl: FIPS_186_URL,
+    securityLevel: 256,
+    operations: ['Signature verification'],
+    specs: [
+      {
+        id: 'kat-algo-ecdsa-p521',
+        useCase: 'ECDSA P-521 (SHA-512) signature verification',
+        standard: 'FIPS 186-5',
+        referenceUrl: FIPS_186_URL,
+        kind: { type: 'ecdsa-sigver', curve: 'P-521' },
+      },
+    ],
+  },
+  {
     id: 'eddsa',
     name: 'EdDSA (Ed25519)',
     standard: 'RFC 8032',
@@ -407,6 +551,23 @@ export const CLASSICAL_SIG_TILES: KATTileConfig[] = [
         standard: 'RFC 8032',
         referenceUrl: RFC_8032_URL,
         kind: { type: 'eddsa-sigver' },
+      },
+    ],
+  },
+  {
+    id: 'eddsa-ed448',
+    name: 'EdDSA (Ed448)',
+    standard: 'FIPS 186-5',
+    fipsUrl: FIPS_186_URL,
+    securityLevel: 224,
+    operations: ['Signature verification'],
+    specs: [
+      {
+        id: 'kat-algo-eddsa-ed448',
+        useCase: 'EdDSA Ed448 signature verification',
+        standard: 'FIPS 186-5',
+        referenceUrl: FIPS_186_URL,
+        kind: { type: 'eddsa-sigver', curve: 'Ed448' },
       },
     ],
   },
