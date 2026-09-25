@@ -259,6 +259,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                     <TimelineEvidenceBadge
                       confidenceScore={primaryEvent.confidenceScore}
                       trustedSourceIdStatus={primaryEvent.trustedSourceIdStatus}
+                      sourceClass={primaryEvent.sourceClass}
                       sourceUrl={primaryEvent.sourceUrl}
                       publishedDate={primaryEvent.sourceDate}
                     />

@@ -140,6 +140,17 @@ interface RawTimelineRow {
   // source document's own publication date). Blank means "never row-verified",
   // which IS the staleness signal; enrichment never sets this field.
   last_verified?: string
+  // Added 2026-09-24 (timeline remediation r2). binding_force: the reviewed
+  // binding character (binding | mandatory_for_scope | official_target |
+  // recommendation | draft | informational), set only by a Claude + Codex
+  // agreed review. source_class: primary (the issuer's own publication) or
+  // secondary (reputable secondary reporting, allowed when flagged — user
+  // decision T5); blank = not yet classified. trusted_source_linked_at: when
+  // the trusted_source_id link was made (moved out of the old free-text
+  // trusted_source_id_status values).
+  binding_force?: string
+  source_class?: string
+  trusted_source_linked_at?: string
 }
 
 // ─── Graded confidence score ─────────────────────────────────────────────────
@@ -325,6 +336,8 @@ export function parseTimelineCSV(
       entityType: (row.entity_type?.trim() as TimelineEvent['entityType']) || 'government',
       eventId: row.event_id || undefined,
       lastVerified: row.last_verified || undefined,
+      bindingForce: (row.binding_force?.trim() as TimelineEvent['bindingForce']) || undefined,
+      sourceClass: (row.source_class?.trim() as TimelineEvent['sourceClass']) || undefined,
       complianceRefs: [],
       xwalkEdgeIds: [],
       // Populate denormalized fields
@@ -413,6 +426,11 @@ function getLatestTimelineFiles(): {
   }
 }
 
+/** Snapshot-comparison key: the row's stable event_id, else the legacy composite. */
+function changeKey(countryName: string, bodyName: string, e: TimelineEvent): string {
+  return e.eventId || `${countryName}:${bodyName}:${e.phase}:${e.title}`
+}
+
 // Parse the CSV content to get the timeline data
 let parsedData: CountryData[] = []
 let metadata: { filename: string; lastUpdate: Date } | null = null
@@ -426,14 +444,26 @@ try {
     const currentCountries = parseTimelineCSV(current.content, current.date)
     const previousCountries = previous ? parseTimelineCSV(previous.content, previous.date) : []
 
-    // Flatten events to compare them
-    // Unique ID for event: Country + Org + Phase + Title
+    // Flatten events to compare them. Keyed by the stable event_id (timeline
+    // remediation r2 W-B: a title edit used to read as a brand-new event), with
+    // the old composite as a fallback for rows without one. Only the CONTENT a
+    // reader sees is compared — adding a metadata column, or the confidence
+    // score drifting with the snapshot date, is not an "Updated" event.
     const flattenEvents = (countries: CountryData[]) => {
       return countries.flatMap((c) =>
         c.bodies.flatMap((b) =>
           b.events.map((e) => ({
-            ...e,
-            id: `${c.countryName}:${b.name}:${e.phase}:${e.title}`,
+            id: changeKey(c.countryName, b.name, e),
+            title: e.title,
+            description: e.description,
+            startYear: e.startYear,
+            endYear: e.endYear,
+            phase: e.phase,
+            type: e.type,
+            sourceUrl: e.sourceUrl,
+            sourceDate: e.sourceDate,
+            reviewStatus: e.reviewStatus,
+            mandateType: e.mandateType,
           }))
         )
       )
@@ -453,10 +483,9 @@ try {
       bodies: c.bodies.map((b) => ({
         ...b,
         events: b.events.map((e) => {
-          const id = `${c.countryName}:${b.name}:${e.phase}:${e.title}`
           return {
             ...e,
-            status: statusMap.get(id),
+            status: statusMap.get(changeKey(c.countryName, b.name, e)),
           }
         }),
       })),

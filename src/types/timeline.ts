@@ -63,6 +63,18 @@ export interface TimelineEvent {
   // it as "verified" in the UI (timeline remediation r2 §1 #11).
   eventId?: string
   lastVerified?: string
+  // Reviewed binding character (CSV `binding_force`, timeline remediation r2);
+  // absent until a Claude + Codex agreed review sets it.
+  bindingForce?:
+    | 'binding'
+    | 'mandatory_for_scope'
+    | 'official_target'
+    | 'recommendation'
+    | 'draft'
+    | 'informational'
+  // primary = the issuer's own publication; secondary = reputable secondary
+  // reporting, allowed only when flagged (user decision T5). Absent = unclassified.
+  sourceClass?: 'primary' | 'secondary'
 
   // Derived fields — populated at load time, not from CSV (FR-T-05)
   complianceRefs?: string[]

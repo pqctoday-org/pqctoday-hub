@@ -60,4 +60,13 @@ describe('TimelineEvidenceBadge — publication date (timeline remediation r2 T-
     render(<TimelineEvidenceBadge trustedSourceIdStatus="registered" />)
     expect(screen.getByText('Tier 1')).toBeTruthy()
   })
+
+  it('flags a secondary source and says nothing for a primary one', () => {
+    const { rerender } = render(
+      <TimelineEvidenceBadge trustedSourceIdStatus="registered" sourceClass="secondary" />
+    )
+    expect(screen.getByTestId('timeline-secondary-source').textContent).toBe('Secondary source')
+    rerender(<TimelineEvidenceBadge trustedSourceIdStatus="registered" sourceClass="primary" />)
+    expect(screen.queryByTestId('timeline-secondary-source')).toBeNull()
+  })
 })

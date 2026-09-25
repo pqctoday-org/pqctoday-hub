@@ -44,6 +44,7 @@ export interface TimelineDocumentRow {
   sourceUrlQuality?: string
   trustedSourceId?: string
   trustedSourceIdStatus?: string
+  sourceClass?: 'primary' | 'secondary'
   localFile?: string
   confidenceScore?: number
   dataQualityNotes?: string
@@ -321,6 +322,7 @@ export const TimelineDocumentDetailPopover = ({
                   <TimelineEvidenceBadge
                     confidenceScore={row.confidenceScore}
                     trustedSourceIdStatus={row.trustedSourceIdStatus}
+                    sourceClass={row.sourceClass}
                     sourceUrl={row.sourceUrl}
                     publishedDate={row.sourceDate}
                     compact={false}

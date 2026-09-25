@@ -18,6 +18,9 @@ interface TimelineEvidenceBadgeProps {
    * per-row decision time exists (timeline remediation r2 T-B3).
    */
   publishedDate?: string
+  /** `secondary` renders a "Secondary source" chip (user decision T5: a
+   * reputable secondary source is allowed only when flagged as such). */
+  sourceClass?: 'primary' | 'secondary'
   compact?: boolean
 }
 
@@ -64,6 +67,7 @@ export function TimelineEvidenceBadge({
   trustedSourceIdStatus,
   sourceUrl,
   publishedDate,
+  sourceClass,
   compact = false,
 }: TimelineEvidenceBadgeProps) {
   const published = (publishedDate ?? '').trim()
@@ -80,6 +84,15 @@ export function TimelineEvidenceBadge({
         >
           {tier.text}
         </span>
+        {sourceClass === 'secondary' && (
+          <span
+            data-testid="timeline-secondary-source"
+            title="Cited from reputable secondary reporting, not the issuer's own publication"
+            className="inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-medium bg-status-warning/10 text-status-warning border-status-warning/30"
+          >
+            Secondary source
+          </span>
+        )}
         {published && (
           <span
             data-testid="timeline-published-date"
@@ -117,6 +130,15 @@ export function TimelineEvidenceBadge({
         >
           {tier.text}
         </span>
+        {sourceClass === 'secondary' && (
+          <span
+            data-testid="timeline-secondary-source"
+            title="Cited from reputable secondary reporting, not the issuer's own publication"
+            className="inline-flex items-center px-2 py-0.5 rounded border text-xs font-medium bg-status-warning/10 text-status-warning border-status-warning/30"
+          >
+            Secondary source
+          </span>
+        )}
         {published && (
           <span
             data-testid="timeline-published-date"
