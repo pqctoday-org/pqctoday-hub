@@ -18,6 +18,7 @@ import {
   SP800_90B_STARTUP_SAMPLES,
   type TestResult,
 } from '../utils/entropyTests'
+import type { CombinationMode, ConditioningMode } from './sourceCombiningCrypto'
 
 // ── Simulated raw noise sources ─────────────────────────────────────────────
 
@@ -107,20 +108,176 @@ export interface SourceContribution {
   name: string
   failed: boolean
   samplesUsed: number
+  /**
+   * True for the source the learner says an adversary may control (Source A
+   * in this workshop). Its credit is zeroed when the stated adversary control
+   * is 'choose' or 'observe' — see creditedEntropyBits().
+   */
+  mayBeAdversaryControlled?: boolean
+}
+
+export interface CreditOptions {
+  /** The learner's statement about the adversary's control over the flagged source. */
+  adversaryControl?: AdversaryControl
+  /** How the sources' samples are assembled into one bitstring (default: concatenation). */
+  assembly?: CombinationMode
 }
 
 /**
- * Entropy credited to one request, SP 800-90C §2.3 Method 1 style: only sources
- * that have not reported a failure are counted (§3.1 item 4.a.1 — entropy
- * collected by a failed source "shall not be used"). Summing across sources
- * is valid only for independent sources (§2.6 item 8); that assumption is the
+ * Entropy one source contributes to this request, after the two exclusions:
+ *  - a failed source counts 0 (SP 800-90C §3.1 item 4.a.1: entropy collected
+ *    by a failed entropy source "shall not be used");
+ *  - a source the adversary can choose or observe counts 0 against that
+ *    adversary. Bits the adversary picked or has seen are not unpredictable
+ *    to it, so they carry no min-entropy for secrecy purposes.
+ */
+export function sourceCreditBits(
+  c: SourceContribution,
+  H = DECLARED_MIN_ENTROPY_PER_SAMPLE,
+  adversaryControl: AdversaryControl = 'none'
+): number {
+  if (c.failed) return 0
+  if (c.mayBeAdversaryControlled && isAdversaryControlled(adversaryControl)) return 0
+  return c.samplesUsed * H
+}
+
+/** 'choose' or 'observe' — either one removes the source's entropy against that adversary. */
+export function isAdversaryControlled(a: AdversaryControl): boolean {
+  return a === 'choose' || a === 'observe'
+}
+
+/**
+ * Entropy credited to the assembled bitstring for one request, SP 800-90C §2.3
+ * Method 1 style. Per-source credit comes from sourceCreditBits(). SP 800-90C
+ * §2.6 item 8 sums entropy only for CONCATENATED output of independent
+ * sources; for any other assembly (XOR, hash, HMAC) the sum is not justified,
+ * so only the largest single source is credited. Independence itself is the
  * learner's to state in assessConstruction().
  */
 export function creditedEntropyBits(
   contributions: SourceContribution[],
-  H = DECLARED_MIN_ENTROPY_PER_SAMPLE
+  H = DECLARED_MIN_ENTROPY_PER_SAMPLE,
+  opts: CreditOptions = {}
 ): number {
-  return contributions.filter((c) => !c.failed).reduce((sum, c) => sum + c.samplesUsed * H, 0)
+  const credits = contributions.map((c) => sourceCreditBits(c, H, opts.adversaryControl))
+  const assembly = opts.assembly ?? 'concat'
+  if (assembly === 'concat') return credits.reduce((sum, b) => sum + b, 0)
+  return credits.reduce((max, b) => Math.max(max, b), 0)
+}
+
+// ── Conditioner bounds (plan P0.5 "the conditioner's input and output bounds") ──
+
+/**
+ * SP 800-90B §3.1.5.1.1 Table 1: narrowest internal width (nw) and output
+ * length (nout) of a vetted conditioning function, instantiated with SHA-256
+ * and AES as this workshop does. For CMAC the workshop's 32-byte output is two
+ * CMAC calls (a demo construction); only ONE vetted CMAC call — 128 bits — is
+ * credited.
+ */
+export interface ConditionerBound {
+  label: string
+  outputBits: number
+  narrowestWidthBits: number
+}
+
+export const VETTED_CONDITIONER_BOUNDS: Record<ConditioningMode, ConditionerBound> = {
+  'hash-df': { label: 'Hash_df (SHA-256)', outputBits: 256, narrowestWidthBits: 256 },
+  hash: { label: 'SHA-256', outputBits: 256, narrowestWidthBits: 256 },
+  hmac: { label: 'HMAC-SHA-256', outputBits: 256, narrowestWidthBits: 256 },
+  'aes-cmac': { label: 'AES-CMAC (one call)', outputBits: 128, narrowestWidthBits: 128 },
+}
+
+/** log2(2^a + 2^b) without overflow. */
+function log2Sum(a: number, b: number): number {
+  const hi = Math.max(a, b)
+  const lo = Math.min(a, b)
+  return hi + Math.log2(1 + Math.pow(2, lo - hi))
+}
+
+/** log2(1 − 2^−x) for x > 0. */
+function log2OneMinusPow2Neg(x: number): number {
+  return Math.log1p(-Math.pow(2, -x)) / Math.LN2
+}
+
+/**
+ * SP 800-90B §3.1.5.1.2 Output_Entropy(nin, nout, nw, hin), evaluated in log2
+ * space so 2^nin never overflows:
+ *   1. P_high = 2^−hin, P_low = (1 − P_high) / (2^nin − 1)
+ *   2. n = min(nout, nw)
+ *   3. ψ = 2^(nin−n)·P_low + P_high
+ *   4. U = 2^(nin−n) + sqrt(2n·2^(nin−n)·ln 2)
+ *   5. ω = U·P_low
+ *   6. return −log2(max(ψ, ω))
+ */
+export function outputEntropy(nIn: number, nOut: number, nW: number, hIn: number): number {
+  const h = Math.min(hIn, nIn)
+  if (h <= 0) return 0
+  const n = Math.min(nOut, nW)
+  const log2PHigh = -h
+  const log2PLow = log2OneMinusPow2Neg(h) - (nIn + log2OneMinusPow2Neg(nIn))
+  const log2Psi = log2Sum(nIn - n + log2PLow, log2PHigh)
+  const log2U = log2Sum(nIn - n, 0.5 * Math.log2(2 * n * Math.LN2) + (nIn - n) / 2)
+  const log2Omega = log2U + log2PLow
+  return -Math.max(log2Psi, log2Omega)
+}
+
+/**
+ * Min-entropy credited to ONE conditioned output block. It never exceeds the
+ * input entropy (SP 800-90B §3.1.5: "the entropy of the output is at most
+ * hin"), the output length, or the vetted-function estimate Output_Entropy
+ * (§3.1.5.1.2). Rounded down — the workshop never rounds a credit up.
+ */
+export function conditionedBlockEntropyBits(
+  inputEntropyBits: number,
+  inputBits: number,
+  bound: ConditionerBound
+): number {
+  if (inputEntropyBits <= 0) return 0
+  const vetted = outputEntropy(
+    inputBits,
+    bound.outputBits,
+    bound.narrowestWidthBits,
+    inputEntropyBits
+  )
+  // 1e-9 absorbs floating-point noise so an exact 256 is not shown as 255.
+  return Math.floor(Math.min(inputEntropyBits, bound.outputBits, vetted) + 1e-9)
+}
+
+/** What the design delivers to the DRBG as seed material for one instantiation. */
+export type SeedMaterial =
+  | {
+      /** The assembled bitstring itself (SP 800-90C §3.1 Get_entropy_bitstring). */
+      kind: 'unconditioned'
+      bitstringBits: number
+    }
+  | {
+      /** One conditioned output block from the Step 4 conditioner. */
+      kind: 'conditioned-block'
+      /** nin: length of the assembled bitstring fed to the conditioner. */
+      inputBits: number
+      bound: ConditionerBound
+    }
+
+export interface EntropyAccount {
+  /** Credited to the assembled bitstring (after failure and adversary exclusions). */
+  inputEntropyBits: number
+  /** Credited to what actually reaches the DRBG. */
+  seedEntropyBits: number
+}
+
+/** The whole entropy chain for one request: sources → bitstring → seed material. */
+export function accountEntropy(
+  contributions: SourceContribution[],
+  seed: SeedMaterial,
+  opts: CreditOptions = {},
+  H = DECLARED_MIN_ENTROPY_PER_SAMPLE
+): EntropyAccount {
+  const inputEntropyBits = creditedEntropyBits(contributions, H, opts)
+  const seedEntropyBits =
+    seed.kind === 'unconditioned'
+      ? Math.min(inputEntropyBits, seed.bitstringBits)
+      : conditionedBlockEntropyBits(inputEntropyBits, seed.inputBits, seed.bound)
+  return { inputEntropyBits, seedEntropyBits }
 }
 
 // ── Assumption-driven assessment (P0.5) ─────────────────────────────────────
@@ -144,14 +301,21 @@ export const SP800_90C_CLASSES: RbgClass[] = [
 
 export interface ConstructionAssumptions {
   independence: Independence
-  /** Adversary's control over the source that may be compromised. */
+  /** Adversary's control over the source that may be compromised (Source A). */
   adversaryControl: AdversaryControl
   failureHandling: FailureHandling
   sourceValidation: SourceValidation
   inputFreshness: InputFreshness
   rbgClass: RbgClass
-  /** Min-entropy credited to the conditioner input (from the pipeline). */
-  creditedEntropyBits: number
+  /**
+   * The sources feeding this request. Credit is computed here, not passed in,
+   * so the verdict cannot disagree with the stated adversary control.
+   */
+  sources: SourceContribution[]
+  /** How the sources are assembled (SP 800-90C §2.6 item 8 sums only concatenation). */
+  assembly: CombinationMode
+  /** What reaches the DRBG, with the conditioner's input/output bounds. */
+  seed: SeedMaterial
   /** Did output from a source that failed its health tests feed the conditioner? */
   failedSourceOutputUsed: boolean
 }
@@ -180,8 +344,34 @@ export function assessConstruction(
 ): Assessment {
   const unsafe: string[] = []
   const missing: string[] = []
+  const notes: string[] = []
   const need = instantiateEntropyRequirement(securityStrength)
   const isRbg3 = a.rbgClass === 'RBG3(XOR)' || a.rbgClass === 'RBG3(RS)'
+  const { inputEntropyBits, seedEntropyBits } = accountEntropy(a.sources, a.seed, {
+    adversaryControl: a.adversaryControl,
+    assembly: a.assembly,
+  })
+  const controlled = a.sources.filter(
+    (c) => c.mayBeAdversaryControlled && !c.failed && isAdversaryControlled(a.adversaryControl)
+  )
+
+  if (controlled.length > 0) {
+    const verb = a.adversaryControl === 'choose' ? 'chooses' : 'can observe'
+    const names = controlled.map((c) => c.name).join(' and ')
+    notes.push(
+      `The adversary ${verb} the output of ${names}, so ${names} is credited 0 bits: output the adversary picked or has seen is not unpredictable to it. Only the other sources count — ${inputEntropyBits} bits.`
+    )
+  }
+  if (a.assembly !== 'concat' && a.sources.filter((c) => !c.failed).length > 1) {
+    notes.push(
+      'The sources are not concatenated, so their entropy is not summed: SP 800-90C §2.6 item 8 sums entropy only for the concatenated output of independent sources. Only the largest single source is credited.'
+    )
+  }
+  if (a.seed.kind === 'conditioned-block') {
+    notes.push(
+      `The DRBG receives one conditioned block: ${a.seed.bound.label}, ${a.seed.bound.outputBits}-bit output, from a ${a.seed.inputBits}-bit input carrying ${inputEntropyBits} bits. Conditioning cannot add entropy (SP 800-90B §3.1.5: the output entropy "is at most hin"), and the vetted-function estimate is capped by the output length (§3.1.5.1.2, Table 1), so the block is credited ${seedEntropyBits} bits.`
+    )
+  }
 
   if (a.failedSourceOutputUsed) {
     unsafe.push(
@@ -203,9 +393,9 @@ export function assessConstruction(
       'Malicious cancellation: an adversary who chooses one source’s output while seeing the other can cancel it — with XOR, choosing A = B makes A ⊕ B all zeros. The surviving source’s entropy is not preserved against this adversary.'
     )
   }
-  if (isRbg3 && a.creditedEntropyBits < need) {
+  if (isRbg3 && seedEntropyBits < need) {
     unsafe.push(
-      `The design is claimed as ${a.rbgClass}, which must provide full-entropy output, but only ${a.creditedEntropyBits} bits of entropy are credited — less than the ${need} bits (3s/2, s = ${securityStrength}) SP 800-90C §2.6 item 11 requires just to instantiate the DRBG.`
+      `The design is claimed as ${a.rbgClass}, which must provide full-entropy output, but only ${seedEntropyBits} bits of entropy reach the DRBG — less than the ${need} bits (3s/2, s = ${securityStrength}) SP 800-90C §2.6 item 11 requires just to instantiate it.`
     )
   }
 
@@ -243,17 +433,20 @@ export function assessConstruction(
       'RBG1 has no internal entropy source and no reseeding (SP 800-90C Table 1); it is seeded once from another RBG. A design that combines live entropy sources is not an RBG1.'
     )
   }
-  if (!isRbg3 && a.creditedEntropyBits < need) {
+  if (!isRbg3 && seedEntropyBits < need) {
     missing.push(
-      `Only ${a.creditedEntropyBits} bits of entropy are credited; instantiating a DRBG at security strength ${securityStrength} from an entropy source needs at least ${need} bits (3s/2, SP 800-90C §2.6 item 11).`
+      a.seed.kind === 'conditioned-block'
+        ? `Only ${seedEntropyBits} bits of entropy reach the DRBG in one ${a.seed.bound.outputBits}-bit conditioned block; instantiating a DRBG at security strength ${securityStrength} from an entropy source needs at least ${need} bits (3s/2, SP 800-90C §2.6 item 11). One block cannot carry that: SP 800-90C §3.2.2.1 Get_conditioned_input produces as many output blocks as are "required to hold the requested amount of entropy", each from its own entropy request.`
+        : `Only ${seedEntropyBits} bits of entropy reach the DRBG; instantiating a DRBG at security strength ${securityStrength} from an entropy source needs at least ${need} bits (3s/2, SP 800-90C §2.6 item 11).`
     )
   }
 
-  if (unsafe.length > 0) return { verdict: 'unsafe', reasons: [...unsafe, ...missing] }
-  if (missing.length > 0) return { verdict: 'not-enough-evidence', reasons: missing }
+  if (unsafe.length > 0) return { verdict: 'unsafe', reasons: [...unsafe, ...missing, ...notes] }
+  if (missing.length > 0) return { verdict: 'not-enough-evidence', reasons: [...missing, ...notes] }
   return {
     verdict: 'consistent-with-assumptions',
     reasons: [
+      ...notes,
       'Nothing in the stated assumptions contradicts the design. Each assumption still needs evidence: an Entropy Validation Certificate for each source, algorithm validation for the DRBG, and — for the SP 800-90C construction — a Random Bit Generator Validation Certificate (FIPS 140-3 IG D.T). This workshop provides none of them.',
     ],
   }
@@ -277,7 +470,10 @@ export interface Counterexample {
   sourceA: RawSourceCondition
   /** Whether Source A's samples are used even if its health tests fail. */
   useFailedSource: boolean
-  assumptions: Omit<ConstructionAssumptions, 'creditedEntropyBits' | 'failedSourceOutputUsed'>
+  assumptions: Omit<
+    ConstructionAssumptions,
+    'sources' | 'assembly' | 'seed' | 'failedSourceOutputUsed'
+  >
 }
 
 const BASE: Counterexample['assumptions'] = {

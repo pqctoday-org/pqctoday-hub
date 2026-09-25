@@ -137,7 +137,7 @@ export const EntropyExercises: React.FC<EntropyExercisesProps> = ({
       borderColor: 'border-warning',
       icon: ShieldAlert,
       observe:
-        'The prediction matches the LCG’s next bytes exactly, yet Math.random() and the LCG usually land within range on the visual checks and signal nothing on the health tests. That is the expected lesson: output statistics cannot tell a predictable generator from an unpredictable one, so the visual group supports no secure or insecure verdict. What separates the sources is how they are seeded — the LCG from the clock, Web Crypto and OpenSSL from the operating system’s entropy source.',
+        'The prediction matches the LCG’s next bytes exactly, yet Math.random() and the LCG usually land within range on the visual checks and signal nothing on the health tests. That is the expected lesson: output statistics cannot tell a predictable generator from an unpredictable one, so the visual group supports no secure or insecure verdict. What separates the sources is both the mechanism and its seed: each LCG state is a fixed linear function of the previous one, so whoever learns the state knows every later output however good the seed was, and here it is seeded from the clock; Web Crypto and OpenSSL run cryptographic generators seeded from the operating system’s entropy source.',
       config: { step: 0 },
     },
     {

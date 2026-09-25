@@ -52,10 +52,10 @@ import {
   type ConditioningMode,
 } from './sourceCombiningCrypto'
 import {
+  accountEntropy,
   assessConstruction,
   assessRawSource,
   COUNTEREXAMPLES,
-  creditedEntropyBits,
   DECLARED_MIN_ENTROPY_PER_SAMPLE,
   fullEntropyConditioningRequirement,
   instantiateEntropyRequirement,
@@ -63,6 +63,7 @@ import {
   simulateRawSamples,
   TARGET_SECURITY_STRENGTH,
   VERDICT_LABELS,
+  VETTED_CONDITIONER_BOUNDS,
   type AdversaryControl,
   type CounterexampleId,
   type FailureHandling,
@@ -71,6 +72,8 @@ import {
   type RawSourceCondition,
   type RawSourceHealth,
   type RbgClass,
+  type SeedMaterial,
+  type SourceContribution,
   type SourceValidation,
 } from './sourceAssessment'
 import { RbgConstructionPanel } from './RbgConstructionPanel'
@@ -97,6 +100,11 @@ const ADVERSARY_ITEMS = [
   { id: 'observe', label: 'Can observe its output' },
   { id: 'choose', label: 'Can choose its output' },
   { id: 'unknown', label: 'Unknown' },
+]
+type SeedPath = SeedMaterial['kind']
+const SEED_ITEMS = [
+  { id: 'conditioned-block', label: 'One conditioned block from Step 4' },
+  { id: 'unconditioned', label: 'The assembled bitstring, unconditioned' },
 ]
 const FAILURE_ITEMS = [
   { id: 'detected-excluded', label: 'Detected by health tests; failed source excluded' },
@@ -282,6 +290,7 @@ export const SourceCombiningDemo: React.FC = () => {
   const [sourceValidation, setSourceValidation] = useState<SourceValidation>('not-validated')
   const [inputFreshness, setInputFreshness] = useState<InputFreshness>('fresh')
   const [rbgClass, setRbgClass] = useState<RbgClass>('none')
+  const [seedPath, setSeedPath] = useState<SeedPath>('conditioned-block')
   const [activeCounterexample, setActiveCounterexample] = useState<CounterexampleId | null>(null)
 
   // Mode selection — defaults: 90C §3.1 concatenation, 90A §10.3.1 Hash_df
@@ -309,13 +318,51 @@ export const SourceCombiningDemo: React.FC = () => {
   const includeB = !!healthB && (!healthB.failed || useFailedSource)
   const failedSourceOutputUsed = (includeA && !!healthA?.failed) || (includeB && !!healthB?.failed)
 
-  const credited =
-    healthA && healthB
-      ? creditedEntropyBits([
-          { name: 'A', failed: healthA.failed, samplesUsed: SAMPLES_PER_REQUEST },
-          { name: 'B', failed: healthB.failed, samplesUsed: SAMPLES_PER_REQUEST },
-        ])
-      : 0
+  // Source A is the one the adversary may control (see the Step 6 picker).
+  const sources: SourceContribution[] = useMemo(
+    () =>
+      healthA && healthB
+        ? [
+            {
+              name: 'Source A',
+              failed: healthA.failed,
+              samplesUsed: SAMPLES_PER_REQUEST,
+              mayBeAdversaryControlled: true,
+            },
+            { name: 'Source B', failed: healthB.failed, samplesUsed: SAMPLES_PER_REQUEST },
+          ]
+        : [],
+    [healthA, healthB]
+  )
+  const includedCount = (includeA ? 1 : 0) + (includeB ? 1 : 0)
+  const assembly: CombinationMode = includedCount === 2 ? combinationMode : 'concat'
+  /** nin: bits in the assembled bitstring (concat keeps both; XOR keeps one width; hash/HMAC give 256). */
+  const assembledBits =
+    includedCount === 0
+      ? 0
+      : includedCount === 1 || assembly === 'xor'
+        ? SAMPLES_PER_REQUEST * 8
+        : assembly === 'concat'
+          ? 2 * SAMPLES_PER_REQUEST * 8
+          : 256
+  const conditionerBound = VETTED_CONDITIONER_BOUNDS[conditioningMode]
+  const seed: SeedMaterial =
+    seedPath === 'unconditioned'
+      ? { kind: 'unconditioned', bitstringBits: assembledBits }
+      : { kind: 'conditioned-block', inputBits: assembledBits, bound: conditionerBound }
+  const { inputEntropyBits: credited, seedEntropyBits } = accountEntropy(sources, seed, {
+    adversaryControl,
+    assembly,
+  })
+  const conditionedBlockBits = accountEntropy(
+    sources,
+    { kind: 'conditioned-block', inputBits: assembledBits, bound: conditionerBound },
+    { adversaryControl, assembly }
+  ).seedEntropyBits
+  const sourceAZeroed =
+    !!healthA &&
+    !healthA.failed &&
+    (adversaryControl === 'choose' || adversaryControl === 'observe')
 
   const resetPipeline = useCallback(() => {
     setCombinedResult(null)
@@ -428,7 +475,9 @@ export const SourceCombiningDemo: React.FC = () => {
         sourceValidation,
         inputFreshness,
         rbgClass,
-        creditedEntropyBits: credited,
+        sources,
+        assembly,
+        seed,
         failedSourceOutputUsed,
       })
     : null
@@ -622,23 +671,37 @@ export const SourceCombiningDemo: React.FC = () => {
             Step 3: Assemble the request samples ({combineLabel})
           </h3>
           <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-1 text-xs">
-            <p className="text-foreground">
-              <strong>Entropy credited:</strong> {credited} bits (only sources with no failure
-              signalled, {SAMPLES_PER_REQUEST} samples &times; {DECLARED_MIN_ENTROPY_PER_SAMPLE}{' '}
-              bits each; summing two sources assumes they are independent — SP 800-90C §2.6 item 8).
+            <p className="text-foreground" data-testid="entropy-credited">
+              <strong>Entropy credited to the assembled bitstring:</strong> {credited} bits (only
+              sources with no failure signalled, {SAMPLES_PER_REQUEST} samples &times;{' '}
+              {DECLARED_MIN_ENTROPY_PER_SAMPLE} bits each; summing two sources assumes they are
+              independent and concatenated — SP 800-90C §2.6 item 8
+              {assembly !== 'concat' && includedCount === 2
+                ? '; with this assembly only the larger source is credited'
+                : ''}
+              ).
             </p>
+            {sourceAZeroed && (
+              <p className="text-status-warning">
+                Source A counts 0 bits: you stated in Step 6 that the adversary can{' '}
+                {adversaryControl === 'choose' ? 'choose' : 'observe'} its output, and output the
+                adversary picked or has seen is not unpredictable to it.
+              </p>
+            )}
             <p className="text-muted-foreground">
               Instantiating a DRBG at security strength {TARGET_SECURITY_STRENGTH} from an entropy
-              source needs at least {REQUIRED_ENTROPY} bits (3s/2, SP 800-90C §2.6 item 11):{' '}
+              source needs at least {REQUIRED_ENTROPY} bits (3s/2, SP 800-90C §2.6 item 11).
+              Delivered unconditioned, this bitstring would{' '}
               <strong
                 className={
                   credited >= REQUIRED_ENTROPY ? 'text-status-success' : 'text-status-error'
                 }
               >
-                {credited >= REQUIRED_ENTROPY ? 'met' : 'not met'}
+                {credited >= REQUIRED_ENTROPY ? 'meet it' : 'not meet it'}
               </strong>
-              . A 256-bit full-entropy conditioned block needs {FULL_ENTROPY_256} bits (output_len +
-              64, SP 800-90C §3.2.2.2):{' '}
+              ; one {conditionerBound.outputBits}-bit conditioned block (Step 4) never can. A
+              256-bit full-entropy conditioned block needs {FULL_ENTROPY_256} bits (output_len + 64,
+              SP 800-90C §3.2.2.2):{' '}
               <strong
                 className={
                   credited >= FULL_ENTROPY_256 ? 'text-status-success' : 'text-status-error'
@@ -746,10 +809,19 @@ export const SourceCombiningDemo: React.FC = () => {
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   {CONDITIONING_DESCRIPTIONS[conditioningMode]}
                 </p>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Conditioning cannot add entropy: this 256-bit block holds at most the {credited}{' '}
-                  bits credited above
-                  {failedSourceOutputUsed ? ' (the failed source adds nothing creditable)' : ''}.
+                <p
+                  className="text-xs text-muted-foreground leading-relaxed"
+                  data-testid="conditioned-credit"
+                >
+                  Conditioning cannot add entropy (SP 800-90B §3.1.5: the output entropy &ldquo;is
+                  at most h<sub>in</sub>&rdquo;). This block is credited {conditionedBlockBits}{' '}
+                  bits: the smaller of its input entropy ({credited} bits from a {assembledBits}-bit
+                  input), its {conditionerBound.outputBits}-bit output length and the
+                  vetted-function estimate (SP 800-90B §3.1.5.1.2, Table 1)
+                  {failedSourceOutputUsed ? '; the failed source adds nothing creditable' : ''}.
+                  {conditioningMode === 'aes-cmac'
+                    ? ' Only one 128-bit CMAC call is credited; the second demo block adds nothing.'
+                    : ''}
                 </p>
               </div>
             </>
@@ -858,7 +930,7 @@ export const SourceCombiningDemo: React.FC = () => {
             onChange={(v) => setIndependence(v as Independence)}
           />
           <AssumptionPicker
-            label="Adversary control over the compromised source"
+            label="Adversary control over Source A"
             items={ADVERSARY_ITEMS}
             value={adversaryControl}
             onChange={(v) => setAdversaryControl(v as AdversaryControl)}
@@ -887,10 +959,20 @@ export const SourceCombiningDemo: React.FC = () => {
             value={rbgClass}
             onChange={(v) => setRbgClass(v as RbgClass)}
           />
+          <AssumptionPicker
+            label="What seeds the DRBG?"
+            items={SEED_ITEMS}
+            value={seedPath}
+            onChange={(v) => setSeedPath(v as SeedPath)}
+          />
         </div>
-        <p className="text-xs text-muted-foreground">
-          From the pipeline: {credited} bits of entropy credited to the conditioner input
-          (conditioner output block 256 bits);{' '}
+        <p className="text-xs text-muted-foreground" data-testid="pipeline-summary">
+          From the pipeline: {credited} bits credited to the {assembledBits}-bit assembled
+          bitstring;{' '}
+          {seedPath === 'conditioned-block'
+            ? `one ${conditionerBound.label} block (${conditionerBound.outputBits}-bit output) carries at most ${seedEntropyBits} bits to the DRBG`
+            : `delivered unconditioned, it carries ${seedEntropyBits} bits to the DRBG`}
+          ;{' '}
           {failedSourceOutputUsed
             ? 'a failed source’s samples ARE being used.'
             : 'no failed source’s samples are used.'}

@@ -590,12 +590,12 @@ export const RandomGenerationDemo: React.FC = () => {
               </div>
             </div>
             <p className="text-[10px] text-muted-foreground leading-snug border-t border-border/40 pt-2">
-              NIST SP 800-90A Rev. 1 §11 approves only{' '}
-              <strong className="text-foreground">CTR_DRBG</strong>,{' '}
-              <strong className="text-foreground">Hash_DRBG</strong>, and{' '}
-              <strong className="text-foreground">HMAC_DRBG</strong> for cryptographic use. LCGs are
-              explicitly excluded — they fail the backtracking-resistance and prediction-resistance
-              requirements of the standard.
+              NIST SP 800-90A Rev. 1 §10 specifies three DRBG mechanisms:{' '}
+              <strong className="text-foreground">Hash_DRBG</strong>,{' '}
+              <strong className="text-foreground">HMAC_DRBG</strong> and{' '}
+              <strong className="text-foreground">CTR_DRBG</strong>. An LCG is not one of them, so
+              it is not an approved DRBG. Each state is a fixed linear function of the previous one,
+              so anyone who learns the state can compute every later output.
             </p>
             <div className="border-t border-border/50 pt-2 space-y-1.5">
               <div className="flex items-baseline gap-2 text-xs font-mono flex-wrap">

@@ -244,3 +244,75 @@ export async function runHmacDrbgKatSuite(cases: HmacDrbgKatCase[]): Promise<Hma
   }
   return out
 }
+
+// ── One-bit sabotage variants (plan P0.2) ───────────────────────────────────
+
+export type SabotagedInput =
+  | 'entropy input'
+  | 'nonce'
+  | 'personalization string'
+  | 'generate additional input'
+  | 'reseed entropy input'
+  | 'reseed additional input'
+  | 'prediction-resistance entropy input'
+
+export interface HmacDrbgSabotage {
+  caseId: string
+  input: SabotagedInput
+  mutated: HmacDrbgKatCase
+}
+
+/** Flip the least-significant bit of the first byte of a non-empty hex string. */
+function flipFirstBit(hex: string): string {
+  const b = hexToBytes(hex)
+  b[0] ^= 0x01
+  return bytesToHex(b)
+}
+
+/**
+ * Every one-bit mutation this vector allows: one variant per non-empty input
+ * (entropy input, nonce, personalization string, additional input, reseed
+ * material, prediction-resistance entropy). A correct HMAC_DRBG must produce
+ * a DIFFERENT answer for each; the UI and hmacDrbg.test.ts both use this list.
+ */
+export function sabotageVariants(base: HmacDrbgKatCase): HmacDrbgSabotage[] {
+  const out: HmacDrbgSabotage[] = []
+  const add = (input: SabotagedInput, mutate: (c: HmacDrbgKatCase) => void) => {
+    const c: HmacDrbgKatCase = JSON.parse(JSON.stringify(base))
+    mutate(c)
+    out.push({ caseId: base.id, input, mutated: c })
+  }
+  if (base.entropyInput)
+    add('entropy input', (c) => (c.entropyInput = flipFirstBit(c.entropyInput)))
+  if (base.nonce) add('nonce', (c) => (c.nonce = flipFirstBit(c.nonce)))
+  if (base.personalizationString)
+    add(
+      'personalization string',
+      (c) => (c.personalizationString = flipFirstBit(c.personalizationString))
+    )
+  const genIdx = base.steps.findIndex((s) => s.op === 'generate' && s.additionalInput)
+  if (genIdx >= 0)
+    add('generate additional input', (c) => {
+      const s = c.steps[genIdx]
+      s.additionalInput = flipFirstBit(s.additionalInput)
+    })
+  const rsIdx = base.steps.findIndex((s) => s.op === 'reseed')
+  if (rsIdx >= 0) {
+    add('reseed entropy input', (c) => {
+      const s = c.steps[rsIdx] as Extract<HmacDrbgKatStep, { op: 'reseed' }>
+      s.entropyInput = flipFirstBit(s.entropyInput)
+    })
+    if (base.steps[rsIdx].additionalInput)
+      add('reseed additional input', (c) => {
+        const s = c.steps[rsIdx]
+        s.additionalInput = flipFirstBit(s.additionalInput)
+      })
+  }
+  const prIdx = base.steps.findIndex((s) => s.op === 'generate' && s.entropyInput)
+  if (prIdx >= 0)
+    add('prediction-resistance entropy input', (c) => {
+      const s = c.steps[prIdx] as Extract<HmacDrbgKatStep, { op: 'generate' }>
+      s.entropyInput = flipFirstBit(s.entropyInput!)
+    })
+  return out
+}

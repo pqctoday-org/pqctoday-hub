@@ -86,7 +86,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     countermeasures: [
       'Use masked implementations (first-order or higher-order masking of NTT operations)',
       'Enable constant-time polynomial arithmetic; avoid branch-dependent execution',
-      'Deploy NIST SP 800-90B compliant DRBG for all randomness',
+      'Draw all randomness from an SP 800-90A DRBG seeded by an SP 800-90B-validated entropy source',
       'Use FIPS 140-3 validated modules with CAVP/ACVP certification',
       'Source key-generation implementations only from vetted, reproducible builds — a kleptographic backdoor is invisible in the algorithm spec and only auditable in the actual code',
     ],
@@ -558,7 +558,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     ],
     countermeasures: [
       'Use a standards-compliant combiner (RFC 9180 HPKE or TLS 1.3 hybrid draft)',
-      'Ensure both components use independent randomness from a NIST SP 800-90B DRBG',
+      'Ensure both components draw independent randomness from an SP 800-90A DRBG seeded by an SP 800-90B-validated entropy source',
       'Apply ML-KEM masking countermeasures to the PQC component',
       'Validate ECDH public keys (point-on-curve, cofactor check) before use',
     ],
@@ -662,7 +662,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       },
     ],
     countermeasures: [
-      'Use NIST SP 800-90B compliant DRBG (CTR_DRBG, HMAC_DRBG, or Hash_DRBG)',
+      'Use an SP 800-90A Rev. 1 DRBG (CTR_DRBG, HMAC_DRBG or Hash_DRBG) seeded by an SP 800-90B-validated entropy source',
       'Zeroize all key material after use (memset_s or explicit_bzero)',
       'Follow OWASP Cryptographic Failures guidance for integration patterns',
       'Use FIPS 140-3 validated cryptographic modules in production',
