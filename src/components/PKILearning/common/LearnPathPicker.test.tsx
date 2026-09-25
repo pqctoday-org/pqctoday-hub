@@ -15,6 +15,8 @@ import { EmbedProvider } from '@/embed/EmbedProvider'
 import { useModuleStore } from '@/store/useModuleStore'
 import { ModuleShell, type WorkshopPart } from './ModuleShell'
 import { LearnSection } from './LearnSection'
+import { PathScopedContent } from './LearnPathPicker'
+import { useLearnPathFilter } from './useLearnPath'
 import { PATH_FIXTURE } from '../manifest/__fixtures__/learnPathFixture'
 import emv from '../modules/EMVPaymentPQC/manifest'
 import hsm from '../modules/HsmPqc/manifest'
@@ -26,6 +28,9 @@ vi.mock('../manifest/registry', async (importOriginal) => {
   const { PATH_FIXTURE: fixture } = await import('../manifest/__fixtures__/learnPathFixture')
   return { ...actual, MANIFEST_BY_ID: { ...actual.MANIFEST_BY_ID, [fixture.id]: fixture } }
 })
+
+const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
+vi.mock('@/hooks/useIsMobileShell', () => ({ useIsMobileShell: mockUseIsMobileShell }))
 
 const Probe = () => <div data-testid="search">{useLocation().search}</div>
 
@@ -45,6 +50,7 @@ const picker = () => within(screen.getByTestId('learn-path-picker'))
 beforeEach(() => {
   window.history.replaceState(null, '', '/')
   useModuleStore.getState().resetProgress()
+  mockUseIsMobileShell.mockReturnValue(false)
 })
 
 describe('LearnPathPicker', () => {
@@ -241,5 +247,60 @@ describe('LearnSection under a learn path', () => {
     act(() => useModuleStore.getState().setActiveLearnPath(PATH_FIXTURE.id, 'b'))
     expect(document.querySelector('[data-section-id="b-1"]')).not.toBeNull()
     expect(document.querySelector('[data-section-id="a-1"]')).toBeNull()
+  })
+})
+
+const EXERCISES = [
+  { id: 'shared-ex', title: 'Shared exercise' },
+  { id: 'a-ex', title: 'A exercise', paths: ['a'] },
+  { id: 'b-ex', title: 'B exercise', paths: ['b'] },
+]
+const ExerciseList = () => (
+  <ul>
+    {useLearnPathFilter(EXERCISES).map((e) => (
+      <li key={e.id}>{e.title}</li>
+    ))}
+  </ul>
+)
+
+describe('exercise / content scoping inside ModuleShell', () => {
+  it('useLearnPathFilter and PathScopedContent follow the picker', () => {
+    renderAt(
+      '/learn/ws0-path-fixture',
+      <ModuleShell
+        manifest={PATH_FIXTURE}
+        learn={
+          <PathScopedContent paths={['b']}>
+            <p>B-only aside</p>
+          </PathScopedContent>
+        }
+        exercises={<ExerciseList />}
+      />
+    )
+    fireEvent.click(screen.getByRole('tab', { name: 'Exercises' }))
+    expect(screen.getAllByRole('listitem').map((li) => li.textContent)).toEqual([
+      'Shared exercise',
+      'A exercise',
+      'B exercise',
+    ])
+    fireEvent.click(picker().getByRole('button', { name: /Path A/ }))
+    expect(screen.getAllByRole('listitem').map((li) => li.textContent)).toEqual([
+      'Shared exercise',
+      'A exercise',
+    ])
+    fireEvent.click(screen.getByRole('tab', { name: 'Learn' }))
+    expect(screen.queryByText('B-only aside')).not.toBeInTheDocument()
+    fireEvent.click(picker().getByRole('button', { name: /Path B/ }))
+    expect(screen.getByText('B-only aside')).toBeInTheDocument()
+  })
+})
+
+describe('phone shell', () => {
+  it('renders the picker and scopes the section checklist to the active path', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderAt('/learn/emv-payment-pqc', <ModuleShell manifest={emv} learn={<div>L</div>} />)
+    expect(screen.getByText('0/12 sections read')).toBeInTheDocument()
+    fireEvent.click(picker().getByRole('button', { name: /Retail & E-Commerce/ }))
+    expect(screen.getByText('0/4 sections read')).toBeInTheDocument()
   })
 })
