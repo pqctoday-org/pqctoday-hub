@@ -748,6 +748,7 @@ tools/
 !/tools/
 /tools/*
 !/tools/acvp-native/
+/tools/acvp-native/__pycache__/
 # ...but allow Business Center tool components (same dir name, different purpose)
 !src/components/BusinessCenter/tools/
 

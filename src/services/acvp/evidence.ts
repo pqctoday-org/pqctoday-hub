@@ -3,13 +3,13 @@
  * Evidence sidecar (F-6): everything PQC Today knows about a run that is NOT
  * part of the ACVP protocol response — engine identity, timestamps, per-test
  * dispositions, the unsupported list and the required disclaimers. It has its
- * own schema (schemas/evidence.schema.json) and never touches response.json.
+ * own schema (schemas/evidence.v<N>.schema.json, selected by evidenceVersion in schemas/evidenceSchemas.ts) and never touches response.json.
  *
  * It carries NO vector payload: the prompt and response are identified by
  * SHA-256 only, so the sidecar can be shared without re-distributing
  * possibly-controlled lab data.
  */
-import evidenceSchema from './schemas/evidence.schema.json'
+import { currentEvidenceSchema } from './schemas/evidenceSchemas'
 import type { AcvpPromptIR, JsonObject } from './ir'
 import { VENDOR_DEFINED_MECHANISMS, type CaseResult, type EngineIdentity } from './dispatch'
 import type { GoldenComparison } from './compare'
@@ -17,7 +17,7 @@ import type { PinnedVectorSetSchema } from './schemas/registry'
 import { validateAgainstSchema } from './schemaValidator'
 import fixtureProvenance from './__fixtures__/nist-acvp-server/PROVENANCE.json'
 
-export const EVIDENCE_VERSION = 'pqctoday.acvp-evidence/1'
+export const EVIDENCE_VERSION = 'pqctoday.acvp-evidence/2'
 
 /** Plan §2.2, first required disclaimer — verbatim. */
 export const DISCLAIMER_GENERAL =
@@ -163,7 +163,7 @@ export const buildEvidence = (inp: EvidenceInput): JsonObject => {
       : null,
   }
 
-  const diagnostics = validateAgainstSchema(evidenceSchema as Record<string, unknown>, evidence)
+  const diagnostics = validateAgainstSchema(currentEvidenceSchema(), evidence)
   if (diagnostics.length > 0) {
     throw new Error(
       `internal: evidence violates its schema: ${diagnostics.map((d) => `${d.path} ${d.reason}`).join('; ')}`

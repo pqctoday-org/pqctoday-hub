@@ -6,7 +6,8 @@
  * incl. OpenSSL), how (acceleration, entropy source, runner) and on which
  * inputs (fixture bundle manifest hash).
  *
- * executionEnvironment.schema.json is the machine contract (shape only; every
+ * executionEnvironment.v<N>.schema.json (selected by the record's own
+ * envVersion via ENVIRONMENT_SCHEMAS; pinned files, never edited) is the machine contract (shape only; every
  * identity field is nullable so a runner never has to invent a value). This
  * module decides PUBLISHABILITY: a run whose record leaves any
  * IDENTITY_REQUIREMENTS entry unmet is `publishable: false`, with the exact
@@ -19,11 +20,21 @@
  * non-publishable. (Signing is not implemented; the hash makes tampering
  * detectable relative to a published envId, nothing more.)
  */
-import schema from './executionEnvironment.schema.json'
+import schemaV1 from './executionEnvironment.v1.schema.json'
 import { canonicalJson, sha256Hex } from '../../services/acvp/ir'
 import { validateAgainstSchema, type SchemaDiagnostic } from '../../services/acvp/schemaValidator'
 
 export const EXECUTION_ENVIRONMENT_VERSION = 'pqctoday.execution-environment/1'
+
+/**
+ * Every ExecutionEnvironment schema version, pinned. A record is validated
+ * against the schema of ITS OWN envVersion, so a frozen run stays valid after
+ * the record shape evolves. A new shape = a new executionEnvironment.v<N>.schema.json
+ * + an entry here (+ its identity requirements); existing files are never edited.
+ */
+export const ENVIRONMENT_SCHEMAS: Readonly<Record<string, Record<string, unknown>>> = {
+  'pqctoday.execution-environment/1': schemaV1 as Record<string, unknown>,
+}
 
 export type TargetClass = 'wasm' | 'native' | 'board'
 export type AccelerationState = 'none' | 'enabled' | 'unknown'
@@ -157,7 +168,7 @@ export const IDENTITY_REQUIREMENTS: readonly IdentityRequirement[] = [
 ]
 
 export interface EnvironmentValidation {
-  /** Shape violations against executionEnvironment.schema.json. */
+  /** Shape violations against the schema of the record's own envVersion. */
   schemaDiagnostics: SchemaDiagnostic[]
   /** true iff envId equals the recomputed hash. */
   envIdValid: boolean
@@ -177,8 +188,18 @@ export const computeEnvId = async (record: Record<string, unknown>): Promise<str
 export const validateExecutionEnvironment = async (
   record: unknown
 ): Promise<EnvironmentValidation> => {
-  const schemaDiagnostics = validateAgainstSchema(schema as Record<string, unknown>, record)
   const obj = (record ?? {}) as Record<string, unknown>
+  const schema =
+    typeof obj.envVersion === 'string' ? ENVIRONMENT_SCHEMAS[obj.envVersion] : undefined
+  const schemaDiagnostics: SchemaDiagnostic[] = schema
+    ? validateAgainstSchema(schema, record)
+    : [
+        {
+          path: '$.envVersion',
+          keyword: 'version',
+          reason: `unknown envVersion ${JSON.stringify(obj.envVersion)} (known: ${Object.keys(ENVIRONMENT_SCHEMAS).join(', ')})`,
+        },
+      ]
   const recomputedEnvId = await computeEnvId(obj)
   const envIdValid = obj.envId === recomputedEnvId
   // Identity rules only make sense on a well-shaped record.

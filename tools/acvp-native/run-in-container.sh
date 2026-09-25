@@ -9,7 +9,11 @@
 # Nothing is built here — building engines is a separate, recorded step
 # (see tools/acvp-native/README.md).
 #
-# usage: run-in-container.sh --container NAME --module /path/in/container.so \
+# --module-from-host PATH copies a host-side engine .so into the private staging
+# dir first (e.g. an engine built earlier and kept outside the container) and
+# uses that copy; its SHA-256 is what the runner records.
+#
+# usage: run-in-container.sh --container NAME (--module /path/in/container.so | --module-from-host PATH) \
 #          --engine cpp|rust --target TARGET_ID --label "TARGET LABEL" \
 #          --run evidence/acvp-xplat/<runId> --bundles <host dir with cpp/<fixture>/> \
 #          [--image-name N --image-id SHA] [--host-machine TEXT] \
@@ -23,6 +27,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --container) CONTAINER="$2"; shift 2 ;;
     --module) MODULE="$2"; shift 2 ;;
+    --module-from-host) MODULE_HOST="$2"; shift 2 ;;
     --engine) ENGINE="$2"; shift 2 ;;
     --target) TARGET="$2"; shift 2 ;;
     --label) LABEL="$2"; shift 2 ;;
@@ -36,13 +41,18 @@ while [[ $# -gt 0 ]]; do
     *) echo "unknown argument: $1" >&2; exit 64 ;;
   esac
 done
-: "${CONTAINER:?}" "${MODULE:?}" "${ENGINE:?}" "${TARGET:?}" "${LABEL:?}" "${RUN:?}" "${BUNDLES:?}"
+: "${CONTAINER:?}" "${ENGINE:?}" "${TARGET:?}" "${LABEL:?}" "${RUN:?}" "${BUNDLES:?}"
 
 T="/tmp/acvp-h-$$"
 cleanup() { docker exec "$CONTAINER" rm -rf "$T" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 
-docker exec "$CONTAINER" mkdir -p "$T/runner" "$T/bundles" "$T/out"
+docker exec "$CONTAINER" mkdir -p "$T/runner" "$T/bundles" "$T/out" "$T/engine"
+if [[ -n "${MODULE_HOST:-}" ]]; then
+  MODULE="$T/engine/$(basename "$MODULE_HOST")"
+  docker cp -q "$MODULE_HOST" "$CONTAINER:$MODULE"
+fi
+: "${MODULE:?--module or --module-from-host is required}"
 for f in acvp_native_runner.py pkcs11_constants.py hub_contract.json; do
   docker cp -q "$HERE/$f" "$CONTAINER:$T/runner/$f"
 done

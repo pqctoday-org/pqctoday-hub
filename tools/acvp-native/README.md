@@ -26,7 +26,13 @@ softhsmv3 C++ `libsofthsmv3.so` or the Rust `libsofthsmrustv3.so`. It writes the
   - For decapsulation: `C_CreateObject` → `C_DecapsulateKey` → `C_GetAttributeValue(CKA_VALUE)`.
   - For verification: `C_CreateObject` → `C_MessageVerifyInit(CK_SIGN_ADDITIONAL_CONTEXT)` →
     `C_VerifyMessage` → `C_MessageVerifyFinal`. This covers pure ML-DSA and HashML-DSA pre-hash.
+  - For ML-DSA externalMu, which uses the **vendor-defined** `CKM_ML_DSA_EXTERNAL_MU`
+    (`0x0000403c`) and is not PKCS#11 v3.2: `C_VerifyInit` → `C_Verify(mu, sig)`.
   - The runner does not seed an RNG and has no test hooks. It passes `pReserved = NULL`.
+- **Output formats are versioned.** The runner writes `evidence.json` as
+  `pqctoday.acvp-evidence/2` with `codePath: "native"`. Every evidence version, environment
+  version and comparator-policy version stays pinned. A frozen run is always validated
+  against the versions it declares, never against whatever is current.
 - **Constants are generated, not copied.** `pkcs11_constants.py` and `hub_contract.json`
   (disclaimers, pinned schema metadata, known public fixtures) are generated from the hub's
   TypeScript tables. Run `npm run gen:acvp-native-constants` to regenerate them. Run the
@@ -58,6 +64,9 @@ softhsmv3 C++ `libsofthsmv3.so` or the Rust `libsofthsmrustv3.so`. It writes the
      --image-name rust:1 --image-id sha256:… --host-machine "arm64 (…)" \
      --acceleration none --acceleration-detail "no hardware accelerator"
    ```
+
+   To use an engine kept on the host instead, for example one built earlier and verified
+   by SHA-256, pass `--module-from-host <path>` in place of `--module`.
 
    The script stages the runner and the bundle in a private `/tmp/acvp-h-<pid>` directory
    inside the container. It copies `response.json`, `evidence.json` and

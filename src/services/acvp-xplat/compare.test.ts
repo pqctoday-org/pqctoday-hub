@@ -67,9 +67,22 @@ const byName = (fixtures: FixtureRef[], name: string) => fixtures.find((f) => f.
 const target = (inputs: TargetInput[], id: string) => inputs.find((i) => i.target.id === id)!
 
 describe('acvp-xplat comparator (WS-H)', () => {
-  it('the committed matrix and divergence set are exactly what the committed evidence produces', async () => {
-    const rendered = await generateRun(repo, RUN, '2026-09-24')
-    expect(checkRun(RUN, rendered)).toEqual([])
+  it.each(['2026-09-24', '2026-09-24b'])(
+    'frozen run %s: the committed matrix and divergence set are exactly what its evidence produces',
+    async (runId) => {
+      const dir = path.join(repo, 'evidence/acvp-xplat', runId)
+      expect(checkRun(dir, await generateRun(repo, dir, runId))).toEqual([])
+    }
+  )
+
+  it('each frozen run is judged under its own pinned formats', async () => {
+    const v1 = await generateRun(repo, RUN, '2026-09-24')
+    const dirB = path.join(repo, 'evidence/acvp-xplat/2026-09-24b')
+    const v2 = await generateRun(repo, dirB, '2026-09-24b')
+    expect(v1.output.matrix.comparatorPolicyVersion).toBe('pqctoday.acvp-comparator-policy/1')
+    expect(v2.output.matrix.comparatorPolicyVersion).toBe('pqctoday.acvp-comparator-policy/2')
+    expect(v1.output.matrix.totals['linux-arm64-cpp'].pass).toBe(112)
+    expect(v2.output.matrix.totals['linux-arm64-cpp'].pass).toBe(157)
   })
 
   it('keeps all five statuses separate in every total', async () => {
@@ -236,6 +249,14 @@ describe('acvp-xplat comparator (WS-H)', () => {
       index[0] = { ...index[0], kind: index[0].kind === 'execute' ? 'unsupported' : 'execute' }
       writeFileSync(idxPath, `${JSON.stringify(index, null, 2)}\n`)
       await expect(loadFixtureRefs(repo, tmp)).rejects.toThrow(/plan-index\.json does not match/)
+      // ...also for a fixture today's live pipeline no longer reproduces (ML-DSA, after externalMu).
+      cpSync(path.join(RUN, 'bundles', fx, 'plan-index.json'), idxPath)
+      const kemIdx = path.join(tmp, 'bundles', 'ML-KEM-encapDecap-FIPS203', 'plan-index.json')
+      const kem = JSON.parse(readFileSync(kemIdx, 'utf8')) as Array<Record<string, unknown>>
+      kem[0] = { ...kem[0], kind: kem[0].kind === 'execute' ? 'unsupported' : 'execute' }
+      writeFileSync(kemIdx, `${JSON.stringify(kem, null, 2)}\n`)
+      await expect(loadFixtureRefs(repo, tmp)).rejects.toThrow(/plan-index\.json does not match/)
+      cpSync(path.join(RUN, 'bundles', 'ML-KEM-encapDecap-FIPS203', 'plan-index.json'), kemIdx)
       // 2. manifest pins a plan today's rules no longer produce → frozen index is used, noted.
       cpSync(path.join(RUN, 'bundles', fx, 'plan-index.json'), idxPath)
       const mPath = path.join(tmp, 'bundles', fx, 'manifest.json')
