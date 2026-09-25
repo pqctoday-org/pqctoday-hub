@@ -244,6 +244,24 @@
       "owner": "unassigned",
       "status": "open",
       "scope": "Rust (wasm)"
+    },
+    {
+      "id": "rust-pbkdf2-prf-limited",
+      "title": "Rust engine's CKM_PKCS5_PBKD2 implements only the HMAC-SHA-256/384/512 PRFs",
+      "detail": "PBKDF 1.0 (pbkdf2_acvp_test, workbench §18b): the pinned NIST sample registers HMAC-SHA2-224 only. The Rust engine answers CKP_PKCS5_PBKD2_HMAC_SHA224 with CKR_ARGUMENTS_BAD (rust/src/ffi.rs ~11138 at 7795799b: prf match arms SHA256/384/512 only, every other PRF -> CKR_ARGUMENTS_BAD, a code that does not name the parameter); CKM_PKCS5_PBKD2 is advertised without any PRF restriction. All 5 Rust rows fail; C++ passes all 5, including the 1-iteration case that the Rust iteration floor (pbkdf2-min-iterations-divergence) would refuse anyway.",
+      "planItem": "E (PBKDF2) / G-7 / G-9",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)"
+    },
+    {
+      "id": "kmac-verify-ignores-output-length",
+      "title": "KMAC C_Verify accepts only the default MAC length, whatever ulOutputLen says",
+      "detail": "KMAC-128 1.0 MVT (kmac_acvp_test, workbench §35b): the valid case tc799 has a 478-byte MAC; both engines accept CK_PQCTODAY_KMAC_PARAMS.ulOutputLen = 478 at C_VerifyInit but C_Verify returns CKR_SIGNATURE_LEN_RANGE because the signature length is checked against the mechanism's fixed default (32 bytes for KMAC-128; rust/src/ffi.rs ~7295-7336 at 7795799b lists CKM_KMAC_128/256 among the fixed-length MACs). The invalid case tc771 (a 32-byte MAC) is rejected with CKR_SIGNATURE_INVALID on both. The pinned KMAC-256 sample has no byte-aligned non-XOF case, so KMAC-256 still has no NIST case (the older kmac_test KMAC256 case stays quarantined). Vendor mechanism, both engines.",
+      "planItem": "E (KMAC) / G-9",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust (wasm) — vendor mechanism"
     }
   ]
 }

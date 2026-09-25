@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "8380b17f9d0f90eeb5204596bef66cf737a30a4235f7b3a0946af96a42945025",
-    "registrySha256": "e77ee1324c4730e2904d0f3159fbadb33f086057e71b63b519f7249c2c727954"
+    "manifestSha256": "b27482b9c35439bf8a66aae148f8a8aaa40c67bbb726cd62b0371f0d95cc21c4",
+    "registrySha256": "de496e306d12b903b3a5087c6e9a8c38d23639439241ebeb962d165de2c512da"
   },
   "records": {
     "acvp.01#aesgcm_test#/testGroups/0/tests/0": {
@@ -23714,6 +23714,216 @@
         "field-drop: Intermediate PRK not carried."
       ]
     },
+    "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/0": {
+      "id": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/0",
+      "test": "acvp.18b",
+      "title": "PBKDF2 NIST reference samples (PBKDF 1.0, HMAC-SHA2-224 PRF): derived-key byte-match, incl. one 1-iteration case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "pbkdf2_acvp_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "PBKDF 1.0",
+      "operation": "derive",
+      "testType": "AFT",
+      "parameters": {
+        "hmacAlg": "SHA2-224",
+        "iterationCount": 1612,
+        "keyLen": 2048,
+        "passwordBytes": 29,
+        "saltBytes": 19
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 4
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/PBKDF-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/PBKDF-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_PKCS5_PBKD2 derive"
+      ],
+      "limitations": [
+        "Upstream: PBKDF 1.0 AFT (PBKDF2, HMAC-SHA2-224) → executed here: C_DeriveKey(CKM_PKCS5_PBKD2) + CKA_VALUE byte-compared",
+        "subset: 5 case(s) (upstream tcId 4, 7, 17, 20, 37) taken from upstream tgId 1 (50 case(s) in the upstream file).",
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Among cases with iterationCount >= 1000: the fewest and the most iterations, the shortest and the longest derived key (ties by lowest tcId); plus the case with the fewest iterations overall (iterationCount 1) so the documented engine policy divergence (the Rust engine refuses fewer than 1000 iterations; open gap pbkdf2-min-iterations-divergence) stays visible. The pinned sample registers HMAC-SHA2-224 only; other PRFs are not claimed.",
+        "The Rust engine implements only the HMAC-SHA-256/384/512 PRFs and refuses fewer than 1000 iterations (open gaps rust-pbkdf2-prf-limited, pbkdf2-min-iterations-divergence); its rows are recorded as fails."
+      ]
+    },
+    "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/1": {
+      "id": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/1",
+      "test": "acvp.18b",
+      "title": "PBKDF2 NIST reference samples (PBKDF 1.0, HMAC-SHA2-224 PRF): derived-key byte-match, incl. one 1-iteration case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "pbkdf2_acvp_test#/testGroups/0/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "PBKDF 1.0",
+      "operation": "derive",
+      "testType": "AFT",
+      "parameters": {
+        "hmacAlg": "SHA2-224",
+        "iterationCount": 1045,
+        "keyLen": 496,
+        "passwordBytes": 19,
+        "saltBytes": 34
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 7
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/PBKDF-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/PBKDF-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_PKCS5_PBKD2 derive"
+      ],
+      "limitations": [
+        "Upstream: PBKDF 1.0 AFT (PBKDF2, HMAC-SHA2-224) → executed here: C_DeriveKey(CKM_PKCS5_PBKD2) + CKA_VALUE byte-compared",
+        "subset: 5 case(s) (upstream tcId 4, 7, 17, 20, 37) taken from upstream tgId 1 (50 case(s) in the upstream file).",
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Among cases with iterationCount >= 1000: the fewest and the most iterations, the shortest and the longest derived key (ties by lowest tcId); plus the case with the fewest iterations overall (iterationCount 1) so the documented engine policy divergence (the Rust engine refuses fewer than 1000 iterations; open gap pbkdf2-min-iterations-divergence) stays visible. The pinned sample registers HMAC-SHA2-224 only; other PRFs are not claimed.",
+        "The Rust engine implements only the HMAC-SHA-256/384/512 PRFs and refuses fewer than 1000 iterations (open gaps rust-pbkdf2-prf-limited, pbkdf2-min-iterations-divergence); its rows are recorded as fails."
+      ]
+    },
+    "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/2": {
+      "id": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/2",
+      "test": "acvp.18b",
+      "title": "PBKDF2 NIST reference samples (PBKDF 1.0, HMAC-SHA2-224 PRF): derived-key byte-match, incl. one 1-iteration case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "pbkdf2_acvp_test#/testGroups/0/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "PBKDF 1.0",
+      "operation": "derive",
+      "testType": "AFT",
+      "parameters": {
+        "hmacAlg": "SHA2-224",
+        "iterationCount": 10000,
+        "keyLen": 1008,
+        "passwordBytes": 57,
+        "saltBytes": 60
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 17
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/PBKDF-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/PBKDF-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_PKCS5_PBKD2 derive"
+      ],
+      "limitations": [
+        "Upstream: PBKDF 1.0 AFT (PBKDF2, HMAC-SHA2-224) → executed here: C_DeriveKey(CKM_PKCS5_PBKD2) + CKA_VALUE byte-compared",
+        "subset: 5 case(s) (upstream tcId 4, 7, 17, 20, 37) taken from upstream tgId 1 (50 case(s) in the upstream file).",
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Among cases with iterationCount >= 1000: the fewest and the most iterations, the shortest and the longest derived key (ties by lowest tcId); plus the case with the fewest iterations overall (iterationCount 1) so the documented engine policy divergence (the Rust engine refuses fewer than 1000 iterations; open gap pbkdf2-min-iterations-divergence) stays visible. The pinned sample registers HMAC-SHA2-224 only; other PRFs are not claimed.",
+        "The Rust engine implements only the HMAC-SHA-256/384/512 PRFs and refuses fewer than 1000 iterations (open gaps rust-pbkdf2-prf-limited, pbkdf2-min-iterations-divergence); its rows are recorded as fails."
+      ]
+    },
+    "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3": {
+      "id": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3",
+      "test": "acvp.18b",
+      "title": "PBKDF2 NIST reference samples (PBKDF 1.0, HMAC-SHA2-224 PRF): derived-key byte-match, incl. one 1-iteration case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "pbkdf2_acvp_test#/testGroups/0/tests/3",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "PBKDF 1.0",
+      "operation": "derive",
+      "testType": "AFT",
+      "parameters": {
+        "hmacAlg": "SHA2-224",
+        "iterationCount": 1,
+        "keyLen": 1432,
+        "passwordBytes": 44,
+        "saltBytes": 63
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 20
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/PBKDF-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/PBKDF-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_PKCS5_PBKD2 derive"
+      ],
+      "limitations": [
+        "Upstream: PBKDF 1.0 AFT (PBKDF2, HMAC-SHA2-224) → executed here: C_DeriveKey(CKM_PKCS5_PBKD2) + CKA_VALUE byte-compared",
+        "subset: 5 case(s) (upstream tcId 4, 7, 17, 20, 37) taken from upstream tgId 1 (50 case(s) in the upstream file).",
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Among cases with iterationCount >= 1000: the fewest and the most iterations, the shortest and the longest derived key (ties by lowest tcId); plus the case with the fewest iterations overall (iterationCount 1) so the documented engine policy divergence (the Rust engine refuses fewer than 1000 iterations; open gap pbkdf2-min-iterations-divergence) stays visible. The pinned sample registers HMAC-SHA2-224 only; other PRFs are not claimed.",
+        "The Rust engine implements only the HMAC-SHA-256/384/512 PRFs and refuses fewer than 1000 iterations (open gaps rust-pbkdf2-prf-limited, pbkdf2-min-iterations-divergence); its rows are recorded as fails."
+      ]
+    },
+    "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/4": {
+      "id": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/4",
+      "test": "acvp.18b",
+      "title": "PBKDF2 NIST reference samples (PBKDF 1.0, HMAC-SHA2-224 PRF): derived-key byte-match, incl. one 1-iteration case",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "pbkdf2_acvp_test#/testGroups/0/tests/4",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "PBKDF 1.0",
+      "operation": "derive",
+      "testType": "AFT",
+      "parameters": {
+        "hmacAlg": "SHA2-224",
+        "iterationCount": 8444,
+        "keyLen": 112,
+        "passwordBytes": 33,
+        "saltBytes": 39
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 37
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/PBKDF-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/PBKDF-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_PKCS5_PBKD2 derive"
+      ],
+      "limitations": [
+        "Upstream: PBKDF 1.0 AFT (PBKDF2, HMAC-SHA2-224) → executed here: C_DeriveKey(CKM_PKCS5_PBKD2) + CKA_VALUE byte-compared",
+        "subset: 5 case(s) (upstream tcId 4, 7, 17, 20, 37) taken from upstream tgId 1 (50 case(s) in the upstream file).",
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. Among cases with iterationCount >= 1000: the fewest and the most iterations, the shortest and the longest derived key (ties by lowest tcId); plus the case with the fewest iterations overall (iterationCount 1) so the documented engine policy divergence (the Rust engine refuses fewer than 1000 iterations; open gap pbkdf2-min-iterations-divergence) stays visible. The pinned sample registers HMAC-SHA2-224 only; other PRFs are not claimed.",
+        "The Rust engine implements only the HMAC-SHA-256/384/512 PRFs and refuses fewer than 1000 iterations (open gaps rust-pbkdf2-prf-limited, pbkdf2-min-iterations-divergence); its rows are recorded as fails."
+      ]
+    },
     "acvp.19#aeskw_test#/testGroups/0/tests/0": {
       "id": "acvp.19#aeskw_test#/testGroups/0/tests/0",
       "test": "acvp.19",
@@ -25523,6 +25733,86 @@
         "operation-change: Published MAC-generation sample used as a positive verification tuple."
       ]
     },
+    "acvp.35b#kmac_acvp_test#/testGroups/0/tests/0": {
+      "id": "acvp.35b#kmac_acvp_test#/testGroups/0/tests/0",
+      "test": "acvp.35b",
+      "title": "KMAC-128 NIST reference samples: the two byte-aligned non-XOF MVT cases (customization + output length, vendor CKM_KMAC_128)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "kmac_acvp_test#/testGroups/0/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "negative",
+      "algorithm": "KMAC-128 1.0",
+      "operation": "mac-verify",
+      "testType": "MVT",
+      "parameters": {
+        "customizationBytes": 5,
+        "keyLen": 3696,
+        "macLen": 256,
+        "msgLen": 31072,
+        "xof": false
+      },
+      "upstream": {
+        "tgId": 8,
+        "tcId": 771
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KMAC-128-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KMAC-128-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_KMAC_128 verify"
+      ],
+      "limitations": [
+        "Upstream: KMAC-128 1.0 MVT (non-XOF, hex customization) → executed here: C_Verify (vendor CKM_KMAC_128 with customization and output length)",
+        "subset: 2 case(s) (upstream tcId 771, 799) taken from upstream tgId 8 (800 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Every byte-aligned (keyLen, msgLen and macLen all multiples of 8) non-XOF case in the pinned KMAC-128 sample: two cases, both in the MVT group with hex customization (one valid, one invalid). Every other group is listed in notExecuted: KMACXOF has no mechanism, and the remaining non-XOF cases use bit-oriented key/message/MAC lengths PKCS#11 cannot express. The KMAC-256 sample has no byte-aligned non-XOF case, so KMAC-256 has no NIST case here (the older kmac_test KMAC256 case stays quarantined)."
+      ]
+    },
+    "acvp.35b#kmac_acvp_test#/testGroups/0/tests/1": {
+      "id": "acvp.35b#kmac_acvp_test#/testGroups/0/tests/1",
+      "test": "acvp.35b",
+      "title": "KMAC-128 NIST reference samples: the two byte-aligned non-XOF MVT cases (customization + output length, vendor CKM_KMAC_128)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "kmac_acvp_test#/testGroups/0/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KMAC-128 1.0",
+      "operation": "mac-verify",
+      "testType": "MVT",
+      "parameters": {
+        "customizationBytes": 9,
+        "keyLen": 3936,
+        "macLen": 3824,
+        "msgLen": 3424,
+        "xof": false
+      },
+      "upstream": {
+        "tgId": 8,
+        "tcId": 799
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KMAC-128-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KMAC-128-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_KMAC_128 verify"
+      ],
+      "limitations": [
+        "Upstream: KMAC-128 1.0 MVT (non-XOF, hex customization) → executed here: C_Verify (vendor CKM_KMAC_128 with customization and output length)",
+        "subset: 2 case(s) (upstream tcId 771, 799) taken from upstream tgId 8 (800 case(s) in the upstream file).",
+        "subset: Subset policy (file _provenance.subset_policy): Every byte-aligned (keyLen, msgLen and macLen all multiples of 8) non-XOF case in the pinned KMAC-128 sample: two cases, both in the MVT group with hex customization (one valid, one invalid). Every other group is listed in notExecuted: KMACXOF has no mechanism, and the remaining non-XOF cases use bit-oriented key/message/MAC lengths PKCS#11 cannot express. The KMAC-256 sample has no byte-aligned non-XOF case, so KMAC-256 has no NIST case here (the older kmac_test KMAC256 case stays quarantined)."
+      ]
+    },
     "acvp.36#rsa_oaep_test#/testGroups/0/tests/0": {
       "id": "acvp.36#rsa_oaep_test#/testGroups/0/tests/0",
       "test": "acvp.36",
@@ -26644,6 +26934,12 @@
     "kmac128-kat-{engine}": [
       "acvp.35#kmac_test#/testGroups/1/tests/0"
     ],
+    "kmac128-nist-tg8-tc771-{engine}": [
+      "acvp.35b#kmac_acvp_test#/testGroups/0/tests/0"
+    ],
+    "kmac128-nist-tg8-tc799-{engine}": [
+      "acvp.35b#kmac_acvp_test#/testGroups/0/tests/1"
+    ],
     "mldsa-ctx-sigver-ML-DSA-44-{engine}": [
       "acvp.05b#mldsa_extended_test#/context/ML-DSA-44"
     ],
@@ -26992,6 +27288,21 @@
     ],
     "pbkdf2-kat-{engine}": [
       "acvp.17#pbkdf2_test#/testGroups/0/tests/1"
+    ],
+    "pbkdf2-nist-tg1-tc17-{engine}": [
+      "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/2"
+    ],
+    "pbkdf2-nist-tg1-tc20-{engine}": [
+      "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3"
+    ],
+    "pbkdf2-nist-tg1-tc37-{engine}": [
+      "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/4"
+    ],
+    "pbkdf2-nist-tg1-tc4-{engine}": [
+      "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/0"
+    ],
+    "pbkdf2-nist-tg1-tc7-{engine}": [
+      "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/1"
     ],
     "rsa-acvp-{engine}": [
       "acvp.03#rsapss_test#/testGroups/0/tests/0"

@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "8380b17f9d0f90eeb5204596bef66cf737a30a4235f7b3a0946af96a42945025",
-    "registrySha256": "e77ee1324c4730e2904d0f3159fbadb33f086057e71b63b519f7249c2c727954"
+    "manifestSha256": "b27482b9c35439bf8a66aae148f8a8aaa40c67bbb726cd62b0371f0d95cc21c4",
+    "registrySha256": "de496e306d12b903b3a5087c6e9a8c38d23639439241ebeb962d165de2c512da"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
@@ -3445,6 +3445,7 @@
     "acvp/hmac_sha512_test.json": "nist-acvp-reference-sample",
     "acvp/hmac_test.json": "nist-acvp-reference-sample",
     "acvp/jose-pqc-kem-jwe-kat.json": "functional-round-trip",
+    "acvp/kmac_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/kmac_test.json": "published-standard-kat",
     "acvp/mldsa_extended_test.json": "nist-acvp-reference-sample",
     "acvp/mldsa_keygen_test.json": "nist-acvp-reference-sample",
@@ -3456,6 +3457,7 @@
     "acvp/mlkem_encapdecap_val_test.json": "nist-acvp-reference-sample",
     "acvp/mlkem_keygen_test.json": "nist-acvp-reference-sample",
     "acvp/mlkem_test.json": "nist-acvp-reference-sample",
+    "acvp/pbkdf2_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/pbkdf2_test.json": "independent-oracle",
     "acvp/rsa_oaep_test.json": "independent-oracle",
     "acvp/rsa_sigver_acvp_test.json": "nist-acvp-reference-sample",

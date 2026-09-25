@@ -1068,6 +1068,21 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       'hkdf-kat-{engine}'
     ),
   ]),
+  acvp(
+    '18b',
+    '§18b (sections/kdfMacAcvp.ts)',
+    'PBKDF2 NIST reference samples (PBKDF 1.0, HMAC-SHA2-224 PRF): derived-key byte-match, incl. one 1-iteration case',
+    casesOf('pbkdf2_acvp_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_PKCS5_PBKD2', 'derive')],
+        `pbkdf2-nist-${upstreamIds(c)}-{engine}`
+      )
+    ),
+    'The Rust engine implements only the HMAC-SHA-256/384/512 PRFs and refuses fewer than 1000 iterations (open gaps rust-pbkdf2-prf-limited, pbkdf2-min-iterations-divergence); its rows are recorded as fails.'
+  ),
   acvp('19', '§19', 'AES-KW-256 wrap', [
     mc(
       'aeskw_test#/testGroups/0/tests/0',
@@ -1323,6 +1338,20 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       'kmac128-kat-{engine}'
     ),
   ]),
+  acvp(
+    '35b',
+    '§35b (sections/kdfMacAcvp.ts)',
+    'KMAC-128 NIST reference samples: the two byte-aligned non-XOF MVT cases (customization + output length, vendor CKM_KMAC_128)',
+    casesOf('kmac_acvp_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x('CKM_KMAC_128', 'verify')],
+        `kmac128-nist-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
   acvp('36', '§36', 'RSA-OAEP (SHA-256) decrypt', [
     mc(
       'rsa_oaep_test#/testGroups/0/tests/0',
