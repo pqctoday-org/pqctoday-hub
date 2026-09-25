@@ -580,7 +580,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
                       <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 flex-wrap">
                         <span>{lib.cmvpCertNumber}</span>
                         <SampleDataBadge />
-                        <LiveCmvpBadge match={liveCmvp.match(lib.vendor, lib.name)} />
+                        <LiveCmvpBadge
+                          match={liveCmvp.matchById(lib.cmvpCertNumber, 'FIPS 140-3')}
+                        />
                       </div>
                     )}
                   </td>
@@ -644,7 +646,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
                       <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 flex-wrap">
                         <span>{h.cmvpCertNumber}</span>
                         <SampleDataBadge />
-                        <LiveCmvpBadge match={liveCmvp.match(h.vendor, h.product)} />
+                        <LiveCmvpBadge match={liveCmvp.matchById(h.cmvpCertNumber, 'FIPS 140-3')} />
                       </div>
                     )}
                   </td>

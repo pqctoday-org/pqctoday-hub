@@ -12,6 +12,11 @@
       "until": "2026-10-06"
     }
   },
+  "complianceRecordDropOk": {
+    "expectedDrop": 583,
+    "reason": "2026-09-24 certification-data repair (product-certification plan r2; user rules D-FIPS and D-SRC): 562 FIPS 140-2 certificates removed (FIPS 140-3 only), 19 duplicate EUCC ids folded into their ENISA certificate, 1 EUCC certificate ENISA no longer lists, 1 CAVP validation (A8348) NIST no longer lists. Every id and reason is in pqctoday-priv public/data/compliance-data.exclusions.json.",
+    "until": "2026-10-09"
+  },
   "emptiedOk": {
     "timeline": {
       "SourceDate": {

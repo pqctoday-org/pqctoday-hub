@@ -14,22 +14,43 @@ import {
   Check,
   LockKeyhole,
   Info,
+  FileText,
 } from 'lucide-react'
-import type { ComplianceRecord, ComplianceSource } from './types'
+import type { ComplianceMeta, ComplianceRecord, ComplianceSource } from './types'
 import { getMigrateCategory, type MigrateCategoryRef } from './migrateCategories'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import clsx from 'clsx'
-import Papa from 'papaparse'
 import { ComplianceDetailPopover } from './ComplianceDetailPopover'
 import { complianceFrameworks } from '@/data/complianceData'
 import { MobileFilterDrawer } from '../Migrate/MobileFilterDrawer'
 import { matchesTrustTierFilter } from '../common/TrustTierFilter'
 import type { TrustTier } from '@/data/trustScore'
-import { canLiveRefreshComplianceData } from './services'
+import { FilterDropdown } from '../common/FilterDropdown'
+import { buildComplianceCsv } from './recordsExport'
+import {
+  applyRecordScope,
+  formatIsoDate,
+  isSecurityTargetType,
+  pqcCoverageState,
+  pqcUnknownReason,
+  pqcEvidenceLabel,
+  pqcNames,
+  recordTypeDescription,
+  recordTypeLabel,
+  scopeNotice,
+  snapshotRetrievalEntries,
+  statusBadgeClass,
+  type RecordScope,
+} from './recordSemantics'
+
+const RECORD_SCOPE_OPTIONS = [
+  { id: 'current', label: 'Current only (Active / Validated)' },
+  { id: 'all', label: 'Include historical / archived' },
+]
 
 /**
- * Maps a live cert record's `source` to the framework ID used to look up
+ * Maps a cert record's `source` to the framework ID used to look up
  * trust scores. Records whose source has no corresponding scored framework
  * (e.g. 'Other') return null and are excluded when a tier filter is active.
  */
@@ -47,7 +68,6 @@ interface ComplianceTableProps {
   onRefresh?: () => void
   isRefreshing?: boolean
   lastUpdated?: Date | null
-  onEnrich?: (r: ComplianceRecord) => void
   /** @deprecated Use filterText prop for controlled mode */
   initialFilter?: string
   /** @deprecated Use selectedRecordId prop for controlled mode */
@@ -77,6 +97,11 @@ interface ComplianceTableProps {
   onCurrentPageChange?: (page: number) => void
   certType?: string
   onCertTypeChange?: (ct: string) => void
+  /** Sidecar for the loaded publication — per-partition retrieval dates and scope. */
+  meta?: ComplianceMeta | null
+  /** 'current' (default) = Active + Validated only; 'all' adds historical / archived / revoked. */
+  recordScope?: RecordScope
+  onRecordScopeChange?: (scope: RecordScope) => void
 }
 
 export type SortDirection = 'asc' | 'desc'
@@ -89,43 +114,19 @@ const PQC_ALGOS = ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS', 'XMSS', 'HSS', 'FN-DSA'
 export const ComplianceRow = ({
   record,
   index,
-  onEnrich,
   autoOpen,
 }: {
   record: ComplianceRecord
   index: number
-  onEnrich?: (record: ComplianceRecord) => void
   autoOpen?: boolean
 }) => {
-  const rowRef = React.useRef<HTMLTableRowElement>(null)
-
-  React.useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          // If this record needs detailed PQC info (Pending), trigger enrich
-          if (
-            onEnrich &&
-            (record.pqcCoverage === 'Pending Check...' || record.pqcCoverage === 'Potentially PQC')
-          ) {
-            onEnrich(record)
-            observer.disconnect() // Only trigger once per view
-          }
-        }
-      },
-      { threshold: 0.1 } // 10% visible
-    )
-
-    if (rowRef.current) {
-      observer.observe(rowRef.current)
-    }
-
-    return () => observer.disconnect()
-  }, [record, onEnrich])
-
   const [showDetailsPopup, setShowDetailsPopup] = useState(autoOpen === true)
   const [showPqcTooltip, setShowPqcTooltip] = useState(false)
   const [showClassicalTooltip, setShowClassicalTooltip] = useState(false)
+  const pqcState = pqcCoverageState(record.pqcCoverage)
+  // CC / EUCC / CSPN: PQC names come from the Security Target — a claim in the
+  // evaluated document, not validated PQC support. Rendered neutrally.
+  const pqcFromSt = isSecurityTargetType(record.type)
 
   return (
     <tr className="border-b border-border hover:bg-muted/50 transition-colors">
@@ -138,9 +139,27 @@ export const ComplianceRow = ({
         <span className="truncate">{record.source}</span>
       </td>
 
-      {/* Certification # Column */}
-      <td className="px-4 py-3 font-mono text-xs w-32 truncate" title={record.id}>
-        {record.id.length > 20 ? record.id.substring(0, 20) + '...' : record.id}
+      {/* Certification # Column — with the record type and its verbatim status */}
+      <td className="px-4 py-3 text-xs w-32">
+        <div className="font-mono truncate" title={record.id}>
+          {record.id.length > 20 ? record.id.substring(0, 20) + '...' : record.id}
+        </div>
+        <div className="mt-0.5 flex flex-wrap items-center gap-1">
+          <span
+            className="text-[10px] text-muted-foreground truncate"
+            title={recordTypeDescription(record.type)}
+          >
+            {recordTypeLabel(record.type)}
+          </span>
+          <span
+            className={clsx(
+              'inline-flex items-center rounded border px-1 text-[9px] font-semibold uppercase tracking-wider',
+              statusBadgeClass(record.status)
+            )}
+          >
+            {record.status || 'No status'}
+          </span>
+        </div>
       </td>
 
       {/* Date Column */}
@@ -175,9 +194,18 @@ export const ComplianceRow = ({
             Scoped to the empty-STRING case only -- the boolean `false` value
             this field can also carry (services.ts) has different, unverified
             semantics and isn't touched here. */}
-        {record.pqcCoverage === 'Not Yet Analyzed' || record.pqcCoverage === '' ? (
-          <span className="text-xs text-muted-foreground italic">Not yet analyzed</span>
-        ) : record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
+        {pqcState === 'not-read' ? (
+          <span
+            className="text-xs text-muted-foreground italic"
+            title={
+              pqcUnknownReason(record) === 'source-lists-none'
+                ? 'NIST publishes this certificate page without an Approved Algorithms list — unknown, not "none".'
+                : "The source page could not be read — PQC status is unknown, not 'none'."
+            }
+          >
+            Unknown
+          </span>
+        ) : pqcState !== 'none' ? (
           <div className="flex items-center">
             <Button
               variant="ghost"
@@ -186,15 +214,23 @@ export const ComplianceRow = ({
               onClick={() => setShowPqcTooltip((v) => !v)}
               className={clsx(
                 'cursor-help p-1 rounded-full transition-colors',
-                record.pqcCoverage === 'Pending Check...'
+                pqcState === 'pending'
                   ? 'bg-warning/10 text-warning animate-pulse'
-                  : 'bg-tertiary/10 text-tertiary hover:bg-tertiary/20'
+                  : pqcFromSt || pqcState === 'heuristic'
+                    ? 'bg-muted text-muted-foreground hover:bg-muted/80'
+                    : 'bg-tertiary/10 text-tertiary hover:bg-tertiary/20'
               )}
-              aria-label="View PQC mechanisms"
+              aria-label={
+                pqcFromSt
+                  ? 'View PQC mechanisms named in the Security Target'
+                  : 'View PQC mechanisms'
+              }
               aria-describedby={`pqc-tooltip-${index}`}
             >
-              {record.pqcCoverage === 'Pending Check...' ? (
+              {pqcState === 'pending' ? (
                 <RefreshCw size={16} className="animate-spin" />
+              ) : pqcFromSt || pqcState === 'heuristic' ? (
+                <FileText size={16} />
               ) : (
                 <ShieldCheck size={18} />
               )}
@@ -211,7 +247,14 @@ export const ComplianceRow = ({
                   : 'opacity-0 pointer-events-none group-hover:opacity-100'
               )}
             >
-              <div className="font-semibold text-tertiary mb-1">PQC Mechanisms</div>
+              <div
+                className={clsx(
+                  'font-semibold mb-1',
+                  pqcFromSt ? 'text-muted-foreground' : 'text-tertiary'
+                )}
+              >
+                {pqcState === 'named' ? pqcEvidenceLabel(record.type) : 'PQC Mechanisms'}
+              </div>
               <div className="text-popover-foreground flex flex-wrap gap-1">
                 {typeof record.pqcCoverage === 'boolean'
                   ? 'PQC Support Detected'
@@ -234,6 +277,24 @@ export const ComplianceRow = ({
                       </span>
                     ))}
               </div>
+              {pqcFromSt && pqcState === 'named' && (
+                <div className="mt-1 text-[10px] text-muted-foreground">
+                  A claim in the evaluated Security Target — not a validation of PQC support.
+                  {record.securityTargetUrls?.[0] && (
+                    <>
+                      {' '}
+                      <a
+                        href={record.securityTargetUrls[0]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Open the Security Target
+                      </a>
+                    </>
+                  )}
+                </div>
+              )}
               <div
                 className={clsx(
                   'absolute left-1/2 -translate-x-1/2 border-4 border-transparent',
@@ -313,7 +374,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   onRefresh,
   isRefreshing,
   lastUpdated,
-  onEnrich,
   initialFilter,
   initialSelectedId,
   filterText: filterTextProp,
@@ -336,10 +396,10 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   onSortDirectionChange,
   certType = 'all',
   onCertTypeChange,
+  meta,
+  recordScope: recordScopeProp,
+  onRecordScopeChange,
 }) => {
-  // Static production build has no live-scrape backend — refresh can only do
-  // something meaningfully different from re-reading the bundled snapshot in dev.
-  const canLiveRefresh = useMemo(() => canLiveRefreshComplianceData(), [])
   // Local state fallbacks (used when not in controlled mode)
   const [localFilterText, setLocalFilterText] = useState(initialFilter ?? '')
   const [localPqcFilters, setLocalPqcFilters] = useState<string[]>([])
@@ -349,6 +409,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const [localMigrateCatFilters, setLocalMigrateCatFilters] = useState<string[]>([])
   const [localSortColumn, setLocalSortColumn] = useState<SortColumn>('date')
   const [localSortDirection, setLocalSortDirection] = useState<SortDirection>('desc')
+  const [localRecordScope, setLocalRecordScope] = useState<RecordScope>('current')
+  const recordScope = recordScopeProp ?? localRecordScope
+  const setRecordScope = onRecordScopeChange ?? setLocalRecordScope
   // Resolve controlled vs local
   const filterText = filterTextProp ?? localFilterText
   const pqcFilters = pqcFiltersProp ?? localPqcFilters
@@ -530,15 +593,21 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     return uniqueVendors.filter((v) => v.toLowerCase().includes(vendorSearch.toLowerCase()))
   }, [uniqueVendors, vendorSearch])
 
+  // Record scope (current only vs. incl. historical / archived) applies before
+  // every other filter, so counts, export and the table all agree.
+  const scopedData = useMemo(() => applyRecordScope(data, recordScope), [data, recordScope])
+  const hiddenByScope = data.length - scopedData.length
+
   const filteredAndSortedData = useMemo(() => {
     // Filter
-    const processed = data.filter((record) => {
+    const processed = scopedData.filter((record) => {
       // 0. Tab/CertType matching
       if (certType && certType !== 'all' && certType !== 'All') {
         const ct = certType.toLowerCase()
         if (ct === 'fips' && record.type !== 'FIPS 140-3') return false
         if (ct === 'acvp' && record.type !== 'ACVP') return false
         if (ct === 'cc' && record.type !== 'Common Criteria') return false
+        if (ct === 'cspn' && record.type !== 'CSPN') return false
         if (ct === 'fips 140-3' && record.type !== 'FIPS 140-3') return false
       }
 
@@ -547,6 +616,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         record.productName.toLowerCase().includes(searchStr) ||
         record.vendor.toLowerCase().includes(searchStr) ||
         record.source.toLowerCase().includes(searchStr) ||
+        recordTypeLabel(record.type).toLowerCase().includes(searchStr) ||
         record.id.toLowerCase().includes(searchStr)
 
       // PQC Filter Logic
@@ -596,7 +666,8 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         certType === 'all' ||
         (certType === 'fips' && record.type === 'FIPS 140-3') ||
         (certType === 'acvp' && record.type === 'ACVP') ||
-        (certType === 'cc' && record.type === 'Common Criteria')
+        (certType === 'cc' && record.type === 'Common Criteria') ||
+        (certType === 'cspn' && record.type === 'CSPN')
 
       return (
         matchesText &&
@@ -639,7 +710,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     })
 
     return processed
-  }, [data, activeFilters, sortColumn, sortDirection, certType, tierFiltersProp])
+  }, [scopedData, activeFilters, sortColumn, sortDirection, certType, tierFiltersProp])
 
   const rowVirtualizer = useVirtualizer({
     count: filteredAndSortedData.length,
@@ -664,7 +735,11 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const handleExport = () => {
     if (filteredAndSortedData.length === 0) return
 
-    const csv = Papa.unparse(filteredAndSortedData)
+    const csv = buildComplianceCsv(filteredAndSortedData, {
+      meta,
+      scope: recordScope,
+      newestRecordDate: lastUpdated,
+    })
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
@@ -675,6 +750,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     link.click()
     document.body.removeChild(link)
   }
+
+  const retrieval = useMemo(() => snapshotRetrievalEntries(meta), [meta])
+  const newestRecordDate = lastUpdated ? formatIsoDate(lastUpdated.toISOString()) : null
 
   const MobileFilterContent = (
     <div className="space-y-6">
@@ -774,14 +852,24 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           />
         </div>
         <div className="flex items-center gap-2">
-          {lastUpdated && (
-            <span
-              className="hidden md:flex items-center gap-1 text-sm text-muted-foreground"
-              title="Newest record date in this dataset — not the moment your browser loaded the page."
-            >
-              <Calendar size={14} />
-              Records as of {lastUpdated.toLocaleDateString()}
-            </span>
+          {(retrieval.length > 0 || lastUpdated) && (
+            <div className="hidden md:flex flex-col items-end text-xs text-muted-foreground">
+              {retrieval.length > 0 && (
+                <span
+                  className="flex items-center gap-1"
+                  title="When each source list was retrieved for this snapshot."
+                >
+                  <Calendar size={12} />
+                  {retrieval.map((e) => `${e.label} retrieved ${e.date}`).join(' · ')}
+                </span>
+              )}
+              {newestRecordDate && (
+                <span title="Date of the most recent certificate in the snapshot — not when the snapshot was retrieved.">
+                  {retrieval.length === 0 && <Calendar size={12} className="mr-1 inline" />}
+                  Newest record date: {newestRecordDate}
+                </span>
+              )}
+            </div>
           )}
           <Button
             variant="outline"
@@ -793,34 +881,25 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             <Download size={14} />
             Export CSV
           </Button>
-          {onRefresh &&
-            (canLiveRefresh ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onRefresh}
-                disabled={isRefreshing}
-                className="gap-2"
-              >
-                <RefreshCw size={14} className={clsx(isRefreshing && 'animate-spin')} />
-                Refresh Data
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                disabled
-                className="gap-2"
-                title={
-                  lastUpdated
-                    ? `Live refresh requires a dev environment — showing the ${lastUpdated.toLocaleDateString()} snapshot published with this site.`
-                    : 'Live refresh requires a dev environment — showing the snapshot published with this site.'
-                }
-              >
-                <RefreshCw size={14} />
-                Refresh Data
-              </Button>
-            ))}
+          {onRefresh && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className="gap-2"
+              title={
+                retrieval.length > 0
+                  ? `Reload the published snapshot (${retrieval.map((e) => `${e.label} retrieved ${e.date}`).join(', ')}). Certificate data is not fetched live from the certification bodies.`
+                  : newestRecordDate
+                    ? `Reload the published snapshot (newest record dated ${newestRecordDate}). Certificate data is not fetched live from the certification bodies.`
+                    : 'Reload the published snapshot. Certificate data is not fetched live from the certification bodies.'
+              }
+            >
+              <RefreshCw size={14} className={clsx(isRefreshing && 'animate-spin')} />
+              Reload Snapshot
+            </Button>
+          )}
         </div>
       </div>
 
@@ -839,8 +918,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           {[
             { id: 'all', label: 'All Records', frameworkId: null },
             { id: 'fips', label: 'FIPS 140-3', frameworkId: 'FIPS-140-3' },
-            { id: 'acvp', label: 'ACVP', frameworkId: 'ACVP' },
+            { id: 'acvp', label: recordTypeLabel('ACVP'), frameworkId: 'ACVP' },
             { id: 'cc', label: 'Common Criteria', frameworkId: 'COMMON-CRITERIA' },
+            { id: 'cspn', label: recordTypeLabel('CSPN'), frameworkId: null },
           ].map((tab) => {
             const framework = tab.frameworkId
               ? complianceFrameworks.find((f) => f.id === tab.frameworkId)
@@ -852,7 +932,13 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                 variant="ghost"
                 key={tab.id}
                 onClick={() => onCertTypeChange && onCertTypeChange(tab.id)}
-                title={framework ? `${framework.label} mandate deadline: ${deadline}` : undefined}
+                title={
+                  framework
+                    ? `${framework.label} mandate deadline: ${deadline}`
+                    : tab.id === 'cspn'
+                      ? recordTypeDescription('CSPN')
+                      : undefined
+                }
                 className={`flex flex-col items-start px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
                   certType === tab.id
                     ? 'bg-background shadow text-foreground'
@@ -868,6 +954,29 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               </Button>
             )
           })}
+        </div>
+
+        <div className="flex flex-wrap items-start gap-x-3 gap-y-2">
+          <FilterDropdown
+            items={RECORD_SCOPE_OPTIONS}
+            selectedId={recordScope}
+            onSelect={(id) => setRecordScope(id === 'all' ? 'all' : 'current')}
+            label="Status"
+            ariaLabel="Record status scope"
+            size="sm"
+            hideDefaultOption
+          />
+          <p
+            className="flex min-w-0 flex-1 items-start gap-1.5 text-[11px] leading-relaxed text-muted-foreground"
+            data-testid="records-scope-notice"
+          >
+            <Info size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+            <span>
+              <span className="font-semibold text-foreground">Scope:</span> {scopeNotice(meta)} PQC
+              names on Common Criteria, EUCC and CSPN rows are named in the Security Target, not
+              validated PQC support.
+            </span>
+          </p>
         </div>
 
         {totalActiveFilters > 0 && (
@@ -973,7 +1082,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                 {isRefreshing ? 'Refreshing Data...' : 'Filtering Records...'}
               </span>
               <span className="text-xs text-muted-foreground">
-                {data.length.toLocaleString()} total verified
+                {scopedData.length.toLocaleString()} records in scope
               </span>
             </div>
           </div>
@@ -1502,7 +1611,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                     key={record.id}
                     record={record}
                     index={virtualRow.index}
-                    onEnrich={onEnrich}
                     autoOpen={record.id === autoOpenId}
                   />
                 )
@@ -1552,24 +1660,34 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                           <Database size={10} className="shrink-0" />
                           {record.source}
                         </span>
+                        <span className="text-xs text-muted-foreground">
+                          {recordTypeLabel(record.type)}
+                        </span>
                         <span
-                          className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${
-                            record.status === 'Active'
-                              ? 'bg-status-success/10 text-status-success border-status-success/30'
-                              : record.status === 'Revoked'
-                                ? 'bg-status-error/10 text-status-error border-status-error/30'
-                                : 'bg-status-warning/10 text-status-warning border-status-warning/30'
-                          }`}
+                          className={clsx(
+                            'inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border',
+                            statusBadgeClass(record.status)
+                          )}
                         >
-                          {record.status}
+                          {record.status || 'No status'}
                         </span>
                       </div>
-                      {record.pqcCoverage &&
-                        record.pqcCoverage !== 'No PQC Mechanisms Detected' &&
-                        record.pqcCoverage !== 'Pending Check...' &&
-                        record.pqcCoverage !== 'Not Yet Analyzed' && (
-                          <ShieldCheck size={16} className="text-tertiary shrink-0 mt-0.5" />
-                        )}
+                      {pqcCoverageState(record.pqcCoverage) === 'named' &&
+                        (isSecurityTargetType(record.type) ? (
+                          <span
+                            className="flex items-center gap-1 text-[10px] text-muted-foreground shrink-0 mt-0.5"
+                            title={`${pqcEvidenceLabel(record.type)}: ${pqcNames(record.pqcCoverage).join(', ')}`}
+                          >
+                            <FileText size={14} aria-hidden="true" />
+                            PQC in ST
+                          </span>
+                        ) : (
+                          <ShieldCheck
+                            size={16}
+                            className="text-tertiary shrink-0 mt-0.5"
+                            aria-label={`${pqcEvidenceLabel(record.type)}: ${pqcNames(record.pqcCoverage).join(', ')}`}
+                          />
+                        ))}
                     </div>
 
                     <p className="text-sm font-semibold text-foreground leading-snug mb-1 line-clamp-2">
@@ -1612,11 +1730,17 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         </div>
       </div>
       {/* Record count strip — both desktop and mobile see all records via virtualizer */}
-      <div className="flex items-center px-2 text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-x-1 px-2 text-xs text-muted-foreground">
         {filteredAndSortedData.length.toLocaleString()} record
         {filteredAndSortedData.length !== 1 ? 's' : ''}
-        {filteredAndSortedData.length !== data.length && (
-          <span className="ml-1">(filtered from {data.length.toLocaleString()})</span>
+        {filteredAndSortedData.length !== scopedData.length && (
+          <span>(filtered from {scopedData.length.toLocaleString()})</span>
+        )}
+        {recordScope === 'current' && hiddenByScope > 0 && (
+          <span>
+            · current only — {hiddenByScope.toLocaleString()} historical / archived record
+            {hiddenByScope !== 1 ? 's' : ''} hidden
+          </span>
         )}
       </div>
     </div>

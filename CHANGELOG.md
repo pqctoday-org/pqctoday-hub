@@ -29,6 +29,27 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.121.0] - 2026-09-25
+
+Every certification record now comes straight from its official source — NIST for FIPS 140-3 and CAVP, the Common Criteria Portal, ANSSI and ENISA — and anything a source does not back is gone.
+
+### Fixed
+
+- **562 records labelled "FIPS 140-3 Active" were really FIPS 140-2 certificates, and they are gone.** [view:/compliance] [view:/migrate] [persona:grc] [persona:ops] [persona:executive] NIST moved every FIPS 140-2 certificate to its historical list on 21–22 September 2026, and a FIPS 140-2 module cannot carry post-quantum algorithms. The records page now covers FIPS 140-3 only: 712 active certificates (exactly NIST's live list, including 21 that were missing) and 71 historical ones, each with the status NIST shows today.
+- **Post-quantum algorithms on FIPS records now come only from NIST's Approved Algorithms list.** [view:/compliance] [persona:grc] [persona:researcher] [persona:ops] They used to be read out of the module's security policy document, which also names algorithms a module does not approve. Some modules therefore showed ML-KEM or ML-DSA they are not validated for; the Luna M7 (#5300) approves only LMS, and the Marvell LS2 (#5502) approves none. 24 FIPS 140-3 modules approve a post-quantum algorithm; each record lists its approved algorithms with a link to the CAVP validation behind each one.
+- **Product pages no longer show validations that do not apply to the product.** [view:/migrate] [persona:ops] [persona:grc] A product-to-certificate link now stays only if the certificate is the product's own: the record names the product and comes from the product's vendor, or the product's documentation cites the certificate number. A shared generic word ("Series", "Center"), a build variant, a different major release (a Red Hat Enterprise Linux 8 module on a RHEL 9 product), or another company's validation of the same code no longer counts. 133 links were retired: 38 pointed at FIPS 140-2 certificates, 80 were not backed by the record, 1 pointed at a CAVP validation NIST no longer lists, and 14 gave way to a newer certificate for the same module. 30 links were added, mostly newly listed validations and each release's own modules, and a module that approves a post-quantum algorithm is now preferred over a newer one that does not.
+- **"Live certification records" and "refreshed daily" were not true, and are gone.** [view:/compliance] [view:/business] [persona:executive] [persona:grc] The page shows a dated snapshot, and each source now states when it was retrieved: NIST CMVP, NIST CAVP, the Common Criteria Portal, ANSSI and ENISA. The newest certificate date appears on its own line.
+
+### Changed
+
+- **Algorithm validations are labelled "NIST CAVP", not "ACVP".** [view:/compliance] [persona:developer] [persona:researcher] ACVP is the testing protocol; the validation comes from NIST's CAVP. All 268 post-quantum CAVP validations (ML-KEM, ML-DSA, SLH-DSA, LMS) are included with no date cut-off, and each shows its parameter sets, functions and tested environments from NIST.
+- **French CSPN certifications have their own label.** [view:/compliance] [persona:grc] 43 ANSSI records were CSPN certifications (France's national first-level scheme) filed under Common Criteria. They now appear as "CSPN (ANSSI)" and are no longer counted as Common Criteria.
+- **Historical and archived certificates are hidden unless you ask for them.** [view:/compliance] [persona:grc] [persona:ops] A status filter switches between current certificates and everything, and exports say which view they contain.
+
+### Data
+
+- **Common Criteria, ANSSI and EUCC records were re-checked against their issuers.** [view:/compliance] [persona:grc] 833 Common Criteria records match the Portal's current or archived lists (three corrected where the Portal changed a date, level or name). All 190 ANSSI records appear in ANSSI's September catalogue. The EUCC list matches ENISA's 107 certificates: 28 added, and 19 duplicate entries folded into their certificate.
+
 ## [4.119.0] - 2026-09-25
 
 The 122 rows where the Timeline's two reviewers disagreed on 25 September were resolved by a closer read of what each one actually quoted from the source document.
