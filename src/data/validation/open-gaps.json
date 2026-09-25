@@ -190,6 +190,42 @@
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ (wasm) — hub helper"
+    },
+    {
+      "id": "rust-gcm-iv-96-only",
+      "title": "Rust engine refuses AES-GCM IVs other than 96 bits",
+      "detail": "The NIST ACVP-Server ACVP-AES-GCM-1.0 sample (aesgcm_acvp_test, workbench §1b) has two groups with a 120-bit IV (tg2 encrypt, tg4 decrypt). The Rust engine refuses them at C_EncryptInit/C_DecryptInit with CKR_MECHANISM_PARAM_INVALID (rust/src/ffi.rs ~8158 at 7795799b: 'AES-GCM requires a 12-byte nonce'); SP 800-38D and PKCS#11 v3.2 §6.13.2 allow other IV lengths and the C++ engine passes all 60 cases. The 30 Rust rows fail, including tg4's upstream authentication failures, which are refused before the tag is checked and therefore do not count as rejections. Engine limitation or advertisement to narrow — a decision for the engine owner.",
+      "planItem": "E (AES-GCM) / G-9",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)"
+    },
+    {
+      "id": "rust-ecdsa-p224-unsupported",
+      "title": "Rust engine accepts P-224 keys but cannot verify P-224 ECDSA signatures",
+      "detail": "ECDSA-SigVer-FIPS186-5 P-224 groups (ecdsa_sigver_acvp_test, workbench §4b): C_CreateObject accepts the P-224 public key, then every C_Verify returns CKR_SIGNATURE_LEN_RANGE for the 56-byte r||s — the Rust crate set has no P-224 (no p224 dependency at 7795799b) although CKM_ECDSA* advertise ulMinKeySize 112. All 28 Rust P-224 rows fail (valid cases rejected; invalid cases refused for the wrong reason, which the section does not count as a rejection). C++ passes all 112 ECDSA cases. P-224 is also outside the capability map's EC curve set, so these cases map to no capability cell; their results are recorded.",
+      "planItem": "E (ECDSA) / G-7 / G-9",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)"
+    },
+    {
+      "id": "hmac-min-key-size-advertisement",
+      "title": "HMAC keys below the advertised ulMinKeySize are accepted by both engines",
+      "detail": "C_GetMechanismInfo advertises ulMinKeySize = the digest length in bytes for every CKM_<hash>_HMAC[_GENERAL] (e.g. 32 for SHA2-256), yet both engines compute and verify NIST HMAC 2.0 cases with shorter keys (down to 1 byte) correctly (hmac_acvp_matrix_test, workbench §2b; each row records keyInAdvertisedRange). FIPS 198-1 allows any key length, so the results are correct; the advertisement understates what the engines accept. Recorded, not enforced.",
+      "planItem": "G-1 / G-7",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust (wasm) — advertisement"
+    },
+    {
+      "id": "wse-nist-sample-scope",
+      "title": "Classical NIST reference samples cover only what the pinned upstream samples register",
+      "detail": "The pinned ACVP-Server@975de31e samples bound what WS-E can claim: ACVP-AES-GCM-1.0 registers AES-128 only (IV 96/120, tag 128/32, payload/AAD 0/120 bits) — AES-192/256-GCM, 64-bit tags and other lengths have no NIST case; HMAC 2.0 registers macLen 80..160 bits — no full-length (untruncated) tag, so CKM_<hash>_HMAC (non-general) has no NIST case; EDDSA-SigVer-1.0 carries no context string (Ed25519ctx / Ed448 contexts not claimed); ECDSA SHA2-512/256 and SHAKE groups have no PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (skip rows).",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust"
     }
   ]
 }
