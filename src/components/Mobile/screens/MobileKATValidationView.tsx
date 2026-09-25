@@ -1,10 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useMemo, useState } from 'react'
-import { CheckCircle2, ChevronDown, ExternalLink, Loader2, XCircle } from 'lucide-react'
+import {
+  CheckCircle2,
+  ChevronDown,
+  ExternalLink,
+  Loader2,
+  MinusCircle,
+  XCircle,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useHSM } from '@/hooks/useHSM'
-import { runKAT, type KatTestSpec, type KATResult, type SlhDsaVariant } from '@/utils/katRunner'
+import {
+  runKAT,
+  advertisedMechanisms,
+  summarizeKatResults,
+  type KatStatus,
+  type KatTestSpec,
+  type KATResult,
+  type SlhDsaVariant,
+} from '@/utils/katRunner'
 import { ATTACK_PROFILES } from '@/data/implementationAttackProfiles'
 import { VALIDATION_DISCLAIMER } from '@/data/validationDisclaimer'
 import { KAT_EVIDENCE_META, evidenceForKind, katActionLabel } from '@/utils/katEvidence'
@@ -192,9 +207,10 @@ function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeo
       if (!hsm.isReady) await hsm.initialize()
       const M = hsm.moduleRef.current!
       const hSession = hsm.hSessionRef.current
+      const advertised = advertisedMechanisms(M, hsm.slotRef.current)
       const out: KATResult[] = []
       for (const spec of config.specs) {
-        out.push(await runKAT(M, hSession, spec))
+        out.push(await runKAT(M, hSession, spec, { advertised }))
         setResults([...out])
       }
     } catch (err) {
@@ -204,7 +220,7 @@ function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeo
     }
   }, [hsm, config.specs])
 
-  const passCount = results.filter((r) => r.status === 'pass').length
+  const counts = summarizeKatResults(results)
   const done = results.length === config.specs.length && !running
 
   return (
@@ -265,31 +281,38 @@ function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeo
                   ) : null
                 })()}
               </span>
-              {r.status === 'pass' ? (
-                <CheckCircle2
-                  size={13}
-                  className="shrink-0 text-status-success"
-                  aria-label="pass"
-                />
-              ) : (
-                <XCircle size={13} className="shrink-0 text-status-error" aria-label="fail" />
-              )}
+              <StatusIcon status={r.status} />
             </div>
           ))}
           {done && (
             <p
+              data-testid="kat-counts"
               className={cn(
                 'text-[10.5px] font-semibold',
-                passCount === results.length ? 'text-status-success' : 'text-status-error'
+                counts.fail + counts.error === 0 ? 'text-status-success' : 'text-status-error'
               )}
             >
-              {passCount}/{results.length} passed
+              {counts.pass}/{counts.total - counts.skip} passed
+              {counts.skip > 0 && (
+                <span className="text-status-warning"> · {counts.skip} not tested</span>
+              )}
             </p>
           )}
         </div>
       )}
     </div>
   )
+}
+
+/** Pass / not tested (skip) / fail icon — a skip is never shown as a pass. */
+function StatusIcon({ status }: { status: KatStatus }) {
+  if (status === 'pass')
+    return <CheckCircle2 size={13} className="shrink-0 text-status-success" aria-label="pass" />
+  if (status === 'skip')
+    return (
+      <MinusCircle size={13} className="shrink-0 text-status-warning" aria-label="not tested" />
+    )
+  return <XCircle size={13} className="shrink-0 text-status-error" aria-label={status} />
 }
 
 function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
@@ -318,7 +341,8 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
       if (!hsm.isReady) await hsm.initialize()
       const M = hsm.moduleRef.current!
       const hSession = hsm.hSessionRef.current
-      setResults([await runKAT(M, hSession, spec)])
+      const advertised = advertisedMechanisms(M, hsm.slotRef.current)
+      setResults([await runKAT(M, hSession, spec, { advertised })])
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
     } finally {
@@ -399,11 +423,7 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
             className="mt-2 flex items-start justify-between gap-2 border-t border-border pt-2 text-[10.5px]"
           >
             <span className="text-foreground/80">{r.useCase}</span>
-            {r.status === 'pass' ? (
-              <CheckCircle2 size={13} className="shrink-0 text-status-success" aria-label="pass" />
-            ) : (
-              <XCircle size={13} className="shrink-0 text-status-error" aria-label="fail" />
-            )}
+            <StatusIcon status={r.status} />
           </div>
         ))}
     </div>

@@ -256,7 +256,7 @@ vi.mock('./dataInputUtils', () => ({
 
 // ── Module under test (imported after mocks) ──────────────────────────────────
 
-import { runKAT } from './katRunner'
+import { runKAT, requiredMechanisms, summarizeKatResults } from './katRunner'
 import type { KatTestSpec } from './katRunner'
 import * as softhsm from '../wasm/softhsm'
 
@@ -1265,5 +1265,50 @@ describe('runKAT', () => {
       expect(result.id).toBe('err-id')
       expect(result.useCase).toBe('Err case')
     })
+  })
+})
+
+// ── not-tested (skip) status ──────────────────────────────────────────────────
+
+describe("runKAT 'skip' — not tested when the engine does not advertise a needed mechanism", () => {
+  it('skips a kind whose registered case needs a mechanism missing from C_GetMechanismList', async () => {
+    // aes-kwp-wrap drives CKM_AES_KEY_WRAP_KWP (0x210b); advertise something else only.
+    const r = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aes-kwp-wrap' }), {
+      advertised: new Set([0x250]),
+    })
+    expect(r.status).toBe('skip')
+    expect(r.details).toMatch(/^Not tested — this engine does not advertise CKM_AES_KEY_WRAP_KWP/)
+  })
+
+  it('runs normally when every needed mechanism is advertised, or when no list is given', async () => {
+    const needed = requiredMechanisms({ type: 'hmac-verify', hashAlg: 'SHA-256' })
+    expect(needed).toEqual([0x252]) // CKM_SHA256_HMAC_GENERAL
+    vi.mocked(softhsm.hsm_hmacVerifyGeneral).mockReturnValue(true)
+    const withList = await runKAT(
+      FAKE_MODULE,
+      FAKE_SESSION,
+      spec({ type: 'hmac-verify', hashAlg: 'SHA-256' }),
+      { advertised: new Set(needed) }
+    )
+    expect(withList.status).toBe('pass')
+    const emptyList = await runKAT(
+      FAKE_MODULE,
+      FAKE_SESSION,
+      spec({ type: 'hmac-verify', hashAlg: 'SHA-256' }),
+      { advertised: new Set() }
+    )
+    expect(emptyList.status).toBe('pass') // empty = probe failed → no pre-skip
+  })
+
+  it('summarizeKatResults keeps skip as its own bucket', () => {
+    expect(
+      summarizeKatResults([
+        { status: 'pass' },
+        { status: 'skip' },
+        { status: 'fail' },
+        { status: 'error' },
+        { status: 'skip' },
+      ])
+    ).toEqual({ pass: 1, fail: 1, error: 1, skip: 2, total: 5 })
   })
 })

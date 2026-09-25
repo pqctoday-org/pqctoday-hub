@@ -118,6 +118,7 @@ import {
   hsm_unwrapKeyMech,
   hsm_createObject,
   hsm_injectTestKey,
+  hsm_getMechanismList,
   hsm_importECPrivateKey,
   writeBytes,
   CKO_SECRET_KEY,
@@ -150,7 +151,10 @@ import {
 } from '../wasm/softhsm'
 import type { SoftHSMModule } from '../wasm/softhsm'
 import { CKM_ML_DSA } from '../wasm/softhsm/constants'
-import { evidenceForKind, type KatEvidenceClass } from './katEvidence'
+import { MECH_TABLE } from '../wasm/softhsm/mechanismTable'
+import { evidenceForKind, evidenceRecordsForKind, type KatEvidenceClass } from './katEvidence'
+
+export type KatStatus = 'pass' | 'fail' | 'error' | 'skip'
 
 export interface KATResult {
   id: string
@@ -160,7 +164,9 @@ export interface KATResult {
   referenceUrl: string
   /** Library CSV referenceId for the authoritative standard, used to render internal /library deep links. */
   libraryRefId?: string
-  status: 'pass' | 'fail' | 'error'
+  /** 'skip' = not tested (the engine does not advertise a mechanism the case
+   *  needs). A skip is evidence of nothing: it never counts as a pass. */
+  status: KatStatus
   details: string
   /** Evidence class of the expected value, derived from the vector file's provenance. */
   evidence: KatEvidenceClass
@@ -1729,14 +1735,74 @@ const runSUCIProfileBKAT = async (
   return { status: 'fail', details: `Unknown step ${step}` }
 }
 
+// ── Not-tested (skip) support ────────────────────────────────────────────────
+
+const MECH_BY_NAME: ReadonlyMap<string, number> = new Map(
+  Object.entries(MECH_TABLE).map(([num, e]) => [e.name, Number(num)])
+)
+
+/**
+ * PKCS #11 mechanisms a kind's registered case drives (from the generated
+ * per-case records — the same exercises the coverage matrix counts). Empty for
+ * an unregistered kind, which is then never pre-skipped.
+ */
+export function requiredMechanisms(kind: KatKind): number[] {
+  const names = new Set(
+    evidenceRecordsForKind(kind).flatMap((r) => r.exercises.map((e) => e.split(' ')[0]))
+  )
+  return [...names].map((n) => MECH_BY_NAME.get(n)).filter((m): m is number => m !== undefined)
+}
+
+/** C_GetMechanismList for the session's slot; empty set when the probe fails (no pre-skip). */
+export function advertisedMechanisms(M: SoftHSMModule, slotId: number): Set<number> {
+  try {
+    return new Set(hsm_getMechanismList(M, slotId))
+  } catch {
+    return new Set()
+  }
+}
+
+export interface RunKatOptions {
+  /** The engine's C_GetMechanismList. A kind that needs a mechanism missing from
+   *  it is reported 'skip' (not tested) instead of being run. Empty/absent = no check. */
+  advertised?: ReadonlySet<number>
+}
+
+/** Result counts. `skip` is its own bucket — never a pass, never a failure. */
+export function summarizeKatResults(results: readonly Pick<KATResult, 'status'>[]) {
+  const c = { pass: 0, fail: 0, error: 0, skip: 0, total: results.length }
+  for (const r of results) c[r.status] += 1
+  return c
+}
+
 // ── Public dispatcher ─────────────────────────────────────────────────────────
 
 export async function runKAT(
   M: SoftHSMModule,
   hSession: number,
-  spec: KatTestSpec
+  spec: KatTestSpec,
+  opts: RunKatOptions = {}
 ): Promise<KATResult> {
   const algorithm = getAlgorithmName(spec.kind)
+
+  if (opts.advertised && opts.advertised.size > 0) {
+    const missing = requiredMechanisms(spec.kind).filter((m) => !opts.advertised!.has(m))
+    if (missing.length > 0) {
+      return {
+        id: spec.id,
+        useCase: spec.useCase,
+        algorithm,
+        standard: spec.standard,
+        referenceUrl: spec.referenceUrl,
+        libraryRefId: spec.libraryRefId,
+        status: 'skip',
+        details: `Not tested — this engine does not advertise ${missing
+          .map((m) => MECH_TABLE[m]?.name ?? `0x${m.toString(16)}`)
+          .join(', ')} (C_GetMechanismList)`,
+        evidence: evidenceForKind(spec.kind),
+      }
+    }
+  }
 
   try {
     let result: { status: 'pass' | 'fail'; details: string }
