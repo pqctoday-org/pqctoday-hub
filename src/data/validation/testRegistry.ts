@@ -213,6 +213,30 @@ const DIGEST_MECH: Record<string, string> = {
 const eddsaScheme = (curve: string, preHash: boolean) =>
   `${curve === 'ED-25519' ? 'Ed25519' : 'Ed448'}${preHash ? 'ph' : ''}`
 
+/** P5: ACVP hashAlg → CKM_ECDSA_<hash> for the sigGen verify-back rows (mirrors sections/ecKeyVerSigGenAcvp.ts). */
+const ECDSA_SIGGEN_MECH: Record<string, string> = {
+  'SHA2-224': 'CKM_ECDSA_SHA224',
+  'SHA2-256': 'CKM_ECDSA_SHA256',
+  'SHA2-384': 'CKM_ECDSA_SHA384',
+  'SHA2-512': 'CKM_ECDSA_SHA512',
+  'SHA3-224': 'CKM_ECDSA_SHA3_224',
+  'SHA3-256': 'CKM_ECDSA_SHA3_256',
+  'SHA3-384': 'CKM_ECDSA_SHA3_384',
+  'SHA3-512': 'CKM_ECDSA_SHA3_512',
+}
+const edCurve = (curve: string) => (curve === 'ED-25519' ? 'Ed25519' : 'Ed448')
+/** P5: ACVP KDF 1.0 kdfMode → PKCS#11 KBKDF mechanism (mirrors sections/kdfDeriveAcvp.ts). */
+const KBKDF_MECH: Record<string, string> = {
+  counter: 'CKM_SP800_108_COUNTER_KDF',
+  feedback: 'CKM_SP800_108_FEEDBACK_KDF',
+  'double pipeline iteration': 'CKM_SP800_108_DOUBLE_PIPELINE_KDF',
+}
+const NOBLE_CURVES = {
+  citation:
+    '@noble/curves 2.x (package.json dependency) p256/p384/p521 ECDSA verify over a @noble/hashes digest, FIPS 186-5 §6.4.2',
+  url: 'https://github.com/paulmillr/noble-curves',
+}
+
 const MLDSA_SETS = ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'] as const
 const MLKEM_SETS = ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024'] as const
 const SLH_SETS = [
@@ -229,6 +253,60 @@ const SLH_SETS = [
   'SLH-DSA-SHAKE-256s',
   'SLH-DSA-SHAKE-256f',
 ] as const
+
+/** P5: the "f" SLH-DSA sets the product-authored sign rows run on (mirrors sections/slhdsaCoverage.ts). */
+const SLH_F_SETS = SLH_SETS.filter((ps) => ps.endsWith('f'))
+
+/** P5: independent verifier the hedged-sign oracle rows use. */
+const NOBLE_PQ = {
+  citation:
+    '@noble/post-quantum 0.7.1 (package.json dependency) — ml_dsa / slh_dsa verify, FIPS 204 Algorithm 3 / FIPS 205 Algorithm 24',
+  url: 'https://github.com/paulmillr/noble-post-quantum',
+}
+
+/** P5: hedged-sign rows at the context extremes for one parameter set (sections/mldsaNegBoundary.ts, slhdsaCoverage.ts). */
+const hedgedCases = (
+  testId: string,
+  rowPrefix: string,
+  signMech: string,
+  ps: string,
+  messageBytes: number
+): RegisteredCase[] =>
+  (['ctx0', 'ctx255'] as const).flatMap((ext) => {
+    const parameters = { contextBytes: ext === 'ctx0' ? 0 : 255, messageBytes }
+    return [
+      lc(
+        testId,
+        `${ps}-${ext}-rt`,
+        RT,
+        'positive',
+        [x(signMech, 'sign', ps, 'hedged'), x(signMech, 'verify', ps)],
+        {
+          rowId: `${rowPrefix}-hedged-${ext}-rt-${ps}-{engine}`,
+          parameters,
+          note: 'CKH_HEDGE_REQUIRED signature over the NIST key material, verified by the same engine with the NIST public key.',
+        }
+      ),
+      lc(testId, `${ps}-${ext}-oracle`, ORACLE, 'positive', [x(signMech, 'sign', ps, 'hedged')], {
+        rowId: `${rowPrefix}-hedged-${ext}-oracle-${ps}-{engine}`,
+        parameters,
+        source: NOBLE_PQ,
+        note: 'The same hedged signature verified by an independent implementation: agreement with that oracle for this case, not a NIST expected value; the signing randomness is not checked.',
+      }),
+      lc(
+        testId,
+        `${ps}-${ext}-neg`,
+        PROBE,
+        'negative',
+        [x(signMech, 'sign', ps, 'hedged'), x(signMech, 'verify', ps)],
+        {
+          rowId: `${rowPrefix}-hedged-${ext}-neg-${ps}-{engine}`,
+          parameters,
+          note: `The hedged signature verified with the ${ext === 'ctx0' ? 'message last bit flipped' : 'context byte 0 flipped'}; asserts CKR_SIGNATURE_INVALID (PQC Today-authored mutation).`,
+        }
+      ),
+    ]
+  })
 
 // ── useAcvpSuite (src/components/Playground/hsm/acvp/useAcvpSuite.ts) ───────
 
@@ -398,6 +476,76 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       )
     }),
     'SHAKE-hash and SHAKE-mask PSS groups are notExecuted skip rows (no PKCS #11 v3.2 mechanism / CKG_MGF).'
+  ),
+  acvp(
+    '04e.keyver',
+    '§4e.1 (sections/ecKeyVerSigGenAcvp.ts)',
+    'ECDSA / EdDSA NIST keyVer: the key is used (sign with the upstream d, verify with the point) — a valid key must verify, an invalid point must be refused with a key error',
+    [...casesOf('ecdsa_keyver_acvp_test'), ...casesOf('eddsa_keyver_acvp_test')].map((c) => {
+      const curve = param(c, 'curve')
+      const ec = c.caseId.startsWith('ecdsa_')
+      const mech = ec ? 'CKM_ECDSA_SHA256' : 'CKM_EDDSA'
+      const ps = ec ? curve : edCurve(curve)
+      return mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        c.expectation === 'positive'
+          ? [x(mech, 'sign', ps), x(mech, 'verify', ps)]
+          : [x(mech, 'verify', ps)],
+        `${ec ? 'ecdsa' : 'eddsa'}-keyver-nist-${curve}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    'A negative passes when the invalid point is refused at C_CreateObject, C_VerifyInit or C_Verify with a code other than CKR_SIGNATURE_INVALID / CKR_SIGNATURE_LEN_RANGE.'
+  ),
+  acvp(
+    '04e.ecdsa-siggen',
+    '§4e.2 (sections/ecKeyVerSigGenAcvp.ts)',
+    'ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)',
+    casesOf('ecdsa_siggen_acvp_test').flatMap((c) => {
+      const curve = param(c, 'curve')
+      const hashAlg = param(c, 'hashAlg')
+      const mech = ECDSA_SIGGEN_MECH[hashAlg]
+      if (!mech) throw new Error(`testRegistry: no CKM_ECDSA_<hash> for ${hashAlg}`)
+      const base = `ecdsa-siggen-${curve}-${hashAlg.toLowerCase()}-${upstreamIds(c)}`
+      return [
+        mc(
+          c.caseId,
+          RT,
+          'positive',
+          [x(mech, 'sign', curve), x(mech, 'verify', curve)],
+          `${base}-rt-{engine}`
+        ),
+        lc(
+          'acvp.04e.ecdsa-siggen',
+          `${curve}-${hashAlg}-oracle`,
+          ORACLE,
+          'positive',
+          [x(mech, 'sign', curve)],
+          {
+            rowId: `${base}-oracle-{engine}`,
+            parameters: { messageBytes: Number(param(c, 'messageBytes')) },
+            source: NOBLE_CURVES,
+            note: `The engine signature over ${c.caseId} (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.`,
+          }
+        ),
+      ]
+    }),
+    'The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped).'
+  ),
+  acvp(
+    '04e.eddsa-siggen',
+    '§4e.3 (sections/ecKeyVerSigGenAcvp.ts)',
+    'EdDSA NIST sigGen byte-match (deterministic): Ed25519 / Ed448, pure and preHash, with the upstream contexts',
+    casesOf('eddsa_siggen_acvp_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_EDDSA', 'sign', edCurve(param(c, 'curve')))],
+        `eddsa-siggen-nist-${eddsaScheme(param(c, 'curve'), c.parameters.preHash === true)}-${upstreamIds(c)}-{engine}`
+      )
+    )
   ),
   acvp(
     '05',
@@ -595,6 +743,67 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     'Skip rows are evidence of nothing; the one NIST 1-byte-context case is hedged and uses SHA2-512/256 — the declaredUnreachable rows mldsa-hedged-rnd and mldsa-hash-sha512t.'
   ),
   acvp(
+    '05f.sigver',
+    '§5f.1 (sections/mldsaNegBoundary.ts)',
+    'ML-DSA NIST sigVer depth: 0-byte and 255-byte context cases of each pure group and every HashML-DSA case with a mechanism, upstream disposition',
+    casesOf('mldsa_sigver_depth_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x(mldsaMech(c), 'verify', param(c, 'parameterSet'))],
+        `mldsa-sigver-depth-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
+  acvp(
+    '05f.det-neg',
+    '§5f.2 (sections/mldsaNegBoundary.ts)',
+    'ML-DSA deterministic-sign negatives (product-authored): message bit flip / 1-byte context must not reproduce the NIST signature nor verify for the original input',
+    casesOf('mldsa_siggen_ctxmsg_test')
+      .filter((c) => c.parameters.contextBytes === 0)
+      .flatMap((c) => {
+        const ps = param(c, 'parameterSet')
+        const messageBytes = Number(param(c, 'messageBytes'))
+        return (
+          [
+            ['msgflip', 0],
+            ['ctxchange', 1],
+          ] as const
+        ).map(([key, contextBytes]) =>
+          lc(
+            'acvp.05f.det-neg',
+            `${key}-${ps}`,
+            PROBE,
+            'negative',
+            [x('CKM_ML_DSA', 'sign', ps, 'deterministic'), x('CKM_ML_DSA', 'verify', ps)],
+            {
+              rowId: `mldsa-negbound-det-${key}-${ps}-{engine}`,
+              parameters: { contextBytes, messageBytes },
+              note: `Key material from ${c.caseId}; the deterministic signature of the mutated input must differ from the NIST expected signature and C_Verify of the original input must return CKR_SIGNATURE_INVALID. PQC Today-authored, not NIST.`,
+            }
+          )
+        )
+      })
+  ),
+  acvp(
+    '05f.hedged',
+    '§5f.3–4 (sections/mldsaNegBoundary.ts)',
+    'ML-DSA hedged signing at context 0 and 255 bytes: engine round-trip, independent-oracle verification (@noble/post-quantum), and mutated-message / mutated-context negatives',
+    casesOf('mldsa_siggen_ctxmsg_test')
+      .filter((c) => c.parameters.contextBytes === 0)
+      .flatMap((c) =>
+        hedgedCases(
+          'acvp.05f.hedged',
+          'mldsa-negbound',
+          'CKM_ML_DSA',
+          param(c, 'parameterSet'),
+          Number(param(c, 'messageBytes'))
+        )
+      ),
+    'Key material from the empty-context case of mldsa_siggen_ctxmsg_test per parameter set; the 255-byte context is product-authored (00..FE). The hedged-rnd NIST sigGen groups stay the declaredUnreachable row mldsa-hedged-rnd.'
+  ),
+  acvp(
     '06',
     '§6',
     'ML-DSA functional sign + verify',
@@ -731,6 +940,21 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     'ML-KEM honest skip (encapsulation AFT: C_EncapsulateKey takes no caller-supplied randomness m)',
     [],
     'Skip rows are evidence of nothing; the encapsulation AFT groups are listed under notExecuted in mlkem_encapdecap_val_test.json.'
+  ),
+  acvp(
+    '07c.ekcheck-depth',
+    '§7c (sections/mlkemKeyCheckDepth.ts)',
+    'ML-KEM encapsulation-key check depth: every remaining invalid NIST ek (FIPS 203 §7.2), key import + C_EncapsulateKey',
+    casesOf('mlkem_ekcheck_depth_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x('CKM_ML_KEM', 'encapsulate', param(c, 'parameterSet'))],
+        `mlkem-ekcheck-depth-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    ),
+    'A negative case passes when the invalid key is rejected at C_CreateObject or at C_EncapsulateKey. ML-KEM inputs have fixed lengths: the capability map declares no length boundary for these cells.'
   ),
   acvp(
     '08',
@@ -891,6 +1115,82 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     [],
     'Skip rows are evidence of nothing; the upstream groups they stand for are listed under notExecuted in the SLH-DSA vector files. No capability-map declaredUnreachable row covers them yet.'
   ),
+  acvp(
+    '09d.keygen',
+    '§9d.1 (sections/slhdsaCoverage.ts)',
+    'SLH-DSA keyGen from seed (CKA_SEED SK.seed‖SK.prf‖PK.seed), pk + sk byte-match, all 12 parameter sets',
+    casesOf('slhdsa_keygen_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_SLH_DSA_KEY_PAIR_GEN', 'generate-key-pair', param(c, 'parameterSet'))],
+        `slhdsa-keygen-seed-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
+  acvp(
+    '09d.siggen-ctx0',
+    '§9d.2 (sections/slhdsaCoverage.ts)',
+    'SLH-DSA deterministic sigGen byte-match at an empty context (sk via C_CreateObject, CKH_DETERMINISTIC_REQUIRED)',
+    casesOf('slhdsa_siggen_ctx0_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_SLH_DSA', 'sign', param(c, 'parameterSet'), 'deterministic')],
+        `slhdsa-siggen-ctx0-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
+  acvp(
+    '09d.det-neg',
+    '§9d.3a (sections/slhdsaCoverage.ts)',
+    'SLH-DSA deterministic-sign negatives for the six "f" sets (product-authored): message / context bit flip must not reproduce the NIST signature nor verify for the original input',
+    casesOf('slhdsa_ctx_test', '/sigGen/')
+      .filter((c) => (SLH_F_SETS as readonly string[]).includes(param(c, 'parameterSet')))
+      .flatMap((c) => {
+        const ps = param(c, 'parameterSet')
+        return (['msgflip', 'ctxflip'] as const).map((key) =>
+          lc(
+            'acvp.09d.det-neg',
+            `${key}-${ps}`,
+            PROBE,
+            'negative',
+            [x('CKM_SLH_DSA', 'sign', ps, 'deterministic'), x('CKM_SLH_DSA', 'verify', ps)],
+            {
+              rowId: `slhdsa-cov-det-${key}-${ps}-{engine}`,
+              parameters: lengthsOf(c),
+              note: `Key material from ${c.caseId}; the deterministic signature of the mutated input must differ from the NIST expected signature and C_Verify of the original input must return CKR_SIGNATURE_INVALID. PQC Today-authored, not NIST.`,
+            }
+          )
+        )
+      })
+  ),
+  acvp(
+    '09d.hedged',
+    '§9d.3b–c (sections/slhdsaCoverage.ts)',
+    'SLH-DSA hedged signing at context 0 and 255 bytes for the six "f" sets: engine round-trip, independent-oracle verification (@noble/post-quantum), and mutated-message / mutated-context negatives',
+    casesOf('slhdsa_ctx_test', '/sigGen/')
+      .filter((c) => (SLH_F_SETS as readonly string[]).includes(param(c, 'parameterSet')))
+      .flatMap((c) =>
+        hedgedCases(
+          'acvp.09d.hedged',
+          'slhdsa-cov',
+          'CKM_SLH_DSA',
+          param(c, 'parameterSet'),
+          Number(param(c, 'messageBytes'))
+        )
+      ),
+    'Key material from the slhdsa_ctx_test sigGen entry of each set; the 255-byte context is the NIST one.'
+  ),
+  acvp(
+    '09d.skips',
+    '§9d.4 (sections/slhdsaCoverage.ts)',
+    'SLH-DSA honest skip (the "s" sets\' product-authored sign rows: runtime budget)',
+    [],
+    'Skip rows are evidence of nothing; the "s" sets keep their NIST deterministic byte-matches at context 0 and 255 bytes, and their sign cells stay without a negative case.'
+  ),
   acvp('10', '§10', 'SHA2-256 digest', digestCases('sha256_test', sha256V, 'CKM_SHA256', 'sha256')),
   acvp(
     '10b',
@@ -935,6 +1235,23 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     }),
     'MCT cases check the first of the 100 upstream outer iterations only (1000 chained C_Digest calls). Alternate-version MCT and LDT groups are notExecuted skip rows.'
   ),
+  acvp(
+    '10g',
+    '§10g (sections/mctFullAcvp.ts)',
+    'SHA-2 / SHA-3 NIST MCT, all 100 outer iterations: standard version (SHA2-224/384/512-224, SHA-3) and alternate version (SHA2-256/512/512-256)',
+    casesOf('sha_mct_full_test').map((c) => {
+      const hashAlg = param(c, 'hashAlg')
+      const mech = DIGEST_MECH[hashAlg]
+      if (!mech) throw new Error(`testRegistry: no digest mechanism for ${hashAlg}`)
+      return mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x(mech, 'digest')],
+        `sha-mct-full-${hashSlug(hashAlg)}-${upstreamIds(c)}-{engine}`
+      )
+    })
+  ),
   acvp('11', '§11', 'AES-CBC-256 decrypt (raw CKM_AES_CBC)', [
     mc(
       'aescbc_test#/testGroups/0/tests/0',
@@ -968,6 +1285,23 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       )
     }),
     'MCT cases run the ACVP inner loop (1000 single-block C_EncryptUpdate/C_DecryptUpdate calls in one multi-part operation) and check the first of the 100 upstream outer iterations only.'
+  ),
+  acvp(
+    '12d',
+    '§12d (sections/mctFullAcvp.ts)',
+    'AES-CBC NIST MCT, all 100 outer iterations (AESAVS §6.4), AES-128/192/256 encrypt and decrypt',
+    casesOf('aescbc_mct_full_test').map((c) => {
+      const kl = param(c, 'keyLen')
+      const dir = param(c, 'direction')
+      return mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_AES_CBC', dir, `AES-${kl}`)],
+        `aescbc-mct-full-k${kl}-${dir}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    'Each outer iteration imports the next key and restarts the multi-part operation with the next IV, both derived from the engine outputs as AESAVS §6.4 specifies.'
   ),
   acvp(
     '12b.probes',
@@ -1088,6 +1422,45 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       )
     ),
     'The Rust engine implements only the HMAC-SHA-256/384/512 PRFs and refuses fewer than 1000 iterations (open gaps rust-pbkdf2-prf-limited, pbkdf2-min-iterations-divergence); its rows are recorded as fails.'
+  ),
+  acvp(
+    '18c.hkdf',
+    '§18c.1 (sections/kdfDeriveAcvp.ts)',
+    'HKDF NIST reference samples (KDA-HKDF-Sp800-56Cr2): IKM = Z‖T, salt, constructed fixedInfo; AFT byte-match and VAL testPassed=false (output must differ)',
+    casesOf('hkdf_acvp_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x('CKM_HKDF_DERIVE', 'derive')],
+        `hkdf-nist-${param(c, 'hmacAlg').toLowerCase().replace('/', '-')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
+  acvp(
+    '18c.kbkdf',
+    '§18c.2 (sections/kdfDeriveAcvp.ts)',
+    'SP 800-108 KBKDF NIST reference samples (KDF 1.0): counter / feedback / double pipeline × every Table 196 PRF, every counter location for HMAC-SHA2-256 and CMAC-AES128; keyOut byte-match',
+    casesOf('kbkdf_acvp_test').map((c) => {
+      const mode = param(c, 'kdfMode')
+      const mech = KBKDF_MECH[mode]
+      if (!mech) throw new Error(`testRegistry: no KBKDF mechanism for ${mode}`)
+      return mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x(mech, 'derive')],
+        `kbkdf-nist-${mode.split(' ')[0]}-${param(c, 'macMode').toLowerCase().replace('/', '-')}-${upstreamIds(c)}-{engine}`
+      )
+    }),
+    'The CK_PRF_DATA_PARAM layout follows PKCS#11 v3.2 §6.42.3–6.42.5 (ITERATION_VARIABLE is mandatory in every mode). Open gaps cpp-kbkdf-counter-position-ignored and rust-kbkdf-iteration-variable-rejected record the engine rows that fail.'
+  ),
+  acvp(
+    '18c.skips',
+    '§18c.3 (sections/kdfDeriveAcvp.ts)',
+    'ANSI X9.63 KDF on a caller-supplied shared secret — honest unsupported row',
+    [],
+    'Skip rows are evidence of nothing; the capability stands as the capability-map declaredUnreachable row x963-kdf-caller-z (shown as unsupported).'
   ),
   acvp('19', '§19', 'AES-KW-256 wrap', [
     mc(

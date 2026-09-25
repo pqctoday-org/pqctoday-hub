@@ -306,9 +306,16 @@ describe('ML-KEM reference samples — sabotaged expectations fail', () => {
         expect(c?.status).toBe('fail')
         expect(c?.details).toMatch(/ACCEPTED a key NIST marks invalid/)
       }
-      // Exactly the sabotaged rows failed, plus the 6 Rust key-check findings.
+      // Exactly the sabotaged rows failed, plus the 6 Rust key-check findings and
+      // the 12 Rust findings of the section 7c ek-check depth rows (same gap:
+      // rust-mlkem-no-key-input-checks).
       const failed = results.filter((r) => r.status === 'fail')
-      expect(failed).toHaveLength(6 + 6)
+      expect(failed).toHaveLength(6 + 6 + 12)
+      expect(
+        failed
+          .filter((r) => r.id.startsWith('mlkem-ekcheck-depth-'))
+          .every((r) => r.id.endsWith('-Rust'))
+      ).toBe(true)
     } finally {
       vi.doUnmock('@/data/acvp/mlkem_keygen_test.json')
       vi.doUnmock('@/data/acvp/mlkem_encapdecap_val_test.json')

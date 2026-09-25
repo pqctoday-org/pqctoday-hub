@@ -9,7 +9,7 @@
     "platform": "darwin",
     "arch": "arm64"
   },
-  "hubCommit": "844e0b0e15c1928c90cc5530245b251c71489aab",
+  "hubCommit": "6fdcd961b31e38b53e58db18acba62b7346d0a37",
   "recordedAt": "2026-09-25",
   "results": [
     {
@@ -16298,90 +16298,6 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA224",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA224",
-      "status": "fail"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA3_224",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA3_224",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA3_256",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA3_256",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA3_384",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA3_384",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA3_512",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA3_512",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA512",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA512",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
       "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_HASH_ML_DSA",
       "status": "pass"
     },
@@ -24096,48 +24012,6 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_ECDSA_SHA224",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_ECDSA_SHA224",
-      "status": "fail"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_ECDSA_SHA3_224",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_ECDSA_SHA3_224",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_ECDSA_SHA3_384",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_ECDSA_SHA3_384",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
       "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA",
       "status": "pass"
     },
@@ -24146,90 +24020,6 @@
       "artifactKind": "wasm",
       "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
       "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHA256",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHA256",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHA3_384",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHA3_384",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHA3_512",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHA3_512",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHA384",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHA384",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHAKE128",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHAKE128",
-      "status": "pass"
-    },
-    {
-      "engine": "cpp",
-      "artifactKind": "wasm",
-      "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHAKE256",
-      "status": "pass"
-    },
-    {
-      "engine": "rust",
-      "artifactKind": "wasm",
-      "artifactSha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961",
-      "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_HASH_ML_DSA_SHAKE256",
       "status": "pass"
     },
     {

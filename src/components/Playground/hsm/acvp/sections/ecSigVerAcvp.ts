@@ -95,7 +95,7 @@ const leftPad = (hex: string, n: number): Uint8Array => {
 /** C_CreateObject(CKO_PUBLIC_KEY): CKA_VALUE is offered for the Rust engine and
  * dropped on CKR_ATTRIBUTE_TYPE_INVALID (the C++ engine rejects it), as the
  * hub's hsm_importECPublicKey / hsm_importEdDSAPublicKey do. */
-function importPublicRv(
+export function importPublicRv(
   M: SoftHSMModule,
   h: number,
   keyType: number,

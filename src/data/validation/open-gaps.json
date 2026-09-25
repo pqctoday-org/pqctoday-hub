@@ -139,8 +139,8 @@
     },
     {
       "id": "rust-mlkem-no-key-input-checks",
-      "title": "Rust engine accepts all 6 invalid NIST ML-KEM encapsulation/decapsulation keys",
-      "detail": "The NIST ACVP ML-KEM encapDecap VAL key-check cases (mlkem_encapdecap_val_test: modified H, ek values too large) are accepted by the Rust engine: its C_EncapsulateKey / C_DecapsulateKey paths perform no FIPS 203 §7.2 encapsulation-key or §7.3 decapsulation-key input checks (bundle 417c47a2; unchanged on pqctoday-hsm origin/main). The workbench rows stay failing on Rust (acvp.07b.keycheck). Engine defect — not patched in the hub.",
+      "title": "Rust engine accepts every invalid NIST ML-KEM encapsulation/decapsulation key (18 of 18)",
+      "detail": "The NIST ACVP ML-KEM encapDecap VAL key-check cases (mlkem_encapdecap_val_test: modified H, ek values too large) are accepted by the Rust engine: its C_EncapsulateKey / C_DecapsulateKey paths perform no FIPS 203 §7.2 encapsulation-key or §7.3 decapsulation-key input checks (bundle 417c47a2; unchanged on pqctoday-hsm origin/main). The workbench rows stay failing on Rust (acvp.07b.keycheck). Since gap-closure P5 the 12 further invalid encapsulation keys of mlkem_ekcheck_depth_test (every remaining testPassed=false case of the upstream encapsulationKeyCheck groups) are accepted as well (acvp.07c.ekcheck-depth); the C++ engine rejects all 18. The fix is on pqctoday-hsm fix/mlkem-input-checks-0925 and reaches these rows with the next WASM rebuild. Engine defect — not patched in the hub.",
       "planItem": "D1-5",
       "owner": "unassigned",
       "status": "open",
@@ -356,7 +356,7 @@
     {
       "id": "wse-nist-sample-scope",
       "title": "Classical NIST reference samples cover only what the pinned upstream samples register",
-      "detail": "The pinned ACVP-Server@975de31e samples bound what WS-E can claim: ACVP-AES-GCM-1.0 registers AES-128 only (IV 96/120, tag 128/32, payload/AAD 0/120 bits) — AES-192/256-GCM, 64-bit tags and other lengths have no NIST case; HMAC 2.0 registers macLen 80..160 bits — no full-length (untruncated) tag, so CKM_<hash>_HMAC (non-general) has no NIST case; EDDSA-SigVer-1.0 carries no context string (Ed25519ctx / Ed448 contexts not claimed); ECDSA SHA2-512/256 and SHAKE groups have no PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (skip rows).",
+      "detail": "The pinned ACVP-Server@975de31e samples bound what WS-E can claim: ACVP-AES-GCM-1.0 registers AES-128 only (IV 96/120, tag 128/32, payload/AAD 0/120 bits) — AES-192/256-GCM, 64-bit tags and other lengths have no NIST case; HMAC 2.0 registers macLen 80..160 bits — no full-length (untruncated) tag, so CKM_<hash>_HMAC (non-general) has no NIST case; EDDSA-SigVer-1.0 carries no context string (contexts are exercised only through the EDDSA-SigGen-1.0 byte-match cases of eddsa_siggen_acvp_test); ECDSA SHA2-512/256 and SHAKE groups have no PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (skip rows). Checked again 2026-09-25 (GitHub API, gap-closure P5): 975de31e (2026-08-12, \"RELEASE/v1.1.0.43 including hotfix patches\") is still the head of usnistgov/ACVP-Server master and the only other branch (jbrock24-patch-1, 2024) changes the README only, so no newer upstream commit carries AES-192/256-GCM or full-length HMAC tag samples; the scope gap stays.",
       "planItem": "E",
       "owner": "unassigned",
       "status": "open",
@@ -400,12 +400,66 @@
     },
     {
       "id": "wse-remaining-classical-acvp",
-      "title": "Classical families still without NIST ACVP-Server cases after WS-E",
-      "detail": "Not yet sourced from the pinned ACVP-Server samples (remediation plan WS-E, P1 breadth): HKDF (KDA-HKDF-Sp800-56Cr2 needs fixedInfo assembly), SP 800-108 KBKDF (KDF-1.0 counter/feedback), ANSI X9.63 KDF (kdf-components-ansix9.63: PKCS#11 exposes it only inside CKM_ECDH1_DERIVE, which takes no caller-supplied Z, so the upstream (Z, sharedInfo) -> key mapping cannot be driven), ECDSA/EdDSA KeyVer (C_CreateObject is not a key-validation operation) and ECDSA/EdDSA SigGen verify-back, the alternate-version SHA-2 MCT (SHA2-256/512/512-256), full 100-iteration MCTs (only outer iteration 0 is checked for SHA-2/SHA-3 standard MCT and AES-CBC MCT), and SHA LDT. The existing HKDF/PBKDF2/X9.63/KBKDF workbench rows keep their published-standard / oracle / round-trip labels.",
+      "title": "Classical families still without NIST ACVP-Server cases after WS-E and gap-closure P5",
+      "detail": "Closed by gap-closure P5 (2026-09-25): HKDF (hkdf_acvp_test, KDA-HKDF-Sp800-56Cr2), SP 800-108 KBKDF (kbkdf_acvp_test, KDF 1.0 counter / feedback / double pipeline), ECDSA/EdDSA KeyVer (ecdsa_/eddsa_keyver_acvp_test, the key is used: sign with d, verify with the point), ECDSA SigGen verify-back (functional round-trip + independent oracle; NIST r, s are not reproducible because C_Sign draws its own nonce), EdDSA SigGen byte-match, the alternate-version SHA-2 MCT and full 100-iteration MCTs for SHA-2/SHA-3 and AES-CBC (sha_mct_full_test, aescbc_mct_full_test). Still open: ANSI X9.63 KDF on a caller-supplied Z — not expressible through PKCS #11 (declaredUnreachable x963-kdf-caller-z, gap x963-kdf-caller-z-no-mechanism); SHA LDT (1 GiB expanded message); HKDF multi-expansion groups; KBKDF with CMAC-TDES, HMAC-SHA2-512/224, /256 or bit-oriented output lengths; ECDSA/EdDSA KeyGen and deterministic ECDSA SigGen (no PKCS #11 input for the random / RFC 6979 nonce). The older HKDF/PBKDF2/X9.63/KBKDF workbench rows keep their published-standard / oracle / round-trip labels.",
       "planItem": "E",
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ + Rust"
+    },
+    {
+      "id": "x963-kdf-caller-z-no-mechanism",
+      "title": "ANSI X9.63 KDF on a caller-supplied shared secret has no PKCS #11 mechanism",
+      "detail": "PKCS #11 v3.2 defines the X9.63 KDF only as the CK_EC_KDF_TYPE of CKM_ECDH1_DERIVE and related ECDH mechanisms (§6.3.16), applied to the shared secret the token derives from its own key pair; no mechanism accepts a caller-supplied Z, so the NIST kdf-components-ansix9.63-1.0 cases (Z, sharedInfo -> keyData) cannot be executed. Shown as the workbench skip row x963-kdf-unsupported and the capability-map declaredUnreachable row x963-kdf-caller-z. The KDF itself is exercised inside ECDH derivation (section 25, round-trip only).",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "accepted-limitation",
+      "scope": "C++ + Rust (specification limit)"
+    },
+    {
+      "id": "cpp-kbkdf-counter-position-ignored",
+      "title": "C++: SP 800-108 KDFs ignore where the caller places the counter in the PRF input",
+      "detail": "With the PKCS #11 v3.2 §6.42 data-parameter layout the NIST KDF 1.0 cases require, the C++ engine derives the wrong key whenever the counter is not in its fixed position: counter mode with the ITERATION_VARIABLE after or in the middle of the fixed data, and feedback / double-pipeline with a COUNTER before the chaining value or after the fixed data (kbkdf_acvp_test, 12 rows per run: HMAC-SHA2-256 and CMAC-AES128). 'Before fixed data' (and no counter) layouts byte-match NIST for every PRF. The engine appears to place the counter first (counter mode) or right after K(i-1)/A(i) (feedback / double pipeline) regardless of the CK_PRF_DATA_PARAM order. Engine defect — not patched in the hub.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)"
+    },
+    {
+      "id": "rust-kbkdf-iteration-variable-rejected",
+      "title": "Rust: feedback and double-pipeline KBKDF reject the mandatory ITERATION_VARIABLE data parameter",
+      "detail": "PKCS #11 v3.2 §6.42.4/§6.42.5 make CK_SP800_108_ITERATION_VARIABLE mandatory in feedback and double-pipeline mode (pValue NULL, ulValueLen 0; §6.42.2). The Rust engine returns CKR_MECHANISM_PARAM_INVALID for every such layout, so all 38 feedback / double-pipeline NIST KDF 1.0 rows fail. Probed 2026-09-25: without the ITERATION_VARIABLE entry the engine accepts the parameters and reproduces NIST except where the counter precedes the chaining value. Counter mode (ITERATION_VARIABLE with a counter format) is correct in every location. The hub keeps the specification layout; the existing sections 27/29 call the feedback mechanism without the ITERATION_VARIABLE. Engine defect — not patched in the hub.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)"
+    },
+    {
+      "id": "cpp-ec-public-key-not-validated",
+      "title": "C++: invalid ECDSA / EdDSA public points are imported and used without validation",
+      "detail": "The NIST keyVer cases with a point not on the curve or a coordinate out of range (ecdsa_keyver_acvp_test P-256/384/521, eddsa_keyver_acvp_test Ed25519/Ed448: 10 points) are accepted by C_CreateObject and C_VerifyInit, and C_Verify then returns CKR_SIGNATURE_INVALID as for any wrong signature — no FIPS 186-5 / SP 800-56A public-key validation happens on import or use (PKCS #11 v3.2 §4.1.1 would return CKR_ATTRIBUTE_VALUE_INVALID at creation). Engine defect — not patched in the hub.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)"
+    },
+    {
+      "id": "rust-ec-public-key-refused-late",
+      "title": "Rust: invalid public points are refused only at C_Verify, with a code C_Verify does not list",
+      "detail": "The Rust engine imports the 10 invalid NIST keyVer points (C_CreateObject CKR_OK) and accepts C_VerifyInit, then C_Verify returns CKR_KEY_TYPE_INCONSISTENT — not among the §5.15.2 C_Verify return values. The keyVer rows pass (the point is refused with a key error), but validation belongs at C_CreateObject (§4.1.1 CKR_ATTRIBUTE_VALUE_INVALID) or C_VerifyInit.",
+      "planItem": "E / G-8",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)"
+    },
+    {
+      "id": "rust-eddsa-ph-context-ignored",
+      "title": "Rust: Ed25519ph / Ed448ph signing ignores the CK_EDDSA_PARAMS context",
+      "detail": "C_Sign(CKM_EDDSA, phFlag = true, non-empty context) on the Rust engine produces the Ed25519ph / Ed448ph signature for an EMPTY context: all 8 preHash NIST EDDSA-SigGen-1.0 cases (contexts 96–248 bytes) differ from NIST, and @noble/curves ed25519ph verifies the Rust output without the context and rejects it with it. Pure Ed25519 / Ed448 with contexts byte-match. The C++ engine matches all 16 cases. Engine defect — not patched in the hub.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)"
     }
   ]
 }

@@ -115,6 +115,9 @@ export interface AcvpCaseMeta {
     | 'mac-generate'
     | 'mac-verify'
     | 'digest'
+    // KDF / key validation (gap-closure P5)
+    | 'derive'
+    | 'keyVer'
     | 'none'
   localOperation:
     | 'sigVer'
@@ -132,6 +135,9 @@ export interface AcvpCaseMeta {
     | 'digest'
     | 'wrap'
     | 'unwrap'
+    // gap-closure P5: KDF derivation; randomized signing verified back (no byte-match)
+    | 'derive'
+    | 'sigGen-verify-back'
     | 'none'
   /** Algorithm parameter set, curve, key length or digest the case runs with. */
   parameterSet: string

@@ -60,12 +60,14 @@ describe('generate-coverage-matrix (committed inputs)', () => {
   it('the ECDSA P-521 NIST sample passes on both engines since the hub DER fix (was a recorded C++ fail)', () => {
     const r = matrix.rows.find((x) => x.key === 'CKM_ECDSA_SHA512|verify|P-521|*')!
     // C++: the §33 workbench case + the 7 WS-E NIST SigVer cases (§4b, P-521 / SHA2-512)
-    // = 8 passes, plus the 5 G-8 error-path verify probes for CKM_ECDSA_SHA512
-    // (4 pass; key-type-inconsistent fails — open gap g8-cpp-init-accepts-wrong-key-type).
-    expect(r.engines.cpp.run).toEqual({ pass: 12, fail: 1 })
-    // Rust: the same 8 plus the Algorithms (katRunner) case, plus the same 5 probes
+    // = 8 passes, plus the P5 SigGen verify-back independent-oracle case
+    // (acvp.04e.ecdsa-siggen P-521-SHA2-512-oracle) = 9, plus the 5 G-8 error-path
+    // verify probes for CKM_ECDSA_SHA512 (4 pass; key-type-inconsistent fails — open
+    // gap g8-cpp-init-accepts-wrong-key-type).
+    expect(r.engines.cpp.run).toEqual({ pass: 13, fail: 1 })
+    // Rust: the same 9 plus the Algorithms (katRunner) case, plus the same 5 probes
     // (key-type-inconsistent fails — open gap g8-rust-init-accepts-wrong-key-type).
-    expect(r.engines.rust.run).toEqual({ pass: 13, fail: 1 })
+    expect(r.engines.rust.run).toEqual({ pass: 14, fail: 1 })
     // The row's only recorded fail is that API error-path probe: every NIST SigVer
     // sample on it passes on both engines.
     const rowFails = (inputs.runResults ?? []).filter(
@@ -106,9 +108,14 @@ describe('generate-coverage-matrix (committed inputs)', () => {
       // rust-mlkem-no-key-input-checks; 09c cpp-hashslhdsa-double-wrap; WS-E —
       // 01b rust-gcm-iv-96-only, 04b rust-ecdsa-p224-unsupported, 04d
       // rust-rsa-public-exponent-limit, 12b.probes rust-cbc-iv-length-arguments-bad,
-      // 18b rust-pbkdf2-prf-limited, 35b kmac-verify-ignores-output-length.
+      // 18b rust-pbkdf2-prf-limited, 35b kmac-verify-ignores-output-length;
+      // gap-closure P5 — 07c rust-mlkem-no-key-input-checks, 04e.keyver
+      // cpp-ec-public-key-not-validated, 04e.ecdsa-siggen
+      // g8-rust-advertised-cells-do-not-execute (SHA-224), 04e.eddsa-siggen
+      // rust-eddsa-ph-context-ignored, 18c.kbkdf cpp-kbkdf-counter-position-ignored
+      // / rust-kbkdf-iteration-variable-rejected.
       expect(f.registryCase, f.registryCase).toMatch(
-        /^acvp\.(07b\.keycheck|09c\.(sigver|siggen-det)|01b|04b|04d|12b\.probes|18b|35b)#/
+        /^acvp\.(07b\.keycheck|07c\.ekcheck-depth|09c\.(sigver|siggen-det)|01b|04b|04d|04e\.(keyver|ecdsa-siggen|eddsa-siggen)|12b\.probes|18b|18c\.kbkdf|35b)#/
       )
       expect(
         matrix.openGaps.some((g) => g.id === `recorded-fail:${f.registryCase}:${f.engine}`)

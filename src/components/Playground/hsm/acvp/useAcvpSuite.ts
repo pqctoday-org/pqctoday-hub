@@ -147,6 +147,9 @@ import { useHsmContext } from '../HsmContext'
 import { runMldsaAcvpSection, type AcvpCaseMeta } from './sections/mldsaAcvp'
 import { runMldsaDepthSection } from './sections/mldsaDepth'
 import { runMlkemAcvpSection } from './sections/mlkemAcvp'
+import { runMldsaNegBoundarySection } from './sections/mldsaNegBoundary'
+import { runMlkemKeyCheckDepthSection } from './sections/mlkemKeyCheckDepth'
+import { runSlhdsaCoverageSection } from './sections/slhdsaCoverage'
 import { runSlhdsaAcvpSection } from './sections/slhdsaAcvp'
 import { runAesGcmAcvpSection } from './sections/aesGcmAcvp'
 import { runAesKwAcvpSection } from './sections/aesKwAcvp'
@@ -156,6 +159,13 @@ import { runShaAcvpSection } from './sections/shaAcvp'
 import { runEcdsaSigVerAcvpSection, runEddsaSigVerAcvpSection } from './sections/ecSigVerAcvp'
 import { runRsaSigVerAcvpSection } from './sections/rsaSigVerAcvp'
 import { runKmacAcvpSection, runPbkdf2AcvpSection } from './sections/kdfMacAcvp'
+import { runHkdfAcvpSection, runKbkdfAcvpSection } from './sections/kdfDeriveAcvp'
+import { runAesCbcMctFullSection, runShaMctFullSection } from './sections/mctFullAcvp'
+import {
+  runEcKeyVerAcvpSection,
+  runEcdsaSigGenAcvpSection,
+  runEddsaSigGenAcvpSection,
+} from './sections/ecKeyVerSigGenAcvp'
 import type { HsmKey } from '../HsmContext'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -187,13 +197,13 @@ export type CategoryId =
   'symmetric' | 'hashing_mac' | 'kdf' | 'classical' | 'ml_dsa' | 'slh_stateful' | 'ml_kem'
 
 export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
-  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 9 },
-  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 8 },
-  { id: 'kdf', label: 'KDF', groups: 6 },
-  { id: 'classical', label: 'Classical Asymmetric', groups: 13 },
-  { id: 'ml_dsa', label: 'ML-DSA', groups: 7 },
-  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 6 },
-  { id: 'ml_kem', label: 'ML-KEM', groups: 3 },
+  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 10 },
+  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 9 },
+  { id: 'kdf', label: 'KDF', groups: 8 },
+  { id: 'classical', label: 'Classical Asymmetric', groups: 16 },
+  { id: 'ml_dsa', label: 'ML-DSA', groups: 8 },
+  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 7 },
+  { id: 'ml_kem', label: 'ML-KEM', groups: 4 },
 ]
 
 export const ALL_CATEGORY_IDS: Set<CategoryId> = new Set(CATEGORIES.map((c) => c.id))
@@ -353,6 +363,8 @@ export function useAcvpSuite() {
       eddsa: 'https://www.rfc-editor.org/rfc/rfc8032',
       pbkdf2: 'https://www.rfc-editor.org/rfc/rfc8018',
       hkdf: 'https://www.rfc-editor.org/rfc/rfc5869',
+      kdaHkdf: 'https://csrc.nist.gov/pubs/sp/800/56/c/r2/final',
+      kbkdf: 'https://csrc.nist.gov/pubs/sp/800/108/r1/upd1/final',
       aeskw: 'https://www.rfc-editor.org/rfc/rfc3394',
       aeskwp: 'https://www.rfc-editor.org/rfc/rfc5649',
       slhdsa: 'https://csrc.nist.gov/pubs/fips/205/final',
@@ -871,6 +883,26 @@ export function useAcvpSuite() {
           })
         }
 
+        // ── 4e. ECDSA / EdDSA KeyVer and SigGen (gap-closure P5) — NIST keyVer
+        // (the key is used: sign with d, verify with the point), ECDSA sigGen
+        // verify-back (engine + independent verifier; NIST r, s are not
+        // reproducible) and EdDSA sigGen byte-match. sections/ecKeyVerSigGenAcvp.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          const ecCtx = {
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            pushResult,
+            addLog,
+          }
+          await runEcKeyVerAcvpSection({ ...ecCtx, referenceUrl: REF.ecdsa })
+          await runEcdsaSigGenAcvpSection({ ...ecCtx, referenceUrl: REF.ecdsa })
+          await runEddsaSigGenAcvpSection({ ...ecCtx, referenceUrl: REF.eddsa })
+        }
+
         // ── 4d. RSA dedicated SigVer (WS-E) — NIST RSA-SigVer-FIPS186-5,
         // PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048,
         // every upstream valid/invalid case; SHAKE groups shown as skips.
@@ -1169,6 +1201,21 @@ export function useAcvpSuite() {
             addLog,
           })
 
+          // ── 5f. ML-DSA negative / boundary depth — NIST sigVer at the context
+          // extremes and every HashML-DSA disposition, product-authored
+          // deterministic-sign negatives, hedged signing at ctx 0/255 checked by
+          // the engine and by an independent verifier. sections/mldsaNegBoundary.ts
+          // (gap-closure P5).
+          await runMldsaNegBoundarySection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mldsa,
+            pushResult,
+            addLog,
+          })
+
           // ── 6. ML-DSA Functional Sign+Verify (FIPS 204) — all variants ──
           for (const dsaVariant of [44, 65, 87] as const) {
             const dsaAlgo = `ML-DSA-${dsaVariant}`
@@ -1373,6 +1420,19 @@ export function useAcvpSuite() {
           // encapsulation skip, product-authored boundary probes. Self-
           // contained in sections/mlkemAcvp.ts (WS-D D1-2..D1-5).
           await runMlkemAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mlkem,
+            pushResult,
+            addLog,
+          })
+
+          // ── 7c. ML-KEM encapsulation-key check depth — every remaining
+          // invalid NIST ek of the encapsulationKeyCheck groups (FIPS 203 §7.2).
+          // sections/mlkemKeyCheckDepth.ts (gap-closure P5).
+          await runMlkemKeyCheckDepthSection({
             M,
             hSession,
             eName,
@@ -1669,6 +1729,20 @@ export function useAcvpSuite() {
             pushResult,
             addLog,
           })
+
+          // ── 9d. SLH-DSA coverage depth — NIST keyGen from seed, empty-context
+          // deterministic sigGen, and (for the "f" sets) product-authored sign
+          // negatives plus hedged signing at ctx 0/255 checked by the engine and
+          // by an independent verifier. sections/slhdsaCoverage.ts (gap-closure P5).
+          await runSlhdsaCoverageSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.slhdsa,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 10. SHA-256 Digest KAT (FIPS 180-4) ─────────────────────────
@@ -1827,6 +1901,19 @@ export function useAcvpSuite() {
         if (activeCategories.has('hashing_mac')) {
           currentCategory = 'hashing_mac'
           await runShaAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.sha256,
+            pushResult,
+            addLog,
+          })
+
+          // ── 10g. SHA MCT, all 100 outer iterations — standard and alternate
+          // version (gap-closure P5). sections/mctFullAcvp.ts.
+          await runShaMctFullSection({
             M,
             hSession,
             eName,
@@ -2014,6 +2101,19 @@ export function useAcvpSuite() {
         if (activeCategories.has('symmetric')) {
           currentCategory = 'symmetric'
           await runAesCbcCtrAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.aescbc,
+            pushResult,
+            addLog,
+          })
+
+          // ── 12d. AES-CBC MCT, all 100 outer iterations (AESAVS §6.4,
+          // gap-closure P5). sections/mctFullAcvp.ts.
+          await runAesCbcMctFullSection({
             M,
             hSession,
             eName,
@@ -2529,6 +2629,21 @@ export function useAcvpSuite() {
             pushResult,
             addLog,
           })
+
+          // ── 18c. HKDF (KDA SP 800-56Cr2) and SP 800-108 KBKDF NIST reference
+          // samples + the X9.63 unsupported row (gap-closure P5).
+          // sections/kdfDeriveAcvp.ts.
+          const kdfCtx = {
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            pushResult,
+            addLog,
+          }
+          await runHkdfAcvpSection({ ...kdfCtx, referenceUrl: REF.kdaHkdf })
+          await runKbkdfAcvpSection({ ...kdfCtx, referenceUrl: REF.kbkdf })
         }
 
         // ── 19. AES-KW Wrap KAT (RFC 3394) ────────────────────────────────
