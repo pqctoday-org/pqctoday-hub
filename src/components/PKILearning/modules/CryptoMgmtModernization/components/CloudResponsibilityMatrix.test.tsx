@@ -217,7 +217,9 @@ describe('buildCloudResponsibilityMatrix - watch-outs', () => {
       regulatoryOverlay: ['FedRAMP High'],
     })
     expect(rec.watchOuts.join(' ')).toMatch(/FIPS 140-3/)
-    expect(rec.watchOuts.join(' ')).toMatch(/6-12 months/)
+    expect(rec.watchOuts.join(' ')).toMatch(/CMVP certificate is issued/)
+    // Guard: no unsourced re-validation duration.
+    expect(rec.watchOuts.join(' ')).not.toMatch(/6-12 months/)
   })
 
   it('IL5/IL6 also triggers the FedRAMP re-validation warning', () => {
