@@ -287,3 +287,19 @@ describe('parseTimelineCSV — review status (timeline remediation r2 T-B1)', ()
     expect(unreviewed).toEqual([])
   })
 })
+
+describe('timeline joins keyed the way their data is (timeline remediation r2 W-B)', () => {
+  it('attaches compliance frameworks by Country:OrgName', () => {
+    const withRefs = timelineData
+      .flatMap((c) => c.bodies.flatMap((b) => b.events))
+      .filter((e) => (e.complianceRefs ?? []).length > 0)
+    expect(withRefs.length).toBeGreaterThan(0)
+  })
+
+  it('resolves a concept id from the event_id', async () => {
+    const { conceptIdForTimelineEvent } = await import('./timelineData')
+    const ev = timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events)).find((e) => e.eventId)
+    expect(conceptIdForTimelineEvent({ eventId: ev?.eventId })).toBeTruthy()
+    expect(conceptIdForTimelineEvent({})).toBeUndefined()
+  })
+})

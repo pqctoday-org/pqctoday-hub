@@ -502,23 +502,28 @@ try {
 }
 
 // ─── complianceRefs post-pass ────────────────────────────────────────────────
-// Inverts compliance.timelineRefs → event.complianceRefs, so each event knows
-// which compliance frameworks cite it (no CSV change needed).
+// Inverts compliance.timeline_refs → event.complianceRefs. timeline_refs holds
+// "Country:OrgName" tuples (CSVmaintenance.md §5.1), so a framework is attached
+// to every event of that country/body. Until 2026-09-24 this looked the tuples
+// up by event TITLE — 0 of 80 ever matched, so no event carried a reference
+// (timeline remediation r2 W-B). The lane key mirrors the loader's CNSA split.
 function attachComplianceRefs(countries: CountryData[]): void {
-  const titleToIds = new Map<string, string[]>()
+  const byPair = new Map<string, string[]>()
   for (const fw of complianceFrameworks) {
     for (const ref of fw.timelineRefs ?? []) {
-      const arr = titleToIds.get(ref) ?? []
-      arr.push(fw.id)
-      titleToIds.set(ref, arr)
+      const key = ref.trim().toLowerCase()
+      const arr = byPair.get(key) ?? []
+      if (!arr.includes(fw.id)) arr.push(fw.id)
+      byPair.set(key, arr)
     }
   }
   for (const country of countries) {
+    const csvCountry =
+      country.countryName === 'United States (CNSA)' ? 'United States' : country.countryName
     for (const body of country.bodies) {
-      for (const event of body.events) {
-        const refs = titleToIds.get(event.title)
-        if (refs && refs.length > 0) event.complianceRefs = refs
-      }
+      const refs = byPair.get(`${csvCountry}:${body.name}`.toLowerCase())
+      if (!refs || refs.length === 0) continue
+      for (const event of body.events) event.complianceRefs = [...refs]
     }
   }
 }
@@ -529,13 +534,14 @@ export const timelineData: CountryData[] = parsedData
 export const timelineMetadata = metadata
 
 /**
- * Canonical concept_id for a timeline event — PR 3c. Timeline events have no
- * stable ID column in the source CSV; `title` is the natural key used by the
- * registry build script.
+ * Canonical concept_id for a timeline event. The concept registry keys timeline
+ * rows by their stable event_id (all 294 source_row_ids are event_ids); this
+ * used to look them up by title, which never matched (timeline remediation r2
+ * W-B).
  */
 import { conceptIdForStoreKey } from './conceptRegistry'
-export function conceptIdForTimelineEvent(event: { title: string }): string | undefined {
-  return conceptIdForStoreKey('timeline', event.title)
+export function conceptIdForTimelineEvent(event: { eventId?: string }): string | undefined {
+  return event.eventId ? conceptIdForStoreKey('timeline', event.eventId) : undefined
 }
 
 /**

@@ -10,6 +10,7 @@
  */
 import fs from 'fs'
 import path from 'path'
+import { TIMELINE_LABEL_ALIASES } from '../src/data/timelineLabelAliases.generated'
 import { createHash } from 'crypto'
 import Papa from 'papaparse'
 import { validateCorpusDeepLinks } from '../src/services/search/deepLinkGrammar'
@@ -326,6 +327,10 @@ function getTimelineRefIds(): Set<string> {
       const orgName = sanitize(row[2])
       const title = sanitize(row[9])
       if (country && title) _timelineRefIds.add(`${country}:${orgName} — ${title}`)
+      // Earlier labels of the same event (r2 W-B): a retitled row keeps its enrichment.
+      const eid = (row[rows[0].indexOf('event_id')] ?? '').trim()
+      // eslint-disable-next-line security/detect-object-injection
+      for (const label of (eid && TIMELINE_LABEL_ALIASES[eid]) || []) _timelineRefIds.add(label)
     }
   }
   return _timelineRefIds
@@ -689,7 +694,13 @@ function processTimeline(): RAGChunk[] {
     // Augment with enrichment dimensions when available
     // Enrichment key format matches the Python script: "{country}:{orgName} — {title}"
     const enrichKey = `${sanitize(country)}:${sanitize(orgName)} — ${sanitize(title)}`
-    const enrich = enrichLookup.get(enrichKey)
+    const eventId = (row[rows[0].indexOf('event_id')] ?? '').trim()
+    const enrich =
+      enrichLookup.get(enrichKey) ??
+      // eslint-disable-next-line security/detect-object-injection
+      ((eventId && TIMELINE_LABEL_ALIASES[eventId]) || [])
+        .map((l) => enrichLookup.get(l))
+        .find((e) => e !== undefined)
     const enrichMetadata: Record<string, string> = {}
     if (enrich) {
       const skip = new Set(['None detected', 'Not specified', 'See document for details.'])

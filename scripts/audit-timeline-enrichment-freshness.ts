@@ -44,6 +44,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import Papa from 'papaparse'
+import { TIMELINE_LABEL_ALIASES } from '../src/data/timelineLabelAliases.generated'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -162,14 +163,20 @@ export function auditRows(
   paths: AuditPaths,
   manifestByRef: Map<string, ManifestEntry>,
   skipList: Record<string, SkipListEntry>,
-  enrichment: Map<string, EnrichmentEntry>
+  enrichment: Map<string, EnrichmentEntry>,
+  aliases: Record<string, readonly string[]> = {}
 ): RowReport[] {
   const cachePresent = existsSync(paths.evidenceRoot)
   const reports: RowReport[] = []
   for (const row of rows) {
     const label = `${row.Country}:${row.OrgName} — ${row.Title}`
     const eventId = (row.event_id || '').trim()
-    const enrich = enrichment.get(label)
+    // By the current label, else by any label the same event_id carried
+    // earlier (a title edit must not orphan a row's enrichment — r2 W-B).
+    const enrich =
+      enrichment.get(label) ??
+      // eslint-disable-next-line security/detect-object-injection
+      (aliases[eventId] ?? []).map((l) => enrichment.get(l)).find((e) => e !== undefined)
     const base = {
       event_id: eventId,
       label,
@@ -290,7 +297,14 @@ function main(): void {
   )
   const enrichment = loadEnrichmentLookup(join(paths.root, 'src/data/doc-enrichments'))
 
-  const reports = auditRows(activeRows, paths, manifestByRef, skipList, enrichment)
+  const reports = auditRows(
+    activeRows,
+    paths,
+    manifestByRef,
+    skipList,
+    enrichment,
+    TIMELINE_LABEL_ALIASES
+  )
   const summary = summarize(reports)
   const code = exitCode(summary, strict)
 

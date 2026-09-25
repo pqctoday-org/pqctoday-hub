@@ -9,7 +9,7 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import type { Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
 import {
-  timelineEnrichments,
+  getTimelineEnrichment,
   hasSubstantiveEnrichment,
   getTimelineEnrichmentKey,
 } from '../../data/timelineEnrichmentData'
@@ -40,8 +40,7 @@ export const TimelineDocumentCard = ({
   const { revisions } = useRevisions()
   const [drilldownOpen, setDrilldownOpen] = useState(false)
 
-  const enrichmentKey = getTimelineEnrichmentKey(row.countryName, row.org, row.title)
-  const enrichment = timelineEnrichments[enrichmentKey]
+  const enrichment = getTimelineEnrichment(row.eventId, row.countryName, row.org, row.title)
   const isEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
 
   const period =

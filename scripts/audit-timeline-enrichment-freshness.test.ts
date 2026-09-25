@@ -141,3 +141,28 @@ describe('audit-timeline-enrichment-freshness', () => {
     expect(exitCode(s, true)).toBe(1)
   })
 })
+
+describe('audit-timeline-enrichment-freshness — renamed rows', () => {
+  it('finds the enrichment under a label the event_id carried before a title edit', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'tl-alias-'))
+    const cache = join(dir, 'cache')
+    const enrichDir = join(dir, 'enrich')
+    mkdirSync(join(cache, 'timeline'), { recursive: true })
+    mkdirSync(enrichDir, { recursive: true })
+    writeFileSync(join(cache, 'timeline/f.pdf'), 'x')
+    utimesSync(join(cache, 'timeline/f.pdf'), 500_000, 500_000)
+    const f = join(enrichDir, 'timeline_doc_enrichments_09012026.md')
+    writeFileSync(f, '## France:ANSSI — Old Title\n\n- **Title**: x\n')
+    utimesSync(f, 1_000_000, 1_000_000)
+    const [r] = auditRows(
+      [row({ Title: 'New Title', local_file: 'timeline/f.pdf' })],
+      { root: dir, evidenceRoot: cache },
+      new Map(),
+      {},
+      loadEnrichmentLookup(enrichDir),
+      { 'france-anssi-phase-1': ['France:ANSSI — New Title', 'France:ANSSI — Old Title'] }
+    )
+    expect(r.outcome).toBe('fresh')
+    rmSync(dir, { recursive: true, force: true })
+  })
+})
