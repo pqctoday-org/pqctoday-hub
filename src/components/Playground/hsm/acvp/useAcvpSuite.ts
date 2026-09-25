@@ -159,6 +159,12 @@ import { runShaAcvpSection } from './sections/shaAcvp'
 import { runEcdsaSigVerAcvpSection, runEddsaSigVerAcvpSection } from './sections/ecSigVerAcvp'
 import { runRsaSigVerAcvpSection } from './sections/rsaSigVerAcvp'
 import { runKmacAcvpSection, runPbkdf2AcvpSection } from './sections/kdfMacAcvp'
+import { runHkdfAcvpSection, runKbkdfAcvpSection } from './sections/kdfDeriveAcvp'
+import {
+  runEcKeyVerAcvpSection,
+  runEcdsaSigGenAcvpSection,
+  runEddsaSigGenAcvpSection,
+} from './sections/ecKeyVerSigGenAcvp'
 import type { HsmKey } from '../HsmContext'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -192,8 +198,8 @@ export type CategoryId =
 export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'symmetric', label: 'Symmetric / AEAD', groups: 9 },
   { id: 'hashing_mac', label: 'Hashing & MAC', groups: 8 },
-  { id: 'kdf', label: 'KDF', groups: 6 },
-  { id: 'classical', label: 'Classical Asymmetric', groups: 13 },
+  { id: 'kdf', label: 'KDF', groups: 8 },
+  { id: 'classical', label: 'Classical Asymmetric', groups: 16 },
   { id: 'ml_dsa', label: 'ML-DSA', groups: 8 },
   { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 7 },
   { id: 'ml_kem', label: 'ML-KEM', groups: 4 },
@@ -356,6 +362,8 @@ export function useAcvpSuite() {
       eddsa: 'https://www.rfc-editor.org/rfc/rfc8032',
       pbkdf2: 'https://www.rfc-editor.org/rfc/rfc8018',
       hkdf: 'https://www.rfc-editor.org/rfc/rfc5869',
+      kdaHkdf: 'https://csrc.nist.gov/pubs/sp/800/56/c/r2/final',
+      kbkdf: 'https://csrc.nist.gov/pubs/sp/800/108/r1/upd1/final',
       aeskw: 'https://www.rfc-editor.org/rfc/rfc3394',
       aeskwp: 'https://www.rfc-editor.org/rfc/rfc5649',
       slhdsa: 'https://csrc.nist.gov/pubs/fips/205/final',
@@ -872,6 +880,26 @@ export function useAcvpSuite() {
             pushResult,
             addLog,
           })
+        }
+
+        // ── 4e. ECDSA / EdDSA KeyVer and SigGen (gap-closure P5) — NIST keyVer
+        // (the key is used: sign with d, verify with the point), ECDSA sigGen
+        // verify-back (engine + independent verifier; NIST r, s are not
+        // reproducible) and EdDSA sigGen byte-match. sections/ecKeyVerSigGenAcvp.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          const ecCtx = {
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            pushResult,
+            addLog,
+          }
+          await runEcKeyVerAcvpSection({ ...ecCtx, referenceUrl: REF.ecdsa })
+          await runEcdsaSigGenAcvpSection({ ...ecCtx, referenceUrl: REF.ecdsa })
+          await runEddsaSigGenAcvpSection({ ...ecCtx, referenceUrl: REF.eddsa })
         }
 
         // ── 4d. RSA dedicated SigVer (WS-E) — NIST RSA-SigVer-FIPS186-5,
@@ -2574,6 +2602,21 @@ export function useAcvpSuite() {
             pushResult,
             addLog,
           })
+
+          // ── 18c. HKDF (KDA SP 800-56Cr2) and SP 800-108 KBKDF NIST reference
+          // samples + the X9.63 unsupported row (gap-closure P5).
+          // sections/kdfDeriveAcvp.ts.
+          const kdfCtx = {
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            pushResult,
+            addLog,
+          }
+          await runHkdfAcvpSection({ ...kdfCtx, referenceUrl: REF.kdaHkdf })
+          await runKbkdfAcvpSection({ ...kdfCtx, referenceUrl: REF.kbkdf })
         }
 
         // ── 19. AES-KW Wrap KAT (RFC 3394) ────────────────────────────────
