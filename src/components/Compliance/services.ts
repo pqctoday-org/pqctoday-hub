@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useEffect, useCallback } from 'react'
 import type { ComplianceRecord } from './types'
+import { normalizeCmvpDetails } from './cmvpDetails'
 import { NIST_SNAPSHOT } from './nistSnapshot'
 import localforage from 'localforage'
 import Papa from 'papaparse'
@@ -667,7 +668,9 @@ const fetchStaticComplianceData = async (): Promise<ComplianceRecord[]> => {
   try {
     const response = await fetch('/data/compliance-data.json')
     if (!response.ok) throw new Error('Failed to load static compliance data')
-    return await response.json()
+    const records: ComplianceRecord[] = await response.json()
+    // CMVP certificate-page fields (FIPS 140-3): malformed values read as null
+    return records.map(normalizeCmvpDetails)
   } catch {
     // console.error('Static Data Fetch Error', err)
     return []
