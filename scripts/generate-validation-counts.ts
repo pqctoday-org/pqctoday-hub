@@ -46,6 +46,7 @@ export function computeCounts(manifest: ValidationCaseManifest) {
   let activeCases = 0
   let quarantinedCases = 0
   let nistCases = 0
+  const byExpectation = { positive: 0, negative: 0 }
 
   for (const f of manifest.files) {
     filesByClass[f.evidenceClass] += 1
@@ -62,6 +63,7 @@ export function computeCounts(manifest: ValidationCaseManifest) {
       }
       activeCases += 1
       activeCasesByClass[eff.evidenceClass] += 1
+      byExpectation[c.expectation] += 1
       if (eff.evidenceClass === 'nist-acvp-reference-sample') nistCases += 1
       const alg = (byAlgorithm[c.algorithm.name] ??= { cases: 0, byClass: {} })
       alg.cases += 1
@@ -92,6 +94,7 @@ export function computeCounts(manifest: ValidationCaseManifest) {
       quarantined: quarantinedCases,
     },
     activeCasesByClass,
+    activeCasesByExpectation: byExpectation,
     byAlgorithm: sortKeys(byAlgorithm),
     activeCasesByTransformation: sortKeys(transformations),
     filesWithPublishabilityGap: sortKeys(gaps),

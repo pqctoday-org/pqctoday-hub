@@ -445,6 +445,8 @@ export function auditManifest(opts: AuditOptions): {
             ['source_release', prov.source_release, n.revision],
             ['source_sha256', prov.source_sha256, n.upstreamSha256],
             ['retrieved', prov.retrieved, n.retrieved],
+            ['source_commit', prov.source_commit, n.revision],
+            ['source_path', prov.source_path, n.upstreamPath],
           ]
           for (const [k, inFile, man] of pairs)
             if (inFile !== undefined && inFile !== null && inFile !== man)

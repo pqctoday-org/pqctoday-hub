@@ -2322,6 +2322,1739 @@
       "publishabilityGaps": []
     },
     {
+      "id": "mldsa_keygen_test",
+      "path": "src/data/acvp/mldsa_keygen_test.json",
+      "sha256": "34e19d905860e9197b48d50303d0fd6c4dfeb9a5c4beeb957addf9d57e5231c3",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-keyGen-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-keyGen-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/ML-DSA-keyGen-FIPS204/internalProjection.json",
+          "upstreamSha256": "e67ee6540d40e11506c3c4e3b1f79fc1cefcd49820db99fc61f87cc8ba463baf",
+          "retrieved": "2026-09-24",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-keyGen-FIPS204/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-24",
+          "method": "Re-fetched the upstream file at the pinned commit: its SHA-256 equals the recorded upstreamSha256, and every field of every local case equals the upstream case with the same tcId after the renames/normalizations recorded in lineage.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "gen-val/json-files/ML-DSA-keyGen-FIPS204/internalProjection.json",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-keyGen-FIPS204/internalProjection.json",
+              "sha256": "e67ee6540d40e11506c3c4e3b1f79fc1cefcd49820db99fc61f87cc8ba463baf",
+              "retrieved": "2026-09-24"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/1/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/2/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "mldsa_keygen_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "keyGen-from-seed",
+          "parameters": {
+            "parameterSet": "ML-DSA-44"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 1
+          },
+          "lineage": ["mldsa-keygen-test-1"]
+        },
+        {
+          "caseId": "mldsa_keygen_test#/testGroups/1/tests/0",
+          "pointer": "/testGroups/1/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "keyGen-from-seed",
+          "parameters": {
+            "parameterSet": "ML-DSA-65"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 26
+          },
+          "lineage": ["mldsa-keygen-test-2"]
+        },
+        {
+          "caseId": "mldsa_keygen_test#/testGroups/2/tests/0",
+          "pointer": "/testGroups/2/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "keyGen-from-seed",
+          "parameters": {
+            "parameterSet": "ML-DSA-87"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 51
+          },
+          "lineage": ["mldsa-keygen-test-3"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "mldsa-keygen-test-1",
+          "appliesTo": ["mldsa_keygen_test#/testGroups/0/tests/0"],
+          "upstreamOperation": "ML-DSA keyGen FIPS204 AFT (seed -> pk, sk)",
+          "localOperation": "C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN) with the upstream seed supplied as CKA_SEED in the private-key template; the generated public key CKA_VALUE is byte-compared to the upstream pk",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 1) taken from upstream tgId 1 (25 cases in that group; 75 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream keyGen maps seed -> (pk, sk); the hub supplies the seed as CKA_SEED to C_GenerateKeyPair and byte-compares only the public key (sk is generated sensitive and not extracted). Accepting a caller-supplied CKA_SEED is engine behaviour, not a PKCS#11 v3.2 requirement (file interface_note)."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-keygen-test-2",
+          "appliesTo": ["mldsa_keygen_test#/testGroups/1/tests/0"],
+          "upstreamOperation": "ML-DSA keyGen FIPS204 AFT (seed -> pk, sk)",
+          "localOperation": "C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN) with the upstream seed supplied as CKA_SEED in the private-key template; the generated public key CKA_VALUE is byte-compared to the upstream pk",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 26) taken from upstream tgId 2 (25 cases in that group; 75 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream keyGen maps seed -> (pk, sk); the hub supplies the seed as CKA_SEED to C_GenerateKeyPair and byte-compares only the public key (sk is generated sensitive and not extracted). Accepting a caller-supplied CKA_SEED is engine behaviour, not a PKCS#11 v3.2 requirement (file interface_note)."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-keygen-test-3",
+          "appliesTo": ["mldsa_keygen_test#/testGroups/2/tests/0"],
+          "upstreamOperation": "ML-DSA keyGen FIPS204 AFT (seed -> pk, sk)",
+          "localOperation": "C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN) with the upstream seed supplied as CKA_SEED in the private-key template; the generated public key CKA_VALUE is byte-compared to the upstream pk",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 51) taken from upstream tgId 3 (25 cases in that group; 75 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream keyGen maps seed -> (pk, sk); the hub supplies the seed as CKA_SEED to C_GenerateKeyPair and byte-compares only the public key (sk is generated sensitive and not extracted). Accepting a caller-supplied CKA_SEED is engine behaviour, not a PKCS#11 v3.2 requirement (file interface_note)."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": []
+    },
+    {
+      "id": "mldsa_siggen_det_test",
+      "path": "src/data/acvp/mldsa_siggen_det_test.json",
+      "sha256": "7eb838cde840c9489f87e2743ef3d984b73f6f8577bf54629291f7d2b79382f0",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json",
+          "upstreamSha256": "72dcaf5f69853ca267ccd16af9cb40949786aca0fcfbf05d1ebeba132b93af22",
+          "retrieved": "2026-09-24",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-24",
+          "method": "Re-fetched the upstream file at the pinned commit: its SHA-256 equals the recorded upstreamSha256, and every field of every local case equals the upstream case with the same tcId after the renames/normalizations recorded in lineage.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json",
+              "sha256": "72dcaf5f69853ca267ccd16af9cb40949786aca0fcfbf05d1ebeba132b93af22",
+              "retrieved": "2026-09-24"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/1/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/2/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/3/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/4/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/5/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/6/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/7/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/8/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "mldsa_siggen_det_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "none",
+            "deterministic": true,
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1,
+            "contextBytes": 180
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 7
+          },
+          "lineage": ["mldsa-siggen-det-test-1"]
+        },
+        {
+          "caseId": "mldsa_siggen_det_test#/testGroups/1/tests/0",
+          "pointer": "/testGroups/1/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "SHA2-384",
+            "deterministic": true,
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1,
+            "contextBytes": 191
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 29
+          },
+          "lineage": ["mldsa-siggen-det-test-2"]
+        },
+        {
+          "caseId": "mldsa_siggen_det_test#/testGroups/2/tests/0",
+          "pointer": "/testGroups/2/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "none",
+            "deterministic": true,
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1,
+            "contextBytes": 11
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 41
+          },
+          "lineage": ["mldsa-siggen-det-test-3"]
+        },
+        {
+          "caseId": "mldsa_siggen_det_test#/testGroups/3/tests/0",
+          "pointer": "/testGroups/3/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "SHA2-224",
+            "deterministic": true,
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1,
+            "contextBytes": 15
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 4,
+            "tcId": 53
+          },
+          "lineage": ["mldsa-siggen-det-test-4"]
+        },
+        {
+          "caseId": "mldsa_siggen_det_test#/testGroups/4/tests/0",
+          "pointer": "/testGroups/4/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "none",
+            "deterministic": true,
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1,
+            "contextBytes": 245
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 5,
+            "tcId": 72
+          },
+          "lineage": ["mldsa-siggen-det-test-5"]
+        },
+        {
+          "caseId": "mldsa_siggen_det_test#/testGroups/5/tests/0",
+          "pointer": "/testGroups/5/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "SHA2-512",
+            "deterministic": true,
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 863,
+            "contextBytes": 161
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 6,
+            "tcId": 86
+          },
+          "lineage": ["mldsa-siggen-det-test-6"]
+        },
+        {
+          "caseId": "mldsa_siggen_det_test#/testGroups/6/tests/0",
+          "pointer": "/testGroups/6/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "none",
+            "deterministic": true,
+            "preHash": "none",
+            "signatureInterface": "internal",
+            "externalMu": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 7,
+            "tcId": 91
+          },
+          "lineage": ["mldsa-siggen-det-test-7"]
+        },
+        {
+          "caseId": "mldsa_siggen_det_test#/testGroups/7/tests/0",
+          "pointer": "/testGroups/7/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "none",
+            "deterministic": true,
+            "preHash": "none",
+            "signatureInterface": "internal",
+            "externalMu": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 9,
+            "tcId": 121
+          },
+          "lineage": ["mldsa-siggen-det-test-8"]
+        },
+        {
+          "caseId": "mldsa_siggen_det_test#/testGroups/8/tests/0",
+          "pointer": "/testGroups/8/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "none",
+            "deterministic": true,
+            "preHash": "none",
+            "signatureInterface": "internal",
+            "externalMu": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 11,
+            "tcId": 151
+          },
+          "lineage": ["mldsa-siggen-det-test-9"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "mldsa-siggen-det-test-1",
+          "appliesTo": ["mldsa_siggen_det_test#/testGroups/0/tests/0"],
+          "upstreamOperation": "ML-DSA sigGen FIPS204 AFT (deterministic groups)",
+          "localOperation": "deterministic SigGen via PKCS#11: C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_DSA, CKA_VALUE = upstream sk) then C_SignInit with CK_SIGN_ADDITIONAL_CONTEXT hedgeVariant = CKH_DETERMINISTIC_REQUIRED + upstream context, C_Sign; output byte-compared to the upstream signature",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 7) taken from upstream tgId 1 (15 cases in that group; 360 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, pk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. One case per deterministic group that PKCS#11 can express (external/pure, external/preHash, internal/externalMu=true) for each parameter set: the shortest message (mu is always 64 bytes), ties broken by lowest tcId; for preHash groups only hashAlg values with a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism are eligible. Hedged groups (deterministic=false) and internal/externalMu=false groups are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-siggen-det-test-2",
+          "appliesTo": ["mldsa_siggen_det_test#/testGroups/1/tests/0"],
+          "upstreamOperation": "ML-DSA sigGen FIPS204 AFT (deterministic groups)",
+          "localOperation": "deterministic SigGen via PKCS#11: C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_DSA, CKA_VALUE = upstream sk) then C_SignInit with CK_SIGN_ADDITIONAL_CONTEXT hedgeVariant = CKH_DETERMINISTIC_REQUIRED + upstream context, C_Sign; output byte-compared to the upstream signature",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 29) taken from upstream tgId 2 (15 cases in that group; 360 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, pk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. One case per deterministic group that PKCS#11 can express (external/pure, external/preHash, internal/externalMu=true) for each parameter set: the shortest message (mu is always 64 bytes), ties broken by lowest tcId; for preHash groups only hashAlg values with a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism are eligible. Hedged groups (deterministic=false) and internal/externalMu=false groups are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-siggen-det-test-3",
+          "appliesTo": ["mldsa_siggen_det_test#/testGroups/2/tests/0"],
+          "upstreamOperation": "ML-DSA sigGen FIPS204 AFT (deterministic groups)",
+          "localOperation": "deterministic SigGen via PKCS#11: C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_DSA, CKA_VALUE = upstream sk) then C_SignInit with CK_SIGN_ADDITIONAL_CONTEXT hedgeVariant = CKH_DETERMINISTIC_REQUIRED + upstream context, C_Sign; output byte-compared to the upstream signature",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 41) taken from upstream tgId 3 (15 cases in that group; 360 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, pk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. One case per deterministic group that PKCS#11 can express (external/pure, external/preHash, internal/externalMu=true) for each parameter set: the shortest message (mu is always 64 bytes), ties broken by lowest tcId; for preHash groups only hashAlg values with a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism are eligible. Hedged groups (deterministic=false) and internal/externalMu=false groups are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-siggen-det-test-4",
+          "appliesTo": ["mldsa_siggen_det_test#/testGroups/3/tests/0"],
+          "upstreamOperation": "ML-DSA sigGen FIPS204 AFT (deterministic groups)",
+          "localOperation": "deterministic SigGen via PKCS#11: C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_DSA, CKA_VALUE = upstream sk) then C_SignInit with CK_SIGN_ADDITIONAL_CONTEXT hedgeVariant = CKH_DETERMINISTIC_REQUIRED + upstream context, C_Sign; output byte-compared to the upstream signature",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 53) taken from upstream tgId 4 (15 cases in that group; 360 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, pk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. One case per deterministic group that PKCS#11 can express (external/pure, external/preHash, internal/externalMu=true) for each parameter set: the shortest message (mu is always 64 bytes), ties broken by lowest tcId; for preHash groups only hashAlg values with a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism are eligible. Hedged groups (deterministic=false) and internal/externalMu=false groups are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-siggen-det-test-5",
+          "appliesTo": ["mldsa_siggen_det_test#/testGroups/4/tests/0"],
+          "upstreamOperation": "ML-DSA sigGen FIPS204 AFT (deterministic groups)",
+          "localOperation": "deterministic SigGen via PKCS#11: C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_DSA, CKA_VALUE = upstream sk) then C_SignInit with CK_SIGN_ADDITIONAL_CONTEXT hedgeVariant = CKH_DETERMINISTIC_REQUIRED + upstream context, C_Sign; output byte-compared to the upstream signature",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 72) taken from upstream tgId 5 (15 cases in that group; 360 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, pk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. One case per deterministic group that PKCS#11 can express (external/pure, external/preHash, internal/externalMu=true) for each parameter set: the shortest message (mu is always 64 bytes), ties broken by lowest tcId; for preHash groups only hashAlg values with a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism are eligible. Hedged groups (deterministic=false) and internal/externalMu=false groups are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-siggen-det-test-6",
+          "appliesTo": ["mldsa_siggen_det_test#/testGroups/5/tests/0"],
+          "upstreamOperation": "ML-DSA sigGen FIPS204 AFT (deterministic groups)",
+          "localOperation": "deterministic SigGen via PKCS#11: C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_DSA, CKA_VALUE = upstream sk) then C_SignInit with CK_SIGN_ADDITIONAL_CONTEXT hedgeVariant = CKH_DETERMINISTIC_REQUIRED + upstream context, C_Sign; output byte-compared to the upstream signature",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 86) taken from upstream tgId 6 (15 cases in that group; 360 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, pk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. One case per deterministic group that PKCS#11 can express (external/pure, external/preHash, internal/externalMu=true) for each parameter set: the shortest message (mu is always 64 bytes), ties broken by lowest tcId; for preHash groups only hashAlg values with a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism are eligible. Hedged groups (deterministic=false) and internal/externalMu=false groups are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-siggen-det-test-7",
+          "appliesTo": ["mldsa_siggen_det_test#/testGroups/6/tests/0"],
+          "upstreamOperation": "ML-DSA sigGen FIPS204 AFT (deterministic groups)",
+          "localOperation": "deterministic SigGen via PKCS#11: C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_DSA, CKA_VALUE = upstream sk) then C_SignInit with CK_SIGN_ADDITIONAL_CONTEXT hedgeVariant = CKH_DETERMINISTIC_REQUIRED + upstream context, C_Sign; output byte-compared to the upstream signature",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 91) taken from upstream tgId 7 (15 cases in that group; 360 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, pk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. One case per deterministic group that PKCS#11 can express (external/pure, external/preHash, internal/externalMu=true) for each parameter set: the shortest message (mu is always 64 bytes), ties broken by lowest tcId; for preHash groups only hashAlg values with a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism are eligible. Hedged groups (deterministic=false) and internal/externalMu=false groups are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-siggen-det-test-8",
+          "appliesTo": ["mldsa_siggen_det_test#/testGroups/7/tests/0"],
+          "upstreamOperation": "ML-DSA sigGen FIPS204 AFT (deterministic groups)",
+          "localOperation": "deterministic SigGen via PKCS#11: C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_DSA, CKA_VALUE = upstream sk) then C_SignInit with CK_SIGN_ADDITIONAL_CONTEXT hedgeVariant = CKH_DETERMINISTIC_REQUIRED + upstream context, C_Sign; output byte-compared to the upstream signature",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 121) taken from upstream tgId 9 (15 cases in that group; 360 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, pk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. One case per deterministic group that PKCS#11 can express (external/pure, external/preHash, internal/externalMu=true) for each parameter set: the shortest message (mu is always 64 bytes), ties broken by lowest tcId; for preHash groups only hashAlg values with a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism are eligible. Hedged groups (deterministic=false) and internal/externalMu=false groups are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-siggen-det-test-9",
+          "appliesTo": ["mldsa_siggen_det_test#/testGroups/8/tests/0"],
+          "upstreamOperation": "ML-DSA sigGen FIPS204 AFT (deterministic groups)",
+          "localOperation": "deterministic SigGen via PKCS#11: C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_DSA, CKA_VALUE = upstream sk) then C_SignInit with CK_SIGN_ADDITIONAL_CONTEXT hedgeVariant = CKH_DETERMINISTIC_REQUIRED + upstream context, C_Sign; output byte-compared to the upstream signature",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 151) taken from upstream tgId 11 (15 cases in that group; 360 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, pk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. One case per deterministic group that PKCS#11 can express (external/pure, external/preHash, internal/externalMu=true) for each parameter set: the shortest message (mu is always 64 bytes), ties broken by lowest tcId; for preHash groups only hashAlg values with a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism are eligible. Hedged groups (deterministic=false) and internal/externalMu=false groups are listed in notExecuted as metadata only."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "15 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): hedged-rnd-not-injectable, no-pkcs11-internal-interface."
+    },
+    {
+      "id": "mldsa_sigver_test",
+      "path": "src/data/acvp/mldsa_sigver_test.json",
+      "sha256": "8c74f05a1c4ee5212b9e80856d554843ab87e4fbc527b28bcebbd346751aed7c",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json",
+          "upstreamSha256": "47cdd6314c7f746d02421ffcba89d4dbc7bb875ac49e07a029fdfc26fba55437",
+          "retrieved": "2026-09-24",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-24",
+          "method": "Re-fetched the upstream file at the pinned commit: its SHA-256 equals the recorded upstreamSha256, and every field of every local case equals the upstream case with the same tcId after the renames/normalizations recorded in lineage.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json",
+              "sha256": "47cdd6314c7f746d02421ffcba89d4dbc7bb875ac49e07a029fdfc26fba55437",
+              "retrieved": "2026-09-24"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/1/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/2/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/3/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/4/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/5/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/localMutations",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 567,
+            "contextBytes": 99
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 11
+          },
+          "lineage": ["mldsa-sigver-test-1"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/0/tests/1",
+          "pointer": "/testGroups/0/tests/1",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 3127,
+            "contextBytes": 77
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 14
+          },
+          "lineage": ["mldsa-sigver-test-2"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/0/tests/2",
+          "pointer": "/testGroups/0/tests/2",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1116,
+            "contextBytes": 89
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 8
+          },
+          "lineage": ["mldsa-sigver-test-3"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/0/tests/3",
+          "pointer": "/testGroups/0/tests/3",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1,
+            "contextBytes": 7
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 9
+          },
+          "lineage": ["mldsa-sigver-test-4"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/0/tests/4",
+          "pointer": "/testGroups/0/tests/4",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 3622,
+            "contextBytes": 243
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 5
+          },
+          "lineage": ["mldsa-sigver-test-5"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/1/tests/0",
+          "pointer": "/testGroups/1/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 166,
+            "contextBytes": 149
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 43
+          },
+          "lineage": ["mldsa-sigver-test-6"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/1/tests/1",
+          "pointer": "/testGroups/1/tests/1",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 2091,
+            "contextBytes": 181
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 35
+          },
+          "lineage": ["mldsa-sigver-test-7"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/1/tests/2",
+          "pointer": "/testGroups/1/tests/2",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 752,
+            "contextBytes": 141
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 34
+          },
+          "lineage": ["mldsa-sigver-test-8"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/1/tests/3",
+          "pointer": "/testGroups/1/tests/3",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1,
+            "contextBytes": 163
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 38
+          },
+          "lineage": ["mldsa-sigver-test-9"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/1/tests/4",
+          "pointer": "/testGroups/1/tests/4",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 3468,
+            "contextBytes": 13
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 31
+          },
+          "lineage": ["mldsa-sigver-test-10"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/2/tests/0",
+          "pointer": "/testGroups/2/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 2725,
+            "contextBytes": 58
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 5,
+            "tcId": 70
+          },
+          "lineage": ["mldsa-sigver-test-11"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/2/tests/1",
+          "pointer": "/testGroups/2/tests/1",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1,
+            "contextBytes": 113
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 5,
+            "tcId": 66
+          },
+          "lineage": ["mldsa-sigver-test-12"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/2/tests/2",
+          "pointer": "/testGroups/2/tests/2",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 3609,
+            "contextBytes": 72
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 5,
+            "tcId": 68
+          },
+          "lineage": ["mldsa-sigver-test-13"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/2/tests/3",
+          "pointer": "/testGroups/2/tests/3",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1791,
+            "contextBytes": 56
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 5,
+            "tcId": 65
+          },
+          "lineage": ["mldsa-sigver-test-14"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/2/tests/4",
+          "pointer": "/testGroups/2/tests/4",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "none",
+            "preHash": "pure",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 157,
+            "contextBytes": 170
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 5,
+            "tcId": 75
+          },
+          "lineage": ["mldsa-sigver-test-15"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/3/tests/0",
+          "pointer": "/testGroups/3/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "none",
+            "preHash": "none",
+            "signatureInterface": "internal",
+            "externalMu": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 7,
+            "tcId": 91
+          },
+          "lineage": ["mldsa-sigver-test-16"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/3/tests/1",
+          "pointer": "/testGroups/3/tests/1",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "none",
+            "preHash": "none",
+            "signatureInterface": "internal",
+            "externalMu": true
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 7,
+            "tcId": 92
+          },
+          "lineage": ["mldsa-sigver-test-17"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/4/tests/0",
+          "pointer": "/testGroups/4/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "none",
+            "preHash": "none",
+            "signatureInterface": "internal",
+            "externalMu": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 9,
+            "tcId": 121
+          },
+          "lineage": ["mldsa-sigver-test-18"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/4/tests/1",
+          "pointer": "/testGroups/4/tests/1",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "none",
+            "preHash": "none",
+            "signatureInterface": "internal",
+            "externalMu": true
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 9,
+            "tcId": 123
+          },
+          "lineage": ["mldsa-sigver-test-19"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/5/tests/0",
+          "pointer": "/testGroups/5/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "none",
+            "preHash": "none",
+            "signatureInterface": "internal",
+            "externalMu": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 11,
+            "tcId": 157
+          },
+          "lineage": ["mldsa-sigver-test-20"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/5/tests/1",
+          "pointer": "/testGroups/5/tests/1",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "none",
+            "preHash": "none",
+            "signatureInterface": "internal",
+            "externalMu": true
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 11,
+            "tcId": 151
+          },
+          "lineage": ["mldsa-sigver-test-21"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/localMutations/0",
+          "pointer": "/localMutations/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "mutation": "pk[0] ^= 0x01 (rho byte 0)",
+            "expectedReturn": "CKR_SIGNATURE_INVALID"
+          },
+          "testType": "product-mutation",
+          "expectation": "negative",
+          "upstream": {
+            "label": "pk-bitflip"
+          },
+          "evidenceClass": "product-mechanism-probe",
+          "lineage": ["mldsa-sigver-test-mutations"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/localMutations/1",
+          "pointer": "/localMutations/1",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "mutation": "context[0] ^= 0x01, or context = 00 when the upstream context is empty",
+            "expectedReturn": "CKR_SIGNATURE_INVALID"
+          },
+          "testType": "product-mutation",
+          "expectation": "negative",
+          "upstream": {
+            "label": "ctx-bitflip"
+          },
+          "evidenceClass": "product-mechanism-probe",
+          "lineage": ["mldsa-sigver-test-mutations"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "mldsa-sigver-test-1",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/0/tests/0"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 11) taken from upstream tgId 1 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-2",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/0/tests/1"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 14) taken from upstream tgId 1 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-3",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/0/tests/2"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 8) taken from upstream tgId 1 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-4",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/0/tests/3"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 9) taken from upstream tgId 1 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-5",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/0/tests/4"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 5) taken from upstream tgId 1 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-6",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/1/tests/0"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 43) taken from upstream tgId 3 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-7",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/1/tests/1"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 35) taken from upstream tgId 3 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-8",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/1/tests/2"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 34) taken from upstream tgId 3 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-9",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/1/tests/3"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 38) taken from upstream tgId 3 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-10",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/1/tests/4"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 31) taken from upstream tgId 3 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-11",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/2/tests/0"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 70) taken from upstream tgId 5 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-12",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/2/tests/1"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 66) taken from upstream tgId 5 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-13",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/2/tests/2"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 68) taken from upstream tgId 5 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-14",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/2/tests/3"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 65) taken from upstream tgId 5 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-15",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/2/tests/4"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 75) taken from upstream tgId 5 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-16",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/3/tests/0"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 91) taken from upstream tgId 7 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-17",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/3/tests/1"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 92) taken from upstream tgId 7 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-18",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/4/tests/0"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 121) taken from upstream tgId 9 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-19",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/4/tests/1"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 123) taken from upstream tgId 9 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-20",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/5/tests/0"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 157) taken from upstream tgId 11 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-21",
+          "appliesTo": ["mldsa_sigver_test#/testGroups/5/tests/1"],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case (upstream tcId 151) taken from upstream tgId 11 (15 cases in that group; 180 in the upstream file)."
+            },
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-mutations",
+          "appliesTo": [
+            "mldsa_sigver_test#/localMutations/0",
+            "mldsa_sigver_test#/localMutations/1"
+          ],
+          "upstreamOperation": "none — the upstream sigVer file provides no modified-public-key or modified-context cases (file negative_classes_not_upstream)",
+          "localOperation": "sigVer (expect CKR_SIGNATURE_INVALID)",
+          "transformations": [
+            {
+              "type": "derived-within-file",
+              "detail": "Applied at run time to each parameter set's positive external/pure case of this file."
+            },
+            {
+              "type": "locally-generated",
+              "detail": "PQC Today-authored mutation (localMutations[].authoredBy); never reported as a NIST vector."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "11 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): no-pkcs11-hash-ml-dsa-mechanism, no-pkcs11-internal-interface."
+    },
+    {
       "id": "mldsa_test",
       "path": "src/data/acvp/mldsa_test.json",
       "sha256": "a826e4da9db35fd4925249e47584448fd9aa64ca5589bf3d902dd8545ed04b87",
