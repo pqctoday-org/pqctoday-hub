@@ -1031,10 +1031,10 @@
         },
         "wasm": {
           "bundle": "softhsmrustv3-engine",
-          "bundleHsmCommit": "417c47a224a9859a4a02b90700ca0cdeb30cfebc",
-          "engineCommitEqualsBundleCommit": false,
+          "bundleHsmCommit": "ac8b40fd01844be0c40d4aa02e951c05cfba73b4",
+          "engineCommitEqualsBundleCommit": true,
           "commitsFromEngineToBundle": 0,
-          "commitsFromBundleToEngine": 2
+          "commitsFromBundleToEngine": 0
         },
         "cases": [
           [
@@ -5261,7 +5261,6 @@
       "openGaps": [
         "The pinned hsm commit holding this report is an unpushed local commit (on no pqctoday-hsm remote branch): nobody else can fetch or verify it until it is pushed.",
         "The report does not record the host OS or CPU architecture it ran on.",
-        "The engine commit differs from the commit this Hub’s Rust WASM bundle was built from, so these results are not results for the engine running in this browser.",
         "The harness assigns no case ids: ids are derived from section heading + check label (ordinal-suffixed where a label repeats), and change if the harness rewords a label.",
         "The harness has no skip status: an unsupported case can only pass or fail."
       ]
