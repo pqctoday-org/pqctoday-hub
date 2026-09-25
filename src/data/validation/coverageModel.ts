@@ -81,6 +81,20 @@ export type Polarity = (typeof POLARITIES)[number]
 /** Polarity a registered case declares; `boundary` is derived (see BOUNDARY rule). */
 export type DeclaredPolarity = Exclude<Polarity, 'boundary'>
 
+/**
+ * Plan G-3: a cell's evidence split by WHAT it demonstrates. `algorithm` =
+ * the output value is checked (acvts-issued … round-trip); `api` = PKCS #11
+ * behaviour only (return codes, state, buffers, attributes: the
+ * oasis-profile-case / product-mechanism-probe classes) plus every
+ * state-error case. Derived from the registered cases, never serialized.
+ */
+export const DIMENSIONS = ['algorithm', 'api'] as const
+export type Dimension = (typeof DIMENSIONS)[number]
+export const DIMENSION_LABEL: Record<Dimension, string> = {
+  algorithm: 'Algorithm correctness',
+  api: 'PKCS #11 API behaviour',
+}
+
 export const COVERAGE_LEVELS = ['covered', 'sampled', 'untested', 'unsupported'] as const
 export type CoverageLevel = (typeof COVERAGE_LEVELS)[number]
 
@@ -108,6 +122,7 @@ export const MATRIX_RULES = {
     'Parity = both engines have a RECORDED PASS of the same registered case on the same artifact kind. Skipped, unsupported and not-run never count as a pass, and a recorded result counts only for the exact artifact (sha256) the mechanism inventory records. Rows with no such pair are "not established".',
   artifacts:
     'Artifact kinds are reported separately: wasm (the two shipped WebAssembly engines — registered tests run in the browser), native, hardware. Native and hardware targets have not been run: they are "not run" and never counted as pass.',
+  dimensions: `Plan G-3 — two further columns per cell, from the same registered cases. Algorithm correctness = cases whose expected value is checked (acvts-issued, nist-reference, standard-kat, oracle, differential, round-trip; state-error cases excluded); covered when at least ${COVERED_MIN_CASES} distinct cases exist and one has an externally expected value. PKCS #11 API behaviour = cases that assert only PKCS #11 behaviour (behavior-only evidence: return codes, operation state, buffers, attributes) plus every state-error case; covered when at least ${COVERED_MIN_CASES} distinct cases exist and one is a state-error case. Neither column says a test passed.`,
   inventory:
     'Per engine and artifact kind the matrix counts, separately: advertised cells (the denominator — C_GetMechanismList × operation × parameter set × variant), registered cells (≥ 1 registered case, by evidence status), cells with a recorded pass, with a recorded fail, and with a recorded skip (the engine did not advertise a mechanism the case needs, so it was not run), unsupported cells (not advertised) and untested cells (advertised, no registered case). A skip is never a pass and is never folded into untested.',
 } as const
@@ -233,7 +248,12 @@ export interface RegisteredCase {
 export type KatKindRef = { type: string } & Record<string, string | number | undefined>
 
 export type RunnerId =
-  'useAcvpSuite' | 'katRunner' | 'mechanismCoverageProbes' | 'profileConditions' | 'oasisProfileXml'
+  | 'useAcvpSuite'
+  | 'katRunner'
+  | 'mechanismCoverageProbes'
+  | 'profileConditions'
+  | 'oasisProfileXml'
+  | 'errorPathProbes'
 
 export interface RegisteredTest {
   id: string
@@ -343,6 +363,8 @@ export interface EngineCell {
   waiver?: string
   /** Recorded wasm run results over this cell's registered cases (absent = none recorded). */
   run?: { pass: number; fail: number; skip?: number }
+  /** Plan G-3 split (advertised cells only; derived, not serialized). */
+  dimensions?: Record<Dimension, CoverageLevel>
 }
 
 export interface MatrixRow {
@@ -389,6 +411,8 @@ export interface EngineTotals {
   advertisedCells: number
   unsupportedCells: number
   overall: LevelCounts
+  /** Plan G-3: advertised cells by algorithm-correctness / API-behaviour level. */
+  byDimension: Record<Dimension, LevelCounts>
   byPolarity: Record<Polarity, LevelCounts & { byStatus: Record<MatrixStatus, number> }>
   byArtifact: Record<
     ArtifactKind,
@@ -475,6 +499,38 @@ export const levelFor = (polarity: Polarity, statuses: MatrixStatus[]): Coverage
     return 'sampled'
   }
   return 'covered'
+}
+
+/** G-3: which column a registered case counts toward. */
+export const dimensionOf = (c: Pick<MatrixCaseRef, 'evidenceClass' | 'polarity'>): Dimension =>
+  c.polarity === 'state-error' || EVIDENCE_TO_STATUS[c.evidenceClass] === 'behavior-only'
+    ? 'api'
+    : 'algorithm'
+
+/** G-3 levels for one advertised cell from its registered case indexes. */
+export function dimensionLevels(
+  caseIdxs: Iterable<number>,
+  cases: readonly MatrixCaseRef[]
+): Record<Dimension, CoverageLevel> {
+  const seen: Record<Dimension, Map<string, MatrixCaseRef>> = {
+    algorithm: new Map(),
+    api: new Map(),
+  }
+  for (const i of caseIdxs) {
+    const c = cases[i] // eslint-disable-line security/detect-object-injection
+    if (c) seen[dimensionOf(c)].set(caseKeyOf(c), c)
+  }
+  const level = (d: Dimension): CoverageLevel => {
+    const list = [...seen[d].values()] // eslint-disable-line security/detect-object-injection
+    if (list.length === 0) return 'untested'
+    if (list.length < COVERED_MIN_CASES) return 'sampled'
+    const qualifies =
+      d === 'algorithm'
+        ? list.some((c) => EXTERNAL_EXPECTED_STATUSES.has(c.status))
+        : list.some((c) => c.polarity === 'state-error')
+    return qualifies ? 'covered' : 'sampled'
+  }
+  return { algorithm: level('algorithm'), api: level('api') }
 }
 
 const emptyPolarity = (
@@ -915,12 +971,13 @@ export function buildCoverageMatrix(inp: MatrixInputs): BuildResult {
         // eslint-disable-next-line security/detect-object-injection
         polarity[p] = { status: assertStatus(status, `${d.row.key}/${e}/${p}`), level, cases: idxs }
       }
+      const cellCases = new Set(POLARITIES.flatMap((p) => polarity[p].cases)) // eslint-disable-line security/detect-object-injection
       const cell: EngineCell = {
         advertised: true,
         level: allCovered ? 'covered' : anyCase ? 'sampled' : 'untested',
         polarity,
+        dimensions: dimensionLevels(cellCases, cases),
       }
-      const cellCases = new Set(POLARITIES.flatMap((p) => polarity[p].cases)) // eslint-disable-line security/detect-object-injection
       let pass = 0
       let fail = 0
       let skip = 0
@@ -1027,6 +1084,7 @@ export function buildCoverageMatrix(inp: MatrixInputs): BuildResult {
       advertisedCells: 0,
       unsupportedCells: 0,
       overall: zero(),
+      byDimension: { algorithm: zero(), api: zero() },
       byPolarity: Object.fromEntries(
         POLARITIES.map((p) => [
           p,
@@ -1066,6 +1124,10 @@ export function buildCoverageMatrix(inp: MatrixInputs): BuildResult {
       }
       t.advertisedCells += 1
       if (c.level !== 'unsupported') t.overall[c.level] += 1
+      for (const d of DIMENSIONS) {
+        const l = c.dimensions?.[d] ?? 'untested' // eslint-disable-line security/detect-object-injection
+        if (l !== 'unsupported') t.byDimension[d][l] += 1 // eslint-disable-line security/detect-object-injection
+      }
       if (c.level !== 'untested') t.byArtifact.wasm.registeredCells += 1
       if (c.run?.pass) t.byArtifact.wasm.passedCells += 1
       if (c.run?.fail) t.byArtifact.wasm.failedCells += 1
@@ -1382,6 +1444,10 @@ export function expandMatrix(f: CoverageMatrixFile): CoverageMatrix {
         advertised: true,
         level: ce.lvl,
         polarity,
+        dimensions: dimensionLevels(
+          new Set(POLARITIES.flatMap((p) => polarity[p].cases)), // eslint-disable-line security/detect-object-injection
+          f.cases
+        ),
         ...(ce.waiver ? { waiver: ce.waiver } : {}),
         ...(ce.run
           ? {

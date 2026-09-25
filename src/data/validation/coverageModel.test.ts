@@ -5,10 +5,13 @@ import {
   assertStatus,
   buildCoverageMatrix,
   compactMatrix,
+  dimensionLevels,
+  dimensionOf,
   expandMatrix,
   levelFor,
   serializeMatrixFile,
   type CoverageMatrix,
+  type MatrixCaseRef,
   type RunResult,
 } from './coverageModel'
 import { FIXTURE_ARTIFACT, fixtureInputs } from './coverageFixture'
@@ -315,5 +318,74 @@ describe('serialized form', () => {
     expect(expandMatrix(JSON.parse(text))).toEqual(JSON.parse(JSON.stringify(matrix)))
     const rowLines = text.split('\n').filter((l) => l.startsWith('    {"k":'))
     expect(rowLines).toHaveLength(matrix.rows.length)
+  })
+})
+
+describe('G-3 algorithm-correctness vs PKCS #11 API-behaviour columns', () => {
+  const ref = (
+    caseId: string,
+    evidenceClass: MatrixCaseRef['evidenceClass'],
+    polarity: MatrixCaseRef['polarity']
+  ): MatrixCaseRef => ({
+    id: `t#${caseId}`,
+    test: 't',
+    runner: 'errorPathProbes',
+    caseId,
+    evidenceClass,
+    status: assertStatus(
+      {
+        'nist-acvp-reference-sample': 'nist-reference',
+        'functional-round-trip': 'round-trip',
+        'product-mechanism-probe': 'behavior-only',
+      }[evidenceClass as string] ?? 'behavior-only',
+      caseId
+    ),
+    polarity,
+    engines: ['cpp'],
+  })
+
+  it('classifies value-checking cases as algorithm and behaviour/state-error cases as api', () => {
+    expect(dimensionOf(ref('a', 'nist-acvp-reference-sample', 'positive'))).toBe('algorithm')
+    expect(dimensionOf(ref('b', 'functional-round-trip', 'negative'))).toBe('algorithm')
+    expect(dimensionOf(ref('c', 'product-mechanism-probe', 'positive'))).toBe('api')
+    // a state-error case is API behaviour whatever its evidence class
+    expect(dimensionOf(ref('d', 'functional-round-trip', 'state-error'))).toBe('api')
+  })
+
+  it('an API-behaviour column is covered only with ≥ 2 distinct cases incl. a state-error case', () => {
+    const cases = [
+      ref('p1', 'product-mechanism-probe', 'positive'),
+      ref('p2', 'product-mechanism-probe', 'positive'),
+      ref('s1', 'product-mechanism-probe', 'state-error'),
+      ref('rt', 'functional-round-trip', 'positive'),
+      ref('ni', 'nist-acvp-reference-sample', 'positive'),
+    ]
+    expect(dimensionLevels([0, 1], cases).api).toBe('sampled') // no state-error case
+    expect(dimensionLevels([0, 2], cases).api).toBe('covered')
+    expect(dimensionLevels([2], cases).api).toBe('sampled')
+    // behaviour probes never lend evidence to the algorithm column, and vice versa
+    expect(dimensionLevels([0, 1, 2], cases).algorithm).toBe('untested')
+    expect(dimensionLevels([3], cases).api).toBe('untested')
+  })
+
+  it('an algorithm column needs ≥ 2 distinct cases and one externally expected value', () => {
+    const cases = [
+      ref('rt1', 'functional-round-trip', 'positive'),
+      ref('rt2', 'functional-round-trip', 'positive'),
+      ref('ni', 'nist-acvp-reference-sample', 'positive'),
+    ]
+    expect(dimensionLevels([0, 1], cases).algorithm).toBe('sampled')
+    expect(dimensionLevels([0, 2], cases).algorithm).toBe('covered')
+  })
+
+  it('the golden fixture carries per-cell dimensions and per-engine dimension totals', () => {
+    const { matrix } = buildCoverageMatrix(fixtureInputs())
+    const t = matrix.totals.byEngine.cpp
+    const sum = (d: 'algorithm' | 'api') =>
+      t.byDimension[d].covered + t.byDimension[d].sampled + t.byDimension[d].untested
+    expect(sum('algorithm')).toBe(t.advertisedCells)
+    expect(sum('api')).toBe(t.advertisedCells)
+    for (const r of matrix.rows)
+      if (r.engines.cpp.advertised) expect(r.engines.cpp.dimensions).toBeDefined()
   })
 })
