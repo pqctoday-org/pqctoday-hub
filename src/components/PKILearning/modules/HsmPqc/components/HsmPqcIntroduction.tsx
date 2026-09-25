@@ -514,14 +514,17 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS:</span>{' '}
-                  <span className="text-foreground">FIPS 140-3 Level 3 (via AWS-LC)</span>
+                  <span className="text-foreground">
+                    FIPS 140-3 Level 3 (hsm2m.medium: CMVP #4703, Marvell LS2; no PQC approved)
+                  </span>
                 </div>
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
                   PQC delivered via AWS-LC SDK, not HSM firmware change. Zero downtime for SDK
-                  update. AWS-LC is a FIPS 140-3 validated open-source library with ML-KEM and
-                  ML-DSA support.
+                  update. AWS-LC has its own CMVP certificates as a Level 1 software module (AWS-LC
+                  3, #5298/#5314, approve ML-KEM but not ML-DSA); they do not change the HSM&apos;s
+                  Level 3 certificate. Checked 24 Sep 2026.
                 </p>
                 <p>
                   <strong>Limitation:</strong> Native PKCS#11 PQC mechanisms not yet in firmware.

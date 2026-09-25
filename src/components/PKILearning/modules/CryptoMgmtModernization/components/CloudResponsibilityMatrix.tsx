@@ -540,7 +540,7 @@ function computeWatchOuts(inputs: CloudMatrixInputs): string[] {
   const isFedrampHigh = inputs.regulatoryOverlay.some((r) => /FedRAMP High|IL5|IL6/i.test(r))
   if (isFedrampHigh) {
     out.push(
-      'FedRAMP High / IL5+: ML-KEM-768 and ML-DSA-65 must wait for FIPS 140-3 module re-validation per provider — expect 6-12 months after algorithm GA before the module appears on the validated list. Plan procurement around the re-validation window, not the algorithm GA date.'
+      'FedRAMP High / IL5+: ML-KEM-768 and ML-DSA-65 must wait for FIPS 140-3 module re-validation per provider — the module counts only once its CMVP certificate is issued and lists the algorithm as approved, and no standard lag after algorithm GA is published. Plan procurement around the issued certificate, not the algorithm GA date.'
     )
   }
 
@@ -1065,8 +1065,8 @@ export const CloudResponsibilityMatrix: React.FC = () => {
           <div>
             <p className="font-medium text-foreground">FedRAMP follows the module, not the algo</p>
             <p className="text-muted-foreground">
-              FIPS 140-3 re-validation lags algorithm GA by 6-12 months. Procurement deadlines
-              should reference the validated-module list.
+              FIPS 140-3 re-validation follows algorithm GA by no fixed interval. Procurement
+              deadlines should reference the validated-module list.
             </p>
           </div>
         </div>

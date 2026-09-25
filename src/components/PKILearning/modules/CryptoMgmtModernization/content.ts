@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'crypto-mgmt-modernization',
-  version: '1.1.2',
+  version: '1.1.3',
   lastReviewed: '2026-08-29',
   lastEdited: '2026-09-24',
 

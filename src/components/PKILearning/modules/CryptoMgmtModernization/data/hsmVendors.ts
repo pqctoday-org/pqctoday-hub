@@ -4,7 +4,9 @@
  *
  * NOTE: Firmware bindings and PQC support are illustrative for educational use.
  * CMVP certificate numbers, standards, statuses and approved PQC algorithms were
- * re-checked against the CMVP certificate pages on 2026-09-24. Verify live against
+ * re-checked against the CMVP certificate pages on 2026-09-24; SP 800-90B ESV statuses
+ * against the ESV certificate search the same day (an ESV status means the vendor
+ * holds an entropy-source certificate for that hardware line). Verify live against
  * csrc.nist.gov/projects/cryptographic-module-validation-program before relying on them.
  */
 
@@ -73,15 +75,16 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     product: 'SecurityServer CP5 Se-Series',
     firmwareRev: '6.0.1',
     fipsLevel: 3,
-    fipsStatus: 'in-mip',
-    cmvpCertNumber: null,
-    esvStatus: 'in-mip',
-    pqcSupport: 'ML-KEM, ML-DSA (lab validated; CMVP MIP)',
+    fipsStatus: 'historical',
+    cmvpCertNumber: '#3925 (CryptoServer Se-Series Gen2; FIPS 140-2 L3, historical)',
+    esvStatus: 'active',
+    pqcSupport:
+      'ML-KEM, ML-DSA (CAVP A7400, Lattice Module - ML on the u.trust Anchor cHSM; algorithm validation only, no CMVP certificate lists them)',
     platformBinding: 'CP5 Se-Gen2 PCIe',
-    lastVerified: '2026-04-12',
+    lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      'Validation submitted 2025-Q4; currently in CMVP Modules-in-Process queue. Non-FIPS path usable today with customer risk-acceptance.',
+      "No Se-Series entry is on the CMVP Modules-in-Process list (checked 2026-09-24). Utimaco's newer u.trust Anchor holds FIPS 140-3 L3 certificate #5223 (1 Apr 2026) with no PQC algorithm approved, and a 'u.trust Anchor CSe' entry is on the MIP list (Comment Resolution - Lab), which is not evidence of the outcome. ESV: E108 Utimaco Entropy Source. Non-FIPS path usable today with customer risk-acceptance.",
   },
   {
     id: 'crypto4a-qxhsm',
@@ -111,13 +114,13 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsLevel: 3,
     fipsStatus: 'historical',
     cmvpCertNumber: '#4139 (SDKMS Appliance; FIPS 140-2, historical)',
-    esvStatus: 'in-mip',
+    esvStatus: 'active',
     pqcSupport: 'ML-KEM, ML-DSA via SGX-backed key objects (outside FIPS boundary)',
     platformBinding: 'Intel SGX-enabled appliance / cloud tenant',
-    lastVerified: '2026-04-22',
+    lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      'Confidential-computing architecture; product rebranded from SDKMS to DSM. CMVP cert #4139 covers the SDKMS Appliance (same hardware); it is a FIPS 140-2 certificate that CMVP moved to the Historical list at sunset (checked 2026-09-24). PQC algorithms exposed via the API but not yet inside the CMVP boundary.',
+      'Confidential-computing architecture; product rebranded from SDKMS to DSM. CMVP cert #4139 covers the SDKMS Appliance (same hardware); it is a FIPS 140-2 certificate that CMVP moved to the Historical list at sunset (checked 2026-09-24). PQC algorithms exposed via the API but not yet inside the CMVP boundary. ESV: E232/E233 Fortanix DRNG RDSEED entropy sources (14 Mar 2025).',
   },
   {
     id: 'yubihsm2',
@@ -141,17 +144,17 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     catalogName: 'AWS CloudHSM',
     vendor: 'Amazon Web Services',
     product: 'AWS CloudHSM (hsm2m.medium)',
-    firmwareRev: 'Cavium LiquidSecurity fw 3.4',
+    firmwareRev: 'Marvell LS2 firmware (AWS-managed)',
     fipsLevel: 3,
     fipsStatus: 'active',
-    cmvpCertNumber: null,
+    cmvpCertNumber: '#4703 (Marvell LS2 HSM Family; FIPS 140-3 L3, per AWS CloudHSM docs)',
     esvStatus: 'active',
     pqcSupport: 'ML-KEM, ML-DSA on hsm2m instance family (outside FIPS boundary)',
     platformBinding: 'hsm2m.medium instance; region-bound',
-    lastVerified: '2026-04-22',
+    lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      'AWS CloudHSM uses Marvell NITROX III CNN35XX hardware. The certificate number is not verified here: #5219, listed previously, is a JISA Softech NITROX III certificate, not Marvell or Amazon. PQC algorithms available via PKCS#11 but pending IG-aligned re-validation.',
+      "AWS's CloudHSM compliance page names certificate #4703 (Marvell LS2 HSM Family) for hsm2m.medium; the older hsm1.medium certificate #4218 (FIPS 140-2) was due to move to the Historical list on 4 Jan 2026. #4703 lists no PQC algorithm as approved. Its Security Policy names the OCTEON HW RBG entropy source without an ESV number; Marvell's later LS2 certificate #5502 cites ESV E231 for that source. PQC algorithms available via PKCS#11 but not in a validated boundary.",
   },
   {
     id: 'azure-dedicated-hsm',
@@ -163,13 +166,13 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsLevel: 3,
     fipsStatus: 'historical',
     cmvpCertNumber: null,
-    esvStatus: 'historical',
+    esvStatus: 'active',
     pqcSupport: 'None in validated boundary',
     platformBinding: 'Luna 7 appliance hosted by Azure',
     lastVerified: '2026-03-30',
     posture: 'red',
     notes:
-      'Current Azure Dedicated HSM ships Luna 7.7.2 firmware whose CMVP cert is historical (cert number not verified here; #3892, listed previously, is a Red Hat OpenSSH module). Customers should request migration to Luna Network HSM 7.13.x for active-PQC coverage.',
+      'Current Azure Dedicated HSM ships Luna 7.7.2 firmware whose CMVP cert is historical (cert number not verified here; #3892, listed previously, is a Red Hat OpenSSH module). The Luna 7 K7 and G7 hardware entropy sources hold active ESV certificates E98 and E97 (checked 2026-09-24). Customers should request migration to Luna Network HSM 7.13.x for PQC firmware, and check which CMVP certificate lists the PQC algorithms as approved.',
   },
   {
     id: 'gcp-cloud-hsm',
@@ -180,13 +183,13 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsLevel: 3,
     fipsStatus: 'active',
     cmvpCertNumber: '#4703 / #5502 (Marvell LS2 HSM Family; confirm with Google which applies)',
-    esvStatus: 'in-mip',
+    esvStatus: 'active',
     pqcSupport: 'No PQC in FIPS boundary; roadmap disclosed 2026H2',
     platformBinding: 'Marvell LiquidSecurity 2 HSM',
-    lastVerified: '2026-04-22',
+    lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      'GCP Cloud HSM uses Marvell LS2 (LiquidSecurity 2) hardware; Marvell\u2019s LS2 certificates are #4703 and #5502, neither listing a PQC algorithm as approved (#5220 is a JISA Softech LS2 certificate). PQC integration pending.',
+      'GCP Cloud HSM uses Marvell LS2 (LiquidSecurity 2) hardware; Marvell\u2019s LS2 certificates are #4703 and #5502, neither listing a PQC algorithm as approved (#5220 is a JISA Softech LS2 certificate). #5502\u2019s Security Policy cites ESV E231 (Marvell OCTEON TRNG). PQC integration pending.',
   },
 ]
 

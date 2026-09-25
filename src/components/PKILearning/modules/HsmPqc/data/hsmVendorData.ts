@@ -151,11 +151,12 @@ export const HSM_VENDORS: HSMVendor[] = [
     product: 'CloudHSM',
     type: 'cloud',
     catalogName: 'AWS CloudHSM',
-    fips140Level: 'FIPS 140-3 Level 3 (via AWS-LC)',
+    fips140Level:
+      'FIPS 140-3 Level 3 (hsm2m.medium: CMVP #4703, Marvell LS2 HSM Family; no PQC approved, checked 2026-09-24)',
     supportedPQCAlgorithms: ['ML-DSA-44/65/87 (preview)'],
     formFactor: 'cloud',
     notes:
-      'Dedicated managed HSM. ML-DSA (44/65/87) key pair generation and signing in preview; ML-KEM not yet available in CloudHSM hardware (AWS KMS software supports ML-KEM separately). Native PKCS#11 PQC mechanisms not yet in HSM firmware. Built on AWS-LC (FIPS 140-3 validated). Multi-AZ redundancy.',
+      "Dedicated managed HSM. ML-DSA (44/65/87) key pair generation and signing in preview; ML-KEM not yet available in CloudHSM hardware (AWS KMS software supports ML-KEM separately). Native PKCS#11 PQC mechanisms not yet in HSM firmware. The HSM's Level 3 certificate is Marvell's #4703 (named on AWS's CloudHSM compliance page); AWS-LC's own certificates (e.g. #5314) are separate Level 1 software modules and do not make the HSM Level 3. Multi-AZ redundancy.",
     firmwareVersion: 'SDK-dependent',
     pkcs11Version: '2.40 (PQC via SDK)',
     hybridSupport: false,

@@ -68,7 +68,10 @@ export const SOURCING_STRATEGIES: SourcingStrategyData[] = [
         impact: 'high',
       },
       { text: 'Side-channel resistance is extremely hard to get right', impact: 'high' },
-      { text: 'FIPS 140-3 certification costs $200K-500K+ and takes 12-24 months', impact: 'high' },
+      {
+        text: 'FIPS 140-3 validation needs an accredited lab, NIST cost-recovery fees and a CMVP review queue with no published completion time',
+        impact: 'high',
+      },
       { text: 'Ongoing maintenance burden — security patches, algorithm updates', impact: 'high' },
       { text: 'Small team = small audit surface — fewer eyes finding bugs', impact: 'medium' },
       { text: 'Liability risk — if your implementation has a flaw, you own it', impact: 'high' },
@@ -138,7 +141,7 @@ export const SOURCING_STRATEGIES: SourcingStrategyData[] = [
       'Your team cannot maintain and patch open-source dependencies',
     ],
     pqcImplications:
-      'Open source leads PQC adoption. OpenSSL oqsprovider, Bouncy Castle, liboqs, and cloudflare/circl provide the fastest path to PQC. However, FIPS certification for PQC is only available through AWS-LC (commercial backing) and wolfSSL (commercial license).',
+      'Open source leads PQC adoption. OpenSSL oqsprovider, Bouncy Castle, liboqs, and cloudflare/circl provide the fastest path to PQC. However, of the libraries named in this module only AWS-LC has a PQC algorithm (ML-KEM) approved on an active CMVP certificate (AWS-LC 3, #5298/#5314; checked 24 Sep 2026). Bouncy Castle #4943 approves LMS signature verification only; wolfCrypt #4718 lists no PQC algorithm.',
     estimatedTCO: {
       year1: '$50K-200K (integration engineering, testing)',
       year3: '$150K-500K (maintenance, patching, compliance verification)',
@@ -182,7 +185,7 @@ export const SOURCING_STRATEGIES: SourcingStrategyData[] = [
       'You have strong in-house crypto expertise',
     ],
     pqcImplications:
-      'Commercial vendors are slower to adopt PQC — they wait for final NIST standards and then go through internal QA and FIPS re-certification. Thales Luna HSMs support ML-KEM/ML-DSA via firmware updates. wolfSSL commercial provides PQC + FIPS. Expect 12-24 month lag behind open source for new PQC algorithms.',
+      'Commercial vendors are slower to adopt PQC — they wait for final NIST standards and then go through internal QA and FIPS re-certification. Thales Luna HSMs support ML-KEM/ML-DSA via firmware updates. wolfSSL commercial provides PQC and a FIPS 140-3 module, but that certificate (#4718) lists no PQC algorithm (checked 24 Sep 2026). Commercial PQC can lag open source; plan on the vendor\u2019s dated roadmap, not a generic interval.',
     estimatedTCO: {
       year1: '$100K-500K (licensing, integration, training)',
       year3: '$300K-1.5M (annual licensing, support renewals)',
@@ -338,7 +341,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     decision:
       'Forked OpenSSL in 2014, stripped unused code, added their own optimizations, and deployed ML-KEM (Kyber) for TLS in Chrome years before any other browser.',
     outcome:
-      'BoringSSL powers billions of daily TLS connections. First production ML-KEM deployment. FIPS 140-2 validated (BoringCrypto module). However, requires a dedicated team of ~15 crypto engineers.',
+      'BoringSSL powers billions of daily TLS connections. First production ML-KEM deployment. BoringCrypto holds FIPS 140-3 certificate #5244 (no PQC algorithm approved). However, requires a dedicated team of ~15 crypto engineers.',
     libraryUsed: 'BoringSSL (fork of OpenSSL)',
     lessonsLearned: [
       'Only viable with dedicated crypto engineering team (15+ engineers)',
@@ -358,13 +361,13 @@ export const CASE_STUDIES: CaseStudy[] = [
     decision:
       'Forked BoringSSL, added FIPS 140-3 validation process, integrated ML-KEM into the FIPS boundary, and created Rust bindings (aws-lc-rs) for memory safety.',
     outcome:
-      'First FIPS 140-3 validated library with PQC (ML-KEM). Powers S2N-TLS across all AWS services. aws-lc-rs enables Rust developers to use FIPS-validated crypto. Cost: dedicated team of ~20 engineers.',
+      'AWS-LC 3 certificates #5298 and #5314 (June 2026) approve ML-KEM. Powers S2N-TLS across all AWS services. aws-lc-rs enables Rust developers to use FIPS-validated crypto. Cost: dedicated team of ~20 engineers.',
     libraryUsed: 'AWS-LC (fork of BoringSSL)',
     lessonsLearned: [
       'FIPS validation with PQC is possible but requires dedicated effort',
       'Rust bindings (aws-lc-rs) provide memory safety over C code',
       'Fork strategy reduces risk vs building from scratch',
-      'FIPS process took 18+ months even with dedicated team',
+      'Validation finishes when CMVP issues the certificate, not on the team\u2019s schedule',
     ],
   },
   {
