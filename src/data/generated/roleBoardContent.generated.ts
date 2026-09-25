@@ -909,7 +909,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 5 hours 25, not 30¾.',
+        trackTitle: 'Then, the background: 5 hours 25, not 32¼.',
 
         trackChips: [
           'PQC 101',
@@ -986,7 +986,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 5 hours 25, not 30¾.',
+        trackTitle: 'Then, the background: 5 hours 25, not 32¼.',
 
         trackChips: [
           'PQC 101',
@@ -1061,7 +1061,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 5 hours 25, not 30¾.',
+        trackTitle: 'Then, the background: 5 hours 25, not 32¼.',
 
         trackChips: [
           'PQC 101',
@@ -1139,7 +1139,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 5 hours 25, not 30¾.',
+        trackTitle: 'Then, the background: 5 hours 25, not 32¼.',
 
         trackChips: [
           'PQC 101',
@@ -1215,7 +1215,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 5 hours 25, not 30¾.',
+        trackTitle: 'Then, the background: 5 hours 25, not 32¼.',
 
         trackChips: [
           'PQC 101',
@@ -1289,7 +1289,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 5 hours 25, not 30¾.',
+        trackTitle: 'Then, the background: 5 hours 25, not 32¼.',
 
         trackChips: [
           'PQC 101',
