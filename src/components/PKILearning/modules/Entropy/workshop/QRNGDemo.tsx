@@ -84,8 +84,9 @@ function formatTestValue(result: TestResult): string {
 /**
  * Public CMVP Entropy Validation Certificates for QRNG noise sources.
  * Every field is copied from the certificate page on csrc.nist.gov, checked
- * 2026-09-24. Replaces an unsourced "FIPS 140-2 / AIS 31 certified" product
- * line: no certificate or registry entry supporting it was found.
+ * 2026-09-24. Replaces an unsourced product-certification line: the CMVP
+ * search found no such certificate, and a web search for a BSI entry
+ * returned only vendor pages.
  */
 const QRNG_ESV_CHECKED_ON = '2026-09-24'
 const ESV_CERT_BASE =

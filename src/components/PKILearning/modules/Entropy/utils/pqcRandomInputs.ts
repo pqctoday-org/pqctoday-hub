@@ -10,7 +10,7 @@
  * with it. Do not restate these rules in prose elsewhere — import them.
  *
  * Key points the data encodes (and that earlier copy got wrong):
- *  - A 32-byte random input does NOT mean "32 bytes of full entropy" or a
+ *  - A 32-byte random input does NOT mean 32 bytes of entropy or a
  *    256-bit RBG. The RBG strength is set per parameter set.
  *  - ML-DSA-44 has a split rule: shall be >= 128 bits, should be >= 192 bits.
  *  - Hedged-signing randomness (ML-DSA `rnd`, SLH-DSA `addrnd`) has no
