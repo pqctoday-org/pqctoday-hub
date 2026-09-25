@@ -2,10 +2,13 @@
 /**
  * Structured content for the AcvpLabWorkflow module (acvp-lab-workflow).
  *
- * Standards below are the Hub Library rows this module cites. Primary sources
- * the Library does not carry yet (CAVP / ACVTS program pages, the usnistgov/ACVP
- * algorithm sub-specifications, the usnistgov/ACVP-Server repository) are cited
- * in-module from data/sources.ts and listed there as LIBRARY_ADDITIONS_NEEDED.
+ * Standards below are the Hub Library rows this module cites. The CAVP /
+ * ACVTS program pages, the usnistgov/ACVP algorithm sub-specifications, and
+ * the usnistgov/ACVP-Server repository were added to the Library 2026-09-25
+ * (ACVP gap-closure plan P6) and are cited here directly, in addition to
+ * their in-module citation from data/sources.ts (kept as the source of the
+ * exact per-algorithm commit pins). LIBRARY_ADDITIONS_NEEDED in sources.ts
+ * is now empty as a result.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
@@ -29,6 +32,10 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     getStandard('PKCS11-V32-OS-OASIS'),
     getStandard('PKCS-11-Cryptographic-Token-Interface-Profiles-Version-3-2-O'),
+    getStandard('NIST-Cryptographic-Algorithm-Validation-Program-CAVP'),
+    getStandard('Accessing-the-ACVTS-Demo-and-Prod-Environments'),
+    getStandard('usnistgov-ACVP-Automated-Cryptographic-Validation-Protocol-S'),
+    getStandard('usnistgov-ACVP-Server-Public-Reference-Sample-Vector-Sets'),
   ],
 
   algorithms: [
