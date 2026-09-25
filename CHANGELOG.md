@@ -29,6 +29,25 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.122.0] - 2026-09-25
+
+A Codex spot-check of 27 already-published Timeline rows caught two date errors nobody had flagged, plus a round of document research closed most of the remaining sourcing gaps from the last two releases.
+
+### Changed
+
+- **Two published dates corrected.** [view:/timeline] [persona:grc] [persona:researcher] IBM's Heron R2 processor row said 2025; its own announcement is dated 13 Nov 2024. Algorand's first post-quantum mainnet-transaction row said 2024; its own page says "In 2025".
+- **Two QKD rows restored.** [view:/timeline] [persona:grc] Czech Republic's CZQCI backbone and the UAE's ADGM/TII testbed were deprecated as out-of-scope for the Timeline last release; quantum key distribution is in scope for the site, tracked separately from post-quantum cryptography, so both are back.
+- **Japan's PQC-migration row re-sourced and re-dated.** [view:/timeline] [persona:grc] [persona:researcher] NISC was reorganised into the National Cybersecurity Office on 1 July 2025; the row now cites NCO's own November 2025 interim summary, which sets 2035 as Japan's migration target — not the 2024–2026 window it previously showed (sourced to an unrelated CRYPTREC document).
+- **CISA's EO 14306 deadline now cites the actual order.** [view:/timeline] [persona:grc] Re-sourced from a generic CISA landing page to the Federal Register's EO 14306 text, which states the December 1, 2025 deadline directly; CISA's own release confirming the list shipped January 23, 2026 is noted alongside it.
+- **The G7 financial-sector deadline now cites the document that states it.** [view:/timeline] [persona:grc] The 2030–32 critical-systems date is in a January 2026 G7 statement, not the September 2024 one previously cited.
+- **A UAE row is honest about what's confirmed and what's self-reported.** [view:/timeline] [persona:researcher] TII's claimed contribution to 6 NIST Round 2 signature candidates is now cited to NIST's own dated status report (IR 8528) for the event itself, with TII's specific involvement noted as self-published, not NIST-confirmed.
+- **Two mis-scoped rows corrected.** [view:/timeline] [persona:grc] Taiwan's row no longer claims a "2027 interim milestone" the document doesn't state (the 2027 belongs to a NIST target, not Taiwan's own). A row titled "Cryptographic Inventory" is retitled to reflect what NSM-10 actually mandates — inventory is one sub-directive among several.
+- **Brazil's ICP-Brasil certificate-standards row is published.** [view:/timeline] [persona:grc] A closer read of the already-captured document confirms it's a real, dated (30 Jan 2026) instruction adding ML-DSA and ML-KEM.
+
+### Data
+
+- **Timeline 09252026_r7:** [view:/timeline] [persona:grc] [persona:researcher] 54 cell changes across 25 rows; 311 rows total. 7 new source documents captured and admitted. Full reasoning in `pqctoday-priv/maintenance/lineage/timeline-review/claude-recommendations-09252026.md` and this session's record.
+
 ## [4.121.0] - 2026-09-25
 
 Every certification record now comes straight from its official source — NIST for FIPS 140-3 and CAVP, the Common Criteria Portal, ANSSI and ENISA — and anything a source does not back is gone.
