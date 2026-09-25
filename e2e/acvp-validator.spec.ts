@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
-  test.setTimeout(180000) // WASM load + autoInit + ACVP exhaustive keys
+  test.setTimeout(360000) // WASM load + autoInit + the full workbench run (see the 180 s wait below)
 
   test.beforeEach(async ({ page }) => {
     // Suppress the WhatsNew alertdialog (fixed inset-0 overlay) that intercepts
@@ -104,10 +104,14 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // tipped over on GitHub's shared CI runners. Widened to match this file's
     // other WASM checkpoints rather than re-guessing; investigate for a real
     // hang only if this is still red at 90s.
+    // 2026-09-24 (WS-D D1/D3/D2-6): the PQC depth sections added NIST
+    // deterministic SLH-DSA signing for all 12 parameter sets (192s/256s take
+    // 2.5-3.6 s each on the Rust engine) — the Rust-only suite measured 52.5 s
+    // in Node. Widened to 180 s so shared CI runners keep real headroom.
     const logSection = page
       .locator('div', { hasText: 'Cryptographic Validation Workbench run completed' })
       .last()
-    await expect(logSection).toBeVisible({ timeout: 90000 })
+    await expect(logSection).toBeVisible({ timeout: 180000 })
 
     // Validate that at least one ML-KEM and ML-DSA passed
     const mlkemRow = page.getByTestId('acvp-result-row').filter({ hasText: 'ML-KEM-512' }).first()
@@ -139,7 +143,22 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // regression reintroduces a known-red row, re-add it here BY NAME with
     // the CKR error and a tracking link, not by re-narrowing the filter
     // above to a subset of algorithms.
-    const KNOWN_RED_ALGORITHMS: string[] = []
+    //
+    // 2026-09-24 (WS-D D1-2): the Rust engine performs no FIPS 203 §7.2
+    // (encapsulation-key modulus) or §7.3 (decapsulation-key hash) input
+    // check — it accepts all six NIST ML-KEM VAL keys marked invalid
+    // (C_CreateObject and the KEM operation both return CKR_OK). Engine
+    // finding, reported for pqctoday-hsm; not a harness defect. Matched by
+    // exact row identity, and asserted to STILL be red below so the entry is
+    // removed when the engine is fixed.
+    const KNOWN_RED_ROWS: { match: RegExp; why: string }[] = [
+      {
+        match:
+          /ML-KEM-(512|768|1024) \(Rust\) (Decapsulation-key check \(FIPS 203 §7\.3\)|Encapsulation-key check \(FIPS 203 §7\.2\)) · NIST VAL tg\d+\/tc\d+ · (modified H|noisy linear system values too large) · expect rejected/,
+        why: 'Rust engine: no FIPS 203 §7.2/§7.3 key check',
+      },
+    ]
+    const knownRedSeen: string[] = []
 
     const resultRows = page.locator('table tbody tr')
     const rowCount = await resultRows.count()
@@ -154,13 +173,21 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     for (let i = 0; i < rowCount; i++) {
       const row = resultRows.nth(i)
       const rowText = (await row.innerText()).replace(/\s+/g, ' ').trim()
-      if (KNOWN_RED_ALGORITHMS.some((algo) => rowText.startsWith(algo))) continue
       const failCell = row.locator('td', { hasText: /^fail$/i })
-      if ((await failCell.count()) > 0) {
+      const failed = (await failCell.count()) > 0
+      if (KNOWN_RED_ROWS.some((k) => k.match.test(rowText))) {
+        if (failed) knownRedSeen.push(rowText)
+        continue
+      }
+      if (failed) {
         failingRows.push(rowText)
       }
     }
     expect(failingRows, `Unexpected failing ACVP rows:\n${failingRows.join('\n')}`).toEqual([])
+    // The known-red finding is still present (3 decapsulation-key + 3
+    // encapsulation-key checks). If this drops, the engine was fixed: delete
+    // the KNOWN_RED_ROWS entry above.
+    expect(knownRedSeen, 'KNOWN_RED_ROWS entry is stale').toHaveLength(6)
   })
 
   test('running a single category runs only that category, and a helper shared across two categories stays in scope', async ({
