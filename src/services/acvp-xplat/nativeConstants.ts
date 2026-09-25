@@ -67,7 +67,7 @@ export const renderHubContract = (): string =>
 const hex = (n: number): string => `0x${(n >>> 0).toString(16).padStart(8, '0')}`
 
 export const renderNativeConstants = (): string => {
-  const nums = Object.entries(C)
+  const nums = (Object.entries(C) as Array<[string, unknown]>)
     .filter((e): e is [string, number] => typeof e[1] === 'number' && Number.isInteger(e[1]))
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
   const rv = Object.entries(RV_NAMES)
