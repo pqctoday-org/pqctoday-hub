@@ -69,6 +69,7 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
         sourceUrlQuality: ev?.sourceUrlQuality,
         trustedSourceId: ev?.trustedSourceId,
         trustedSourceIdStatus: ev?.trustedSourceIdStatus,
+        sourceClass: ev?.sourceClass,
         localFile: ev?.localFile,
         confidenceScore: ev?.confidenceScore,
         dataQualityNotes: ev?.dataQualityNotes,

@@ -10,6 +10,10 @@
  * via REGULATORY_DEADLINE_YEAR (re-exported from timelineFacts.generated.ts).
  * Edit the CSV → rebuild → all consumers pick up the new year automatically.
  *
+ * Provenance of every date below: regulatoryConstantProvenance.ts (timeline /
+ * generated / derived / policy constant / planning / unsourced), enforced by
+ * regulatoryConstantProvenance.test.ts against the reviewed timeline CSV.
+ *
  * Sources:
  *   - CNSA 2.0: NSA Cybersecurity Advisory (September 2022, updated March 2024)
  *   - NIST IR 8547: Transition to Post-Quantum Cryptography Standards (November 2024)
@@ -43,8 +47,11 @@ export const CNSA_2_0 = {
    * support + new acquisitions, NOT networking — networking support is 2026). Field
    * name kept for back-compat. */
   networkingRequired: 2027,
-  /** Software/firmware signing must exclusively use CNSA 2.0 (= US sim deadline, from CSV) */
-  softwareExclusive: US_DEADLINE,
+  /** Software/firmware signing and traditional networking must exclusively use CNSA 2.0.
+   * Restates the reviewed timeline row united-states-nsa-cnsa-2-0-exclusive-network-signing
+   * (regulatoryConstantProvenance.ts). It used to read US_DEADLINE — EO 14412's
+   * key-establishment year, a different policy that happens to be 2030 too. */
+  softwareExclusive: 2030,
   /** Web browsers, servers, cloud services & operating systems exclusively CNSA 2.0.
    * (Traditional networking equipment is exclusive by 2030, not 2033.) Field name kept
    * for back-compat. */
@@ -171,8 +178,10 @@ export const ANSSI_TIMELINE = {
   hybridMandatory: true,
   /** Hash-based signatures (SLH-DSA, LMS, XMSS) may be used standalone */
   hashBasedStandaloneAllowed: true,
-  /** Target year for organizations to have PQC migration plans */
-  migrationPlanTarget: 2025,
+  // migrationPlanTarget (2025) REMOVED 2026-09-25 (timeline remediation r2 W-K,
+  // user decision): no ANSSI document sets a 2025 migration-plan target for
+  // organisations. ANSSI's 2025 dates are its own guide updates (end 2025) and
+  // phase 1 lasting "until after 2025" (2022 position paper).
 } as const
 
 // ── BSI (Germany) ─────────────────────────────────────────────────────────

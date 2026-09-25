@@ -857,9 +857,9 @@ export const SimpleGanttChart = ({
                               {countryLastVerified && (
                                 <div
                                   className="text-[9px] text-muted-foreground font-mono mt-0.5"
-                                  title="Most recent human-verification date for this country's timeline events"
+                                  title="Most recent date this country's source documents were re-fetched or re-checked. Not a per-claim review date."
                                 >
-                                  Verified {countryLastVerified}
+                                  Sources checked {countryLastVerified}
                                 </div>
                               )}
                               <div className="flex items-center gap-0.5 -ml-1 mt-0.5">

@@ -29,6 +29,30 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.118.0] - 2026-09-25
+
+Every entry on the Timeline was checked against its own source document by two independent reviewers, and the Timeline now shows only government, regulator and standards-body milestones — with honest labels for what was checked and when.
+
+### Changed
+
+- **The Timeline now covers government, regulator and standards milestones only.** [view:/timeline] [persona:executive] [persona:grc] [persona:architect] Vendor product news, quantum-hardware announcements, conferences and general privacy or cyber laws with no post-quantum milestone were retired from the Timeline (60 entries). Nothing was deleted: 11 of them already live in Compliance, Vendor Roadmaps or the Library, and the rest keep their history. The empty "Vendor" filter option is gone.
+- **Entries are shown only once they have been reviewed.** [view:/timeline] [persona:grc] [persona:researcher] Every remaining entry was read against its cited document by two independent reviewers, and a change was applied only where both agreed — corrected dates, titles and descriptions, and a recorded "binding force" (law, mandatory for a defined scope, official target, recommendation, draft or informational). Entries still awaiting review, or whose cited document does not support them, are held back instead of shown unlabelled. The Timeline shows 173 entries.
+- **Country deadlines in Assess, Report and the Simulation come only from reviewed entries, labelled binding or guidance.** [view:/assess] [view:/report] [persona:executive] [persona:grc] Canada's 2031 and India's 2027 dates are now labelled as guidance targets (their documents recommend rather than mandate), France's 2027 qualification requirement as mandatory for its scope, Australia's 2030 as an official target, and Korea's 2035 comes from its national PQC master plan rather than a page that only forecast quantum-computer timing.
+- **Dates on Timeline cards say what they are.** [view:/timeline] [persona:curious] [persona:grc] A card shows the source document's publication date as "Published <date>" instead of colouring old documents "Stale" or red "Critical", and the per-country date now reads "Sources checked" — it records when the sources were last re-checked, not a claim-by-claim review.
+- **Authority links read correctly.** [view:/timeline] [persona:grc] Forty-six entries linked to a registered authority were wrongly badged "Unverified"; they now show their tier. A source that is reputable secondary reporting rather than the issuer's own publication carries a "Secondary source" chip.
+
+### Added
+
+- **New milestones: the G7 Call to Action and the HAWK withdrawal.** [view:/timeline] [persona:researcher] [persona:executive] The G7 Cybersecurity Working Group's "Preparing for the Post-Quantum Era: A Call to Action" (3 September 2026), and the withdrawal of the HAWK signature scheme from NIST's additional-signatures process (29 July 2026).
+
+### Fixed
+
+- **A regulatory deadline in the Learn modules no longer borrows another policy's year.** [view:/learn] [persona:developer] [persona:grc] The CNSA 2.0 software-signing deadline was wired to the US executive-order key-establishment year, which only happened to match. Every hard-coded deadline used by the Learn modules now traces to a reviewed Timeline entry or a named document, and an unsupported "ANSSI 2025 migration-plan target" was removed from the Hybrid Cryptography module.
+
+### Data
+
+- **Timeline 09252026_r5:** [view:/timeline] [persona:researcher] [persona:grc] 311 rows, 173 public; all 265 previously active rows reviewed; binding force recorded; one evidence manifest keyed by entry id. The site search index is rebuilt with the reviewed rows only, and retitled rows keep their document analysis under their current title.
+
 ## [4.117.0] - 2026-09-25
 
 Every threat on the Threats page now says only what its cited document says — 71 threats are published, each with its main claims checked against the source, and 49 more are held back until a document that backs them is found.

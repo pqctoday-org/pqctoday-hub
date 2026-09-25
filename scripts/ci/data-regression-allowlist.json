@@ -11,5 +11,19 @@
       "reason": "2026-09-22 re-enrichment through the fixed reader; same class as protocols/entropy_source above",
       "until": "2026-10-06"
     }
+  },
+  "emptiedOk": {
+    "timeline": {
+      "SourceDate": {
+        "expectedEmptied": 23,
+        "reason": "2026-09-25 timeline review r2: Claude + Codex both found the cited document gives no publication date for these rows; the unsupported dates were blanked (under-assertion, user decision 2026-09-22). Row list: pqctoday-priv maintenance/lineage/timeline-review/csv-changes.jsonl",
+        "until": "2026-10-09"
+      },
+      "OrgFullName": {
+        "expectedEmptied": 11,
+        "reason": "2026-09-25 timeline review r2: both reviewers found the cited document does not name the issuing organisation's full name; blanked rather than asserted",
+        "until": "2026-10-09"
+      }
+    }
   }
 }
