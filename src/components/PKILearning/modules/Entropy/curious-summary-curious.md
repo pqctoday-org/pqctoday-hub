@@ -1,3 +1,3 @@
-In cryptography, "entropy" simply means how utterly random and unpredictable a generated password or digital key truly is. Traditional math creates keys that look completely random to a standard computer.
+In cryptography, "entropy" means how unpredictable the random numbers behind a password or digital key really are. If an attacker can guess how a key was picked, the key is weak no matter how strong the algorithm is.
 
-However, a quantum computer is so incredibly powerful it can instantly find hidden mathematical patterns in things we thought were perfectly random. To ensure new Post-Quantum locks work properly, computers must use completely new, advanced methods to generate keys with massive, true randomness so they remain mathematically unpredictable to any future machine.
+Quantum computers do not make good random numbers predictable. The new post-quantum algorithms need the same thing today's algorithms need: random numbers from a well-built, well-tested generator that is strong enough for the key size being made.

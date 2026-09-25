@@ -159,26 +159,26 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/playground/rng-demo': {
     researcher:
-      'Generate 64 bytes from each source, Web Crypto API, OpenSSL WASM, Math.random() and Timestamp LCG, and compare them: the LCG output can be predicted from earlier bytes, which is the failure the test table shows.',
+      'Generate 64 bytes from each source, Web Crypto API, OpenSSL WASM, Math.random() and Timestamp LCG, and compare them: the LCG output can be predicted from earlier bytes, yet it usually lands within range on the visual checks — a failure no output check shows.',
     developer:
       'Generate from Web Crypto API and from Math.random() side by side: the first is the call your code should make for keys and nonces, the second is the one that must never be, and the panels show why.',
     architect:
-      'The Production Entropy Sources section lists the hardware and cloud services that feed SP 800-90B qualified entropy into production systems, which is where a key-generation design has to start.',
+      'The Production Entropy Sources section lists entropy-source products and, where one exists, the CMVP Entropy Validation Certificate that covers them (listed versions only); checking that evidence is where a key-generation design has to start.',
     ops: 'Use the four sources to see what a weak generator produces; the Production Entropy Sources list names the hardware and cloud entropy feeds to check for on your key-generating hosts.',
   },
   '/playground/qrng-demo': {
     researcher:
-      'Generate CSPRNG and Run Entropy Tests on Both Samples: monobit, runs and chi-squared results for the QRNG reference, the CSPRNG and the Weak PRNG sit side by side, and the note states that the QRNG sample here is produced by crypto.getRandomValues, not quantum hardware.',
+      'Generate CSPRNG and Run the Checks on All Three Samples: the visual checks and the SP 800-90B health tests for the Simulated QRNG, the CSPRNG and the Weak PRNG sit side by side in separate groups, and the page states that the Simulated QRNG sample is produced by crypto.getRandomValues, not quantum hardware.',
     curious:
-      'Press Run Entropy Tests on Both Samples and look at which of the three sources fails: good random numbers from a computer and from a quantum device look the same statistically; only the weak one stands out.',
+      'Press Run the Checks on All Three Samples and look at which source stands out: only the weak one does. The “quantum” sample here is simulated with ordinary computer randomness, and even a real quantum device could not be told apart from a good computer generator by these checks.',
   },
   '/playground/entropy-test': {
     researcher:
-      'Load Generate Random, then All Zeros, Repeating Pattern and Incrementing under Static Tests: the simplified tests show which check each bad sample fails; the note says production validation needs the NIST SP 800-90B EntropyAssessment tool.',
+      'Load Generate Random, then All Zeros, Repeating Pattern and Incrementing under Static Tests: the grouped results show which visual check and which SP 800-90B health test each bad sample trips — Incrementing trips no health test at all — and the page says an entropy estimate needs the NIST SP 800-90B EntropyAssessment tool on raw data.',
     architect:
-      'Use the Bit Flipper and the Live Monitor to see how small biases change the test results; the point for a design is that ML-KEM and ML-DSA key generation depends on the same entropy quality.',
+      'Use the Bit Flipper and the Live Monitor to see which corruption the checks notice and which they miss; the point for a design is that ML-KEM and ML-DSA key generation depends on entropy these output checks cannot measure.',
     developer:
-      "Paste Hex from your own generator's output and run the static tests; Run NIST KAT under Entropy Testing Known Answer Tests shows the implementations against the published vectors.",
+      "Paste Hex from your own generator's output and run the static tests to see the grouped results; Run NIST KAT under Primitive self-checks compares SHA-256 and HMAC with published vectors — algorithm correctness only, not an entropy test.",
   },
   '/playground/drbg-demo': {
     architect:
@@ -186,15 +186,15 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     developer:
       'Set the bytes and optional additional input, Generate several times and Reseed: the state tracker shows what your DRBG wrapper must keep between calls and when reseeding changes the output.',
     researcher:
-      'Use a custom nonce and personalization to reproduce a deterministic run, then compare the Instantiate and Generate outputs across runs to check the SP 800-90A HMAC_DRBG construction.',
+      'Run the known-answer check: 16 NIST HMAC_DRBG vectors must match byte for byte and a one-bit flip in one entropy input must not — evidence the SP 800-90A Rev. 1 mechanism is computed correctly, and none about the entropy input.',
   },
   '/playground/source-combining': {
     researcher:
-      "Generate Source A (CSPRNG), Assemble via Concat, Apply Hash_df and Expand to 64 bytes: each step names its SP 800-90 section, and replacing Source A with all zeros shows Source B's entropy surviving conditioning.",
+      'Collect raw samples, read the startup and continuous health tests in Step 2, then load each counterexample in Step 6: every verdict names the SP 800-90B or SP 800-90C clause it rests on, and the best possible outcome is “consistent with the stated assumptions”, never a validation.',
     architect:
-      'The SP 800-90C RBG Construction Types panel and the four-step pipeline are the reference for combining two entropy sources in a design so that one weak source does not weaken the key.',
+      'Step 6 asks what a combined-source design has to state — independence, adversary control, failure handling, validation, freshness and the SP 800-90C construction class — before anyone can claim one weak source does not weaken the key.',
     developer:
-      'Run the pipeline once with the defaults and once with a zeroed Source A; the Hash_df and HKDF outputs are what your key-generation code should produce from the same inputs.',
+      'Set Source A to Biased toward 0x5A: the Adaptive Proportion test catches it on the raw samples in Step 2, while conditioned and expanded output would look fine — so your health tests go before conditioning, and HKDF is not a stand-in for an SP 800-90A DRBG.',
   },
   '/playground/pki-workshop': {
     developer:
@@ -652,11 +652,11 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/learn/entropy-randomness': {
     developer:
-      'Generate random bytes from Web Crypto and OpenSSL, run the simplified SP 800-90B tests, then combine TRNG and QRNG output with the SP 800-90C conditioning step: the entropy every key you generate depends on.',
+      'Generate random bytes from Web Crypto and OpenSSL, run the visual checks and SP 800-90B health tests as separate groups, step through HMAC_DRBG, then health-test raw sources before conditioning in the source-combining step: the entropy every key you generate depends on.',
     architect:
-      'The Entropy Source Validation walkthrough and the source-combining step are the design references for where keys are generated and how two sources are combined for defence in depth.',
+      'The Entropy Source Validation walkthrough and the source-combining step show what evidence a key-generation design needs, and the assumptions under which combining two sources adds assurance.',
     researcher:
-      'The SP 800-90B tests, the pre-fetched quantum random data against local TRNG output, and the 90C XOR-and-conditioning step are all runnable, with the Entropy Testing tool for your own samples.',
+      'The SP 800-90B health tests, the HMAC_DRBG known-answer check against NIST vectors and the source-combining counterexamples are all runnable, with the Entropy Testing tool for your own samples.',
     curious:
       'Every secret key starts as random numbers; the module shows the difference between good randomness and predictable numbers with tests you can run on both.',
   },

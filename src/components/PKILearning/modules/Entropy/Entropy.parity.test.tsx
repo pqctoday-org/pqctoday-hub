@@ -24,7 +24,7 @@ describe('Entropy render parity', () => {
     expect(screen.getByRole('heading', { name: 'Entropy & Randomness' })).toBeInTheDocument()
     // in-page description (a stable substring of the override slot)
     expect(
-      screen.getByText(/Master entropy sources, DRBG mechanisms, and quantum randomness/)
+      screen.getByText(/Entropy sources, SP 800-90A DRBGs, SP 800-90B entropy-source validation/)
     ).toBeInTheDocument()
     // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
