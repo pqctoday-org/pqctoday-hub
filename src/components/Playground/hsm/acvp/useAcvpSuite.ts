@@ -149,7 +149,9 @@ import { runMldsaDepthSection } from './sections/mldsaDepth'
 import { runMlkemAcvpSection } from './sections/mlkemAcvp'
 import { runSlhdsaAcvpSection } from './sections/slhdsaAcvp'
 import { runAesGcmAcvpSection } from './sections/aesGcmAcvp'
+import { runAesKwAcvpSection } from './sections/aesKwAcvp'
 import { runHmacAcvpSection } from './sections/hmacAcvp'
+import { runShaAcvpSection } from './sections/shaAcvp'
 import { runEcdsaSigVerAcvpSection, runEddsaSigVerAcvpSection } from './sections/ecSigVerAcvp'
 import type { HsmKey } from '../HsmContext'
 
@@ -182,8 +184,8 @@ export type CategoryId =
   'symmetric' | 'hashing_mac' | 'kdf' | 'classical' | 'ml_dsa' | 'slh_stateful' | 'ml_kem'
 
 export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
-  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 7 },
-  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 6 },
+  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 8 },
+  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 7 },
   { id: 'kdf', label: 'KDF', groups: 5 },
   { id: 'classical', label: 'Classical Asymmetric', groups: 12 },
   { id: 'ml_dsa', label: 'ML-DSA', groups: 7 },
@@ -1797,6 +1799,24 @@ export function useAcvpSuite() {
           }
         }
 
+        // ── 10f. SHA-2 / SHA-3 message-length boundaries + MCT (WS-E) — NIST
+        // empty / short / block-boundary / longest AFT digests for 10 digests,
+        // standard MCT (first outer iteration), LDT + alternate MCT as skips.
+        // Self-contained in sections/shaAcvp.ts.
+        if (activeCategories.has('hashing_mac')) {
+          currentCategory = 'hashing_mac'
+          await runShaAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.sha256,
+            pushResult,
+            addLog,
+          })
+        }
+
         // ── 11. AES-CBC-256 Decrypt KAT (NIST ACVP-AES-CBC) ────────────────
         if (activeCategories.has('symmetric')) {
           currentCategory = 'symmetric'
@@ -2661,6 +2681,24 @@ export function useAcvpSuite() {
               addLog(`[DISCREPANCY] [${eName}] [id:${id20}] AES-KWP: ${errMessage}`)
             }
           }
+        }
+
+        // ── 20b. AES-KW / AES-KWP NIST reference samples (WS-E) — wrap
+        // byte-match, unwrap byte-match and upstream integrity failures
+        // (C_UnwrapKey refused, CK_RV pinned per engine), AES-128/192/256,
+        // aligned / one-byte / unaligned payloads. sections/aesKwAcvp.ts.
+        if (activeCategories.has('symmetric')) {
+          currentCategory = 'symmetric'
+          await runAesKwAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.aeskw,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 21. SLH-DSA Context Binding (FIPS 205 §9.2) ───────────────────

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // KAT for the WS-E classical / symmetric / MAC reference-sample sections
-// (sections/aesGcmAcvp.ts, hmacAcvp.ts, ecSigVerAcvp.ts), driven through the
+// (sections/aesGcmAcvp.ts, hmacAcvp.ts, ecSigVerAcvp.ts, shaAcvp.ts, aesKwAcvp.ts), driven through the
 // REAL useAcvpSuite hook in dual-engine mode (C++ Emscripten engine in Node +
 // Rust wasm-bindgen).
 //
@@ -17,6 +17,10 @@
 //  - ECDSA / EdDSA SigVer: every upstream valid/invalid case agrees on both
 //    engines except Rust P-224, which refuses every signature with
 //    CKR_SIGNATURE_LEN_RANGE (open gap rust-ecdsa-p224-unsupported);
+//  - SHA-2/SHA-3: empty / shortest / block-boundary / longest digests and the
+//    standard-MCT first outer iteration byte-match on both engines;
+//  - AES-KW/KWP: wrap and unwrap byte-match, upstream integrity failures are
+//    refused with CKR_WRAPPED_KEY_INVALID on both engines;
 //  - the literal mechanism numbers the sections use equal the generated
 //    mechanism inventory's;
 //  - sabotage on a COPY of the vectors (vi.doMock) turns exactly those rows red.
@@ -242,6 +246,58 @@ describe('WS-E classical reference samples — both engines, real vectors', () =
           expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
         }
     }
+  })
+
+  it('SHA-2/SHA-3: every boundary digest and MCT outer iteration byte-matches on both engines', () => {
+    const v = readVectors('sha_acvp_boundary_test.json') as Vec & { notExecuted: unknown[] }
+    const lens = new Set<number>()
+    for (const g of v.testGroups) {
+      const slug = String(g.hashAlg).toLowerCase().replace('/', '-')
+      for (const t of g.tests)
+        for (const e of ENGINES) {
+          const kind = g.testType === 'MCT' ? 'mct' : 'nist'
+          const r = row(`sha-${kind}-${slug}-tg${g.tgId}-tc${t.tcId}-${e}`)!
+          expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
+          expect(r.caseMeta?.observed).toBe('byte-equal')
+          expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
+          if (kind === 'nist') lens.add(Number(t.len) / 8 - Number(g.blockBytes))
+        }
+    }
+    // exact-block and block−1 messages are present (no upstream sample has a block+1 byte message)
+    expect([...lens]).toEqual(expect.arrayContaining([-1, 0]))
+    expect(v.testGroups.some((g) => g.tests.some((t) => t.len === 0 && g.testType === 'AFT'))).toBe(
+      true
+    )
+    expect(v.testGroups.filter((g) => g.testType === 'MCT').length).toBeGreaterThanOrEqual(7)
+    const skips = results.filter((r) => r.id.startsWith('sha-skip-'))
+    expect(skips).toHaveLength(2 * v.notExecuted.length)
+    for (const r of skips) expect(r.status).toBe('skip')
+  })
+
+  it('AES-KW/KWP: wrap and unwrap byte-match; upstream integrity failures refused on both engines', () => {
+    const v = readVectors('aeskw_acvp_test.json') as Vec
+    let negatives = 0
+    for (const g of v.testGroups)
+      for (const t of g.tests)
+        for (const e of ENGINES) {
+          const mode = String(g.mode).toLowerCase()
+          const r = row(`aes${mode}-nist-k${g.keyLen}-tg${g.tgId}-tc${t.tcId}-${e}`)!
+          expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
+          if (t.testPassed) expect(r.caseMeta?.observed).toBe('byte-equal')
+          else {
+            negatives += 1
+            expect(r.caseMeta?.observed).toBe('CKR_WRAPPED_KEY_INVALID')
+          }
+          expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
+        }
+    expect(negatives).toBe(2 * 6)
+    // one-byte and non-64-bit-aligned KWP payloads are exercised
+    expect(v.testGroups.some((g) => g.mode === 'KWP' && g.payloadLen === 8)).toBe(true)
+    expect(
+      v.testGroups.some(
+        (g) => g.mode === 'KWP' && Number(g.payloadLen) % 64 !== 0 && Number(g.payloadLen) > 8
+      )
+    ).toBe(true)
   })
 })
 
