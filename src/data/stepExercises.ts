@@ -1235,6 +1235,20 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 0,
     why: 'The listing field definition says the notation "is for the existence of PQC support": algorithm details sit in the Security Policy and readiness details come from the vendor. Public PCI material names no PQC algorithm, parameter set or deadline, and a FIPS certificate is separate evidence under a separate scheme.',
   },
+
+  // ── crypto-product-certification — FIPS author (2026-09-24) ──
+  'crypto-product-certification/fips-level-planner': {
+    prompt:
+      'A customer’s PQC deadline is close, so Orrin N7 adds ML-KEM and ML-DSA to its already-validated HSM firmware. Which CMVP route does the planner accept?',
+    options: [
+      'TRNS — the deadline makes it an algorithm transition',
+      'UPDT if each of the five change ratios stays under 30 %, otherwise a Full Submission',
+      'ALG — it only adds algorithms',
+      'CVE — it closes a quantum vulnerability',
+    ],
+    answer: 1,
+    why: 'Route eligibility comes from the Management Manual, not the calendar: new approved algorithms, services and self-tests are security-relevant changes (UPDT under 30 % per category, else FS). TRNS needs a published CMVP transition, ALG allows no code change, and CVE may not add cryptography.',
+  },
 }
 
 export function stepExerciseFor(moduleId: string, stepId: string): StepExercise | undefined {
