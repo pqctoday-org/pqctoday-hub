@@ -26,6 +26,11 @@ import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { TestResult } from './useAcvpSuite'
 import { MLDSA_CTX256_PINS } from './sections/mldsaDepth'
 import { ACVP_HASH_TO_MECH } from './sections/mldsaAcvp'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+
+/** Manifest evidence classes of a row (generated per-case records; [] = no record). */
+const classesOf = (rowId: string) =>
+  [...new Set(evidenceForRowId(rowId).map((e) => e.evidenceClass))].sort()
 
 const require_ = createRequire(import.meta.url)
 const loadCppEngineInNode = async (): Promise<SoftHSMModule> => {
@@ -127,7 +132,7 @@ describe('ML-DSA depth (D2-6) — both engines, real vectors', () => {
               messageBytes: t.message.length / 2,
               hashAlg: t.hashAlg,
             })
-            expect(row!.evidenceTier).toBe('nist-acvp')
+            expect(classesOf(row!.id)).toEqual(['nist-acvp-reference-sample'])
           }
     }
     const pure = section().filter(
@@ -163,7 +168,7 @@ describe('ML-DSA depth (D2-6) — both engines, real vectors', () => {
       expect(r.caseMeta?.observed).toMatch(
         /^verify ctx1 CKR_OK; verify ctx0 CKR_SIGNATURE_INVALID; sha256:[0-9a-f]{16}$/
       )
-      expect(r.evidenceTier).toBeUndefined()
+      expect(classesOf(r!.id)).not.toContain('nist-acvp-reference-sample')
       expect(r.caseMeta?.contextBytes).toBe(1)
     }
     expect(rows[0].caseMeta?.observed).toBe(rows[1].caseMeta?.observed) // differential agreement
@@ -185,7 +190,7 @@ describe('ML-DSA depth (D2-6) — both engines, real vectors', () => {
     const skips = section().filter((r) => r.status === 'skip')
     expect(skips.map(caseKey)).toEqual(['mldsa-depth-skip-ctx1-nist', 'mldsa-depth-skip-ctx1-nist'])
     for (const r of skips) {
-      expect(r.evidenceTier).toBeUndefined()
+      expect(classesOf(r.id)).toEqual([])
       expect(r.caseMeta).toMatchObject({ tgId: 16, tcId: 239, hashAlg: 'SHA2-512/256' })
     }
   })

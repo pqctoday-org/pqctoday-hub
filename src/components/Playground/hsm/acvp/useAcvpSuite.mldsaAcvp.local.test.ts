@@ -28,6 +28,11 @@ import { renderHook, waitFor } from '@testing-library/react'
 import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { TestResult } from './useAcvpSuite'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+
+/** Manifest evidence classes of a row (generated per-case records; [] = no record). */
+const classesOf = (rowId: string) =>
+  [...new Set(evidenceForRowId(rowId).map((e) => e.evidenceClass))].sort()
 
 const require_ = createRequire(import.meta.url)
 const loadCppEngineInNode = async (): Promise<SoftHSMModule> => {
@@ -131,7 +136,7 @@ describe('ML-DSA reference samples — both engines, real vectors', () => {
           expect(row!.caseMeta?.observed).toBe(
             t.testPassed ? 'C_Verify → CKR_OK' : 'C_Verify → CKR_SIGNATURE_INVALID'
           )
-          expect(row!.evidenceTier).toBe('nist-acvp')
+          expect(classesOf(row!.id)).toEqual(['nist-acvp-reference-sample'])
           expect(row!.caseMeta).toMatchObject({
             origin: 'nist-acvp-server',
             upstreamOperation: 'sigVer',
@@ -168,7 +173,7 @@ describe('ML-DSA reference samples — both engines, real vectors', () => {
     for (const r of local) {
       expect(r.status, r.details).toBe('pass')
       expect(r.caseMeta?.observed).toBe('C_Verify → CKR_SIGNATURE_INVALID')
-      expect(r.evidenceTier).toBeUndefined()
+      expect(classesOf(r!.id)).not.toContain('nist-acvp-reference-sample')
       expect(r.caseMeta?.origin).toBe('product-authored-mutation')
       expect(r.testCase).toMatch(/product-authored/)
       expect(r.details).toMatch(/not a NIST vector/)
@@ -181,7 +186,7 @@ describe('ML-DSA reference samples — both engines, real vectors', () => {
     for (const r of det) {
       expect(r.status, `${r.algorithm} ${r.testCase}: ${r.details}`).toBe('pass')
       expect(r.caseMeta?.observed).toBe('byte-equal')
-      expect(r.evidenceTier).toBe('nist-acvp')
+      expect(classesOf(r!.id)).toEqual(['nist-acvp-reference-sample'])
     }
     // External µ (vendor 0x403c) really ran on both engines — not skipped.
     const mu = det.filter((r) => r.caseMeta?.mode === 'externalMu')
@@ -199,7 +204,7 @@ describe('ML-DSA reference samples — both engines, real vectors', () => {
       'mldsa-skip-internal',
     ])
     for (const r of skips) {
-      expect(r.evidenceTier).toBeUndefined()
+      expect(classesOf(r.id)).toEqual([])
       expect(r.caseMeta?.expected).toBe('not-run')
       expect(r.details).toMatch(/^Skipped — /)
     }

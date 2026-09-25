@@ -108,6 +108,8 @@ export const MATRIX_RULES = {
     'Parity = both engines have a RECORDED PASS of the same registered case on the same artifact kind. Skipped, unsupported and not-run never count as a pass, and a recorded result counts only for the exact artifact (sha256) the mechanism inventory records. Rows with no such pair are "not established".',
   artifacts:
     'Artifact kinds are reported separately: wasm (the two shipped WebAssembly engines — registered tests run in the browser), native, hardware. Native and hardware targets have not been run: they are "not run" and never counted as pass.',
+  inventory:
+    'Per engine and artifact kind the matrix counts, separately: advertised cells (the denominator — C_GetMechanismList × operation × parameter set × variant), registered cells (≥ 1 registered case, by evidence status), cells with a recorded pass, with a recorded fail, and with a recorded skip (the engine did not advertise a mechanism the case needs, so it was not run), unsupported cells (not advertised) and untested cells (advertised, no registered case). A skip is never a pass and is never folded into untested.',
 } as const
 
 // ── Capability map (declared) ────────────────────────────────────────────────
@@ -215,8 +217,20 @@ export interface RegisteredCase {
   exercises: CaseExercise[]
   /** Runtime result-row id, `{engine}` = C++ | Rust. */
   rowId?: string
+  /** katRunner cases: the KatKind that executes this case — the join key the
+   *  Algorithms KAT view and Learn panels use to find their evidence record. */
+  katKind?: KatKindRef
+  /** Local cases whose expected values come from a document outside the vector
+   *  manifest (e.g. 3GPP TS 33.501 Annex C.4): what the case was checked against. */
+  source?: { citation: string; url?: string }
+  /** The operation this runner executes when it differs from the manifest's
+   *  recorded local operation (e.g. MAC generation on a case the workbench verifies). */
+  operation?: string
   note?: string
 }
+
+/** A katRunner KatKind as plain data (the registry does not import the runner). */
+export type KatKindRef = { type: string } & Record<string, string | number | undefined>
 
 export type RunnerId =
   'useAcvpSuite' | 'katRunner' | 'mechanismCoverageProbes' | 'profileConditions' | 'oasisProfileXml'
@@ -229,6 +243,10 @@ export interface RegisteredTest {
   title: string
   engines: EngineId[]
   cases: RegisteredCase[]
+  /** Row id (`{engine}` template) the runner emits INSTEAD of this test's rows
+   *  when the engine does not advertise the mechanism: every case of the test
+   *  is then a recorded skip for that engine — never a pass. */
+  skipRowId?: string
   note?: string
 }
 
@@ -324,7 +342,7 @@ export interface EngineCell {
   polarity: Record<Polarity, PolarityCell>
   waiver?: string
   /** Recorded wasm run results over this cell's registered cases (absent = none recorded). */
-  run?: { pass: number; fail: number }
+  run?: { pass: number; fail: number; skip?: number }
 }
 
 export interface MatrixRow {
@@ -374,7 +392,15 @@ export interface EngineTotals {
   byPolarity: Record<Polarity, LevelCounts & { byStatus: Record<MatrixStatus, number> }>
   byArtifact: Record<
     ArtifactKind,
-    { status: string; registeredCells: number; passedCells: number; failedCells: number }
+    {
+      status: string
+      registeredCells: number
+      passedCells: number
+      failedCells: number
+      /** Cells with a recorded skip (engine did not advertise the mechanism the
+       *  case needs, so it was not run) — never a pass, never folded into untested. */
+      skippedCells: number
+    }
   >
 }
 
@@ -847,6 +873,8 @@ export function buildCoverageMatrix(inp: MatrixInputs): BuildResult {
     results.get(caseId)?.get(e)?.get(k) === 'pass'
   const failed = (caseId: string, e: EngineId, k: ArtifactKind) =>
     results.get(caseId)?.get(e)?.get(k) === 'fail'
+  const skipped = (caseId: string, e: EngineId, k: ArtifactKind) =>
+    results.get(caseId)?.get(e)?.get(k) === 'skip'
 
   // 6. Assemble rows.
   const rows: MatrixRow[] = []
@@ -895,12 +923,14 @@ export function buildCoverageMatrix(inp: MatrixInputs): BuildResult {
       const cellCases = new Set(POLARITIES.flatMap((p) => polarity[p].cases)) // eslint-disable-line security/detect-object-injection
       let pass = 0
       let fail = 0
+      let skip = 0
       for (const i of cellCases) {
         const id = cases[i].id // eslint-disable-line security/detect-object-injection
         if (passed(id, e, 'wasm')) pass += 1
         if (failed(id, e, 'wasm')) fail += 1
+        if (skipped(id, e, 'wasm')) skip += 1
       }
-      if (pass + fail > 0) cell.run = { pass, fail }
+      if (pass + fail + skip > 0) cell.run = { pass, fail, ...(skip ? { skip } : {}) }
       if (!anyCase) {
         const w = waiverIndex.get(
           `${e}|${d.row.mechanism}|${d.row.operation}|${d.row.parameterSet}|${d.row.variant}`
@@ -1004,9 +1034,27 @@ export function buildCoverageMatrix(inp: MatrixInputs): BuildResult {
         ])
       ) as EngineTotals['byPolarity'],
       byArtifact: {
-        wasm: { status: 'registered', registeredCells: 0, passedCells: 0, failedCells: 0 },
-        native: { status: 'not-run', registeredCells: 0, passedCells: 0, failedCells: 0 },
-        hardware: { status: 'not-run', registeredCells: 0, passedCells: 0, failedCells: 0 },
+        wasm: {
+          status: 'registered',
+          registeredCells: 0,
+          passedCells: 0,
+          failedCells: 0,
+          skippedCells: 0,
+        },
+        native: {
+          status: 'not-run',
+          registeredCells: 0,
+          passedCells: 0,
+          failedCells: 0,
+          skippedCells: 0,
+        },
+        hardware: {
+          status: 'not-run',
+          registeredCells: 0,
+          passedCells: 0,
+          failedCells: 0,
+          skippedCells: 0,
+        },
       },
     }
     for (const r of rows) {
@@ -1021,6 +1069,7 @@ export function buildCoverageMatrix(inp: MatrixInputs): BuildResult {
       if (c.level !== 'untested') t.byArtifact.wasm.registeredCells += 1
       if (c.run?.pass) t.byArtifact.wasm.passedCells += 1
       if (c.run?.fail) t.byArtifact.wasm.failedCells += 1
+      if (c.run?.skip) t.byArtifact.wasm.skippedCells += 1
       for (const p of POLARITIES) {
         const pc = c.polarity[p] // eslint-disable-line security/detect-object-injection
         const bucket = t.byPolarity[p] // eslint-disable-line security/detect-object-injection
@@ -1224,8 +1273,8 @@ export type CompactEngineCell =
       lvl: CoverageLevel
       pol?: Partial<Record<Polarity, CompactPolarity>>
       waiver?: string
-      /** [pass, fail] recorded wasm results */
-      run?: [number, number]
+      /** [pass, fail] or [pass, fail, skip] recorded wasm results */
+      run?: [number, number] | [number, number, number]
     }
 
 export interface CompactRow {
@@ -1283,7 +1332,13 @@ export function compactMatrix(m: CoverageMatrix): CoverageMatrixFile {
         lvl: cell.level,
         ...(Object.keys(pol).length ? { pol } : {}),
         ...(cell.waiver ? { waiver: cell.waiver } : {}),
-        ...(cell.run ? { run: [cell.run.pass, cell.run.fail] as [number, number] } : {}),
+        ...(cell.run
+          ? {
+              run: cell.run.skip
+                ? ([cell.run.pass, cell.run.fail, cell.run.skip] as [number, number, number])
+                : ([cell.run.pass, cell.run.fail] as [number, number]),
+            }
+          : {}),
       }
     }
     const pars = POLARITIES.map((p) => r.parity[p]) // eslint-disable-line security/detect-object-injection
@@ -1328,7 +1383,15 @@ export function expandMatrix(f: CoverageMatrixFile): CoverageMatrix {
         level: ce.lvl,
         polarity,
         ...(ce.waiver ? { waiver: ce.waiver } : {}),
-        ...(ce.run ? { run: { pass: ce.run[0], fail: ce.run[1] } } : {}),
+        ...(ce.run
+          ? {
+              run: {
+                pass: ce.run[0],
+                fail: ce.run[1],
+                ...(ce.run[2] ? { skip: ce.run[2] } : {}),
+              },
+            }
+          : {}),
       }
     }
     const parity =

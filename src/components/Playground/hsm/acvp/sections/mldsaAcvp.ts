@@ -66,7 +66,7 @@ import {
   CKH_HEDGE_PREFERRED,
   CKH_DETERMINISTIC_REQUIRED,
 } from '@/wasm/softhsm/constants'
-import type { EvidenceTier, TestResult } from '../useAcvpSuite'
+import type { TestResult } from '../useAcvpSuite'
 
 /** Vendor-defined (NOT PKCS#11 v3.2) — pqctoday-hsm src/lib/vendor_mechanisms.h,
  * rust/src/constants.rs. µ travels as the C_Sign/C_Verify data argument. */
@@ -149,7 +149,6 @@ export interface MldsaAcvpSectionCtx {
   referenceUrl: string
   pushResult: (r: Omit<TestResult, 'category'>) => Promise<void>
   addLog: (msg: string) => void
-  evidenceTierFor: (prov: { producer?: string }) => EvidenceTier | undefined
 }
 
 // ── JSON shapes (only the fields read here) ─────────────────────────────────
@@ -459,9 +458,6 @@ export const unsupportedReason = (mechs: Set<number>, mech: number | undefined, 
  */
 export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<void> {
   const { M, hSession, eName, mechs, referenceUrl, pushResult, addLog } = ctx
-  const nistTier = ctx.evidenceTierFor(sigVerVectors._provenance)
-  const sgTier = ctx.evidenceTierFor(sigGenDetVectors._provenance)
-  const kgTier = ctx.evidenceTierFor(keyGenVectors._provenance)
   const rvText = (rv: number) => rvName(rv)
 
   // ── 1. Dedicated SigVer (NIST expected disposition) ────────────────────
@@ -537,7 +533,6 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           algorithm: `${ps} (${eName})`,
           testCase,
           referenceUrl,
-          evidenceTier: nistTier,
           status: ok ? 'pass' : 'fail',
           details: `${observed} (expected ${rvText(want)})${verdict} · msg ${nBytes(data)}B · ${srcTag(SV_PROV)}`,
           caseMeta: { ...meta, observed },
@@ -550,7 +545,6 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           algorithm: `${ps} (${eName})`,
           testCase,
           referenceUrl,
-          evidenceTier: nistTier,
           status: 'fail',
           details: `${msg} · ${srcTag(SV_PROV)}`,
           caseMeta: { ...meta, observed: msg },
@@ -720,7 +714,6 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           algorithm: `${ps} (${eName})`,
           testCase,
           referenceUrl,
-          evidenceTier: sgTier,
           status: ok ? 'pass' : 'fail',
           details: ok
             ? `sig[${s.sig.length}B] byte-equal to NIST expected (CKH_DETERMINISTIC_REQUIRED, sk via C_CreateObject) · ${srcTag(SG_PROV)}`
@@ -735,7 +728,6 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           algorithm: `${ps} (${eName})`,
           testCase,
           referenceUrl,
-          evidenceTier: sgTier,
           status: 'fail',
           details: `${msg} · ${srcTag(SG_PROV)}`,
           caseMeta: { ...meta, observed: msg },
@@ -788,7 +780,6 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           algorithm: `${ps} (${eName})`,
           testCase,
           referenceUrl,
-          evidenceTier: kgTier,
           status: ok ? 'pass' : 'fail',
           details:
             (ok ? `pk[${pk.length}B] byte-equal to NIST expected` : `pk mismatch: ${diff}`) +
@@ -804,7 +795,6 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           algorithm: `${ps} (${eName})`,
           testCase,
           referenceUrl,
-          evidenceTier: kgTier,
           status: 'fail',
           details: `${msg} · ${srcTag(KG_PROV)}`,
           caseMeta: { ...meta, observed: msg },

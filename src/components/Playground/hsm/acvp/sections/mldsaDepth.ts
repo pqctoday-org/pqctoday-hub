@@ -114,7 +114,6 @@ export async function runMldsaDepthSection(ctx: MldsaAcvpSectionCtx): Promise<vo
   ])
   const files = [cmMod.default as unknown as VectorFile, phMod.default as unknown as VectorFile]
   const PROV = files[0]._provenance
-  const tier = ctx.evidenceTierFor(PROV)
 
   // ── 1. Deterministic SigGen byte-match ─────────────────────────────────
   for (const f of files) {
@@ -170,7 +169,6 @@ export async function runMldsaDepthSection(ctx: MldsaAcvpSectionCtx): Promise<vo
             algorithm,
             testCase,
             referenceUrl,
-            evidenceTier: tier,
             status: ok ? 'pass' : 'fail',
             details:
               (ok
@@ -186,7 +184,6 @@ export async function runMldsaDepthSection(ctx: MldsaAcvpSectionCtx): Promise<vo
             algorithm,
             testCase,
             referenceUrl,
-            evidenceTier: tier,
             status: 'fail',
             details: `${m} · ${srcTag(f._provenance)}`,
             caseMeta: { ...meta, observed: m },

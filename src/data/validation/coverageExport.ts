@@ -92,7 +92,7 @@ export function groupByMechanismOperation(matrix: CoverageMatrix): CoverageGroup
             ? strongest(statuses)
             : g.rows.some((r) => r.engines[e].advertised)
               ? 'untested'
-              : 'unsupported', // eslint-disable-line security/detect-object-injection
+              : 'unsupported',
           ...counts,
         }
       }
@@ -122,7 +122,7 @@ export function headline(matrix: CoverageMatrix): string[] {
     const t = matrix.totals.byEngine[e] // eslint-disable-line security/detect-object-injection
     const pos = t.byPolarity.positive
     const neg = t.byPolarity.negative
-    return `${ENGINE_LABEL[e]}: ${t.advertisedCells} advertised capability cells (${matrix.engines[e].mechanismCount} mechanisms). Positive: ${pos.covered} covered, ${pos.sampled} sampled, ${pos.untested} untested. Negative: ${neg.covered} covered, ${neg.sampled} sampled, ${neg.untested} untested. ${t.unsupportedCells} further cells unsupported.` // eslint-disable-line security/detect-object-injection
+    return `${ENGINE_LABEL[e]}: ${t.advertisedCells} advertised capability cells (${matrix.engines[e].mechanismCount} mechanisms). Positive: ${pos.covered} covered, ${pos.sampled} sampled, ${pos.untested} untested. Negative: ${neg.covered} covered, ${neg.sampled} sampled, ${neg.untested} untested. ${t.unsupportedCells} further cells unsupported. WebAssembly runs: ${t.byArtifact.wasm.passedCells} cells with a recorded pass, ${t.byArtifact.wasm.failedCells} with a recorded fail, ${t.byArtifact.wasm.skippedCells ?? 0} with a recorded skip (not run, never a pass).` // eslint-disable-line security/detect-object-injection
   })
 }
 

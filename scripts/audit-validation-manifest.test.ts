@@ -18,6 +18,7 @@ import {
   sha256,
 } from './audit-validation-manifest'
 import type { ValidationCaseManifest } from '../src/data/validation/validationCaseManifest'
+import { canonical } from './generate-release-evidence'
 
 const REPO = process.cwd()
 let tmp: string
@@ -206,6 +207,80 @@ describe('audit-validation-manifest — sabotage (temp copy only)', () => {
     expect(codes()).toEqual([])
     fs.writeFileSync(copy, `export const SS = '${ss.slice(0, -2)}00'\n`)
     expect(codes()).toContain('COPY_DIVERGED')
+  })
+})
+
+describe('audit-validation-manifest — contributor flow (WS-I, temp copy only)', () => {
+  /** Register a new active vector file cloned from sha256_test (new id, one changed byte). */
+  function plantContribution(mutate?: (e: ValidationCaseManifest['files'][number]) => void) {
+    const src = path.join(tmp, 'src/data/acvp/sha256_test.json')
+    const doc = JSON.parse(fs.readFileSync(src, 'utf8'))
+    doc._contribution = 'synthetic'
+    const bytes = JSON.stringify(doc, null, 2)
+    fs.writeFileSync(path.join(tmp, 'src/data/acvp/contrib_test.json'), bytes)
+    const m = readManifest()
+    const base = m.files.find((f) => f.id === 'sha256_test')!
+    const e = structuredClone(base)
+    e.id = 'contrib_test'
+    e.path = 'src/data/acvp/contrib_test.json'
+    e.sha256 = sha256(bytes)
+    e.cases = e.cases.map((c) => ({
+      ...c,
+      caseId: c.caseId.replace('sha256_test', 'contrib_test'),
+    }))
+    e.lineage = e.lineage.map((l) => ({
+      ...l,
+      appliesTo: l.appliesTo.map((a) => a.replace('sha256_test', 'contrib_test')),
+    }))
+    mutate?.(e)
+    m.files.push(e)
+    writeManifest(m)
+    return e
+  }
+  const contribCodes = () => codes().filter((c) => c.startsWith('CONTRIB_'))
+
+  it('the 40 pre-flow files are exempt; a new file without a two-person review fails', () => {
+    expect(contribCodes()).toEqual([])
+    plantContribution()
+    expect(contribCodes()).toEqual(['CONTRIB_REVIEW'])
+  })
+
+  it('fails a contribution without a reviewed license note, source identity or expectations', () => {
+    plantContribution((e) => {
+      e.license = { note: 'TODO', reviewed: false }
+      delete (e.source as { nist?: unknown }).nist
+      delete (e.cases[0] as { expectation?: string }).expectation
+    })
+    expect(contribCodes()).toEqual(
+      expect.arrayContaining(['CONTRIB_LICENSE', 'CONTRIB_PROVENANCE', 'CONTRIB_EXPECTATION'])
+    )
+  })
+
+  it('an approved two-person review of the exact record passes; one reviewer, or a stale record, does not', () => {
+    const e = plantContribution()
+    const dir = path.join(tmp, 'src/data/validation/reviews')
+    const record = (over: Record<string, unknown> = {}) => ({
+      schema: 'pqctoday.validation-review/v1',
+      item: 'vector-source:contrib_test',
+      subjectSha256: sha256(canonical(e)),
+      author: 'Ada Contributor',
+      sourceVerification: { reviewer: 'Grace Verifier', date: '2026-09-24', decision: 'approved' },
+      claimReview: { reviewer: 'Alan Reviewer', date: '2026-09-24', decision: 'approved' },
+      decision: 'approved',
+      ...over,
+    })
+    const write = (r: unknown) =>
+      fs.writeFileSync(path.join(dir, 'contrib_test.review.json'), JSON.stringify(r))
+    write(record())
+    expect(contribCodes()).toEqual([])
+    write(
+      record({
+        claimReview: { reviewer: 'Grace Verifier', date: '2026-09-24', decision: 'approved' },
+      })
+    )
+    expect(contribCodes()).toEqual(['CONTRIB_REVIEW'])
+    write(record({ subjectSha256: 'a'.repeat(64) }))
+    expect(contribCodes()).toEqual(['CONTRIB_REVIEW'])
   })
 })
 

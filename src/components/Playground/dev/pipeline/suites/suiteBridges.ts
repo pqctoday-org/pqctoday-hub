@@ -8,6 +8,7 @@
 // lifetime concerns, and `json.loads` on the Python side is one line.
 import type { AcvpSuite, CategoryId } from '@/components/Playground/hsm/acvp/useAcvpSuite'
 import type { Pkcs11ConformanceSuite } from '@/components/Playground/hsm/conformance/usePkcs11Conformance'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
 import { bootPyRuntime, runPython } from '@/services/python/pyRuntime'
 
 /** A Python list arrives as a PyProxy; a JS array as itself. */
@@ -29,7 +30,14 @@ export const createAcvpBridge = (suite: AcvpSuite): AcvpBridge => ({
   run_categories: async (ids: unknown) => {
     const set = new Set(toStringArray(ids) as CategoryId[])
     const rows = await suite.runTests(set)
-    return JSON.stringify(rows)
+    // Evidence class from the generated per-case records (one class per
+    // registered row; none for skips/errors) — never inferred here.
+    return JSON.stringify(
+      rows.map((r) => {
+        const classes = [...new Set(evidenceForRowId(r.id).map((e) => e.evidenceClass))]
+        return classes.length === 1 ? { ...r, evidenceClass: classes[0] } : r
+      })
+    )
   },
 })
 

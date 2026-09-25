@@ -29,6 +29,8 @@ vi.mock('../wasm/softhsm', () => ({
   // HMAC / Hash
   hsm_importHMACKey: vi.fn(),
   hsm_hmacVerify: vi.fn(),
+  hsm_hmacVerifyGeneral: vi.fn(),
+  hsm_hmacGeneral: vi.fn(),
   hsm_digest: vi.fn(),
   // ECDSA
   hsm_importECPublicKey: vi.fn(),
@@ -63,6 +65,9 @@ vi.mock('../wasm/softhsm', () => ({
   CKM_SHA256_HMAC: 0x251,
   CKM_SHA384_HMAC: 0x261,
   CKM_SHA512_HMAC: 0x271,
+  CKM_SHA256_HMAC_GENERAL: 0x252,
+  CKM_SHA384_HMAC_GENERAL: 0x262,
+  CKM_SHA512_HMAC_GENERAL: 0x272,
   CKM_ECDSA_SHA256: 0x1044,
   CKM_ECDSA_SHA384: 0x1045,
   CKM_SHA256_RSA_PKCS_PSS: 0x43,
@@ -251,7 +256,7 @@ vi.mock('./dataInputUtils', () => ({
 
 // ── Module under test (imported after mocks) ──────────────────────────────────
 
-import { runKAT } from './katRunner'
+import { runKAT, requiredMechanisms, summarizeKatResults } from './katRunner'
 import type { KatTestSpec } from './katRunner'
 import * as softhsm from '../wasm/softhsm'
 
@@ -320,6 +325,7 @@ describe('runKAT', () => {
     // HMAC / Hash
     vi.mocked(softhsm.hsm_importHMACKey).mockReturnValue(12)
     vi.mocked(softhsm.hsm_hmacVerify).mockReturnValue(true)
+    vi.mocked(softhsm.hsm_hmacVerifyGeneral).mockReturnValue(true)
     vi.mocked(softhsm.hsm_digest).mockReturnValue(new Uint8Array(1)) // matches hexToBytes('00')
 
     // ECDSA
@@ -676,6 +682,14 @@ describe('runKAT', () => {
       expect(result.details).toContain('AES-CBC decrypt crash')
     })
 
+    // 2026-09-24: the NIST ACVP-AES-CBC sample is unpadded; 'cbc' (CKM_AES_CBC_PAD)
+    // made both engines reject it. The runner must ask for raw CKM_AES_CBC.
+    it("decrypts with raw CKM_AES_CBC ('cbc-raw'), not CBC_PAD", async () => {
+      vi.mocked(softhsm.hsm_aesDecrypt).mockReturnValue(new Uint8Array(1))
+      await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aescbc-decrypt' }))
+      expect(vi.mocked(softhsm.hsm_aesDecrypt).mock.lastCall?.[5]).toBe('cbc-raw')
+    })
+
     it('sets algorithm to AES-256-CBC', async () => {
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aescbc-decrypt' }))
       expect(result.algorithm).toBe('AES-256-CBC')
@@ -813,25 +827,39 @@ describe('runKAT', () => {
 
   describe('hmac-verify', () => {
     it('returns pass when HMAC-SHA-256 verifies', async () => {
-      vi.mocked(softhsm.hsm_hmacVerify).mockReturnValue(true)
+      vi.mocked(softhsm.hsm_hmacVerifyGeneral).mockReturnValue(true)
       const result = await runKAT(
         FAKE_MODULE,
         FAKE_SESSION,
         spec({ type: 'hmac-verify', hashAlg: 'SHA-256' })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('matches ACVP expected value')
+      expect(result.details).toContain("accepts the ACVP sample's truncated MAC")
+    })
+
+    // 2026-09-24: the NIST ACVP-HMAC samples carry a truncated MAC, which only
+    // the _GENERAL mechanism can verify. The plain CKM_SHA*_HMAC path failed on
+    // both engines; this pins the mechanism the runner hands to the engine.
+    it.each([
+      ['SHA-256', 0x252],
+      ['SHA-384', 0x262],
+      ['SHA-512', 0x272],
+    ] as const)('verifies %s with the truncating _GENERAL mechanism', async (hashAlg, mech) => {
+      vi.mocked(softhsm.hsm_hmacVerifyGeneral).mockReturnValue(true)
+      await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'hmac-verify', hashAlg }))
+      expect(vi.mocked(softhsm.hsm_hmacVerifyGeneral).mock.lastCall?.[5]).toBe(mech)
+      expect(softhsm.hsm_hmacVerify).not.toHaveBeenCalled()
     })
 
     it('returns fail when HMAC verification fails', async () => {
-      vi.mocked(softhsm.hsm_hmacVerify).mockReturnValue(false)
+      vi.mocked(softhsm.hsm_hmacVerifyGeneral).mockReturnValue(false)
       const result = await runKAT(
         FAKE_MODULE,
         FAKE_SESSION,
         spec({ type: 'hmac-verify', hashAlg: 'SHA-256' })
       )
       expect(result.status).toBe('fail')
-      expect(result.details).toContain('verification failed')
+      expect(result.details).toContain('verification rejected')
     })
 
     it('returns error when hsm_importHMACKey throws', async () => {
@@ -1237,5 +1265,50 @@ describe('runKAT', () => {
       expect(result.id).toBe('err-id')
       expect(result.useCase).toBe('Err case')
     })
+  })
+})
+
+// ── not-tested (skip) status ──────────────────────────────────────────────────
+
+describe("runKAT 'skip' — not tested when the engine does not advertise a needed mechanism", () => {
+  it('skips a kind whose registered case needs a mechanism missing from C_GetMechanismList', async () => {
+    // aes-kwp-wrap drives CKM_AES_KEY_WRAP_KWP (0x210b); advertise something else only.
+    const r = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aes-kwp-wrap' }), {
+      advertised: new Set([0x250]),
+    })
+    expect(r.status).toBe('skip')
+    expect(r.details).toMatch(/^Not tested — this engine does not advertise CKM_AES_KEY_WRAP_KWP/)
+  })
+
+  it('runs normally when every needed mechanism is advertised, or when no list is given', async () => {
+    const needed = requiredMechanisms({ type: 'hmac-verify', hashAlg: 'SHA-256' })
+    expect(needed).toEqual([0x252]) // CKM_SHA256_HMAC_GENERAL
+    vi.mocked(softhsm.hsm_hmacVerifyGeneral).mockReturnValue(true)
+    const withList = await runKAT(
+      FAKE_MODULE,
+      FAKE_SESSION,
+      spec({ type: 'hmac-verify', hashAlg: 'SHA-256' }),
+      { advertised: new Set(needed) }
+    )
+    expect(withList.status).toBe('pass')
+    const emptyList = await runKAT(
+      FAKE_MODULE,
+      FAKE_SESSION,
+      spec({ type: 'hmac-verify', hashAlg: 'SHA-256' }),
+      { advertised: new Set() }
+    )
+    expect(emptyList.status).toBe('pass') // empty = probe failed → no pre-skip
+  })
+
+  it('summarizeKatResults keeps skip as its own bucket', () => {
+    expect(
+      summarizeKatResults([
+        { status: 'pass' },
+        { status: 'skip' },
+        { status: 'fail' },
+        { status: 'error' },
+        { status: 'skip' },
+      ])
+    ).toEqual({ pass: 1, fail: 1, error: 1, skip: 2, total: 5 })
   })
 })

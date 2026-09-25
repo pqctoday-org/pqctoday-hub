@@ -9,10 +9,10 @@
  * shares it — a mixed set gets the neutral "Run validation tests".
  */
 import { useState } from 'react'
-import { ShieldCheck, Loader2, CheckCircle, XCircle } from 'lucide-react'
+import { ShieldCheck, Loader2, CheckCircle, XCircle, MinusCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useHSM } from '@/hooks/useHSM'
-import { runKAT } from '@/utils/katRunner'
+import { runKAT, advertisedMechanisms, summarizeKatResults } from '@/utils/katRunner'
 import type { KATResult, KatTestSpec } from '@/utils/katRunner'
 import {
   WorkshopOperationLog,
@@ -20,7 +20,14 @@ import {
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { KatEvidenceChip } from '@/components/shared/ValidationDisclaimer'
-import { KAT_EVIDENCE_META, evidenceClassesFor, katActionLabel } from '@/utils/katEvidence'
+import {
+  KAT_EVIDENCE_META,
+  evidenceClassesFor,
+  evidenceRecordsForKind,
+  katActionLabel,
+} from '@/utils/katEvidence'
+import { CaseEvidenceBadge } from '@/components/shared/CaseEvidenceBadge'
+import { KatStatusBadge } from '@/components/shared/KatStatusBadge'
 
 interface KatValidationPanelProps {
   specs: KatTestSpec[]
@@ -87,17 +94,20 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
       }
       const M = hsm.moduleRef.current!
       const hSession = hsm.hSessionRef.current
+      const advertised = advertisedMechanisms(M, hsm.slotRef.current)
       const out: KATResult[] = []
       for (const spec of specs) {
         const op = beginOp(`Running ${spec.useCase || spec.id} via PKCS#11…`)
         try {
-          const r = await runKAT(M, hSession, spec)
+          const r = await runKAT(M, hSession, spec, { advertised })
           out.push(r)
           setResults([...out])
           op.done(
             r.status === 'pass'
               ? `Passed ${r.algorithm || spec.id} — ${r.details || 'all vectors validated'}`
-              : `${r.status.toUpperCase()} ${r.algorithm || spec.id} — ${r.details || 'no details'}`
+              : r.status === 'skip'
+                ? `NOT TESTED ${r.algorithm || spec.id} — ${r.details}`
+                : `${r.status.toUpperCase()} ${r.algorithm || spec.id} — ${r.details || 'no details'}`
           )
         } catch (e) {
           op.fail(`${spec.useCase || spec.id} — ${e instanceof Error ? e.message : String(e)}`)
@@ -111,8 +121,10 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
     }
   }
 
-  const passCount = results.filter((r) => r.status === 'pass').length
-  const failCount = results.filter((r) => r.status !== 'pass').length
+  const counts = summarizeKatResults(results)
+  const passCount = counts.pass
+  // Skips are their own count: not a pass, not a failure.
+  const failCount = counts.fail + counts.error
   const done = results.length === specs.length && !running
   const actionLabel = katActionLabel(specs)
   const evidenceClasses = evidenceClassesFor(specs)
@@ -169,6 +181,15 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
               {failCount} failed
             </span>
           )}
+          {counts.skip > 0 && (
+            <span
+              data-testid="kat-skip-count"
+              className="flex items-center gap-1 text-status-warning font-medium"
+            >
+              <MinusCircle size={13} />
+              {counts.skip} not tested
+            </span>
+          )}
         </div>
       )}
 
@@ -215,20 +236,19 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
                       )}
                     </span>
                   </td>
-                  <td className="px-3 py-2">
-                    <KatEvidenceChip evidence={r.evidence} />
+                  <td className="px-3 py-2 min-w-[9rem]">
+                    {(() => {
+                      const spec = specs.find((s) => s.id === r.id)
+                      const records = spec ? evidenceRecordsForKind(spec.kind) : []
+                      return records.length > 0 ? (
+                        <CaseEvidenceBadge records={records} />
+                      ) : (
+                        <KatEvidenceChip evidence={r.evidence} />
+                      )
+                    })()}
                   </td>
                   <td className="px-3 py-2">
-                    <span
-                      className={
-                        r.status === 'pass'
-                          ? 'inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-status-success/10 text-status-success'
-                          : 'inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-status-error/10 text-status-error'
-                      }
-                    >
-                      {r.status === 'pass' ? <CheckCircle size={10} /> : <XCircle size={10} />}
-                      {r.status}
-                    </span>
+                    <KatStatusBadge status={r.status} />
                   </td>
                   <td className="px-3 py-2 text-muted-foreground">{r.details}</td>
                 </tr>

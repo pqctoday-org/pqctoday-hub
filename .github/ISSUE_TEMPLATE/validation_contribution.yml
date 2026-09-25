@@ -1,0 +1,99 @@
+name: 🧪 Propose a validation vector, adapter, correction or test case
+description: For lab practitioners and implementers — a source-backed test for the Cryptographic Validation Workbench. Incomplete provenance cannot merge as a trusted vector.
+title: '[Validation] '
+labels: ['validation: contribution', 'needs-verification']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you. Every expected value in the Hub must trace to an immutable source, and every new trusted vector needs **two independent reviewers** (source verification + implementation review, plan J-5). The manifest gate (`npm run audit:validation-manifest`) rejects a contributed vector whose record lacks provenance, a reviewed license note, per-case expectations, or an approved two-person review record — see CONTRIBUTING.md › "Contributing validation vectors, adapters and test cases".
+
+        **Do not paste vectors issued to an ACVTS session or other access-controlled lab material.** Public reference material only.
+
+  - type: dropdown
+    id: contribution_type
+    attributes:
+      label: What are you proposing?
+      options:
+        - New vector / test case from a public source (NIST ACVP-Server sample, RFC, standard's example)
+        - Correction to an existing vector, label or evidence class
+        - PKCS#11 adapter / mechanism mapping (how a case is executed)
+        - Negative, boundary or state/error test for an existing capability
+    validations:
+      required: true
+
+  - type: input
+    id: algorithm
+    attributes:
+      label: Algorithm, revision, operation and parameters
+      placeholder: 'ML-DSA (FIPS 204) sigVer, ML-DSA-65, external/pure, context 32 B'
+    validations:
+      required: true
+
+  - type: textarea
+    id: provenance
+    attributes:
+      label: Provenance — immutable source identity
+      description: For repository sources give ALL four. For a published document give the URL, the exact revision/version, the section/example, and the SHA-256 of the document you checked.
+      placeholder: |
+        Upstream repository: https://github.com/usnistgov/ACVP-Server
+        Commit (40 hex): 975de31eb83d87039ec88934fdc47d8c312b892d
+        Path at that commit: gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json
+        SHA-256 of that file: <64 hex>
+        tgId / tcId (or section / example): tg3 / tc43
+        Transformation you applied (subset, field rename, operation change): none
+    validations:
+      required: true
+
+  - type: textarea
+    id: license
+    attributes:
+      label: License / redistribution
+      description: Under what terms may the Hub (GPL-3.0) redistribute this material? Quote the source's license or notice.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behaviour
+    attributes:
+      label: Expected behaviour
+      description: Positive or negative case, the exact expected output or PKCS#11 return code, and which engines/mechanisms should run it.
+      placeholder: |
+        Negative: C_Verify must return CKR_SIGNATURE_INVALID (upstream testPassed=false, reason "modified signature - z").
+        Mechanism: CKM_ML_DSA with CK_SIGN_ADDITIONAL_CONTEXT (context 32 B). Both engines.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: evidence_class
+    attributes:
+      label: Evidence class you believe it supports (plan §2.1)
+      options:
+        - nist-acvp-reference-sample
+        - published-standard-kat
+        - independent-oracle (name the oracle AND its version below)
+        - functional-round-trip
+        - product-mechanism-probe
+        - Not sure
+    validations:
+      required: true
+
+  - type: input
+    id: reviewer
+    attributes:
+      label: Independent reviewer
+      description: Someone other than you who can verify the source or review the implementation — or write "please assign one". Two distinct named reviewers are required before merge.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: attest
+    attributes:
+      label: Before submitting
+      options:
+        - label: The source is public and I am allowed to share it (no ACVTS-issued or access-controlled vectors)
+          required: true
+        - label: I gave an immutable revision (commit, RFC number, document version) — not a branch or "latest"
+          required: true
+        - label: I understand a passing case is evidence only for that case — never an ACVTS verdict or CAVP/CMVP certificate
+          required: true

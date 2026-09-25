@@ -164,8 +164,12 @@ describe('coverage matrix — parity and run results (C-4)', () => {
     )
     const r = row(matrix, 'CKM_TEST_SIG|verify|P-A|*')
     expect(r.parity.negative).toBe('not-established')
-    expect(r.engines.cpp.run).toBeUndefined()
+    // A skip is its own recorded status: counted as skipped, never as a pass,
+    // never folded into untested (plan §10.1 #6).
+    expect(r.engines.cpp.run).toEqual({ pass: 0, fail: 0, skip: 1 })
     expect(matrix.totals.byEngine.cpp.byArtifact.wasm.passedCells).toBe(0)
+    expect(matrix.totals.byEngine.cpp.byArtifact.wasm.skippedCells).toBe(1)
+    expect(matrix.totals.byEngine.cpp.byArtifact.wasm.failedCells).toBe(0)
   })
 
   it('a pass on one engine and a fail on the other is divergent and becomes an open gap', () => {

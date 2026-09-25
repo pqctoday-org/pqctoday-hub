@@ -1,10 +1,19 @@
 {
-  "source": "3GPP TS 33.501 Annex C.4 \u2014 Official ETSI/3GPP Test Vectors",
+  "_provenance": {
+    "source_url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf",
+    "source_release": "ETSI TS 133 501 V19.5.0 (2026-02) = 3GPP TS 33.501 version 19.5.0 Release 19",
+    "retrieved": "2026-09-11",
+    "producer": "3GPP TS 33.501 Annex C.4 (published test vectors, not from ACVP)",
+    "source_sha256": "91d949e68792d5cae0c9b8f096f903c67cda2a636f0e8c30bbeba92a59e5b9fc",
+    "localCopy": "library/3GPP_TS_33.501_Rel-19.pdf (pqctoday-priv/local-evidence-cache)",
+    "note": "official_3gpp_vectors[*] are copied from Annex C.4 (C.4.3.1/C.4.3.2 Profile A, C.4.4.1/C.4.4.2 Profile B). The profile-b-imsi intermediate values (eph_shared_key_hex … eph_mac_key_hex, plaintext_block_hex) were added 2026-09-24 verbatim from C.4.4.1 and re-derived with Node crypto (OpenSSL): X9.63-KDF(SHA-256, Z, SharedInfo = the COMPRESSED ephemeral public key) → Enc key (16) || ICB (16) || MAC key (32); AES-128-CTR(Enc key, ICB) over the plaintext block; HMAC-SHA-256(MAC key, ciphertext) truncated to 8 bytes — all equal the published values. profiles.B is NOT an Annex C vector: it is a tool-default example whose derived values (K_enc, K_mac, cipher_msin, mac_tag) were computed locally with a different KDF output layout (no ICB, zero counter block, uncompressed SharedInfo) and does not reproduce any published value; katRunner does not use it."
+  },
+  "source": "3GPP TS 33.501 Annex C.4 — Official ETSI/3GPP Test Vectors",
   "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.501/",
-  "notes": "All key material taken directly from 3GPP TS 33.501 Annex C.4. Derived values (K_enc, K_mac, cipher_msin, mac_tag) for the Profile B IMSI tool-default vector are computed using ANSI X9.63-KDF(SHA-256) with SharedInfo=raw 65-byte uncompressed P-256 ephemeral public key per \u00a7C.3.3. The SUCI tool uses SUPI 310260123456789 (US example) while the 3GPP official vectors use imsi-26283000123456 (European example).",
+  "notes": "All key material taken directly from 3GPP TS 33.501 Annex C.4. Derived values (K_enc, K_mac, cipher_msin, mac_tag) for the Profile B IMSI tool-default vector are computed using ANSI X9.63-KDF(SHA-256) with SharedInfo=raw 65-byte uncompressed P-256 ephemeral public key per §C.3.3. The SUCI tool uses SUPI 310260123456789 (US example) while the 3GPP official vectors use imsi-26283000123456 (European example).",
   "profiles": {
     "A": {
-      "note": "Deferred \u2014 X25519 WASM vector pending",
+      "note": "Deferred — X25519 WASM vector pending",
       "curve": "X25519"
     },
     "B": {
@@ -34,7 +43,7 @@
       "profile": "A",
       "scheme_id": "0x01",
       "supi_type": "IMSI",
-      "description": "Profile A (X25519 + AES-128-CTR + HMAC-SHA-256), IMSI-based SUPI \u2014 3GPP TS 33.501 Annex C.4",
+      "description": "Profile A (X25519 + AES-128-CTR + HMAC-SHA-256), IMSI-based SUPI — 3GPP TS 33.501 Annex C.4",
       "hn_priv_hex": "C53C22208B61860B06C62E5406A7B330C2B577AA5558981510D128247D38BD1D",
       "hn_pub_hex": "5A8D38864820197C3394B92613B20B91633CBD897119273BF8E4A6F4EEC0A650",
       "eph_priv_hex": "C80949F13EBE61AF4EBDBD293EA4F942696B9E815D7E8F0096BBECF6ED7DE62256",
@@ -45,14 +54,17 @@
         "cipher_msin": "CB02352410",
         "mac_tag": "CDDD9E730EF3FA87"
       },
-      "supi_example": "imsi-26283000123456"
+      "supi_example": "imsi-274012001002086",
+      "mcc_mnc": "274012",
+      "msin": "001002086",
+      "plaintext_block_hex": "00012080F6"
     },
     {
       "id": "profile-a-nai",
       "profile": "A",
       "scheme_id": "0x01",
       "supi_type": "NAI (Network-specific identifier)",
-      "description": "Profile A (X25519 + AES-128-CTR + HMAC-SHA-256), NAI-based SUPI \u2014 3GPP TS 33.501 Annex C.4",
+      "description": "Profile A (X25519 + AES-128-CTR + HMAC-SHA-256), NAI-based SUPI — 3GPP TS 33.501 Annex C.4",
       "hn_priv_hex": "C53C22208B61860B06C62E5406A7B330C2B577AA5558981510D128247D38BD1D",
       "hn_pub_hex": "5A8D38864820197C3394B92613B20B91633CBD897119273BF8E4A6F4EEC0A650",
       "eph_priv_hex": "BE9EFF3E9F22A4B42A3D236E7A6C500B3F2E7E0C7449988BA800D664BF4FCD97",
@@ -69,7 +81,7 @@
       "profile": "B",
       "scheme_id": "0x02",
       "supi_type": "IMSI",
-      "description": "Profile B (P-256 + AES-128-CTR + HMAC-SHA-256), IMSI-based SUPI \u2014 3GPP TS 33.501 Annex C.4",
+      "description": "Profile B (P-256 + AES-128-CTR + HMAC-SHA-256), IMSI-based SUPI — 3GPP TS 33.501 Annex C.4",
       "hn_priv_hex": "F1AB1074477EBCC7F554EA1C5FC368B1616730155E0041AC447D6301975FECDA",
       "hn_pub_compressed_hex": "0272DA71976234CE833A6907425867B82E074D44EF907DFB4B3E21C1C2256EBCD1",
       "hn_pub_hex": "0472DA71976234CE833A6907425867B82E074D44EF907DFB4B3E21C1C2256EBCD15A7DED52FCBB097A4ED250E036C7B9C8C7004C4EEDC4F068CD7BF8D3F900E3B4",
@@ -82,15 +94,23 @@
         "cipher_msin": "46A33FC271",
         "mac_tag": "6AC7DAE96AA30A4D"
       },
-      "supi_example": "imsi-26283000123456",
-      "note": "Scheme output uses COMPRESSED ephemeral public key (33 bytes, 03/02 prefix). ECDH uses the uncompressed key internally."
+      "supi_example": "imsi-274012001002086",
+      "note": "Scheme output uses COMPRESSED ephemeral public key (33 bytes, 03/02 prefix). ECDH uses the uncompressed key internally. Annex C.4.4.1 states MCC|MNC 274012, MSIN 001002086 (the earlier supi_example imsi-26283000123456 was not the vector's SUPI).",
+      "mcc_mnc": "274012",
+      "msin": "001002086",
+      "plaintext_block_hex": "00012080F6",
+      "clause": "C.4.4.1",
+      "eph_shared_key_hex": "6C7E6518980025B982FBB2FF746E3C2E85A196D252099A7AD23EA7B4C0959CAE",
+      "eph_enc_key_hex": "8A65C3AED80295C12BD55087E965702A",
+      "icb_hex": "EF285B4061C3BAEE858AB6EC68487DAE",
+      "eph_mac_key_hex": "A5EBAC0BC48D9CF7AE5CE39CD840AC6C761AEC04078FAB954D634F923E901C64"
     },
     {
       "id": "profile-b-nai",
       "profile": "B",
       "scheme_id": "0x02",
       "supi_type": "NAI (Network-specific identifier)",
-      "description": "Profile B (P-256 + AES-128-CTR + HMAC-SHA-256), NAI-based SUPI \u2014 3GPP TS 33.501 Annex C.4",
+      "description": "Profile B (P-256 + AES-128-CTR + HMAC-SHA-256), NAI-based SUPI — 3GPP TS 33.501 Annex C.4",
       "hn_priv_hex": "F1AB1074477EBCC7F554EA1C5FC368B1616730155E0041AC447D6301975FECDA",
       "hn_pub_compressed_hex": "0272DA71976234CE833A6907425867B82E074D44EF907DFB4B3E21C1C2256EBCD1",
       "hn_pub_hex": "0472DA71976234CE833A6907425867B82E074D44EF907DFB4B3E21C1C2256EBCD15A7DED52FCBB097A4ED250E036C7B9C8C7004C4EEDC4F068CD7BF8D3F900E3B4",

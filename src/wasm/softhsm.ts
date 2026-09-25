@@ -17,6 +17,7 @@
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { MECH_TABLE, type MechanismFamily } from './softhsm/mechanismTable'
+import { derOctetString } from './softhsm/helpers'
 export type { SoftHSMModule }
 
 // Injected by Vite at build time — ensures WASM URLs are cache-busted on each release
@@ -4997,22 +4998,17 @@ export const hsm_importECPublicKey = (
   const oid = weierstrassCurveOID(curve)
   const oidPtr = writeBytes(M, oid)
 
-  // Build DER-encoded uncompressed EC point: OCTET STRING { 04 || x || y }
-  const pointLen = 1 + qx.length + qy.length // 04 prefix + coordinates
-  const derPoint = new Uint8Array(2 + pointLen)
-  derPoint[0] = 0x04 // OCTET STRING tag
-  derPoint[1] = pointLen
-  derPoint[2] = 0x04 // uncompressed point prefix
-  derPoint.set(qx, 3)
-  derPoint.set(qy, 3 + qx.length)
-  const pointPtr = writeBytes(M, derPoint)
-
-  // Build CKA_VALUE as raw SEC1 uncompressed point for Rust engine: 04 || x || y
+  // Raw SEC 1 uncompressed point 04 || x || y — CKA_VALUE for the Rust engine
   const sec1Point = new Uint8Array(1 + qx.length + qy.length)
   sec1Point[0] = 0x04
   sec1Point.set(qx, 1)
   sec1Point.set(qy, 1 + qx.length)
   const valPtr = writeBytes(M, sec1Point)
+
+  // CKA_EC_POINT: DER OCTET STRING { 04 || x || y }. P-521's 133-byte point
+  // needs the long-form length (0x81 0x85); the old one-byte length broke it.
+  const derPoint = derOctetString(sec1Point)
+  const pointPtr = writeBytes(M, derPoint)
 
   const baseAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
@@ -5670,6 +5666,44 @@ export const hsm_hmacVerify = (
     M._free(mech)
     M._free(dataPtr)
     M._free(macPtr)
+  }
+}
+
+/**
+ * Compute a truncated HMAC via CKM_*_HMAC_GENERAL (PKCS#11 v3.2 §6.31 —
+ * CK_MAC_GENERAL_PARAMS gives the output length in bytes). The generation
+ * counterpart of hsm_hmacVerifyGeneral: NIST's ACVP-HMAC samples carry a
+ * truncated macLen, which the non-GENERAL mechanism (full-length output) can
+ * never reproduce. `mechType` must be the `_GENERAL` variant.
+ */
+export const hsm_hmacGeneral = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  data: Uint8Array,
+  macLenBytes: number,
+  mechType: number
+): Uint8Array => {
+  const paramPtr = allocUlong(M)
+  writeUlong(M, paramPtr, macLenBytes)
+  const mech = buildMech(M, mechType, paramPtr, 4)
+  const dataPtr = writeBytes(M, data)
+  const macLenPtr = allocUlong(M)
+  let macPtr = 0
+  try {
+    checkRV(M._C_SignInit(hSession, mech, keyHandle), 'C_SignInit(HMAC_GENERAL)')
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, 0, macLenPtr), 'C_Sign(HMAC_GENERAL,len)')
+    const macLen = readUlong(M, macLenPtr)
+    macPtr = M._malloc(macLen)
+    writeUlong(M, macLenPtr, macLen)
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, macPtr, macLenPtr), 'C_Sign(HMAC_GENERAL)')
+    return M.HEAPU8.slice(macPtr, macPtr + readUlong(M, macLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(macLenPtr)
+    M._free(paramPtr)
+    if (macPtr) M._free(macPtr)
   }
 }
 

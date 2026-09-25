@@ -18,11 +18,10 @@
  *  - A round-trip's key generation IS listed (its output is consumed), as
  *    functional-round-trip evidence for the key-generation cell.
  *
- * Not registered because they FAIL on the engine that runs them (local run of
- * both shipped wasm engines, 2026-09-24 — see open-gaps.json
- * katrunner-failing-kinds): KatKinds aescbc-decrypt, hmac-verify,
- * hmac-generate, pbkdf2-derive, aes-kwp-wrap. Also not registered:
- * suci-profile-b (multi-step 3GPP chain, not yet mapped).
+ * katRunner cases carry their `katKind`, the join key the Algorithms KAT view
+ * and the Learn panels use to find a spec's evidence record, so a case shows
+ * the same class and source wherever it runs. suci-profile-b steps 1–2 (key
+ * import only) exercise no mechanism and are not registered.
  *
  * Engines: useAcvpSuite and the conformance runners drive the C++ and Rust
  * engines (dual mode). katRunner is driven by KATView (/algorithms) and
@@ -39,6 +38,7 @@ import type { EvidenceClassId } from './evidenceClasses'
 import type { CaseRecord, ValidationCaseManifest } from './validationCaseManifest'
 import type {
   CapabilityRef,
+  KatKindRef,
   CaseExercise,
   CaseParams,
   DeclaredPolarity,
@@ -108,7 +108,12 @@ const lc = (
   evidenceClass: EvidenceClassId,
   polarity: DeclaredPolarity,
   exercises: CaseExercise[],
-  opts: { rowId?: string; parameters?: CaseParams; note?: string } = {}
+  opts: {
+    rowId?: string
+    parameters?: CaseParams
+    note?: string
+    source?: RegisteredCase['source']
+  } = {}
 ): RegisteredCase => ({
   caseId: `local:${testId}/${n}`,
   evidenceClass,
@@ -138,11 +143,12 @@ const HASH_SUFFIX: Record<string, string> = {
   'shake-256': 'SHAKE256',
   shake256: 'SHAKE256',
 }
-const hashMlDsaMech = (hashAlg: string): string => {
+const hashMech = (family: 'ML_DSA' | 'SLH_DSA', hashAlg: string): string => {
   const s = HASH_SUFFIX[hashAlg.toLowerCase()]
-  if (!s) throw new Error(`testRegistry: no CKM_HASH_ML_DSA mechanism for ${hashAlg}`)
-  return `CKM_HASH_ML_DSA_${s}`
+  if (!s) throw new Error(`testRegistry: no CKM_HASH_${family} mechanism for ${hashAlg}`)
+  return `CKM_HASH_${family}_${s}`
 }
+const hashMlDsaMech = (hashAlg: string): string => hashMech('ML_DSA', hashAlg)
 /** The mechanism an ML-DSA manifest case drives (mirrors sections/mldsaAcvp.ts mechFor()). */
 const mldsaMech = (c: CaseRecord): string =>
   c.parameters.externalMu === true
@@ -150,6 +156,14 @@ const mldsaMech = (c: CaseRecord): string =>
     : c.parameters.preHash === 'preHash'
       ? hashMlDsaMech(param(c, 'hashAlg'))
       : 'CKM_ML_DSA'
+/** The mechanism an SLH-DSA manifest case drives (mirrors sections/slhdsaAcvp.ts mechFor()). */
+const slhdsaMech = (c: CaseRecord): string =>
+  c.parameters.preHash === 'preHash' ? hashMech('SLH_DSA', param(c, 'hashAlg')) : 'CKM_SLH_DSA'
+/** Manifest `contextBytes` / `messageBytes` of a case, for product-authored cases derived from it. */
+const lengthsOf = (c: CaseRecord): CaseParams => ({
+  contextBytes: Number(param(c, 'contextBytes')),
+  messageBytes: Number(param(c, 'messageBytes')),
+})
 
 const upstreamIds = (c: CaseRecord) => `tg${c.upstream?.tgId ?? '?'}-tc${c.upstream?.tcId ?? '?'}`
 
@@ -352,6 +366,87 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     'Skip rows are evidence of nothing; the capabilities they stand for are the capability map declaredUnreachable rows (mldsa-hash-sha512t, mldsa-hedged-rnd, mldsa-internal-interface), shown as unsupported.'
   ),
   acvp(
+    '05e.siggen-det',
+    '§5e.1 (sections/mldsaDepth.ts)',
+    'ML-DSA deterministic sigGen byte-match at context 0/255, 8192-byte messages and the remaining HashML-DSA functions (sk via C_CreateObject)',
+    [...casesOf('mldsa_siggen_ctxmsg_test'), ...casesOf('mldsa_siggen_prehash_test')].map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x(mldsaMech(c), 'sign', param(c, 'parameterSet'), 'deterministic')],
+        `mldsa-depth-siggen-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
+  acvp(
+    '05e.ctx-probes',
+    '§5e.2 (sections/mldsaDepth.ts)',
+    'ML-DSA-44 context boundaries: 1-byte context sign + verify, 256-byte context refused at C_SignInit / C_VerifyInit',
+    (() => {
+      const base = manifestCase('mldsa_siggen_ctxmsg_test#/testGroups/0/tests/0')
+      const ps = 'ML-DSA-44'
+      const msg = Number(param(base, 'messageBytes'))
+      return [
+        lc(
+          'acvp.05e.ctx-probes',
+          'ctx1',
+          RT,
+          'positive',
+          [x('CKM_ML_DSA', 'sign', ps, 'deterministic'), x('CKM_ML_DSA', 'verify', ps)],
+          {
+            rowId: 'mldsa-depth-probe-ctx1-{engine}',
+            parameters: { contextBytes: 1, messageBytes: msg },
+            note: `Key material from ${base.caseId}; the deterministic signature is verified by the same engine. Its sha256 fingerprint is recorded for a C++/Rust comparison, but the row does not compare it.`,
+          }
+        ),
+        lc(
+          'acvp.05e.ctx-probes',
+          'ctx1-verify-no-context',
+          PROBE,
+          'negative',
+          [x('CKM_ML_DSA', 'verify', ps)],
+          {
+            rowId: 'mldsa-depth-probe-ctx1-{engine}',
+            parameters: { contextBytes: 0, messageBytes: msg },
+            note: 'Asserts CKR_SIGNATURE_INVALID when the 1-byte-context signature is verified without its context.',
+          }
+        ),
+        lc(
+          'acvp.05e.ctx-probes',
+          'ctx256-sign',
+          PROBE,
+          'state-error',
+          [x('CKM_ML_DSA', 'sign', ps, 'deterministic')],
+          {
+            rowId: 'mldsa-depth-probe-ctx256-sign-{engine}',
+            parameters: { contextBytes: 256, messageBytes: msg },
+            note: 'Asserts refusal at C_SignInit with the CK_RV pinned per engine (C++ CKR_ARGUMENTS_BAD, Rust CKR_MECHANISM_PARAM_INVALID).',
+          }
+        ),
+        lc(
+          'acvp.05e.ctx-probes',
+          'ctx256-verify',
+          PROBE,
+          'state-error',
+          [x('CKM_ML_DSA', 'verify', ps)],
+          {
+            rowId: 'mldsa-depth-probe-ctx256-verify-{engine}',
+            parameters: { contextBytes: 256, messageBytes: msg },
+            note: 'Asserts refusal at C_VerifyInit with the CK_RV pinned per engine (C++ CKR_ARGUMENTS_BAD, Rust CKR_MECHANISM_PARAM_INVALID).',
+          }
+        ),
+      ]
+    })()
+  ),
+  acvp(
+    '05e.skips',
+    '§5e.3 (sections/mldsaDepth.ts)',
+    'ML-DSA honest skip (the NIST 1-byte-context sigGen case)',
+    [],
+    'Skip rows are evidence of nothing; the one NIST 1-byte-context case is hedged and uses SHA2-512/256 — the declaredUnreachable rows mldsa-hedged-rnd and mldsa-hash-sha512t.'
+  ),
+  acvp(
     '06',
     '§6',
     'ML-DSA functional sign + verify',
@@ -383,6 +478,111 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
         `test-${param(c, 'parameterSet')}-decap-{engine}`
       )
     )
+  ),
+  acvp(
+    '07b.keygen',
+    '§7b.1 (sections/mlkemAcvp.ts)',
+    'ML-KEM keyGen from seed (CKA_SEED d‖z), ek + dk byte-match',
+    casesOf('mlkem_keygen_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_ML_KEM_KEY_PAIR_GEN', 'generate-key-pair', param(c, 'parameterSet'))],
+        `mlkem-keygen-seed-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
+  acvp(
+    '07b.decap-val',
+    '§7b.3 (sections/mlkemAcvp.ts)',
+    'ML-KEM decapsulation VAL: valid and modified ciphertexts (dk via C_CreateObject), k byte-match',
+    casesOf('mlkem_encapdecap_val_test')
+      .filter((c) => c.parameters.function === 'decapsulation')
+      .map((c) =>
+        mc(
+          c.caseId,
+          NIST,
+          c.expectation,
+          [x('CKM_ML_KEM', 'decapsulate', param(c, 'parameterSet'))],
+          `mlkem-decap-val-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+        )
+      ),
+    'A modified-ciphertext case (negative) must still return CKR_OK, with k equal to the NIST implicit-rejection value.'
+  ),
+  acvp(
+    '07b.keycheck',
+    '§7b.4 (sections/mlkemAcvp.ts)',
+    'ML-KEM decapsulation-key / encapsulation-key checks (FIPS 203 §7.3 / §7.2), key import + decapsulate / encapsulate',
+    casesOf('mlkem_encapdecap_val_test')
+      .filter((c) => c.parameters.function !== 'decapsulation')
+      .map((c) => {
+        const isDk = c.parameters.function === 'decapsulationKeyCheck'
+        return mc(
+          c.caseId,
+          NIST,
+          c.expectation,
+          [x('CKM_ML_KEM', isDk ? 'decapsulate' : 'encapsulate', param(c, 'parameterSet'))],
+          `mlkem-keycheck-${isDk ? 'dk' : 'ek'}-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+        )
+      }),
+    'A negative case passes when the invalid key is rejected anywhere on the path — at C_CreateObject or at the C_DecapsulateKey / C_EncapsulateKey that must perform the check.'
+  ),
+  acvp(
+    '07b.implicit-reject',
+    '§7b.5 (sections/mlkemAcvp.ts)',
+    'ML-KEM product-authored implicit rejection (ciphertext bit flip → k = J(z‖c′)), per parameter set',
+    casesOf('mlkem_encapdecap_val_test')
+      .filter((c) => c.parameters.function === 'decapsulation')
+      .filter(
+        (c, i, all) =>
+          c.parameters.reason === 'valid decapsulation' &&
+          all.findIndex(
+            (d) =>
+              d.parameters.parameterSet === c.parameters.parameterSet &&
+              d.parameters.reason === 'valid decapsulation'
+          ) === i
+      )
+      .map((c) =>
+        lc(
+          'acvp.07b.implicit-reject',
+          param(c, 'parameterSet'),
+          PROBE,
+          'negative',
+          [x('CKM_ML_KEM', 'decapsulate', param(c, 'parameterSet'))],
+          {
+            rowId: `mlkem-implicit-reject-local-${param(c, 'parameterSet')}-{engine}`,
+            note: `Mutation of ${c.caseId} (c[0]^=0x01). Expects CKR_OK and k = SHAKE256(z‖c′, 32) computed with @noble/hashes (FIPS 203 Alg. 18), never the original k; the mutation is PQC Today-authored, not NIST.`,
+          }
+        )
+      )
+  ),
+  acvp(
+    '07b.boundary',
+    '§7b.6 (sections/mlkemAcvp.ts)',
+    'ML-KEM-512 PKCS #11 boundary probes (ciphertext length, output buffer, short ek), exact CK_RV pinned per engine',
+    (
+      [
+        ['decap-ct-short', 'decapsulate', 'state-error'],
+        ['decap-ct-long', 'decapsulate', 'state-error'],
+        ['decap-ct-other-set', 'decapsulate', 'state-error'],
+        ['encap-size-query', 'encapsulate', 'positive'],
+        ['encap-short-buffer', 'encapsulate', 'state-error'],
+        ['import-ek-short', 'encapsulate', 'state-error'],
+      ] as const
+    ).map(([key, op, pol]) =>
+      lc('acvp.07b.boundary', key, PROBE, pol, [x('CKM_ML_KEM', op, 'ML-KEM-512')], {
+        rowId: `mlkem-boundary-${key}-{engine}`,
+      })
+    ),
+    'import-dk-short is not registered: the Rust engine rejects the 1-byte-short dk at C_CreateObject, so on that engine the row drives no mechanism operation. import-ek-short is: both engines accept the short ek and the pinned code comes from C_EncapsulateKey.'
+  ),
+  acvp(
+    '07b.skips',
+    '§7b.2 (sections/mlkemAcvp.ts)',
+    'ML-KEM honest skip (encapsulation AFT: C_EncapsulateKey takes no caller-supplied randomness m)',
+    [],
+    'Skip rows are evidence of nothing; the encapsulation AFT groups are listed under notExecuted in mlkem_encapdecap_val_test.json.'
   ),
   acvp(
     '08',
@@ -435,6 +635,113 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
         `slhdsa-sigver-kat-${param(c, 'parameterSet')}-{engine}`
       )
     )
+  ),
+  acvp(
+    '09c.sigver',
+    '§9c.1 (sections/slhdsaAcvp.ts)',
+    'SLH-DSA dedicated NIST sigVer, pure and pre-hash (positive and negative)',
+    [...casesOf('slhdsa_sigver_sha2_test'), ...casesOf('slhdsa_sigver_shake_test')].map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x(slhdsaMech(c), 'verify', param(c, 'parameterSet'))],
+        `slhdsa-sigver-nist-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    ),
+    'A too-small / too-large signature must return CKR_SIGNATURE_LEN_RANGE; any other invalid case CKR_SIGNATURE_INVALID.'
+  ),
+  acvp(
+    '09c.siggen-det',
+    '§9c.2 (sections/slhdsaAcvp.ts)',
+    'SLH-DSA deterministic sigGen byte-match (sk via C_CreateObject, CKH_DETERMINISTIC_REQUIRED): all 12 sets at context 255 B, plus 128f empty-context and pre-hash',
+    [...casesOf('slhdsa_ctx_test', '/sigGen/'), ...casesOf('slhdsa_siggen_det_test')].map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x(slhdsaMech(c), 'sign', param(c, 'parameterSet'), 'deterministic')],
+        `slhdsa-siggen-det-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
+  acvp(
+    '09c.mutation',
+    '§9c.3 (sections/slhdsaAcvp.ts)',
+    'SLH-DSA product-authored negatives (public-key / context flips for all 12 sets; signature / message flips for the sets without a pure NIST sigVer case)',
+    (() => {
+      const nistSigVerSets = new Set(
+        [...casesOf('slhdsa_sigver_sha2_test'), ...casesOf('slhdsa_sigver_shake_test')]
+          .filter((c) => c.parameters.preHash === 'pure')
+          .map((c) => param(c, 'parameterSet'))
+      )
+      return casesOf('slhdsa_ctx_test', '/sigVer/').flatMap((c) => {
+        const ps = param(c, 'parameterSet')
+        const keys = nistSigVerSets.has(ps)
+          ? ['pk-bitflip', 'ctx-bitflip']
+          : ['pk-bitflip', 'ctx-bitflip', 'sig-bitflip', 'msg-bitflip']
+        return keys.map((key) =>
+          lc(
+            'acvp.09c.mutation',
+            `${key}-${ps}`,
+            PROBE,
+            'negative',
+            [x('CKM_SLH_DSA', 'verify', ps)],
+            {
+              rowId: `slhdsa-sigver-local-${key}-${ps}-{engine}`,
+              parameters: lengthsOf(c),
+              note: `One-bit mutation of ${c.caseId}; expected CKR_SIGNATURE_INVALID is PQC Today-authored, not NIST.`,
+            }
+          )
+        )
+      })
+    })()
+  ),
+  acvp(
+    '09c.probes',
+    '§9c.4 (sections/slhdsaAcvp.ts)',
+    'SLH-DSA-SHA2-128f product-authored probes: 256-byte context refused at C_SignInit; hedged signing randomized',
+    (() => {
+      const base = casesOf('slhdsa_siggen_det_test').find(
+        (c) => c.parameters.parameterSet === 'SLH-DSA-SHA2-128f' && c.parameters.preHash === 'pure'
+      )
+      if (!base)
+        throw new Error('testRegistry: no pure SLH-DSA-SHA2-128f deterministic sigGen case')
+      const ps = 'SLH-DSA-SHA2-128f'
+      return [
+        lc(
+          'acvp.09c.probes',
+          'ctx256',
+          PROBE,
+          'state-error',
+          [x('CKM_SLH_DSA', 'sign', ps, 'deterministic')],
+          {
+            rowId: 'slhdsa-probe-ctx256-{engine}',
+            parameters: { ...lengthsOf(base), contextBytes: 256 },
+            note: `Key material from ${base.caseId}. Asserts refusal at C_SignInit with the CK_RV pinned per engine (C++ CKR_ARGUMENTS_BAD, Rust CKR_MECHANISM_PARAM_INVALID).`,
+          }
+        ),
+        lc(
+          'acvp.09c.probes',
+          'hedged-randomized',
+          RT,
+          'positive',
+          [x('CKM_SLH_DSA', 'sign', ps, 'hedged'), x('CKM_SLH_DSA', 'verify', ps)],
+          {
+            rowId: 'slhdsa-probe-hedged-randomized-{engine}',
+            parameters: lengthsOf(base),
+            note: `Key material from ${base.caseId}. Two CKH_HEDGE_REQUIRED signatures must differ (and differ from the NIST deterministic one) and both verify; shows randomization is active, not that the randomness is correct.`,
+          }
+        ),
+      ]
+    })()
+  ),
+  acvp(
+    '09c.skips',
+    '§9c.5 (sections/slhdsaAcvp.ts)',
+    'SLH-DSA honest skips (pre-hash functions with no PKCS #11 mechanism, internal interface, hedged sigGen)',
+    [],
+    'Skip rows are evidence of nothing; the upstream groups they stand for are listed under notExecuted in the SLH-DSA vector files. No capability-map declaredUnreachable row covers them yet.'
   ),
   acvp('10', '§10', 'SHA2-256 digest', digestCases('sha256_test', sha256V, 'CKM_SHA256', 'sha256')),
   acvp(
@@ -808,190 +1115,496 @@ const kat = (
   ...(note ? { note } : {}),
 })
 
+/** Attach the KatKind that executes a registered case. */
+const k = (c: RegisteredCase, katKind: KatKindRef): RegisteredCase => ({ ...c, katKind })
+
+const TS33501_C441 = {
+  citation: 'ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI',
+  url: 'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+}
+const suciNote =
+  'Expected values printed in Annex C.4.4.1 (src/data/kat/gsma_suci_ts33501_annex_c.json, profile-b-imsi); the file is outside the src/data/acvp vector manifest.'
+
+const HMACS = [
+  ['SHA-256', 'hmac_test', 'CKM_SHA256_HMAC_GENERAL'],
+  ['SHA-384', 'hmac_sha384_test', 'CKM_SHA384_HMAC_GENERAL'],
+  ['SHA-512', 'hmac_sha512_test', 'CKM_SHA512_HMAC_GENERAL'],
+] as const
+
+/** First pure/external positive and negative case per parameter set (katRunner mldsa-sigver-nist). */
+const mldsaNistPick = (ps: string, valid: boolean): CaseRecord => {
+  const c = casesOf('mldsa_sigver_test', '/testGroups/').find(
+    (x) =>
+      x.parameters.parameterSet === ps &&
+      x.parameters.preHash === 'pure' &&
+      x.parameters.externalMu !== true &&
+      (x.expectation === 'positive') === valid
+  )
+  if (!c) throw new Error(`testRegistry: no pure ${valid ? 'positive' : 'negative'} ${ps} case`)
+  return c
+}
+
 const KAT_RUNNER: RegisteredTest[] = [
   kat(
     'mlkem-decap',
     'ML-KEM decapsulation (testIndex 0)',
     casesOf('mlkem_test').map((c) =>
-      mc(c.caseId, NIST, 'positive', [x('CKM_ML_KEM', 'decapsulate', param(c, 'parameterSet'))])
+      k(
+        mc(c.caseId, NIST, 'positive', [x('CKM_ML_KEM', 'decapsulate', param(c, 'parameterSet'))]),
+        { type: 'mlkem-decap', variant: Number(param(c, 'parameterSet').slice(7)) }
+      )
     )
   ),
   kat(
     'mlkem-encap-roundtrip',
     'ML-KEM encapsulate + decapsulate round-trip',
     MLKEM_SETS.map((ps) =>
-      lc('kat.mlkem-encap-roundtrip', ps, RT, 'positive', [
-        x('CKM_ML_KEM_KEY_PAIR_GEN', 'generate-key-pair', ps),
-        x('CKM_ML_KEM', 'encapsulate', ps),
-        x('CKM_ML_KEM', 'decapsulate', ps),
-      ])
+      k(
+        lc('kat.mlkem-encap-roundtrip', ps, RT, 'positive', [
+          x('CKM_ML_KEM_KEY_PAIR_GEN', 'generate-key-pair', ps),
+          x('CKM_ML_KEM', 'encapsulate', ps),
+          x('CKM_ML_KEM', 'decapsulate', ps),
+        ]),
+        { type: 'mlkem-encap-roundtrip', variant: Number(ps.slice(7)) }
+      )
     )
   ),
   kat(
     'mldsa-sigver',
     'ML-DSA verify of NIST sigGen output (testIndex 0)',
     casesOf('mldsa_test').map((c) =>
-      mc(c.caseId, NIST, 'positive', [x('CKM_ML_DSA', 'verify', param(c, 'parameterSet'))])
+      k(mc(c.caseId, NIST, 'positive', [x('CKM_ML_DSA', 'verify', param(c, 'parameterSet'))]), {
+        type: 'mldsa-sigver',
+        variant: Number(param(c, 'parameterSet').slice(7)),
+      })
     )
+  ),
+  kat(
+    'mldsa-sigver-nist',
+    'ML-DSA dedicated NIST sigVer, pure: positive and first negative case per parameter set',
+    MLDSA_SETS.flatMap((ps) =>
+      ([true, false] as const).map((valid) => {
+        const c = mldsaNistPick(ps, valid)
+        return k(mc(c.caseId, NIST, c.expectation, [x('CKM_ML_DSA', 'verify', ps)]), {
+          type: 'mldsa-sigver-nist',
+          variant: Number(ps.slice(7)),
+          expect: valid ? 'valid' : 'invalid',
+        })
+      })
+    ),
+    'Same cases and executor (sections/mldsaAcvp.ts verifyRv) as the workbench §5d.1.'
   ),
   kat(
     'mldsa-functional',
     'ML-DSA sign + verify round-trip',
     MLDSA_SETS.map((ps) =>
-      lc('kat.mldsa-functional', ps, RT, 'positive', [
-        x('CKM_ML_DSA_KEY_PAIR_GEN', 'generate-key-pair', ps),
-        x('CKM_ML_DSA', 'sign', ps, 'hedged'),
-        x('CKM_ML_DSA', 'verify', ps),
-      ])
+      k(
+        lc('kat.mldsa-functional', ps, RT, 'positive', [
+          x('CKM_ML_DSA_KEY_PAIR_GEN', 'generate-key-pair', ps),
+          x('CKM_ML_DSA', 'sign', ps, 'hedged'),
+          x('CKM_ML_DSA', 'verify', ps),
+        ]),
+        { type: 'mldsa-functional', variant: Number(ps.slice(7)) }
+      )
     )
   ),
   kat(
     'slhdsa-functional',
     'SLH-DSA sign + verify round-trip',
     SLH_SETS.map((ps) =>
-      lc('kat.slhdsa-functional', ps, RT, 'positive', [
-        x('CKM_SLH_DSA_KEY_PAIR_GEN', 'generate-key-pair', ps),
-        x('CKM_SLH_DSA', 'sign', ps, 'hedged'),
-        x('CKM_SLH_DSA', 'verify', ps),
-      ])
+      k(
+        lc('kat.slhdsa-functional', ps, RT, 'positive', [
+          x('CKM_SLH_DSA_KEY_PAIR_GEN', 'generate-key-pair', ps),
+          x('CKM_SLH_DSA', 'sign', ps, 'hedged'),
+          x('CKM_SLH_DSA', 'verify', ps),
+        ]),
+        { type: 'slhdsa-functional', variant: ps.slice(8) }
+      )
     )
   ),
+  kat(
+    'slhdsa-sigver',
+    'SLH-DSA verify of NIST sigGen output (sigGen → local sigVer, context 255 B)',
+    casesOf('slhdsa_ctx_test', '/sigVer/').map((c) =>
+      k(mc(c.caseId, NIST, 'positive', [x('CKM_SLH_DSA', 'verify', param(c, 'parameterSet'))]), {
+        type: 'slhdsa-sigver',
+        variant: param(c, 'parameterSet').slice(8),
+      })
+    ),
+    'Same cases as the workbench §9b.'
+  ),
   kat('aesgcm-decrypt', 'AES-GCM-256 decrypt (testIndex 0)', [
-    mc('aesgcm_test#/testGroups/0/tests/0', ORACLE, 'positive', [
-      x('CKM_AES_GCM', 'decrypt', 'AES-256'),
-    ]),
+    k(
+      mc('aesgcm_test#/testGroups/0/tests/0', ORACLE, 'positive', [
+        x('CKM_AES_GCM', 'decrypt', 'AES-256'),
+      ]),
+      { type: 'aesgcm-decrypt' }
+    ),
+  ]),
+  kat('aescbc-decrypt', 'AES-CBC-256 decrypt (raw CKM_AES_CBC)', [
+    k(
+      mc('aescbc_test#/testGroups/0/tests/0', NIST, 'positive', [
+        x('CKM_AES_CBC', 'decrypt', 'AES-256'),
+      ]),
+      { type: 'aescbc-decrypt' }
+    ),
   ]),
   kat('aesctr-roundtrip', 'AES-CTR-256 encrypt (expected ciphertext) + decrypt', [
-    mc('aesctr_test#/testGroups/0/tests/0', STD, 'positive', [
-      x('CKM_AES_CTR', 'encrypt', 'AES-256'),
-      x('CKM_AES_CTR', 'decrypt', 'AES-256', undefined, { evidenceClass: RT }),
-    ]),
+    k(
+      mc('aesctr_test#/testGroups/0/tests/0', STD, 'positive', [
+        x('CKM_AES_CTR', 'encrypt', 'AES-256'),
+        x('CKM_AES_CTR', 'decrypt', 'AES-256', undefined, { evidenceClass: RT }),
+      ]),
+      { type: 'aesctr-roundtrip' }
+    ),
   ]),
   kat('aeskw-wrap', 'AES-KW-256 wrap (testIndex 0)', [
-    mc('aeskw_test#/testGroups/0/tests/0', STD, 'positive', [
-      x('CKM_AES_KEY_WRAP', 'wrap', 'AES-256'),
-    ]),
+    k(
+      mc('aeskw_test#/testGroups/0/tests/0', STD, 'positive', [
+        x('CKM_AES_KEY_WRAP', 'wrap', 'AES-256'),
+      ]),
+      { type: 'aeskw-wrap' }
+    ),
+  ]),
+  kat('aes-kwp-wrap', 'AES-KWP-256 wrap + unwrap round-trip (20-byte generic secret)', [
+    k(
+      lc('kat.aes-kwp-wrap', '1', RT, 'positive', [
+        x('CKM_AES_KEY_WRAP_KWP', 'wrap', 'AES-256'),
+        x('CKM_AES_KEY_WRAP_KWP', 'unwrap', 'AES-256'),
+      ]),
+      { type: 'aes-kwp-wrap' }
+    ),
   ]),
   kat('aesgcm-functional', 'AES-GCM encrypt + decrypt round-trip', [
-    lc('kat.aesgcm-functional', '1', RT, 'positive', [
-      x('CKM_AES_KEY_GEN', 'generate-key', 'AES-256'),
-      x('CKM_AES_GCM', 'encrypt', 'AES-256'),
-      x('CKM_AES_GCM', 'decrypt', 'AES-256'),
-    ]),
-  ]),
-  kat('sha256-hash', 'SHA2-256 digest (testIndex 0)', [
-    mc('sha256_test#/testGroups/0/tests/0', NIST, 'positive', [x('CKM_SHA256', 'digest')]),
-  ]),
-  kat('sha384-hash', 'SHA2-384 digest (testIndex 0)', [
-    mc('sha384_test#/testGroups/0/tests/0', NIST, 'positive', [x('CKM_SHA384', 'digest')]),
-  ]),
-  kat('sha512-hash', 'SHA2-512 digest (testIndex 0)', [
-    mc('sha512_test#/testGroups/0/tests/0', NIST, 'positive', [x('CKM_SHA512', 'digest')]),
-  ]),
-  kat('sha3-256-hash', 'SHA3-256 digest (testIndex 0)', [
-    mc('sha3_256_test#/testGroups/0/tests/0', NIST, 'positive', [x('CKM_SHA3_256', 'digest')]),
-  ]),
-  kat('sha3-512-hash', 'SHA3-512 digest (testIndex 0)', [
-    mc('sha3_512_test#/testGroups/0/tests/0', NIST, 'positive', [x('CKM_SHA3_512', 'digest')]),
-  ]),
-  kat('digest-multipart', 'Multi-part digest (C_DigestUpdate) vs single-shot expected value', [
-    mc(
-      'sha256_test#/testGroups/0/tests/0',
-      NIST,
-      'positive',
-      [x('CKM_SHA256', 'digest')],
-      undefined,
-      'multipart'
-    ),
-    mc(
-      'sha384_test#/testGroups/0/tests/0',
-      NIST,
-      'positive',
-      [x('CKM_SHA384', 'digest')],
-      undefined,
-      'multipart'
-    ),
-    mc(
-      'sha512_test#/testGroups/0/tests/0',
-      NIST,
-      'positive',
-      [x('CKM_SHA512', 'digest')],
-      undefined,
-      'multipart'
+    k(
+      lc('kat.aesgcm-functional', '1', RT, 'positive', [
+        x('CKM_AES_KEY_GEN', 'generate-key', 'AES-256'),
+        x('CKM_AES_GCM', 'encrypt', 'AES-256'),
+        x('CKM_AES_GCM', 'decrypt', 'AES-256'),
+      ]),
+      { type: 'aesgcm-functional' }
     ),
   ]),
+  kat(
+    'hmac-verify',
+    'HMAC-SHA2 verify of the NIST truncated MAC (_GENERAL mechanism)',
+    HMACS.map(([hashAlg, file, mech]) =>
+      k(mc(`${file}#/testGroups/0/tests/0`, NIST, 'positive', [x(mech, 'verify')]), {
+        type: 'hmac-verify',
+        hashAlg,
+      })
+    )
+  ),
+  kat(
+    'hmac-generate',
+    'HMAC-SHA2 generation at the NIST truncated macLen (_GENERAL mechanism)',
+    HMACS.map(([hashAlg, file, mech]) =>
+      k(
+        {
+          ...mc(
+            `${file}#/testGroups/0/tests/0`,
+            NIST,
+            'positive',
+            [x(mech, 'sign')],
+            undefined,
+            'generate'
+          ),
+          operation: 'mac-generate',
+        },
+        { type: 'hmac-generate', hashAlg }
+      )
+    ),
+    "Runs the upstream AFT's own operation (MAC generation) on the manifest case whose recorded local operation is verification."
+  ),
+  kat(
+    'sha256-hash',
+    "SHA2-256 digest (testIndex 0-2: the file's three NIST cases)",
+    casesOf('sha256_test', '/testGroups/0/tests/').map((c) => {
+      const i = Number(c.pointer.split('/').pop())
+      return k(mc(c.caseId, NIST, 'positive', [x('CKM_SHA256', 'digest')]), {
+        type: 'sha256-hash',
+        ...(i ? { testIndex: i } : {}),
+      })
+    })
+  ),
+  kat(
+    'sha384-hash',
+    "SHA2-384 digest (testIndex 0-2: the file's three NIST cases)",
+    casesOf('sha384_test', '/testGroups/0/tests/').map((c) => {
+      const i = Number(c.pointer.split('/').pop())
+      return k(mc(c.caseId, NIST, 'positive', [x('CKM_SHA384', 'digest')]), {
+        type: 'sha384-hash',
+        ...(i ? { testIndex: i } : {}),
+      })
+    })
+  ),
+  kat(
+    'sha512-hash',
+    "SHA2-512 digest (testIndex 0-2: the file's three NIST cases)",
+    casesOf('sha512_test', '/testGroups/0/tests/').map((c) => {
+      const i = Number(c.pointer.split('/').pop())
+      return k(mc(c.caseId, NIST, 'positive', [x('CKM_SHA512', 'digest')]), {
+        type: 'sha512-hash',
+        ...(i ? { testIndex: i } : {}),
+      })
+    })
+  ),
+  kat(
+    'sha3-256-hash',
+    "SHA3-256 digest (testIndex 0-2: the file's three NIST cases)",
+    casesOf('sha3_256_test', '/testGroups/0/tests/').map((c) => {
+      const i = Number(c.pointer.split('/').pop())
+      return k(mc(c.caseId, NIST, 'positive', [x('CKM_SHA3_256', 'digest')]), {
+        type: 'sha3-256-hash',
+        ...(i ? { testIndex: i } : {}),
+      })
+    })
+  ),
+  kat(
+    'sha3-512-hash',
+    "SHA3-512 digest (testIndex 0-2: the file's three NIST cases)",
+    casesOf('sha3_512_test', '/testGroups/0/tests/').map((c) => {
+      const i = Number(c.pointer.split('/').pop())
+      return k(mc(c.caseId, NIST, 'positive', [x('CKM_SHA3_512', 'digest')]), {
+        type: 'sha3-512-hash',
+        ...(i ? { testIndex: i } : {}),
+      })
+    })
+  ),
+  kat(
+    'digest-multipart',
+    'Multi-part digest (C_DigestUpdate) vs single-shot expected value',
+    (
+      [
+        ['SHA-256', 'sha256_test', 'CKM_SHA256'],
+        ['SHA-384', 'sha384_test', 'CKM_SHA384'],
+        ['SHA-512', 'sha512_test', 'CKM_SHA512'],
+      ] as const
+    ).map(([hashAlg, file, mech]) =>
+      k(
+        mc(
+          `${file}#/testGroups/0/tests/0`,
+          NIST,
+          'positive',
+          [x(mech, 'digest')],
+          undefined,
+          'multipart'
+        ),
+        { type: 'digest-multipart', hashAlg }
+      )
+    )
+  ),
   kat('ecdsa-sigver', 'ECDSA verify (testIndex 0)', [
-    mc('ecdsa_test#/testGroups/0/tests/0', STD, 'positive', [
-      x('CKM_ECDSA_SHA256', 'verify', 'P-256'),
-    ]),
-    mc('ecdsa_p384_test#/testGroups/0/tests/0', STD, 'positive', [
-      x('CKM_ECDSA_SHA384', 'verify', 'P-384'),
-    ]),
+    k(
+      mc('ecdsa_test#/testGroups/0/tests/0', STD, 'positive', [
+        x('CKM_ECDSA_SHA256', 'verify', 'P-256'),
+      ]),
+      { type: 'ecdsa-sigver', curve: 'P-256' }
+    ),
+    k(
+      mc('ecdsa_p384_test#/testGroups/0/tests/0', STD, 'positive', [
+        x('CKM_ECDSA_SHA384', 'verify', 'P-384'),
+      ]),
+      { type: 'ecdsa-sigver', curve: 'P-384' }
+    ),
+    k(
+      mc('ecdsa_p521_test#/testGroups/0/tests/0', NIST, 'positive', [
+        x('CKM_ECDSA_SHA512', 'verify', 'P-521'),
+      ]),
+      { type: 'ecdsa-sigver', curve: 'P-521' }
+    ),
   ]),
-  kat('eddsa-sigver', 'EdDSA Ed25519 verify (testIndex 0)', [
-    mc('eddsa_test#/testGroups/0/tests/0', STD, 'positive', [x('CKM_EDDSA', 'verify', 'Ed25519')]),
+  kat('eddsa-sigver', 'EdDSA verify (testIndex 0)', [
+    k(
+      mc('eddsa_test#/testGroups/0/tests/0', STD, 'positive', [
+        x('CKM_EDDSA', 'verify', 'Ed25519'),
+      ]),
+      { type: 'eddsa-sigver' }
+    ),
+    k(
+      mc('eddsa_ed448_test#/testGroups/0/tests/0', NIST, 'positive', [
+        x('CKM_EDDSA', 'verify', 'Ed448'),
+      ]),
+      { type: 'eddsa-sigver', curve: 'Ed448' }
+    ),
   ]),
   kat('rsapss-sigver', 'RSA-PSS SHA-256 verify (testIndex 0)', [
-    mc('rsapss_test#/testGroups/0/tests/0', ORACLE, 'positive', [
-      x('CKM_SHA256_RSA_PKCS_PSS', 'verify'),
-    ]),
+    k(
+      mc('rsapss_test#/testGroups/0/tests/0', ORACLE, 'positive', [
+        x('CKM_SHA256_RSA_PKCS_PSS', 'verify'),
+      ]),
+      { type: 'rsapss-sigver' }
+    ),
   ]),
   kat('ecdsa-functional', 'ECDSA sign + verify round-trip', [
-    lc('kat.ecdsa-functional', 'P-256', RT, 'positive', [
-      x('CKM_EC_KEY_PAIR_GEN', 'generate-key-pair', 'P-256'),
-      x('CKM_ECDSA_SHA256', 'sign', 'P-256'),
-      x('CKM_ECDSA_SHA256', 'verify', 'P-256'),
-    ]),
-    lc('kat.ecdsa-functional', 'P-384', RT, 'positive', [
-      x('CKM_EC_KEY_PAIR_GEN', 'generate-key-pair', 'P-384'),
-      x('CKM_ECDSA_SHA384', 'sign', 'P-384'),
-      x('CKM_ECDSA_SHA384', 'verify', 'P-384'),
-    ]),
+    k(
+      lc('kat.ecdsa-functional', 'P-256', RT, 'positive', [
+        x('CKM_EC_KEY_PAIR_GEN', 'generate-key-pair', 'P-256'),
+        x('CKM_ECDSA_SHA256', 'sign', 'P-256'),
+        x('CKM_ECDSA_SHA256', 'verify', 'P-256'),
+      ]),
+      { type: 'ecdsa-functional', curve: 'P-256' }
+    ),
+    k(
+      lc('kat.ecdsa-functional', 'P-384', RT, 'positive', [
+        x('CKM_EC_KEY_PAIR_GEN', 'generate-key-pair', 'P-384'),
+        x('CKM_ECDSA_SHA384', 'sign', 'P-384'),
+        x('CKM_ECDSA_SHA384', 'verify', 'P-384'),
+      ]),
+      { type: 'ecdsa-functional', curve: 'P-384' }
+    ),
   ]),
   kat('eddsa-functional', 'Ed25519 sign + verify round-trip', [
-    lc('kat.eddsa-functional', 'Ed25519', RT, 'positive', [
-      x('CKM_EC_EDWARDS_KEY_PAIR_GEN', 'generate-key-pair', 'Ed25519'),
-      x('CKM_EDDSA', 'sign', 'Ed25519'),
-      x('CKM_EDDSA', 'verify', 'Ed25519'),
-    ]),
+    k(
+      lc('kat.eddsa-functional', 'Ed25519', RT, 'positive', [
+        x('CKM_EC_EDWARDS_KEY_PAIR_GEN', 'generate-key-pair', 'Ed25519'),
+        x('CKM_EDDSA', 'sign', 'Ed25519'),
+        x('CKM_EDDSA', 'verify', 'Ed25519'),
+      ]),
+      { type: 'eddsa-functional' }
+    ),
   ]),
   kat(
     'rsa-functional',
     'RSA key generation + RSA-PSS SHA-256 sign + verify round-trip',
     (['2048', '3072'] as const).map((bits) =>
-      lc(
-        'kat.rsa-functional',
-        bits,
-        RT,
-        'positive',
-        [
-          x('CKM_RSA_PKCS_KEY_PAIR_GEN', 'generate-key-pair'),
-          x('CKM_SHA256_RSA_PKCS_PSS', 'sign'),
-          x('CKM_SHA256_RSA_PKCS_PSS', 'verify'),
-        ],
-        { parameters: { modulusBits: Number(bits) } }
+      k(
+        lc(
+          'kat.rsa-functional',
+          bits,
+          RT,
+          'positive',
+          [
+            x('CKM_RSA_PKCS_KEY_PAIR_GEN', 'generate-key-pair'),
+            x('CKM_SHA256_RSA_PKCS_PSS', 'sign'),
+            x('CKM_SHA256_RSA_PKCS_PSS', 'verify'),
+          ],
+          { parameters: { modulusBits: Number(bits) } }
+        ),
+        { type: 'rsa-functional', bits: Number(bits) }
       )
     ),
     'Only the 2048- and 3072-bit variants are instantiated by a product surface (grep of KatKind uses).'
   ),
   kat('aescmac-verify', 'AES-CMAC-256 generate vs SP 800-38B example (testIndex 0)', [
-    mc('aescmac_test#/testGroups/0/tests/0', STD, 'positive', [
-      x('CKM_AES_CMAC', 'sign', 'AES-256'),
-    ]),
+    k(
+      mc('aescmac_test#/testGroups/0/tests/0', STD, 'positive', [
+        x('CKM_AES_CMAC', 'sign', 'AES-256'),
+      ]),
+      { type: 'aescmac-verify' }
+    ),
   ]),
   kat('ecdh-derive', 'ECDH two-party round-trip', [
-    lc('kat.ecdh-derive', 'P-256', RT, 'positive', [
-      x('CKM_EC_KEY_PAIR_GEN', 'generate-key-pair', 'P-256'),
-      x('CKM_ECDH1_DERIVE', 'derive', 'P-256'),
-    ]),
-    lc('kat.ecdh-derive', 'P-384', RT, 'positive', [
-      x('CKM_EC_KEY_PAIR_GEN', 'generate-key-pair', 'P-384'),
-      x('CKM_ECDH1_DERIVE', 'derive', 'P-384'),
-    ]),
+    k(
+      lc('kat.ecdh-derive', 'P-256', RT, 'positive', [
+        x('CKM_EC_KEY_PAIR_GEN', 'generate-key-pair', 'P-256'),
+        x('CKM_ECDH1_DERIVE', 'derive', 'P-256'),
+      ]),
+      { type: 'ecdh-derive', curve: 'P-256' }
+    ),
+    k(
+      lc('kat.ecdh-derive', 'P-384', RT, 'positive', [
+        x('CKM_EC_KEY_PAIR_GEN', 'generate-key-pair', 'P-384'),
+        x('CKM_ECDH1_DERIVE', 'derive', 'P-384'),
+      ]),
+      { type: 'ecdh-derive', curve: 'P-384' }
+    ),
   ]),
+  kat(
+    'pbkdf2-derive',
+    'PBKDF2 derive, c = 4096 (the OpenSSL-oracle case the workbench §17 also runs)',
+    (
+      [
+        ['SHA-256', 'pbkdf2_test#/testGroups/0/tests/1'],
+        ['SHA-512', 'pbkdf2_test#/testGroups/1/tests/1'],
+      ] as const
+    ).map(([prf, caseId]) =>
+      k(mc(caseId, ORACLE, 'positive', [x('CKM_PKCS5_PBKD2', 'derive')]), {
+        type: 'pbkdf2-derive',
+        prf,
+      })
+    ),
+    'The c = 1 cases (tests/0) are not run: the Rust engine refuses iterations < 1000 (open-gaps pbkdf2-min-iterations-divergence).'
+  ),
   kat('hkdf-derive', 'HKDF-SHA256 derive (testIndex 0)', [
-    mc('hkdf_test#/testGroups/0/tests/0', STD, 'positive', [x('CKM_HKDF_DERIVE', 'derive')]),
+    k(mc('hkdf_test#/testGroups/0/tests/0', STD, 'positive', [x('CKM_HKDF_DERIVE', 'derive')]), {
+      type: 'hkdf-derive',
+    }),
   ]),
+  kat(
+    'suci-profile-b',
+    '5G SUCI Profile B (TS 33.501 Annex C.4.4.1): ECDH, X9.63 KDF, AES-CTR, HMAC, scheme output',
+    [
+      k(
+        lc(
+          'kat.suci-profile-b',
+          '3-ecdh',
+          STD,
+          'positive',
+          [x('CKM_ECDH1_DERIVE', 'derive', 'P-256')],
+          {
+            source: TS33501_C441,
+            note: suciNote,
+          }
+        ),
+        { type: 'suci-profile-b', step: '3-ecdh' }
+      ),
+      k(
+        lc(
+          'kat.suci-profile-b',
+          '4-kdf',
+          STD,
+          'positive',
+          [x('CKM_ECDH1_DERIVE', 'derive', 'P-256')],
+          {
+            source: TS33501_C441,
+            note: `${suciNote} ECDH with CKD_SHA256_KDF (ANSI X9.63), SharedInfo = compressed ephemeral key.`,
+          }
+        ),
+        { type: 'suci-profile-b', step: '4-kdf' }
+      ),
+      k(
+        lc(
+          'kat.suci-profile-b',
+          '5-encrypt',
+          STD,
+          'positive',
+          [x('CKM_AES_CTR', 'encrypt', 'AES-128')],
+          {
+            source: TS33501_C441,
+            note: suciNote,
+          }
+        ),
+        { type: 'suci-profile-b', step: '5-encrypt' }
+      ),
+      k(
+        lc('kat.suci-profile-b', '6-mac', STD, 'positive', [x('CKM_SHA256_HMAC_GENERAL', 'sign')], {
+          source: TS33501_C441,
+          note: suciNote,
+        }),
+        { type: 'suci-profile-b', step: '6-mac' }
+      ),
+      k(
+        lc(
+          'kat.suci-profile-b',
+          '7-e2e',
+          STD,
+          'positive',
+          [
+            x('CKM_ECDH1_DERIVE', 'derive', 'P-256'),
+            x('CKM_AES_CTR', 'encrypt', 'AES-128'),
+            x('CKM_SHA256_HMAC_GENERAL', 'sign'),
+          ],
+          {
+            source: TS33501_C441,
+            note: `${suciNote} Compares the Scheme Output; no full SUCI string is published.`,
+          }
+        ),
+        { type: 'suci-profile-b', step: '7-e2e' }
+      ),
+    ],
+    'Steps 1-2 (key import only) exercise no mechanism and are not registered.'
+  ),
 ]
 
 // ── PKCS #11 conformance runner (usePkcs11Conformance.ts) ───────────────────
@@ -1141,8 +1754,53 @@ const CONFORMANCE: RegisteredTest[] = [
 ]
 
 /** Every registered test, in runner order. */
+/**
+ * The skip row each workbench section emits (pushSkip) when the engine does
+ * not advertise its mechanism — read from useAcvpSuite.ts. A recorded skip
+ * counts for every case of that test on that engine, as its own status.
+ */
+const SKIP_ROW_PREFIX: Readonly<Record<string, string>> = {
+  'acvp.01': 'aes',
+  'acvp.02': 'hmac',
+  'acvp.03': 'rsa',
+  'acvp.04': 'ecdsa',
+  'acvp.10': 'sha256',
+  'acvp.10b': 'sha384',
+  'acvp.10c': 'sha512',
+  'acvp.10d': 'sha3-256',
+  'acvp.10e': 'sha3-512',
+  'acvp.11': 'aescbc',
+  'acvp.12': 'aesctr',
+  'acvp.13': 'hmac384',
+  'acvp.14': 'hmac512',
+  'acvp.15': 'ecdsa384',
+  'acvp.16': 'eddsa-sigver',
+  'acvp.16b': 'eddsa448-sigver',
+  'acvp.17': 'pbkdf2',
+  'acvp.18': 'hkdf',
+  'acvp.19': 'aeskw',
+  'acvp.20': 'aeskwp',
+  'acvp.23': 'x25519',
+  'acvp.24': 'x448',
+  'acvp.25': 'x963-sha3-kdf',
+  'acvp.26': 'chacha20',
+  'acvp.27': 'sp800-108',
+  'acvp.29': 'sp800-108-feedback',
+  'acvp.30': 'xmss',
+  'acvp.31': 'hss',
+  'acvp.32': 'ecdsa-k1',
+  'acvp.33': 'ecdsa521',
+  'acvp.34': 'ecdh521',
+  'acvp.35': 'kmac128',
+  'acvp.36': 'rsaoaep',
+}
+const withSkipRows = (tests: RegisteredTest[]): RegisteredTest[] =>
+  tests.map((t) =>
+    SKIP_ROW_PREFIX[t.id] ? { ...t, skipRowId: `${SKIP_ROW_PREFIX[t.id]}-skip-{engine}` } : t
+  )
+
 export const TEST_REGISTRY: RegisteredTest[] = [
-  ...USE_ACVP_SUITE,
+  ...withSkipRows(USE_ACVP_SUITE),
   ...KAT_RUNNER,
   ...MECHANISM_PROBES,
   ...CONFORMANCE,

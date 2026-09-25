@@ -8,8 +8,6 @@ import {
   ChevronDown,
   ChevronRight,
   Loader2,
-  CheckCircle,
-  XCircle,
   AlertCircle,
   Terminal,
   ShieldCheck,
@@ -24,14 +22,17 @@ import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { ValidationDisclaimer, KatEvidenceChip } from '@/components/shared/ValidationDisclaimer'
-import { runKAT } from '@/utils/katRunner'
+import { runKAT, advertisedMechanisms, summarizeKatResults } from '@/utils/katRunner'
 import type { KatTestSpec, KATResult, SlhDsaVariant } from '@/utils/katRunner'
 import {
   KAT_EVIDENCE_META,
   evidenceForKind,
+  evidenceRecordsForKind,
   katActionLabel,
-  vectorFileForKind,
+  sourceForKind,
 } from '@/utils/katEvidence'
+import { CaseEvidenceBadge } from '@/components/shared/CaseEvidenceBadge'
+import { KatStatusBadge } from '@/components/shared/KatStatusBadge'
 import type { UseHSMResult } from '@/hooks/useHSM'
 import {
   type KATTileConfig,
@@ -50,9 +51,25 @@ function levelLabel(n: number): string {
   return n <= 5 ? `Level ${n}` : `${n}-bit`
 }
 
+// ── Run summary: skips are their own count, never passes ───────────────────
+
+const KatCounts: React.FC<{ counts: ReturnType<typeof summarizeKatResults> }> = ({ counts }) => {
+  const ran = counts.total - counts.skip
+  const ok = counts.fail + counts.error === 0
+  return (
+    <span data-testid="kat-counts" className={ok ? 'text-status-success' : 'text-status-error'}>
+      {counts.pass}/{ran} passed
+      {counts.skip > 0 && <span className="text-status-warning"> · {counts.skip} not tested</span>}
+    </span>
+  )
+}
+
 // ── Results table (shared by all tiles) ─────────────────────────────────────
 
-const ResultsTable: React.FC<{ results: KATResult[] }> = ({ results }) => (
+const ResultsTable: React.FC<{ results: KATResult[]; specs: readonly KatTestSpec[] }> = ({
+  results,
+  specs,
+}) => (
   <div className="overflow-x-auto rounded-lg border border-border">
     <table className="w-full text-xs text-left">
       <thead>
@@ -71,20 +88,19 @@ const ResultsTable: React.FC<{ results: KATResult[] }> = ({ results }) => (
               {r.useCase}
             </td>
             <td className="px-3 py-2 font-mono text-foreground">{r.algorithm}</td>
-            <td className="px-3 py-2">
-              <KatEvidenceChip evidence={r.evidence} />
+            <td className="px-3 py-2 min-w-[9rem]">
+              {(() => {
+                const spec = specs.find((s) => s.id === r.id)
+                const records = spec ? evidenceRecordsForKind(spec.kind) : []
+                return records.length > 0 ? (
+                  <CaseEvidenceBadge records={records} />
+                ) : (
+                  <KatEvidenceChip evidence={r.evidence} />
+                )
+              })()}
             </td>
             <td className="px-3 py-2">
-              <span
-                className={
-                  r.status === 'pass'
-                    ? 'inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-status-success/10 text-status-success'
-                    : 'inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-status-error/10 text-status-error'
-                }
-              >
-                {r.status === 'pass' ? <CheckCircle size={10} /> : <XCircle size={10} />}
-                {r.status}
-              </span>
+              <KatStatusBadge status={r.status} />
             </td>
             <td className="px-3 py-2 text-muted-foreground">{r.details}</td>
           </tr>
@@ -107,13 +123,15 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
   const [error, setError] = useState<string | null>(null)
   const [resultsOpen, setResultsOpen] = useState(false)
 
-  const passCount = results.filter((r) => r.status === 'pass').length
+  const counts = summarizeKatResults(results)
   const done = results.length === config.specs.length && !running
+  const specs = config.specs
   // Only a spec that actually reads a NIST ACVP-Server file earns a link to
   // one — and it is that file's own pinned upstream URL, not a folder guess.
   const referenceSampleUrl = config.specs
-    .map((s) => vectorFileForKind(s.kind))
-    .find((f) => f?.producer?.startsWith('NIST ACVP-Server') && f.sourceUrl)?.sourceUrl
+    .filter((s) => evidenceForKind(s.kind) === 'nist-acvp-reference-sample')
+    .map((s) => sourceForKind(s.kind)?.url)
+    .find(Boolean)
 
   const handleRun = useCallback(async () => {
     setRunning(true)
@@ -124,9 +142,10 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
       if (!hsm.isReady) await hsm.initialize()
       const M = hsm.moduleRef.current!
       const hSession = hsm.hSessionRef.current
+      const advertised = advertisedMechanisms(M, hsm.slotRef.current)
       const out: KATResult[] = []
       for (const spec of config.specs) {
-        const r = await runKAT(M, hSession, spec)
+        const r = await runKAT(M, hSession, spec, { advertised })
         out.push(r)
         setResults([...out])
       }
@@ -224,21 +243,13 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
             <span>Results</span>
             {done && (
               <span className="ml-auto text-xs text-muted-foreground">
-                {passCount === results.length ? (
-                  <span className="text-status-success">
-                    {passCount}/{results.length} passed
-                  </span>
-                ) : (
-                  <span className="text-status-error">
-                    {passCount}/{results.length} passed
-                  </span>
-                )}
+                <KatCounts counts={counts} />
               </span>
             )}
           </Button>
           {resultsOpen && (
             <div className="mt-2">
-              <ResultsTable results={results} />
+              <ResultsTable results={results} specs={specs} />
             </div>
           )}
         </div>
@@ -267,11 +278,18 @@ const SLHDSATile: React.FC<{ hsm: UseHSMResult }> = ({ hsm }) => {
         referenceUrl: FIPS_205_URL,
         kind: { type: 'slhdsa-functional' as const, variant },
       },
+      {
+        id: `kat-algo-slhdsa-${variant}-sigver`,
+        useCase: `SLH-DSA-${variant} verify of the NIST sigGen output`,
+        standard: 'FIPS 205',
+        referenceUrl: FIPS_205_URL,
+        kind: { type: 'slhdsa-sigver' as const, variant },
+      },
     ],
     [variant]
   )
 
-  const passCount = results.filter((r) => r.status === 'pass').length
+  const counts = summarizeKatResults(results)
   const done = results.length === specs.length && !running
 
   const handleRun = useCallback(async () => {
@@ -283,9 +301,10 @@ const SLHDSATile: React.FC<{ hsm: UseHSMResult }> = ({ hsm }) => {
       if (!hsm.isReady) await hsm.initialize()
       const M = hsm.moduleRef.current!
       const hSession = hsm.hSessionRef.current
+      const advertised = advertisedMechanisms(M, hsm.slotRef.current)
       const out: KATResult[] = []
       for (const spec of specs) {
-        const r = await runKAT(M, hSession, spec)
+        const r = await runKAT(M, hSession, spec, { advertised })
         out.push(r)
         setResults([...out])
       }
@@ -338,19 +357,15 @@ const SLHDSATile: React.FC<{ hsm: UseHSMResult }> = ({ hsm }) => {
         </div>
         <div className="flex justify-between">
           <span className="text-muted-foreground">Tests</span>
-          <span className="text-foreground text-xs">
-            Sign+verify round-trip{' '}
-            <span className="text-muted-foreground">
-              ({KAT_EVIDENCE_META['functional-round-trip'].short})
-            </span>
-          </span>
-        </div>
-        <div className="flex justify-between gap-3">
-          <span className="text-muted-foreground shrink-0">Note</span>
-          <span className="text-muted-foreground text-xs italic text-right">
-            No external expected value here. One sigGen-derived NIST ACVP-Server positive
-            verification per parameter set runs in the Playground&apos;s Cryptographic Validation
-            Workbench.
+          <span className="text-foreground text-xs text-right">
+            {specs.map((sp, i) => (
+              <span key={sp.id} className="block">
+                {i === 0 ? 'Sign+verify round-trip' : 'Verify of the NIST sigGen output'}{' '}
+                <span className="text-muted-foreground">
+                  ({KAT_EVIDENCE_META[evidenceForKind(sp.kind)].short})
+                </span>
+              </span>
+            ))}
           </span>
         </div>
       </div>
@@ -390,21 +405,13 @@ const SLHDSATile: React.FC<{ hsm: UseHSMResult }> = ({ hsm }) => {
             <span>Results</span>
             {done && (
               <span className="ml-auto text-xs text-muted-foreground">
-                {passCount === results.length ? (
-                  <span className="text-status-success">
-                    {passCount}/{results.length} passed
-                  </span>
-                ) : (
-                  <span className="text-status-error">
-                    {passCount}/{results.length} passed
-                  </span>
-                )}
+                <KatCounts counts={counts} />
               </span>
             )}
           </Button>
           {resultsOpen && (
             <div className="mt-2">
-              <ResultsTable results={results} />
+              <ResultsTable results={results} specs={specs} />
             </div>
           )}
         </div>

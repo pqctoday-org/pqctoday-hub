@@ -85,8 +85,8 @@
     },
     {
       "id": "run-results-partial",
-      "title": "Run results recorded only for the workbench suite, on the wasm engines, in Node",
-      "detail": "src/data/validation/run-results/ holds one recorded run of useAcvpSuite (all categories, both engines) executed in Node against the shipped .wasm bytes. katRunner, the mechanism probes and the conformance cases have no recorded results, so their cells are never reported as passed and C++/Rust parity is only established where a useAcvpSuite case passed on both. A browser-host run and a signed evidence bundle (H-1, H-7) do not exist yet.",
+      "title": "Run results recorded only for the workbench and katRunner, on the wasm engines, in Node",
+      "detail": "src/data/validation/run-results/ holds one recorded run of useAcvpSuite (all categories, both engines) and one of every registered katRunner case (both engines asserted, the Rust engine recorded — the engine the KAT surfaces use), executed in Node against the shipped .wasm bytes. The mechanism probes and the conformance cases have no recorded results, so their cells are never reported as passed. A browser-host run and a signed evidence bundle (H-1, H-7) do not exist yet.",
       "planItem": "C-4 / H-1 / H-7",
       "owner": "unassigned",
       "status": "open",
@@ -131,20 +131,65 @@
     {
       "id": "other-surfaces-not-registered",
       "title": "Some test surfaces are not in the test registry",
-      "detail": "Not registered: the katRunner suci-profile-b chain (3GPP TS 33.501 Annex C), Learn-module demos outside KatValidationPanel, and the *.local.test.ts engine suites (local gate only, no committed results). Their evidence does not appear in this matrix.",
+      "detail": "Not registered: Learn-module demos outside KatValidationPanel (the SUCI flow's own step-by-step tool among them) and the *.local.test.ts engine suites that are not run-results recorders. Their evidence does not appear in this matrix. (The katRunner suci-profile-b chain is registered since 2026-09-24: steps 3-7 against TS 33.501 Annex C.4.4.1.)",
       "planItem": "C-2",
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ + Rust"
     },
     {
-      "id": "katrunner-failing-kinds",
-      "title": "katRunner kinds that fail on the engine they run on",
-      "detail": "Observed 2026-09-24 in a local Node run of both shipped wasm engines: aescbc-decrypt (CKM_AES_CBC_PAD applied to a raw NIST CBC vector: Rust CKR_FUNCTION_FAILED, C++ 0x40), hmac-verify ×3 and hmac-generate ×3 (non-GENERAL CKM_SHA*_HMAC against 160-bit truncated NIST MACs: fail on both), pbkdf2-derive (Rust CKR_ARGUMENTS_BAD; C++ passes), aes-kwp-wrap (Rust C_CreateObject 0x13; C++ C_WrapKey CKR_ARGUMENTS_BAD). These run on the /algorithms KAT view and Learn KatValidationPanel (Rust engine). They are NOT registered as evidence in this matrix.",
-      "planItem": "A-3 / E",
+      "id": "rust-mlkem-no-key-input-checks",
+      "title": "Rust engine accepts all 6 invalid NIST ML-KEM encapsulation/decapsulation keys",
+      "detail": "The NIST ACVP ML-KEM encapDecap VAL key-check cases (mlkem_encapdecap_val_test: modified H, ek values too large) are accepted by the Rust engine: its C_EncapsulateKey / C_DecapsulateKey paths perform no FIPS 203 §7.2 encapsulation-key or §7.3 decapsulation-key input checks (bundle 417c47a2; unchanged on pqctoday-hsm origin/main). The workbench rows stay failing on Rust (acvp.07b.keycheck). Engine defect — not patched in the hub.",
+      "planItem": "D1-5",
       "owner": "unassigned",
       "status": "open",
-      "scope": "Rust (katRunner surfaces); also C++"
+      "scope": "Rust (wasm)"
+    },
+    {
+      "id": "cpp-hashslhdsa-double-wrap",
+      "title": "C++ HashSLH-DSA wraps M′ twice — valid NIST pre-hash signatures rejected",
+      "detail": "OSSLSLHDSA.cpp (bundle 7795799b, lines ~341-402) builds M′ = 0x01 ‖ len(ctx) ‖ ctx ‖ OID ‖ PH(M) itself and then passes it to OpenSSL's pure SLH-DSA via EVP_DigestSign together with OSSL_SIGNATURE_PARAM_CONTEXT_STRING, so OpenSSL wraps it again as a pure message: all 5 valid NIST pre-hash sigVer signatures are rejected and deterministic pre-hash signatures differ at byte 0. Unchanged on pqctoday-hsm origin/main. Rows stay failing on C++ (acvp.09c). Engine defect — not patched in the hub.",
+      "planItem": "D3-3",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)"
+    },
+    {
+      "id": "mlkem-wrong-length-return-codes",
+      "title": "ML-KEM wrong-length inputs: return codes differ from PKCS #11 v3.2 and between engines",
+      "detail": "Wrong-length ciphertext at C_DecapsulateKey: Rust returns CKR_ENCRYPTED_DATA_INVALID (not in the return-value list of PKCS #11 v3.2 §5.18.9), C++ returns CKR_WRAPPED_KEY_LEN_RANGE. The C++ engine accepts a decapsulation key 1 byte short at C_CreateObject; both engines accept a short encapsulation key. The boundary rows (acvp.07b.boundary) pin each engine's observed code, so a pass there means 'behaves as pinned', not 'conforms'.",
+      "planItem": "D1-5 / G-8",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust (wasm)"
+    },
+    {
+      "id": "pbkdf2-min-iterations-divergence",
+      "title": "PBKDF2 iteration floor differs between engines (Rust refuses c < 1000)",
+      "detail": "The Rust engine refuses CKM_PKCS5_PBKD2 with iterations < 1000 (rust/src/ffi.rs:11125 at 417c47a2: CKR_ARGUMENTS_BAD, a code that does not name the parameter); the C++ engine accepts c = 1 (SoftHSM_keygen.cpp ~3012-3030 at 7795799b). A policy divergence, not an algorithm error. The c = 1 oracle cases (pbkdf2_test tests/0) are therefore not registered; katRunner and the workbench run the c = 4096 cases, which pass on both engines.",
+      "planItem": "G-9",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ vs Rust (wasm)"
+    },
+    {
+      "id": "ecdsa-p521-cpp-ec-point-der",
+      "title": "ECDSA P-521 NIST sample failed on C++ — hub CKA_EC_POINT encoding (fixed hub-side)",
+      "detail": "Root cause (triage 2026-09-24): hsm_importECPublicKey wrote the DER OCTET STRING length of the 133-byte P-521 point as the single byte 0x85, which DER reads as '5 length octets follow'; the C++ engine parsed a garbage CKA_EC_POINT and rejected the NIST ACVP-Server ECDSA-SigVer-FIPS186-5 sample (workbench §33), while Rust passed because it reads the raw CKA_VALUE copy. Hub adapter bug, not an engine defect. Fixed by the X.690 long-form length (softhsm/helpers derOctetString); the re-recorded run shows the case passing on both engines. Kept on record until the release freeze re-captures evidence on the browser host.",
+      "planItem": "E (ECDSA) / J-7",
+      "owner": "unassigned",
+      "status": "in-progress",
+      "scope": "C++ (wasm) — hub adapter"
+    },
+    {
+      "id": "suci-inject-testkey-cpp",
+      "title": "SUCI key-injection helper is rejected by the C++ engine",
+      "detail": "hsm_injectTestKey unwraps the raw EC scalar with C_UnwrapKeyAuthenticated using a template that carries CKA_EC_PARAMS; the C++ engine rejects it with CKR_ATTRIBUTE_READ_ONLY (the same unwrap without CKA_EC_PARAMS succeeds). katRunner suci-profile-b steps 1-2 (import only, not registered) therefore error on C++; steps 3-7 import with C_CreateObject and pass on both engines. The KAT surfaces run the Rust engine. Hub helper limitation.",
+      "planItem": "A-3",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm) — hub helper"
     }
   ]
 }

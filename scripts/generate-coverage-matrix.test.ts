@@ -9,7 +9,7 @@ import {
   loadInputs,
   renderOutputs,
 } from './generate-coverage-matrix'
-import { buildCoverageMatrix, ENGINES } from '../src/data/validation/coverageModel'
+import { buildCoverageMatrix, caseKeyOf, ENGINES } from '../src/data/validation/coverageModel'
 import { TEST_REGISTRY } from '../src/data/validation/testRegistry'
 import { VALIDATION_DISCLAIMER } from '../src/data/validationDisclaimer'
 
@@ -57,12 +57,26 @@ describe('generate-coverage-matrix (committed inputs)', () => {
     expect(files[`${PUBLIC_DIR_REL}/coverage-matrix.html`]).not.toMatch(/<script/i)
   })
 
-  it('the recorded C++ ECDSA P-521 failure is an open gap, never a pass', () => {
+  it('the ECDSA P-521 NIST sample passes on both engines since the hub DER fix (was a recorded C++ fail)', () => {
     const r = matrix.rows.find((x) => x.key === 'CKM_ECDSA_SHA512|verify|P-521|*')!
-    expect(r.engines.cpp.run).toEqual({ pass: 0, fail: 1 })
-    expect(r.engines.rust.run).toEqual({ pass: 1, fail: 0 })
-    expect(r.parity.positive).toBe('divergent')
-    expect(matrix.openGaps.some((g) => g.id.startsWith('recorded-fail:acvp.33#'))).toBe(true)
+    expect(r.engines.cpp.run).toEqual({ pass: 1, fail: 0 })
+    // Rust: the workbench case and the Algorithms (katRunner) case, both passing.
+    expect(r.engines.rust.run).toEqual({ pass: 2, fail: 0 })
+    expect(r.parity.positive).toBe('parity')
+    expect(matrix.openGaps.some((g) => g.id.startsWith('recorded-fail:acvp.33#'))).toBe(false)
+  })
+
+  it('every recorded fail is a documented engine defect and becomes an open gap', () => {
+    const fails = (inputs.runResults ?? []).filter((r) => r.status === 'fail')
+    expect(fails.length).toBeGreaterThan(0)
+    for (const f of fails) {
+      expect(f.registryCase, f.registryCase).toMatch(
+        /^acvp\.(07b\.keycheck|09c\.(sigver|siggen-det))#/
+      )
+      expect(
+        matrix.openGaps.some((g) => g.id === `recorded-fail:${f.registryCase}:${f.engine}`)
+      ).toBe(true)
+    }
   })
 
   it('native and hardware are never counted as pass', () => {
@@ -73,8 +87,13 @@ describe('generate-coverage-matrix (committed inputs)', () => {
     }
   })
 
-  it('does not register katRunner kinds observed to fail on the engine that runs them', () => {
+  it('registers the katRunner kinds fixed 2026-09-24, each with a recorded pass (katRunner.engines.local.test.ts)', () => {
     const ids = TEST_REGISTRY.map((t) => t.id)
+    const recorded = new Map(
+      (inputs.runResults ?? [])
+        .filter((r) => r.registryCase.startsWith('kat.'))
+        .map((r) => [`${r.registryCase}|${r.engine}`, r.status])
+    )
     for (const k of [
       'aescbc-decrypt',
       'hmac-verify',
@@ -82,7 +101,11 @@ describe('generate-coverage-matrix (committed inputs)', () => {
       'pbkdf2-derive',
       'aes-kwp-wrap',
     ]) {
-      expect(ids).not.toContain(`kat.${k}`)
+      expect(ids).toContain(`kat.${k}`)
+      const t = TEST_REGISTRY.find((x) => x.id === `kat.${k}`)!
+      for (const c of t.cases) {
+        expect(recorded.get(`kat.${k}#${caseKeyOf(c)}|rust`), `kat.${k}`).toBe('pass')
+      }
     }
   })
 
