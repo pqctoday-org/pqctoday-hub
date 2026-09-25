@@ -16,5 +16,19 @@
     "expectedDrop": 583,
     "reason": "2026-09-24 certification-data repair (product-certification plan r2; user rules D-FIPS and D-SRC): 562 FIPS 140-2 certificates removed (FIPS 140-3 only), 19 duplicate EUCC ids folded into their ENISA certificate, 1 EUCC certificate ENISA no longer lists, 1 CAVP validation (A8348) NIST no longer lists. Every id and reason is in pqctoday-priv public/data/compliance-data.exclusions.json.",
     "until": "2026-10-09"
+  },
+  "emptiedOk": {
+    "timeline": {
+      "SourceDate": {
+        "expectedEmptied": 23,
+        "reason": "2026-09-25 timeline review r2: Claude + Codex both found the cited document gives no publication date for these rows; the unsupported dates were blanked (under-assertion, user decision 2026-09-22). Row list: pqctoday-priv maintenance/lineage/timeline-review/csv-changes.jsonl",
+        "until": "2026-10-09"
+      },
+      "OrgFullName": {
+        "expectedEmptied": 11,
+        "reason": "2026-09-25 timeline review r2: both reviewers found the cited document does not name the issuing organisation's full name; blanked rather than asserted",
+        "until": "2026-10-09"
+      }
+    }
   }
 }

@@ -54,8 +54,9 @@ describe('moscaClock', () => {
   })
 
   // Deadlines are DERIVED from the timeline CSV (the is_sim_deadline-tagged row),
-  // not hardcoded. The 10 tagged jurisdictions resolve; SG (guidance-only, no
-  // tagged row) falls back to the Q-Day anchor.
+  // not hardcoded. The 10 REVIEWED tagged jurisdictions resolve (AU and KR were
+  // settled by the user on 2026-09-25 after the Claude + Codex review); SG
+  // (guidance-only, no tagged row) falls back to the Q-Day anchor.
   it('derives per-country deadlines from the timeline CSV (tagged rows)', () => {
     for (const c of ['US', 'DE', 'FR', 'UK', 'EU', 'CA', 'KR', 'JP', 'AU', 'IN'] as const) {
       expect(typeof COUNTRY_DEADLINE_YEAR[c], `${c} deadline`).toBe('number')

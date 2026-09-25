@@ -6,8 +6,13 @@
  * evidence. A row passes when at least one of the following holds:
  *
  *   (a) its `local_file` exists on disk under public/timeline/
- *   (b) it appears in `public/timeline/evidence/manifest.json` with a healthy
- *       download_status (`ok`, `paywall`, or `skipped`)
+ *   (b) it has an entry in `public/timeline/manifest.json` — the lineage
+ *       manifest, keyed by refId = event_id — whose status is `downloaded`,
+ *       `recaptured` or `paywall` and which carries a sha256. (Repointed
+ *       2026-09-24, timeline remediation r2 T-E1: this audit used to read the
+ *       older public/timeline/evidence/manifest.json — composite-keyed, no
+ *       hashes, built from a different CSV snapshot than the one it audited.
+ *       That file is deleted, as threats' was on 2026-08-21.)
  *   (c) its SourceUrl is listed in `public/timeline/skip-list.json`
  *       (operator-acknowledged: manually-verified real source, auto-fetch
  *       blocked — e.g. WAF or TLS incompatibility)
@@ -26,7 +31,6 @@
  */
 
 import { readFileSync, existsSync, readdirSync } from 'fs'
-import { createHash } from 'crypto'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import Papa from 'papaparse'
@@ -63,7 +67,7 @@ function findLatestTimelineCsv(): string {
 }
 
 const CSV_PATH = findLatestTimelineCsv()
-const MANIFEST_PATH = join(ROOT, 'public/timeline/evidence/manifest.json')
+const MANIFEST_PATH = join(ROOT, 'public/timeline/manifest.json')
 const SKIP_LIST_PATH = join(ROOT, 'public/timeline/skip-list.json')
 
 const JSON_MODE = process.argv.slice(2).includes('--json')
@@ -81,25 +85,15 @@ interface RawTimelineRow {
 type DownloadStatus = 'ok' | 'paywall' | 'error' | 'missing' | 'no_url' | 'skipped'
 
 interface TimelineManifestEntry {
-  row_key: string
-  country: string
-  org: string
-  title: string
-  start_year: number
-  source_url: string
-  csv_local_file: string | null
-  resolved_local_file: string | null
-  download_status: DownloadStatus
-  http_status: number | null
-  error_message: string | null
+  refId?: string
+  url?: string
+  status?: string
+  sha256?: string
+  file?: string
 }
 
 interface TimelineManifest {
-  generated_at: string
-  source_csv: string
-  total_rows: number
-  active_rows: number
-  status_counts: Record<DownloadStatus, number>
+  csv?: string
   entries: TimelineManifestEntry[]
 }
 
@@ -109,7 +103,7 @@ interface AuditSummary {
   rows_with_resolved_local_file: number
   status_counts: Record<DownloadStatus, number>
   problem_rows: Array<{
-    row_key: string
+    event_id: string
     country: string
     org: string
     title: string
@@ -119,34 +113,11 @@ interface AuditSummary {
   passed: boolean
 }
 
-// --- row_key reproduction (must match scripts/download-timeline-evidence.ts) ---
-
-function slug(input: string): string {
-  return input
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
-
-function shortHash(input: string): string {
-  return createHash('sha256').update(input).digest('hex').slice(0, 8)
-}
-
-function rowKey(
-  country: string,
-  org: string,
-  startYear: number,
-  title: string,
-  url: string
-): string {
-  return `TL-${slug(country)}-${slug(org)}-${startYear}-${shortHash(title + url)}`
-}
-
-// Acceptable = ok | paywall | skipped. paywall is an acceptable proof-of-real-source
-// even when access is locked. skipped means the operator added the URL to
-// public/timeline/skip-list.json (manually-verified real source, but auto-fetch
-// blocked — e.g. WAF or TLS incompatibility); the skip-list entry is the audit trail.
-const ACCEPTABLE: ReadonlySet<DownloadStatus> = new Set(['ok', 'paywall', 'skipped'])
+// Lineage-manifest statuses that prove a real, hashed capture. paywall is an
+// acceptable proof-of-real-source even when access is locked. A skip-list entry
+// (check (c)) is the audit trail for a manually verified source that auto-fetch
+// cannot reach (WAF, TLS incompatibility).
+const HEALTHY_MANIFEST: ReadonlySet<string> = new Set(['downloaded', 'recaptured', 'paywall'])
 
 function fail(message: string): never {
   if (JSON_MODE) {
@@ -167,7 +138,8 @@ function main(): void {
   if (!existsSync(CSV_PATH)) fail(`CSV not found: ${CSV_PATH}`)
   if (!existsSync(MANIFEST_PATH)) {
     fail(
-      `Manifest not found: ${MANIFEST_PATH}\n` + `Run \`npm run download:timeline-evidence\` first.`
+      `Manifest not found: ${MANIFEST_PATH}\n` +
+        `Rebuild it: python3 maintenance/lineage/rebuild_manifest.py --source timeline (pqctoday-priv).`
     )
   }
 
@@ -185,13 +157,8 @@ function main(): void {
   }
 
   const manifest: TimelineManifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf-8'))
-  const byRowKey = new Map<string, TimelineManifestEntry>(
-    manifest.entries.map((e) => [e.row_key, e])
-  )
-  const bySourceUrl = new Map<string, TimelineManifestEntry>()
-  for (const e of manifest.entries) {
-    if (e.source_url && !bySourceUrl.has(e.source_url)) bySourceUrl.set(e.source_url, e)
-  }
+  const byRefId = new Map<string, TimelineManifestEntry>()
+  for (const e of manifest.entries) if (e.refId) byRefId.set(e.refId, e)
 
   const skipUrls: ReadonlySet<string> = existsSync(SKIP_LIST_PATH)
     ? new Set(Object.keys(JSON.parse(readFileSync(SKIP_LIST_PATH, 'utf-8'))))
@@ -214,9 +181,8 @@ function main(): void {
     const org = (row.OrgName ?? '').trim()
     const title = (row.Title ?? '').trim()
     const url = (row.SourceUrl ?? '').trim()
-    const startYear = parseInt(row.StartYear, 10) || 0
     const localFile = (row.local_file ?? '').trim()
-    const key = rowKey(country, org, startYear, title, url)
+    const key = (row.event_id ?? '').trim()
 
     if (localFile) rowsWithCsvLocalFile++
 
@@ -224,10 +190,10 @@ function main(): void {
     const onDisk = !!localFile && existsSync(localFilePath(localFile))
     if (onDisk) rowsOnDisk++
 
-    // (b) manifest entry with a healthy status (join by row_key, fall back to
-    //     source_url so cosmetic title edits don't orphan existing evidence)
-    const entry = byRowKey.get(key) ?? (url ? bySourceUrl.get(url) : undefined)
-    const inManifestHealthy = !!entry && ACCEPTABLE.has(entry.download_status)
+    // (b) lineage-manifest entry for this event_id: a healthy status + a hash
+    const entry = byRefId.get(key)
+    const inManifestHealthy =
+      !!entry && HEALTHY_MANIFEST.has(entry.status ?? '') && !!(entry.sha256 ?? '').trim()
 
     // (c) operator-acknowledged skip-list entry
     const inSkipList = !!url && skipUrls.has(url)
@@ -235,11 +201,13 @@ function main(): void {
     const rowStatus: DownloadStatus = onDisk
       ? 'ok'
       : inManifestHealthy
-        ? entry!.download_status
+        ? entry!.status === 'paywall'
+          ? 'paywall'
+          : 'ok'
         : inSkipList
           ? 'skipped'
           : entry
-            ? entry.download_status
+            ? 'error'
             : url
               ? 'missing'
               : 'no_url'
@@ -247,16 +215,14 @@ function main(): void {
 
     if (!onDisk && !inManifestHealthy && !inSkipList) {
       problems.push({
-        row_key: key,
+        event_id: key,
         country,
         org,
         title,
         download_status: rowStatus,
-        error_message:
-          entry?.error_message ??
-          (entry
-            ? null
-            : 'not on disk, not in evidence manifest, not in skip-list — run `npm run download:timeline-evidence`'),
+        error_message: entry
+          ? `manifest entry status "${entry.status ?? ''}"${entry.sha256 ? '' : ', no sha256'}`
+          : 'not on disk, not in public/timeline/manifest.json, not in skip-list — fetch the evidence, then rebuild the manifest',
       })
     }
   }
@@ -301,7 +267,7 @@ function main(): void {
   console.log(`First ${Math.min(20, problems.length)} problem rows (of ${problems.length}):`)
   for (const p of problems.slice(0, 20)) {
     console.log(
-      `  [${p.download_status.padEnd(7)}] ${p.row_key} — ${p.country} / ${p.org} — ${p.title}`
+      `  [${p.download_status.padEnd(7)}] ${p.event_id} — ${p.country} / ${p.org} — ${p.title}`
     )
     if (p.error_message) console.log(`            ${p.error_message}`)
   }

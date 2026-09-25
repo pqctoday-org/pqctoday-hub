@@ -6,6 +6,7 @@ import {
   type LibraryEnrichment,
 } from './libraryEnrichmentData'
 import { libraryData } from './libraryData'
+import { TIMELINE_LABEL_ALIASES } from './timelineLabelAliases.generated'
 
 export type { LibraryEnrichment, EnrichmentLookup }
 export { hasSubstantiveEnrichment }
@@ -61,4 +62,27 @@ export const timelineEnrichments: EnrichmentLookup = loadTimelineEnrichments()
  */
 export function getTimelineEnrichmentKey(countryName: string, org: string, title: string): string {
   return `${countryName}:${org} — ${title}`
+}
+
+/**
+ * The enrichment for a timeline row: by its current label first, then by any
+ * label the same event_id carried in an earlier CSV generation. Enrichment
+ * sections are keyed by label, so a title edit used to orphan a row's
+ * enrichment (timeline remediation r2 W-B).
+ */
+export function getTimelineEnrichment(
+  eventId: string | undefined,
+  countryName: string,
+  org: string,
+  title: string
+): LibraryEnrichment | undefined {
+  const direct = timelineEnrichments[getTimelineEnrichmentKey(countryName, org, title)]
+  if (direct || !eventId) return direct
+  // eslint-disable-next-line security/detect-object-injection
+  for (const label of TIMELINE_LABEL_ALIASES[eventId] ?? []) {
+    // eslint-disable-next-line security/detect-object-injection
+    const hit = timelineEnrichments[label]
+    if (hit) return hit
+  }
+  return undefined
 }

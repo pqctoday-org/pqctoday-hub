@@ -10,6 +10,7 @@
  */
 import fs from 'fs'
 import path from 'path'
+import { TIMELINE_LABEL_ALIASES } from '../src/data/timelineLabelAliases.generated'
 import { createHash } from 'crypto'
 import Papa from 'papaparse'
 import { validateCorpusDeepLinks } from '../src/services/search/deepLinkGrammar'
@@ -275,6 +276,22 @@ function isInactiveRow(rows: string[][], i: number): boolean {
   return v === 'deprecated' || v === 'obsolete'
 }
 
+// Timeline rows whose capital-S `Status` is unreviewed are withheld from every
+// public surface, the assistant's corpus included (timelineReviewPolicy.json,
+// timeline remediation r2 T-B1, 2026-09-24).
+const TIMELINE_UNREVIEWED: ReadonlySet<string> = new Set(
+  (
+    JSON.parse(
+      fs.readFileSync(path.join(DATA_DIR, 'timelineReviewPolicy.json'), 'utf-8')
+    ) as { unreviewedStatuses: string[] }
+  ).unreviewedStatuses.map((s) => s.trim().toLowerCase())
+)
+function isUnreviewedTimelineRow(rows: string[][], i: number): boolean {
+  const idx = rows[0]?.indexOf('Status') ?? -1
+  if (idx === -1) return false
+  return TIMELINE_UNREVIEWED.has((rows[i]?.[idx] ?? '').trim().toLowerCase())
+}
+
 function isInactiveRecord(rec: Record<string, string>): boolean {
   const v = (rec.status ?? '').trim().toLowerCase()
   return v === 'deprecated' || v === 'obsolete'
@@ -298,25 +315,34 @@ function getLibraryRefIds(): Set<string> {
 }
 
 /**
- * Load all ACTIVE timeline enrichment keys ("{country}:{orgName} — {title}").
- * Used to keep doc-enrichment chunks in sync with the Gantt: deprecated rows
- * and stale-key orphan enrichments (present in older dated md files) are
- * excluded, mirroring the library safeguard in processDocumentEnrichments().
+ * Load all ACTIVE timeline enrichment keys ("{country}:{orgName} — {title}"),
+ * each mapped to the row's CURRENT key. Used to keep doc-enrichment chunks in
+ * sync with the Gantt: deprecated rows and stale-key orphan enrichments
+ * (present in older dated md files) are excluded, mirroring the library
+ * safeguard in processDocumentEnrichments(). A retitled row's earlier labels
+ * (r2 W-B) map to its current key so its enrichment is emitted under the
+ * label the trust scorer and the Gantt know.
  */
-let _timelineRefIds: Set<string> | null = null
-function getTimelineRefIds(): Set<string> {
+let _timelineRefIds: Map<string, string> | null = null
+function getTimelineRefIds(): Map<string, string> {
   if (_timelineRefIds) return _timelineRefIds
-  _timelineRefIds = new Set<string>()
+  _timelineRefIds = new Map<string, string>()
   const file = findLatestCSV('timeline_')
   if (file) {
     const rows = readCSV(file)
     for (let i = 1; i < rows.length; i++) {
-      if (isInactiveRow(rows, i)) continue
+      if (isInactiveRow(rows, i) || isUnreviewedTimelineRow(rows, i)) continue
       const row = rows[i]
       const country = sanitize(row[0])
       const orgName = sanitize(row[2])
       const title = sanitize(row[9])
-      if (country && title) _timelineRefIds.add(`${country}:${orgName} — ${title}`)
+      if (!country || !title) continue
+      const current = `${country}:${orgName} — ${title}`
+      _timelineRefIds.set(current, current)
+      const eid = (row[rows[0].indexOf('event_id')] ?? '').trim()
+      // eslint-disable-next-line security/detect-object-injection
+      for (const label of (eid && TIMELINE_LABEL_ALIASES[eid]) || [])
+        if (!_timelineRefIds.has(label)) _timelineRefIds.set(label, current)
     }
   }
   return _timelineRefIds
@@ -658,7 +684,7 @@ function processTimeline(): RAGChunk[] {
 
   // Skip header row
   for (let i = 1; i < rows.length; i++) {
-    if (isInactiveRow(rows, i)) continue
+    if (isInactiveRow(rows, i) || isUnreviewedTimelineRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 12) continue
 
@@ -689,7 +715,13 @@ function processTimeline(): RAGChunk[] {
     // Augment with enrichment dimensions when available
     // Enrichment key format matches the Python script: "{country}:{orgName} — {title}"
     const enrichKey = `${sanitize(country)}:${sanitize(orgName)} — ${sanitize(title)}`
-    const enrich = enrichLookup.get(enrichKey)
+    const eventId = (row[rows[0].indexOf('event_id')] ?? '').trim()
+    const enrich =
+      enrichLookup.get(enrichKey) ??
+      // eslint-disable-next-line security/detect-object-injection
+      ((eventId && TIMELINE_LABEL_ALIASES[eventId]) || [])
+        .map((l) => enrichLookup.get(l))
+        .find((e) => e !== undefined)
     const enrichMetadata: Record<string, string> = {}
     if (enrich) {
       const skip = new Set(['None detected', 'Not specified', 'See document for details.'])
@@ -3713,15 +3745,26 @@ function processDocumentEnrichments(): RAGChunk[] {
       .sort()
       .reverse()[0]
 
-    for (const [refId, fields] of enrichLookup) {
+    const emittedTimelineKeys = new Set<string>()
+    for (const [lookupKey, fields] of enrichLookup) {
       // Skip enrichment chunks for deprecated/inactive library entries so the
       // corpus stays in sync with what the UI actually surfaces.
-      if (collection === 'library' && !getLibraryRefIds().has(refId)) continue
-      if (collection === 'timeline' && !getTimelineRefIds().has(refId)) continue
+      if (collection === 'library' && !getLibraryRefIds().has(lookupKey)) continue
       // Same for threats: enrichments exist for retired (and draft) threats
       // too, and a chunk for one would link /threats?id=<id> the page no
       // longer opens.
-      if (collection === 'threats' && !getPublishedThreatIds().has(refId)) continue
+      if (collection === 'threats' && !getPublishedThreatIds().has(lookupKey)) continue
+      let refId = lookupKey
+      if (collection === 'timeline') {
+        const current = getTimelineRefIds().get(lookupKey)
+        if (!current) continue
+        // An earlier label yields to the row's own current-label enrichment,
+        // and one row gets one enrichment chunk however many labels it had.
+        if (current !== lookupKey && enrichLookup.has(current)) continue
+        if (emittedTimelineKeys.has(current)) continue
+        emittedTimelineKeys.add(current)
+        refId = current
+      }
 
       const title = fields['Title'] || refId
       if (title === '---') continue
