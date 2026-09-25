@@ -309,6 +309,12 @@ scripts/*
 !scripts/ci/
 # WS-F ACVP-format prototype CLI (thin entry; logic in src/services/acvp/node/cli.ts)
 !scripts/acvp-respond.ts
+# WS-H cross-target evidence: WASM baseline runner, cross-target comparator,
+# and the generator that derives the Python runner's PKCS#11 constants from
+# src/wasm/softhsm/constants.ts (thin entries; logic in src/services/acvp-xplat/).
+!scripts/acvp-xplat-wasm.ts
+!scripts/acvp-xplat-compare.ts
+!scripts/gen-acvp-native-constants.ts
 # Unified data-integrity validator — runs in the local gate (npm run
 # validate:data / gate:data, see TESTING.md); its check modules and their
 # tests must be tracked or new files silently can't be added (existing
@@ -730,6 +736,12 @@ embed-root-ca/
 
 # Standalone tools repo (managed separately at pqctoday/pqctoday-sdk)
 tools/
+# ...except the WS-H native ACVP runner (stdlib Python/ctypes), which is hub
+# source. `tools/` above ignores every dir named tools; re-include only the
+# top-level one, re-ignore its children, then re-include acvp-native.
+!/tools/
+/tools/*
+!/tools/acvp-native/
 # ...but allow Business Center tool components (same dir name, different purpose)
 !src/components/BusinessCenter/tools/
 
