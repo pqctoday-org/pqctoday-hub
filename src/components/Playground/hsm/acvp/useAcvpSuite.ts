@@ -145,6 +145,7 @@ import {
 } from '@/wasm/softhsm'
 import type { SoftHSMModule, SLHDSASignOptions } from '@/wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
+import { runMldsaAcvpSection, type AcvpCaseMeta } from './sections/mldsaAcvp'
 import type { HsmKey } from '../HsmContext'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -212,7 +213,7 @@ export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'hashing_mac', label: 'Hashing & MAC', groups: 5 },
   { id: 'kdf', label: 'KDF', groups: 5 },
   { id: 'classical', label: 'Classical Asymmetric', groups: 10 },
-  { id: 'ml_dsa', label: 'ML-DSA', groups: 3 },
+  { id: 'ml_dsa', label: 'ML-DSA', groups: 6 },
   { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 5 },
   { id: 'ml_kem', label: 'ML-KEM', groups: 2 },
 ]
@@ -231,6 +232,9 @@ export interface TestResult {
   status: 'pass' | 'fail' | 'pending' | 'skip'
   details: string
   evidenceTier?: EvidenceTier
+  // Exact upstream identity (tgId/tcId, mode, context length, source commit,
+  // origin) for rows that have one — see sections/mldsaAcvp.ts.
+  caseMeta?: AcvpCaseMeta
   category: CategoryId
 }
 
@@ -997,6 +1001,22 @@ export function useAcvpSuite() {
               )
             }
           }
+
+          // ── 5d. ML-DSA reference-sample depth — dedicated NIST SigVer
+          // (positive + negative), product-authored pk/context negatives,
+          // deterministic SigGen byte-match, KeyGen from seed, and honest
+          // skips for upstream groups PKCS#11 cannot express. Self-contained
+          // in sections/mldsaAcvp.ts (WS-D D2-2/D2-3/D2-5, D4).
+          await runMldsaAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mldsa,
+            pushResult,
+            addLog,
+            evidenceTierFor: deriveEvidenceTier,
+          })
 
           // ── 6. ML-DSA Functional Sign+Verify (FIPS 204) — all variants ──
           for (const dsaVariant of [44, 65, 87] as const) {
