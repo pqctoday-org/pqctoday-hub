@@ -79,4 +79,30 @@ describe('SourceCombiningDemo — raw-boundary health tests and assessment', () 
     expect(await screen.findByText(/Attacker sets A = B/)).toBeInTheDocument()
     expect(screen.getByTestId('construction-verdict')).toHaveTextContent('Construction is unsafe')
   })
+
+  // Review pass 2, H2: the page said "this 256-bit block holds at most the 512 bits".
+  it('credits one conditioned block no more than its output length (H2)', async () => {
+    renderDemo()
+    fireEvent.click(screen.getByRole('button', { name: /Collect raw samples/ }))
+    const summary = await screen.findByTestId('pipeline-summary')
+    expect(summary).toHaveTextContent('512 bits credited to the 1024-bit assembled bitstring')
+    expect(summary).toHaveTextContent('carries at most 256 bits to the DRBG')
+    expect(document.body.textContent).not.toMatch(/holds at most the 512/)
+  })
+
+  // Review pass 2, H1: adversary control did not change the credited total.
+  it('zeroes Source A when the adversary can choose its output (H1)', async () => {
+    renderDemo()
+    fireEvent.click(screen.getByRole('button', { name: /Collect raw samples/ }))
+    expect(await screen.findByTestId('entropy-credited')).toHaveTextContent('512 bits')
+    fireEvent.click(screen.getByRole('button', { name: 'Adversary control over Source A' }))
+    fireEvent.click(await screen.findByRole('option', { name: /Can choose its output/ }))
+    await waitFor(() =>
+      expect(screen.getByTestId('entropy-credited')).toHaveTextContent('256 bits')
+    )
+    expect(screen.getByText(/Source A counts 0 bits/)).toBeInTheDocument()
+    expect(screen.getByTestId('construction-verdict')).not.toHaveTextContent(
+      'Consistent with the stated assumptions'
+    )
+  })
 })
