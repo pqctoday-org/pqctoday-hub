@@ -7222,7 +7222,12 @@
       "refId": "Liboqs Brief",
       "sha256": "6d7d42e55276c61769eba2afaf9b34add7daa40606ccca3944a79e28f68a3344",
       "sizeBytes": 243050,
-      "hashedAt": "2026-09-06"
+      "hashedAt": "2026-09-06",
+      "ok": false,
+      "superseded_file": "_superseded-09252026/products/liboqs-brief-5e149b14.html",
+      "supersededAt": "2026-09-25T11:59:04.320623+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "migrate r2 M5: proof_url re-pointed to the document the row's claims rest on — replaced by liboqs-5e149b14.html"
     },
     {
       "softwareName": "Liboqs Brief",
@@ -17621,7 +17626,12 @@
       "previousSha256": "3e1686d48491e941aa8fc8564fa0de4f7c7d2901527563f35fd8b4f1898b50be",
       "previousSizeBytes": 241181,
       "hashCorrectedAt": "2026-09-17T17:51:50.256800+00:00",
-      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)"
+      "hashCorrectionReason": "recomputed from the named file on disk; the previous value was another file's (rebuild_manifest --additive resolved by row, 2026-09-06)",
+      "ok": false,
+      "superseded_file": "_superseded-09252026/products/liboqs-brief-5e149b14.html",
+      "supersededAt": "2026-09-25T11:59:04.320623+00:00",
+      "supersededBy": "replace_evidence.py",
+      "superseded_reason": "migrate r2 M5: proof_url re-pointed to the document the row's claims rest on — replaced by liboqs-5e149b14.html"
     },
     {
       "softwareName": "cryptosense-analyzer",

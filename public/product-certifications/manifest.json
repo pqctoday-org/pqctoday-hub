@@ -5388,7 +5388,7 @@
       "addedBy": "admit.py --stamp-existing --add-missing-entries",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-17T14:05:19.601087+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "stampedAt": "2026-09-17T14:05:20.645689+00:00"
