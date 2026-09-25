@@ -155,7 +155,7 @@ import type { HsmKey } from '../HsmContext'
 // verbatim from HsmAcvpTesting.tsx (2026-09-02, design handoff
 // design_handoff_kmip_pkcs11_playground WP-P6c) so the Build tab's suite
 // workbench, the standalone results view and the Pyodide `acvp_native`
-// bridge all drive ONE runner. The ~36 test sections inside `runTests` are
+// bridge all drive ONE runner. The test sections inside `runTests` are
 // untouched — this is a move, not a rewrite; parity with the pre-extraction
 // results is what e2e/acvp-validator.spec.ts's ≥40-row assertion checks.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -169,7 +169,7 @@ import type { HsmKey } from '../HsmContext'
 // disagreed with the manifest for aesgcm_test — WS-I.)
 
 /**
- * The 36 test sections below group into 7 algorithm-family categories, used
+ * The test sections below group into the algorithm-family CATEGORIES, used
  * by the left sidebar to let a user run a subset instead of the full suite.
  * Each section is tagged with its category by setting `currentCategory`
  * (see `pushResult` below) right as its enclosing `if (activeCategories.has(...))`
@@ -309,7 +309,7 @@ export function useAcvpSuite() {
 
     // Which of the 7 categories the section currently executing belongs to —
     // set as the first statement inside each section's `if (activeCategories.has(...))`
-    // guard, below. `pushResult` reads it so none of the ~36 sections' own
+    // guard, below. `pushResult` reads it so none of the sections' own
     // pushResult({...}) call sites need a `category` field added by hand.
     let currentCategory: CategoryId = CATEGORIES[0].id
 
@@ -528,7 +528,7 @@ export function useAcvpSuite() {
                 handle: aesHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-256 (${eName})`,
+                label: `Oracle AES-256 (${eName})`,
                 engine: engineId,
               })
 
@@ -608,7 +608,7 @@ export function useAcvpSuite() {
                 handle: hmacHandle,
                 family: 'hmac',
                 role: 'secret',
-                label: `ACVP HMAC-SHA256 (${eName})`,
+                label: `NIST sample HMAC-SHA256 (${eName})`,
                 engine: engineId,
               })
 
@@ -681,7 +681,7 @@ export function useAcvpSuite() {
                 handle: rsaPubHandle,
                 family: 'rsa',
                 role: 'public',
-                label: `ACVP RSA-2048 Public (${eName})`,
+                label: `Oracle RSA-2048 Public (${eName})`,
                 variant: '2048',
                 engine: engineId,
               })
@@ -755,7 +755,7 @@ export function useAcvpSuite() {
                 handle: ecPubHandle,
                 family: 'ecdsa',
                 role: 'public',
-                label: `ACVP ECDSA P-256 Public (${eName})`,
+                label: `Std KAT ECDSA P-256 Public (${eName})`,
                 variant: 'P-256',
                 engine: engineId,
               })
@@ -846,7 +846,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'ml-dsa',
                 role: 'public',
-                label: `ACVP ${algo} Public (${eName})`,
+                label: `NIST sample ${algo} Public (${eName})`,
                 variant: String(variantNum),
                 engine: engineId,
               })
@@ -922,7 +922,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'ml-dsa',
                 role: 'public',
-                label: `ACVP ${paramSet} Context KAT Public (${eName})`,
+                label: `NIST sample ${paramSet} Context KAT Public (${eName})`,
                 variant: String(variantNum),
                 engine: engineId,
               })
@@ -996,7 +996,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'ml-dsa',
                 role: 'public',
-                label: `ACVP ${paramSet} HashML-DSA KAT Public (${eName})`,
+                label: `NIST sample ${paramSet} HashML-DSA KAT Public (${eName})`,
                 variant: String(variantNum),
                 engine: engineId,
               })
@@ -1083,7 +1083,7 @@ export function useAcvpSuite() {
                 handle: mldsaPair.pubHandle,
                 family: 'ml-dsa',
                 role: 'public',
-                label: `ACVP ${dsaAlgo} Keygen Public (${eName})`,
+                label: `Round-trip ${dsaAlgo} Keygen Public (${eName})`,
                 variant: String(dsaVariant),
                 engine: engineId,
               })
@@ -1091,7 +1091,7 @@ export function useAcvpSuite() {
                 handle: mldsaPair.privHandle,
                 family: 'ml-dsa',
                 role: 'private',
-                label: `ACVP ${dsaAlgo} Keygen Private (${eName})`,
+                label: `Round-trip ${dsaAlgo} Keygen Private (${eName})`,
                 variant: String(dsaVariant),
                 engine: engineId,
               })
@@ -1184,7 +1184,7 @@ export function useAcvpSuite() {
                 handle: privHandle,
                 family: 'ml-kem',
                 role: 'private',
-                label: `ACVP ${algo} Private (${eName})`,
+                label: `NIST sample ${algo} Private (${eName})`,
                 variant: String(variantNum),
                 engine: engineId,
               })
@@ -1296,7 +1296,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'ml-kem',
                 role: 'public',
-                label: `ACVP ${kemAlgo} RT Public (${eName})`,
+                label: `Round-trip ${kemAlgo} RT Public (${eName})`,
                 variant: String(kemVariant),
                 engine: engineId,
               })
@@ -1304,7 +1304,7 @@ export function useAcvpSuite() {
                 handle: privHandle,
                 family: 'ml-kem',
                 role: 'private',
-                label: `ACVP ${kemAlgo} RT Private (${eName})`,
+                label: `Round-trip ${kemAlgo} RT Private (${eName})`,
                 variant: String(kemVariant),
                 engine: engineId,
               })
@@ -1391,14 +1391,14 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'slh-dsa',
                 role: 'public',
-                label: `ACVP ${slhParam.name} Public (${eName})`,
+                label: `Round-trip ${slhParam.name} Public (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privHandle,
                 family: 'slh-dsa',
                 role: 'private',
-                label: `ACVP ${slhParam.name} Private (${eName})`,
+                label: `Round-trip ${slhParam.name} Private (${eName})`,
                 engine: engineId,
               })
               const sigBytes = hsm_slhdsaSign(
@@ -1519,7 +1519,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'slh-dsa',
                 role: 'public',
-                label: `ACVP ${tv.parameterSet} KAT Public (${eName})`,
+                label: `NIST sample ${tv.parameterSet} KAT Public (${eName})`,
                 engine: engineId,
               })
 
@@ -1766,7 +1766,7 @@ export function useAcvpSuite() {
                 handle: aesHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-CBC-256 (${eName})`,
+                label: `NIST sample AES-CBC-256 (${eName})`,
                 engine: engineId,
               })
 
@@ -1846,7 +1846,7 @@ export function useAcvpSuite() {
                 handle: aesHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-CTR-256 (${eName})`,
+                label: `Std KAT AES-CTR-256 (${eName})`,
                 engine: engineId,
               })
 
@@ -1920,7 +1920,7 @@ export function useAcvpSuite() {
                 handle: hmacHandle,
                 family: 'hmac',
                 role: 'secret',
-                label: `ACVP HMAC-SHA384 (${eName})`,
+                label: `NIST sample HMAC-SHA384 (${eName})`,
                 engine: engineId,
               })
 
@@ -1986,7 +1986,7 @@ export function useAcvpSuite() {
                 handle: hmacHandle,
                 family: 'hmac',
                 role: 'secret',
-                label: `ACVP HMAC-SHA512 (${eName})`,
+                label: `NIST sample HMAC-SHA512 (${eName})`,
                 engine: engineId,
               })
 
@@ -2057,7 +2057,7 @@ export function useAcvpSuite() {
                 handle: ecPubHandle,
                 family: 'ecdsa',
                 role: 'public',
-                label: `ACVP ECDSA P-384 Public (${eName})`,
+                label: `Std KAT ECDSA P-384 Public (${eName})`,
                 variant: 'P-384',
                 engine: engineId,
               })
@@ -2123,7 +2123,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'eddsa',
                 role: 'public',
-                label: `ACVP EdDSA Ed25519 Public (${eName})`,
+                label: `Std KAT EdDSA Ed25519 Public (${eName})`,
                 engine: engineId,
               })
 
@@ -2194,7 +2194,7 @@ export function useAcvpSuite() {
                 handle: pubHandle448,
                 family: 'eddsa',
                 role: 'public',
-                label: `ACVP EdDSA Ed448 Public (${eName})`,
+                label: `NIST sample EdDSA Ed448 Public (${eName})`,
                 engine: engineId,
               })
 
@@ -2332,7 +2332,7 @@ export function useAcvpSuite() {
                 handle: ikmHandle,
                 family: 'kdf',
                 role: 'secret',
-                label: `ACVP HKDF IKM RFC 5869 (${eName})`,
+                label: `Std KAT HKDF IKM RFC 5869 (${eName})`,
                 engine: engineId,
               })
 
@@ -2418,7 +2418,7 @@ export function useAcvpSuite() {
                 handle: kekHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-KW KEK (${eName})`,
+                label: `Std KAT AES-KW KEK (${eName})`,
                 engine: engineId,
               })
               const targetHandle = hsm_importAESKey(
@@ -2436,7 +2436,7 @@ export function useAcvpSuite() {
                 handle: targetHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-KW Target (${eName})`,
+                label: `Std KAT AES-KW Target (${eName})`,
                 engine: engineId,
               })
 
@@ -2508,7 +2508,7 @@ export function useAcvpSuite() {
                 handle: kekHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-KWP KEK (${eName})`,
+                label: `Round-trip AES-KWP KEK (${eName})`,
                 engine: engineId,
               })
               const targetHandle = hsm_generateAESKey(
@@ -2526,7 +2526,7 @@ export function useAcvpSuite() {
                 handle: targetHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-KWP Target (${eName})`,
+                label: `Round-trip AES-KWP Target (${eName})`,
                 engine: engineId,
               })
 
@@ -2605,14 +2605,14 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'slh-dsa',
                 role: 'public',
-                label: `ACVP SLH-DSA Ctx Binding Public (${eName})`,
+                label: `Round-trip SLH-DSA Ctx Binding Public (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privHandle,
                 family: 'slh-dsa',
                 role: 'private',
-                label: `ACVP SLH-DSA Ctx Binding Private (${eName})`,
+                label: `Round-trip SLH-DSA Ctx Binding Private (${eName})`,
                 engine: engineId,
               })
               const ctxA: SLHDSASignOptions = { context: new TextEncoder().encode('acvp-ctx-A') }
@@ -2683,14 +2683,14 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'slh-dsa',
                 role: 'public',
-                label: `ACVP SLH-DSA Det Mode Public (${eName})`,
+                label: `Round-trip SLH-DSA Det Mode Public (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privHandle,
                 family: 'slh-dsa',
                 role: 'private',
-                label: `ACVP SLH-DSA Det Mode Private (${eName})`,
+                label: `Round-trip SLH-DSA Det Mode Private (${eName})`,
                 engine: engineId,
               })
               const detOpts: SLHDSASignOptions = { deterministic: true }
@@ -2784,28 +2784,28 @@ export function useAcvpSuite() {
                 handle: pubA,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X25519 PubKey-A (${eName})`,
+                label: `Round-trip X25519 PubKey-A (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privA,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X25519 PrivKey-A (${eName})`,
+                label: `Round-trip X25519 PrivKey-A (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: pubB,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X25519 PubKey-B (${eName})`,
+                label: `Round-trip X25519 PubKey-B (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privB,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X25519 PrivKey-B (${eName})`,
+                label: `Round-trip X25519 PrivKey-B (${eName})`,
                 engine: engineId,
               })
 
@@ -2913,28 +2913,28 @@ export function useAcvpSuite() {
                 handle: pubA,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X448 PubKey-A (${eName})`,
+                label: `Round-trip X448 PubKey-A (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privA,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X448 PrivKey-A (${eName})`,
+                label: `Round-trip X448 PrivKey-A (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: pubB,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X448 PubKey-B (${eName})`,
+                label: `Round-trip X448 PubKey-B (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privB,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X448 PrivKey-B (${eName})`,
+                label: `Round-trip X448 PrivKey-B (${eName})`,
                 engine: engineId,
               })
 
@@ -3045,28 +3045,28 @@ export function useAcvpSuite() {
                 handle: pubA,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X963-SHA3 PubA (${eName})`,
+                label: `Round-trip X963-SHA3 PubA (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privA,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X963-SHA3 PrivA (${eName})`,
+                label: `Round-trip X963-SHA3 PrivA (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: pubB,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X963-SHA3 PubB (${eName})`,
+                label: `Round-trip X963-SHA3 PubB (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privB,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X963-SHA3 PrivB (${eName})`,
+                label: `Round-trip X963-SHA3 PrivB (${eName})`,
                 engine: engineId,
               })
 
@@ -3172,7 +3172,7 @@ export function useAcvpSuite() {
                 handle: hKey,
                 family: 'chacha20',
                 role: 'secret',
-                label: `ACVP ChaCha20 (${eName})`,
+                label: `Round-trip ChaCha20 (${eName})`,
                 engine: engineId,
               })
 
@@ -3541,7 +3541,7 @@ export function useAcvpSuite() {
                 handle: kp.pubHandle,
                 family: 'ecdsa',
                 role: 'public',
-                label: `ACVP ECDSA secp256k1 Public (${eName})`,
+                label: `Round-trip ECDSA secp256k1 Public (${eName})`,
                 variant: 'secp256k1',
                 engine: engineId,
               })
@@ -3549,7 +3549,7 @@ export function useAcvpSuite() {
                 handle: kp.privHandle,
                 family: 'ecdsa',
                 role: 'private',
-                label: `ACVP ECDSA secp256k1 Private (${eName})`,
+                label: `Round-trip ECDSA secp256k1 Private (${eName})`,
                 variant: 'secp256k1',
                 engine: engineId,
               })
@@ -3614,7 +3614,7 @@ export function useAcvpSuite() {
                 handle: ecPubHandle,
                 family: 'ecdsa',
                 role: 'public',
-                label: `ACVP ECDSA P-521 Public (${eName})`,
+                label: `NIST sample ECDSA P-521 Public (${eName})`,
                 variant: 'P-521',
                 engine: engineId,
               })
@@ -3675,7 +3675,7 @@ export function useAcvpSuite() {
                 handle: kpA.pubHandle,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP ECDH P-521 PubKey-A (${eName})`,
+                label: `Round-trip ECDH P-521 PubKey-A (${eName})`,
                 variant: 'P-521',
                 engine: engineId,
               })
@@ -3683,7 +3683,7 @@ export function useAcvpSuite() {
                 handle: kpA.privHandle,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP ECDH P-521 PrivKey-A (${eName})`,
+                label: `Round-trip ECDH P-521 PrivKey-A (${eName})`,
                 variant: 'P-521',
                 engine: engineId,
               })
@@ -3691,7 +3691,7 @@ export function useAcvpSuite() {
                 handle: kpB.pubHandle,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP ECDH P-521 PubKey-B (${eName})`,
+                label: `Round-trip ECDH P-521 PubKey-B (${eName})`,
                 variant: 'P-521',
                 engine: engineId,
               })
@@ -3699,7 +3699,7 @@ export function useAcvpSuite() {
                 handle: kpB.privHandle,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP ECDH P-521 PrivKey-B (${eName})`,
+                label: `Round-trip ECDH P-521 PrivKey-B (${eName})`,
                 variant: 'P-521',
                 engine: engineId,
               })
@@ -3796,7 +3796,7 @@ export function useAcvpSuite() {
                 handle: kmacHandle,
                 family: 'hmac',
                 role: 'secret',
-                label: `ACVP KMAC128 (${eName})`,
+                label: `Std KAT KMAC128 (${eName})`,
                 engine: engineId,
               })
 
@@ -3875,7 +3875,7 @@ export function useAcvpSuite() {
                 handle: privHandle,
                 family: 'rsa',
                 role: 'private',
-                label: `ACVP RSA-OAEP Private (${eName})`,
+                label: `Oracle RSA-OAEP Private (${eName})`,
                 engine: engineId,
               })
 
