@@ -11,7 +11,7 @@
  */
 import evidenceSchema from './schemas/evidence.schema.json'
 import type { AcvpPromptIR, JsonObject } from './ir'
-import type { CaseResult, EngineIdentity } from './dispatch'
+import { VENDOR_DEFINED_MECHANISMS, type CaseResult, type EngineIdentity } from './dispatch'
 import type { GoldenComparison } from './compare'
 import type { PinnedVectorSetSchema } from './schemas/registry'
 import { validateAgainstSchema } from './schemaValidator'
@@ -85,6 +85,20 @@ export const buildEvidence = (inp: EvidenceInput): JsonObject => {
     }
   }
 
+  // Every vendor-defined (non-PKCS#11-v3.2) mechanism a case was dispatched to.
+  const vendorRows: JsonObject[] = []
+  for (const [name, meta] of Object.entries(VENDOR_DEFINED_MECHANISMS)) {
+    const hits = inp.results.filter((r) => r.mechanism === name)
+    if (hits.length === 0 || !meta) continue
+    vendorRows.push({
+      name,
+      value: meta.value,
+      source: meta.source,
+      tgIds: [...new Set(hits.map((r) => r.tgId))],
+      answered: hits.filter((r) => r.disposition === 'answered').length,
+    })
+  }
+
   const fixture = identifyKnownFixture(inp.promptSha256)
   const evidence: JsonObject = {
     evidenceVersion: EVIDENCE_VERSION,
@@ -130,8 +144,13 @@ export const buildEvidence = (inp: EvidenceInput): JsonObject => {
       const c: JsonObject = { tgId: r.tgId, tcId: r.tcId, disposition: r.disposition }
       if (r.reason !== undefined) c.reason = r.reason
       if (r.detail !== undefined) c.detail = r.detail
+      if (r.mechanism !== undefined) {
+        c.mechanism = r.mechanism
+        c.mechanismKind = VENDOR_DEFINED_MECHANISMS[r.mechanism] ? 'vendor-defined' : 'pkcs11-v3.2'
+      }
       return c
     }),
+    vendorDefinedMechanisms: vendorRows,
     unsupported,
     goldenComparison: inp.goldenComparison
       ? {

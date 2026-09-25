@@ -10,6 +10,11 @@
  *   ml-dsa.verify:      C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_DSA, CKA_VALUE=pk)
  *                       → C_MessageVerifyInit(mech, CK_SIGN_ADDITIONAL_CONTEXT{ctx})
  *                       → C_VerifyMessage → C_MessageVerifyFinal
+ *   ml-dsa.verify-external-mu (VENDOR-DEFINED mechanism, not PKCS#11 v3.2):
+ *                       C_CreateObject(pk) → C_VerifyInit(CKM_ML_DSA_EXTERNAL_MU
+ *                       0x0000403c, no parameter) → C_Verify(data = mu, sig) —
+ *                       the same call shape as the Playground ML-DSA section
+ *                       (src/components/Playground/hsm/acvp/sections/mldsaAcvp.ts).
  *
  * Every imported object is destroyed after its test. No RNG seeding, no
  * test-only hooks, no secret-injection seam: decapsulation and verification
@@ -44,14 +49,16 @@ import {
   CKM_ML_KEM,
 } from '../../wasm/softhsm/constants'
 import { bytesToUpperHex, hexToBytes } from './ir'
-import type {
-  AcvpEngine,
-  EngineIdentity,
-  EngineOutcome,
-  MlDsaVerifyOp,
-  MlKemDecapsulateOp,
-  PlanOperation,
-  Pkcs11MechanismName,
+import {
+  VENDOR_DEFINED_MECHANISMS,
+  type AcvpEngine,
+  type EngineIdentity,
+  type EngineOutcome,
+  type MlDsaVerifyExternalMuOp,
+  type MlDsaVerifyOp,
+  type MlKemDecapsulateOp,
+  type PlanOperation,
+  type Pkcs11MechanismName,
 } from './dispatch'
 
 const CKR_OK = 0
@@ -78,6 +85,7 @@ const mechanismValue = (name: Pkcs11MechanismName): number =>
     CKM_HASH_ML_DSA_SHA3_512,
     CKM_HASH_ML_DSA_SHAKE128,
     CKM_HASH_ML_DSA_SHAKE256,
+    CKM_ML_DSA_EXTERNAL_MU: Number(VENDOR_DEFINED_MECHANISMS.CKM_ML_DSA_EXTERNAL_MU!.value),
   })[name]
 
 const variantOf = (ps: string): number => Number(ps.slice(ps.lastIndexOf('-') + 1))
@@ -206,12 +214,54 @@ export const createPkcs11Engine = (M: SoftHSMModule, identity: EngineIdentity): 
     }
   }
 
+  const verifyExternalMu = (op: MlDsaVerifyExternalMuOp): EngineOutcome => {
+    const variant = variantOf(op.parameterSet) as 44 | 65 | 87
+    const mu = hexToBytes(op.mu)
+    const sig = hexToBytes(op.signature)
+    const ptrs: number[] = []
+    const alloc = (n: number) => {
+      const p = M._malloc(Math.max(n, 1))
+      ptrs.push(p)
+      return p
+    }
+    let pub = 0
+    try {
+      pub = hsm_importMLDSAPublicKey(M, hSession, variant, hexToBytes(op.pk))
+      const mech = alloc(12)
+      M.setValue(mech, mechanismValue(op.mechanism), 'i32')
+      M.setValue(mech + 4, 0, 'i32')
+      M.setValue(mech + 8, 0, 'i32')
+      const muPtr = alloc(mu.length)
+      M.HEAPU8.set(mu, muPtr)
+      const sigPtr = alloc(sig.length)
+      M.HEAPU8.set(sig, sigPtr)
+      const initRv = M._C_VerifyInit(hSession, mech, pub) >>> 0
+      if (initRv !== CKR_OK) {
+        return { status: 'error', reason: `C_VerifyInit(${op.mechanism}) → ${rvName(initRv)}` }
+      }
+      // A single-part C_Verify always terminates the operation, whatever it returns.
+      const rv = M._C_Verify(hSession, muPtr, mu.length, sigPtr, sig.length) >>> 0
+      if (rv === CKR_OK) return { status: 'ok', value: true }
+      if (rv === CKR_SIGNATURE_INVALID || rv === CKR_SIGNATURE_LEN_RANGE) {
+        return { status: 'ok', value: false, detail: rvName(rv) }
+      }
+      return { status: 'error', reason: `C_Verify(${op.mechanism}) → ${rvName(rv)}` }
+    } catch (e) {
+      return { status: 'error', reason: errText(e) }
+    } finally {
+      for (const p of ptrs) M._free(p)
+      if (pub) destroy(pub)
+    }
+  }
+
   return {
     identity,
     execute(op: PlanOperation): EngineOutcome {
       const gate = notAdvertised(op.mechanism)
       if (gate) return gate
-      return op.operation === 'ml-kem.decapsulate' ? decapsulate(op) : verify(op)
+      if (op.operation === 'ml-kem.decapsulate') return decapsulate(op)
+      if (op.operation === 'ml-dsa.verify-external-mu') return verifyExternalMu(op)
+      return verify(op)
     },
     close() {
       try {
