@@ -11,7 +11,9 @@ import { buildResponse, validateResponse } from './response'
 import { compareToExpected } from './compare'
 import { DISCLAIMER_GENERAL, DISCLAIMER_IMPORT } from './evidence'
 import { validateAgainstSchema } from './schemaValidator'
-import evidenceSchema from './schemas/evidence.schema.json'
+import { currentEvidenceSchema } from './schemas/evidenceSchemas'
+
+const evidenceSchema = currentEvidenceSchema()
 import { createExpectedResultsFakeEngine } from './testing/expectedResultsFakeEngine'
 import { FIXTURE_NAMES, readFixture, type FixtureName } from './node/fixtures'
 import goldens from './__fixtures__/goldens/goldens.json'

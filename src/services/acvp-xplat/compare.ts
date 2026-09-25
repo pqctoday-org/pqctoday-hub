@@ -22,9 +22,9 @@
  * answered case). Publishability (H-1) is reported per target alongside the
  * statuses and never changes a status.
  */
-import policyDoc from '../../data/validation/acvpComparatorPolicy.json'
-import evidenceSchema from '../acvp/schemas/evidence.schema.json'
-import { validateAgainstSchema } from '../acvp/schemaValidator'
+import policyV1 from '../../data/validation/acvpComparatorPolicy.v1.json'
+import policyV2 from '../../data/validation/acvpComparatorPolicy.v2.json'
+import { validateEvidenceDocument } from '../acvp/schemas/evidenceSchemas'
 import { sha256Hex, type JsonObject } from '../acvp/ir'
 import type { ExecutionPlan } from '../acvp/dispatch'
 import {
@@ -57,14 +57,40 @@ export interface OperationPolicy {
   inScope: boolean
 }
 
-export const COMPARATOR_POLICY = policyDoc as unknown as {
+export interface ComparatorPolicy {
   policyVersion: string
   operations: Record<string, OperationPolicy>
 }
 
-export const policyFor = (operation: string): OperationPolicy => {
-  const p = COMPARATOR_POLICY.operations[operation]
-  if (!p) throw new Error(`comparator policy has no entry for operation "${operation}"`)
+/**
+ * Every comparator policy version, pinned (files are never edited). A run
+ * selects its version in targets.json `comparatorPolicyVersion`; a run whose
+ * targets.json predates that field was produced under version 1.
+ */
+export const COMPARATOR_POLICIES: Readonly<Record<string, ComparatorPolicy>> = {
+  'pqctoday.acvp-comparator-policy/1': policyV1 as unknown as ComparatorPolicy,
+  'pqctoday.acvp-comparator-policy/2': policyV2 as unknown as ComparatorPolicy,
+}
+export const LEGACY_COMPARATOR_POLICY_VERSION = 'pqctoday.acvp-comparator-policy/1'
+export const CURRENT_COMPARATOR_POLICY_VERSION = 'pqctoday.acvp-comparator-policy/2'
+export const COMPARATOR_POLICY = COMPARATOR_POLICIES[CURRENT_COMPARATOR_POLICY_VERSION]
+
+export const comparatorPolicy = (version: string): ComparatorPolicy => {
+  const p = COMPARATOR_POLICIES[version]
+  if (!p) throw new Error(`unknown comparatorPolicyVersion "${version}"`)
+  return p
+}
+
+export const policyFor = (
+  operation: string,
+  policy: ComparatorPolicy = COMPARATOR_POLICY
+): OperationPolicy => {
+  const p = policy.operations[operation]
+  if (!p) {
+    throw new Error(
+      `comparator policy ${policy.policyVersion} has no entry for operation "${operation}"`
+    )
+  }
   return p
 }
 
@@ -224,7 +250,8 @@ const finishCell = (cases: CaseResult[], extra: Partial<CellResult> = {}): CellR
 export const compareCell = async (
   fx: FixtureRef,
   declared: DeclaredTarget,
-  files: TargetFixtureFiles | undefined
+  files: TargetFixtureFiles | undefined,
+  policy: ComparatorPolicy = COMPARATOR_POLICY
 ): Promise<CellResult> => {
   if (declared.status === 'not run') {
     return finishCell(allCases(fx.planIndex, 'not run', declared.reason ?? 'declared not run'), {
@@ -242,7 +269,7 @@ export const compareCell = async (
 
   // Integrity: evidence shape, response hash, environment hash, same inputs.
   const problems: string[] = []
-  const evDiag = validateAgainstSchema(evidenceSchema as Record<string, unknown>, files.evidence)
+  const evDiag = validateEvidenceDocument(files.evidence)
   if (evDiag.length > 0) problems.push(`evidence.json violates its schema (${evDiag[0].path})`)
   const ev = (files.evidence ?? {}) as JsonObject
   const respSha = await sha256Hex(files.responseText)
@@ -288,12 +315,12 @@ export const compareCell = async (
         reason: `plan marks the case unsupported but the target reports "${disp}"`,
       }
     }
-    const policy = policyFor(item.operation ?? '')
+    const opPolicy = policyFor(item.operation ?? '', policy)
     const field = item.responseField ?? ''
     if (disp === 'unsupported') {
       return { ...base, status: 'unsupported', reason: (tc.reason as string) ?? 'engine' }
     }
-    const refVal = norm(ref.get(key)?.[field], policy.normalize)
+    const refVal = norm(ref.get(key)?.[field], opPolicy.normalize)
     if (disp === 'error') {
       return {
         ...base,
@@ -303,7 +330,7 @@ export const compareCell = async (
         actual: null,
       }
     }
-    const actual = norm(got.get(key)?.[field], policy.normalize)
+    const actual = norm(got.get(key)?.[field], opPolicy.normalize)
     if (actual === null) {
       return {
         ...base,
@@ -316,11 +343,11 @@ export const compareCell = async (
     if (refVal === null) {
       return { ...base, status: 'not comparable', reason: 'reference has no answer', actual }
     }
-    if (policy.comparator === 'semantic') {
+    if (opPolicy.comparator === 'semantic') {
       return {
         ...base,
         status: 'not comparable',
-        reason: `semantic comparator (${policy.semanticCheck ?? 'unspecified'}) — no semantic verdict recorded`,
+        reason: `semantic comparator (${opPolicy.semanticCheck ?? 'unspecified'}) — no semantic verdict recorded`,
         expected: refVal,
         actual,
       }
@@ -458,7 +485,8 @@ export const compareTargets = async (
   runId: string,
   fixtures: FixtureRef[],
   inputs: TargetInput[],
-  replayHint: (target: string, fixture: string) => string[]
+  replayHint: (target: string, fixture: string) => string[],
+  policy: ComparatorPolicy = COMPARATOR_POLICY
 ): Promise<CompareOutput> => {
   const errors = checkDeclaredTargets(inputs.map((i) => i.declared))
   if (errors.length > 0) throw new Error(`targets.json: ${errors.join('; ')}`)
@@ -484,7 +512,7 @@ export const compareTargets = async (
     let firstEnv: Record<string, unknown> | null = null
     for (const [fi, fx] of fixtures.entries()) {
       const files = input.fixtures[fx.name]
-      const cell = await compareCell(fx, input.declared, files)
+      const cell = await compareCell(fx, input.declared, files, policy)
       for (const s of STATUSES) totals[t.id][s] += cell.counts[s]
       if (cell.environment) {
         envs.push(cell.environment)
@@ -516,7 +544,7 @@ export const compareTargets = async (
           tgId: c.tgId,
           tcId: c.tcId,
           operation: item.operation,
-          comparator: policyFor(item.operation).comparator,
+          comparator: policyFor(item.operation, policy).comparator,
           input: await inputOf(item, fx.testFields.get(`${c.tgId}/${c.tcId}`), fx.publicInputs),
           expected: c.expected ?? null,
           actual: c.actual ?? null,
@@ -574,7 +602,7 @@ export const compareTargets = async (
       runId,
       statuses: STATUSES,
       statusCodes: STATUS_CODE,
-      comparatorPolicyVersion: COMPARATOR_POLICY.policyVersion,
+      comparatorPolicyVersion: policy.policyVersion,
       reference:
         'WS-F golden responses (src/services/acvp/__fixtures__/goldens/*.response.json): identical from both WASM engines and equal to NIST ACVP-Server expectedResults.json for every answered case',
       baselineTarget: BASELINE_TARGET_ID,

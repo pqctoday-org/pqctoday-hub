@@ -4,7 +4,7 @@
 // CSP-safe schema interpreter agrees with ajv on the schema file.
 import { describe, expect, it } from 'vitest'
 import Ajv2020 from 'ajv/dist/2020'
-import schema from './executionEnvironment.schema.json'
+import schema from './executionEnvironment.v1.schema.json'
 import {
   computeEnvId,
   diffEnvironments,
@@ -151,6 +151,13 @@ describe('ExecutionEnvironment (WS-H H-1)', () => {
     ])
     expect(v.publishable).toBe(false)
     expect(ajvValidate(rec)).toBe(false)
+  })
+
+  it('an unknown envVersion is refused, not validated against the current schema', async () => {
+    const rec = { ...(await withEnvId(base())), envVersion: 'pqctoday.execution-environment/99' }
+    const v = await validateExecutionEnvironment(rec)
+    expect(v.schemaDiagnostics[0]).toMatchObject({ path: '$.envVersion', keyword: 'version' })
+    expect(v.publishable).toBe(false)
   })
 
   it('diffEnvironments names the differing leaves and ignores envId/recordedAt', async () => {

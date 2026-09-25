@@ -25,8 +25,11 @@ import { preparePrompt } from '../../acvp/run'
 import { FIXTURE_NAMES, readFixture } from '../../acvp/node/fixtures'
 import { identifyKnownFixture } from '../../acvp/evidence'
 import {
+  comparatorPolicy,
   compareTargets,
+  LEGACY_COMPARATOR_POLICY_VERSION,
   planIndexOf,
+  type ComparatorPolicy,
   renderMatrixMarkdown,
   type CompareOutput,
   type FixtureRef,
@@ -93,6 +96,30 @@ export const loadFixtureRefs = async (
     ) {
       throw new Error(`${dir}: plan-index.json does not match the plan the manifest pins`)
     }
+    // Independent of today's dispatch rules: the frozen index must cover exactly
+    // the prompt's cases, and its executed set must be exactly the reference's
+    // answered set (the reference run had no engine-side unsupported/error).
+    const promptCases = prepared.ir.testGroups.flatMap((g) =>
+      g.tests.map((t) => `${g.tgId}/${t.tcId}`)
+    )
+    const indexCases = planIndex.map((i) => `${i.tgId}/${i.tcId}`)
+    const answered = new Set<string>()
+    const refVs = (Array.isArray(reference) ? reference[1] : reference) as {
+      testGroups: Array<{ tgId: number; tests: Array<{ tcId: number }> }>
+    }
+    for (const g of refVs.testGroups) for (const t of g.tests) answered.add(`${g.tgId}/${t.tcId}`)
+    const executed = planIndex.filter((i) => i.kind === 'execute').map((i) => `${i.tgId}/${i.tcId}`)
+    if (
+      canonicalJson(indexCases) !== canonicalJson(promptCases) ||
+      canonicalJson(executed) !==
+        canonicalJson([...answered].filter((k) => executed.includes(k))) ||
+      executed.length !== answered.size ||
+      planIndex.some((i) => (i.kind === 'execute') !== answered.has(`${i.tgId}/${i.tcId}`))
+    ) {
+      throw new Error(
+        `${dir}: plan-index.json does not match the prompt's cases and the reference's answered set`
+      )
+    }
     notes.push({ fixture: name, livePlanReproducible })
     const testFields = new Map<string, JsonObject>()
     for (const g of prepared.ir.testGroups) {
@@ -110,6 +137,14 @@ export const loadFixtureRefs = async (
     })
   }
   return out
+}
+
+/** The comparator policy a run declares (absent = version 1, which predates the field). */
+export const runComparatorPolicy = (runDir: string): ComparatorPolicy => {
+  const declared = readJson(path.join(runDir, 'targets.json')) as {
+    comparatorPolicyVersion?: string
+  }
+  return comparatorPolicy(declared.comparatorPolicyVersion ?? LEGACY_COMPARATOR_POLICY_VERSION)
 }
 
 export const loadTargetInputs = (runDir: string): TargetInput[] => {
@@ -156,7 +191,13 @@ export const generateRun = async (
   notes: FixtureLoadNote[] = []
 ): Promise<GeneratedRun> => {
   const fixtures = await loadFixtureRefs(repoRoot, runDir, notes)
-  const output = await compareTargets(runId, fixtures, loadTargetInputs(runDir), replayHint(runDir))
+  const output = await compareTargets(
+    runId,
+    fixtures,
+    loadTargetInputs(runDir),
+    replayHint(runDir),
+    runComparatorPolicy(runDir)
+  )
   const files = new Map<string, string>()
   files.set('matrix.json', `${JSON.stringify(output.matrix, null, 2)}\n`)
   files.set('matrix.md', renderMatrixMarkdown(output.matrix))

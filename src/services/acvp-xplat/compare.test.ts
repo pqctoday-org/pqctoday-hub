@@ -236,6 +236,14 @@ describe('acvp-xplat comparator (WS-H)', () => {
       index[0] = { ...index[0], kind: index[0].kind === 'execute' ? 'unsupported' : 'execute' }
       writeFileSync(idxPath, `${JSON.stringify(index, null, 2)}\n`)
       await expect(loadFixtureRefs(repo, tmp)).rejects.toThrow(/plan-index\.json does not match/)
+      // ...also for a fixture today's live pipeline no longer reproduces (ML-DSA, after externalMu).
+      cpSync(path.join(RUN, 'bundles', fx, 'plan-index.json'), idxPath)
+      const kemIdx = path.join(tmp, 'bundles', 'ML-KEM-encapDecap-FIPS203', 'plan-index.json')
+      const kem = JSON.parse(readFileSync(kemIdx, 'utf8')) as Array<Record<string, unknown>>
+      kem[0] = { ...kem[0], kind: kem[0].kind === 'execute' ? 'unsupported' : 'execute' }
+      writeFileSync(kemIdx, `${JSON.stringify(kem, null, 2)}\n`)
+      await expect(loadFixtureRefs(repo, tmp)).rejects.toThrow(/plan-index\.json does not match/)
+      cpSync(path.join(RUN, 'bundles', 'ML-KEM-encapDecap-FIPS203', 'plan-index.json'), kemIdx)
       // 2. manifest pins a plan today's rules no longer produce → frozen index is used, noted.
       cpSync(path.join(RUN, 'bundles', fx, 'plan-index.json'), idxPath)
       const mPath = path.join(tmp, 'bundles', fx, 'manifest.json')
