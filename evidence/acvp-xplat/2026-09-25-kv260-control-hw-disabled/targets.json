@@ -1,0 +1,67 @@
+{
+  "runId": "2026-09-25-kv260-control-hw-disabled",
+  "note": "KV260-only re-run of the frozen 2026-09-24b fixture bundles (identical manifests: ML-DSA 966ec2fa…, ML-KEM d2ea5cd4…) on the board's CURRENT image, same boot and same engine bytes as run 2026-09-25-boards, with acceleration recorded as none on a per-operation source finding at hsm 7f12c48d. Variant B (control, PQC_HW_DISABLE=1); the appliance-default run is 2026-09-25-kv260-default. 'not run' is a status, never a pass; the comparator's per-operation policy decides comparability.",
+  "targets": [
+    {
+      "id": "wasm-cpp",
+      "status": "not run",
+      "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded."
+    },
+    {
+      "id": "wasm-rust",
+      "status": "not run",
+      "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded."
+    },
+    {
+      "id": "macos-arm64-cpp",
+      "status": "not run",
+      "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded."
+    },
+    {
+      "id": "macos-arm64-rust",
+      "status": "not run",
+      "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded."
+    },
+    {
+      "id": "linux-x86_64-cpp",
+      "status": "not run",
+      "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded."
+    },
+    {
+      "id": "linux-x86_64-rust",
+      "status": "not run",
+      "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded."
+    },
+    {
+      "id": "linux-arm64-cpp",
+      "status": "not run",
+      "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded."
+    },
+    {
+      "id": "linux-arm64-rust",
+      "status": "not run",
+      "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded."
+    },
+    {
+      "id": "imx95-cpp",
+      "status": "not run",
+      "reason": "Not part of this KV260-only re-run. The i.MX95 result on its current image is recorded in run 2026-09-25-boards."
+    },
+    {
+      "id": "imx95-rust",
+      "status": "not run",
+      "reason": "Not part of this KV260-only re-run. The i.MX95 result on its current image is recorded in run 2026-09-25-boards."
+    },
+    {
+      "id": "kv260-cpp",
+      "status": "run",
+      "reason": "KV260 on its CURRENT image (build 20260925131032, card 0x231, FPGA profile hashsig), the image's own /usr/lib/softhsm/libsofthsmv3.so, hsm 7f12c48d (on-board SHA-256 re-verified equal to run 2026-09-25-boards and the .wic's file). Variant B, control: PQC_HW_DISABLE=1 (the Rust engine skips its C_Initialize accelerator probe); otherwise identical to run 2026-09-25-kv260-default. Acceleration recorded as none on a source-verified per-operation finding at hsm 7f12c48d (see the execution-environment acceleration.detail and README). Not rebuilt, not reflashed."
+    },
+    {
+      "id": "kv260-rust",
+      "status": "run",
+      "reason": "KV260 on its CURRENT image (build 20260925131032, card 0x231, FPGA profile hashsig), the image's own /usr/lib/softhsm/libsofthsmrustv3.so (hw-accel build), hsm 7f12c48d (on-board SHA-256 re-verified equal to run 2026-09-25-boards and the .wic's file). Variant B, control: PQC_HW_DISABLE=1 (the Rust engine skips its C_Initialize accelerator probe); otherwise identical to run 2026-09-25-kv260-default. Acceleration recorded as none on a source-verified per-operation finding at hsm 7f12c48d (see the execution-environment acceleration.detail and README). Not rebuilt, not reflashed."
+    }
+  ],
+  "comparatorPolicyVersion": "pqctoday.acvp-comparator-policy/2"
+}

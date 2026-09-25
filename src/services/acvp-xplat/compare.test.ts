@@ -67,7 +67,14 @@ const byName = (fixtures: FixtureRef[], name: string) => fixtures.find((f) => f.
 const target = (inputs: TargetInput[], id: string) => inputs.find((i) => i.target.id === id)!
 
 describe('acvp-xplat comparator (WS-H)', () => {
-  it.each(['2026-09-24', '2026-09-24b', '2026-09-25-boards', '2026-09-25-native'])(
+  it.each([
+    '2026-09-24',
+    '2026-09-24b',
+    '2026-09-25-boards',
+    '2026-09-25-kv260-control-hw-disabled',
+    '2026-09-25-kv260-default',
+    '2026-09-25-native',
+  ])(
     'frozen run %s: the committed matrix and divergence set are exactly what its evidence produces',
     async (runId) => {
       const dir = path.join(repo, 'evidence/acvp-xplat', runId)
@@ -107,6 +114,36 @@ describe('acvp-xplat comparator (WS-H)', () => {
     }
     expect(matrix.divergences).toEqual([])
   })
+
+  it.each(['2026-09-25-kv260-default', '2026-09-25-kv260-control-hw-disabled'])(
+    'run %s: both KV260 targets are publishable with acceleration none, 157 passes, and answers byte-identical to the other variant',
+    async (runId) => {
+      const dir = path.join(repo, 'evidence/acvp-xplat', runId)
+      const { matrix } = (await generateRun(repo, dir, runId)).output
+      const run = matrix.targets.filter((t) => t.declaredStatus === 'run').map((t) => t.id)
+      expect(run.sort()).toEqual(['kv260-cpp', 'kv260-rust'])
+      for (const id of run) {
+        expect(matrix.targets.find((t) => t.id === id)!.publishable, id).toBe(true)
+        expect(matrix.totals[id], id).toMatchObject({ pass: 157, fail: 0, 'not comparable': 0 })
+      }
+      expect(matrix.divergences).toEqual([])
+      const other =
+        runId === '2026-09-25-kv260-default'
+          ? '2026-09-25-kv260-control-hw-disabled'
+          : '2026-09-25-kv260-default'
+      for (const id of run)
+        for (const fx of ['ML-KEM-encapDecap-FIPS203', 'ML-DSA-sigVer-FIPS204']) {
+          const at = (r: string, f: string) =>
+            readFileSync(path.join(repo, 'evidence/acvp-xplat', r, 'targets', id, fx, f), 'utf8')
+          const env = JSON.parse(at(runId, 'execution-environment.json')) as {
+            acceleration: { state: string; detail: string }
+          }
+          expect(env.acceleration.state).toBe('none')
+          expect(env.acceleration.detail).toContain('7f12c48d5e406c075076b5ea2eaf2d2de63c879b')
+          expect(at(runId, 'response.json')).toBe(at(other, 'response.json'))
+        }
+    }
+  )
 
   it('keeps all five statuses separate in every total', async () => {
     const { fixtures, inputs } = await loadAll()

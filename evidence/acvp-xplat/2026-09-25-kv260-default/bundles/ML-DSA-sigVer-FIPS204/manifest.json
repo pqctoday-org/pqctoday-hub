@@ -1,0 +1,28 @@
+{
+  "bundleVersion": "pqctoday.acvp-bundle/1",
+  "schemaId": "ML-DSA/sigVer/FIPS204",
+  "vsId": 42,
+  "producedBy": {
+    "engine": "cpp",
+    "artifactSha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be"
+  },
+  "files": {
+    "prompt.json": "e2cba4589389756fa0bea1a7e6837138bf0a81f9d14234c9ee8f6d33caa1654e",
+    "ir.json": "a217a154ab25cb3d7979faef64e073ca0d26fcc8dfba4bf30a220e367ae93450",
+    "plan.json": "a6be5338459e22354181fb16e3db3cc46a6619a648f3ead7322ff68a308e9a8e",
+    "response.json": "174268694b90404e189cc4e2215199894ca327c77040049040b375dfbc65c2cf",
+    "expectedResults.json": "e1d84ef1b2f35196278ab0b0ed6a46ec62cc03d2dfa92c564199e1999bfb8ea6"
+  },
+  "canonicalSha256": {
+    "ir": "342cba821659c89200b3e790400b863954dcd43d9c253f478564392b80fa458b",
+    "plan": "7485f50e93b40dfdadfc25ca58f6fcf931fb1d6f8dbbba65fc1bbc74b5e10e7b",
+    "response": "ac66a18aeb14f71ed2f65d758a2ebf95a86807b63eac18b519e025bd48815178"
+  },
+  "canonicalJson": "keys sorted, no whitespace — Python: json.dumps(o, sort_keys=True, separators=(\",\", \":\"))",
+  "rules": {
+    "promptToIr": "src/services/acvp/ir.ts P1–P6",
+    "irToPlan": "src/services/acvp/dispatch.ts D1–D7",
+    "response": "src/services/acvp/response.ts R1–R5"
+  },
+  "note": "A conforming runner must reproduce ir.json/plan.json from prompt.json and, executing plan.json on its engine, produce a response.json whose canonical SHA-256 equals canonicalSha256.response."
+}

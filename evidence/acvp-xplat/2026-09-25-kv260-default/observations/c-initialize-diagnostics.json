@@ -1,0 +1,11 @@
+{
+  "note": "NOT an evidence run. A separate process on the board loaded /usr/lib/softhsm/libsofthsmrustv3.so and called only C_Initialize(NULL) and C_Finalize(NULL), with this variant's environment plus PQC_HW_DIAGNOSTICS=1 (rust/src/hw_accel.rs:780-784 prints PQC_HW_DIAGNOSTIC lines to stderr only when it is 1). Captured stderr, verbatim.",
+  "environment": "env -u SOFTHSMRUST_STATE_FILE -u PQC_BEHAVIOUR_RING -u PQC_BEHAVIOUR_SRC -u PQC_AUTH_LOG -u SOFTHSM3_OP_LOG PQC_HW_DIAGNOSTICS=1",
+  "stderr": [
+    "PQC_HW_PHASE\tsession open begin",
+    "PQC_HW_DIAGNOSTIC\taccelerator probe failed: whole-signature=FPGA UIO device not found; matvec=FPGA UIO device not found",
+    "PQC_HW_DIAGNOSTIC\tselected hash-signature engine: build 0x0, 4 lane(s) (0 generic), SLH sign sets 0x444, keygen sets 0x444, LMS families 0x0/W 0x0, XMSS families 0x0; routing shake=Fpga sha2=Cpu; hooks: SLH_SIGN, SLH_KEYGEN",
+    "C_Initialize rv=0x0",
+    "C_Finalize rv=0x0"
+  ]
+}
