@@ -89,7 +89,7 @@ export async function runAesKwAcvpSection(ctx: ClassicalSectionCtx): Promise<voi
       source_sha256: g.source_sha256,
     }
     const mechName = g.mode === 'KW' ? 'CKM_AES_KEY_WRAP' : 'CKM_AES_KEY_WRAP_KWP'
-    const mech = WSE_MECH[mechName]
+    const mech = WSE_MECH[mechName] // eslint-disable-line security/detect-object-injection
     const why = unsupportedReason(mechs, mech, mechName)
     for (const t of g.tests) {
       const neg = !t.testPassed

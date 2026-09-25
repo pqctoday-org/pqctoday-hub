@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // KAT for the WS-E classical / symmetric / MAC reference-sample sections
-// (sections/aesGcmAcvp.ts, hmacAcvp.ts, ecSigVerAcvp.ts, shaAcvp.ts, aesKwAcvp.ts, aesCbcCtrAcvp.ts), driven through the
+// (sections/aesGcmAcvp.ts, hmacAcvp.ts, ecSigVerAcvp.ts, shaAcvp.ts, aesKwAcvp.ts, aesCbcCtrAcvp.ts, rsaSigVerAcvp.ts), driven through the
 // REAL useAcvpSuite hook in dual-engine mode (C++ Emscripten engine in Node +
 // Rust wasm-bindgen).
 //
@@ -26,6 +26,9 @@
 //    codes; a 15-byte IV gets CKR_MECHANISM_PARAM_INVALID on C++ but
 //    CKR_ARGUMENTS_BAD on Rust (not a C_EncryptInit return value — red row,
 //    open gap rust-cbc-iv-length-arguments-bad);
+//  - RSA SigVer: every upstream case on C++; Rust refuses public exponents
+//    above 2^33-1 (CKR_KEY_TYPE_INCONSISTENT — open gap
+//    rust-rsa-public-exponent-limit);
 //  - the literal mechanism numbers the sections use equal the generated
 //    mechanism inventory's;
 //  - sabotage on a COPY of the vectors (vi.doMock) turns exactly those rows red.
@@ -339,6 +342,31 @@ describe('WS-E classical reference samples — both engines, real vectors', () =
         expect(r.status, r.details).toBe(key === 'iv15' && e === 'Rust' ? 'fail' : 'pass')
         expect(classesOf(r.id)).toEqual(['product-mechanism-probe'])
       }
+  })
+
+  it('RSA SigVer: upstream disposition on every case; Rust refuses exponents above 2^33-1 (pinned finding)', () => {
+    const v = readVectors('rsa_sigver_acvp_test.json') as Vec & { notExecuted: unknown[] }
+    for (const g of v.testGroups) {
+      const bigE = BigInt(`0x${g.e}`) > 2n ** 33n - 1n
+      for (const t of g.tests)
+        for (const e of ENGINES) {
+          const r = row(
+            `rsa-sigver-nist-${g.modulo}-${g.sigType}-${g.hashAlg}-tg${g.tgId}-tc${t.tcId}-${e}`
+          )!
+          const gap = e === 'Rust' && bigE
+          expect(r.status, `${r.id}: ${r.details}`).toBe(gap ? 'fail' : 'pass')
+          expect(r.caseMeta?.observed).toBe(
+            gap
+              ? 'CKR_KEY_TYPE_INCONSISTENT'
+              : t.testPassed === true
+                ? 'CKR_OK'
+                : 'CKR_SIGNATURE_INVALID'
+          )
+          expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
+        }
+    }
+    const skips = results.filter((r) => r.id.startsWith('rsa-sigver-nist-skip-'))
+    expect(skips).toHaveLength(2 * v.notExecuted.length)
   })
 })
 

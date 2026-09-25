@@ -154,6 +154,7 @@ import { runAesCbcCtrAcvpSection } from './sections/aesCbcCtrAcvp'
 import { runHmacAcvpSection } from './sections/hmacAcvp'
 import { runShaAcvpSection } from './sections/shaAcvp'
 import { runEcdsaSigVerAcvpSection, runEddsaSigVerAcvpSection } from './sections/ecSigVerAcvp'
+import { runRsaSigVerAcvpSection } from './sections/rsaSigVerAcvp'
 import type { HsmKey } from '../HsmContext'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -188,7 +189,7 @@ export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'symmetric', label: 'Symmetric / AEAD', groups: 9 },
   { id: 'hashing_mac', label: 'Hashing & MAC', groups: 7 },
   { id: 'kdf', label: 'KDF', groups: 5 },
-  { id: 'classical', label: 'Classical Asymmetric', groups: 12 },
+  { id: 'classical', label: 'Classical Asymmetric', groups: 13 },
   { id: 'ml_dsa', label: 'ML-DSA', groups: 7 },
   { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 6 },
   { id: 'ml_kem', label: 'ML-KEM', groups: 3 },
@@ -864,6 +865,24 @@ export function useAcvpSuite() {
             slot: engine.slot,
             mechs: engine.mechs,
             referenceUrl: REF.eddsa,
+            pushResult,
+            addLog,
+          })
+        }
+
+        // ── 4d. RSA dedicated SigVer (WS-E) — NIST RSA-SigVer-FIPS186-5,
+        // PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048,
+        // every upstream valid/invalid case; SHAKE groups shown as skips.
+        // Self-contained in sections/rsaSigVerAcvp.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          await runRsaSigVerAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.rsapss,
             pushResult,
             addLog,
           })
