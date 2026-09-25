@@ -32,4 +32,27 @@ export interface ComplianceRecord {
   cemVersion?: string // CEM version (e.g., "ISO/IEC 18045:2022")
   avaVanLevel?: string // AVA_VAN level
   packageInfo?: string // Full package/augmentation details
+  // CMVP certificate-page fields (FIPS records only). Parsed by the
+  // private pipeline's enrich-cmvp-certificate-details.py from each record's
+  // own certificate page. Absent = the page was never read; null = the page
+  // was read and does not state the field (or it did not parse). Never guessed.
+  sunsetDate?: string | null // ISO YYYY-MM-DD, from "Sunset Date"
+  overallLevel?: number | null // 1-4, from "Overall Level"
+  caveat?: string | null // "Caveat", verbatim (may literally be "None")
+  embodiment?: string | null // "Embodiment", verbatim (CMVP spells values several ways)
+  moduleType?: string | null // "Module Type": Hardware / Software / Firmware / Hybrid ...
+  /** "Tested Configuration(s)": [] = the page states N/A; null = the page has no such field. */
+  operationalEnvironments?: string[] | null
+  cmvpStandard?: string | null // "Standard" as the page states it, e.g. "FIPS 140-2"
+  cmvpStatus?: string | null // "Status" as the page states it, e.g. "Historical"
+  cmvpHistoricalReason?: string | null // "Historical Reason", when given
+  /** "Approved Algorithms" section ONLY: [] = empty section; null = the page has no such section. */
+  cmvpApprovedAlgorithms?: CmvpApprovedAlgorithm[] | null
+  cmvpDetailsFetchedAt?: string // UTC ISO timestamp of the page fetch the fields above came from
+}
+
+/** One algorithm in a CMVP certificate's "Approved Algorithms" section. */
+export interface CmvpApprovedAlgorithm {
+  name: string // e.g. "ML-KEM KeyGen" (current layout) or "AES" (legacy FIPS 140-2 layout)
+  cavpRefs: string[] // CAVP certificate refs verbatim, e.g. ["A5021"]; [] for "vendor affirmed"
 }
