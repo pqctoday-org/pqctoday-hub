@@ -417,7 +417,7 @@ export function MobileComplianceView() {
       {section === 'records' && (
         <div className="flex flex-col gap-3">
           <p className="text-[11.5px] leading-relaxed text-muted-foreground">
-            Six terms that gate the rest of this tab.
+            {RECORDS_GLOSSARY.length} terms that gate the rest of this tab.
           </p>
           {RECORDS_GLOSSARY.map((t) => (
             <div key={t.term} className="glass-panel p-3">

@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useEffect, useCallback } from 'react'
-import type { ComplianceRecord } from './types'
+import type { ComplianceMeta, ComplianceRecord } from './types'
 import { NIST_SNAPSHOT } from './nistSnapshot'
+import {
+  fetchComplianceMeta,
+  fetchStaticComplianceData,
+  publicationSignature,
+} from './complianceDataLoader'
 import localforage from 'localforage'
 import Papa from 'papaparse'
 
@@ -10,8 +15,6 @@ localforage.config({
   name: 'PQCTimelineApp',
   storeName: 'compliance_cache',
 })
-
-const CACHE_TIMESTAMP_KEY = 'compliance_data_ts_v6'
 
 const withTimeout = <T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> => {
   return new Promise((resolve) => {
@@ -624,7 +627,8 @@ const fetchLiveACVPData = async (): Promise<ComplianceRecord[]> => {
         date,
         link: fullLink,
         type: 'ACVP',
-        status: 'Active',
+        // CAVP has no lifecycle status — NIST shows "First Validated" only.
+        status: 'Validated',
         pqcCoverage, // Placeholder
         productName: moduleName,
         productCategory: 'Algorithm Implementation',
@@ -655,22 +659,51 @@ const fetchSchemeData = async (schemeCode: string): Promise<ComplianceRecord[]> 
 export const fetchBSIData = () => fetchSchemeData('DE')
 export const fetchANSSIData = () => fetchSchemeData('FR')
 
-// Keys for granular persistence
-const CACHE_KEYS = {
-  NIST: 'compliance_data_nist_v2',
-  ACVP: 'compliance_data_acvp_v2',
-  CC: 'compliance_data_cc_v2',
+// ── Browser cache (localforage), versioned per publication ─────────────────
+// Every key carries the publication signature (the sidecar's publicationId, or
+// a length/first-id/last-id/newest-date signature of the fetched JSON when the
+// sidecar is absent). A new compliance-data.json publication therefore gets
+// fresh keys and can never be masked by a copy cached against an older one;
+// keys from other publications are pruned on first use.
+const CACHE_PREFIX = 'compliance_cache_v3'
+
+interface CacheKeys {
+  NIST: string
+  ACVP: string
+  TIMESTAMP: string
 }
 
-// Helper to fetch static data (Production Mode)
-const fetchStaticComplianceData = async (): Promise<ComplianceRecord[]> => {
+const cacheKeysFor = (signature: string): CacheKeys => ({
+  NIST: `${CACHE_PREFIX}:nist:${signature}`,
+  ACVP: `${CACHE_PREFIX}:acvp:${signature}`,
+  TIMESTAMP: `${CACHE_PREFIX}:ts:${signature}`,
+})
+
+// Keys of the publication most recently loaded — used by the debounced ACVP
+// enrichment save, which runs outside fetchComplianceData.
+let currentCacheKeys: CacheKeys = cacheKeysFor('empty')
+
+const LEGACY_CACHE_KEYS = [
+  'compliance_data_ts_v6',
+  'compliance_data_nist_v2',
+  'compliance_data_acvp_v2',
+  'compliance_data_cc_v2',
+]
+
+/** Drops cached entries that belong to any other publication (and pre-v3 keys). */
+const pruneStaleCacheKeys = async (keys: CacheKeys): Promise<void> => {
   try {
-    const response = await fetch('/data/compliance-data.json')
-    if (!response.ok) throw new Error('Failed to load static compliance data')
-    return await response.json()
+    const keep = new Set(Object.values(keys))
+    const all = await localforage.keys()
+    await Promise.all(
+      all
+        .filter(
+          (k) => LEGACY_CACHE_KEYS.includes(k) || (k.startsWith(`${CACHE_PREFIX}:`) && !keep.has(k))
+        )
+        .map((k) => localforage.removeItem(k))
+    )
   } catch {
-    // console.error('Static Data Fetch Error', err)
-    return []
+    // Storage unavailable (private mode, tests) — nothing to prune.
   }
 }
 
@@ -705,12 +738,17 @@ export const fetchComplianceData = async (forceRefresh = false): Promise<Complia
 
     // console.log('Fetching Live Data for NIST/ACVP...')
 
+    const meta = await fetchComplianceMeta()
+    const CACHE_KEYS = cacheKeysFor(publicationSignature(meta, staticData))
+    currentCacheKeys = CACHE_KEYS
+    await pruneStaleCacheKeys(CACHE_KEYS)
+
     const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000
     const now = Date.now()
 
     // Load Timestamps
     const timestampMap =
-      (await localforage.getItem<Record<string, string>>(CACHE_TIMESTAMP_KEY)) || {}
+      (await localforage.getItem<Record<string, string>>(CACHE_KEYS.TIMESTAMP)) || {}
 
     const getAge = (key: string) => {
       // eslint-disable-next-line security/detect-object-injection
@@ -773,7 +811,7 @@ export const fetchComplianceData = async (forceRefresh = false): Promise<Complia
     // Update Timestamps
     if (fetchNist || fetchAcvp) {
       timestampMap['_global'] = new Date().toISOString()
-      await localforage.setItem(CACHE_TIMESTAMP_KEY, timestampMap)
+      await localforage.setItem(CACHE_KEYS.TIMESTAMP, timestampMap)
     }
 
     // MERGE STRATEGY:
@@ -851,19 +889,17 @@ const debouncedSaveACVP = (records: ComplianceRecord[]) => {
   saveTimeout = setTimeout(() => {
     // Filter out only ACVP records to save
     const acvpOnly = records.filter((r) => r.type === 'ACVP')
-    localforage.setItem(CACHE_KEYS.ACVP, acvpOnly)
+    localforage.setItem(currentCacheKeys.ACVP, acvpOnly).catch(() => undefined)
     // console.log('Persisted Updated ACVP Data to Cache')
   }, 1000)
 }
 
 /**
- * The genuine "as of" date for a set of compliance records: the newest
- * per-record `date` (ISO YYYY-MM-DD) actually present in the data, not the
- * moment the browser happened to fetch it. On the static production build,
- * `fetchComplianceData` always returns the same snapshot regardless of a
- * "refresh" click, so a wall-clock timestamp would falsely imply the data
- * just changed — this instead reports when the underlying records were last
- * dated.
+ * The newest per-record `date` (ISO YYYY-MM-DD) actually present in the data —
+ * the date of the most recent certificate, NOT when the snapshot was
+ * retrieved. Label it "Newest record date", never "as of": the snapshot's
+ * retrieval dates come from the sidecar (compliance-data.meta.json, see
+ * `snapshotRetrievalEntries` in recordSemantics.ts).
  */
 export const computeRecordsSnapshotDate = (records: ComplianceRecord[]): Date | null => {
   let latest: number | null = null
@@ -889,13 +925,20 @@ export const useComplianceRefresh = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  // Sidecar for the loaded publication (retrieval dates, scope); null until
+  // published or when it fails to load — callers fall back to record dates.
+  const [meta, setMeta] = useState<ComplianceMeta | null>(null)
 
   const refresh = useCallback(async (force = false) => {
     setLoading(true)
     setError(null)
     try {
-      const records = await fetchComplianceData(force)
+      const [records, sidecar] = await Promise.all([
+        fetchComplianceData(force),
+        fetchComplianceMeta(),
+      ])
       setData(records)
+      setMeta(sidecar)
       setLastUpdated(computeRecordsSnapshotDate(records))
     } catch (err) {
       console.error('Failed to fetch compliance data:', err)
@@ -938,5 +981,5 @@ export const useComplianceRefresh = () => {
     refresh(false)
   }, [refresh])
 
-  return { data, loading, error, lastUpdated, refresh: () => refresh(true), enrichRecord }
+  return { data, loading, error, lastUpdated, meta, refresh: () => refresh(true), enrichRecord }
 }

@@ -6,13 +6,22 @@ import {
   buildMonthlyPqcCertificationTrend,
   isAmbiguousPqcMatch,
 } from './pqcCertificationTrendModel'
+import { formatIsoDate } from './recordSemantics'
 
 interface PqcCertificationTrendChartProps {
+  /** Records already filtered to the reader's record scope (current only by default). */
   data: ComplianceRecord[]
-  /** Genuine "as of" date for the underlying snapshot — the same value
-   *  ComplianceTable already receives as `lastUpdated` (computeRecordsSnapshotDate).
-   *  Falls back to the wall clock only when the data hasn't loaded yet. */
+  /** Newest certificate date in the snapshot (computeRecordsSnapshotDate) — the
+   *  axis ends at its month. Not a retrieval date. Falls back to the wall clock
+   *  only when the data hasn't loaded yet. */
   asOf: Date | null
+}
+
+const SERIES_LABEL: Record<string, string> = {
+  acvp: 'NIST CAVP',
+  fips: 'FIPS 140-3',
+  cc: 'CC / EUCC (named in ST)',
+  cspn: 'CSPN (ANSSI, named in ST)',
 }
 
 const MONTH_ABBR = [
@@ -59,6 +68,7 @@ export function PqcCertificationTrendChart({ data, asOf }: PqcCertificationTrend
   )
 
   const totalCertified = useMemo(() => trend.reduce((sum, t) => sum + t.total, 0), [trend])
+  const hasCspn = useMemo(() => trend.some((t) => t.cspn > 0), [trend])
 
   const ambiguousCount = useMemo(
     () => data.filter((r) => r.date >= '2024-01-01' && isAmbiguousPqcMatch(r.pqcCoverage)).length,
@@ -74,7 +84,9 @@ export function PqcCertificationTrendChart({ data, asOf }: PqcCertificationTrend
   return (
     <div className="glass-panel rounded-lg p-3">
       <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-3">
-        <h3 className="text-sm font-medium text-foreground">PQC certifications by month</h3>
+        <h3 className="text-sm font-medium text-foreground">
+          Certification records naming PQC, by month
+        </h3>
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <span className="flex items-center gap-3">
             <span className="flex items-center gap-1">
@@ -82,25 +94,34 @@ export function PqcCertificationTrendChart({ data, asOf }: PqcCertificationTrend
                 className="inline-block h-2 w-2 rounded-sm"
                 style={{ background: 'var(--color-primary)' }}
               />
-              ACVP
+              {SERIES_LABEL.acvp}
             </span>
             <span className="flex items-center gap-1">
               <span
                 className="inline-block h-2 w-2 rounded-sm"
                 style={{ background: 'var(--color-secondary)' }}
               />
-              FIPS
+              {SERIES_LABEL.fips}
             </span>
             <span className="flex items-center gap-1">
               <span
                 className="inline-block h-2 w-2 rounded-sm"
                 style={{ background: 'var(--color-accent)' }}
               />
-              CC
+              {SERIES_LABEL.cc}
             </span>
+            {hasCspn && (
+              <span className="flex items-center gap-1">
+                <span
+                  className="inline-block h-2 w-2 rounded-sm"
+                  style={{ background: 'var(--color-tertiary)' }}
+                />
+                {SERIES_LABEL.cspn}
+              </span>
+            )}
           </span>
           <span>
-            {totalCertified.toLocaleString()} certified · {formatMonthLong(trend[0].month)}–
+            {totalCertified.toLocaleString()} records · {formatMonthLong(trend[0].month)}–
             {formatMonthLong(trend[trend.length - 1].month)}
           </span>
         </div>
@@ -140,28 +161,29 @@ export function PqcCertificationTrendChart({ data, asOf }: PqcCertificationTrend
             // "Invalid Date" into the tooltip, which looks like real data.
             // Falling back to the raw label instead keeps the failure visible.
             labelFormatter={(ym) => (typeof ym === 'string' ? formatMonthLong(ym) : ym)}
-            formatter={(value, name) => [
-              `${value}`,
-              name === 'acvp' ? 'ACVP' : name === 'fips' ? 'FIPS' : 'CC',
-            ]}
+            formatter={(value, name) => [`${value}`, SERIES_LABEL[String(name)] ?? String(name)]}
           />
           <Bar dataKey="acvp" stackId="a" fill="var(--color-primary)" />
           <Bar dataKey="fips" stackId="a" fill="var(--color-secondary)" />
-          <Bar dataKey="cc" stackId="a" fill="var(--color-accent)" radius={[3, 3, 0, 0]} />
+          <Bar
+            dataKey="cc"
+            stackId="a"
+            fill="var(--color-accent)"
+            radius={hasCspn ? undefined : [3, 3, 0, 0]}
+          />
+          {hasCspn && (
+            <Bar dataKey="cspn" stackId="a" fill="var(--color-tertiary)" radius={[3, 3, 0, 0]} />
+          )}
         </BarChart>
       </ResponsiveContainer>
       <p className="mt-1.5 text-[11px] text-muted-foreground">
-        Confirmed PQC algorithm only (ML-KEM, ML-DSA, SLH-DSA, LMS/HSS/XMSS, Falcon) in the
-        certificate's validated scope
+        Records naming a PQC algorithm (ML-KEM, ML-DSA, SLH-DSA, LMS/HSS/XMSS, Falcon): FIPS 140-3
+        from the certificate's Approved Algorithms list, NIST CAVP from the algorithm validation,
+        and CC / EUCC / CSPN where the algorithm is named in the Security Target (a claim, not a
+        validation of PQC support)
         {ambiguousCount > 0 &&
           ` — excludes ${ambiguousCount} record${ambiguousCount === 1 ? '' : 's'} flagged only as a potential name match`}
-        . Data as of{' '}
-        {referenceDate.toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-        })}
-        .
+        {asOf && `. Newest record dated ${formatIsoDate(asOf.toISOString())}`}.
       </p>
     </div>
   )

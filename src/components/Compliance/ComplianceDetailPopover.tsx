@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import {
@@ -14,6 +14,18 @@ import {
 } from 'lucide-react'
 import type { ComplianceRecord, ComplianceStatus } from './types'
 import clsx from 'clsx'
+import {
+  cavpValidationUrl,
+  formatIsoDate,
+  isSecurityTargetType,
+  pqcCoverageState,
+  pqcEvidenceLabel,
+  pqcNames,
+  recordTypeDescription,
+  recordTypeLabel,
+  statusBadgeClass,
+  statusTone,
+} from './recordSemantics'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
@@ -28,31 +40,205 @@ interface ComplianceDetailPopoverProps {
   record: ComplianceRecord | null
 }
 
+/** Status verbatim from the source; unknown strings render as-is, styled as not current. */
 const StatusBadge = ({ status }: { status: ComplianceStatus }) => {
-  const styles = {
-    Active: 'bg-status-success text-status-success border-status-success/50',
-    Historical: 'bg-muted text-muted-foreground border-border',
-    Pending: 'bg-status-warning text-status-warning border-status-warning/50',
-    'In Process': 'bg-status-info text-status-info border-status-info/50',
-    Revoked: 'bg-status-error text-status-error border-status-error/50',
-  }
-
-  // Accessing property by dynamic key is flagged, but status is strictly typed
-  // eslint-disable-next-line security/detect-object-injection
-  const badgeStyle = styles[status] || styles.Historical
-
+  const tone = statusTone(status)
   return (
     <span
       className={clsx(
         'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border gap-1',
-        badgeStyle
+        statusBadgeClass(status)
       )}
     >
-      {status === 'Active' && <ShieldCheck size={10} />}
-      {status === 'Revoked' && <ShieldAlert size={10} />}
-      {status === 'Pending' && <Shield size={10} />}
-      {status}
+      {tone === 'current' && <ShieldCheck size={10} />}
+      {tone === 'revoked' && <ShieldAlert size={10} />}
+      {tone === 'pending' && <Shield size={10} />}
+      {status || 'No status'}
     </span>
+  )
+}
+
+const FieldLabel = ({ children }: { children: ReactNode }) => (
+  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+    {children}
+  </h4>
+)
+
+const Field = ({ label, children }: { label: string; children: ReactNode }) => (
+  <div className="space-y-1">
+    <FieldLabel>{label}</FieldLabel>
+    <div className="text-sm text-foreground whitespace-normal break-words">{children}</div>
+  </div>
+)
+
+const ExtLink = ({ href, children }: { href: string; children: ReactNode }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-flex items-center gap-1 text-primary hover:underline"
+  >
+    {children}
+    <ExternalLink size={10} className="shrink-0 opacity-60" aria-hidden="true" />
+  </a>
+)
+
+/** FIPS 140-3: what the NIST CMVP certificate page states. */
+const FipsDetails = ({ record }: { record: ComplianceRecord }) => {
+  const observed = formatIsoDate(record.cmvpDetailsFetchedAt)
+  const sunset = formatIsoDate(record.sunsetDate ?? undefined)
+  const algos = record.cmvpApprovedAlgorithms ?? []
+  const envs = record.operationalEnvironments ?? []
+  return (
+    <div className="space-y-3 pt-2 border-t border-border" data-testid="fips-details">
+      <FieldLabel>NIST CMVP certificate</FieldLabel>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {record.cmvpStandard && <Field label="Standard">{record.cmvpStandard}</Field>}
+        <Field label="Status">
+          {record.cmvpStatus || record.status || 'Not stated'}
+          {observed && (
+            <span className="block text-xs text-muted-foreground">status observed {observed}</span>
+          )}
+        </Field>
+        {record.cmvpHistoricalReason && (
+          <Field label="Historical reason">{record.cmvpHistoricalReason}</Field>
+        )}
+        {sunset && <Field label="Sunset date">{sunset}</Field>}
+        {record.overallLevel != null && (
+          <Field label="Overall level">{String(record.overallLevel)}</Field>
+        )}
+        {record.moduleType && <Field label="Module type">{record.moduleType}</Field>}
+        {record.embodiment && <Field label="Embodiment">{record.embodiment}</Field>}
+        {record.caveat && <Field label="Caveat">{record.caveat}</Field>}
+        {envs.length > 0 && (
+          <Field label="Operational environments">
+            <ul className="list-disc pl-4 text-xs">
+              {envs.map((e) => (
+                <li key={e}>{e}</li>
+              ))}
+            </ul>
+          </Field>
+        )}
+      </div>
+      {algos.length > 0 && (
+        <div className="space-y-1">
+          <FieldLabel>Approved Algorithms (certificate page)</FieldLabel>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1 text-xs">
+            {algos.map((a, i) => (
+              <li key={`${a.name}-${i}`} className="flex flex-wrap items-baseline gap-1">
+                <span className="text-foreground">{a.name}</span>
+                {(a.cavpRefs ?? []).map((ref) => (
+                  <ExtLink key={ref} href={cavpValidationUrl(ref)}>
+                    <span className="font-mono">{ref}</span>
+                  </ExtLink>
+                ))}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {record.link && <ExtLink href={record.link}>NIST CMVP certificate #{record.id}</ExtLink>}
+    </div>
+  )
+}
+
+/** NIST CAVP: what the validation details page states. */
+const CavpDetails = ({ record }: { record: ComplianceRecord }) => {
+  const firstValidated = formatIsoDate(record.cavpFirstValidated)
+  const caps = record.cavpCapabilities ?? []
+  const productUrl = record.cavpProductUrl || record.link
+  return (
+    <div className="space-y-3 pt-2 border-t border-border" data-testid="cavp-details">
+      <FieldLabel>NIST CAVP algorithm validation</FieldLabel>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {firstValidated && <Field label="First validated">{firstValidated}</Field>}
+        {record.cavpImplementationVersion && (
+          <Field label="Implementation version">{record.cavpImplementationVersion}</Field>
+        )}
+        {record.cavpImplementationType && (
+          <Field label="Implementation type">{record.cavpImplementationType}</Field>
+        )}
+      </div>
+      {caps.length > 0 && (
+        <div className="space-y-1">
+          <FieldLabel>Capabilities</FieldLabel>
+          <div className="overflow-x-auto rounded border border-border">
+            <table className="w-full text-xs">
+              <thead className="bg-muted/50 text-muted-foreground">
+                <tr>
+                  <th className="px-2 py-1 text-left font-semibold">Algorithm</th>
+                  <th className="px-2 py-1 text-left font-semibold">Parameter sets</th>
+                  <th className="px-2 py-1 text-left font-semibold">Functions</th>
+                  <th className="px-2 py-1 text-left font-semibold">Operating environment</th>
+                </tr>
+              </thead>
+              <tbody>
+                {caps.map((c, i) => (
+                  <tr key={`${c.algorithm}-${i}`} className="border-t border-border align-top">
+                    <td className="px-2 py-1 text-foreground">{c.algorithm}</td>
+                    <td className="px-2 py-1">{(c.parameterSets ?? []).join(', ') || '—'}</td>
+                    <td className="px-2 py-1">{(c.functions ?? []).join(', ') || '—'}</td>
+                    <td className="px-2 py-1">{c.operatingEnvironment || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      {productUrl && <ExtLink href={productUrl}>NIST CAVP product page</ExtLink>}
+    </div>
+  )
+}
+
+const PqcSection = ({ record }: { record: ComplianceRecord }) => {
+  const state = pqcCoverageState(record.pqcCoverage)
+  const fromSt = isSecurityTargetType(record.type)
+  if (state === 'none') return null
+  if (state === 'not-read') {
+    return (
+      <div className="space-y-1">
+        <FieldLabel>PQC mechanisms</FieldLabel>
+        <p className="text-sm text-muted-foreground italic">
+          {record.type === 'FIPS 140-3'
+            ? "Not read — the certificate page's Approved Algorithms list could not be read, so PQC status is unknown."
+            : 'Not read — PQC status is unknown.'}
+        </p>
+      </div>
+    )
+  }
+  const names = pqcNames(record.pqcCoverage)
+  return (
+    <div className="space-y-1">
+      <h4
+        className={clsx(
+          'text-xs font-semibold uppercase tracking-wider',
+          fromSt ? 'text-muted-foreground' : 'text-tertiary'
+        )}
+      >
+        {state === 'named'
+          ? `PQC — ${pqcEvidenceLabel(record.type).toLowerCase()}`
+          : 'PQC mechanisms'}
+      </h4>
+      <p className="text-sm text-foreground">
+        {typeof record.pqcCoverage === 'boolean'
+          ? 'PQC indicated (no algorithm names recorded).'
+          : names.length > 0
+            ? names.join(', ')
+            : String(record.pqcCoverage)}
+      </p>
+      {fromSt && state === 'named' && (
+        <p className="text-xs text-muted-foreground">
+          A claim in the evaluated Security Target, not a validation of PQC support.
+          {record.securityTargetUrls?.[0] && (
+            <>
+              {' '}
+              <ExtLink href={record.securityTargetUrls[0]}>Open the Security Target</ExtLink>
+            </>
+          )}
+        </p>
+      )}
+    </div>
   )
 }
 
@@ -141,7 +327,7 @@ export const ComplianceDetailPopover = ({
                   </div>
                   <div className="flex items-center gap-1">
                     <AskAssistantButton
-                      question={`What PQC compliance requirements does ${record.productName}${record.vendor ? ` by ${record.vendor}` : ''} enforce under ${record.type}${record.source ? ` (${record.source})` : ''}${record.certificationLevel ? `, level: ${record.certificationLevel}` : ''}?`}
+                      question={`What PQC compliance requirements does ${record.productName}${record.vendor ? ` by ${record.vendor}` : ''} enforce under ${recordTypeLabel(record.type)}${record.source ? ` (${record.source})` : ''}${record.certificationLevel ? `, level: ${record.certificationLevel}` : ''}?`}
                     />
                     <EndorseButton
                       endorseUrl={buildRecordEndorsementUrl(record)}
@@ -183,7 +369,7 @@ export const ComplianceDetailPopover = ({
                   <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Type
                   </h4>
-                  <p className="text-sm text-foreground">{record.type}</p>
+                  <p className="text-sm text-foreground">{recordTypeDescription(record.type)}</p>
                 </div>
 
                 {/* Category */}
@@ -227,6 +413,18 @@ export const ComplianceDetailPopover = ({
                   </div>
                 </div>
 
+                {/* CC Portal archived-list date */}
+                {record.ccArchivedDate && (
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Archived
+                    </h4>
+                    <p className="text-sm text-foreground">
+                      {formatIsoDate(record.ccArchivedDate)}
+                    </p>
+                  </div>
+                )}
+
                 {/* Source */}
                 <div className="space-y-1">
                   <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -241,25 +439,8 @@ export const ComplianceDetailPopover = ({
 
               {/* Algorithms Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-                {/* PQC Section */}
-                {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
-                  <div className="space-y-1">
-                    <h4 className="text-xs font-semibold text-tertiary uppercase tracking-wider">
-                      PQC Mechanisms Detected
-                    </h4>
-                    <p className="text-sm text-foreground">
-                      {typeof record.pqcCoverage === 'boolean'
-                        ? 'Detailed analysis confirmed PQC support.'
-                        : record.pqcCoverage}
-                    </p>
-                  </div>
-                ) : // Empty div to maintain grid structure if PQC is missing but Classical exists?
-                // Actually, if PQC is missing, we might want Classical to just be there.
-                // But if we want strictly "PQC Left, Classical Right" if both exist...
-                // If we just render conditionally, Classical moves left if PQC is missing.
-                // Let's keep it simple: If PQC matches condition, render it.
-                // If not, render null.
-                null}
+                {/* PQC Section — says where the names come from; '' = not read */}
+                <PqcSection record={record} />
 
                 {/* Classical Algorithms Section */}
                 {record.classicalAlgorithms && (
@@ -271,6 +452,9 @@ export const ComplianceDetailPopover = ({
                   </div>
                 )}
               </div>
+
+              {record.type === 'FIPS 140-3' && <FipsDetails record={record} />}
+              {record.type === 'ACVP' && <CavpDetails record={record} />}
 
               {/* Documents Section */}
               {(record.certificationReportUrls ||
@@ -336,7 +520,11 @@ export const ComplianceDetailPopover = ({
                     <ExternalLink size={14} />
                     {record.link.includes('?expand#')
                       ? 'View Product Details'
-                      : 'View Official Record Source'}
+                      : record.type === 'FIPS 140-3'
+                        ? 'View the NIST CMVP certificate page'
+                        : record.type === 'ACVP'
+                          ? 'View the NIST CAVP validation page'
+                          : 'View Official Record Source'}
                   </a>
                 </div>
               )}
