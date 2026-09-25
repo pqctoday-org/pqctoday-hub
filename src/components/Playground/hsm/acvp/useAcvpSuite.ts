@@ -146,6 +146,7 @@ import {
 import type { SoftHSMModule, SLHDSASignOptions } from '@/wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
 import { runMldsaAcvpSection, type AcvpCaseMeta } from './sections/mldsaAcvp'
+import { runMlkemAcvpSection } from './sections/mlkemAcvp'
 import type { HsmKey } from '../HsmContext'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -221,7 +222,7 @@ export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'classical', label: 'Classical Asymmetric', groups: 10 },
   { id: 'ml_dsa', label: 'ML-DSA', groups: 6 },
   { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 5 },
-  { id: 'ml_kem', label: 'ML-KEM', groups: 2 },
+  { id: 'ml_kem', label: 'ML-KEM', groups: 3 },
 ]
 
 export const ALL_CATEGORY_IDS: Set<CategoryId> = new Set(CATEGORIES.map((c) => c.id))
@@ -1171,7 +1172,12 @@ export function useAcvpSuite() {
           }
         }
 
-        // ── 7. ML-KEM Decapsulation KAT (FIPS 203) ──────────────────────
+        // ── 7. ML-KEM Decapsulation from upstream encapsulation AFT (FIPS 203) ──
+        // D1-1 (2026-09-24): mlkem_test.json holds cases from the upstream
+        // ENCAPSULATION group (ek, m -> c, k). The hub imports dk and runs
+        // C_DecapsulateKey on c, comparing against k: a transformation, not a
+        // NIST decapsulation case. Row text and caseMeta say so; dedicated
+        // decapsulation VAL cases live in section 7b (sections/mlkemAcvp.ts).
         if (activeCategories.has('ml_kem')) {
           currentCategory = 'ml_kem'
           for (const group of mlkemTestVectors.testGroups) {
@@ -1179,6 +1185,26 @@ export function useAcvpSuite() {
             const algo = group.parameterSet
             const variantNum = (parseInt(algo.split('-')[2]) || 768) as 512 | 768 | 1024
             const id7 = `test-${algo}-decap-${eName}`
+            const testCase7 = `Decapsulate · upstream encapsulation AFT tg${group.tgId}/tc${test.tcId} → local decapsulation`
+            const lineage7 =
+              'NIST encapsulation-group output (dk, c, k) re-used as a decapsulation KAT; upstream m → c not executed ' +
+              '(ACVP-Server@975de31e ML-KEM-encapDecap-FIPS203)'
+            const caseMeta7: AcvpCaseMeta = {
+              origin: 'nist-acvp-server',
+              upstreamOperation: 'encapsulation',
+              localOperation: 'decapsulation',
+              parameterSet: algo,
+              expected: 'byte-match',
+              expectedRv: 'CKR_OK',
+              tgId: group.tgId,
+              tcId: test.tcId,
+              source: {
+                repo: 'https://github.com/usnistgov/ACVP-Server',
+                commit: mlkemTestVectors._provenance.source_release,
+                path: 'gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json',
+                sha256: mlkemTestVectors._provenance.source_sha256,
+              },
+            }
             addLog(`[${eName}] Testing ${algo} Decapsulate KAT...`)
             addLog(
               `  ACVP SK: ${test.sk.slice(0, 32)}… | CT[${test.ct.length / 2}B]: ${test.ct.slice(0, 32)}…`
@@ -1218,11 +1244,12 @@ export function useAcvpSuite() {
                 await pushResult({
                   id: id7,
                   algorithm: `${algo} (${eName})`,
-                  testCase: 'Decapsulate KAT',
+                  testCase: testCase7,
+                  caseMeta: caseMeta7,
                   referenceUrl: REF.mlkem,
                   evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
                   status: 'pass',
-                  details: `SS[${recoveredSs.length}B]: ${ssHex}`,
+                  details: `SS[${recoveredSs.length}B]: ${ssHex} · ${lineage7}`,
                 })
                 addLog(`[${eName}] [id:${id7}] ${algo} Decapsulate: PASS | SS: ${ssHex}`)
               } else {
@@ -1235,11 +1262,12 @@ export function useAcvpSuite() {
                 await pushResult({
                   id: id7,
                   algorithm: `${algo} (${eName})`,
-                  testCase: 'Decapsulate KAT',
+                  testCase: testCase7,
+                  caseMeta: caseMeta7,
                   referenceUrl: REF.mlkem,
                   evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
                   status: 'fail',
-                  details: `SS mismatch: got ${gotHex}... expected ${expHex}...`,
+                  details: `SS mismatch: got ${gotHex}... expected ${expHex}... · ${lineage7}`,
                 })
                 addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Decapsulate: SS mismatch`)
                 // The PKCS#11 call itself succeeded (CKR_OK) — the recovered
@@ -1263,11 +1291,12 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `test-${algo}-err-${eName}`,
                 algorithm: `${algo} (${eName})`,
-                testCase: 'Decapsulate KAT',
+                testCase: testCase7,
+                caseMeta: caseMeta7,
                 referenceUrl: REF.mlkem,
                 evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
                 status: 'fail',
-                details: errorMessage,
+                details: `${errorMessage} · ${lineage7}`,
               })
               addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Error: ${errorMessage}`)
               addHsmLog({
@@ -1282,6 +1311,21 @@ export function useAcvpSuite() {
               })
             }
           }
+
+          // ── 7b. ML-KEM reference-sample depth — keyGen from seed, VAL
+          // decapsulation (incl. implicit rejection) and key checks, honest
+          // encapsulation skip, product-authored boundary probes. Self-
+          // contained in sections/mlkemAcvp.ts (WS-D D1-2..D1-5).
+          await runMlkemAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mlkem,
+            pushResult,
+            addLog,
+            evidenceTierFor: deriveEvidenceTier,
+          })
 
           // ── 8. ML-KEM Encap+Decap Round-Trip (FIPS 203) ─────────────────
           for (const kemVariant of [512, 768, 1024] as const) {
