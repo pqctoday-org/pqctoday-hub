@@ -17,6 +17,8 @@ import { runCli } from '../../acvp/node/cli'
 import { FIXTURE_NAMES, fixturePath, type FixtureName } from '../../acvp/node/fixtures'
 import { ENGINE_ARTIFACTS, type EngineId } from '../../acvp/node/loadEngines'
 import { withEnvId, type ExecutionEnvironment } from '../../../data/validation/executionEnvironment'
+import type { ExecutionPlan } from '../../acvp/dispatch'
+import { planIndexOf } from '../compare'
 
 /**
  * Build facts for the vendored WASM engines that cannot be observed at run
@@ -251,6 +253,14 @@ export const runWasmBaseline = async (opts: WasmRunOptions): Promise<string[]> =
     const committed = path.join(opts.runDir, 'bundles', name, 'manifest.json')
     mkdirSync(path.dirname(committed), { recursive: true })
     copyFileSync(path.join(opts.bundleDir, 'cpp', name, 'manifest.json'), committed)
+    copyFileSync(
+      path.join(opts.bundleDir, 'cpp', name, 'response.json'),
+      path.join(path.dirname(committed), 'response.json')
+    )
+    const plan = JSON.parse(
+      readFileSync(path.join(opts.bundleDir, 'cpp', name, 'plan.json'), 'utf8')
+    ) as ExecutionPlan
+    writeJson(path.join(path.dirname(committed), 'plan-index.json'), planIndexOf(plan))
     const bundleSha = await sha256Hex(manifests.cpp.text)
     for (const engine of ['cpp', 'rust'] as const) {
       const ev = JSON.parse(

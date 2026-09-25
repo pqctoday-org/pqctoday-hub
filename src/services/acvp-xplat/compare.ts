@@ -26,7 +26,7 @@ import policyDoc from '../../data/validation/acvpComparatorPolicy.json'
 import evidenceSchema from '../acvp/schemas/evidence.schema.json'
 import { validateAgainstSchema } from '../acvp/schemaValidator'
 import { sha256Hex, type JsonObject } from '../acvp/ir'
-import type { ExecutionPlan, PlanItem, PlanOperation } from '../acvp/dispatch'
+import type { ExecutionPlan } from '../acvp/dispatch'
 import {
   diffEnvironments,
   validateExecutionEnvironment,
@@ -68,16 +68,53 @@ export const policyFor = (operation: string): OperationPolicy => {
   return p
 }
 
+/**
+ * The payload-free skeleton of a plan item, frozen with each run
+ * (bundles/<fixture>/plan-index.json), so a committed run stays comparable
+ * after the live dispatch rules evolve (e.g. new groups become executable).
+ */
+export interface PlanIndexItem {
+  tgId: number
+  tcId: number
+  kind: 'execute' | 'unsupported'
+  operation?: string
+  mechanism?: string
+  parameterSet?: string
+  hashAlg?: string | null
+  responseField?: string
+  scope?: 'group' | 'test'
+  reason?: string
+}
+
+export const planIndexOf = (plan: ExecutionPlan): PlanIndexItem[] =>
+  plan.items.map((i) =>
+    i.kind === 'execute'
+      ? {
+          tgId: i.tgId,
+          tcId: i.tcId,
+          kind: 'execute',
+          operation: i.op.operation,
+          mechanism: i.op.mechanism,
+          parameterSet: i.op.parameterSet,
+          ...(i.op.operation === 'ml-dsa.verify' ? { hashAlg: i.op.hashAlg } : {}),
+          responseField: i.responseField,
+        }
+      : { tgId: i.tgId, tcId: i.tcId, kind: 'unsupported', scope: i.scope, reason: i.reason }
+  )
+
 /** Everything the comparator needs about one fixture. */
 export interface FixtureRef {
   name: string
   schemaId: string
   vsId: number
   bundleManifestSha256: string
-  plan: ExecutionPlan
-  /** Reference response document (golden). */
+  /** Frozen plan skeleton of the run. */
+  planIndex: PlanIndexItem[]
+  /** Prompt test-case fields by "tgId/tcId" (inputs for divergence export). */
+  testFields: Map<string, JsonObject>
+  /** Reference response document (the bundle's own response.json). */
   reference: unknown
-  /** evidenceClass of the reference run — decides whether inputs may be exported. */
+  /** Public reference sample → inputs may be exported verbatim in a divergence. */
   publicInputs: boolean
 }
 
@@ -174,8 +211,8 @@ export const headline = (c: StatusCounts): CaseStatus => {
   return 'unsupported'
 }
 
-const allCases = (plan: ExecutionPlan, status: CaseStatus, reason: string): CaseResult[] =>
-  plan.items.map((i) => ({ tgId: i.tgId, tcId: i.tcId, status, reason }))
+const allCases = (index: PlanIndexItem[], status: CaseStatus, reason: string): CaseResult[] =>
+  index.map((i) => ({ tgId: i.tgId, tcId: i.tcId, status, reason }))
 
 const finishCell = (cases: CaseResult[], extra: Partial<CellResult> = {}): CellResult => {
   const counts = emptyCounts()
@@ -190,13 +227,13 @@ export const compareCell = async (
   files: TargetFixtureFiles | undefined
 ): Promise<CellResult> => {
   if (declared.status === 'not run') {
-    return finishCell(allCases(fx.plan, 'not run', declared.reason ?? 'declared not run'), {
+    return finishCell(allCases(fx.planIndex, 'not run', declared.reason ?? 'declared not run'), {
       reason: declared.reason,
     })
   }
   if (!files) {
     const reason = 'no evidence files for this fixture'
-    return finishCell(allCases(fx.plan, 'not run', reason), { reason })
+    return finishCell(allCases(fx.planIndex, 'not run', reason), { reason })
   }
 
   const env = await validateExecutionEnvironment(files.environment)
@@ -217,12 +254,12 @@ export const compareCell = async (
   if (!env.envIdValid) problems.push('execution-environment.json envId does not recompute')
   if (problems.length > 0) {
     const reason = `integrity: ${problems.join('; ')}`
-    return finishCell(allCases(fx.plan, 'not comparable', reason), { reason, environment })
+    return finishCell(allCases(fx.planIndex, 'not comparable', reason), { reason, environment })
   }
   const bundleSha = (envObj.fixtureBundle as Record<string, unknown>).manifestSha256
   if (bundleSha !== fx.bundleManifestSha256) {
     const reason = `different inputs: fixture bundle ${String(bundleSha)} ≠ reference ${fx.bundleManifestSha256}`
-    return finishCell(allCases(fx.plan, 'not comparable', reason), { reason, environment })
+    return finishCell(allCases(fx.planIndex, 'not comparable', reason), { reason, environment })
   }
 
   let response: unknown
@@ -230,14 +267,14 @@ export const compareCell = async (
     response = JSON.parse(files.responseText)
   } catch {
     const reason = 'integrity: response.json is not JSON'
-    return finishCell(allCases(fx.plan, 'not comparable', reason), { reason, environment })
+    return finishCell(allCases(fx.planIndex, 'not comparable', reason), { reason, environment })
   }
   const got = responseValues(response)
   const ref = responseValues(fx.reference)
   const evCases = new Map<string, JsonObject>()
   for (const c of (ev.cases as JsonObject[]) ?? []) evCases.set(`${c.tgId}/${c.tcId}`, c)
 
-  const cases = fx.plan.items.map((item: PlanItem): CaseResult => {
+  const cases = fx.planIndex.map((item: PlanIndexItem): CaseResult => {
     const key = `${item.tgId}/${item.tcId}`
     const base = { tgId: item.tgId, tcId: item.tcId }
     const tc = evCases.get(key)
@@ -251,11 +288,12 @@ export const compareCell = async (
         reason: `plan marks the case unsupported but the target reports "${disp}"`,
       }
     }
-    const policy = policyFor(item.op.operation)
+    const policy = policyFor(item.operation ?? '')
+    const field = item.responseField ?? ''
     if (disp === 'unsupported') {
       return { ...base, status: 'unsupported', reason: (tc.reason as string) ?? 'engine' }
     }
-    const refVal = norm(ref.get(key)?.[item.responseField], policy.normalize)
+    const refVal = norm(ref.get(key)?.[field], policy.normalize)
     if (disp === 'error') {
       return {
         ...base,
@@ -265,7 +303,7 @@ export const compareCell = async (
         actual: null,
       }
     }
-    const actual = norm(got.get(key)?.[item.responseField], policy.normalize)
+    const actual = norm(got.get(key)?.[field], policy.normalize)
     if (actual === null) {
       return {
         ...base,
@@ -323,34 +361,38 @@ export const firstDifference = (
   return { field, kind: typeof expected === 'boolean' ? 'boolean' : 'value', expected, actual }
 }
 
+const HEX_INPUTS: Record<string, readonly string[]> = {
+  'ml-kem.decapsulate': ['dk', 'c'],
+  'ml-dsa.verify': ['pk', 'message', 'signature', 'context'],
+}
+
 const inputOf = async (
-  op: PlanOperation,
+  item: PlanIndexItem,
+  fields: JsonObject | undefined,
   publicInputs: boolean
 ): Promise<Record<string, unknown>> => {
-  const hexFields =
-    op.operation === 'ml-kem.decapsulate'
-      ? (['dk', 'c'] as const)
-      : (['pk', 'message', 'signature', 'context'] as const)
-  const src = op as unknown as Record<string, string>
-  const hashes: Record<string, { lengthBytes: number; sha256: string }> = {}
-  for (const f of hexFields) {
-    hashes[f] = { lengthBytes: src[f].length / 2, sha256: await sha256Hex(src[f].toUpperCase()) }
+  const names = HEX_INPUTS[item.operation ?? ''] ?? []
+  const hashes: Record<string, { lengthBytes: number; sha256: string } | null> = {}
+  const values: Record<string, string> = {}
+  for (const f of names) {
+    const v = fields?.[f]
+    if (typeof v !== 'string') {
+      hashes[f] = null
+      continue
+    }
+    hashes[f] = { lengthBytes: v.length / 2, sha256: await sha256Hex(v.toUpperCase()) }
+    values[f] = v
   }
-  const meta: Record<string, unknown> = {
-    operation: op.operation,
-    mechanism: op.mechanism,
-    parameterSet: op.parameterSet,
-    ...(op.operation === 'ml-dsa.verify' ? { hashAlg: op.hashAlg } : {}),
+  return {
+    operation: item.operation,
+    mechanism: item.mechanism,
+    parameterSet: item.parameterSet,
+    ...(item.hashAlg !== undefined ? { hashAlg: item.hashAlg } : {}),
     inputSha256OfUpperHex: hashes,
+    // Inputs are exported verbatim only for public reference samples; an issued
+    // (possibly controlled) prompt exports identities + hashes only.
+    ...(publicInputs ? { values } : {}),
   }
-  // Inputs are exported verbatim only for public reference samples; an issued
-  // (possibly controlled) prompt exports identities + hashes only.
-  if (publicInputs) {
-    const values: Record<string, string> = {}
-    for (const f of hexFields) values[f] = src[f]
-    meta.values = values
-  }
-  return meta
 }
 
 export interface TargetSummary {
@@ -430,7 +472,7 @@ export const compareTargets = async (
     schemaId: f.schemaId,
     vsId: f.vsId,
     bundleManifestSha256: f.bundleManifestSha256,
-    caseIds: f.plan.items.map((i) => `${i.tgId}/${i.tcId}`),
+    caseIds: f.planIndex.map((i) => `${i.tgId}/${i.tcId}`),
     cells: {},
   }))
 
@@ -457,8 +499,8 @@ export const compareTargets = async (
       }
       for (const c of cell.cases) {
         if (c.status !== 'fail') continue
-        const item = fx.plan.items.find((i) => i.tgId === c.tgId && i.tcId === c.tcId)
-        if (!item || item.kind !== 'execute') continue
+        const item = fx.planIndex.find((i) => i.tgId === c.tgId && i.tcId === c.tcId)
+        if (!item || item.kind !== 'execute' || !item.operation) continue
         const evCase = ((files?.evidence as JsonObject)?.cases as JsonObject[] | undefined)?.find(
           (x) => x.tgId === c.tgId && x.tcId === c.tcId
         )
@@ -473,13 +515,13 @@ export const compareTargets = async (
           bundleManifestSha256: fx.bundleManifestSha256,
           tgId: c.tgId,
           tcId: c.tcId,
-          operation: item.op.operation,
-          comparator: policyFor(item.op.operation).comparator,
-          input: await inputOf(item.op, fx.publicInputs),
+          operation: item.operation,
+          comparator: policyFor(item.operation).comparator,
+          input: await inputOf(item, fx.testFields.get(`${c.tgId}/${c.tcId}`), fx.publicInputs),
           expected: c.expected ?? null,
           actual: c.actual ?? null,
           firstDifference: firstDifference(
-            item.responseField,
+            item.responseField ?? '',
             c.expected ?? null,
             c.actual ?? null
           ),

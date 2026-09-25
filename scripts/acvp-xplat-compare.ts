@@ -4,7 +4,12 @@
 //   npx tsx scripts/acvp-xplat-compare.ts --run evidence/acvp-xplat/<runId>          # write matrix + divergences
 //   npx tsx scripts/acvp-xplat-compare.ts --run evidence/acvp-xplat/<runId> --check  # exit 1 if committed output is stale
 import path from 'node:path'
-import { checkRun, renderRun, writeRun } from '../src/services/acvp-xplat/node/runDir'
+import {
+  checkRun,
+  generateRun,
+  writeRun,
+  type FixtureLoadNote,
+} from '../src/services/acvp-xplat/node/runDir'
 import { STATUSES } from '../src/services/acvp-xplat/compare'
 
 const main = async () => {
@@ -14,7 +19,15 @@ const main = async () => {
     console.error('usage: acvp-xplat-compare --run <evidence/acvp-xplat/runId> [--check]')
     process.exit(64)
   }
-  const rendered = await renderRun(process.cwd(), runDir, path.basename(runDir))
+  const notes: FixtureLoadNote[] = []
+  const rendered = await generateRun(process.cwd(), runDir, path.basename(runDir), notes)
+  for (const n of notes) {
+    if (!n.livePlanReproducible) {
+      console.warn(
+        `  note: ${n.fixture}: today's dispatch rules plan this prompt differently than the frozen run — the frozen plan-index.json is used`
+      )
+    }
+  }
   const m = rendered.output.matrix
   for (const t of m.targets) {
     const c = m.totals[t.id]
