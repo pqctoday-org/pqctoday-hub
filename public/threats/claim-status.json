@@ -1,6 +1,6 @@
 {
- "csv": "quantum_threats_hsm_industries_09242026_r7.csv",
- "generatedAt": "2026-09-25T01:58:50+00:00",
+ "csv": "quantum_threats_hsm_industries_09242026_r8.csv",
+ "generatedAt": "2026-09-25T02:35:22+00:00",
  "note": "Claim-ledger verdicts on each row's cited document, only where the verdict was reached on the file cited today. Verdict words only; no document text.",
  "rows": {
   "AERO-002": {
