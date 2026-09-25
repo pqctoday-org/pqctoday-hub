@@ -261,3 +261,19 @@ describe('--emit-bundle: language-neutral bundle for non-JS (e.g. Python/ctypes 
     120000
   )
 })
+
+describe('engine lifecycle next to other Playground panels', () => {
+  it.each(['cpp', 'rust-node'] as const)(
+    '%s: a run still works after another panel C_Finalize()s the shared module',
+    async (which) => {
+      const { M, id } = engines[which]
+      const name: FixtureName = 'ML-KEM-encapDecap-FIPS203'
+      const before = await run(M, id, prompt(name))
+      M._C_Finalize(0) // what the ACVP suite / HsmContext do on re-init
+      const after = await run(M, id, prompt(name))
+      expect(after.response.text).toBe(before.response.text)
+      expect((after.evidence.summary as JsonObject).error).toBe(0)
+    },
+    60000
+  )
+})

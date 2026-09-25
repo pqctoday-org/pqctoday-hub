@@ -84,18 +84,34 @@ const variantOf = (ps: string): number => Number(ps.slice(ps.lastIndexOf('-') + 
 
 const errText = (e: unknown): string => (e instanceof Error ? e.message : String(e))
 
+/** This prototype's token per module, so repeated browser runs reuse one slot. */
+const tokenSlot = new WeakMap<SoftHSMModule, number>()
+
 /**
- * Open a fresh token + user session on `M` and return an AcvpEngine over it.
- * The token is this prototype's own (never the Playground's key-inventory
- * session), so a run neither sees nor disturbs other Playground objects.
+ * Open a user session on this prototype's own token on `M` (created on first
+ * use, re-created if the module was finalized since) and return an AcvpEngine
+ * over it. The token is never the Playground's key-inventory session, so a run
+ * neither sees nor disturbs other Playground objects.
  */
 export const createPkcs11Engine = (M: SoftHSMModule, identity: EngineIdentity): AcvpEngine => {
   const initRv = M._C_Initialize(0) >>> 0
   if (initRv !== CKR_OK && initRv !== CKR_CRYPTOKI_ALREADY_INITIALIZED) {
     throw new Error(`C_Initialize → ${rvName(initRv)}`)
   }
-  const slotId = hsm_initToken(M, hsm_getFirstFreeSlot(M), SO_PIN, TOKEN_LABEL)
-  const hSession = hsm_openUserSession(M, slotId, SO_PIN, USER_PIN)
+  let slotId = tokenSlot.get(M)
+  let hSession = 0
+  if (slotId !== undefined) {
+    try {
+      hSession = hsm_openUserSession(M, slotId, SO_PIN, USER_PIN)
+    } catch {
+      slotId = undefined // token gone (module re-initialized elsewhere) — make a new one
+    }
+  }
+  if (slotId === undefined || hSession === 0) {
+    slotId = hsm_initToken(M, hsm_getFirstFreeSlot(M), SO_PIN, TOKEN_LABEL)
+    hSession = hsm_openUserSession(M, slotId, SO_PIN, USER_PIN)
+    tokenSlot.set(M, slotId)
+  }
   const advertised = new Set(hsm_getMechanismList(M, slotId).map((m) => m >>> 0))
 
   const notAdvertised = (name: Pkcs11MechanismName): EngineOutcome | null =>
