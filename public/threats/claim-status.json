@@ -1,6 +1,6 @@
 {
- "csv": "quantum_threats_hsm_industries_09242026_r8.csv",
- "generatedAt": "2026-09-25T02:35:22+00:00",
+ "csv": "quantum_threats_hsm_industries_09242026_r12.csv",
+ "generatedAt": "2026-09-25T04:18:12+00:00",
  "note": "Claim-ledger verdicts on each row's cited document, only where the verdict was reached on the file cited today. Verdict words only; no document text.",
  "rows": {
   "AERO-002": {
@@ -972,6 +972,41 @@
     }
    },
    "evidenceSha256": "e8c9b064ca103559"
+  },
+  "EDU-005": {
+   "claims": {
+    "crypto_at_risk": {
+     "basis": "second-source",
+     "codexLog": "cx-20260925T041756Z-193d1231",
+     "decidedAt": "2026-09-25",
+     "primaryVerdict": "supported",
+     "secondSource": "Planning-for-post-quantum-cryptography-Cyber-gov-au",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "basis": "codex-review",
+     "codexLog": "cx-20260925T041756Z-193d1231",
+     "decidedAt": "2026-09-25",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "basis": "second-source",
+     "codexLog": "cx-20260925T041756Z-193d1231",
+     "decidedAt": "2026-09-25",
+     "primaryVerdict": "supported",
+     "secondSource": "RFC 10024",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "basis": "second-source",
+     "codexLog": "cx-20260925T041756Z-193d1231",
+     "decidedAt": "2026-09-25",
+     "primaryVerdict": "supported",
+     "secondSource": "Planning-for-post-quantum-cryptography-Cyber-gov-au",
+     "verdict": "supported"
+    }
+   },
+   "evidenceSha256": "1b64163dc218f3f2"
   },
   "ENER-001": {
    "claims": {
