@@ -22223,6 +22223,23 @@
       "replacedAt": "2026-09-17T17:55:45.744426+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "the validation sentence needs the CAVP validation's own page (validation 40088); the vendor brief stays as the product brief"
+    },
+    {
+      "product_id": "neslib-6-11-3-st31n600-a04",
+      "refId": "neslib-6-11-3-st31n600-a04",
+      "file": "neslib-6-11-3-st31n600-a04-333232cc.pdf",
+      "sizeBytes": 1997633,
+      "content_type": "application/pdf",
+      "url": "https://commoncriteriaportal.org/files/epfiles/EUCC-3090-2026-25-cible.pdf",
+      "sha256": "0d30fa603f8a8a361bd47a70b4309de4621bff39bcf6b99b06186307374e955c",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-25T04:20:01.436948+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "replacedAt": "2026-09-25T04:19:57.400232+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "re-issued row (case-only ID collision, migrate r2 R7): record its security target EUCC-3090-2026-25 under the new id"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
