@@ -22,7 +22,11 @@ describe('AlgorithmValidationView — Coverage Matrix section (WS-C C-6)', () =>
       'aria-expanded',
       'true'
     )
-    expect(await screen.findByTestId('coverage-matrix-view')).toBeInTheDocument()
+    // The view is React.lazy + a fetch; under full-suite load the chunk can take
+    // longer than findBy's 1 s default (failed at 1120 ms in gate:local).
+    expect(
+      await screen.findByTestId('coverage-matrix-view', undefined, { timeout: 10_000 })
+    ).toBeInTheDocument()
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringMatching(/\/data\/validation\/coverage-matrix\.json$/)
     )
