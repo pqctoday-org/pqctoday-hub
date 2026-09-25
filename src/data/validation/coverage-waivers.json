@@ -1,6 +1,6 @@
 {
   "$comment": [
-    "Reviewed coverage waivers (plan WS-C C-5). The coverage-diff gate (npm run gen:coverage-matrix:check) fails when an advertised capability cell (engine \u00d7 mechanism \u00d7 operation \u00d7 parameter set \u00d7 sign variant) has no registered test and no waiver here.",
+    "Reviewed coverage waivers (plan WS-C C-5). The coverage-diff gate (npm run gen:coverage-matrix:check) fails when an advertised capability cell (engine × mechanism × operation × parameter set × sign variant) has no registered test and no waiver here.",
     "Cells are exact \"operation|parameterSet|variant\" strings (no wildcards), so a NEW mechanism, operation, parameter set or variant is never silently covered by an old waiver.",
     "Every waiver needs reason, owner and an ISO date. status \"baseline-pending-review\" = recorded at the WS-C baseline so the gate can detect new gaps; it is NOT an approval and must be reviewed (plan J-5). Only status \"approved\" means a reviewer accepted the gap.",
     "Regenerate the baseline (for review, never blindly): npx tsx scripts/generate-coverage-matrix.ts --print-baseline-waivers --date YYYY-MM-DD"
@@ -19,7 +19,7 @@
         "wrap|*|*",
         "unwrap|*|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -29,7 +29,7 @@
       "mechanism": "CKM_RSA_X_509",
       "engines": ["cpp"],
       "cells": ["encrypt|*|*", "decrypt|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -39,7 +39,7 @@
       "mechanism": "CKM_RSA_X_509",
       "engines": ["cpp", "rust"],
       "cells": ["sign-recover|*|*", "verify-recover|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -49,7 +49,7 @@
       "mechanism": "CKM_MD5_RSA_PKCS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -59,7 +59,7 @@
       "mechanism": "CKM_MD5_RSA_PKCS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -69,7 +69,7 @@
       "mechanism": "CKM_SHA1_RSA_PKCS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -79,7 +79,7 @@
       "mechanism": "CKM_SHA1_RSA_PKCS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -89,7 +89,7 @@
       "mechanism": "CKM_RSA_PKCS_OAEP",
       "engines": ["cpp", "rust"],
       "cells": ["encrypt|*|*", "wrap|*|*", "unwrap|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -99,7 +99,7 @@
       "mechanism": "CKM_RSA_PKCS_PSS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -109,7 +109,7 @@
       "mechanism": "CKM_RSA_PKCS_PSS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -119,7 +119,7 @@
       "mechanism": "CKM_SHA1_RSA_PKCS_PSS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -129,7 +129,7 @@
       "mechanism": "CKM_SHA1_RSA_PKCS_PSS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -149,7 +149,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -169,7 +169,7 @@
         "verify|ML-DSA-65|*",
         "verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -189,7 +189,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -207,7 +207,7 @@
         "verify|ML-DSA-44|*",
         "verify|ML-DSA-65|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -227,7 +227,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -246,7 +246,7 @@
         "verify|ML-DSA-65|*",
         "verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -266,7 +266,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -285,7 +285,7 @@
         "verify|ML-DSA-65|*",
         "verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -305,7 +305,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -315,7 +315,7 @@
       "mechanism": "CKM_HASH_ML_DSA_SHA512",
       "engines": ["cpp", "rust"],
       "cells": ["sign|ML-DSA-44|deterministic", "sign|ML-DSA-65|deterministic"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -335,7 +335,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -353,7 +353,7 @@
         "verify|ML-DSA-65|*",
         "verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -373,7 +373,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -391,7 +391,7 @@
         "verify|ML-DSA-44|*",
         "verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -411,7 +411,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -430,7 +430,7 @@
         "verify|ML-DSA-65|*",
         "verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -450,7 +450,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -469,7 +469,7 @@
         "verify|ML-DSA-65|*",
         "verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -489,7 +489,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -508,7 +508,7 @@
         "verify|ML-DSA-65|*",
         "verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -528,7 +528,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -547,7 +547,7 @@
         "verify|ML-DSA-65|*",
         "verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -567,7 +567,7 @@
         "message-verify|ML-DSA-65|*",
         "message-verify|ML-DSA-87|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -614,7 +614,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -661,7 +661,7 @@
         "verify|SLH-DSA-SHAKE-256s|*",
         "verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -708,7 +708,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -755,7 +755,7 @@
         "verify|SLH-DSA-SHAKE-256s|*",
         "verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -802,7 +802,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -847,7 +847,7 @@
         "verify|SLH-DSA-SHAKE-256s|*",
         "verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -894,7 +894,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -940,7 +940,7 @@
         "verify|SLH-DSA-SHAKE-256s|*",
         "verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -987,7 +987,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1033,7 +1033,7 @@
         "verify|SLH-DSA-SHAKE-256s|*",
         "verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1080,7 +1080,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1126,7 +1126,7 @@
         "verify|SLH-DSA-SHAKE-256s|*",
         "verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1173,7 +1173,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1219,7 +1219,7 @@
         "verify|SLH-DSA-SHAKE-256s|*",
         "verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1266,7 +1266,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1313,7 +1313,7 @@
         "verify|SLH-DSA-SHAKE-256s|*",
         "verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1360,7 +1360,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1406,7 +1406,7 @@
         "verify|SLH-DSA-SHAKE-256s|*",
         "verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1453,7 +1453,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1500,7 +1500,7 @@
         "verify|SLH-DSA-SHAKE-256s|*",
         "verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1547,7 +1547,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1593,7 +1593,7 @@
         "verify|SLH-DSA-SHAKE-256s|*",
         "verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1640,7 +1640,7 @@
         "message-verify|SLH-DSA-SHAKE-256s|*",
         "message-verify|SLH-DSA-SHAKE-256f|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1650,7 +1650,7 @@
       "mechanism": "CKM_SHA256_RSA_PKCS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1660,7 +1660,7 @@
       "mechanism": "CKM_SHA384_RSA_PKCS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1670,7 +1670,7 @@
       "mechanism": "CKM_SHA384_RSA_PKCS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1680,7 +1680,7 @@
       "mechanism": "CKM_SHA512_RSA_PKCS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1690,7 +1690,7 @@
       "mechanism": "CKM_SHA512_RSA_PKCS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1700,7 +1700,7 @@
       "mechanism": "CKM_SHA256_RSA_PKCS_PSS",
       "engines": ["cpp"],
       "cells": ["sign|*|*", "message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1710,7 +1710,7 @@
       "mechanism": "CKM_SHA384_RSA_PKCS_PSS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1720,7 +1720,7 @@
       "mechanism": "CKM_SHA384_RSA_PKCS_PSS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1730,7 +1730,7 @@
       "mechanism": "CKM_SHA512_RSA_PKCS_PSS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1740,7 +1740,7 @@
       "mechanism": "CKM_SHA512_RSA_PKCS_PSS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1750,7 +1750,7 @@
       "mechanism": "CKM_SHA224_RSA_PKCS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1760,7 +1760,7 @@
       "mechanism": "CKM_SHA224_RSA_PKCS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1770,7 +1770,7 @@
       "mechanism": "CKM_SHA224_RSA_PKCS_PSS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1780,17 +1780,7 @@
       "mechanism": "CKM_SHA224_RSA_PKCS_PSS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA512_224",
-      "mechanism": "CKM_SHA512_224",
-      "engines": ["cpp", "rust"],
-      "cells": ["digest|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1800,17 +1790,7 @@
       "mechanism": "CKM_SHA512_224_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA512_224_HMAC_GENERAL",
-      "mechanism": "CKM_SHA512_224_HMAC_GENERAL",
-      "engines": ["cpp", "rust"],
-      "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1820,17 +1800,7 @@
       "mechanism": "CKM_SHA512_224_KEY_DERIVATION",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA512_256",
-      "mechanism": "CKM_SHA512_256",
-      "engines": ["cpp", "rust"],
-      "cells": ["digest|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1840,17 +1810,7 @@
       "mechanism": "CKM_SHA512_256_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA512_256_HMAC_GENERAL",
-      "mechanism": "CKM_SHA512_256_HMAC_GENERAL",
-      "engines": ["cpp", "rust"],
-      "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1860,7 +1820,7 @@
       "mechanism": "CKM_SHA512_256_KEY_DERIVATION",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1870,7 +1830,7 @@
       "mechanism": "CKM_SHA3_256_RSA_PKCS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1880,7 +1840,7 @@
       "mechanism": "CKM_SHA3_256_RSA_PKCS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1890,7 +1850,7 @@
       "mechanism": "CKM_SHA3_384_RSA_PKCS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1900,7 +1860,7 @@
       "mechanism": "CKM_SHA3_384_RSA_PKCS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1910,7 +1870,7 @@
       "mechanism": "CKM_SHA3_512_RSA_PKCS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1920,7 +1880,7 @@
       "mechanism": "CKM_SHA3_512_RSA_PKCS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1929,8 +1889,8 @@
       "id": "baseline-CKM_SHA3_256_RSA_PKCS_PSS-cpp+rust",
       "mechanism": "CKM_SHA3_256_RSA_PKCS_PSS",
       "engines": ["cpp", "rust"],
-      "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "cells": ["sign|*|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1940,7 +1900,7 @@
       "mechanism": "CKM_SHA3_256_RSA_PKCS_PSS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1950,7 +1910,7 @@
       "mechanism": "CKM_SHA3_384_RSA_PKCS_PSS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1960,7 +1920,7 @@
       "mechanism": "CKM_SHA3_384_RSA_PKCS_PSS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1970,7 +1930,7 @@
       "mechanism": "CKM_SHA3_512_RSA_PKCS_PSS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1980,7 +1940,7 @@
       "mechanism": "CKM_SHA3_512_RSA_PKCS_PSS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -1990,7 +1950,7 @@
       "mechanism": "CKM_SHA3_224_RSA_PKCS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2000,7 +1960,7 @@
       "mechanism": "CKM_SHA3_224_RSA_PKCS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2010,7 +1970,7 @@
       "mechanism": "CKM_SHA3_224_RSA_PKCS_PSS",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2020,7 +1980,7 @@
       "mechanism": "CKM_SHA3_224_RSA_PKCS_PSS",
       "engines": ["cpp"],
       "cells": ["message-sign|*|*", "message-verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2030,7 +1990,7 @@
       "mechanism": "CKM_MD5",
       "engines": ["cpp", "rust"],
       "cells": ["digest|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2040,7 +2000,7 @@
       "mechanism": "CKM_MD5_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2050,7 +2010,7 @@
       "mechanism": "CKM_MD5_HMAC_GENERAL",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2060,7 +2020,7 @@
       "mechanism": "CKM_SHA_1",
       "engines": ["cpp", "rust"],
       "cells": ["digest|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2070,17 +2030,7 @@
       "mechanism": "CKM_SHA_1_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA_1_HMAC_GENERAL",
-      "mechanism": "CKM_SHA_1_HMAC_GENERAL",
-      "engines": ["cpp", "rust"],
-      "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2090,7 +2040,7 @@
       "mechanism": "CKM_RIPEMD160",
       "engines": ["rust"],
       "cells": ["digest|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2100,7 +2050,7 @@
       "mechanism": "CKM_RIPEMD160_HMAC",
       "engines": ["rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2110,7 +2060,7 @@
       "mechanism": "CKM_RIPEMD160_HMAC_GENERAL",
       "engines": ["rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2120,27 +2070,7 @@
       "mechanism": "CKM_SHA256_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA256_HMAC_GENERAL",
-      "mechanism": "CKM_SHA256_HMAC_GENERAL",
-      "engines": ["cpp"],
-      "cells": ["sign|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA224",
-      "mechanism": "CKM_SHA224",
-      "engines": ["cpp", "rust"],
-      "cells": ["digest|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2150,17 +2080,7 @@
       "mechanism": "CKM_SHA224_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA224_HMAC_GENERAL",
-      "mechanism": "CKM_SHA224_HMAC_GENERAL",
-      "engines": ["cpp", "rust"],
-      "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2170,17 +2090,7 @@
       "mechanism": "CKM_SHA384_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA384_HMAC_GENERAL",
-      "mechanism": "CKM_SHA384_HMAC_GENERAL",
-      "engines": ["cpp"],
-      "cells": ["sign|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2190,17 +2100,7 @@
       "mechanism": "CKM_SHA512_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA512_HMAC_GENERAL",
-      "mechanism": "CKM_SHA512_HMAC_GENERAL",
-      "engines": ["cpp"],
-      "cells": ["sign|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2210,27 +2110,7 @@
       "mechanism": "CKM_SHA3_256_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA3_256_HMAC_GENERAL",
-      "mechanism": "CKM_SHA3_256_HMAC_GENERAL",
-      "engines": ["cpp", "rust"],
-      "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA3_224",
-      "mechanism": "CKM_SHA3_224",
-      "engines": ["cpp", "rust"],
-      "cells": ["digest|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2240,27 +2120,7 @@
       "mechanism": "CKM_SHA3_224_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA3_224_HMAC_GENERAL",
-      "mechanism": "CKM_SHA3_224_HMAC_GENERAL",
-      "engines": ["cpp", "rust"],
-      "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA3_384",
-      "mechanism": "CKM_SHA3_384",
-      "engines": ["cpp", "rust"],
-      "cells": ["digest|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2270,17 +2130,7 @@
       "mechanism": "CKM_SHA3_384_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA3_384_HMAC_GENERAL",
-      "mechanism": "CKM_SHA3_384_HMAC_GENERAL",
-      "engines": ["cpp", "rust"],
-      "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2290,17 +2140,7 @@
       "mechanism": "CKM_SHA3_512_HMAC",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_SHA3_512_HMAC_GENERAL",
-      "mechanism": "CKM_SHA3_512_HMAC_GENERAL",
-      "engines": ["cpp", "rust"],
-      "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2310,7 +2150,7 @@
       "mechanism": "CKM_GENERIC_SECRET_KEY_GEN",
       "engines": ["cpp", "rust"],
       "cells": ["generate-key|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2320,7 +2160,7 @@
       "mechanism": "CKM_CONCATENATE_BASE_AND_DATA",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2330,7 +2170,7 @@
       "mechanism": "CKM_CONCATENATE_DATA_AND_BASE",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2340,7 +2180,7 @@
       "mechanism": "CKM_SHA256_KEY_DERIVATION",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2350,7 +2190,7 @@
       "mechanism": "CKM_SHA384_KEY_DERIVATION",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2360,7 +2200,7 @@
       "mechanism": "CKM_SHA512_KEY_DERIVATION",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2370,7 +2210,7 @@
       "mechanism": "CKM_SHA3_256_KEY_DERIVATION",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2380,7 +2220,7 @@
       "mechanism": "CKM_SHA3_384_KEY_DERIVATION",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2390,7 +2230,7 @@
       "mechanism": "CKM_SHA3_512_KEY_DERIVATION",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2400,7 +2240,7 @@
       "mechanism": "CKM_SHAKE_256_KEY_DERIVATION",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2410,7 +2250,7 @@
       "mechanism": "CKM_SP800_108_DOUBLE_PIPELINE_KDF",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2420,7 +2260,7 @@
       "mechanism": "CKM_EC_KEY_PAIR_GEN",
       "engines": ["cpp"],
       "cells": ["generate-key-pair|P-384|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2437,7 +2277,7 @@
         "verify|P-521|*",
         "verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2456,7 +2296,7 @@
         "message-verify|P-521|*",
         "message-verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2475,7 +2315,7 @@
         "verify|P-521|*",
         "verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2494,7 +2334,7 @@
         "message-verify|P-521|*",
         "message-verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2513,7 +2353,7 @@
         "verify|P-521|*",
         "verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2532,7 +2372,7 @@
         "message-verify|P-521|*",
         "message-verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2552,7 +2392,7 @@
         "message-verify|P-521|*",
         "message-verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2561,8 +2401,8 @@
       "id": "baseline-CKM_ECDSA_SHA256-cpp+rust",
       "mechanism": "CKM_ECDSA_SHA256",
       "engines": ["cpp", "rust"],
-      "cells": ["sign|P-384|*", "sign|P-521|*", "verify|P-384|*", "verify|P-521|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "cells": ["sign|P-384|*", "sign|P-521|*"],
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2579,7 +2419,7 @@
         "verify|P-521|*",
         "verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2599,7 +2439,7 @@
         "message-verify|P-521|*",
         "message-verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2613,11 +2453,9 @@
         "sign|P-384|*",
         "sign|P-521|*",
         "sign|secp256k1|*",
-        "verify|P-256|*",
-        "verify|P-384|*",
         "verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2636,7 +2474,7 @@
         "message-verify|P-521|*",
         "message-verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2655,7 +2493,7 @@
         "verify|P-521|*",
         "verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2674,7 +2512,7 @@
         "message-verify|P-521|*",
         "message-verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2688,12 +2526,9 @@
         "sign|P-384|*",
         "sign|P-521|*",
         "sign|secp256k1|*",
-        "verify|P-256|*",
-        "verify|P-384|*",
-        "verify|P-521|*",
         "verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2712,7 +2547,7 @@
         "message-verify|P-521|*",
         "message-verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2731,7 +2566,7 @@
         "verify|P-521|*",
         "verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2750,7 +2585,7 @@
         "message-verify|P-521|*",
         "message-verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2764,12 +2599,9 @@
         "sign|P-384|*",
         "sign|P-521|*",
         "sign|secp256k1|*",
-        "verify|P-256|*",
-        "verify|P-384|*",
-        "verify|P-521|*",
         "verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2788,7 +2620,7 @@
         "message-verify|P-521|*",
         "message-verify|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2798,7 +2630,7 @@
       "mechanism": "CKM_ECDH1_DERIVE",
       "engines": ["cpp"],
       "cells": ["derive|P-256|*", "derive|P-384|*", "encapsulate|X25519|*", "decapsulate|X25519|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2815,7 +2647,7 @@
         "decapsulate|P-521|*",
         "decapsulate|X448|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2825,7 +2657,7 @@
       "mechanism": "CKM_ECDH1_COFACTOR_DERIVE",
       "engines": ["cpp", "rust"],
       "cells": ["derive|P-384|*", "derive|P-521|*", "derive|secp256k1|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2835,7 +2667,7 @@
       "mechanism": "CKM_RSA_AES_KEY_WRAP",
       "engines": ["cpp", "rust"],
       "cells": ["wrap|*|*", "unwrap|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2845,7 +2677,7 @@
       "mechanism": "CKM_EC_EDWARDS_KEY_PAIR_GEN",
       "engines": ["cpp"],
       "cells": ["generate-key-pair|Ed25519|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2855,7 +2687,7 @@
       "mechanism": "CKM_EC_EDWARDS_KEY_PAIR_GEN",
       "engines": ["cpp", "rust"],
       "cells": ["generate-key-pair|Ed448|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2865,7 +2697,7 @@
       "mechanism": "CKM_EDDSA",
       "engines": ["cpp"],
       "cells": ["sign|Ed25519|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2875,7 +2707,7 @@
       "mechanism": "CKM_EDDSA",
       "engines": ["cpp", "rust"],
       "cells": ["sign|Ed448|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2890,7 +2722,7 @@
         "decrypt|XTS-AES-128|*",
         "decrypt|XTS-AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2900,7 +2732,7 @@
       "mechanism": "CKM_AES_XTS_KEY_GEN",
       "engines": ["cpp", "rust"],
       "cells": ["generate-key|XTS-AES-128|*", "generate-key|XTS-AES-256|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2910,7 +2742,7 @@
       "mechanism": "CKM_AES_KEY_GEN",
       "engines": ["cpp", "rust"],
       "cells": ["generate-key|AES-192|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2927,7 +2759,7 @@
         "decrypt|AES-192|*",
         "decrypt|AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2937,11 +2769,6 @@
       "mechanism": "CKM_AES_CBC",
       "engines": ["cpp", "rust"],
       "cells": [
-        "encrypt|AES-128|*",
-        "encrypt|AES-192|*",
-        "encrypt|AES-256|*",
-        "decrypt|AES-128|*",
-        "decrypt|AES-192|*",
         "wrap|AES-128|*",
         "wrap|AES-192|*",
         "wrap|AES-256|*",
@@ -2949,7 +2776,7 @@
         "unwrap|AES-192|*",
         "unwrap|AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -2970,27 +2797,7 @@
         "unwrap|AES-192|*",
         "unwrap|AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_AES_CTR-cpp+rust",
-      "mechanism": "CKM_AES_CTR",
-      "engines": ["cpp", "rust"],
-      "cells": ["encrypt|AES-192|*", "decrypt|AES-128|*", "decrypt|AES-192|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_AES_CTR-cpp",
-      "mechanism": "CKM_AES_CTR",
-      "engines": ["cpp"],
-      "cells": ["encrypt|AES-128|*", "encrypt|AES-256|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3000,9 +2807,7 @@
       "mechanism": "CKM_AES_GCM",
       "engines": ["cpp", "rust"],
       "cells": [
-        "encrypt|AES-128|*",
         "encrypt|AES-192|*",
-        "decrypt|AES-128|*",
         "decrypt|AES-192|*",
         "message-encrypt|AES-128|*",
         "message-encrypt|AES-192|*",
@@ -3011,7 +2816,7 @@
         "message-decrypt|AES-192|*",
         "message-decrypt|AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3021,7 +2826,7 @@
       "mechanism": "CKM_AES_GCM",
       "engines": ["cpp"],
       "cells": ["encrypt|AES-256|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3038,7 +2843,7 @@
         "decrypt|AES-192|*",
         "decrypt|AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3054,7 +2859,7 @@
         "verify|AES-192|*",
         "verify|AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3064,7 +2869,7 @@
       "mechanism": "CKM_AES_CMAC",
       "engines": ["cpp"],
       "cells": ["sign|AES-256|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3081,7 +2886,7 @@
         "verify|AES-192|*",
         "verify|AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3091,7 +2896,7 @@
       "mechanism": "CKM_AES_ECB_ENCRYPT_DATA",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3101,7 +2906,7 @@
       "mechanism": "CKM_AES_CBC_ENCRYPT_DATA",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3111,7 +2916,7 @@
       "mechanism": "CKM_CHACHA20",
       "engines": ["cpp", "rust"],
       "cells": ["encrypt|*|*", "decrypt|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3126,7 +2931,7 @@
         "generate-key-pair|P-521|*",
         "generate-key-pair|secp256k1|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3143,7 +2948,7 @@
         "decrypt|AES-192|*",
         "decrypt|AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3160,7 +2965,7 @@
         "decrypt|AES-192|*",
         "decrypt|AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3177,7 +2982,7 @@
         "decrypt|AES-192|*",
         "decrypt|AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3194,23 +2999,7 @@
         "decrypt|AES-192|*",
         "decrypt|AES-256|*"
       ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_AES_KEY_WRAP",
-      "mechanism": "CKM_AES_KEY_WRAP",
-      "engines": ["cpp", "rust"],
-      "cells": [
-        "wrap|AES-128|*",
-        "wrap|AES-192|*",
-        "unwrap|AES-128|*",
-        "unwrap|AES-192|*",
-        "unwrap|AES-256|*"
-      ],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3220,17 +3009,7 @@
       "mechanism": "CKM_AES_KEY_WRAP_PAD",
       "engines": ["cpp", "rust"],
       "cells": ["wrap|AES-128|*", "wrap|AES-192|*", "unwrap|AES-128|*", "unwrap|AES-192|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
-    },
-    {
-      "id": "baseline-CKM_AES_KEY_WRAP_KWP",
-      "mechanism": "CKM_AES_KEY_WRAP_KWP",
-      "engines": ["cpp", "rust"],
-      "cells": ["wrap|AES-128|*", "wrap|AES-192|*", "unwrap|AES-128|*", "unwrap|AES-192|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3240,7 +3019,7 @@
       "mechanism": "CKM_XMSSMT_KEY_PAIR_GEN",
       "engines": ["cpp", "rust"],
       "cells": ["generate-key-pair|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3250,7 +3029,7 @@
       "mechanism": "CKM_XMSSMT",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3260,7 +3039,7 @@
       "mechanism": "CKM_ML_DSA_EXTERNAL_MU_GEN",
       "engines": ["cpp", "rust"],
       "cells": ["digest|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3270,7 +3049,7 @@
       "mechanism": "CKM_ML_DSA_EXTERNAL_MU",
       "engines": ["cpp", "rust"],
       "cells": ["sign|ML-DSA-44|hedged", "sign|ML-DSA-65|hedged", "sign|ML-DSA-87|hedged"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3280,7 +3059,7 @@
       "mechanism": "CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN",
       "engines": ["rust"],
       "cells": ["generate-key-pair|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3290,7 +3069,7 @@
       "mechanism": "CKM_PQCTODAY_FRODOKEM_ENCAPSULATE",
       "engines": ["rust"],
       "cells": ["encapsulate|*|*", "decapsulate|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3300,7 +3079,7 @@
       "mechanism": "CKM_PQCTODAY_CLASSIC_MCELIECE_KEY_PAIR_GEN",
       "engines": ["cpp", "rust"],
       "cells": ["generate-key-pair|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3310,7 +3089,7 @@
       "mechanism": "CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE",
       "engines": ["cpp", "rust"],
       "cells": ["encapsulate|*|*", "decapsulate|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3320,7 +3099,7 @@
       "mechanism": "CKM_KECCAK_256",
       "engines": ["rust"],
       "cells": ["digest|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3330,7 +3109,7 @@
       "mechanism": "CKM_EC_MONTGOMERY_KEY_DERIVE",
       "engines": ["rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3340,7 +3119,7 @@
       "mechanism": "CKM_KMAC_128",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3350,7 +3129,7 @@
       "mechanism": "CKM_KMAC_256",
       "engines": ["cpp", "rust"],
       "cells": ["sign|*|*", "verify|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3360,7 +3139,7 @@
       "mechanism": "CKM_EDDSA_PH",
       "engines": ["cpp", "rust"],
       "cells": ["sign|Ed25519|*", "verify|Ed25519|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3370,7 +3149,7 @@
       "mechanism": "CKM_EDDSA_PH",
       "engines": ["rust"],
       "cells": ["sign|Ed448|*", "verify|Ed448|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3380,7 +3159,7 @@
       "mechanism": "CKM_X25519",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3390,7 +3169,7 @@
       "mechanism": "CKM_X448",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3400,7 +3179,7 @@
       "mechanism": "CKM_BIP32_MASTER_DERIVE",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
@@ -3410,7 +3189,7 @@
       "mechanism": "CKM_BIP32_CHILD_DERIVE",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval \u2014 it awaits review (plan J-5) and is tracked in the open-gaps register.",
+      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"

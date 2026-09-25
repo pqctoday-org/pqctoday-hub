@@ -262,6 +262,15 @@
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ + Rust (wasm) — vendor mechanism"
+    },
+    {
+      "id": "wse-remaining-classical-acvp",
+      "title": "Classical families still without NIST ACVP-Server cases after WS-E",
+      "detail": "Not yet sourced from the pinned ACVP-Server samples (remediation plan WS-E, P1 breadth): HKDF (KDA-HKDF-Sp800-56Cr2 needs fixedInfo assembly), SP 800-108 KBKDF (KDF-1.0 counter/feedback), ANSI X9.63 KDF (kdf-components-ansix9.63: PKCS#11 exposes it only inside CKM_ECDH1_DERIVE, which takes no caller-supplied Z, so the upstream (Z, sharedInfo) -> key mapping cannot be driven), ECDSA/EdDSA KeyVer (C_CreateObject is not a key-validation operation) and ECDSA/EdDSA SigGen verify-back, the alternate-version SHA-2 MCT (SHA2-256/512/512-256), full 100-iteration MCTs (only outer iteration 0 is checked for SHA-2/SHA-3 standard MCT and AES-CBC MCT), and SHA LDT. The existing HKDF/PBKDF2/X9.63/KBKDF workbench rows keep their published-standard / oracle / round-trip labels.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ + Rust"
     }
   ]
 }

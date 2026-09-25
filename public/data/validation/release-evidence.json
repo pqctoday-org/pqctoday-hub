@@ -8,27 +8,27 @@
     "evidence/acvp-xplat/2026-09-24/targets.json": "68d23bd0090e0a104fd365f60175ccb11b85c53d2eb7aca2f45d103fe69ec775",
     "evidence/acvp-xplat/2026-09-24b/matrix.json": "b3370d4bf4518c7c4519244e921977eeae4a0f07223869397185f1112f3baba8",
     "evidence/acvp-xplat/2026-09-24b/targets.json": "6413cac2139288ae126c4e31035f0110b8b72dc1c0a97e80722841a992715ccd",
-    "public/data/validation/coverage-matrix.json": "91ba60bf511b6d149c413e06ce3766f603233b379733a16ca849f660a3b67e90",
-    "src/data/validation/coverage-waivers.json": "e554010b48411143943757c206a4a4412ba369c3951a4ef336134ad6fa8c8969",
+    "public/data/validation/coverage-matrix.json": "ad8b983ca4576ec5fa8ca0ca2992cc08262427d88c8026074463065171605716",
+    "src/data/validation/coverage-waivers.json": "4d305a2255a2ff2fc38ad32abff9bf74e0aacedaca9e9b63d420d5cb1ff2401a",
     "src/data/validation/native-conformance.generated.json": "4896b6b29fe12e8d66d807ab82fd051b7fe79683a13123c42fa7a7f8ff903fc1",
-    "src/data/validation/open-gaps.json": "b83e6fb1430de4bf3d6168967076106d03e0cb1b75e829b1ffbf94b08a8e575c",
+    "src/data/validation/open-gaps.json": "65d602767454b01697656e5e00c70f2f0a73cd3c58396251d3f22497be896282",
     "src/data/validation/run-results/wasm-node-katRunner.json": "64433a7f1a77adbed09e8e0eb3bf0c43fc39c53a4f30816e8202376ab0c247c2",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "3ab5d11967de93a4a52f98736cf2f8bc64939d16893636e37fe0bdf65c5d6591",
-    "src/data/validation/validation-counts.generated.json": "782f68b73f39f323654d07a1a6c0dbee664bf27ade3e263096b39450ed8344e1",
-    "src/data/validation/vector-manifest.json": "95b54b52499c3a3dc17aed6b2145def51ef6db177f02c57517245c15794a118c"
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "350ce697eeb3c30100bc336af78ea6d90c24f030c48ed01211a794a9945201a4",
+    "src/data/validation/validation-counts.generated.json": "2f005d1472d229ae1bb14710364f8205e747f0e3d094b0fdee24cd7d0d4dd08e",
+    "src/data/validation/vector-manifest.json": "740cb44d020ab3ae82db1cc4fb6eb127fa3221365edefa3929251e1aa56cbf7d"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "a90dac21efe7430a7a6383464f93d6393ec70d1898575425f22f525884b3d662",
-    "nistReferenceSampleFiles": 25,
-    "nistReferenceSampleCases": 159,
+    "manifestCanonicalSha256": "b27482b9c35439bf8a66aae148f8a8aaa40c67bbb726cd62b0371f0d95cc21c4",
+    "nistReferenceSampleFiles": 36,
+    "nistReferenceSampleCases": 552,
     "vectorFiles": {
-      "total": 40,
-      "active": 40,
+      "total": 51,
+      "active": 51,
       "quarantined": 0
     },
     "filesByClass": {
-      "nist-acvp-reference-sample": 25,
+      "nist-acvp-reference-sample": 36,
       "acvts-issued-vector": 0,
       "published-standard-kat": 9,
       "independent-oracle": 4,
@@ -39,12 +39,12 @@
       "unverified": 0
     },
     "cases": {
-      "total": 191,
-      "active": 190,
+      "total": 584,
+      "active": 583,
       "quarantined": 1
     },
     "activeCasesByClass": {
-      "nist-acvp-reference-sample": 159,
+      "nist-acvp-reference-sample": 552,
       "acvts-issued-vector": 0,
       "published-standard-kat": 16,
       "independent-oracle": 11,
@@ -55,8 +55,8 @@
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 152,
-      "negative": 38
+      "positive": 396,
+      "negative": 187
     },
     "filesWithPublishabilityGap": {
       "generator-script-not-in-repo": 1,
@@ -93,65 +93,65 @@
         "unsupportedCells": 27,
         "overall": {
           "covered": 0,
-          "sampled": 167,
-          "untested": 1468
+          "sampled": 223,
+          "untested": 1412
         },
         "byPolarity": {
           "positive": {
-            "covered": 38,
-            "sampled": 128,
-            "untested": 1469,
+            "covered": 98,
+            "sampled": 124,
+            "untested": 1413,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 79,
-              "standard-kat": 7,
-              "oracle": 4,
+              "nist-reference": 144,
+              "standard-kat": 2,
+              "oracle": 3,
               "differential": 0,
-              "round-trip": 54,
-              "behavior-only": 22,
-              "untested": 1469,
+              "round-trip": 52,
+              "behavior-only": 21,
+              "untested": 1413,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 18,
-            "sampled": 7,
-            "untested": 1610,
+            "covered": 35,
+            "sampled": 25,
+            "untested": 1575,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 21,
+              "nist-reference": 45,
               "standard-kat": 0,
               "oracle": 0,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 4,
-              "untested": 1610,
+              "behavior-only": 15,
+              "untested": 1575,
               "unsupported": 0
             }
           },
           "boundary": {
             "covered": 18,
-            "sampled": 18,
-            "untested": 1599,
+            "sampled": 22,
+            "untested": 1595,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 35,
+              "nist-reference": 39,
               "standard-kat": 0,
               "oracle": 0,
               "differential": 0,
               "round-trip": 1,
               "behavior-only": 0,
-              "untested": 1599,
+              "untested": 1595,
               "unsupported": 0
             }
           },
           "state-error": {
-            "covered": 2,
-            "sampled": 3,
-            "untested": 1630,
+            "covered": 3,
+            "sampled": 15,
+            "untested": 1617,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
@@ -160,8 +160,8 @@
               "oracle": 0,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 5,
-              "untested": 1630,
+              "behavior-only": 18,
+              "untested": 1617,
               "unsupported": 0
             }
           }
@@ -169,9 +169,9 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 167,
-            "passedCells": 140,
-            "failedCells": 7,
+            "registeredCells": 223,
+            "passedCells": 197,
+            "failedCells": 8,
             "skippedCells": 0
           },
           "native": {
@@ -197,65 +197,65 @@
         "unsupportedCells": 637,
         "overall": {
           "covered": 0,
-          "sampled": 179,
-          "untested": 846
+          "sampled": 230,
+          "untested": 795
         },
         "byPolarity": {
           "positive": {
-            "covered": 47,
-            "sampled": 131,
-            "untested": 847,
+            "covered": 102,
+            "sampled": 127,
+            "untested": 796,
             "denominator": 1025,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 82,
-              "standard-kat": 11,
-              "oracle": 4,
+              "nist-reference": 144,
+              "standard-kat": 4,
+              "oracle": 3,
               "differential": 0,
-              "round-trip": 63,
-              "behavior-only": 18,
-              "untested": 847,
+              "round-trip": 61,
+              "behavior-only": 17,
+              "untested": 796,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 18,
-            "sampled": 7,
-            "untested": 1000,
+            "covered": 35,
+            "sampled": 25,
+            "untested": 965,
             "denominator": 1025,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 21,
+              "nist-reference": 45,
               "standard-kat": 0,
               "oracle": 0,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 4,
-              "untested": 1000,
+              "behavior-only": 15,
+              "untested": 965,
               "unsupported": 0
             }
           },
           "boundary": {
             "covered": 19,
-            "sampled": 18,
-            "untested": 988,
+            "sampled": 22,
+            "untested": 984,
             "denominator": 1025,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 35,
+              "nist-reference": 39,
               "standard-kat": 1,
               "oracle": 0,
               "differential": 0,
               "round-trip": 1,
               "behavior-only": 0,
-              "untested": 988,
+              "untested": 984,
               "unsupported": 0
             }
           },
           "state-error": {
-            "covered": 2,
-            "sampled": 3,
-            "untested": 1020,
+            "covered": 3,
+            "sampled": 15,
+            "untested": 1007,
             "denominator": 1025,
             "byStatus": {
               "acvts-issued": 0,
@@ -264,8 +264,8 @@
               "oracle": 0,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 5,
-              "untested": 1020,
+              "behavior-only": 18,
+              "untested": 1007,
               "unsupported": 0
             }
           }
@@ -273,9 +273,9 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 179,
-            "passedCells": 163,
-            "failedCells": 6,
+            "registeredCells": 230,
+            "passedCells": 214,
+            "failedCells": 13,
             "skippedCells": 0
           },
           "native": {
@@ -297,34 +297,34 @@
     },
     "parity": {
       "positive": {
-        "parity": 138,
-        "divergent": 7,
-        "not-established": 868,
+        "parity": 190,
+        "divergent": 12,
+        "not-established": 811,
         "single-engine": 649
       },
       "negative": {
-        "parity": 19,
-        "divergent": 6,
-        "not-established": 988,
+        "parity": 51,
+        "divergent": 9,
+        "not-established": 953,
         "single-engine": 649
       },
       "boundary": {
-        "parity": 34,
+        "parity": 38,
         "divergent": 2,
-        "not-established": 977,
+        "not-established": 973,
         "single-engine": 649
       },
       "state-error": {
-        "parity": 5,
-        "divergent": 0,
-        "not-established": 1008,
+        "parity": 17,
+        "divergent": 1,
+        "not-established": 995,
         "single-engine": 649
       }
     },
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b); 520 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 88609829b); 1356 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub ea5aa8f64). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -370,15 +370,15 @@
   },
   "waivers": {
     "source": "src/data/validation/coverage-waivers.json",
-    "entries": 207,
+    "entries": 187,
     "byStatus": {
-      "baseline-pending-review": 207
+      "baseline-pending-review": 187
     },
     "approvedEntries": 0,
-    "waivedCells": 2314,
-    "pendingReviewCells": 2314,
+    "waivedCells": 2207,
+    "pendingReviewCells": 2207,
     "staleCells": 0,
-    "statement": "All 207 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
+    "statement": "All 187 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
   },
   "nativeSuites": {
     "source": "src/data/validation/native-conformance.generated.json",
@@ -495,20 +495,300 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "88609829b4344cd3f5db63940fbc266fddd66813",
+      "hubCommit": "ea5aa8f648cdfe3ed9b26b2e427621cc1ce35cf4",
       "recordedAt": "2026-09-25",
-      "results": 520,
+      "results": 1356,
       "byEngine": {
         "cpp": {
-          "pass": 253,
-          "fail": 7
+          "pass": 670,
+          "fail": 8
         },
         "rust": {
-          "pass": 254,
-          "fail": 6
+          "pass": 595,
+          "fail": 83
         }
       },
       "failures": [
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/10"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/11"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/12"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/13"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/14"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/3"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/4"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/5"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/6"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/7"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/8"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/9"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/10"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/11"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/12"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/13"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/14"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/3"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/4"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/5"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/6"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/7"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/8"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/9"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/3"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/4"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/5"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/6"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/3"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/4"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/5"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/6"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/3"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/4"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/5"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/6"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/3"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/4"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/5"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/6"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/3"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/4"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/5"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/3"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/4"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/5"
+        },
         {
           "engine": "rust",
           "registryCase": "acvp.07b.keycheck#mlkem_encapdecap_val_test#/testGroups/3/tests/0"
@@ -560,6 +840,38 @@
         {
           "engine": "cpp",
           "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/5/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.12b.probes#local:acvp.12b.probes/iv15"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/2"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/4"
+        },
+        {
+          "engine": "cpp",
+          "registryCase": "acvp.35b#kmac_acvp_test#/testGroups/0/tests/1"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.35b#kmac_acvp_test#/testGroups/0/tests/1"
         }
       ]
     }
@@ -1100,17 +1412,17 @@
   },
   "openGaps": {
     "source": "public/data/validation/coverage-matrix.json (openGaps; curated entries from src/data/validation/open-gaps.json)",
-    "total": 187,
+    "total": 255,
     "byStatus": {
-      "open": 184,
+      "open": 252,
       "accepted-limitation": 2,
       "in-progress": 1
     },
     "byOrigin": {
-      "curated": 21,
-      "generated": 166
+      "curated": 30,
+      "generated": 225
     },
-    "unassignedOwner": 187,
+    "unassignedOwner": 255,
     "curated": [
       {
         "id": "d2-4-hedged-rnd",
@@ -1258,6 +1570,69 @@
         "status": "open",
         "planItem": "A-3",
         "owner": "unassigned"
+      },
+      {
+        "id": "rust-gcm-iv-96-only",
+        "title": "Rust engine refuses AES-GCM IVs other than 96 bits",
+        "status": "open",
+        "planItem": "E (AES-GCM) / G-9",
+        "owner": "unassigned"
+      },
+      {
+        "id": "rust-ecdsa-p224-unsupported",
+        "title": "Rust engine accepts P-224 keys but cannot verify P-224 ECDSA signatures",
+        "status": "open",
+        "planItem": "E (ECDSA) / G-7 / G-9",
+        "owner": "unassigned"
+      },
+      {
+        "id": "hmac-min-key-size-advertisement",
+        "title": "HMAC keys below the advertised ulMinKeySize are accepted by both engines",
+        "status": "open",
+        "planItem": "G-1 / G-7",
+        "owner": "unassigned"
+      },
+      {
+        "id": "wse-nist-sample-scope",
+        "title": "Classical NIST reference samples cover only what the pinned upstream samples register",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "rust-cbc-iv-length-arguments-bad",
+        "title": "Rust engine answers a wrong-length AES-CBC IV with CKR_ARGUMENTS_BAD",
+        "status": "open",
+        "planItem": "G-8 / G-9",
+        "owner": "unassigned"
+      },
+      {
+        "id": "rust-rsa-public-exponent-limit",
+        "title": "Rust engine cannot verify RSA signatures whose public exponent exceeds 2^33 - 1",
+        "status": "open",
+        "planItem": "E (RSA) / G-9",
+        "owner": "unassigned"
+      },
+      {
+        "id": "rust-pbkdf2-prf-limited",
+        "title": "Rust engine's CKM_PKCS5_PBKD2 implements only the HMAC-SHA-256/384/512 PRFs",
+        "status": "open",
+        "planItem": "E (PBKDF2) / G-7 / G-9",
+        "owner": "unassigned"
+      },
+      {
+        "id": "kmac-verify-ignores-output-length",
+        "title": "KMAC C_Verify accepts only the default MAC length, whatever ulOutputLen says",
+        "status": "open",
+        "planItem": "E (KMAC) / G-9",
+        "owner": "unassigned"
+      },
+      {
+        "id": "wse-remaining-classical-acvp",
+        "title": "Classical families still without NIST ACVP-Server cases after WS-E",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
       }
     ]
   },
@@ -1265,27 +1640,27 @@
     "source": "src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)",
     "note": "Test groups per family as declared in the workbench CATEGORIES table; the file itself is not hashed here (it changes with every section edit), its parsed table is.",
     "families": 7,
-    "groups": 42,
+    "groups": 52,
     "categories": [
       {
         "id": "symmetric",
         "label": "Symmetric / AEAD",
-        "groups": 6
+        "groups": 9
       },
       {
         "id": "hashing_mac",
         "label": "Hashing & MAC",
-        "groups": 5
+        "groups": 8
       },
       {
         "id": "kdf",
         "label": "KDF",
-        "groups": 5
+        "groups": 6
       },
       {
         "id": "classical",
         "label": "Classical Asymmetric",
-        "groups": 10
+        "groups": 13
       },
       {
         "id": "ml_dsa",
@@ -1308,15 +1683,22 @@
     "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-065 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
     "validRecords": 0,
     "statusCounts": {
-      "awaiting-review": 249
+      "awaiting-review": 240
     },
     "awaiting": {
-      "vector-source": 38,
-      "coverage-waiver": 207,
+      "vector-source": 49,
+      "coverage-waiver": 187,
       "public-claim": 3,
       "learn-module-practitioner": 1
     },
     "items": [
+      {
+        "id": "vector-source:aescbc_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/aescbc_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
       {
         "id": "vector-source:aescbc_test",
         "kind": "vector-source",
@@ -1332,6 +1714,13 @@
         "status": "awaiting-review"
       },
       {
+        "id": "vector-source:aesctr_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/aesctr_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
         "id": "vector-source:aesctr_test",
         "kind": "vector-source",
         "title": "src/data/acvp/aesctr_test.json — published-standard-kat (NIST SP 800-38A Appendix F.5.6 (CTR-AES256.Decrypt))",
@@ -1339,9 +1728,23 @@
         "status": "awaiting-review"
       },
       {
+        "id": "vector-source:aesgcm_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/aesgcm_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-GCM-1.0/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
         "id": "vector-source:aesgcm_test",
         "kind": "vector-source",
         "title": "src/data/acvp/aesgcm_test.json — independent-oracle (Node crypto (OpenSSL) output; case 1 reuses the key/IV/plaintext of McGrew-Viega GCM Test Case 16 without its AAD)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:aeskw_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/aeskw_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -1374,6 +1777,13 @@
         "status": "awaiting-review"
       },
       {
+        "id": "vector-source:ecdsa_sigver_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/ecdsa_sigver_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ECDSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
         "id": "vector-source:ecdsa_test",
         "kind": "vector-source",
         "title": "src/data/acvp/ecdsa_test.json — published-standard-kat (RFC 6979 Appendix A.2.5 (P-256))",
@@ -1388,6 +1798,13 @@
         "status": "awaiting-review"
       },
       {
+        "id": "vector-source:eddsa_sigver_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/eddsa_sigver_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/EDDSA-SigVer-1.0/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
         "id": "vector-source:eddsa_test",
         "kind": "vector-source",
         "title": "src/data/acvp/eddsa_test.json — published-standard-kat (RFC 8032 Section 7.1 (Ed25519 TEST 1, TEST 2))",
@@ -1398,6 +1815,13 @@
         "id": "vector-source:hkdf_test",
         "kind": "vector-source",
         "title": "src/data/acvp/hkdf_test.json — published-standard-kat (RFC 5869 Appendix A.1-A.3 (HKDF-SHA256 test cases 1-3))",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:hmac_acvp_matrix_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/hmac_acvp_matrix_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -1419,6 +1843,13 @@
         "id": "vector-source:hmac_test",
         "kind": "vector-source",
         "title": "src/data/acvp/hmac_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:kmac_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/kmac_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/KMAC-128-1.0/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -1500,6 +1931,13 @@
         "status": "awaiting-review"
       },
       {
+        "id": "vector-source:pbkdf2_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/pbkdf2_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/PBKDF-1.0/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
         "id": "vector-source:pbkdf2_test",
         "kind": "vector-source",
         "title": "src/data/acvp/pbkdf2_test.json — independent-oracle (Generated via Node.js crypto (OpenSSL backend), PBKDF2-HMAC-SHA256 and PBKDF2-HMAC-SHA512)",
@@ -1510,6 +1948,13 @@
         "id": "vector-source:rsa_oaep_test",
         "kind": "vector-source",
         "title": "src/data/acvp/rsa_oaep_test.json — independent-oracle (Generated via Node.js crypto (OpenSSL backend), RSA-2048 OAEP with SHA-256)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:rsa_sigver_acvp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/rsa_sigver_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -1552,6 +1997,13 @@
         "id": "vector-source:sha512_test",
         "kind": "vector-source",
         "title": "src/data/acvp/sha512_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SHA2-512-1.0/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:sha_acvp_boundary_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/sha_acvp_boundary_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SHA2-256-1.0/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -2088,23 +2540,9 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_SHA512_224",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_224 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_SHA512_224_HMAC",
         "kind": "coverage-waiver",
         "title": "CKM_SHA512_224_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_224_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_224_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2116,23 +2554,9 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_SHA512_256",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_256 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_SHA512_256_HMAC",
         "kind": "coverage-waiver",
         "title": "CKM_SHA512_256_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_256_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_256_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2188,7 +2612,7 @@
       {
         "id": "coverage-waiver:baseline-CKM_SHA3_256_RSA_PKCS_PSS-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_SHA3_256_RSA_PKCS_PSS (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_SHA3_256_RSA_PKCS_PSS (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2291,13 +2715,6 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_SHA_1_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA_1_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_RIPEMD160",
         "kind": "coverage-waiver",
         "title": "CKM_RIPEMD160 (rust): 1 cell pattern(s), status baseline-pending-review",
@@ -2326,30 +2743,9 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_SHA256_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA256_HMAC_GENERAL (cpp): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA224",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA224 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_SHA224_HMAC",
         "kind": "coverage-waiver",
         "title": "CKM_SHA224_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA224_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA224_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2361,23 +2757,9 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_SHA384_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA384_HMAC_GENERAL (cpp): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_SHA512_HMAC",
         "kind": "coverage-waiver",
         "title": "CKM_SHA512_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA512_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA512_HMAC_GENERAL (cpp): 1 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2389,37 +2771,9 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_SHA3_256_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_256_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_224",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_224 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_SHA3_224_HMAC",
         "kind": "coverage-waiver",
         "title": "CKM_SHA3_224_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_224_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_224_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_384",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_384 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2431,23 +2785,9 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_SHA3_384_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_384_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_SHA3_512_HMAC",
         "kind": "coverage-waiver",
         "title": "CKM_SHA3_512_HMAC (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_SHA3_512_HMAC_GENERAL",
-        "kind": "coverage-waiver",
-        "title": "CKM_SHA3_512_HMAC_GENERAL (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2587,7 +2927,7 @@
       {
         "id": "coverage-waiver:baseline-CKM_ECDSA_SHA256-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA256 (cpp, rust): 4 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_ECDSA_SHA256 (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2608,7 +2948,7 @@
       {
         "id": "coverage-waiver:baseline-CKM_ECDSA_SHA512-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA512 (cpp, rust): 7 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_ECDSA_SHA512 (cpp, rust): 5 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2636,7 +2976,7 @@
       {
         "id": "coverage-waiver:baseline-CKM_ECDSA_SHA3_256-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA3_256 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_ECDSA_SHA3_256 (cpp, rust): 5 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2664,7 +3004,7 @@
       {
         "id": "coverage-waiver:baseline-CKM_ECDSA_SHA3_512-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_ECDSA_SHA3_512 (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_ECDSA_SHA3_512 (cpp, rust): 5 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2762,7 +3102,7 @@
       {
         "id": "coverage-waiver:baseline-CKM_AES_CBC",
         "kind": "coverage-waiver",
-        "title": "CKM_AES_CBC (cpp, rust): 11 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_AES_CBC (cpp, rust): 6 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2774,23 +3114,9 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_AES_CTR-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CTR (cpp, rust): 3 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_CTR-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_CTR (cpp): 2 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_AES_GCM-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_AES_GCM (cpp, rust): 10 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_AES_GCM (cpp, rust): 8 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -2886,23 +3212,9 @@
         "status": "awaiting-review"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_AES_KEY_WRAP",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_KEY_WRAP (cpp, rust): 5 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_AES_KEY_WRAP_PAD",
         "kind": "coverage-waiver",
         "title": "CKM_AES_KEY_WRAP_PAD (cpp, rust): 4 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_AES_KEY_WRAP_KWP",
-        "kind": "coverage-waiver",
-        "title": "CKM_AES_KEY_WRAP_KWP (cpp, rust): 4 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -3072,7 +3384,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 370 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 788 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,
@@ -3082,7 +3394,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "40 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1."
+      "basis": "51 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1."
     },
     {
       "n": 3,
