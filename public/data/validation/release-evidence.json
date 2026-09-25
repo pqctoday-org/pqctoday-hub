@@ -10,6 +10,10 @@
     "evidence/acvp-xplat/2026-09-24b/targets.json": "6413cac2139288ae126c4e31035f0110b8b72dc1c0a97e80722841a992715ccd",
     "evidence/acvp-xplat/2026-09-25-boards/matrix.json": "856379d11fb511974797f2866b281521e41793de29431eea2986c582be4bca81",
     "evidence/acvp-xplat/2026-09-25-boards/targets.json": "86eba22321773866ab48d3f24f3ccadecdad8e36e72a025eab5b98b27ec65f45",
+    "evidence/acvp-xplat/2026-09-25-kv260-control-hw-disabled/matrix.json": "9665bc47a07d3046a3f08a98e97e27d69b501fbbde04675b66f5e259f870757a",
+    "evidence/acvp-xplat/2026-09-25-kv260-control-hw-disabled/targets.json": "2d7d92399b93a2adcf8dfea4e5e214e3c026eecac0a1dbd017f992f44b34166f",
+    "evidence/acvp-xplat/2026-09-25-kv260-default/matrix.json": "bb3daf3a96e9c6a499804870043a22c1243d120d674841779d15849be433e2a4",
+    "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
     "public/data/validation/coverage-matrix.json": "9e4f4887dfff0fc1d60a5fe818f8cf55c5f625f51f54666ff21542886def973b",
@@ -3926,6 +3930,534 @@
         ]
       },
       {
+        "runId": "2026-09-25-kv260-control-hw-disabled",
+        "dir": "evidence/acvp-xplat/2026-09-25-kv260-control-hw-disabled",
+        "matrixSha256": "9665bc47a07d3046a3f08a98e97e27d69b501fbbde04675b66f5e259f870757a",
+        "comparatorPolicyVersion": "pqctoday.acvp-comparator-policy/2",
+        "baselineTarget": "wasm-cpp",
+        "fixtures": [
+          {
+            "name": "ML-KEM-encapDecap-FIPS203",
+            "vsId": 42,
+            "bundleManifestSha256": "d2ea5cd41c49bb156a0301ce033c09a12ccf61837a8edbecd1f9fcdbf8f702fd",
+            "cases": 165
+          },
+          {
+            "name": "ML-DSA-sigVer-FIPS204",
+            "vsId": 42,
+            "bundleManifestSha256": "966ec2faeba6d85fe862b3bead4f0aebf47b784cecd472c2e5fb3a30905f444f",
+            "cases": 180
+          }
+        ],
+        "divergences": 0,
+        "targets": [
+          {
+            "id": "wasm-cpp",
+            "label": "WebAssembly (Node 22, host V8) — C++ engine",
+            "class": "wasm",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "wasm-rust",
+            "label": "WebAssembly (Node 22, host V8) — Rust engine",
+            "class": "wasm",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "macos-arm64-cpp",
+            "label": "Native macOS arm64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "macos-arm64-rust",
+            "label": "Native macOS arm64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-x86_64-cpp",
+            "label": "Native Linux x86-64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-x86_64-rust",
+            "label": "Native Linux x86-64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-arm64-cpp",
+            "label": "Native Linux Arm64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-arm64-rust",
+            "label": "Native Linux Arm64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "imx95-cpp",
+            "label": "NXP i.MX95 (CACP Yocto) — C++ engine",
+            "class": "board",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. The i.MX95 result on its current image is recorded in run 2026-09-25-boards.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "imx95-rust",
+            "label": "NXP i.MX95 (CACP Yocto) — Rust engine",
+            "class": "board",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. The i.MX95 result on its current image is recorded in run 2026-09-25-boards.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "kv260-cpp",
+            "label": "AMD KV260 (CACP Yocto) — C++ engine",
+            "class": "board",
+            "engine": "cpp",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "KV260 on its CURRENT image (build 20260925131032, card 0x231, FPGA profile hashsig), the image's own /usr/lib/softhsm/libsofthsmv3.so, hsm 7f12c48d (on-board SHA-256 re-verified equal to run 2026-09-25-boards and the .wic's file). Variant B, control: PQC_HW_DISABLE=1 (the Rust engine skips its C_Initialize accelerator probe); otherwise identical to run 2026-09-25-kv260-default. Acceleration recorded as none on a source-verified per-operation finding at hsm 7f12c48d (see the execution-environment acceleration.detail and README). Not rebuilt, not reflashed.",
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "d4eb794a0520b894e76dbd26b0d36a1c6cf0a09fcb5c8b94a05aa1e71743e458",
+            "sourceCommit": "7f12c48d5e406c075076b5ea2eaf2d2de63c879b",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "kv260-rust",
+            "label": "AMD KV260 (CACP Yocto) — Rust engine",
+            "class": "board",
+            "engine": "rust",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "KV260 on its CURRENT image (build 20260925131032, card 0x231, FPGA profile hashsig), the image's own /usr/lib/softhsm/libsofthsmrustv3.so (hw-accel build), hsm 7f12c48d (on-board SHA-256 re-verified equal to run 2026-09-25-boards and the .wic's file). Variant B, control: PQC_HW_DISABLE=1 (the Rust engine skips its C_Initialize accelerator probe); otherwise identical to run 2026-09-25-kv260-default. Acceleration recorded as none on a source-verified per-operation finding at hsm 7f12c48d (see the execution-environment acceleration.detail and README). Not rebuilt, not reflashed.",
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "3b75af8a0380d417d20d657ff01f6fc8d82b51f99f22705058929ccc97a563a0",
+            "sourceCommit": "7f12c48d5e406c075076b5ea2eaf2d2de63c879b",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          }
+        ]
+      },
+      {
+        "runId": "2026-09-25-kv260-default",
+        "dir": "evidence/acvp-xplat/2026-09-25-kv260-default",
+        "matrixSha256": "bb3daf3a96e9c6a499804870043a22c1243d120d674841779d15849be433e2a4",
+        "comparatorPolicyVersion": "pqctoday.acvp-comparator-policy/2",
+        "baselineTarget": "wasm-cpp",
+        "fixtures": [
+          {
+            "name": "ML-KEM-encapDecap-FIPS203",
+            "vsId": 42,
+            "bundleManifestSha256": "d2ea5cd41c49bb156a0301ce033c09a12ccf61837a8edbecd1f9fcdbf8f702fd",
+            "cases": 165
+          },
+          {
+            "name": "ML-DSA-sigVer-FIPS204",
+            "vsId": 42,
+            "bundleManifestSha256": "966ec2faeba6d85fe862b3bead4f0aebf47b784cecd472c2e5fb3a30905f444f",
+            "cases": 180
+          }
+        ],
+        "divergences": 0,
+        "targets": [
+          {
+            "id": "wasm-cpp",
+            "label": "WebAssembly (Node 22, host V8) — C++ engine",
+            "class": "wasm",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "wasm-rust",
+            "label": "WebAssembly (Node 22, host V8) — Rust engine",
+            "class": "wasm",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "macos-arm64-cpp",
+            "label": "Native macOS arm64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "macos-arm64-rust",
+            "label": "Native macOS arm64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-x86_64-cpp",
+            "label": "Native Linux x86-64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-x86_64-rust",
+            "label": "Native Linux x86-64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-arm64-cpp",
+            "label": "Native Linux Arm64 — C++ engine",
+            "class": "native",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "linux-arm64-rust",
+            "label": "Native Linux Arm64 — Rust engine",
+            "class": "native",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. Same bundles as runs 2026-09-24b and 2026-09-25-native, where this target's result is recorded.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "imx95-cpp",
+            "label": "NXP i.MX95 (CACP Yocto) — C++ engine",
+            "class": "board",
+            "engine": "cpp",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. The i.MX95 result on its current image is recorded in run 2026-09-25-boards.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "imx95-rust",
+            "label": "NXP i.MX95 (CACP Yocto) — Rust engine",
+            "class": "board",
+            "engine": "rust",
+            "declaredStatus": "not run",
+            "publishable": null,
+            "reason": "Not part of this KV260-only re-run. The i.MX95 result on its current image is recorded in run 2026-09-25-boards.",
+            "unmetIdentity": [],
+            "emulated": null,
+            "artifactSha256": null,
+            "sourceCommit": null,
+            "totals": {
+              "pass": 0,
+              "fail": 0,
+              "unsupported": 0,
+              "not run": 345,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "kv260-cpp",
+            "label": "AMD KV260 (CACP Yocto) — C++ engine",
+            "class": "board",
+            "engine": "cpp",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "KV260 on its CURRENT image (build 20260925131032, card 0x231, FPGA profile hashsig), the image's own /usr/lib/softhsm/libsofthsmv3.so, hsm 7f12c48d (on-board SHA-256 re-verified equal to run 2026-09-25-boards and the .wic's file). Variant A, appliance-default environment (PQC_HW_DISABLE not set), exactly as run 2026-09-25-boards. Acceleration recorded as none on a source-verified per-operation finding at hsm 7f12c48d (see the execution-environment acceleration.detail and README). Not rebuilt, not reflashed.",
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "d4eb794a0520b894e76dbd26b0d36a1c6cf0a09fcb5c8b94a05aa1e71743e458",
+            "sourceCommit": "7f12c48d5e406c075076b5ea2eaf2d2de63c879b",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          },
+          {
+            "id": "kv260-rust",
+            "label": "AMD KV260 (CACP Yocto) — Rust engine",
+            "class": "board",
+            "engine": "rust",
+            "declaredStatus": "run",
+            "publishable": true,
+            "reason": "KV260 on its CURRENT image (build 20260925131032, card 0x231, FPGA profile hashsig), the image's own /usr/lib/softhsm/libsofthsmrustv3.so (hw-accel build), hsm 7f12c48d (on-board SHA-256 re-verified equal to run 2026-09-25-boards and the .wic's file). Variant A, appliance-default environment (PQC_HW_DISABLE not set), exactly as run 2026-09-25-boards. Acceleration recorded as none on a source-verified per-operation finding at hsm 7f12c48d (see the execution-environment acceleration.detail and README). Not rebuilt, not reflashed.",
+            "unmetIdentity": [],
+            "emulated": false,
+            "artifactSha256": "3b75af8a0380d417d20d657ff01f6fc8d82b51f99f22705058929ccc97a563a0",
+            "sourceCommit": "7f12c48d5e406c075076b5ea2eaf2d2de63c879b",
+            "totals": {
+              "pass": 157,
+              "fail": 0,
+              "unsupported": 188,
+              "not run": 0,
+              "not comparable": 0
+            }
+          }
+        ]
+      },
+      {
         "runId": "2026-09-25-native",
         "dir": "evidence/acvp-xplat/2026-09-25-native",
         "matrixSha256": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
@@ -5331,9 +5863,11 @@
         "evidence/acvp-xplat/2026-09-25-native/targets.json",
         "evidence/acvp-xplat/2026-09-25-boards/matrix.json",
         "evidence/acvp-xplat/2026-09-25-boards/targets.json",
+        "evidence/acvp-xplat/2026-09-25-kv260-default/matrix.json",
+        "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json",
         "evidence/release-freeze/"
       ],
-      "basis": "Frozen and publishable: wasm-cpp (2026-09-25-native), wasm-rust (2026-09-25-native), macos-arm64-cpp (2026-09-25-native), macos-arm64-rust (2026-09-25-native), linux-x86_64-cpp (2026-09-25-native), linux-x86_64-rust (2026-09-25-native), linux-arm64-cpp (2026-09-25-native), linux-arm64-rust (2026-09-25-native), imx95-cpp (2026-09-25-boards), imx95-rust (2026-09-25-boards). 2 plan §11 Q3 target(s) have no publishable frozen evidence in any run: kv260-cpp (run, non-publishable in 2026-09-25-boards), kv260-rust (run, non-publishable in 2026-09-25-boards); no release freeze manifest in evidence/release-freeze/ (plan J-4: freeze by 19 October)."
+      "basis": "Frozen and publishable: wasm-cpp (2026-09-25-native), wasm-rust (2026-09-25-native), macos-arm64-cpp (2026-09-25-native), macos-arm64-rust (2026-09-25-native), linux-x86_64-cpp (2026-09-25-native), linux-x86_64-rust (2026-09-25-native), linux-arm64-cpp (2026-09-25-native), linux-arm64-rust (2026-09-25-native), imx95-cpp (2026-09-25-boards), imx95-rust (2026-09-25-boards), kv260-cpp (2026-09-25-kv260-default), kv260-rust (2026-09-25-kv260-default). no release freeze manifest in evidence/release-freeze/ (plan J-4: freeze by 19 October)."
     },
     {
       "n": 8,
