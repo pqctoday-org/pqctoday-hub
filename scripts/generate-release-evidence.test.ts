@@ -140,6 +140,7 @@ describe('release evidence — committed report', () => {
       matrix: readRepo(IN.publicMatrix),
       runs: [],
       reviewItems: [],
+      reviewStatus: {},
       xplat: [
         {
           dir: 'evidence/acvp-xplat/r1',
