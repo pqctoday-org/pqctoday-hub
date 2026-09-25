@@ -1,0 +1,102 @@
+{
+  "envVersion": "pqctoday.execution-environment/1",
+  "recordedAt": "2026-09-25T15:34:25.054Z",
+  "target": {
+    "id": "imx95-rust",
+    "label": "NXP i.MX95 (CACP Yocto) — Rust engine",
+    "class": "board"
+  },
+  "os": {
+    "name": "NXP i.MX Distro with Wayland 6.18-wrynose (wrynose)",
+    "version": "6.18-wrynose",
+    "kernel": "Linux 6.18.20-2.0.0-gb096ce610e95",
+    "image": {
+      "name": "CACP pqc-cacp-image imx95-15x15-lpddr4x-frdm build 20260920213212 (NXP i.MX Distro 6.18-wrynose)",
+      "id": "wic.zst sha256:e7fa1bcbfe014b4e685faf9551b032216c9b34af7b292e880d971800cd383ecf"
+    }
+  },
+  "arch": {
+    "machine": "aarch64",
+    "pointerBits": 64,
+    "endianness": "little"
+  },
+  "cpu": {
+    "model": "ARMv8 CPU implementer 0x41 (Arm) part 0xd05",
+    "board": "NXP FRDM-IMX95 (device-tree model NXP FRDM-IMX95), i.MX95 SoC revision 2.0; board PCB revision not exposed to Linux",
+    "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+  },
+  "emulation": {
+    "emulated": false,
+    "mechanism": null,
+    "hostMachine": "bare metal (no hypervisor or container)",
+    "detection": "/proc/self/maps rosetta mapping: absent; cpuinfo vendor_id: None"
+  },
+  "engine": {
+    "id": "rust",
+    "implementation": "pqctoday-hsm softhsmrustv3 (Rust), native cdylib libsofthsmrustv3.so as installed by the CACP Yocto image (meta-pqc-hsm/recipes-crypto/softhsmrustv3/softhsmrustv3_git.bb)",
+    "artifactKind": "shared-library",
+    "artifactPath": "/usr/lib/softhsm/libsofthsmrustv3.so",
+    "artifactSha256": "7d57ad56e8d06d9c4332e56b1197de7c2e1f45402395dbac3e3676a967d6ecb0",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": "44e7207229f875bb3bb6e57a70e812886eac0435",
+    "sourceCommitEvidence": "Not built for this run: the engine is the one installed by the board's current CACP Yocto image, run as found. Source commit from the image's BUILD-TIME records (pqctoday-cacp/out/imx95/20260920213212/): SBOM pqc-cacp-image-imx95-15x15-lpddr4x-frdm.rootfs-20260920213212.spdx.json downloadLocation git+https://github.com/pqctoday-org/pqctoday-hsm.git@44e7207229f875bb3bb6e57a70e812886eac0435; image package manifest `softhsmrustv3 armv8-2a 0.17.0+git0+44e7207229-r0`; recipe SRCREV = PQCTODAY_HSM_SRCREV (meta-pqc-hsm/conf/pqctoday-hsm-src.inc = 44e7207229f875bb3bb6e57a70e812886eac0435 at cacp c047274a). The commit is an ancestor of pqctoday-hsm origin/main. On-board SHA-256 of /usr/lib/softhsm/libsofthsmrustv3.so (7d57ad56e8d06d9c4332e56b1197de7c2e1f45402395dbac3e3676a967d6ecb0) equals the same file extracted read-only (debugfs) from that bundle's .wic rootfs. The board runs that image: its root is SD card serial 0x00000232, which the cacp release note docs/releases/2026-09-20-mx95-network-separation.md records as carrying build 20260920213212, and its rootfs partition (mmcblk1p2, 2057482 KiB) equals the .wic's partition 2 size exactly. CAVEAT: the image's cacp revision is stamped c047274a…-dirty (the build started from a working tree with uncommitted changes), so recipe-level build settings are those of commit c047274a only as far as the uncommitted changes did not touch the engine recipes; the hsm source commit itself is fixed by the build-time SBOM and package version.",
+    "builtAt": null
+  },
+  "build": {
+    "buildSystem": "cargo via Yocto cargo.bbclass (meta-lts-mixins-rust), CARGO_SRC_DIR=rust, crates pinned by the recipe's crates.inc",
+    "compiler": "rustc 1.94.1 (image testdata.json RUSTVERSION / PREFERRED_VERSION_rust 1.94.1%; the installed .so is stripped, no ELF .comment)",
+    "flags": "no CARGO_PROFILE_* override in the recipe at cacp c047274a (the opt-level=3 override was added later); RUSTFLAGS from Yocto cargo.bbclass",
+    "profile": "release (rust/Cargo.toml @ 44e72072 [profile.release]: opt-level=\"s\", lto=true)",
+    "features": "default (default = [] at 44e72072: no acvp, no hw-accel — the recipe appends --features hw-accel only for the k26 machine)",
+    "location": "Yocto cross-build in the imx95-yocto OrbStack container (pqctoday-cacp tools/nxp-build.sh), image build 20260920213212"
+  },
+  "dependencies": {
+    "openssl": {
+      "linked": false,
+      "version": null,
+      "source": "no libcrypto mapped into the runner process after loading /usr/lib/softhsm/libsofthsmrustv3.so (/proc/self/maps)"
+    },
+    "cryptoBackend": {
+      "name": "RustCrypto ml-kem (patched: rust/ml-kem-patched) + fips204 (patched: rust/fips204-patched)",
+      "version": "ml-kem 0.2.3, fips204 0.4.6 (rust/Cargo.lock @ 44e72072)"
+    },
+    "runtime": [
+      {
+        "name": "python",
+        "version": "3.14.4"
+      },
+      {
+        "name": "libc",
+        "version": "glibc 2.43"
+      }
+    ]
+  },
+  "acceleration": {
+    "state": "none",
+    "detail": "no hardware crypto offload used: the Rust engine is built without hw-accel (the recipe appends it for the k26 machine only); the i.MX95 NPU and secure enclave are not called by either engine; CPU ISA extensions only"
+  },
+  "entropy": {
+    "source": "getrandom crate → getrandom(2)",
+    "exercisedByTestedOperations": false
+  },
+  "runner": {
+    "name": "pqctoday acvp-native (Python/ctypes)",
+    "version": "2.0.0",
+    "language": "python",
+    "languageVersion": "3.14.4"
+  },
+  "fixtureBundle": {
+    "manifestSha256": "d2ea5cd41c49bb156a0301ce033c09a12ccf61837a8edbecd1f9fcdbf8f702fd",
+    "schemaId": "ML-KEM/encapDecap/FIPS203",
+    "vsId": 42
+  },
+  "notes": [
+    "Board: NXP FRDM-IMX95 (device-tree model 'NXP FRDM-IMX95', compatible fsl,frdm-imx95), SoC i.MX95 revision 2.0 (/sys/devices/soc0), 6× Cortex-A55 (CPU part 0xd05). No board PCB revision is exposed to Linux.",
+    "Image: CACP pqc-cacp-image for imx95-15x15-lpddr4x-frdm, build id 20260920213212 (bundle pqctoday-cacp/out/imx95/20260920213212/build-metadata.json), compressed WIC SHA-256 e7fa1bcbfe014b4e685faf9551b032216c9b34af7b292e880d971800cd383ecf, cacp revision c047274a7c165b771357994c1e627a2cd440439c-dirty. The board itself carries no build-identity file (/etc/version and /etc/timestamp are the reproducible-build constant 20180309123456; /etc/pqc/build-epoch is SOURCE_DATE_EPOCH 1302044400), so the build id comes from the cacp records tied above.",
+    "Reached over the lab LAN: 192.168.4.30 on the Mac's en0 (192.168.4.0/22), MAC 00:04:9f:0b:4f:48 (NXP OUI), SSH admin with the operator key. Read-only: runner and bundle staged in a private mktemp dir under /tmp (tmpfs) and removed afterwards; engine-side persistence/logging env vars (SOFTHSMRUST_STATE_FILE, PQC_BEHAVIOUR_RING, PQC_BEHAVIOUR_SRC, PQC_AUTH_LOG, SOFTHSM3_OP_LOG) explicitly unset, so the run used a private in-memory/tmp token and did not touch the appliance's token store or behaviour ring. Board clock NTP-synchronised at run time.",
+    "aws-lc-rs 1.18.0 (aws-lc-sys 0.44.0) is statically linked for the RSA / NIST-curve ECDH fast path only (rust/src/crypto/awslc.rs @ 44e72072; crypto::awslc_pq does not exist at this commit), so ML-KEM decapsulation and ML-DSA verification run on the pure-Rust crates.",
+    "builtAt left null: the image build id 20260920213212 is the bitbake start stamp, and the engine file mtime is clamped to SOURCE_DATE_EPOCH.",
+    "C_GetInfo: cryptoki 3.2, manufacturer 'SoftHSMv3 Rust WASM', library 'PQC PKCS#11 v3.2 Rust WASM' 3.0"
+  ],
+  "envId": "31556fab4fdb87f114df5f4f1112f07f874ec50fddcd106bd8b859dd5c14fc2f"
+}
