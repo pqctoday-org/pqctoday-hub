@@ -95,3 +95,7 @@ public/kmip-policies/
 # wasm-bindgen glue above. Missed when P1 added these because `format:check`
 # had never been run against the whole repo until G7.
 public/pyodide/
+
+# WS-F ACVP-format prototype: byte-exact NIST ACVP-Server sample files, hash-
+# pinned in PROVENANCE.json (src/services/acvp/fixtures.test.ts re-hashes them).
+src/services/acvp/__fixtures__/nist-acvp-server/*/*.json

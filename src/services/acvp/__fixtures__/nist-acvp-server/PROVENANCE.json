@@ -1,0 +1,34 @@
+{
+  "_comment": "Byte-exact copies of public NIST ACVP-Server gen-val sample files, used as the WS-F (ACVP-format import/export prototype) fixtures. Evidence class: nist-acvp-reference-sample. These are NOT vectors issued to an ACVTS session and passing them establishes no validation. Do not reformat these files (listed in .prettierignore): src/services/acvp/fixtures.test.ts re-hashes every file against the sha256 below and fails on any byte change.",
+  "producer": "NIST ACVP-Server (usnistgov/ACVP-Server) gen-val sample vector sets",
+  "repository": "https://github.com/usnistgov/ACVP-Server",
+  "commit": "975de31eb83d87039ec88934fdc47d8c312b892d",
+  "commitNote": "RELEASE/v1.1.0.43 including hotfix patches (committed 2026-08-12T19:29:36Z); the newest ACVP-Server commit on 2026-09-24, and the same commit the hub's existing src/data/acvp/mlkem_test.json and mldsa_test.json were extracted from.",
+  "retrieved": "2026-09-24",
+  "files": [
+    {
+      "local": "ML-KEM-encapDecap-FIPS203/prompt.json",
+      "upstreamPath": "gen-val/json-files/ML-KEM-encapDecap-FIPS203/prompt.json",
+      "sourceUrl": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-KEM-encapDecap-FIPS203/prompt.json",
+      "sha256": "998e22dfb12efb14ce9fdff911ca634b13612819a1806f25da69adba7e16db91"
+    },
+    {
+      "local": "ML-KEM-encapDecap-FIPS203/expectedResults.json",
+      "upstreamPath": "gen-val/json-files/ML-KEM-encapDecap-FIPS203/expectedResults.json",
+      "sourceUrl": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-KEM-encapDecap-FIPS203/expectedResults.json",
+      "sha256": "9089ec6ff2424da9f2782b89b2f831a329a3e28d6e5e24b802b78ff36ac61cdf"
+    },
+    {
+      "local": "ML-DSA-sigVer-FIPS204/prompt.json",
+      "upstreamPath": "gen-val/json-files/ML-DSA-sigVer-FIPS204/prompt.json",
+      "sourceUrl": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigVer-FIPS204/prompt.json",
+      "sha256": "e2cba4589389756fa0bea1a7e6837138bf0a81f9d14234c9ee8f6d33caa1654e"
+    },
+    {
+      "local": "ML-DSA-sigVer-FIPS204/expectedResults.json",
+      "upstreamPath": "gen-val/json-files/ML-DSA-sigVer-FIPS204/expectedResults.json",
+      "sourceUrl": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ML-DSA-sigVer-FIPS204/expectedResults.json",
+      "sha256": "e1d84ef1b2f35196278ab0b0ed6a46ec62cc03d2dfa92c564199e1999bfb8ea6"
+    }
+  ]
+}
