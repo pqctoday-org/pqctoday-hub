@@ -428,7 +428,7 @@
     {
       "id": "rust-kbkdf-iteration-variable-rejected",
       "title": "Rust: feedback and double-pipeline KBKDF reject the mandatory ITERATION_VARIABLE data parameter",
-      "detail": "PKCS #11 v3.2 §6.42.4/§6.42.5 make CK_SP800_108_ITERATION_VARIABLE mandatory in feedback and double-pipeline mode (pValue NULL, ulValueLen 0; §6.42.2). The Rust engine returns CKR_MECHANISM_PARAM_INVALID for every such layout, so all 44 feedback / double-pipeline NIST KDF 1.0 rows fail. Probed 2026-09-25: without the ITERATION_VARIABLE entry the engine accepts the parameters and reproduces NIST except where the counter precedes the chaining value. Counter mode (ITERATION_VARIABLE with a counter format) is correct in every location. The hub keeps the specification layout; the existing sections 27/29 call the feedback mechanism without the ITERATION_VARIABLE. Engine defect — not patched in the hub.",
+      "detail": "PKCS #11 v3.2 §6.42.4/§6.42.5 make CK_SP800_108_ITERATION_VARIABLE mandatory in feedback and double-pipeline mode (pValue NULL, ulValueLen 0; §6.42.2). The Rust engine returns CKR_MECHANISM_PARAM_INVALID for every such layout, so all 38 feedback / double-pipeline NIST KDF 1.0 rows fail. Probed 2026-09-25: without the ITERATION_VARIABLE entry the engine accepts the parameters and reproduces NIST except where the counter precedes the chaining value. Counter mode (ITERATION_VARIABLE with a counter format) is correct in every location. The hub keeps the specification layout; the existing sections 27/29 call the feedback mechanism without the ITERATION_VARIABLE. Engine defect — not patched in the hub.",
       "planItem": "E",
       "owner": "unassigned",
       "status": "open",
