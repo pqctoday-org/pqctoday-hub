@@ -110,17 +110,11 @@
     <script>
       // Reload once after the PWA service worker takes control so it can inject
       // Cross-Origin Isolation headers (COEP:credentialless + COOP:same-origin),
-      // enabling SharedArrayBuffer for WASM threading on GitHub Pages.
-      if (window.crossOriginIsolated === false && !sessionStorage.getItem('coi-reload')) {
-        sessionStorage.setItem('coi-reload', '1')
-        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-          location.reload()
-        } else if (navigator.serviceWorker) {
-          navigator.serviceWorker.addEventListener('controllerchange', function () {
-            location.reload()
-          })
-        }
-      }
+      // enabling SharedArrayBuffer for WASM threading on GitHub Pages — but ONLY
+      // on a route that needs it. The guard (route list + reload-once rule) is
+      // generated from src/utils/crossOriginIsolation.ts by the coiGuardHtml
+      // Vite plugin; the build fails if this placeholder is missing.
+      /* __COI_GUARD__ */
     </script>
   </head>
   <body>

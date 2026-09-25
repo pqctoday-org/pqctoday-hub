@@ -2,12 +2,22 @@
 import Papa from 'papaparse'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitPipe, parseIntSafe } from './csvUtils'
+import { getThreatLineage } from './threatClaimStatus'
+import {
+  canonicalThreatIndustry,
+  isPublishedThreatStatus,
+  isRetiredThreatStatus,
+  parseThreatClass,
+  UNRATED_CRITICALITY,
+  type ReviewedThreatClass,
+} from './threatRowRules'
 
 export interface ThreatData {
   industry: string
   threatId: string
   description: string
-  criticality: 'Critical' | 'High' | 'Medium' | 'Medium-High' | 'Low'
+  /** 'Unrated' when the CSV cell is blank — shown as such, never guessed. */
+  criticality: 'Critical' | 'High' | 'Medium' | 'Medium-High' | 'Low' | 'Unrated'
   cryptoAtRisk: string
   pqcReplacement: string
   mainSource: string
@@ -28,6 +38,52 @@ export interface ThreatData {
   applicableIndustriesNormalized?: string[]
   lastVerified?: string
   status?: 'New' | 'Updated'
+  /** Approved second sources (library referenceIds) and the claim columns
+   *  each one states — from `secondary_source_ref` + `secondary_claims`,
+   *  written only by an approved second-source review item (2026-09-24). */
+  secondarySources?: SecondarySource[]
+  /** The reviewed threat class from `threat_class` (ruling R1, 2026-09-24).
+   *  Every published row carries one (validator TP-4). */
+  threatClass?: ReviewedThreatClass
+  /** Publisher of the original document when `source_url` points at a mirror
+   *  copy (e.g. "PCI Security Standards Council") — the link says so. */
+  sourceMirrorOf?: string
+}
+
+export interface SecondarySource {
+  /** Library referenceId, e.g. "RFC 7935". */
+  ref: string
+  /** Claim columns it states: threat_description | crypto_at_risk | pqc_replacement. */
+  claims: string[]
+}
+
+/**
+ * `secondary_claims` is either plain columns ("threat_description") when the
+ * row has one second source, or `column@ref` pairs when claims rest on
+ * different documents ("crypto_at_risk@RFC 6605;pqc_replacement@draft-x-00").
+ * Both are ';'-separated. A pair naming a ref the row does not list is kept
+ * out rather than guessed onto another source.
+ */
+export function parseSecondarySources(refCell?: string, claimsCell?: string): SecondarySource[] {
+  const refs = (refCell ?? '')
+    .split(';')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  if (refs.length === 0) return []
+  const parts = (claimsCell ?? '')
+    .split(';')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  const byRef = new Map<string, string[]>(refs.map((r) => [r, []]))
+  for (const part of parts) {
+    const at = part.indexOf('@')
+    if (at < 0) {
+      if (refs.length === 1) byRef.get(refs[0])?.push(part)
+      continue
+    }
+    byRef.get(part.slice(at + 1).trim())?.push(part.slice(0, at).trim())
+  }
+  return refs.map((ref) => ({ ref, claims: byRef.get(ref) ?? [] }))
 }
 
 export type ThreatItem = ThreatData
@@ -56,7 +112,13 @@ interface RawThreatRow {
   status?: string
   deprecated_at?: string
   deprecated_reason?: string
+  secondary_source_ref?: string
+  secondary_claims?: string
+  threat_class?: string
+  source_mirror_of?: string
 }
+
+const THREATS_FILE_RE = /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
 
 const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
   query: '?raw',
@@ -64,33 +126,16 @@ const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
   eager: true,
 })
 
-/**
- * Collapses near-duplicate raw `industry` labels that describe the same
- * sector under different CSV wording — verified against the corpus's own
- * `applicable_industries_normalized` tags, which tag both "Critical
- * Infrastructure" and "Energy / Critical Infrastructure" rows with the same
- * `critical-infrastructure` tag (Threats #5). Extend this map, driven by that
- * same tag evidence, if a future CSV snapshot introduces another wording
- * variant of an already-covered sector.
- */
-const INDUSTRY_ALIASES: Record<string, string> = {
-  'Critical Infrastructure': 'Critical Infrastructure / Energy',
-  'Energy / Critical Infrastructure': 'Critical Infrastructure / Energy',
-  'Critical Infrastructure / Energy': 'Critical Infrastructure / Energy',
-}
-
-function canonicalIndustry(raw: string): string {
-  return INDUSTRY_ALIASES[raw] ?? raw
-}
-
 function transformThreat(row: RawThreatRow): ThreatData | null {
-  if (row.status === 'deprecated' || row.status === 'obsolete') return null
+  // Retired (deprecated/obsolete) and not-yet-filled (draft) rows never reach
+  // the page — one predicate shared with the RAG corpus generator.
+  if (!isPublishedThreatStatus(row.status)) return null
   const pct = parseIntSafe(row.accuracy_pct)
   return {
-    industry: canonicalIndustry(row.industry || ''),
+    industry: canonicalThreatIndustry(row.industry || ''),
     threatId: row.threat_id || '',
     description: row.threat_description || '',
-    criticality: (row.criticality as ThreatData['criticality']) || 'Medium',
+    criticality: (row.criticality?.trim() as ThreatData['criticality']) || UNRATED_CRITICALITY,
     cryptoAtRisk: row.crypto_at_risk || '',
     pqcReplacement: row.pqc_replacement || '',
     mainSource: row.main_source || '',
@@ -110,6 +155,12 @@ function transformThreat(row: RawThreatRow): ThreatData | null {
     dataQualityNotes: row.data_quality_notes || undefined,
     confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
     lastVerified: row.last_verified || undefined,
+    threatClass: parseThreatClass(row.threat_class),
+    sourceMirrorOf: row.source_mirror_of?.trim() || undefined,
+    secondarySources: (() => {
+      const found = parseSecondarySources(row.secondary_source_ref, row.secondary_claims)
+      return found.length ? found : undefined
+    })(),
     applicableIndustriesNormalized: row.applicable_industries_normalized
       ? row.applicable_industries_normalized
           .split(';')
@@ -125,7 +176,7 @@ const {
   metadata,
 } = loadLatestCSV<RawThreatRow, ThreatData>(
   modules,
-  /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+  THREATS_FILE_RE,
   transformThreat,
   true // withPrevious for status badges
 )
@@ -143,6 +194,58 @@ export const threatsData: ThreatData[] = currentItems.map((item) => ({
 
 export const threatsMetadata = metadata
 
+/** A retired (deprecated/obsolete) threat: just enough to tell a reader who
+ *  follows an old link what happened to it. */
+export interface RetiredThreat {
+  threatId: string
+  deprecatedAt?: string
+  deprecatedReason?: string
+}
+
+function transformRetired(row: RawThreatRow): RetiredThreat | null {
+  if (!isRetiredThreatStatus(row.status) || !row.threat_id) return null
+  return {
+    threatId: row.threat_id,
+    deprecatedAt: row.deprecated_at?.trim() || undefined,
+    deprecatedReason: row.deprecated_reason?.trim() || undefined,
+  }
+}
+
+/** Retired rows of the latest snapshot, by id — so `/threats?id=<retired>`
+ *  can say the entry was retired instead of silently showing nothing. */
+export const retiredThreats: ReadonlyMap<string, RetiredThreat> = new Map(
+  loadLatestCSV<RawThreatRow, RetiredThreat>(modules, THREATS_FILE_RE, transformRetired).data.map(
+    (r) => [r.threatId, r]
+  )
+)
+
+/** A drafted threat: held off the page until a document that states it is
+ *  on file (the 2026-09-24 claim check drafted rows whose cited document
+ *  never states the quantum risk). Only its sector is exposed — so a sector
+ *  whose every threat is awaiting a source stays a KNOWN sector (links to it
+ *  are hidden, not broken) rather than vanishing from the vocabulary. */
+function transformDraft(row: RawThreatRow): { threatId: string; industry: string } | null {
+  if (isPublishedThreatStatus(row.status) || isRetiredThreatStatus(row.status) || !row.threat_id)
+    return null
+  return { threatId: row.threat_id, industry: canonicalThreatIndustry(row.industry || '') }
+}
+
+/** Drafted threats of the latest snapshot: id → sector. */
+export const draftThreatIndustries: ReadonlyMap<string, string> = new Map(
+  loadLatestCSV<RawThreatRow, { threatId: string; industry: string }>(
+    modules,
+    THREATS_FILE_RE,
+    transformDraft
+  ).data.map((r) => [r.threatId, r.industry])
+)
+
+/** Every sector the Threats page knows: those with a published threat plus
+ *  those whose threats are all drafted (awaiting a source). */
+export const knownThreatIndustries: ReadonlySet<string> = new Set([
+  ...threatsData.map((t) => t.industry),
+  ...draftThreatIndustries.values(),
+])
+
 export const THREATS_COUNT = threatsData.length
 
 // Standalone CSV parser for use by tests and RAG corpus generator
@@ -156,19 +259,20 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
 }
 
 /**
- * How well-evidenced a threat record is, 0–100 — B+ remediation 4.3
- * (2026-08-10). Composed only of fields the corpus actually carries, and
- * weighted the way the rest of the site weights evidence: who says it and
- * whether it was reviewed outrank how confident the extraction was.
- *
- * A record missing a field scores zero for that component rather than being
- * excluded or imputed — "we don't know" must sort below "we checked", never
- * above it.
+ * Sort key for "best-evidenced first" (the researcher's evidence sort) —
+ * LINEAGE ONLY since ruling R2 (2026-09-24): whether the cited document was
+ * confirmed to be the one the row names, how many of the row's three claims it
+ * was found to state, and whether a trusted-source id backs the row. The old
+ * extraction-confidence and "stated accuracy" components are gone: they were
+ * scores about the extraction, not evidence about the claim. A record the
+ * ledger has not checked scores zero on those parts — "we don't know" sorts
+ * below "we checked", never above it. Used for ordering only; never shown as
+ * a number.
  */
 export function evidenceStrength(threat: ThreatItem): number {
-  const peer = threat.peerReviewed === 'yes' ? 40 : threat.peerReviewed === 'partial' ? 20 : 0
-  const sourced = threat.trustedSourceId?.trim() ? 25 : 0
-  const confidence = Math.min(20, ((threat.confidenceScore ?? 0) / 100) * 20)
-  const accuracy = Math.min(15, ((threat.accuracyPct ?? 0) / 100) * 15)
-  return Math.round(peer + sourced + confidence + accuracy)
+  const lineage = getThreatLineage(threat.threatId)
+  const source = lineage.sourceConfirmed ? 40 : 0
+  const claims = lineage.supported * 15
+  const sourced = threat.trustedSourceId?.trim() ? 15 : 0
+  return source + claims + sourced
 }
