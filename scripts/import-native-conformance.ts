@@ -42,12 +42,16 @@ import {
 } from '../src/data/validation/nativeConformance'
 
 /**
- * The pqctoday-hsm commit every report is read at: hsm `origin/main` on
- * 2026-09-24 (ac8b40f, "fix(differential): reconfigure when the last CMake
- * configure failed (#253)"). Move it — and re-run the importer — when hsm
- * commits regenerated reports; --check says when that has happened.
+ * The pqctoday-hsm commit every report is read at: 7643d5c0 on hsm branch
+ * chore/p11-reports-refresh-0925 (2026-09-25), "chore(reports): regenerate
+ * PKCS#11 v3.2 conformance reports at ac8b40fd" — both suites re-run at engine
+ * commit ac8b40f (hsm `origin/main`, #253), the commit the Hub's WASM bundles
+ * are being rebuilt from. That commit is NOT pushed yet; the generated file
+ * records this (hsm.pinnedCommitPublished) and says so in every suite's gaps.
+ * Move the pin — and re-run the importer — when hsm commits regenerated
+ * reports; --check says when that has happened on hsm main.
  */
-export const PINNED_HSM_COMMIT = 'ac8b40fd01844be0c40d4aa02e951c05cfba73b4'
+export const PINNED_HSM_COMMIT = '7643d5c05bf0bbf453aa63d799d290a10826b61b'
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '..', '..')
 export const NATIVE_CONFORMANCE_OUT = join(
@@ -85,6 +89,25 @@ const resolveCommit = (ref: string): string => git('rev-parse', '--verify', `${r
 const commitDate = (commit: string): string => git('log', '-1', '--format=%cs', commit).trim()
 const countBetween = (from: string, to: string): number =>
   Number(git('rev-list', '--count', `${from}..${to}`).trim())
+/**
+ * Like countBetween, but a commit that changed ONLY report files is not
+ * counted: the commit that stores a fresh report necessarily comes after the
+ * engine commit it was run at, and must not make that report look stale.
+ */
+const engineCommitsBetween = (from: string, to: string): number =>
+  Number(
+    git(
+      'rev-list',
+      '--count',
+      `${from}..${to}`,
+      '--',
+      '.',
+      ...REPORT_FILES.map((f) => `:(exclude)${f}`)
+    ).trim()
+  )
+/** Whether any remote-tracking branch of the hsm checkout contains the commit. */
+const onAnyRemote = (commit: string): boolean =>
+  git('branch', '-r', '--contains', commit).trim().length > 0
 const isAncestor = (a: string, b: string): boolean => gitOk('merge-base', '--is-ancestor', a, b)
 const showAt = (commit: string, path: string): string => git('show', `${commit}:${path}`)
 /** Last commit at or before `at` that changed `path`. */
@@ -120,25 +143,31 @@ const wasmComparison = (
     bundleHsmCommit,
     engineCommitEqualsBundleCommit: bundleHsmCommit === engineCommit,
     commitsFromEngineToBundle: countBetween(engineCommit, bundleHsmCommit),
+    commitsFromBundleToEngine: countBetween(bundleHsmCommit, engineCommit),
   }
 }
 
 /** Gaps that follow from the imported facts — derived, never hand-listed per run. */
 const derivedGaps = (
   r: NonNullable<NativeSuiteRecord['report']>,
-  engineLabel: string
+  engineLabel: string,
+  pinnedCommitPublished: boolean
 ): string[] => {
   const gaps: string[] = []
+  if (!pinnedCommitPublished)
+    gaps.push(
+      'The pinned hsm commit holding this report is an unpushed local commit (on no pqctoday-hsm remote branch): nobody else can fetch or verify it until it is pushed.'
+    )
   if (r.hostPlatform === 'not recorded')
     gaps.push('The report does not record the host OS or CPU architecture it ran on.')
   if (r.target === 'not recorded')
     gaps.push('The report does not record the build target (platform/ABI) of the engine under test.')
   if (r.staleness.commitsFromEngineToPinnedMain > 0)
     gaps.push(
-      `The report was produced at an engine commit ${r.staleness.commitsFromEngineToPinnedMain} hsm main commit(s) behind the pinned hsm main; re-running the suite in pqctoday-hsm is needed for current results.`
+      `The report was produced at an engine commit ${r.staleness.commitsFromEngineToPinnedMain} hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.`
     )
   if (!r.staleness.engineCommitOnPinnedMainHistory)
-    gaps.push('The engine commit is not in hsm main’s history (a branch build).')
+    gaps.push('The engine commit is not in the pinned hsm commit’s history (a branch build).')
   if (r.wasm && !r.wasm.engineCommitEqualsBundleCommit)
     gaps.push(
       `The engine commit differs from the commit this Hub’s ${engineLabel} WASM bundle was built from, so these results are not results for the engine running in this browser.`
@@ -158,9 +187,10 @@ export const buildNativeConformance = (pin: string): NativeConformanceFile => {
     bundles: ProvenanceBundle[]
   }
   const pinned = resolveCommit(pin)
+  const pinnedCommitPublished = onAnyRemote(pinned)
 
   const staleness = (engineCommit: string) => ({
-    commitsFromEngineToPinnedMain: countBetween(engineCommit, pinned),
+    commitsFromEngineToPinnedMain: engineCommitsBetween(engineCommit, pinned),
     engineCommitOnPinnedMainHistory: isAncestor(engineCommit, pinned),
   })
 
@@ -225,7 +255,7 @@ export const buildNativeConformance = (pin: string): NativeConformanceFile => {
       sourceFile: CPP_SOURCE,
       reportFiles: [CPP_JSON, CPP_MD],
       report: cppReport,
-      openGaps: derivedGaps(cppReport, 'C++'),
+      openGaps: derivedGaps(cppReport, 'C++', pinnedCommitPublished),
     },
     {
       id: 'rust-p11-v32-conformance',
@@ -234,7 +264,7 @@ export const buildNativeConformance = (pin: string): NativeConformanceFile => {
       sourceFile: RUST_SOURCE,
       reportFiles: [RUST_MD],
       report: rustReport,
-      openGaps: derivedGaps(rustReport, 'Rust'),
+      openGaps: derivedGaps(rustReport, 'Rust', pinnedCommitPublished),
     },
     {
       id: 'cross-engine-differential',
@@ -256,13 +286,14 @@ export const buildNativeConformance = (pin: string): NativeConformanceFile => {
 
   return {
     _comment:
-      'GENERATED by scripts/import-native-conformance.ts — do not edit. WS-G G-6: the pqctoday-hsm engines’ own PKCS#11 v3.2 conformance suites, IMPORTED from the reports hsm committed (read with git show at hsm.pinnedCommit). Nothing here was executed by the Hub or in a browser. Target/host fields say "not recorded" unless the report states them. Staleness counts are relative to the pinned hsm main; wasm.* compares each report’s engine commit with the commit the Hub’s own WASM bundle was built from.',
+      'GENERATED by scripts/import-native-conformance.ts — do not edit. WS-G G-6: the pqctoday-hsm engines’ own PKCS#11 v3.2 conformance suites, IMPORTED from the reports hsm committed (read with git show at hsm.pinnedCommit). Nothing here was executed by the Hub or in a browser. Target/host fields say "not recorded" unless the report states them. Staleness counts are engine commits (report-only commits excluded) between each report’s engine commit and hsm.pinnedCommit; hsm.pinnedCommitPublished=false means the pinned commit is an unpushed local hsm commit; wasm.* compares each report’s engine commit with the commit the Hub’s own WASM bundle was built from.',
     schema: NATIVE_CONFORMANCE_SCHEMA,
     generator: 'scripts/import-native-conformance.ts',
     hsm: {
       repo: provenance.hsmRepo,
       pinnedCommit: pinned,
       pinnedCommitDate: commitDate(pinned),
+      pinnedCommitPublished,
     },
     wasmProvenanceFile: relative(ROOT, PROVENANCE),
     suites,
@@ -312,7 +343,7 @@ const main = async (): Promise<void> => {
       r
         ? `${s.id}: ${r.counts.pass} pass / ${r.counts.fail} fail / ${r.counts.skip ?? '—'} skip ` +
             `(${r.cases.length} case ids), engine ${r.engineCommit.slice(0, 10)} ` +
-            `${r.staleness.commitsFromEngineToPinnedMain} commits behind pinned main, ` +
+            `${r.staleness.commitsFromEngineToPinnedMain} engine commits behind the pin, ` +
             `wasm ${r.wasm?.engineCommitEqualsBundleCommit ? 'same commit' : 'different commit'}`
         : `${s.id}: no committed report`
     )
@@ -329,6 +360,11 @@ const main = async (): Promise<void> => {
     const liveMain = gitOk('rev-parse', '--verify', 'origin/main')
       ? resolveCommit('origin/main')
       : null
+    if (liveMain && !isAncestor(PINNED_HSM_COMMIT, liveMain))
+      console.log(
+        `ℹ  the pin ${PINNED_HSM_COMMIT.slice(0, 10)} is not on hsm origin/main (${liveMain.slice(0, 10)})` +
+          (file.hsm.pinnedCommitPublished ? ' (a pushed branch commit).' : ' and is on no remote: an unpushed local commit.')
+      )
     if (liveMain && liveMain !== PINNED_HSM_COMMIT && isAncestor(PINNED_HSM_COMMIT, liveMain)) {
       const newer = newerReportsOnMain(PINNED_HSM_COMMIT, liveMain)
       if (newer.length > 0) {

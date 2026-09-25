@@ -45,7 +45,11 @@ export interface NativeSuiteCounts {
 export type NativeCaseIdentity = 'suite-assigned' | 'derived-from-transcript' | 'none'
 
 export interface NativeSuiteStaleness {
-  /** `git rev-list --count <engineCommit>..<pinned hsm main>`. */
+  /**
+   * `git rev-list --count <engineCommit>..<pinned hsm commit>`, not counting
+   * commits that changed only the report files (the commit storing a fresh
+   * report always follows its engine commit).
+   */
   commitsFromEngineToPinnedMain: number
   /** Whether the engine commit is in the pinned main's history (false = a branch build). */
   engineCommitOnPinnedMainHistory: boolean
@@ -57,8 +61,10 @@ export interface NativeSuiteWasmComparison {
   /** Full commit the Hub's shipped WASM bundle of this engine was built from. */
   bundleHsmCommit: string
   engineCommitEqualsBundleCommit: boolean
-  /** `git rev-list --count <engineCommit>..<bundle commit>`. */
+  /** `git rev-list --count <engineCommit>..<bundle commit>`: bundle commits the engine commit lacks. */
   commitsFromEngineToBundle: number
+  /** `git rev-list --count <bundle commit>..<engineCommit>`: engine commits the bundle lacks (the bundle is older). */
+  commitsFromBundleToEngine: number
 }
 
 export interface NativeSuiteRecord {
@@ -107,9 +113,11 @@ export interface NativeConformanceFile {
   generator: string
   hsm: {
     repo: string
-    /** The pqctoday-hsm main commit every report and count was read at. */
+    /** The pqctoday-hsm commit every report and count was read at. */
     pinnedCommit: string
     pinnedCommitDate: string
+    /** false → the pinned commit is on no pqctoday-hsm remote branch (unpushed, local only). */
+    pinnedCommitPublished: boolean
   }
   wasmProvenanceFile: string
   suites: NativeSuiteRecord[]
