@@ -20642,6 +20642,36 @@
       "unified": "converted",
       "admittedAt": "2026-09-25T02:43:16.316115+00:00",
       "admittedBy": "admit.py"
+    },
+    {
+      "refId": "NIST-CMVP-ESV",
+      "title": "NIST ESV-Server (usnistgov, GitHub) \u2014 Entropy Source Validation Protocol and Server specifications",
+      "url": "https://github.com/usnistgov/esv-server",
+      "status": "downloaded",
+      "filename": "NIST-CMVP-ESV.html",
+      "sizeBytes": 274362,
+      "contentType": "text/html",
+      "sha256": "165cb2c613556f5a6ffb204bba5e38f9d93d1dd12e7d2b8724c9ead3cd3549b7",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-25T02:55:07.329950+00:00",
+      "admittedBy": "admit.py"
+    },
+    {
+      "refId": "PCI-SSC-Blog-KMO-v1-0-Published",
+      "title": "Just Published: PCI Key Management and Operations (KMO) Standard v1.0 (PCI Perspectives blog)",
+      "url": "https://blog.pcisecuritystandards.org/just-published-pci-key-management-operations-kmo-standard-v1.0",
+      "status": "downloaded",
+      "filename": "PCI-SSC-Blog-KMO-v1-0-Published.html",
+      "sizeBytes": 83026,
+      "contentType": "text/html",
+      "sha256": "5483f221ea542c709ad42755ecdf79b6ec209bee888b6dd3b62c84d22c43b897",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-09-25T02:55:07.878424+00:00",
+      "admittedBy": "admit.py"
     }
   ],
   "archivedEntries": [
