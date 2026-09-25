@@ -592,6 +592,16 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p6"
+    },
+    "acvp-lab-workflow": {
+      "id": "acvp-lab-workflow",
+      "lm_id": "LM-065",
+      "title": "ACVP Lab Workflow: From Vector Set to Evidence",
+      "description": "How algorithm validation testing actually runs: CAVP versus CMVP, capability registration and vector sets, the prompt → response → disposition → validation lifecycle, ACVP test types, deterministic versus randomized algorithms, the limits of a PKCS#11 test adapter, negative testing, and how to state a result at exactly the evidence level it reached. Draft — awaiting validation-lab practitioner review.",
+      "duration": "90 min",
+      "difficulty": "advanced",
+      "workInProgress": true,
+      "frameworkPhase": "p6"
     }
   },
   "MODULE_STEP_COUNTS": {
@@ -661,7 +671,8 @@
     "vendor-risk": 4,
     "verification-closure": 3,
     "web-gateway-pqc": 5,
-    "assess": 1
+    "assess": 1,
+    "acvp-lab-workflow": 3
   },
   "LEARN_SECTIONS": {
     "ai-security-pqc": [
@@ -1665,7 +1676,7 @@
       },
       {
         "id": "fips-acvp",
-        "label": "FIPS ACVP Validation"
+        "label": "FIPS 140-3 & ACVP Testing"
       }
     ],
     "platform-eng-pqc": [
@@ -2016,6 +2027,48 @@
       {
         "id": "vendor-paths",
         "label": "Vendor Migration Paths"
+      }
+    ],
+    "acvp-lab-workflow": [
+      {
+        "id": "algorithm-vs-module",
+        "label": "Algorithm vs Module Validation"
+      },
+      {
+        "id": "capability-registration",
+        "label": "Capability Registration & Vector Sets"
+      },
+      {
+        "id": "prompt-response-lifecycle",
+        "label": "Prompt → Response → Validation"
+      },
+      {
+        "id": "test-types",
+        "label": "AFT, VAL, MCT & Test Types"
+      },
+      {
+        "id": "deterministic-randomized",
+        "label": "Deterministic vs Randomized"
+      },
+      {
+        "id": "pkcs11-adapter-boundaries",
+        "label": "PKCS#11 Adapter Boundaries"
+      },
+      {
+        "id": "negative-testing",
+        "label": "Negative & Failure Testing"
+      },
+      {
+        "id": "evidence-provenance",
+        "label": "Evidence Provenance"
+      },
+      {
+        "id": "cross-implementation-limits",
+        "label": "Cross-Implementation Limits"
+      },
+      {
+        "id": "contributing-tests",
+        "label": "Contributing a Source-Backed Test"
       }
     ]
   },
@@ -3401,6 +3454,20 @@
         "id": "vendor-readiness",
         "label": "Vendor Readiness Matrix"
       }
+    ],
+    "acvp-lab-workflow": [
+      {
+        "id": "evidence-classifier",
+        "label": "Evidence Classifier"
+      },
+      {
+        "id": "vector-set-anatomy",
+        "label": "Vector Set Anatomy"
+      },
+      {
+        "id": "response-artifact-lab",
+        "label": "Response Artifact Lab"
+      }
     ]
   },
   "MODULE_TRACKS": [
@@ -3655,6 +3722,16 @@
           "duration": "35 min",
           "difficulty": "intermediate",
           "frameworkPhase": "p5"
+        },
+        {
+          "id": "acvp-lab-workflow",
+          "lm_id": "LM-065",
+          "title": "ACVP Lab Workflow: From Vector Set to Evidence",
+          "description": "How algorithm validation testing actually runs: CAVP versus CMVP, capability registration and vector sets, the prompt → response → disposition → validation lifecycle, ACVP test types, deterministic versus randomized algorithms, the limits of a PKCS#11 test adapter, negative testing, and how to state a result at exactly the evidence level it reached. Draft — awaiting validation-lab practitioner review.",
+          "duration": "90 min",
+          "difficulty": "advanced",
+          "workInProgress": true,
+          "frameworkPhase": "p6"
         }
       ]
     },
@@ -4351,6 +4428,10 @@
     "hybrid-certs": {
       "algorithms": ["ML-DSA", "ECDSA"],
       "standards": ["X.509", "RFC 9794"]
+    },
+    "acvp-lab-workflow": {
+      "algorithms": ["ML-KEM", "ML-DSA", "SLH-DSA"],
+      "standards": ["FIPS 203", "FIPS 204", "FIPS 205", "FIPS 140-3", "PKCS#11"]
     }
   }
 }

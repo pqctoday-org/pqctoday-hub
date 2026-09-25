@@ -11,8 +11,7 @@ type StatusFilter = 'all' | FipsValidationEntry['status']
 const CERT_TYPE_COLORS: Record<FipsValidationEntry['certType'], string> = {
   'FIPS 140-3': 'bg-success/10 text-success border-success/20',
   'FIPS 140-2': 'bg-muted/40 text-muted-foreground border-border',
-  ACVP: 'bg-primary/10 text-primary border-primary/20',
-  CAVP: 'bg-secondary/10 text-secondary border-secondary/20',
+  CAVP: 'bg-primary/10 text-primary border-primary/20',
   'Common Criteria': 'bg-warning/10 text-warning border-warning/20',
 }
 
@@ -105,12 +104,12 @@ export const FipsValidationTracker: React.FC = () => {
           Certification &amp; Algorithm Validation Tracker
         </h3>
         <p className="text-sm text-muted-foreground">
-          Track FIPS 140-3 module certifications and ACVP PQC algorithm validations across HSM
+          Track FIPS 140-3 module certifications and CAVP PQC algorithm validations across HSM
           vendors. Filter by certification type, status, or algorithm.
         </p>
       </div>
 
-      {/* FIPS vs ACVP clarification banner */}
+      {/* FIPS vs CAVP clarification banner */}
       <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
         <div className="flex items-start gap-2">
           <Info size={14} className="text-primary shrink-0 mt-0.5" />
@@ -125,9 +124,10 @@ export const FipsValidationTracker: React.FC = () => {
               .
             </p>
             <p>
-              <strong className="text-foreground">ACVP</strong> validates individual algorithm
-              implementations against NIST test vectors. This is where PQC algorithm support is
-              formally validated — separate from module certification.
+              <strong className="text-foreground">CAVP</strong> validates individual algorithm
+              implementations; the testing runs through NIST&apos;s ACVTS over the ACVP protocol.
+              This is where PQC algorithm support is formally validated — separate from module
+              certification.
             </p>
           </div>
         </div>
@@ -452,7 +452,7 @@ export const FipsValidationTracker: React.FC = () => {
             </a>
           </p>
           <p>
-            <strong>NIST ACVP</strong> &mdash; Automated Cryptographic Validation Protocol —{' '}
+            <strong>NIST CAVP</strong> &mdash; Cryptographic Algorithm Validation Program —{' '}
             <a
               href="https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program"
               target="_blank"
@@ -466,7 +466,7 @@ export const FipsValidationTracker: React.FC = () => {
             <strong>Note:</strong> Validation data is based on publicly available NIST records and
             vendor announcements as of early 2026. Check the official databases for the most current
             status. FIPS 140-3 module certs currently show &ldquo;No PQC Mechanisms Detected&rdquo;
-            — only ACVP provides PQC algorithm validation.
+            — only CAVP provides PQC algorithm validation.
           </p>
         </div>
       </div>

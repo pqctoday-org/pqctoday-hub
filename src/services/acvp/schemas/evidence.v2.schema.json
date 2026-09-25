@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pqctoday.com/schemas/acvp/evidence.schema.json",
-  "title": "PQC Today ACVP-format prototype — evidence sidecar (evidence.json)",
-  "$comment": "PQC Today's own schema, independent of the ACVP response schemas. Carries run metadata only — never vector payloads (prompt/response are identified by SHA-256). evidenceClass is nist-acvp-reference-sample only when the prompt bytes hash-match a pinned public NIST ACVP-Server sample (src/services/acvp/__fixtures__/nist-acvp-server/PROVENANCE.json); anything else is unverified-imported-vector-set. Cases dispatched to a pqctoday-hsm vendor-defined mechanism (CKM_ML_DSA_EXTERNAL_MU, 0x0000403c) carry mechanismKind \"vendor-defined\" and are listed in vendorDefinedMechanisms.",
+  "$id": "https://pqctoday.com/schemas/acvp/evidence.v2.schema.json",
+  "title": "PQC Today ACVP-format prototype — evidence sidecar (evidence.json), version 2",
+  "$comment": "PQC Today's own schema, independent of the ACVP response schemas. Carries run metadata only — never vector payloads (prompt/response are identified by SHA-256). evidenceClass is nist-acvp-reference-sample only when the prompt bytes hash-match a pinned public NIST ACVP-Server sample (src/services/acvp/__fixtures__/nist-acvp-server/PROVENANCE.json); anything else is unverified-imported-vector-set. Cases dispatched to a pqctoday-hsm vendor-defined mechanism (CKM_ML_DSA_EXTERNAL_MU, 0x0000403c) carry mechanismKind \"vendor-defined\" and are listed in vendorDefinedMechanisms. Version 2 (pqctoday.acvp-evidence/2): adds per-case mechanism/mechanismKind and the required vendorDefinedMechanisms list (WS-F externalMu), and codePath native (tools/acvp-native Python runner). Version 1 stays pinned in evidence.v1.schema.json; select by evidenceVersion via evidenceSchemas.ts.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "evidenceVersion": {
-      "const": "pqctoday.acvp-evidence/1"
+      "const": "pqctoday.acvp-evidence/2"
     },
     "label": {
       "const": "ACVP-format compatible prototype"
@@ -48,7 +48,7 @@
           "type": "string"
         },
         "codePath": {
-          "enum": ["browser", "cli"]
+          "enum": ["browser", "cli", "native"]
         },
         "appVersion": {
           "type": ["string", "null"]

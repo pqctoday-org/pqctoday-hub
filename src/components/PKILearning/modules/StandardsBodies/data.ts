@@ -236,10 +236,10 @@ export const ORGANIZATIONS: OrgEntry[] = [
     mission:
       'NIST/CSE (Communications Security Establishment Canada) joint program validating cryptographic module implementations against FIPS 140-3. Required for US federal procurement (FISMA). PQC-first FIPS 140-3 certificates began appearing in late 2024.',
     decisionMaking:
-      'NVLAP-accredited testing labs perform validation testing → CMVP issues official certificate. ACVP (Cryptographic Algorithm Validation Program) handles individual algorithm testing (e.g., FIPS 203/204/205 test vectors). CMVP validation typically takes 18–36 months, creating a critical path dependency.',
+      'NVLAP-accredited testing labs perform validation testing → CMVP issues official certificate. The CAVP (Cryptographic Algorithm Validation Program) validates the individual algorithm implementations first (e.g., FIPS 203/204/205), testing them through NIST’s ACVTS over the ACVP protocol. CMVP validation typically takes 18–36 months, creating a critical path dependency.',
     keyPqcOutputs: [
       'FIPS 140-3 certificates for PQC-enabled modules',
-      'FIPS 203/204/205 ACVP algorithm test vectors',
+      'FIPS 203/204/205 algorithm validation (CAVP, tested via ACVP) as a module prerequisite',
       'FIPS 140-3 Implementation Guidance for PQC (Sep 2025)',
     ],
     libraryRefs: ['NIST-FIPS140-3-IG-PQC'],
@@ -568,10 +568,10 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
       {
         id: 'acvp-cert',
         role: 'certification',
-        label: 'ACVP Algorithm Validation',
+        label: 'CAVP Algorithm Validation (via ACVP)',
         body: 'NIST CAVP',
         description:
-          "ACVP (Automated Cryptographic Validation Protocol) is NIST's cloud-based system for testing cryptographic algorithm implementations. Before a module gets CMVP validation, its individual algorithms must pass ACVP testing with NIST's official FIPS 203/204/205 test vectors.",
+          "The CAVP validates cryptographic algorithm implementations, and algorithm validation is a prerequisite of CMVP module validation. Testing runs through NIST's ACVTS, which speaks ACVP (the Automated Cryptographic Validation Protocol): the implementation receives FIPS 203/204/205 test vector sets as JSON and returns its answers. Only the ACVTS production environment, used by accredited labs, creates CAVP certificates.",
       },
       {
         id: 'fedramp-pqc',
@@ -621,7 +621,7 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
       note: 'FIPS 203/204/205 — globally influential despite being US-origin',
     },
     'certification-body': {
-      orgs: ['CMVP (NIST/CSE)', 'ACVP', 'NIAP (Common Criteria)'],
+      orgs: ['CMVP (NIST/CSE)', 'CAVP (NIST/CSE)', 'NIAP (Common Criteria)'],
       note: 'CMVP validation required for US federal procurement (FISMA)',
     },
     'compliance-framework': {

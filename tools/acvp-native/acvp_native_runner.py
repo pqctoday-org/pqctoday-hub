@@ -25,6 +25,9 @@ src/services/acvp/engine.ts and response.ts call-for-call:
   ml-dsa.verify:      C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_DSA, CKA_VALUE=pk)
                       -> C_MessageVerifyInit(mech, CK_SIGN_ADDITIONAL_CONTEXT{ctx})
                       -> C_VerifyMessage -> C_MessageVerifyFinal
+  ml-dsa.verify-external-mu (VENDOR-DEFINED CKM_ML_DSA_EXTERNAL_MU, not PKCS#11 v3.2):
+                      C_CreateObject(pk) -> C_VerifyInit(0x0000403c, no parameter)
+                      -> C_Verify(data = mu, sig)
 
 No PyKCS11 (by policy), no third-party modules, no network, no RNG seeding.
 Local only: nothing is submitted anywhere.
@@ -44,14 +47,24 @@ import shutil
 import sys
 
 RUNNER_NAME = "pqctoday acvp-native (Python/ctypes)"
-RUNNER_VERSION = "1.0.0"
+RUNNER_VERSION = "2.0.0"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.dont_write_bytecode = True  # never leave __pycache__ in a (possibly shared) checkout
 sys.path.insert(0, HERE)
 import pkcs11_constants as K  # noqa: E402  (generated from the hub tables)
 
 with open(os.path.join(HERE, "hub_contract.json"), encoding="utf-8") as _f:
     CONTRACT = json.load(_f)
+VENDOR_MECHS = {m["name"]: m for m in CONTRACT.get("vendorDefinedMechanisms", [])}
+
+
+def mechanism_value(name):
+    """PKCS#11 v3.2 constant from the hub table, else a vendor-defined value from the contract."""
+    v = getattr(K, name, None)
+    if v is None and name in VENDOR_MECHS:
+        v = int(VENDOR_MECHS[name]["value"], 16)
+    return v
 
 SO_PIN = b"12345678"
 USER_PIN = b"user1234"
@@ -153,6 +166,8 @@ class Engine:
             "C_MessageVerifyInit": [u, ctypes.POINTER(CK_MECHANISM), u],
             "C_VerifyMessage": [u, v, u, v, u, v, u],
             "C_MessageVerifyFinal": [u],
+            "C_VerifyInit": [u, ctypes.POINTER(CK_MECHANISM), u],
+            "C_Verify": [u, v, u, v, u],
         }
 
         class F:
@@ -272,12 +287,16 @@ class Engine:
 
     # -- operations (mirror engine.ts) ----------------------------------------
     def execute(self, op):
-        mech = getattr(K, op["mechanism"], None)
+        mech = mechanism_value(op["mechanism"])
         if mech is None or mech not in self.advertised:
             return {"status": "unsupported", "reason": "%s does not list %s in C_GetMechanismList" % (self.label, op["mechanism"])}
         if op["operation"] == "ml-kem.decapsulate":
             return self._decapsulate(op)
-        return self._verify(op, mech)
+        if op["operation"] == "ml-dsa.verify-external-mu":
+            return self._verify_external_mu(op, mech)
+        if op["operation"] == "ml-dsa.verify":
+            return self._verify(op, mech)
+        return {"status": "error", "reason": "operation %s not implemented by this runner" % op["operation"]}
 
     def _decapsulate(self, op):
         variant = int(op["parameterSet"].rsplit("-", 1)[1])
@@ -378,6 +397,47 @@ class Engine:
             if pub:
                 self._destroy(pub)
 
+    def _import_mldsa_pub(self, op):
+        variant = int(op["parameterSet"].rsplit("-", 1)[1])
+        ps = {44: K.CKP_ML_DSA_44, 65: K.CKP_ML_DSA_65, 87: K.CKP_ML_DSA_87}[variant]
+        return self._create(
+            [
+                (K.CKA_CLASS, "ulong", K.CKO_PUBLIC_KEY),
+                (K.CKA_KEY_TYPE, "ulong", K.CKK_ML_DSA),
+                (K.CKA_TOKEN, "bool", False),
+                (K.CKA_VERIFY, "bool", True),
+                (K.CKA_PARAMETER_SET, "ulong", ps),
+                (K.CKA_VALUE, "bytes", bytes.fromhex(op["pk"])),
+            ],
+            "C_CreateObject(Import ML-DSA PubKey)",
+        )
+
+    def _verify_external_mu(self, op, mech_value):
+        """Mirror of verifyExternalMu() in engine.ts: C_VerifyInit(no parameter) + single-part C_Verify."""
+        pub = 0
+        try:
+            mu = bytes.fromhex(op["mu"])
+            sig = bytes.fromhex(op["signature"])
+            pub = self._import_mldsa_pub(op)
+            m = CK_MECHANISM(mech_value, None, 0)
+            mubuf = ctypes.create_string_buffer(mu, max(len(mu), 1))
+            sigbuf = ctypes.create_string_buffer(sig, max(len(sig), 1))
+            rv = self.f.C_VerifyInit(self.h, ctypes.byref(m), pub)
+            if rv != CKR_OK:
+                return {"status": "error", "reason": "C_VerifyInit(%s) \u2192 %s" % (op["mechanism"], K.rv_name(rv))}
+            # A single-part C_Verify always terminates the operation, whatever it returns.
+            rv = self.f.C_Verify(self.h, ctypes.cast(mubuf, ctypes.c_void_p), len(mu), ctypes.cast(sigbuf, ctypes.c_void_p), len(sig))
+            if rv == CKR_OK:
+                return {"status": "ok", "value": True}
+            if rv in (CKR_SIGNATURE_INVALID, CKR_SIGNATURE_LEN_RANGE):
+                return {"status": "ok", "value": False, "detail": K.rv_name(rv)}
+            return {"status": "error", "reason": "C_Verify(%s) \u2192 %s" % (op["mechanism"], K.rv_name(rv))}
+        except Exception as e:  # noqa: BLE001
+            return {"status": "error", "reason": str(e)}
+        finally:
+            if pub:
+                self._destroy(pub)
+
     def close(self):
         try:
             self.f.C_CloseSession(self.h)
@@ -397,7 +457,7 @@ def execute_plan(plan, engine):
             out = engine.execute(item["op"])
         except Exception as e:  # noqa: BLE001
             out = {"status": "error", "reason": str(e)}
-        base = {"tgId": item["tgId"], "tcId": item["tcId"]}
+        base = {"tgId": item["tgId"], "tcId": item["tcId"], "mechanism": item["op"]["mechanism"]}
         if out["status"] == "ok":
             r = dict(base, disposition="answered", responseField=item["responseField"], value=out["value"])
             if out.get("detail"):
@@ -481,7 +541,23 @@ def build_evidence(ir, prompt_sha, response_sha, results, engine_identity, start
             c["reason"] = r["reason"]
         if "detail" in r:
             c["detail"] = r["detail"]
+        if "mechanism" in r:
+            c["mechanism"] = r["mechanism"]
+            c["mechanismKind"] = "vendor-defined" if r["mechanism"] in VENDOR_MECHS else "pkcs11-v3.2"
         cases.append(c)
+    vendor_rows = []
+    for name, meta in VENDOR_MECHS.items():
+        hits = [r for r in results if r.get("mechanism") == name]
+        if not hits:
+            continue
+        tg = []
+        for r in hits:
+            if r["tgId"] not in tg:
+                tg.append(r["tgId"])
+        vendor_rows.append(
+            {"name": name, "value": meta["value"], "source": meta["source"], "tgIds": tg,
+             "answered": len([r for r in hits if r["disposition"] == "answered"])}
+        )
     return {
         "evidenceVersion": CONTRACT["evidenceVersion"],
         "label": CONTRACT["label"],
@@ -489,7 +565,7 @@ def build_evidence(ir, prompt_sha, response_sha, results, engine_identity, start
         "evidenceClass": "nist-acvp-reference-sample" if fixture else "unverified-imported-vector-set",
         "generator": {
             "name": "PQC Today acvp-native runner (Python/ctypes) executing the hub-generated plan.json",
-            "codePath": "cli",
+            "codePath": "native",
             "appVersion": None,
             "irVersion": ir["irVersion"],
         },
@@ -518,6 +594,7 @@ def build_evidence(ir, prompt_sha, response_sha, results, engine_identity, start
         "finishedAt": finished,
         "summary": {"testCases": len(results), "answered": count("answered"), "unsupported": count("unsupported"), "error": count("error")},
         "cases": cases,
+        "vendorDefinedMechanisms": vendor_rows,
         "unsupported": unsupported,
         "goldenComparison": golden,
     }

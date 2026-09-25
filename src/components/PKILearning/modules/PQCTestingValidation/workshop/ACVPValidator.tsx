@@ -11,6 +11,7 @@ import aesCbcTest from '@/data/acvp/aescbc_test.json'
 import sha256Test from '@/data/acvp/sha256_test.json'
 import ecdsaTest from '@/data/acvp/ecdsa_p384_test.json'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import { Cite } from '@/components/PKILearning/modules/AcvpLabWorkflow/components/Cite'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { KAT_EVIDENCE_META, evidenceForVectorFile } from '@/utils/katEvidence'
 import { Button } from '@/components/ui/button'
@@ -237,7 +238,7 @@ export const ACVPValidator: React.FC = () => {
           <p>
             <span className="font-semibold text-foreground">Illustrative simulation:</span> the
             console below plays back a scripted animation of a NIST Automated Cryptographic
-            Validation Protocol (ACVP) run over the Known Answer Test (KAT) vectors bundled in{' '}
+            Validation Protocol (ACVP) run over the test vector files bundled in{' '}
             <code className="text-[10px] bg-background px-1 rounded border border-border">
               /src/data/acvp/
             </code>
@@ -358,8 +359,8 @@ export const ACVPValidator: React.FC = () => {
                 [simulation] Found algorithm definition: {activeAlg.name} ({activeAlg.fips})
               </div>
               <div>
-                [simulation] Listing {activeAlg.vectorCount} Known Answer Test vectors from schema
-                (no cryptography executes).
+                [simulation] Listing {activeAlg.vectorCount} test vectors from schema (no
+                cryptography executes).
               </div>
               <div className="text-primary">
                 [simulation] Rendering scripted ACVP walkthrough animation...
@@ -379,7 +380,7 @@ export const ACVPValidator: React.FC = () => {
               ))}
               <div className="border-t border-border mt-2 mb-2 w-full" />
               <div className="flex items-center justify-between text-foreground/80">
-                <span>[simulation] Playing KAT vector animation...</span>
+                <span>[simulation] Playing test-vector animation...</span>
                 <span>
                   {Math.floor(progress)}% [{Math.floor((progress / 100) * activeAlg.vectorCount)} /{' '}
                   {activeAlg.vectorCount}]
@@ -411,7 +412,7 @@ export const ACVPValidator: React.FC = () => {
               </div>
               <div className="text-muted-foreground mt-1 bg-muted/50 p-2 rounded">
                 Illustrative filename:{' '}
-                <span className="text-foreground">{selectedAlg}_test.rsp</span> — no file is
+                <span className="text-foreground">{selectedAlg}_response.json</span> — no file is
                 actually written.
               </div>
             </>
@@ -458,22 +459,24 @@ export const ACVPValidator: React.FC = () => {
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10" />
         <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
           <HardDrive size={13} className="text-primary" />
-          Why ACVP Testing is Mandatory for PQC
+          Where ACVP Fits for PQC
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          You cannot use a cryptographic library in a regulated environment (Federal, Financial,
-          Healthcare) unless it holds a FIPS 140-3 certificate. To achieve this, the implementation
-          must pass the NIST Automated Cryptographic Validation Protocol (ACVP). NIST provides JSON
-          files (<code className="text-[10px]">.req</code>) containing Known Answer Tests (KATs)
-          with deterministic inputs, keys, and seeds. The library must guarantee mathematically
-          identical outputs (e.g., cross-platform byte-for-byte alignment) and write them back into
-          a <code className="text-[10px]">.rsp</code> file for NIST to verify.
+          US federal agencies use FIPS 140-3 modules <Cite s="fips1403" at="§6" />, and an algorithm
+          appears on a module certificate as an Approved security function only after it completes
+          CAVP algorithm validation <Cite s="cavp" />. CAVP testing runs through NIST&apos;s ACVTS:
+          the implementation receives JSON test vector sets over the ACVP protocol and returns JSON
+          responses the server checks <Cite s="acvpSpec" at="§8, §12.4" />. Those are not the{' '}
+          <code className="text-[10px]">.req</code>/<code className="text-[10px]">.rsp</code> files
+          of the older CAVS tool. The suite below runs selected public NIST ACVP-Server reference
+          samples and other labelled tests locally — no ACVTS session, verdict or certificate is
+          involved.
         </p>
       </div>
 
       <KatValidationPanel
         specs={TESTING_KAT_SPECS}
-        label="PQC Testing & Validation Known Answer Tests"
+        label="PQC Testing & Validation Tests"
         authorityNote="FIPS 203 · FIPS 204 · SP 800-38D"
       />
     </div>

@@ -21,7 +21,7 @@ const manifest: ModuleManifest = {
     { id: 'performance-testing-method', label: 'Performance Benchmarking' },
     { id: 'interop-testing', label: 'Interoperability & RFC' },
     { id: 'side-channel-tvla', label: 'TVLA Side-Channel Testing' },
-    { id: 'fips-acvp', label: 'FIPS ACVP Validation' },
+    { id: 'fips-acvp', label: 'FIPS 140-3 & ACVP Testing' },
   ],
   workshopSteps: [
     { id: 'passive-discovery-lab', label: 'Passive Crypto Discovery Lab' },

@@ -105,7 +105,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What does the EU Recommendation 2024/1101 require?',
     'When must ANSSI-qualified French products support PQC?',
     'What is the Korean PQC standardization timeline?',
-    'What PQC-related certification does ACVP provide?',
+    'How does ACVP relate to CAVP algorithm certificates for PQC?',
     'What is a CBOM and why is it important for PQC compliance?',
     'What industry regulation covers payment card PQC requirements?',
     'What is NERC-CIP and its relevance to PQC?',

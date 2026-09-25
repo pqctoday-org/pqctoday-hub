@@ -7,7 +7,9 @@ import { describe, it, expect } from 'vitest'
 import Ajv2020 from 'ajv/dist/2020'
 import { validateAgainstSchema } from './schemaValidator'
 import { PINNED_SCHEMAS } from './schemas/registry'
-import evidenceSchema from './schemas/evidence.schema.json'
+import { currentEvidenceSchema } from './schemas/evidenceSchemas'
+
+const evidenceSchema = currentEvidenceSchema()
 import { readFixture, type FixtureName } from './node/fixtures'
 
 const ajv = new Ajv2020({

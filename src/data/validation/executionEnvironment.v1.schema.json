@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pqctoday.com/schemas/validation/execution-environment.schema.json",
+  "$id": "https://pqctoday.com/schemas/validation/execution-environment.v1.schema.json",
   "title": "PQC Today ExecutionEnvironment record (execution-environment.json)",
   "$comment": "Plan WS-H H-1. One record per (target, engine artifact, fixture bundle) run. Hash-addressed: envId is the SHA-256 of the canonical JSON (keys sorted, no whitespace, non-ASCII \\uXXXX-escaped == Python json.dumps(o, sort_keys=True, separators=(',', ':'))) of the record WITHOUT the envId key. The schema only fixes the SHAPE: identity fields are nullable so a runner can always write an honest record. Whether a run is PUBLISHABLE is decided by validateExecutionEnvironment() in executionEnvironment.ts (IDENTITY_REQUIREMENTS): any required identity field that is null/unknown makes the run non-publishable. Kept inside the src/services/acvp/schemaValidator.ts keyword subset (CSP-safe, no ajv at runtime).",
   "type": "object",
