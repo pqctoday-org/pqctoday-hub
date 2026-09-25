@@ -78,7 +78,7 @@ describe('industry-landscape driftguards', () => {
 
   it('every industry resolves to a Threats-page industry (/threats?industry= deep links)', () => {
     // The landscape keeps the site-wide vocabulary ("Critical Infrastructure /
-    // Energy", "Aerospace / Aviation", "Hardware Security Modules"); the
+    // Energy", "Aerospace / Aviation"); the
     // Threats page renamed its own labels in ruling R3 (2026-09-24). What must
     // hold is that the landscape's /threats?industry=<its label> link still
     // lands — through the same resolver the page uses, aliases included.

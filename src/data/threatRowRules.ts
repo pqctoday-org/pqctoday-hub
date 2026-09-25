@@ -37,10 +37,12 @@ export function isRetiredThreatStatus(status: string | null | undefined): boolea
  * The Threats page's own industry vocabulary (ruling R3, 2026-09-24):
  * "Critical Infrastructure" and "Energy / Critical Infrastructure" (and the
  * earlier merged label "Critical Infrastructure / Energy") became
- * "Critical Infrastructure / OT"; the two "Hardware Security Modules" rows
- * (HSM-001, HSM-002) moved to "Cross-Industry"; "Aerospace / Aviation" became
- * "Aerospace / Aviation / Space". The CSV carries the new labels from
- * quantum_threats_hsm_industries_09242026_r2.csv on; these aliases keep every
+ * "Critical Infrastructure / OT"; "Aerospace / Aviation" became "Aerospace /
+ * Aviation / Space". "Hardware Security Modules" stays its own sector (the
+ * ruling's move of HSM-001/HSM-002 to Cross-Industry was reverted on the
+ * user's review, quantum_threats_hsm_industries_09242026_r4.csv). The CSV
+ * carries the new labels from quantum_threats_hsm_industries_09242026_r2.csv
+ * on; these aliases keep every
  * OLD label working — in `?industry=` deep links, persona maps and anything
  * built from an older snapshot. Other modules (Learn, industry landscape,
  * assessment) keep their own site-wide vocabulary; this map is the bridge
@@ -50,7 +52,6 @@ export const THREAT_INDUSTRY_ALIASES: Readonly<Record<string, string>> = {
   'Critical Infrastructure': 'Critical Infrastructure / OT',
   'Energy / Critical Infrastructure': 'Critical Infrastructure / OT',
   'Critical Infrastructure / Energy': 'Critical Infrastructure / OT',
-  'Hardware Security Modules': 'Cross-Industry',
   'Aerospace / Aviation': 'Aerospace / Aviation / Space',
 }
 

@@ -57,6 +57,12 @@ describe('Threats-page labels renamed by ruling R3 (2026-09-24)', () => {
     expect(matchesIndustry('Critical Infrastructure / OT', 'Finance & Banking')).toBe(false)
   })
 
+  it('"Hardware Security Modules" stays its own threats sector and joins Technology, not everyone', () => {
+    expect(isCrossIndustry('Hardware Security Modules')).toBe(false)
+    expect(matchesIndustry('Hardware Security Modules', 'Technology')).toBe(true)
+    expect(matchesIndustry('Hardware Security Modules', 'Healthcare')).toBe(false)
+  })
+
   it('"Aerospace / Aviation / Space" matches the aerospace sector', () => {
     expect(matchesIndustry('Aerospace / Aviation / Space', 'Aerospace')).toBe(true)
   })

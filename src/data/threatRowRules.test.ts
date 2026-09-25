@@ -41,7 +41,8 @@ describe('threat row status rules', () => {
     ]) {
       expect(canonicalThreatIndustry(old)).toBe('Critical Infrastructure / OT')
     }
-    expect(canonicalThreatIndustry('Hardware Security Modules')).toBe('Cross-Industry')
+    // HSM stays its own sector (R3's HSM move reverted on user review).
+    expect(canonicalThreatIndustry('Hardware Security Modules')).toBe('Hardware Security Modules')
     expect(canonicalThreatIndustry('Aerospace / Aviation')).toBe('Aerospace / Aviation / Space')
     expect(canonicalThreatIndustry('Insurance')).toBe('Insurance')
   })
@@ -69,9 +70,9 @@ describe('the Threats page industry vocabulary against the live CSV', () => {
     for (const label of targets) expect(live, `"${label}"`).toContain(label)
   })
 
-  it('HSM-001 and HSM-002 sit under Cross-Industry', () => {
+  it('HSM-001 and HSM-002 sit under their own Hardware Security Modules sector', () => {
     for (const id of ['HSM-001', 'HSM-002']) {
-      expect(threatsData.find((t) => t.threatId === id)?.industry).toBe('Cross-Industry')
+      expect(threatsData.find((t) => t.threatId === id)?.industry).toBe('Hardware Security Modules')
     }
   })
 })

@@ -727,9 +727,7 @@ export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
     'Internet of Things (IoT)',
     'Media / Entertainment / DRM',
     'Supply Chain / Logistics',
-    // The two "Hardware Security Modules" rows are "Cross-Industry" since
-    // ruling R3 (2026-09-24); Cross-Industry reaches Technology readers via
-    // 'Cross-cutting & Other' in their persona defaults.
+    'Hardware Security Modules',
   ],
   'Energy & Utilities': [
     // The Threats page's label since ruling R3 (2026-09-24) — formerly
