@@ -15,11 +15,16 @@
  *   recorded runs ............ src/data/validation/run-results/*.json
  *   cross-target runs ........ evidence/acvp-xplat/<run>/{matrix,targets}.json
  *   reviews (J-5) ............ src/data/validation/reviews/*.review.json
+ *   workbench groups ......... CATEGORIES in src/components/Playground/hsm/acvp/useAcvpSuite.ts
+ *
+ * Stale inputs (a coverage matrix or counts file older than its own inputs)
+ * fail --check first, naming the generator to run; nothing is regenerated here.
  *
  *   npx tsx scripts/generate-release-evidence.ts            # (re)write the report
  *   npx tsx scripts/generate-release-evidence.ts --check    # gate: exit 1 on drift
  *   npx tsx scripts/generate-release-evidence.ts --check -- ../presentations/fipsandchips2026
- *        # also lint the deck/script/README (banned claims + NIST ACVP-Server count,
+ *        # also lint the deck/script/README (banned claims + NIST ACVP-Server count +
+ *        # workbench test groups/families,
  *        # reused from audit-validation-claims) and check every other bound figure
  *   npx tsx scripts/generate-release-evidence.ts --print-review-items
  *        # item ids + subject hashes a reviewer needs to write a review record
