@@ -344,7 +344,13 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
         type: 'checkpoint',
         id: 'grc-assurance-closure',
         label: 'Assurance & Closure',
-        categories: ['vendor-risk', 'crypto-agility', 'migration-program', 'verification-closure'],
+        categories: [
+          'vendor-risk',
+          'crypto-product-certification',
+          'crypto-agility',
+          'migration-program',
+          'verification-closure',
+        ],
       },
       { type: 'module', moduleId: 'quiz' },
     ],
@@ -361,7 +367,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     ],
     essentialsMinutes: 250,
     quizDescription:
-      'Test your knowledge on quantum risk fundamentals, risk management, data asset classification, GRC program design, compliance strategy, standards bodies, governance, team structure, cryptographic inventory (registry, SBOM, CBOM), vendor risk and assurance, crypto agility, migration programs, and verification & closure.',
+      'Test your knowledge on quantum risk fundamentals, risk management, data asset classification, GRC program design, compliance strategy, standards bodies, governance, team structure, cryptographic inventory (registry, SBOM, CBOM), vendor risk and assurance, cryptographic product certification, crypto agility, migration programs, and verification & closure.',
     quizCategories: [
       'pqc-fundamentals',
       'quantum-threats',
@@ -376,6 +382,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'sbom',
       'cbom',
       'vendor-risk',
+      'crypto-product-certification',
       'crypto-agility',
       'migration-program',
       'verification-closure',
