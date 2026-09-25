@@ -14,6 +14,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'australia-asd-acsc-annual-cyber-threat-report-2024-25-pqc-as-a-national-priority': [
     'Australia:ASD — ACSC Annual Cyber Threat Report 2024–25 — PQC as a National Priority',
+    "Australia:ASD — ACSC Annual Cyber Threat Report 2024–25 — Prepare for PQC as one of 4 'Big Moves'",
   ],
   'australia-asd-asd-full-migration-phase': ['Australia:ASD — ASD Full Migration Phase'],
   'australia-asd-commonwealth-cyber-security-posture-in-2025': [
@@ -46,6 +47,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Brazil:BACEN — LIFT Papers Post-Quantum Cryptography Feasibility Study for Pix',
   ],
   'brazil-iti-icp-brasil-mandates-ml-dsa-and-ml-kem-certificate-standards': [
+    'Brazil:ITI — ICP-Brasil Adds ML-DSA and ML-KEM to Its Cryptographic Standards (DOC-ICP-01.01 v6.0)',
     'Brazil:ITI — ICP-Brasil Mandates ML-DSA and ML-KEM Certificate Standards',
   ],
   'bsi-vs-it-umstellungsfristen-fuer-post-quanten-kryptografie': [
@@ -91,6 +93,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'china-iccs-ngcc-program-launched': ['China:ICCS — NGCC Program Launched'],
   'czech-republic-czqci-czqci-euroqci-backbone-launched': [
     'Czech Republic:CZQCI — CZQCI EuroQCI Backbone Launched',
+    'Czech Republic:CZQCI — CZQCI EuroQCI Test Quantum Backbone Project',
   ],
   'czech-republic-nukib-cryptographic-recommendations': [
     'Czech Republic:NUKIB — Cryptographic Recommendations',
@@ -122,6 +125,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'european-union-ec-critical-infrastructure-migration': [
     'European Union:EC — Critical Infrastructure Migration',
+    'European Union:EC — High-Risk Use Cases Transitioned to PQC',
   ],
   'european-union-ec-cryptographic-inventory-mandate': [
     'European Union:EC — Cryptographic Inventory Mandate',
@@ -203,6 +207,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'france-idemia-first-pqc-hardware-accelerator-announced': [
     'France:IDEMIA — First PQC Hardware Accelerator Announced',
   ],
+  'g7-cybersecurity-working-group-preparing-for-the-post-quantum-era-call-to-action': [
+    'G7:G7 Cybersecurity Working Group — Preparing for the Post-Quantum Era: A Call to Action',
+  ],
   'g7-g7-ceg-g7-financial-sector-critical-systems-pqc-transition': [
     'G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transition',
   ],
@@ -220,13 +227,18 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Germany:BSI — Very High Protection Requirements — Transition to Quantum-Safe Mechanisms by End of 2030 Using Hybrid Form',
   ],
   'germany-bsi-dlr-quantity-initiative-launched': [
+    'Germany:BSI/DLR — DLR × BSI Cooperation on QUANTITY Cryptanalysis Project',
     'Germany:BSI/DLR — QUANTITY Initiative Launched',
   ],
   'germany-bsi-eu-joint-statement-on-pqc': ['Germany:BSI — EU Joint Statement on PQC'],
   'germany-bsi-full-pqc-transition-standalone-algorithms-required': [
     'Germany:BSI — Full PQC Transition — Standalone Algorithms Required',
+    'Germany:BSI — Transition to Quantum-Safe Signatures by 2035',
   ],
-  'germany-bsi-hybrid-ipsec-and-ssh-required': ['Germany:BSI — Hybrid IPsec and SSH Required'],
+  'germany-bsi-hybrid-ipsec-and-ssh-required': [
+    'Germany:BSI — BSI Sets 2031 End for Sole Use of Classical Key Agreement in IKEv2/IPsec',
+    'Germany:BSI — Hybrid IPsec and SSH Required',
+  ],
   'germany-bsi-hybrid-tls-required-for-classified-communications': [
     'Germany:BSI — BSI Signals Future Hybrid PQC Key Exchange for TLS',
   ],
@@ -235,6 +247,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Germany:Infineon — First CC EAL6 PQC Security Controller',
   ],
   'global-3gpp-sa3-3gpp-tr-33-938-pqc-transition-study': [
+    'Global:3GPP SA3 — 3GPP TR 33.938 Cryptographic Inventory (5G System)',
     'Global:3GPP SA3 — 3GPP TR 33.938 PQC Transition Study',
   ],
   'global-ca-browser-forum-ballot-smc013-ml-dsa-for-s-mime-adopted': [
@@ -297,6 +310,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Global:TCG — TPM 2.0 PQC Library Specification Draft',
   ],
   'global-tcg-tpm-2-0-v1-85-pqc-library-specification-draft': [
+    'Global:TCG — TPM 2.0 Library Specification Version 185 Released',
     'Global:TCG — TPM 2.0 v1.85 PQC Library Specification Draft',
   ],
   'going-beyond-encryption-malaysia-rolls-out-quantum-cryptogra': [
@@ -306,6 +320,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'gsma-gsma-pq-03-v2-0-guidelines': ['GSMA:GSMA — PQ.03 v2.0 Guidelines'],
   'hong-kong-hkma-financial-sector-pqc-migration-complete': [
     'Hong Kong:HKMA — Financial Sector PQC Migration Complete',
+    'Hong Kong:HKMA — HKMA target for full sectoral PQC readiness',
   ],
   'hong-kong-hkma-financial-sector-pqc-planning': [
     'Hong Kong:HKMA — Financial Sector PQC Planning',
@@ -324,11 +339,15 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'hong-kong-hkma-pqc-readiness-assessment-required': [
     'Hong Kong:HKMA — PQC Readiness Assessment Required',
+    'Hong Kong:HKMA — Quantum Preparedness Whitepaper and First Quantum Preparedness Index Launched',
   ],
   'hong-kong-legco-critical-infrastructure-cybersecurity-ordinance': [
     'Hong Kong:LegCo — Critical Infrastructure Cybersecurity Ordinance',
   ],
-  'india-cert-in-bom-guidelines-expanded': ['India:CERT-In — BOM Guidelines Expanded'],
+  'india-cert-in-bom-guidelines-expanded': [
+    'India:CERT-In — BOM Guidelines Expanded',
+    'India:CERT-In — BOM Guidelines Version 2.0 Cover QBOM & CBOM',
+  ],
   'india-dst-nqm-cii-pqc-foundations-deadline': ['India:DST/NQM — CII PQC Foundations Deadline'],
   'india-dst-nqm-full-nationwide-pqc-adoption': ['India:DST/NQM — Full Nationwide PQC Adoption'],
   'india-dst-nqm-india-national-pqc-migration': ['India:DST/NQM — India National PQC Migration'],
@@ -427,6 +446,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Malaysia:NACSA — Malaysia National PQC Migration',
   ],
   'malaysia-nacsa-national-pqc-migration-plan-published': [
+    'Malaysia:NACSA — MyKriptografi Action Plan 2026–2030',
     'Malaysia:NACSA — National PQC Migration Plan Published',
   ],
   'my-pki-consortium-pki-consortium-pqc-conference-2025-conclusions': [
@@ -444,8 +464,14 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'new-zealand-gcsb-ncsc-nzism-v3-8-updated': ['New Zealand:GCSB/NCSC — NZISM v3.8 Updated'],
   'new-zealand-gcsb-ncsc-nzism-v3-9-published': ['New Zealand:GCSB/NCSC — NZISM v3.9 Published'],
-  'new-zealand-gcsb-ncsc-planning-phase': ['New Zealand:GCSB/NCSC — Planning Phase'],
-  'new-zealand-gcsb-ncsc-transition-phase': ['New Zealand:GCSB/NCSC — Transition Phase'],
+  'new-zealand-gcsb-ncsc-planning-phase': [
+    'New Zealand:GCSB/NCSC — NZISM v3.9 Release',
+    'New Zealand:GCSB/NCSC — Planning Phase',
+  ],
+  'new-zealand-gcsb-ncsc-transition-phase': [
+    'New Zealand:GCSB/NCSC — NZISM v3.9 Release',
+    'New Zealand:GCSB/NCSC — Transition Phase',
+  ],
   'nigeria-ndpc-ndpa-general-application-directive-2025': [
     'Nigeria:NDPC — NDPA General Application Directive 2025',
   ],
@@ -483,6 +509,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Saudi Arabia:STC — STC Quantum-Safe Framework Launched',
   ],
   'singapore-csa-govtech-imda-quantum-safe-handbook-and-quantum-readiness-index-rel': [
+    'Singapore:CSA/GovTech/IMDA — Draft Quantum-Safe Handbook Released for Public Consultation',
     'Singapore:CSA/GovTech/IMDA — Quantum-Safe Handbook and Quantum Readiness Index Released',
   ],
   'singapore-csa-mas-financial-sector-planning': ['Singapore:CSA/MAS — Financial Sector Planning'],
@@ -492,6 +519,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'singapore-mas-financial-sector-pqc-migration-plans-due': [
     'Singapore:MAS — Financial Sector PQC Migration Plans Due',
+    'Singapore:MAS — MAS advisory on addressing cybersecurity risks associated with quantum',
   ],
   'singapore-mas-financial-sector-qkd-sandbox-completed': [
     'Singapore:MAS — Financial Sector QKD Sandbox Completed',
@@ -512,7 +540,10 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'spain-ccn-ccn-tec-009-post-quantum-transition': [
     'Spain:CCN — CCN-TEC 009 Post-Quantum Transition',
   ],
-  'spain-ccn-four-phase-pqc-approach': ['Spain:CCN — Four-Phase PQC Approach'],
+  'spain-ccn-four-phase-pqc-approach': [
+    'Spain:CCN — Five-Phase PQC Transition Approach',
+    'Spain:CCN — Four-Phase PQC Approach',
+  ],
   'spain-ccn-pqc-transition-period': ['Spain:CCN — PQC Transition Period'],
   'spain-spain-govt-spain-quantum-technologies-strategy-eur-808m': [
     'Spain:Spain Govt — Spain Quantum Technologies Strategy (EUR 800M)',
@@ -540,6 +571,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'United Arab Emirates:DESC — Dubai PQC Guideline Launched',
   ],
   'united-arab-emirates-tii-nist-additional-signatures-round-2-contributions': [
+    'United Arab Emirates:TII — NIST Additional Digital Signature Schemes Round 2 candidates',
     'United Arab Emirates:TII — NIST Additional Signatures Round 2 Contributions',
   ],
   'united-arab-emirates-uae-csc-national-encryption-policy-approved': [
@@ -650,10 +682,14 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'United States:NIST — Additional Signatures Round 3 Advances',
   ],
   'united-states-nist-fips-203-204-205-published': [
+    'United States:NIST — FIPS 203 Published',
     'United States:NIST — FIPS 203, 204, 205 Published',
   ],
   'united-states-nist-fips-206-fn-dsa-draft-submitted': [
     'United States:NIST — FIPS 206 (FN-DSA) Draft Submitted',
+  ],
+  'united-states-nist-hawk-withdrawn-from-additional-signatures-round-3': [
+    'United States:NIST — HAWK Withdrawn from the Additional Signatures Process',
   ],
   'united-states-nist-hqc-selected-as-fifth-algorithm': [
     'United States:NIST — HQC Selected as Fifth Algorithm',
@@ -696,6 +732,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'united-states-nsa-cnsa-1-0-compliance-deadline-for-nss': [
     'United States:NSA — CNSA 1.0 Compliance Deadline for NSS',
+    'United States:NSA — No CNSA 2.0 Transition Enforced Before December 31, 2025 for NIAP/CSfC-Validated NSS',
   ],
   'united-states-nsa-cnsa-2-0-algorithms-revised': [
     'United States:NSA — CNSA 2.0 Algorithms Revised',
