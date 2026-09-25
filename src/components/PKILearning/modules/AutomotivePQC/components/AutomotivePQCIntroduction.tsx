@@ -526,7 +526,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 <ShieldCheck size={14} className="text-status-success" /> V2X SCMS HSM
               </h3>
               <p className="text-[10px] font-medium text-status-success mb-2">
-                FIPS 140-3 Level 3 / CC EAL4+
+                FIPS 140-3 Level 3 / CC EAL4 augmented (check the certificate for the named
+                components)
               </p>
               <p className="text-xs text-muted-foreground mb-2">
                 Backend HSMs in the Security Credential Management System. Issue pseudonym
