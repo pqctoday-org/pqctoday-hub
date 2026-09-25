@@ -50,7 +50,7 @@ const PARTS: WorkshopPart[] = [
 export const EntropyModule: FC = () => (
   <ModuleShell
     manifest={manifest}
-    description="Master entropy sources, DRBG mechanisms, and quantum randomness — NIST SP 800-90 standards, entropy testing, TRNG vs QRNG, and combining sources for defense-in-depth."
+    description="Entropy sources, SP 800-90A DRBGs, SP 800-90B entropy-source validation and SP 800-90C RBG constructions — why output tests are not entropy estimates, why a QRNG is judged by the same rules, and what random inputs ML-KEM, ML-DSA and SLH-DSA require."
     learn={(api) => <EntropyIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
     exercises={(api) => (
       <EntropyExercises

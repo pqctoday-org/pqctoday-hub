@@ -7,7 +7,7 @@ const manifest: ModuleManifest = {
   lm_id: 'LM-003',
   title: 'Entropy & Randomness',
   description:
-    'Master entropy sources, DRBG mechanisms, and quantum randomness — NIST SP 800-90 standards, entropy testing, TRNG vs QRNG, and combining sources for defense-in-depth.',
+    'Entropy sources, SP 800-90A DRBGs, SP 800-90B entropy-source validation and SP 800-90C RBG constructions — why output tests are not entropy estimates, why a QRNG is judged by the same rules, and what random inputs ML-KEM, ML-DSA and SLH-DSA require.',
   whyThisMatters:
     "Every key this curriculum generates depends on entropy — a weak DRBG or predictable seed makes even a perfect PQC algorithm choice worthless, since the attack moves from 'break the math' to 'guess the seed'.",
   duration: '40 min',
@@ -19,7 +19,9 @@ const manifest: ModuleManifest = {
     { id: 'entropy', label: 'Entropy Sources' },
     { id: 'drbg', label: 'SP 800-90 DRBG' },
     { id: 'testing', label: 'Entropy Testing (90B)' },
-    { id: 'qrng', label: 'TRNG vs QRNG Comparison' },
+    // P0 cleanup (2026-09-24): matches the section heading; the separate
+    // QRNG comparison workshop step was removed (P0.7).
+    { id: 'qrng', label: 'TRNG vs QRNG' },
     { id: 'combining', label: 'Combining Sources' },
   ],
   workshopSteps: [

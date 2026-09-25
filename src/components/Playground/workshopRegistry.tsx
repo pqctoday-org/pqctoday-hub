@@ -796,7 +796,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       whatYouWillDo:
         'Generate random bytes from Web Crypto, OpenSSL WASM, Math.random() and a linear congruential generator, and run the same statistical tests on each.',
       workedExample:
-        'Generate from the LCG source, then predict its next output from the bytes it already produced — the test table shows which checks it fails.',
+        'Generate from the LCG source, then predict its next output from the bytes it already produced — the prediction matches even though the LCG usually lands within range on the visual checks.',
     },
   },
   {
@@ -808,7 +808,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     // was removed, so this links to the module root, not a step. The description
     // says "simulation" first so no surface implies QRNG hardware or evidence.
     description:
-      'Simulation — no QRNG hardware involved. Compares a pre-generated reference sample (produced by a classical CSPRNG, not a quantum source), live Web Crypto output and a deliberately broken PRNG on the same statistical checks, which cannot show whether any source is quantum.',
+      'Simulation — no QRNG hardware involved. Compares a simulated QRNG sample (crypto.getRandomValues() output, not a quantum source), live Web Crypto output and a deliberately broken PRNG on the same grouped checks, which cannot show whether any source is quantum.',
     category: 'Entropy & Random',
     algorithms: ['TRNG', 'Web Crypto'],
     icon: Dice5,
@@ -819,9 +819,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['researcher', 'curious'],
     intro: {
       whatYouWillDo:
-        'Compare a simulated QRNG sample, a CSPRNG sample and a deliberately broken PRNG on the same statistical tests.',
+        'Compare a simulated QRNG sample, a CSPRNG sample and a deliberately broken PRNG on the same visual checks and SP 800-90B health tests, shown as separate groups.',
       workedExample:
-        'The monobit, runs and chi-squared results for all three, side by side: see which source fails and by how much.',
+        'Run the checks on all three samples: only the weak PRNG stands out, because the simulated QRNG and the CSPRNG are the same kind of output.',
     },
     startHere: ['curious'],
   },
@@ -915,8 +915,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     pt_id: 'PT-013',
     version: '1.0.1',
     name: 'Source Combining',
+    // Entropy remediation P0 cleanup (2026-09-24): HKDF was listed as a
+    // conditioning function. It is only the workshop's demonstration expansion
+    // step — not an SP 800-90A DRBG and not part of an SP 800-90C construction.
+    // Conditioning is Hash_df, SHA-256, HMAC-SHA-256 or AES-CMAC.
     description:
-      'SP 800-90C source combining: XOR, Hash, HMAC, Concat + HKDF/Hash_df/AES-CMAC conditioning via SoftHSMv3',
+      'Two simulated raw sources: SP 800-90B health tests before conditioning, SP 800-90C concatenation (XOR, hash and HMAC as educational variants), Hash_df/SHA-256/HMAC/AES-CMAC conditioning via SoftHSMv3, and an assumption-driven verdict that can end in "not enough evidence" or "unsafe".',
     category: 'Entropy & Random',
     algorithms: ['SHA-256', 'HMAC-SHA-256', 'HKDF', 'AES-CMAC', 'XOR', 'Hash_df'],
     icon: Dice5,
@@ -938,9 +942,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['researcher', 'architect', 'developer'],
     intro: {
       whatYouWillDo:
-        'Combine two entropy sources with SP 800-90C concatenation and condition the result with Hash_df or HMAC, step by step.',
+        'Health-test two simulated raw sources, assemble their samples with SP 800-90C concatenation, condition the result, then state the assumptions the combined construction rests on.',
       workedExample:
-        "Replace Source A with all zeros and re-run the pipeline: Source B's entropy survives the conditioning step, which is the point of combining.",
+        'Load the Stuck source, detected counterexample: the health tests exclude Source A before conditioning, and Source B alone falls short of the 384 bits a 256-bit DRBG needs, so the verdict is Not enough evidence.',
     },
   },
   {
