@@ -19,7 +19,7 @@ import {
   PROTOTYPE_LABEL,
 } from '../acvp/evidence'
 import { IR_VERSION } from '../acvp/ir'
-import { PLAN_VERSION } from '../acvp/dispatch'
+import { PLAN_VERSION, VENDOR_DEFINED_MECHANISMS } from '../acvp/dispatch'
 import fixtureProvenance from '../acvp/__fixtures__/nist-acvp-server/PROVENANCE.json'
 
 export const NATIVE_CONSTANTS_PATH = 'tools/acvp-native/pkcs11_constants.py'
@@ -28,7 +28,7 @@ export const HUB_CONTRACT_PATH = 'tools/acvp-native/hub_contract.json'
 /**
  * The non-PKCS#11 facts the Python runner must reproduce to write an
  * evidence.json that validates against src/services/acvp/schemas/
- * evidence.schema.json: evidence/IR/plan versions, the verbatim plan §2.2
+ * evidence.v<N>.schema.json (current version): evidence/IR/plan versions, the verbatim plan §2.2
  * disclaimers, the pinned schema metadata, and the known public fixtures
  * (prompt SHA-256 → NIST ACVP-Server identity). Generated, never hand-edited.
  */
@@ -52,6 +52,11 @@ export const renderHubContract = (): string =>
         specRepository: s.specSource.repository,
         specCommit: s.specSource.commit,
         specDocument: s.specSource.document,
+      })),
+      vendorDefinedMechanisms: Object.entries(VENDOR_DEFINED_MECHANISMS).map(([name, m]) => ({
+        name,
+        value: m?.value,
+        source: m?.source,
       })),
       knownFixtures: fixtureProvenance.files.map((f) => ({
         sha256: f.sha256,

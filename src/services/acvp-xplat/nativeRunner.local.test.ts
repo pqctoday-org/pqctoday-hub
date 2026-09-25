@@ -16,8 +16,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import evidenceSchema from '../acvp/schemas/evidence.schema.json'
-import { validateAgainstSchema } from '../acvp/schemaValidator'
+import { validateEvidenceDocument } from '../acvp/schemas/evidenceSchemas'
 import { canonicalJson, sha256Hex } from '../acvp/ir'
 import { runCli } from '../acvp/node/cli'
 import { FIXTURE_NAMES, fixturePath } from '../acvp/node/fixtures'
@@ -108,7 +107,10 @@ describe.skipIf(!containerUp)(`native runner in ${CONTAINER} (${ENGINE})`, () =>
         summary: { answered: number; unsupported: number; error: number }
         goldenComparison: { mismatched: number; unexpected: number }
       }
-      expect(validateAgainstSchema(evidenceSchema as Record<string, unknown>, evidence)).toEqual([])
+      expect(validateEvidenceDocument(evidence)).toEqual([])
+      expect((evidence as unknown as { generator: { codePath: string } }).generator.codePath).toBe(
+        'native'
+      )
       expect(evidence.response.sha256).toBe(await sha256Hex(text))
       expect(evidence.summary.answered).toBe(golden.counts.planExecute)
       expect(evidence.summary.unsupported).toBe(golden.counts.planUnsupported)
