@@ -243,7 +243,7 @@
   {
     "term": "SP 800-90A",
     "definition": "NIST Special Publication defining three Deterministic Random Bit Generator (DRBG) mechanisms: CTR_DRBG (AES-based), Hash_DRBG (SHA-based), and HMAC_DRBG. Published June 2015 (Rev. 1).",
-    "technicalNote": "All three DRBGs use symmetric primitives and are quantum-safe. CTR_DRBG is the default in OpenSSL. Rev. 2 is in draft, adding XOF_DRBG (SHAKE-based) and removing TDES/SHA-1.",
+    "technicalNote": "All three DRBGs are built on symmetric primitives (hash functions, HMAC, block ciphers), which Shor's algorithm does not break; whether a given DRBG is adequate against quantum attack depends on the primitive and security strength chosen (Rev. 1 CTR_DRBG also allows three-key TDEA). That is engineering judgment, not a NIST statement. CTR_DRBG is the default in OpenSSL. Rev. 2 is not yet a draft: NIST published a pre-draft call for comments on 2025-09-04 (closed 2025-11-04) announcing plans for a new DRBG construction based on SHAKE extendable-output functions; no draft text has been published.",
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "advanced",
     "category": "standard"

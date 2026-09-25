@@ -16,7 +16,8 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
-import { DRBG_MECHANISMS, RNG_COMPARISON } from '../utils/entropyConstants'
+import { DRBG_MECHANISMS, RNG_COMPARISON, SP800_90A_REV2_STATUS } from '../utils/entropyConstants'
+import { PQC_RANDOM_INPUTS, PQC_ERRATA_STATE } from '../utils/pqcRandomInputs'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface EntropyIntroductionProps {
@@ -65,7 +66,9 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
                 /dev/urandom)
               </li>
               <li>
-                Hardware <InlineTooltip term="TRNG">TRNG</InlineTooltip> (Intel RDRAND, ARM RNDR)
+                Processor RNG instructions: Intel RDRAND and Arm RNDR return DRBG output, Intel
+                RDSEED returns conditioned seed values from the on-chip{' '}
+                <InlineTooltip term="TRNG">TRNG</InlineTooltip> — none is raw noise
               </li>
               <li>Continuous health monitoring per SP 800-90B</li>
             </ul>
@@ -140,7 +143,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           <ArrowRight size={14} className="text-muted-foreground shrink-0" />
           <div className="bg-primary/10 rounded-lg px-3 py-2 border border-primary/30 text-center">
             <div className="font-bold text-primary">Random Output</div>
-            <div className="text-muted-foreground">Full entropy</div>
+            <div className="text-muted-foreground">RBG construction (90C)</div>
           </div>
         </div>
       </section>
@@ -151,56 +154,55 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           <Cog size={20} /> DRBG Mechanisms (SP 800-90A)
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          SP 800-90A defines approved DRBG mechanisms using symmetric primitives. All are
-          quantum-safe — Grover's algorithm at most halves the effective key length, which is
-          addressed by using 256-bit keys to achieve PQC Security Categories 3 and 5.
+          SP 800-90A defines approved DRBG mechanisms built on symmetric primitives: hash functions,
+          HMAC and block ciphers. Engineering judgment, not a NIST statement: Shor's algorithm does
+          not apply to these primitives, so a DRBG's resistance to quantum attack depends on the
+          primitive and security strength chosen — Rev. 1 CTR_DRBG still allows three-key TDEA
+          alongside AES.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
-          {DRBG_MECHANISMS.filter((m) => m.name !== 'XOF_DRBG').map((mech) => (
+          {DRBG_MECHANISMS.map((mech) => (
             <div key={mech.name} className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-sm font-bold text-primary">{mech.name}</span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border">
-                  Rev. 1
+                  {mech.section}
                 </span>
               </div>
               <div className="text-xs text-muted-foreground mb-1">
                 <span className="font-medium text-foreground/70">Basis:</span> {mech.basis}
               </div>
               <p className="text-xs text-muted-foreground mb-2">{mech.description}</p>
-              <p className="text-xs text-success/80">
-                <span className="font-medium">Strengths:</span> {mech.strengths}
-              </p>
+              <p className="text-xs text-muted-foreground">{mech.strengths}</p>
             </div>
           ))}
         </div>
-        <div className="bg-primary/5 rounded-lg p-4 border border-primary/20 mb-3">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm font-bold text-primary">
-              {DRBG_MECHANISMS.find((m) => m.name === 'XOF_DRBG')?.name}
-            </span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-bold">
-              Proposed in the Rev. 2 pre-draft (Sep 2025 call for comments)
+        <div className="bg-muted/50 rounded-lg p-4 border border-border mb-3">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <span className="text-sm font-bold text-foreground">SP 800-90A Rev. 2</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
+              {SP800_90A_REV2_STATUS.stage} — not a draft, not a standard
             </span>
           </div>
-          <div className="text-xs text-muted-foreground mb-1">
-            <span className="font-medium text-foreground/70">Basis:</span>{' '}
-            {DRBG_MECHANISMS.find((m) => m.name === 'XOF_DRBG')?.basis}
-          </div>
-          <p className="text-xs text-muted-foreground mb-2">
-            {DRBG_MECHANISMS.find((m) => m.name === 'XOF_DRBG')?.description}
-          </p>
-          <p className="text-xs text-success/80">
-            <span className="font-medium">Strengths:</span>{' '}
-            {DRBG_MECHANISMS.find((m) => m.name === 'XOF_DRBG')?.strengths}
+          <p className="text-xs text-muted-foreground">
+            On {SP800_90A_REV2_STATUS.published} NIST published a pre-draft call for comments on SP
+            800-90A (comments closed {SP800_90A_REV2_STATUS.commentsClosed}).{' '}
+            {SP800_90A_REV2_STATUS.note}{' '}
+            <a
+              href={SP800_90A_REV2_STATUS.url}
+              className="text-primary underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              NIST CSRC page
+            </a>{' '}
+            (status checked {SP800_90A_REV2_STATUS.checkedOn}).
           </p>
         </div>
         <p className="text-xs text-muted-foreground">
-          <span className="font-medium text-foreground/70">Note:</span> SP 800-90A Rev. 1 (2015)
-          defined CTR, Hash, and HMAC DRBGs. The Rev. 2 pre-draft (Sep 2025 call for comments; not
-          yet published) proposes removing deprecated TDES and SHA-1 and adding{' '}
-          <strong>XOF_DRBG (SHAKE-based)</strong>, which synergizes perfectly with the SHAKE-heavy
-          PQC algorithms (ML-KEM, ML-DSA).
+          <span className="font-medium text-foreground/70">Note:</span> SP 800-90A Rev. 1 (June
+          2015) is the current final version. It specifies Hash_DRBG and HMAC_DRBG (§10.1) and
+          CTR_DRBG (§10.2).
         </p>
       </section>
 
@@ -225,9 +227,10 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
                   Repetition Count Test
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Detects stuck-at failures by flagging repeated outputs. If the same value appears
-                  more than a threshold number of consecutive times, the source is considered
-                  failed.
+                  Detects a noise source that gets stuck on one value (SP 800-90B §4.4.1). The test
+                  signals a failure if a sample is repeated C or more times in a row, where the
+                  cutoff C follows from the assessed min-entropy H and the false-positive
+                  probability &alpha;.
                 </p>
               </div>
               <div>
@@ -235,8 +238,10 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
                   Adaptive Proportion Test
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Detects bias by tracking the frequency of the most common value within a sliding
-                  window. Flags the source if any value appears disproportionately often.
+                  Detects a large loss of entropy (SP 800-90B §4.4.2). It takes one sample, counts
+                  how many times that same value occurs within the next W&minus;1 samples, and
+                  signals a failure if the count reaches the cutoff C; then it starts a new window
+                  with the next sample. W is 1,024 for a binary noise source and 512 otherwise.
                 </p>
               </div>
             </div>
@@ -285,46 +290,51 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           <ShieldCheck size={20} /> NIST ESV Program
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          The Entropy Source Validation (ESV) program, part of NIST&apos;s CMVP, provides formal
-          certification of entropy sources used in FIPS-validated cryptographic modules.
+          SP 800-90B sets the requirements an entropy source must meet. The certificate comes from
+          NIST&apos;s Cryptographic Module Validation Program (CMVP): a testing lab accredited for
+          entropy validation submits the source&apos;s SP 800-90B conformance justification, and
+          CMVP issues an Entropy Validation Certificate.
         </p>
 
         {/* ESV Flow */}
         <div className="flex flex-wrap items-center justify-center gap-2 text-xs mb-4">
           <div className="bg-muted/50 rounded-lg px-3 py-2 border border-border text-center">
-            <div className="font-bold text-foreground">Submit</div>
-            <div className="text-muted-foreground">Entropy Source</div>
+            <div className="font-bold text-foreground">Accredited Lab</div>
+            <div className="text-muted-foreground">Prepares evidence</div>
           </div>
           <ArrowRight size={14} className="text-muted-foreground shrink-0" />
           <div className="bg-muted/50 rounded-lg px-3 py-2 border border-border text-center">
             <div className="font-bold text-foreground">ESV Server</div>
-            <div className="text-muted-foreground">Assessment</div>
+            <div className="text-muted-foreground">Web API submission</div>
           </div>
           <ArrowRight size={14} className="text-muted-foreground shrink-0" />
           <div className="bg-muted/50 rounded-lg px-3 py-2 border border-border text-center">
             <div className="font-bold text-foreground">CMVP Review</div>
-            <div className="text-muted-foreground">~6 weeks</div>
+            <div className="text-muted-foreground">Is the justification sufficient?</div>
           </div>
           <ArrowRight size={14} className="text-muted-foreground shrink-0" />
           <div className="bg-primary/10 rounded-lg px-3 py-2 border border-primary/30 text-center">
-            <div className="font-bold text-primary">ESV Certificate</div>
-            <div className="text-muted-foreground">Validated</div>
+            <div className="font-bold text-primary">Entropy Validation</div>
+            <div className="text-muted-foreground">Certificate</div>
           </div>
         </div>
 
         <div className="bg-muted/50 rounded-lg p-3 border border-border">
           <ul className="text-xs text-muted-foreground space-y-1">
             <li>
-              Launched April 2022 as part of NIST&apos;s Cryptographic Module Validation Program
+              Separate from a FIPS 140-3 module certificate. Since 7 November 2020 CMVP has required
+              module submissions to include documentation justifying SP 800-90B conformance where
+              applicable.
             </li>
             <li>
-              Separate from FIPS 140-3 module validation — entropy sources are validated
-              independently
+              Each certificate records a reuse status — for example, &quot;Reuse restricted to
+              vendor&quot;.
             </li>
-            <li>Allows reuse of validated entropy sources across multiple module validations</li>
             <li>
-              Automated process via ESV Server web API for submitting samples and receiving results
+              RBG constructions are a separate step: CMVP also issues Random Bit Generator
+              Validation Certificates for SP 800-90C conformance (IG D.T).
             </li>
+            <li>NIST publishes no review duration. Do not plan around a fixed number of weeks.</li>
           </ul>
         </div>
       </section>
@@ -335,6 +345,13 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           <Cpu size={20} className="shrink-0" /> <InlineTooltip term="TRNG">TRNG</InlineTooltip> vs{' '}
           <Atom size={20} className="shrink-0" /> <InlineTooltip term="QRNG">QRNG</InlineTooltip>
         </h2>
+        <p className="text-foreground/80 leading-relaxed mb-4">
+          &quot;Quantum&quot; describes a noise source; it is not evidence. A QRNG is judged by the
+          same SP 800-90B requirements as any other entropy source, and SP 800-90B calls the noise
+          source &quot;the root of security for the entropy source and for the RBG as a whole&quot;.
+          What matters for either kind is the assessed min-entropy of its raw data and health tests
+          that catch it failing.
+        </p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -359,6 +376,11 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
             </tbody>
           </table>
         </div>
+        <p className="text-xs text-muted-foreground mt-3">
+          Certificate numbers from the CMVP entropy-validation search, checked 2026-09-24. A
+          certificate covers the implementation and versions it lists, not a vendor&apos;s whole
+          product line.
+        </p>
       </section>
 
       {/* Section 7: Combining Sources for PQC */}
@@ -367,68 +389,108 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           <Shield size={20} /> Combining Sources for PQC
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          <strong>
-            Current TRNG implementations are already quantum-safe because they rely on physical
-            noise processes, not computational assumptions that quantum computers could break.
-          </strong>
+          A hardware noise source does not rest on a computational hardness assumption, so a quantum
+          computer does not break it the way it breaks RSA or elliptic-curve keys. That does not
+          make it secure: it is only as good as the entropy it actually delivers, and that has to be
+          assessed and monitored.
         </p>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          Combining TRNG and QRNG sources provides additional assurance for post-quantum
-          cryptographic systems:
+          Combining sources can add assurance, but only under stated conditions:
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-border mb-4">
           <ul className="text-xs text-muted-foreground space-y-2">
             <li>
-              <span className="font-medium text-foreground/70">Defense-in-depth:</span> If one
-              source is compromised or experiences a failure, the other still provides entropy
+              <span className="font-medium text-foreground/70">Defense-in-depth:</span> A second
+              source helps only if it is independent of the first. If one fails or is compromised,
+              what is left is the entropy the other source actually delivers.
             </li>
             <li>
-              <span className="font-medium text-foreground/70">SP 800-90C framework:</span> Provides
-              the standard construction for combining multiple entropy sources into a single RBG
+              <span className="font-medium text-foreground/70">SP 800-90C:</span> Specifies the
+              RBG1, RBG2, RBG3 and RBGC constructions, which build RBGs from SP 800-90A DRBG
+              mechanisms and SP 800-90B entropy sources
             </li>
             <li>
-              <span className="font-medium text-foreground/70">XOR combination:</span> XORing two
-              independent sources preserves the entropy of the stronger source — an attacker must
-              break both
+              <span className="font-medium text-foreground/70">XOR combination:</span> XOR of two
+              independent inputs is at least as unpredictable as the stronger one. If the inputs are
+              correlated, or an attacker can influence one of them, that guarantee is gone.
             </li>
             <li>
               <span className="font-medium text-foreground/70">Conditioning:</span> HMAC or hash
-              conditioning distributes entropy uniformly across the output, removing any bias from
-              individual sources
+              conditioning can raise the entropy rate of its output, but it cannot add entropy. SP
+              800-90B assesses conditioned output from the entropy that went in.
             </li>
           </ul>
         </div>
 
-        <div className="bg-primary/5 rounded-lg p-4 border border-primary/20 mb-4">
+        <div
+          data-testid="pqc-random-inputs"
+          className="bg-primary/5 rounded-lg p-4 border border-primary/20 mb-4"
+        >
           <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
-            <Atom size={16} className="text-primary" /> FIPS 203 & 204 Seed Requirements
+            <Atom size={16} className="text-primary" /> Random inputs in FIPS 203, 204 and 205
           </h3>
-          <ul className="text-xs text-foreground/80 space-y-2">
-            <li>
-              <span className="font-medium text-foreground">ML-KEM (FIPS 203):</span> Explicitly
-              requires exactly
-              <strong> 32 bytes of full entropy</strong> directly from the RBG to generate the{' '}
-              <code className="text-primary font-mono">d</code> and{' '}
-              <code className="text-primary font-mono">z</code> seeds during encapsulation and key
-              generation.
-            </li>
-            <li>
-              <span className="font-medium text-foreground">ML-DSA (FIPS 204):</span> Requires
-              exactly
-              <strong> 32 bytes of full entropy</strong> to derive the{' '}
-              <code className="text-primary font-mono">ρ</code> (rho),{' '}
-              <code className="text-primary font-mono">ρ'</code> (rhoprime), and{' '}
-              <code className="text-primary font-mono">K</code> seeds.
-            </li>
-            <li>
-              <span className="font-medium text-foreground">Strength Match:</span> An RBG feeding
-              key generation has to supply at least the security strength you are targeting — do not
-              feed a 128-bit DRBG into an ML-KEM-1024 keypair generation, or the keypair inherits
-              the DRBG&apos;s strength, not the parameter set&apos;s. This is the general
-              seed-strength rule from the SP 800-90 series and SP 800-57; SP 800-131A Rev 3 is an
-              initial public draft and does not state it in terms of PQC security categories.
-            </li>
-          </ul>
+          <p className="text-xs text-foreground/80 mb-3">
+            Random-input length is not security strength. A 32-byte input does not by itself mean
+            256 bits of entropy or a 256-bit RBG requirement: each standard sets the minimum RBG
+            security strength per parameter set, and signing randomness has no mandatory strength at
+            all.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 pr-3 font-bold text-foreground/80">Operation</th>
+                  <th className="text-left py-2 pr-3 font-bold text-foreground/80">Random input</th>
+                  <th className="text-left py-2 pr-3 font-bold text-foreground/80">Length</th>
+                  <th className="text-left py-2 pr-3 font-bold text-foreground/80">RBG rule</th>
+                  <th className="text-left py-2 font-bold text-foreground/80">Source</th>
+                </tr>
+              </thead>
+              <tbody>
+                {PQC_RANDOM_INPUTS.map((row) => (
+                  <tr key={row.id} className="border-b border-border/50 align-top">
+                    <td className="py-2 pr-3 font-medium text-foreground">{row.operation}</td>
+                    <td className="py-2 pr-3">
+                      {row.inputs.map((input) => (
+                        <code key={input} className="block text-primary font-mono">
+                          {input}
+                        </code>
+                      ))}
+                    </td>
+                    <td className="py-2 pr-3 text-muted-foreground">{row.length}</td>
+                    <td className="py-2 pr-3 text-muted-foreground">
+                      {row.ruleSummary}
+                      <span className="block mt-1 text-muted-foreground/80">{row.notes}</span>
+                    </td>
+                    <td className="py-2 text-muted-foreground whitespace-nowrap">
+                      {[...new Set(row.sources.map((src) => src.section))].map((section) => (
+                        <span key={section} className="block">
+                          {section}
+                        </span>
+                      ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-3">
+            Errata state checked {PQC_ERRATA_STATE.checkedOn}:{' '}
+            {PQC_ERRATA_STATE.entries.map((entry, i) => (
+              <React.Fragment key={entry.standard}>
+                {i > 0 && ' '}
+                <a
+                  href={entry.url}
+                  className="text-primary underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {entry.standard}
+                </a>{' '}
+                — {entry.state}
+              </React.Fragment>
+            ))}
+          </p>
         </div>
 
         <Button

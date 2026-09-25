@@ -4,7 +4,12 @@ import { Atom, Cpu, Play, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 import { getRandomBytes } from '@/utils/webCrypto'
-import { runAllTests, type TestResult } from '../utils/entropyTests'
+import {
+  groupResults,
+  runAllTests,
+  TEST_GROUP_STATUS,
+  type TestResult,
+} from '../utils/entropyTests'
 import { formatHex, binnedFrequency } from '../utils/outputFormatters'
 import { BitMatrixGrid } from '../components/BitMatrixGrid'
 import { LagPlot } from '../components/LagPlot'
@@ -59,27 +64,80 @@ const FrequencyHistogram: React.FC<{ data: Uint8Array }> = ({ data }) => {
   )
 }
 
-/** Pass/Fail icon */
-const PassFailIcon: React.FC<{ passed: boolean }> = ({ passed }) =>
-  passed ? (
-    <CheckCircle size={16} className="text-status-success" />
-  ) : (
-    <XCircle size={16} className="text-status-error" />
+/** Result icon, with the group's own wording for screen readers and hover. */
+const PassFailIcon: React.FC<{ result: TestResult }> = ({ result }) => {
+  const label = result.passed
+    ? TEST_GROUP_STATUS[result.group].ok
+    : TEST_GROUP_STATUS[result.group].bad
+  return (
+    <span title={label} className="inline-flex">
+      {result.passed ? (
+        <CheckCircle size={16} className="text-status-success" />
+      ) : (
+        <XCircle size={16} className="text-status-error" />
+      )}
+      <span className="sr-only">{label}</span>
+    </span>
   )
+}
 
 /** Format a test value for display */
 function formatTestValue(result: TestResult): string {
   if (result.name === 'Frequency (Monobit)') {
     return `${(result.value * 100).toFixed(1)}%`
   }
-  if (result.name === 'Min-Entropy') {
-    return `${result.value.toFixed(2)} b/B`
-  }
   if (result.name === 'Repetition Count') {
     return String(result.value)
   }
   return result.value.toFixed(2)
 }
+
+/**
+ * Public CMVP Entropy Validation Certificates for products marketed as quantum
+ * entropy sources. The certificate's own "Noise Source Classification" is
+ * shown for each: E214 is certified as Non-Physical, i.e. a noise source that
+ * uses system data (SP 800-90B §2.2.1), so it is not a QRNG noise-source
+ * certificate.
+ * Every field is copied from the certificate page on csrc.nist.gov, checked
+ * 2026-09-24. Replaces an unsourced product-certification line: the CMVP
+ * search found no such certificate, and a web search for a BSI entry
+ * returned only vendor pages.
+ */
+const QRNG_ESV_CHECKED_ON = '2026-09-24'
+const ESV_CERT_BASE =
+  'https://csrc.nist.gov/projects/cryptographic-module-validation-program/entropy-validations/certificate/'
+const QRNG_ESV_CERTIFICATES = [
+  {
+    vendor: 'ID Quantique',
+    cert: 'E63',
+    certUrl: `${ESV_CERT_BASE}63`,
+    catalogLink: '/migrate?q=ID+Quantique+Quantis+QRNG',
+    implementation: 'IDQ Quantis IID QRNG',
+    scope: 'QRNG chips IDQ250C2, IDQ250C3, IDQ6MC1, IDQ20MC1, IDQ20MC1-S1, IDQ20MC1-S3',
+    classification: 'Physical',
+    validated: '2023-08-25',
+  },
+  {
+    vendor: 'QuintessenceLabs',
+    cert: 'E145',
+    certUrl: `${ESV_CERT_BASE}145`,
+    catalogLink: '/migrate?q=QuintessenceLabs+qStream',
+    implementation: 'qStream 100',
+    scope: 'version 1.5, quantum tunnelling diode noise source',
+    classification: 'Physical',
+    validated: '2024-06-21',
+  },
+  {
+    vendor: 'Quantinuum',
+    cert: 'E214',
+    certUrl: `${ESV_CERT_BASE}214`,
+    catalogLink: '/migrate?q=Quantinuum+Quantum+Origin',
+    implementation: 'Entropy Source for Quantum Origin',
+    scope: 'version 3.4.1',
+    classification: 'Non-Physical',
+    validated: '2024-11-22',
+  },
+] as const
 
 const generateSimulatedQrng = (bytes: number): Uint8Array => {
   const buf = new Uint8Array(bytes)
@@ -96,7 +154,7 @@ const generateSimulatedQrng = (bytes: number): Uint8Array => {
  *   - the monobit frequency test fails (every byte loses 4 of its 8 bits
  *     → ones-ratio collapses from ~0.5 to ~0.25)
  *   - chi-squared blows up (only 16 of 256 buckets ever populated)
- *   - SP 800-90B min-entropy collapses (∼4 bits/byte instead of ≥6)
+ *   - its min-entropy is at most 4 bits/byte (only 16 values ever occur)
  *   - the histogram is visibly broken (1/16 of the x-axis populated)
  *
  * This is NOT a real-world weak RNG; it is an explicitly-broken source
@@ -156,52 +214,74 @@ export const QRNGDemo: React.FC = () => {
           <Atom size={14} className="text-status-info" />
         </span>
         <p className="text-xs text-foreground leading-relaxed">
-          <span className="font-semibold text-status-info">Simulated reference:</span> The
-          &ldquo;QRNG&rdquo; sample shown below is generated fresh on load (and on Try Another
-          Sample) via the browser&rsquo;s{' '}
+          <span className="font-semibold text-status-info">
+            Simulation — no QRNG hardware involved.
+          </span>{' '}
+          The &ldquo;QRNG&rdquo; sample below is generated on load (and on Try Another Sample) by
+          the browser&rsquo;s{' '}
           <code className="font-mono text-primary">crypto.getRandomValues()</code> — the same
-          classical CSPRNG call used by the &ldquo;CSPRNG&rdquo; panel below. In a production system
-          this data would instead come from a hardware quantum source (photon detection or vacuum
-          fluctuations). Statistical quality is equivalent; the <em>physical entropy source</em>{' '}
-          differs — this demo does not have access to real quantum hardware.
+          classical CSPRNG call the &ldquo;CSPRNG&rdquo; panel uses. It stands in for QRNG output so
+          you can see the data flow and the tests; nothing here comes from a quantum device.
         </p>
       </div>
 
       {/* Explanation Header */}
       <div className="glass-panel p-4">
         <p className="text-sm text-foreground leading-relaxed">
-          This step compares three sources side by side: a pre-generated reference sample
-          (representing QRNG-quality output), locally generated random data from your browser&apos;s
-          CSPRNG (Web Crypto API), and a deliberately-broken weak PRNG. The QRNG and CSPRNG should
-          pass every test &mdash; they are statistically indistinguishable at this sample size. The
-          weak PRNG should visibly fail several tests, illustrating what the tests are actually
-          designed to catch.
+          This tool compares three samples side by side: a simulated &ldquo;QRNG&rdquo; sample, a
+          fresh sample from your browser&apos;s CSPRNG (Web Crypto API), and a deliberately broken
+          weak PRNG. The first two are the same kind of output, so any difference in their results
+          is sampling noise. The weak PRNG should visibly fail several tests, which shows what the
+          tests can catch.
         </p>
       </div>
 
-      <WhyThisMatters title="Statistical Equivalence vs. Quantum Origin" variant="info">
+      {/* What this demo proves / does not prove */}
+      <div
+        data-testid="qrng-proves-panel"
+        className="glass-panel p-4 grid grid-cols-1 md:grid-cols-2 gap-4"
+      >
+        <div>
+          <p className="text-xs font-semibold text-foreground mb-1">What this demo shows</p>
+          <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-4">
+            <li>
+              Simple statistical tests catch grossly broken output, like the weak PRNG&apos;s.
+            </li>
+            <li>Good output from different generators looks the same to these tests.</li>
+          </ul>
+        </div>
+        <div>
+          <p className="text-xs font-semibold text-foreground mb-1">What it does not show</p>
+          <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-4">
+            <li>Anything about a real QRNG — no quantum device is involved.</li>
+            <li>
+              How much entropy any source has. SP 800-90B estimates entropy from at least 1,000,000
+              raw noise-source samples, not from 64 or 128 bytes of final output.
+            </li>
+            <li>That any source is validated or certified.</li>
+          </ul>
+        </div>
+      </div>
+
+      <WhyThisMatters title="Statistical Tests vs. the Noise Source" variant="info">
         <p>
-          A classical CSPRNG (ChaCha20-DRBG, AES-CTR-DRBG, or the OS entropy pool) and a true
-          quantum random number generator <strong>produce indistinguishable output</strong> under
-          every standard statistical test — monobit, frequency, min-entropy, autocorrelation. The
-          bit patterns you see in the hex and histogram displays above will be equally uniform for
-          both sources. This is by design: statistical quality is the floor, not the differentiator.
+          A working CSPRNG and a working QRNG both produce output that passes standard statistical
+          tests, so tests on output <strong>cannot tell them apart</strong>. Passing is the floor,
+          not the differentiator.
         </p>
         <p>
-          The practical difference is the <strong>physical entropy source</strong>. CSPRNG output
-          depends on OS entropy events (hardware interrupts, disk I/O timing) which, on a
-          deterministic machine, are bounded in unpredictability. A photon-detection or vacuum-state
-          QRNG draws on quantum-mechanical randomness that is fundamentally unpredictable by any
-          physical process — no adversary with unlimited classical compute can predict it.
+          The difference is the <strong>noise source</strong>, which SP 800-90B calls &ldquo;the
+          root of security for the entropy source and for the RBG as a whole&rdquo;. A QRNG&apos;s
+          noise source is a quantum process. Whether a particular device actually delivers its
+          claimed entropy is established the same way as for any other source: an SP 800-90B
+          assessment of its raw data, plus health tests that detect failures in operation. The word
+          &ldquo;quantum&rdquo; is not evidence.
         </p>
         <p>
-          For most cryptographic uses (session key generation, nonces, IVs) a well-seeded CSPRNG is
-          fully sufficient — NIST FIPS 140-3 approved DRBGs are the standard. QRNG matters in two
-          specific scenarios: (1) long-lived key material in high-assurance HSMs where
-          <strong>seed unpredictability</strong> must be provable to evaluators, and (2)
-          quantum-resistant long-term keys where you want the key bits themselves to have quantum
-          entropy. NIST SP 800-90B certifies entropy source quality for both cases — statistical
-          tests alone are not sufficient certification evidence.
+          SP 800-90B specifies the requirements and validation tests for entropy sources; it does
+          not certify anything. CMVP issues Entropy Validation Certificates after an accredited
+          testing lab submits the source&apos;s SP 800-90B conformance justification. Statistical
+          tests on output are not that evidence.
         </p>
       </WhyThisMatters>
 
@@ -237,10 +317,10 @@ export const QRNGDemo: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 pr-20">
             <Atom size={18} className="text-primary" />
-            <h2 className="text-sm font-semibold text-foreground">QRNG Reference</h2>
+            <h2 className="text-sm font-semibold text-foreground">Simulated QRNG</h2>
           </div>
           <span className="inline-flex items-center text-xs text-muted-foreground bg-muted/40 rounded-full px-2 py-0.5">
-            Reference random sample
+            crypto.getRandomValues() stand-in
           </span>
           <pre className="font-mono text-xs text-foreground bg-muted/30 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
             {formatHex(qrngSample)}
@@ -300,7 +380,7 @@ export const QRNGDemo: React.FC = () => {
       {trngData && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="min-w-0 glass-panel p-4">
-            <p className="text-xs font-medium text-foreground mb-2">QRNG Bit Structure</p>
+            <p className="text-xs font-medium text-foreground mb-2">Simulated QRNG Bit Structure</p>
             <BitMatrixGrid data={qrngSample} compact />
           </div>
           <div className="min-w-0 glass-panel p-4">
@@ -318,7 +398,9 @@ export const QRNGDemo: React.FC = () => {
       {trngData && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="min-w-0 glass-panel p-4">
-            <p className="text-xs font-medium text-foreground mb-2">QRNG Autocorrelation</p>
+            <p className="text-xs font-medium text-foreground mb-2">
+              Simulated QRNG Autocorrelation
+            </p>
             <LagPlot data={qrngSample} size={180} />
           </div>
           <div className="min-w-0 glass-panel p-4">
@@ -336,7 +418,7 @@ export const QRNGDemo: React.FC = () => {
       <div className="flex justify-center">
         <Button variant="gradient" onClick={handleCompare} disabled={!trngData}>
           <Play size={16} className="mr-2" />
-          Run Entropy Tests on Both Samples
+          Run the Checks on All Three Samples
         </Button>
       </div>
 
@@ -344,15 +426,22 @@ export const QRNGDemo: React.FC = () => {
       {hasComparison && (
         <div className="glass-panel p-4 space-y-3">
           <h2 className="text-sm font-semibold text-foreground">Comparison Results</h2>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Read each group on its own. Visual checks describe these bytes and give no security
+            verdict. The health tests are defined on raw noise-source samples before conditioning
+            (SP 800-90B §4.3 item 6); on these generator outputs they are a demonstration only.
+          </p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-2 pr-4 text-muted-foreground font-medium">Test</th>
+                  <th className="text-left py-2 pr-4 text-muted-foreground font-medium">Check</th>
                   <th className="text-right py-2 px-3 text-muted-foreground font-medium">
-                    QRNG Value
+                    Sim. QRNG Value
                   </th>
-                  <th className="text-center py-2 px-2 text-muted-foreground font-medium">QRNG</th>
+                  <th className="text-center py-2 px-2 text-muted-foreground font-medium">
+                    Sim. QRNG
+                  </th>
                   <th className="text-right py-2 px-3 text-muted-foreground font-medium">
                     CSPRNG Value
                   </th>
@@ -363,51 +452,60 @@ export const QRNGDemo: React.FC = () => {
                   <th className="text-center py-2 pl-2 text-status-error font-medium">Weak</th>
                 </tr>
               </thead>
-              <tbody>
-                {qrngResults.map((qr, i) => {
-                  const tr = trngResults[i]
-                  const wk = weakResults[i]
-                  return (
-                    <tr key={qr.name} className="border-b border-border/50">
-                      <td className="py-2 pr-4">
-                        <div className="font-medium text-foreground">{qr.name}</div>
-                        <div className="text-xs text-muted-foreground">{qr.description}</div>
-                        {/* Surfaces caveats like "small sample — estimate unreliable below
-                            1,000 bytes" next to the pass/fail verdict, same as EntropyTestingDemo —
-                            without this a Min-Entropy fail at the default 64/128-byte sizes reads
-                            as "this data has detectable patterns" with no explanation. */}
-                        <div className="text-[10px] text-muted-foreground/80 font-mono">
-                          {qr.detail}
-                        </div>
-                      </td>
-                      <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
-                        {formatTestValue(qr)}
-                      </td>
-                      <td className="text-center py-2 px-2">
-                        <div className="flex justify-center">
-                          <PassFailIcon passed={qr.passed} />
-                        </div>
-                      </td>
-                      <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
-                        {formatTestValue(tr)}
-                      </td>
-                      <td className="text-center py-2 px-2">
-                        <div className="flex justify-center">
-                          <PassFailIcon passed={tr.passed} />
-                        </div>
-                      </td>
-                      <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
-                        {formatTestValue(wk)}
-                      </td>
-                      <td className="text-center py-2 pl-2">
-                        <div className="flex justify-center">
-                          <PassFailIcon passed={wk.passed} />
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
+              {/* One block of rows per group — never totalled across groups (P0.4) */}
+              {groupResults(qrngResults).map((g) => (
+                <tbody key={g.group}>
+                  <tr className="border-b border-border bg-muted/30">
+                    <th
+                      colSpan={7}
+                      scope="colgroup"
+                      className="text-left py-2 px-2 text-xs font-bold text-muted-foreground uppercase tracking-wider"
+                    >
+                      {g.label}
+                    </th>
+                  </tr>
+                  {g.results.map((qr) => {
+                    const tr = trngResults.find((r) => r.name === qr.name)
+                    const wk = weakResults.find((r) => r.name === qr.name)
+                    if (!tr || !wk) return null
+                    return (
+                      <tr key={qr.name} className="border-b border-border/50">
+                        <td className="py-2 pr-4">
+                          <div className="font-medium text-foreground">{qr.name}</div>
+                          <div className="text-xs text-muted-foreground">{qr.description}</div>
+                          <div className="text-[10px] text-muted-foreground/80 font-mono">
+                            {qr.detail}
+                          </div>
+                        </td>
+                        <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
+                          {formatTestValue(qr)}
+                        </td>
+                        <td className="text-center py-2 px-2">
+                          <div className="flex justify-center">
+                            <PassFailIcon result={qr} />
+                          </div>
+                        </td>
+                        <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
+                          {formatTestValue(tr)}
+                        </td>
+                        <td className="text-center py-2 px-2">
+                          <div className="flex justify-center">
+                            <PassFailIcon result={tr} />
+                          </div>
+                        </td>
+                        <td className="text-right py-2 px-3 font-mono text-xs text-foreground">
+                          {formatTestValue(wk)}
+                        </td>
+                        <td className="text-center py-2 pl-2">
+                          <div className="flex justify-center">
+                            <PassFailIcon result={wk} />
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              ))}
             </table>
           </div>
         </div>
@@ -417,25 +515,24 @@ export const QRNGDemo: React.FC = () => {
         <div className="mt-4 rounded-lg border border-border bg-muted/40 p-4">
           <p className="text-sm font-semibold text-foreground">What the three sources tell you</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            <strong className="text-status-error">Weak PRNG</strong> visibly fails the histogram,
-            chi-squared, and min-entropy tests because it only ever emits values 0&ndash;15 (the
-            high nibble is forced to zero). This is what bad entropy actually looks like &mdash; and
-            it&apos;s exactly what the statistical tests are designed to catch.
+            <strong className="text-status-error">Weak PRNG</strong> only ever emits values
+            0&ndash;15 (the high nibble is forced to zero), so its histogram is lopsided and the
+            visual checks land outside range. The health tests, whose cutoffs assume H = 8
+            bits/sample, may signal a failure too. Gross structure like this is what output checks
+            can catch.
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            <strong>QRNG-simulated</strong> and <strong>CSPRNG</strong> both pass every test because
-            at this sample size they are statistically indistinguishable. The simulated QRNG sample
-            is itself CSPRNG output &mdash; in a production system it would come from a hardware
-            quantum source (photon detection, vacuum fluctuations). The byte distributions look
-            identical because they are.
+            <strong>Simulated QRNG</strong> and <strong>CSPRNG</strong> usually get the same results
+            because they are the same kind of output &mdash; the simulated QRNG sample is CSPRNG
+            output. At 64 or 128 bytes a single check can land outside range for either by chance;
+            that is a small-sample effect, not a finding about the source.
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Statistical tests measure <em>output quality</em>, not <em>source security</em>. A
-            CSPRNG seeded with a compromised value (weak entropy, side-channel, backdoored RNG) can
-            produce output that passes every test while being completely predictable to an attacker.
-            QRNG matters when you need provable seed unpredictability for long-lived cryptographic
-            material &mdash; not for everyday session keys, where a well-seeded CSPRNG (NIST FIPS
-            140-3 DRBG) is the standard.
+            Statistical tests measure <em>output patterns</em>, not <em>source security</em>. A
+            CSPRNG seeded with a compromised value can produce output that passes every test while
+            being predictable to whoever knows the seed. Choosing a QRNG is a decision about the
+            noise source; it still needs SP 800-90B validation and an SP 800-90C construction like
+            any other source.
           </p>
         </div>
       )}
@@ -461,46 +558,43 @@ export const QRNGDemo: React.FC = () => {
       {/* Educational Callout */}
       {hasComparison && (
         <div className="glass-panel p-4 space-y-3 border-l-4 border-l-primary bg-primary/5">
-          {/* Production QRNG Products */}
+          {/* Products marketed as quantum entropy sources, with public CMVP entropy certificates */}
           <div className="pt-1 border-t border-border/50">
             <p className="text-xs font-medium text-foreground mb-2">
-              Production QRNG Hardware &amp; Services
+              CMVP Entropy Validation Certificates for products marketed as quantum entropy sources
             </p>
             <ul className="space-y-1">
-              <li className="text-xs text-muted-foreground">
-                <a
-                  href="/migrate?q=ID+Quantique+Quantis+QRNG"
-                  className="text-primary underline font-medium"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  ID Quantique Quantis QRNG
-                </a>{' '}
-                — Quantis 2.0 (PCIe/USB) · FIPS 140-2 / AIS 31 certified
-              </li>
-              <li className="text-xs text-muted-foreground">
-                <a
-                  href="/migrate?q=Quantinuum+Quantum+Origin"
-                  className="text-primary underline font-medium"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Quantinuum Quantum Origin
-                </a>{' '}
-                — Cloud API · First software QRNG with NIST SP 800-90B validation
-              </li>
-              <li className="text-xs text-muted-foreground">
-                <a
-                  href="/migrate?q=QuintessenceLabs+qStream"
-                  className="text-primary underline font-medium"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  QuintessenceLabs qStream
-                </a>{' '}
-                — qStream 200 (PCIe/Network) · NIST SP 800-90B compliant
-              </li>
+              {QRNG_ESV_CERTIFICATES.map((cert) => (
+                <li key={cert.cert} className="text-xs text-muted-foreground">
+                  <a
+                    href={cert.catalogLink}
+                    className="text-primary underline font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {cert.vendor}
+                  </a>{' '}
+                  —{' '}
+                  <a
+                    href={cert.certUrl}
+                    className="text-primary underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Entropy Certificate #{cert.cert}
+                  </a>
+                  : &ldquo;{cert.implementation}&rdquo; ({cert.scope}), noise source classified{' '}
+                  {cert.classification}, validated {cert.validated}
+                </li>
+              ))}
             </ul>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              Checked on the CMVP entropy-validation search on {QRNG_ESV_CHECKED_ON}. A certificate
+              covers the implementation and versions it lists, not a vendor&apos;s whole product
+              line. The classification is the certificate&apos;s own: a Non-Physical noise source
+              uses system data (SP 800-90B §2.2.1), so #E214 does not certify a quantum noise
+              source.
+            </p>
           </div>
 
           {/* Related Standards */}
@@ -545,7 +639,7 @@ export const QRNGDemo: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                BSI AIS 20/31 — TRNG/QRNG Certification
+                BSI AIS 20/31 — Functionality Classes for RNGs
               </a>
             </div>
           </div>

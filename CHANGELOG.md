@@ -29,6 +29,32 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.117.0] - 2026-09-25
+
+Every threat on the Threats page now says only what its cited document says — 71 threats are published, each with its main claims checked against the source, and 49 more are held back until a document that backs them is found.
+
+### Changed
+
+- **The Threats page shows fewer threats, and every one it shows is backed by its source.** [view:/threats] [persona:grc] [persona:executive] [persona:researcher] Each threat's quantum risk, the cryptography it puts at risk and the recommended replacement were checked against the document it cites. Where the document said less, the entry was trimmed to what it does say; where the document did not state the threat at all, we first searched for a better source and, failing that, held the entry back as a draft. The page goes from 122 threats to 71; the 49 held-back entries return as soon as a document that states them is on file. Two duplicate entries were retired.
+- **The Evidence panel explains where each claim comes from.** [view:/threats] [persona:grc] [persona:researcher] It shows the source's history, whether it was peer reviewed and which body vetted it, any second source that confirms it, and when a claim was confirmed by an AI second reader rather than a person. Where a cited source doesn't itself state the entry's quantum points, a short note says so.
+- **One quantum-computer arrival window everywhere.** [view:/threats] [persona:executive] [persona:grc] The page uses a single expert-forecast window instead of several hand-typed ranges.
+- **Threat classes and industry labels are reviewed, not inferred.** [view:/threats] [persona:grc] Each threat's class comes from a reviewed column, and industry labels are tidied — old links using the previous labels keep working. A sector whose threats are all awaiting a source stays listed but is no longer a dead link.
+- **Criticality left blank reads "Unrated".** [view:/threats] [persona:grc] Missing details say "Not yet specified", retired source links are explained, and internal maintenance notes are hidden.
+
+### Fixed
+
+- **Threat links work.** [view:/threats] [persona:curious] [persona:grc] Links to a single threat open it directly — including on phones — and links to the horizon view work.
+- **The Shor risk tier is graded from the cryptography actually at risk.** [view:/threats] [persona:researcher] A threat is never shown as "PQC-safe" just because a field was empty.
+- **Detection & Response tabs show the real SOC use cases and playbooks.** [view:/threats] [persona:ops]
+- **The Threats page fits a laptop screen, and short searches match at the start of words.** [view:/threats] [persona:curious] The desktop table and cards fit a 1440px-wide window, and the dialog and copy got small fixes.
+- **Phones: the first-run notice sits below the role picker, with larger tap targets.** [persona:curious]
+- **Pages that don't need the in-browser crypto engines no longer reload on first visit.** [persona:curious]
+
+### Data
+
+- **Threat sources point at the documents themselves.** [view:/threats] [persona:researcher] [persona:grc] Source links were corrected to the exact documents on file, titles were fixed, 21 changed documents were re-captured, and several threats gained a confirming second source from a trusted body.
+- **The site search and assistant only know published threats.** [view:/threats] [persona:curious] The search index was rebuilt, so held-back threats no longer turn up in answers.
+
 ## [4.116.0] - 2026-09-23
 
 The in-browser crypto engines carry the latest upstream security fixes, the About page's software list is accurate again, and a compliance chart stops risking a misleading tooltip.

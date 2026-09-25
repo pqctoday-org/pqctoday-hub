@@ -3,7 +3,12 @@ import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { Activity, Play, Pause, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getRandomBytes } from '@/utils/webCrypto'
-import { runAllTests, type TestResult } from '../utils/entropyTests'
+import {
+  groupResults,
+  runAllTests,
+  TEST_GROUP_STATUS,
+  type TestResult,
+} from '../utils/entropyTests'
 import { mathRandomBytes, type LCGResult, lcgBytes } from '../utils/outputFormatters'
 import {
   BAD_SAMPLE_ZEROS,
@@ -41,7 +46,7 @@ const HIGHER_IS_BETTER: Record<string, boolean> = {
   'Runs Test': false, // value = z-score, lower is better
   'Chi-Squared': false, // value = chi-sq stat, lower is better
   'Repetition Count': false, // value = max run length, lower is better
-  'Min-Entropy': true, // value = bits/byte, higher is better
+  'Adaptive Proportion': false, // value = worst-window recurrence count, lower is better
 }
 
 interface HistoryEntry {
@@ -167,8 +172,9 @@ export const StreamingEntropyMonitor: React.FC = () => {
     return map
   }, [history])
 
-  const passCount = currentResults?.filter((r) => r.passed).length ?? 0
-  const totalTests = currentResults?.length ?? 5
+  // Groups are shown and summarised separately (Entropy remediation P0.4):
+  // there is no combined "N/M passing" across visual checks and health tests.
+  const groups = currentResults ? groupResults(currentResults) : []
 
   return (
     <div className="space-y-5">
@@ -178,7 +184,8 @@ export const StreamingEntropyMonitor: React.FC = () => {
         <div>
           <h3 className="text-base font-semibold text-foreground">Streaming Entropy Monitor</h3>
           <p className="text-xs text-muted-foreground">
-            Watch entropy quality in real-time. Switch sources mid-stream to see tests respond.
+            Watch the checks react in real time. Switch sources mid-stream and see which group
+            responds — none of them measures entropy.
           </p>
         </div>
       </div>
@@ -225,50 +232,49 @@ export const StreamingEntropyMonitor: React.FC = () => {
         )}
       </div>
 
-      {/* Status bar */}
-      {currentResults && (
-        <div className="flex items-center gap-3">
-          <div
-            className={`h-2 w-2 rounded-full ${running ? 'animate-pulse' : ''} ${
-              passCount === totalTests
-                ? 'bg-success'
-                : passCount === 0
-                  ? 'bg-destructive'
-                  : 'bg-warning'
-            }`}
-          />
-          <span
-            className={`text-xs font-bold ${
-              passCount === totalTests
-                ? 'text-success'
-                : passCount === 0
-                  ? 'text-destructive'
-                  : 'text-warning'
-            }`}
-          >
-            {passCount}/{totalTests} Tests Passing
-          </span>
-        </div>
-      )}
-
-      {/* Gauges */}
+      {/* One block per group, each with its own status — never totalled across groups */}
       {currentResults ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          {currentResults.map((result) => (
-            <EntropyGauge
-              key={result.name}
-              label={result.name}
-              value={result.value}
-              threshold={result.threshold}
-              passed={result.passed}
-              higherIsBetter={HIGHER_IS_BETTER[result.name] ?? false}
-              history={testHistories[result.name] ?? []}
-            />
-          ))}
-        </div>
+        groups.map((g) => {
+          const failed = g.results.filter((r) => !r.passed).length
+          const status =
+            g.group === 'health'
+              ? failed > 0
+                ? TEST_GROUP_STATUS.health.bad
+                : TEST_GROUP_STATUS.health.ok
+              : failed > 0
+                ? `${failed} of ${g.results.length} outside range`
+                : `All ${g.results.length} within range`
+          return (
+            <div key={g.group} className="space-y-2">
+              <div className="flex items-center gap-3 flex-wrap">
+                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  {g.label}
+                </h4>
+                <span
+                  className={`text-xs font-bold ${failed > 0 ? 'text-warning' : 'text-success'}`}
+                >
+                  {status}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {g.results.map((result) => (
+                  <EntropyGauge
+                    key={result.name}
+                    label={result.name}
+                    value={result.value}
+                    threshold={result.threshold}
+                    passed={result.passed}
+                    higherIsBetter={HIGHER_IS_BETTER[result.name] ?? false}
+                    history={testHistories[result.name] ?? []}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        })
       ) : (
         <div className="glass-panel p-8 text-center text-sm text-muted-foreground">
-          Click Start to begin streaming entropy data
+          Click Start to begin streaming samples
         </div>
       )}
 
@@ -283,9 +289,12 @@ export const StreamingEntropyMonitor: React.FC = () => {
       <div className="text-xs text-muted-foreground leading-relaxed border-t border-border pt-3 space-y-1">
         <p>
           <strong className="text-foreground">Try this:</strong> Start with Web Crypto, then switch
-          to &quot;All Zeros&quot; or &quot;Repeating 0xDEADBEEF&quot; mid-stream. Watch how quickly
-          the gauges react — some tests (min-entropy, repetition count) detect bad data immediately,
-          while others (chi-squared) may take a sample or two.
+          to &quot;All Zeros&quot; or &quot;Repeating 0xDEADBEEF&quot; mid-stream. All Zeros trips
+          the Repetition Count health test in the first batch; the repeating pattern never repeats a
+          byte back-to-back, so the Adaptive Proportion test fires instead. Each batch is 64 bytes,
+          so Adaptive Proportion runs on a partial window (SP 800-90B §4.4.2 specifies 512 samples
+          for 8-bit data), and on browser output the health tests are a demonstration only — they
+          are defined on raw noise-source samples (§4.3 item 6).
         </p>
       </div>
     </div>

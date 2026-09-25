@@ -46,19 +46,19 @@ export const CONDITIONING_MODES: FilterDropdownItem[] = [
 
 export const COMBINATION_DESCRIPTIONS: Record<CombinationMode, string> = {
   concat:
-    'Concatenation (SP 800-90C §3.1) is the NIST-prescribed method for assembling entropy from multiple sources. All source bits are preserved without transformation; the entropy in the bitstring is the sum of entropy from each source. Conditioning is then required to produce full-entropy output.',
-  xor: 'Educational: XOR ensures the combined output has at least as much entropy as the stronger source. Note: in SP 800-90C, XOR is used in RBG3(XOR) to combine entropy source output with DRBG output (§6.4), not to combine two entropy sources directly.',
+    'Concatenation is how SP 800-90C §3.1 (Get_entropy_bitstring, item 3) assembles entropy-source output: every source bit is kept. The entropy of the bitstring is the sum credited from each independent source (§2.6 item 8); with Method 1 only validated physical sources count (§2.3). Conditioning is optional, and yields full entropy only when its input carries output_len + 64 bits of entropy (§3.2.2.2).',
+  xor: 'Educational: XOR keeps the entropy of the stronger input only when the inputs are independent. An adversary who controls one input and can see the other can cancel it — choosing A = B makes A ⊕ B all zeros. In SP 800-90C, XOR appears in RBG3(XOR), where entropy-source output is XORed with DRBG output (§6.4), not as a way to combine two entropy sources.',
   hash: 'Educational: Hash(A||B) applies SHA-256 to the concatenated sources via the HSM. Note: Hash is a vetted conditioning function (SP 800-90C §3.2.1.2), not a source assembly method — using it here applies conditioning twice when a separate conditioning step follows.',
   hmac: 'Educational: HMAC uses one source as the key and the other as the message. Note: HMAC is a vetted conditioning function (SP 800-90C §3.2.1.2), not a source assembly method — using it here applies conditioning twice when a separate conditioning step follows.',
 }
 
 export const CONDITIONING_DESCRIPTIONS: Record<ConditioningMode, string> = {
   'hash-df':
-    'Hash_df (SP 800-90A §10.3.1 / SP 800-90C §3.2.1.2) is the standard derivation function used internally by Hash_DRBG and CTR_DRBG. It prepends a counter and requested bit length to the input before hashing, producing a fixed-length conditioned output.',
+    'Hash_df (SP 800-90A Rev. 1 §10.3.1) is the derivation function Hash_DRBG uses (CTR_DRBG uses Block_Cipher_df instead), and SP 800-90B §3.1.5.1.1 lists it as a vetted conditioning component. It hashes a counter, the requested bit length and the input, producing a fixed-length output.',
   hash: 'Hash conditioning (SP 800-90C §3.2.1.2 item 1) applies SHA-256 directly to the entropy bitstring. The simplest vetted conditioning function — output length equals the hash digest length (256 bits).',
   hmac: 'HMAC conditioning (SP 800-90C §3.2.1.2 item 2) uses HMAC-SHA-256 with a fixed key (per §3.2.1.1, conditioning keys do not require secrecy and may be fixed or all zeros). Output length equals the hash output length (256 bits).',
   'aes-cmac':
-    'AES-CMAC conditioning (SP 800-90C §3.2.1.3 item 1 / SP 800-38B) uses the block cipher MAC via the HSM with a fixed key (per §3.2.1.1). This is the block-cipher-based approach analogous to Block_Cipher_df from SP 800-90A §10.3.2.',
+    'SP 800-90C §3.2.1.3 item 1 specifies CMAC conditioning as conditioned_output_block = CMAC(Key, entropy_bitstring), a 128-bit output for AES, with a key that may be fixed (§3.2.1.1). To show 32 bytes, this demo concatenates two CMAC outputs over domain-separated inputs (0x01 || x and 0x02 || x) — a demo construction, not the single-block call SP 800-90C specifies.',
 }
 
 /** Short labels for pipeline visualization */

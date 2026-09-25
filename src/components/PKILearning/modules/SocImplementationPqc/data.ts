@@ -1,5 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { RoleGuideData } from '../../common/roleGuide/types'
+import { getSocUseCase, type SocUseCaseId } from '@/data/socQuantumPlaybook'
+
+/** "Use Case N — <title>", from the shared SOC use-case list (also read by the
+ *  Threats page), so the two surfaces can never name a use case differently. */
+const socUseCaseTitle = (id: SocUseCaseId): string => {
+  const uc = getSocUseCase(id)
+  return `Use Case ${uc.number} — ${uc.title}`
+}
 
 export const SOC_GUIDE_DATA: RoleGuideData = {
   roleId: 'soc',
@@ -13,7 +21,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
   threatImpacts: [
     {
       id: 'hybrid-downgrade',
-      title: 'Use Case 1 — Hybrid Downgrade Detection',
+      title: socUseCaseTitle('hybrid-downgrade'),
       description:
         'Adversaries can force a hybrid PQC connection to fall back to classical-only cryptography, analogous to the TLS downgrade attacks SOCs have monitored for years.',
       severity: 'critical',
@@ -23,7 +31,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
     },
     {
       id: 'crypto-drift',
-      title: 'Use Case 2 — Cryptographic Drift Monitoring',
+      title: socUseCaseTitle('crypto-drift'),
       description:
         'Migration is not a one-time event. Migrated systems drift back to classical crypto via new microservices, restored backups, vendor updates, and shadow IT.',
       severity: 'high',
@@ -33,7 +41,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
     },
     {
       id: 'cert-lifecycle-anomalies',
-      title: 'Use Case 3 — Certificate Lifecycle Anomalies',
+      title: socUseCaseTitle('cert-lifecycle-anomalies'),
       description:
         'Wholesale transition of certificate infrastructure to ML-DSA / SLH-DSA, new intermediate CAs, and reconfigured chains creates a window of elevated risk.',
       severity: 'high',
@@ -43,7 +51,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
     },
     {
       id: 'tnfl-signature-integrity',
-      title: 'Use Case 4 — TNFL & Signature Integrity Monitoring',
+      title: socUseCaseTitle('tnfl-signature-integrity'),
       description:
         'Trust Now, Forge Later: once an adversary has signature-forgery capability, they can forge software updates, fabricate financial instructions, and impersonate trusted parties in real time.',
       severity: 'critical',
@@ -53,7 +61,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
     },
     {
       id: 'hndl-indicator',
-      title: 'Use Case 5 — Enhanced HNDL-Indicator Detection',
+      title: socUseCaseTitle('hndl-indicator'),
       description:
         'The Harvest Now, Decrypt Later threat is active today. The SOC detects harvesting indicators weighted by the sensitivity and longevity of the targeted data.',
       severity: 'high',

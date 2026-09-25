@@ -3,7 +3,7 @@ import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
-import { getCrqcConsensus } from '../data/quantumConstants'
+import { getCrqcForecast } from '../data/quantumConstants'
 
 export interface WorkshopConfig {
   step: number
@@ -31,7 +31,9 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
   onSetWorkshopConfig,
 }) => {
   const navigate = useNavigate()
-  const crqc = getCrqcConsensus()
+  // The one CRQC expert forecast (ruling R5). `planningYear` — the window's
+  // midpoint, rounded down — is the single Z these worked examples need.
+  const crqc = getCrqcForecast()
 
   const scenarios: Scenario[] = [
     {
@@ -70,10 +72,10 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
     {
       id: 'hndl-healthcare',
       title: '4. HNDL Risk: Healthcare Records',
-      description: `Calculate the HNDL migration deadline for medical records that must remain confidential for 50 years, assuming a 5-year migration time. With a CRQC expected between ${crqc.qdayLow}-${crqc.qdayHigh}, when should migration have started?`,
+      description: `Calculate the HNDL migration deadline for medical records that must remain confidential for 50 years, assuming a 5-year migration time. With the one published expert forecast putting a CRQC in ${crqc.low}–${crqc.high}, when should migration have started?`,
       badge: 'HNDL',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
-      observe: `With 50-year data sensitivity, a 5-year migration time, and a CRQC in ${crqc.zEstimate} (this catalog's data-derived consensus estimate), the migration deadline was ${crqc.zEstimate - 50 - 5}. This illustrates why healthcare data intercepted today is already at risk — HNDL is not a future problem.`,
+      observe: `With 50-year data sensitivity, a 5-year migration time, and a CRQC in ${crqc.planningYear} (the midpoint of that ${crqc.low}–${crqc.high} expert forecast), the migration deadline was ${crqc.planningYear - 50 - 5}. This illustrates why healthcare data intercepted today is already at risk — HNDL is not a future problem.`,
       config: { step: 3 },
     },
     {
@@ -83,7 +85,7 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
         'A Root CA issued today with a 20-year validity period — calculate when the PKI infrastructure must migrate to PQC signing to avoid HNFL exposure. Assume a 5-year re-issuance time.',
       badge: 'HNFL',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
-      observe: `With a CRQC expected in ${crqc.zEstimate} (this catalog's data-derived consensus estimate) and a 5-year re-issuance time, the deadline is ${crqc.zEstimate - 5}. A Root CA valid until 2046 remains trusted well into the forge window — every certificate it has ever signed becomes retroactively forgeable. Migration to ML-DSA must begin now.`,
+      observe: `With a CRQC in ${crqc.planningYear} (the midpoint of the ${crqc.low}–${crqc.high} expert forecast) and a 5-year re-issuance time, the deadline is ${crqc.planningYear - 5}. A Root CA valid until 2046 remains trusted well into the forge window — every certificate it has ever signed becomes retroactively forgeable. Migration to ML-DSA must begin now.`,
       config: { step: 4 },
     },
     {

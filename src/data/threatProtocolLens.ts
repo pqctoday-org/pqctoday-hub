@@ -108,3 +108,14 @@ export function protocolsForThreat(threat: ThreatItem): ProtocolMatch[] {
 export function threatTouchesProtocol(threat: ThreatItem, protocol: string): boolean {
   return protocolsForThreat(threat).some((m) => m.protocol === protocol)
 }
+
+/**
+ * The lens protocols that match at least one of `rows`, in filter order. The
+ * filter offers only these: a chip that returns nothing is a dead end, and
+ * which protocols the corpus touches moves as rows are trimmed to what their
+ * documents state (the 2026-09-24 claim check left no row naming SWIFT, EMV
+ * or FIX).
+ */
+export function lensProtocolsFor(rows: readonly ThreatItem[]): string[] {
+  return LENS_PROTOCOLS.filter((p) => rows.some((t) => threatTouchesProtocol(t, p)))
+}

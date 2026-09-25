@@ -313,8 +313,30 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
   },
 ]
 
+/**
+ * What a CRQC_ESTIMATES entry actually is (ruling R5, 2026-09-24). Only an
+ * `arrival-forecast` says when a CRQC may exist; the others are dates for
+ * finishing a migration or advice to start one, and must never be shown or
+ * averaged as a forecast.
+ *   arrival-forecast       — a published forecast of CRQC arrival
+ *   migration-deadline     — a regulator's date to finish migrating
+ *   planning-guidance      — advice to plan/migrate, no arrival date
+ *   site-derived-scenario  — a range THIS site derived; the source makes no
+ *                            arrival claim
+ */
+export type CrqcEstimateKind =
+  'arrival-forecast' | 'migration-deadline' | 'planning-guidance' | 'site-derived-scenario'
+
+export const CRQC_ESTIMATE_KIND_LABELS: Record<CrqcEstimateKind, string> = {
+  'arrival-forecast': 'Expert forecast',
+  'migration-deadline': 'Migration deadline',
+  'planning-guidance': 'Planning guidance',
+  'site-derived-scenario': 'Scenario derived by this site',
+}
+
 export interface CRQCEstimate {
   source: string
+  kind: CrqcEstimateKind
   yearLow: number
   yearHigh: number
   confidence: string
@@ -334,29 +356,20 @@ export interface CRQCEstimate {
 }
 
 /**
- * Multi-source CRQC arrival estimates backing the Threats-page capability strip.
- * The canonical optimistic/expected/pessimistic planning triple (2030 / 2035 / 2040)
- * lives in `regulatoryTimelines.ts` (`CRQC_ESTIMATES` object); these per-source rows
- * are the detail behind that range and now agree on its bounds. Rows are CRQC
- * *arrival* estimates — not regulatory mandate dates (e.g. CNSA 2.0's 2025 is a
- * migration deadline, kept in the notes, not used as a CRQC-arrival year). The
- * GRI 2025 survey puts the median expert estimate at 2029–2032, so the window
- * floor is ~2029, not 2025.
+ * The CRQC-related dates the Threats page cites, each marked with what it
+ * actually is (`kind`, ruling R5, 2026-09-24). Only the Global Risk Institute
+ * survey is a CRQC *arrival* forecast. NIST IR 8547, NSA CNSA 2.0 and ANSSI
+ * give migration deadlines; BSI gives planning guidance; the Google Quantum AI
+ * & Ethereum Foundation range is derived by this site from a resource
+ * estimate (the paper makes no arrival claim). Deadlines are shown separately
+ * and attributed, never averaged into the forecast. The canonical planning
+ * triple (2030 / 2035 / 2040) used by the Learn workshops lives in
+ * `regulatoryTimelines.ts` (`CRQC_ESTIMATES` object), a separate constant.
  */
 export const CRQC_ESTIMATES: CRQCEstimate[] = [
   {
-    source: 'Google Quantum AI & Ethereum Foundation (2026)',
-    yearLow: 2029,
-    yearHigh: 2036,
-    confidence:
-      'Architecture-dependent \u2014 year range is THIS dataset\u2019s derived estimate, not asserted by the source',
-    notes:
-      'Mar 2026: secp256k1 ECDLP breakable with \u22641,200 logical qubits (1,200\u20131,450 per the two circuit variants) and fewer than half a million physical qubits \u2014 the most aggressive resource estimate to date, ~20x below prior best estimates. The whitepaper itself makes NO CRQC-arrival-date claim (confirmed 2026-07-16) \u2014 yearLow/yearHigh here are derived by combining its qubit threshold with published hardware roadmaps (e.g. IonQ), not read off the paper. Introduces fast-clock (superconducting/photonic) vs slow-clock (trapped ion/neutral atom) CRQC distinction. Fast-clock CRQCs enable on-spend attacks on public mempools; slow-clock enable at-rest attacks on dormant wallets. 2.3M BTC identified as at-risk.',
-    url: 'https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf',
-    lastReviewed: '2026-07-30',
-  },
-  {
     source: 'Global Risk Institute (2025)',
+    kind: 'arrival-forecast',
     yearLow: 2030,
     yearHigh: 2041,
     confidence:
@@ -368,6 +381,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
   },
   {
     source: 'NIST IR 8547 (IPD, Nov 2024)',
+    kind: 'migration-deadline',
     yearLow: 2030,
     yearHigh: 2035,
     confidence: 'Planning horizon',
@@ -378,6 +392,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
   },
   {
     source: 'NSA CNSA 2.0 (2022)',
+    kind: 'migration-deadline',
     yearLow: 2030,
     yearHigh: 2033,
     confidence: 'Mandate',
@@ -387,7 +402,19 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     lastReviewed: '2026-07-30',
   },
   {
+    source: 'ANSSI France (2022, upd. 2023)',
+    kind: 'migration-deadline',
+    yearLow: 2030,
+    yearHigh: 2035,
+    confidence: 'Migration milestone, not a CRQC forecast',
+    notes:
+      'ANSSI gives no CRQC arrival date; 2030/2035 are transition milestones. Hybrid PQC is required only where quantum-resistance is claimed, not mandated for all government systems. ANSSI is targeting 2027 for PQC obligations to begin applying to security qualifications/certifications.',
+    url: 'https://messervices.cyber.gouv.fr/guides/en-anssi-views-post-quantum-cryptography-transition',
+    lastReviewed: '2026-07-30',
+  },
+  {
     source: 'BSI Germany (2024)',
+    kind: 'planning-guidance',
     yearLow: 2030,
     yearHigh: 2040,
     confidence: 'Recommend migration now',
@@ -397,58 +424,76 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     lastReviewed: '2026-07-30',
   },
   {
-    source: 'ANSSI France (2022, upd. 2023)',
-    yearLow: 2030,
-    yearHigh: 2035,
-    confidence: 'Migration milestone, not a CRQC forecast',
+    source: 'Google Quantum AI & Ethereum Foundation (2026)',
+    kind: 'site-derived-scenario',
+    yearLow: 2029,
+    yearHigh: 2036,
+    confidence:
+      'Architecture-dependent \u2014 year range is THIS dataset\u2019s derived estimate, not asserted by the source',
     notes:
-      'ANSSI gives no CRQC arrival date; 2030/2035 are transition milestones. Hybrid PQC is required only where quantum-resistance is claimed, not mandated for all government systems. ANSSI is targeting 2027 for PQC obligations to begin applying to security qualifications/certifications.',
-    url: 'https://messervices.cyber.gouv.fr/guides/en-anssi-views-post-quantum-cryptography-transition',
+      'Mar 2026: secp256k1 ECDLP breakable with \u22641,200 logical qubits (1,200\u20131,450 per the two circuit variants) and fewer than half a million physical qubits \u2014 the most aggressive resource estimate to date, ~20x below prior best estimates. The whitepaper itself makes NO CRQC-arrival-date claim (confirmed 2026-07-16) \u2014 yearLow/yearHigh here are derived by combining its qubit threshold with published hardware roadmaps (e.g. IonQ), not read off the paper. Introduces fast-clock (superconducting/photonic) vs slow-clock (trapped ion/neutral atom) CRQC distinction. Fast-clock CRQCs enable on-spend attacks on public mempools; slow-clock enable at-rest attacks on dormant wallets. 2.3M BTC identified as at-risk.',
+    url: 'https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf',
     lastReviewed: '2026-07-30',
   },
 ]
 
 /**
- * Single-sourced CRQC consensus derivation \u2014 the ONE place that reduces
- * `CRQC_ESTIMATES` down to headline numbers. Every Threats-page component that
- * shows a Q-Day figure (`SectorExposureHero`, `CrqcCapabilityStrip`,
- * `CrqcTrajectoryChart`, `ThreatEconomicsHeader`) calls this instead of
- * re-deriving its own value, so the four displayed numbers agree by
- * construction. `zEstimate` is the median of each source's midpoint
- * (yearLow+yearHigh)/2; `qdayLow`/`qdayHigh` are the median of the per-source
- * low/high bounds \u2014 a data-derived consensus window, narrower than the full
- * min/max spread but not a single hardcoded guess.
+ * The ONE CRQC window the site shows (ruling R5, 2026-09-24) — derived only
+ * from the `arrival-forecast` entries of CRQC_ESTIMATES (today: the Global
+ * Risk Institute 2025 survey, 2030–2041). Migration deadlines, planning
+ * guidance and the site-derived scenario are excluded: none of them says when
+ * a CRQC will exist. Every Threats-page surface (capability strip, trajectory
+ * chart, exposure hero, economics calculator, mobile screen) and the
+ * QuantumThreats Learn module read this function, so they agree by
+ * construction.
  */
-function median(nums: number[]): number {
-  const sorted = [...nums].sort((a, b) => a - b)
-  const mid = Math.floor(sorted.length / 2)
-  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
+export interface CrqcForecast {
+  /** Earliest yearLow across the arrival forecasts. */
+  low: number
+  /** Latest yearHigh across the arrival forecasts. */
+  high: number
+  /**
+   * A single year for the calculators that need one (Mosca's Z): the midpoint
+   * of the forecast window, rounded DOWN — the earlier year is the safer
+   * planning assumption. A calculator default, not a forecast of its own;
+   * every calculator lets the reader move it.
+   */
+  planningYear: number
+  /** The arrival-forecast entries the window comes from. */
+  sources: CRQCEstimate[]
+  /** "one expert survey" / "2 expert surveys". */
+  sourceCountLabel: string
+  /** "CRQC expert forecast: 2030–2041 (one expert survey)" — the one wording. */
+  label: string
 }
 
-export interface CrqcConsensus {
-  /** Earliest yearLow across all sources \u2014 the low end of the full spread. */
-  earliest: number
-  /** Latest yearHigh across all sources \u2014 the high end of the full spread. */
-  latest: number
-  /** Median of each source's (yearLow+yearHigh)/2 \u2014 the single headline Z-estimate. */
-  zEstimate: number
-  /** Median of the per-source yearLow values \u2014 a data-derived consensus window floor. */
-  qdayLow: number
-  /** Median of the per-source yearHigh values \u2014 a data-derived consensus window ceiling. */
-  qdayHigh: number
-}
-
-export function getCrqcConsensus(): CrqcConsensus {
-  const lows = CRQC_ESTIMATES.map((e) => e.yearLow)
-  const highs = CRQC_ESTIMATES.map((e) => e.yearHigh)
-  const mids = CRQC_ESTIMATES.map((e) => (e.yearLow + e.yearHigh) / 2)
+export function getCrqcForecast(): CrqcForecast {
+  const sources = CRQC_ESTIMATES.filter((e) => e.kind === 'arrival-forecast')
+  const low = Math.min(...sources.map((e) => e.yearLow))
+  const high = Math.max(...sources.map((e) => e.yearHigh))
+  const sourceCountLabel =
+    sources.length === 1 ? 'one expert survey' : `${sources.length} expert surveys`
   return {
-    earliest: Math.min(...lows),
-    latest: Math.max(...highs),
-    zEstimate: Math.round(median(mids)),
-    qdayLow: Math.round(median(lows)),
-    qdayHigh: Math.round(median(highs)),
+    low,
+    high,
+    planningYear: Math.floor((low + high) / 2),
+    sources,
+    sourceCountLabel,
+    label: `CRQC expert forecast: ${low}\u2013${high} (${sourceCountLabel})`,
   }
+}
+
+/** The migration deadlines and planning guidance — shown separately from the
+ *  forecast, attributed, and labelled as what they are. */
+export function getCrqcMigrationDeadlines(): CRQCEstimate[] {
+  return CRQC_ESTIMATES.filter(
+    (e) => e.kind === 'migration-deadline' || e.kind === 'planning-guidance'
+  )
+}
+
+/** Ranges this site derived from a source that makes no arrival claim. */
+export function getCrqcSiteDerivedScenarios(): CRQCEstimate[] {
+  return CRQC_ESTIMATES.filter((e) => e.kind === 'site-derived-scenario')
 }
 
 export const NIST_SECURITY_LEVELS = [

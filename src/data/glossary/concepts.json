@@ -940,7 +940,7 @@
     "term": "TRNG",
     "acronym": "TRNG",
     "definition": "True Random Number Generator. A hardware device that generates random numbers from physical phenomena such as thermal noise, shot noise, or clock jitter.",
-    "technicalNote": "Intel RDRAND/RDSEED, ARM RNDR, and TPM RNG are common TRNG implementations. TRNG output is not affected by quantum computers since it relies on physical processes, not computational assumptions.",
+    "technicalNote": "Processor random-number instructions are not raw TRNG output. Intel's DRNG guide says RDRAND returns values from an SP 800-90A-compliant DRBG (AES CTR_DRBG) and RDSEED returns seed values from an SP 800-90B/C-compliant enhanced non-deterministic RNG; Arm documents RNDR as returning a number from an approved RBG whose DRBG is reseeded from an approved entropy source. In NIST terms, the physical noise source is one part of an entropy source (SP 800-90B), which in turn seeds a DRBG (SP 800-90A).",
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "intermediate",
     "category": "concept"
@@ -949,7 +949,7 @@
     "term": "QRNG",
     "acronym": "QRNG",
     "definition": "Quantum Random Number Generator. A device that generates random numbers from quantum mechanical phenomena such as photon detection, vacuum fluctuations, or quantum beam splitting.",
-    "technicalNote": "QRNG randomness is guaranteed by the laws of quantum physics (Born rule). Commercial products are available from ID Quantique, Toshiba, and others. The Australian National University (ANU) operates a public QRNG service.",
+    "technicalNote": "A quantum process is the noise source; like any noise source it still needs a stochastic model, health tests and an SP 800-90B entropy assessment, and a product's claims rest on its own certificate. For example, CMVP Entropy Validation Certificate #E63 covers ID Quantique's Quantis IID QRNG chips (physical noise source; checked 2026-09-24). A simulated QRNG is not evidence about a QRNG.",
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "advanced",
     "category": "concept"
@@ -957,7 +957,7 @@
   {
     "term": "Min-Entropy",
     "definition": "The most conservative measure of entropy, defined as the negative base-2 logarithm of the probability of the most likely outcome. Used by NIST SP 800-90B for entropy source validation.",
-    "technicalNote": "For a uniform byte distribution, min-entropy = 8 bits per byte. Real entropy sources typically achieve 6-8 bits per byte before conditioning. The NIST SP 800-90B EntropyAssessment tool computes min-entropy estimates.",
+    "technicalNote": "For a uniform byte distribution, min-entropy = 8 bits per byte. There is no typical figure for real sources: min-entropy is estimated per noise source from its raw samples, and for non-IID data SP 800-90B takes the minimum of all its estimators' results (§6.2). The NIST SP 800-90B EntropyAssessment tool computes these estimates.",
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "advanced",
     "category": "concept"

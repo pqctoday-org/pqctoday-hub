@@ -9,8 +9,12 @@ import { useIsEmbedded } from '../../embed/EmbedProvider'
  * Non-blocking disclaimer banner pinned to bottom of viewport.
  * Does NOT use createPortal or full-screen overlays — the page remains
  * fully interactive so users are never locked out.
+ *
+ * `placement="inline"` renders the same banner in normal document flow
+ * instead — used on the phone's first-run role picker, where a fixed banner
+ * covered the role choices (UX-17); there it sits below them.
  */
-export function DisclaimerModal() {
+export function DisclaimerModal({ placement = 'fixed' }: { placement?: 'fixed' | 'inline' }) {
   const { hasAcknowledgedCurrentMajor, acknowledgeDisclaimer } = useDisclaimerStore()
   const buttonRef = useRef<HTMLButtonElement>(null)
   const [forceClosed, setForceClosed] = useState(false)
@@ -22,13 +26,14 @@ export function DisclaimerModal() {
     setForceClosed(true)
   }, [acknowledgeDisclaimer])
 
-  // Auto-focus the button when banner appears
+  // Auto-focus the button when banner appears — not inline, where it sits
+  // below the content the reader should meet first.
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && placement === 'fixed') {
       const timer = setTimeout(() => buttonRef.current?.focus(), 100)
       return () => clearTimeout(timer)
     }
-  }, [isOpen])
+  }, [isOpen, placement])
 
   // Escape key to dismiss
   useEffect(() => {
@@ -44,7 +49,11 @@ export function DisclaimerModal() {
 
   return (
     <div
-      className={`${isEmbedded ? 'absolute' : 'fixed'} inset-x-0 bottom-0 z-disclaimer p-4 print:hidden safe-bottom`}
+      className={
+        placement === 'inline'
+          ? 'px-4 pb-4 print:hidden'
+          : `${isEmbedded ? 'absolute' : 'fixed'} inset-x-0 bottom-0 z-disclaimer p-4 print:hidden safe-bottom`
+      }
       role="alert"
       aria-labelledby="disclaimer-title"
     >

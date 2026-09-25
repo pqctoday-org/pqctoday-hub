@@ -8,6 +8,7 @@ import topLevelAwait from 'vite-plugin-top-level-await'
 import { VitePWA } from 'vite-plugin-pwa'
 
 import tailwindcss from '@tailwindcss/vite'
+import { injectCoiGuard } from './src/utils/crossOriginIsolation'
 
 // Plugin to inject build-time constants
 function buildTimestampPlugin(): Plugin {
@@ -185,9 +186,22 @@ function wasmVitestAware(): Plugin {
   }
 }
 
+/**
+ * Injects the cross-origin-isolation guard into index.html, generated from
+ * src/utils/crossOriginIsolation.ts — so the pre-app reload and the in-app
+ * navigation guard read one route list (see that module's doc comment).
+ */
+function coiGuardHtml(): Plugin {
+  return {
+    name: 'coi-guard-html',
+    transformIndexHtml: (html) => injectCoiGuard(html),
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    coiGuardHtml(),
     buildTimestampPlugin(),
     precacheShellAllowlist(),
     react(),

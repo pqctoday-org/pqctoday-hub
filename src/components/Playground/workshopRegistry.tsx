@@ -781,7 +781,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'rng-demo',
     pt_id: 'PT-010',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Random Generation',
     description: 'Web Crypto + OpenSSL DRBG random generation with statistical analysis',
     category: 'Entropy & Random',
@@ -796,36 +796,39 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       whatYouWillDo:
         'Generate random bytes from Web Crypto, OpenSSL WASM, Math.random() and a linear congruential generator, and run the same statistical tests on each.',
       workedExample:
-        'Generate from the LCG source, then predict its next output from the bytes it already produced — the test table shows which checks it fails.',
+        'Generate from the LCG source, then predict its next output from its internal state after generation — the prediction matches even though the LCG usually lands within range on the visual checks.',
     },
   },
   {
     id: 'qrng-demo',
     pt_id: 'PT-012',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'QRNG Demo',
+    // Entropy remediation P0.7/P0.8 (2026-09-24): the module's QRNG workshop step
+    // was removed, so this links to the module root, not a step. The description
+    // says "simulation" first so no surface implies QRNG hardware or evidence.
     description:
-      'Simulates quantum random number generation patterns using CSPRNG statistical analysis. Note: runs in-browser via Web Crypto — not a physical QRNG device.',
+      'Simulation — no QRNG hardware involved. Compares a simulated QRNG sample (crypto.getRandomValues() output, not a quantum source), live Web Crypto output and a deliberately broken PRNG on the same grouped checks, which cannot show whether any source is quantum.',
     category: 'Entropy & Random',
     algorithms: ['TRNG', 'Web Crypto'],
     icon: Dice5,
-    moduleLink: '/learn/entropy-randomness?tab=workshop&step=3',
+    moduleLink: '/learn/entropy-randomness',
     keywords: ['qrng', 'quantum random', 'trng', 'true random', 'statistics'],
     difficulty: 'beginner',
     requires: [],
     recommendedPersonas: ['researcher', 'curious'],
     intro: {
       whatYouWillDo:
-        'Compare a simulated QRNG sample, a CSPRNG sample and a deliberately broken PRNG on the same statistical tests.',
+        'Compare a simulated QRNG sample, a CSPRNG sample and a deliberately broken PRNG on the same visual checks and SP 800-90B health tests, shown as separate groups.',
       workedExample:
-        'The monobit, runs and chi-squared results for all three, side by side: see which source fails and by how much.',
+        'Run the checks on all three samples: only the weak PRNG stands out, because the simulated QRNG and the CSPRNG are the same kind of output.',
     },
     startHere: ['curious'],
   },
   {
     id: 'entropy-test',
     pt_id: 'PT-011',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Entropy Testing',
     // Previously "NIST SP 800-90B entropy test suite: monobit, frequency,
     // min-entropy", which attributed monobit and frequency to SP 800-90B —
@@ -833,8 +836,14 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     // families, and now runs BOTH of SP 800-90B's mandated continuous health
     // tests (§4.4.1 repetition count and §4.4.2 adaptive proportion); until
     // 2026-08-12 it shipped only the first while claiming the standard.
+    // Entropy remediation P0.4/P0.8 (2026-09-24): results are now four separate
+    // groups — SP 800-22-style visual checks, the two SP 800-90B health tests,
+    // a placeholder for the 90B estimators (not run here), and primitive
+    // SHA-256/HMAC self-checks. The MCV-only min-entropy card and its
+    // 6-bits/byte pass mark were removed: one estimator on a small buffer is
+    // not an SP 800-90B assessment.
     description:
-      'SP 800-90B health tests (repetition count, adaptive proportion) and MCV min-entropy, alongside monobit, runs and chi-squared statistical checks',
+      'Separate groups: monobit, runs and chi-squared visual checks; the SP 800-90B repetition-count and adaptive-proportion health tests (on samples treated as raw noise-source output); and SHA-256/HMAC primitive self-checks. No SP 800-90B entropy estimate is made here.',
     category: 'Entropy & Random',
     algorithms: ['SP 800-90B', 'SP 800-22', 'Web Crypto'],
     icon: Dice5,
@@ -860,26 +869,24 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     startHere: ['researcher'],
     intro: {
       whatYouWillDo:
-        'Load a 64-byte sample (Generate Random, All Zeros, Repeating Pattern, Incrementing, or Paste Hex), press Run All Entropy Tests, and read the six pass/fail cards plus the byte histogram and lag plot.',
+        'Load a 64-byte sample (Generate Random, All Zeros, Repeating Pattern, Incrementing, or Paste Hex), press Run the checks, and read each group separately: visual checks, health tests, estimators (not run here) and primitive self-checks.',
       workedExample:
-        'Load Repeating Pattern (deadbeef repeated over 64 bytes) and run: the summary bar reports how many of the six tests passed and each failing card shows its value against the threshold.',
+        'Load Repeating Pattern (deadbeef repeated over 64 bytes) and run: the visual checks flag the pattern, and each result shows its value, its cutoff and the limit of a 64-byte sample.',
     },
   },
   {
     id: 'drbg-demo',
     pt_id: 'PT-014',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'SP 800-90A DRBG',
     description:
-      'Interactive visualization of HMAC_DRBG internal state (Instantiate, Generate, Reseed) complying with NIST SP 800-90A.',
+      'Interactive HMAC_DRBG (SHA-256) state machine — Instantiate, Generate, Reseed as specified in NIST SP 800-90A Rev. 1 §10.1.2 — with a known-answer check against pinned NIST ACVP and CAVP vectors.',
     category: 'Entropy & Random',
     algorithms: ['HMAC_DRBG', 'SHA-256'],
     icon: Workflow,
-    // Deliberately the module root, not a workshop step: the Entropy module's
-    // renderWorkshopStep switch has no case for DrbgArchitectureDemo, so there is
-    // no step to deep-link to. The other four Entropy tools now point at their own
-    // step. If a DRBG step is ever added, point this at it.
-    moduleLink: '/learn/entropy-randomness',
+    // Entropy remediation P0.2 (2026-09-24): DrbgArchitectureDemo is now the
+    // module's workshop step 4 ('drbg-state-machine', index 3), so this links there.
+    moduleLink: '/learn/entropy-randomness?tab=workshop&step=3',
     keywords: [
       'drbg',
       'sp 800-90a',
@@ -896,9 +903,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     startHere: ['researcher'],
     intro: {
       whatYouWillDo:
-        'Instantiate HMAC_DRBG from a 32-byte entropy input, a nonce and a personalization string, then press Generate and Reseed while the Internal State Tracker shows the working key K, state value V and the counter.',
+        'Instantiate HMAC_DRBG from a 32-byte entropy input, a nonce and a personalization string, then press Generate and Reseed while the Internal State Tracker shows the working key K, state value V and reseed_counter. Run the known-answer check to compare the same code with NIST vectors.',
       workedExample:
-        'Instantiate with the default personalization string and generate 32 bytes ten times: the counter hits 10 and a Reseed required banner blocks Generate until you press Reseed, which resets it to 1.',
+        'Instantiate with the default personalization string and generate 32 bytes ten times: reseed_counter reaches 11, above the demo interval of 10, so a Reseed required banner blocks Generate until you press Reseed, which resets it to 1.',
     },
   },
 
@@ -906,10 +913,14 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'source-combining',
     pt_id: 'PT-013',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Source Combining',
+    // Entropy remediation P0 cleanup (2026-09-24): HKDF was listed as a
+    // conditioning function. It is only the workshop's demonstration expansion
+    // step — not an SP 800-90A DRBG and not part of an SP 800-90C construction.
+    // Conditioning is Hash_df, SHA-256, HMAC-SHA-256 or AES-CMAC.
     description:
-      'SP 800-90C source combining: XOR, Hash, HMAC, Concat + HKDF/Hash_df/AES-CMAC conditioning via SoftHSMv3',
+      'Two simulated raw sources: SP 800-90B health tests before conditioning, SP 800-90C concatenation (XOR, hash and HMAC as educational variants), Hash_df/SHA-256/HMAC/AES-CMAC conditioning via SoftHSMv3, and an assumption-driven verdict that can end in "not enough evidence" or "unsafe".',
     category: 'Entropy & Random',
     algorithms: ['SHA-256', 'HMAC-SHA-256', 'HKDF', 'AES-CMAC', 'XOR', 'Hash_df'],
     icon: Dice5,
@@ -931,9 +942,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['researcher', 'architect', 'developer'],
     intro: {
       whatYouWillDo:
-        'Combine two entropy sources with SP 800-90C concatenation and condition the result with Hash_df or HMAC, step by step.',
+        'Health-test two simulated raw sources, assemble their samples with SP 800-90C concatenation, condition the result, then state the assumptions the combined construction rests on.',
       workedExample:
-        "Replace Source A with all zeros and re-run the pipeline: Source B's entropy survives the conditioning step, which is the point of combining.",
+        'Load the Stuck source, detected counterexample: the health tests exclude Source A before conditioning, and Source B alone falls short of the 384 bits a 256-bit DRBG needs, so the verdict is Not enough evidence.',
     },
   },
   {

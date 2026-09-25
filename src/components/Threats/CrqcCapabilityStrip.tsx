@@ -3,18 +3,22 @@ import React, { useMemo, useState } from 'react'
 import { Activity, ChevronDown, Cpu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
-  CRQC_ESTIMATES,
+  CRQC_ESTIMATE_KIND_LABELS,
   CRQC_QUBIT_THRESHOLDS,
   CURRENT_QUANTUM_COMPUTERS,
-  getCrqcConsensus,
+  getCrqcForecast,
+  getCrqcMigrationDeadlines,
+  getCrqcSiteDerivedScenarios,
+  type CRQCEstimate,
 } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
 /**
  * Consolidated CRQC-timeline / capability strip (PER-PAGE-CHANGES Threats #5).
  *
- * Surfaces a single CTI-style banner on the Threats page: the consensus
- * Z-estimate (the "when does the clock stop" year) reduced from the published
- * `CRQC_ESTIMATES`, plus a compact modality-progress readout from the live
+ * Surfaces a single CTI-style banner on the Threats page: the one CRQC expert
+ * forecast (`getCrqcForecast()`, ruling R5 — arrival forecasts only), the
+ * migration deadlines regulators have set (shown separately, never as a
+ * forecast), plus a compact modality-progress readout from the live
  * `CURRENT_QUANTUM_COMPUTERS` table. Both data sets are reused verbatim from
  * the QuantumThreats module — this component renders, it does not re-author.
  *
@@ -50,17 +54,12 @@ export const CrqcCapabilityStrip: React.FC<{
     }
   }
 
-  // Single-sourced via getCrqcConsensus() (Threats #1) — the same derivation
-  // SectorExposureHero, CrqcTrajectoryChart, and ThreatEconomicsHeader use.
-  const consensus = useMemo(() => {
-    const { earliest, latest, zEstimate } = getCrqcConsensus()
-    return {
-      earliest,
-      latest,
-      zEstimate,
-      yearsToEarliest: earliest - CURRENT_YEAR,
-    }
-  }, [])
+  // The one CRQC window (ruling R5) — the same function the trajectory chart,
+  // exposure hero, economics calculator and mobile screen read.
+  const forecast = useMemo(() => getCrqcForecast(), [])
+  const deadlines = useMemo(() => getCrqcMigrationDeadlines(), [])
+  const scenarios = useMemo(() => getCrqcSiteDerivedScenarios(), [])
+  const yearsToLow = forecast.low - CURRENT_YEAR
 
   const leadMachine = useMemo(
     () =>
@@ -96,12 +95,13 @@ export const CrqcCapabilityStrip: React.FC<{
             >
               CRQC Capability Watch
               <span className="text-[10px] font-medium px-1.5 py-0.5 rounded border border-warning/30 bg-warning/10 text-warning uppercase tracking-wide">
-                CTI · Z-estimate
+                CTI
               </span>
             </h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              When the clock stops: a blended CRQC planning window (genuine arrival estimates plus
-              migration-mandate dates) and how far today&apos;s hardware has come.
+              When the clock stops: the published expert forecast of CRQC arrival, the migration
+              deadlines regulators have set (deadlines, not forecasts), and how far today&apos;s
+              hardware has come.
             </p>
           </div>
         </div>
@@ -127,22 +127,29 @@ export const CrqcCapabilityStrip: React.FC<{
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
         <div className="rounded-lg border border-border bg-muted/30 p-3">
           <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            Z — blended planning estimate
+            CRQC expert forecast
           </div>
-          <div className="text-2xl font-bold text-warning">~{consensus.zEstimate}</div>
-          <div className="text-xs text-muted-foreground mt-0.5">
-            Window {consensus.earliest}–{consensus.latest} ({CRQC_ESTIMATES.length} sources)
+          <div className="text-2xl font-bold text-warning">
+            {forecast.low}–{forecast.high}
           </div>
+          <div className="text-xs text-muted-foreground mt-0.5">{forecast.label}</div>
         </div>
         <div className="rounded-lg border border-border bg-muted/30 p-3">
           <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            Earliest credible
+            Migration deadlines (not forecasts)
           </div>
-          <div className="text-2xl font-bold text-destructive">{consensus.earliest}</div>
-          <div className="text-xs text-muted-foreground mt-0.5">
-            {consensus.yearsToEarliest > 0
-              ? `${consensus.yearsToEarliest} years out at the low end`
-              : 'Inside the planning horizon now'}
+          <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
+            {deadlines.map((e) => (
+              <li key={e.source}>
+                <span className="font-semibold text-foreground">{e.source}</span>: {e.yearLow}–
+                {e.yearHigh}
+              </li>
+            ))}
+          </ul>
+          <div className="text-[10px] text-muted-foreground mt-1">
+            {yearsToLow > 0
+              ? `The forecast's low end is ${yearsToLow} year${yearsToLow === 1 ? '' : 's'} out.`
+              : 'The forecast window has opened.'}
           </div>
         </div>
         <div className="rounded-lg border border-border bg-muted/30 p-3">
@@ -188,32 +195,15 @@ export const CrqcCapabilityStrip: React.FC<{
       {/* Per-source + per-machine detail — collapsible */}
       {expanded && (
         <div id="crqc-strip-body" className="mt-4 space-y-4">
-          <div>
-            <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-              CRQC arrival estimates
-            </h3>
-            <ul className="space-y-1.5">
-              {CRQC_ESTIMATES.map((e) => (
-                <li
-                  key={e.source}
-                  className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs"
-                >
-                  <span className="font-mono font-semibold text-warning w-24 shrink-0">
-                    {e.yearLow}–{e.yearHigh}
-                  </span>
-                  <a
-                    href={e.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-foreground sm:w-64 shrink-0 hover:text-primary hover:underline"
-                  >
-                    {e.source}
-                  </a>
-                  <span className="text-muted-foreground">{e.confidence}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <EstimateList title="CRQC arrival forecast — the window above" items={forecast.sources} />
+          <EstimateList
+            title="Migration deadlines and planning guidance — dates to finish migrating, not forecasts"
+            items={deadlines}
+          />
+          <EstimateList
+            title="Not in the window — a range this site derived; the source makes no arrival claim"
+            items={scenarios}
+          />
           <div>
             <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
               Current modality progress (logical-qubit estimates)
@@ -242,5 +232,41 @@ export const CrqcCapabilityStrip: React.FC<{
         </div>
       )}
     </section>
+  )
+}
+
+/** One attributed list of CRQC_ESTIMATES entries, each tagged with its kind. */
+function EstimateList({ title, items }: { title: string; items: CRQCEstimate[] }) {
+  if (items.length === 0) return null
+  return (
+    <div>
+      <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+        {title}
+      </h3>
+      <ul className="space-y-1.5">
+        {items.map((e) => (
+          <li
+            key={e.source}
+            className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs"
+          >
+            <span className="font-mono font-semibold text-warning w-24 shrink-0">
+              {e.yearLow}–{e.yearHigh}
+            </span>
+            <a
+              href={e.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-foreground sm:w-64 shrink-0 hover:text-primary hover:underline"
+            >
+              {e.source}
+            </a>
+            <span className="text-muted-foreground">
+              <span className="font-semibold">{CRQC_ESTIMATE_KIND_LABELS[e.kind]}</span> ·{' '}
+              {e.confidence}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }

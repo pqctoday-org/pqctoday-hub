@@ -84,7 +84,20 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   },
   {
     path: exact('/threats'),
-    queryKeys: ['id', 'industry', 'criticality', 'q', 'sort', 'dir'],
+    // Every parameter ThreatsDashboard reads (threatsUrlParams + the trust-tier
+    // filter), so the Assistant's links to them are not stripped.
+    queryKeys: [
+      'id',
+      'industry',
+      'criticality',
+      'class',
+      'q',
+      'sort',
+      'dir',
+      'mode',
+      'tier',
+      'view',
+    ],
     description: 'Threats',
   },
   {

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { CRQC_ESTIMATES } from '../data/quantumConstants'
+import { CRQC_ESTIMATES, CRQC_ESTIMATE_KIND_LABELS } from '../data/quantumConstants'
 import { Button } from '@/components/ui/button'
 
 const CURRENT_YEAR = new Date().getFullYear()
@@ -174,6 +174,9 @@ export const HNFLTimeline: React.FC = () => {
               {CRQC_ESTIMATES.slice(0, 3).map((estimate) => (
                 <div key={estimate.source} className="flex items-center gap-2 text-xs">
                   <span className="text-muted-foreground truncate">{estimate.source}:</span>
+                  <span className="shrink-0 font-semibold text-foreground/80">
+                    {CRQC_ESTIMATE_KIND_LABELS[estimate.kind]}
+                  </span>
                   <span className="text-foreground/80">{estimate.confidence}</span>
                 </div>
               ))}

@@ -17,9 +17,20 @@ import {
   Clock,
   List,
   ChevronDown,
+  HelpCircle,
 } from 'lucide-react'
 import { useSearchParams } from 'react-router'
-import { evidenceStrength, threatsData, threatsMetadata } from '../../data/threatsData'
+import {
+  evidenceStrength,
+  retiredThreats,
+  threatsData,
+  threatsMetadata,
+} from '../../data/threatsData'
+import {
+  criticalityLevelsPresent,
+  criticalityRank,
+  UNRATED_CRITICALITY,
+} from '../../data/threatRowRules'
 import type { ThreatItem } from '../../data/threatsData'
 import { AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -43,10 +54,9 @@ import { Button } from '../ui/button'
 import { CollapsibleSection } from '../ui/CollapsibleSection'
 
 // B+ remediation 4.3 (2026-08-10): 'evidence' added. "The researcher corpus
-// sorts by recency rather than evidence strength" — and every field the sort
-// needs was already on the row (confidenceScore on 114/114, peerReviewed on
-// 114/114, a trusted-source id on 107/114, accuracyPct on 93/114). This is a
-// new ORDERING over existing data, not new data.
+// sorts by recency rather than evidence strength". Since ruling R2
+// (2026-09-24) the ordering is lineage only — source confirmed, claims the
+// cited document states, trusted-source id (see `evidenceStrength`).
 type SortField = 'industry' | 'threatId' | 'criticality' | 'evidence'
 type SortDirection = 'asc' | 'desc'
 
@@ -60,7 +70,7 @@ const PERSONA_SHORT_LABELS: Record<PersonaId, string> = {
   curious: 'Curious',
 }
 
-import { getIndustryIcon } from './threatsHelper'
+import { getIndustryIcon, threatCountLabel } from './threatsHelper'
 import { ThreatsViewToggle, type ThreatsViewMode } from './ThreatsViewToggle'
 import { LeftNavTOC } from '@/components/common/LeftNavTOC'
 import { ThreatsCardGrid } from './ThreatsCardGrid'
@@ -75,13 +85,21 @@ import { ThreatEconomicsHeader } from './ThreatEconomicsHeader'
 import { CrqcCapabilityStrip } from './CrqcCapabilityStrip'
 import { CrqcTrajectoryChart } from './CrqcTrajectoryChart'
 import { SectorExposureHero } from './SectorExposureHero'
+import { RetiredThreatNotice } from './RetiredThreatNotice'
+import {
+  isShortThreatQuery,
+  matchesThreatQuery,
+  resolveIndustryParam,
+  threatIdParam,
+  wantsHorizonView,
+} from './threatsUrlParams'
 import { THREAT_CLASS_DEFS, threatMatchesClass, type ThreatClass } from './threatClassification'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileThreatsView } from '@/components/Mobile/screens/MobileThreatsView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import {
-  LENS_PROTOCOLS,
+  lensProtocolsFor,
   protocolsForThreat,
   threatTouchesProtocol,
 } from '../../data/threatProtocolLens'
@@ -89,6 +107,9 @@ import {
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
 type ThreatsTab = 'list' | 'horizon'
+
+/** The protocol chips worth offering: only those that match a published threat. */
+const lensProtocols = lensProtocolsFor(threatsData)
 
 export const ThreatsDashboard: React.FC<{
   simEmbed?: boolean
@@ -127,25 +148,23 @@ export const ThreatsDashboard: React.FC<{
   // click to discover). `initialTab` is kept only so existing embed call sites
   // (ThreatsEmbed / SimulationView's CRQC-horizon step) can still ask the page
   // to open scrolled to the Horizon section instead of at the top.
+  // The standalone page reads the same request from `?view=horizon` — the link
+  // the simulation's CRQC-horizon steps (and their navigate-away links) use,
+  // which the page used to ignore.
+  const horizonRequested = initialTab === 'horizon' || (!simEmbed && wantsHorizonView(searchParams))
   useEffect(() => {
-    if (initialTab !== 'horizon') return
+    if (!horizonRequested) return
     document.getElementById('crqc-threat-horizon')?.scrollIntoView({ block: 'start' })
-    // Intentionally runs once on mount only — this is an initial scroll position,
-    // not a state to keep syncing.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    // Runs when the request appears (mount, or a same-route link adding
+    // ?view=horizon) — an initial scroll position, not a state to keep syncing.
+  }, [horizonRequested])
 
   const { selectedIndustries: storeIndustries, selectedPersona } = usePersonaStore()
 
   const initialIndustries = useMemo(() => {
     const param = searchParams.get('industry')
     // URL param takes precedence — supports comma-separated multi-industry
-    if (param) {
-      return param.split(',').flatMap((p) => {
-        const match = threatsData.find((d) => d.industry.toLowerCase() === p.trim().toLowerCase())
-        return match ? [match.industry] : []
-      })
-    }
+    if (param) return resolveIndustryParam(param, threatsData)
     // Map all home-page selected industries through the threats name mapping
     return (
       storeIndustries
@@ -172,7 +191,7 @@ export const ThreatsDashboard: React.FC<{
     () => (searchParams.get('dir') as SortDirection | null) ?? 'asc'
   )
   const [selectedThreat, setSelectedThreat] = useState<ThreatItem | null>(() => {
-    const idParam = searchParams.get('id')
+    const idParam = threatIdParam(searchParams)
     if (idParam) {
       return threatsData.find((t) => t.threatId === idParam) ?? null
     }
@@ -204,7 +223,7 @@ export const ThreatsDashboard: React.FC<{
   // Functional setters prevent infinite loops when syncFiltersToUrl triggers a searchParams update.
   useEffect(() => {
     const indParam = searchParams.get('industry')
-    const idParam = searchParams.get('id')
+    const idParam = threatIdParam(searchParams)
     const nextCrit = searchParams.get('criticality') ?? 'All'
     const nextClass = searchParams.get('class') ?? 'All'
     const nextQ = searchParams.get('q') ?? ''
@@ -215,14 +234,13 @@ export const ThreatsDashboard: React.FC<{
       modeParam === 'cards' || modeParam === 'table' ? modeParam : 'table'
 
     if (indParam) {
-      const matches = indParam.split(',').flatMap((p) => {
-        const m = threatsData.find((d) => d.industry.toLowerCase() === p.trim().toLowerCase())
-        return m ? [m.industry] : []
-      })
-      if (matches.length > 0)
+      const matches = resolveIndustryParam(indParam, threatsData)
+      if (matches.length > 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- same-route URL→state sync; the functional setter is a no-op when unchanged
         setSelectedIndustries((prev) =>
           JSON.stringify(prev) !== JSON.stringify(matches) ? matches : prev
         )
+      }
     }
     if (idParam) {
       const found = threatsData.find((t) => t.threatId === idParam)
@@ -275,6 +293,8 @@ export const ThreatsDashboard: React.FC<{
           else next.delete('dir')
           if (id) next.set('id', id)
           else next.delete('id')
+          // Legacy alias (old Endorse/Flag links) — `id` is the one we write.
+          next.delete('threat')
           if (mode !== 'table') next.set('mode', mode)
           else next.delete('mode')
           return next
@@ -305,27 +325,26 @@ export const ThreatsDashboard: React.FC<{
       })
   }, [])
 
-  // Criticality items
+  // Criticality items — only the levels some row actually has, so the filter
+  // never offers a level that matches nothing (it used to offer Medium-High,
+  // which no row carries). 'Unrated' appears only while a blank-criticality
+  // row is live.
   const criticalityItems = useMemo(() => {
+    const icons: Record<string, React.ReactNode> = {
+      Critical: <AlertOctagon size={16} className="text-status-error" />,
+      High: <AlertTriangle size={16} className="text-status-error" />,
+      'Medium-High': <AlertCircle size={16} className="text-status-warning" />,
+      Medium: <Info size={16} className="text-primary" />,
+      Low: <CheckCircle size={16} className="text-status-success" />,
+      [UNRATED_CRITICALITY]: <HelpCircle size={16} className="text-muted-foreground" />,
+    }
     return [
       { id: 'All', label: 'All Levels', icon: null },
-      {
-        id: 'Critical',
-        label: 'Critical',
-        icon: <AlertOctagon size={16} className="text-status-error" />,
-      },
-      {
-        id: 'High',
-        label: 'High',
-        icon: <AlertTriangle size={16} className="text-status-error" />,
-      },
-      {
-        id: 'Medium-High',
-        label: 'Medium-High',
-        icon: <AlertCircle size={16} className="text-status-warning" />,
-      },
-      { id: 'Medium', label: 'Medium', icon: <Info size={16} className="text-primary" /> },
-      { id: 'Low', label: 'Low', icon: <CheckCircle size={16} className="text-status-success" /> },
+      ...criticalityLevelsPresent(threatsData).map((level) => ({
+        id: level,
+        label: level,
+        icon: icons[level] ?? null, // eslint-disable-line security/detect-object-injection
+      })),
     ]
   }, [])
 
@@ -360,7 +379,13 @@ export const ThreatsDashboard: React.FC<{
 
   // Phase 3 — semantic supplement. Queries like "email tampering risk"
   // surface relevant threats regardless of source vocabulary.
-  const semantic = useSemanticSearch('threats', searchQuery, { limit: 30 })
+  // A short acronym query ("PCI", "HSM") is matched lexically at word starts
+  // only (UX-16); the semantic supplement would bring back the near-misses
+  // the word-start rule exists to exclude.
+  const semantic = useSemanticSearch('threats', searchQuery, {
+    limit: 30,
+    disabled: isShortThreatQuery(searchQuery),
+  })
   const semanticIdSet = useMemo(
     () =>
       semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
@@ -441,13 +466,7 @@ export const ThreatsDashboard: React.FC<{
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       data = data.filter((item) => {
-        const lexicalMatch =
-          item.threatId.toLowerCase().includes(query) ||
-          item.description.toLowerCase().includes(query) ||
-          item.industry.toLowerCase().includes(query) ||
-          item.cryptoAtRisk.toLowerCase().includes(query) ||
-          item.pqcReplacement.toLowerCase().includes(query)
-        if (lexicalMatch) return true
+        if (matchesThreatQuery(item, query)) return true
         if (semanticIdSet && semanticIdSet.has(item.threatId.toLowerCase())) return true
         return false
       })
@@ -455,16 +474,8 @@ export const ThreatsDashboard: React.FC<{
 
     // Sort
     data.sort((a, b) => {
-      // Helper for criticality value
-      const criticalityOrder: Record<string, number> = {
-        Critical: 3,
-        High: 2,
-        'Medium-High': 1.5,
-        Medium: 1,
-        Low: 0,
-      }
-      // eslint-disable-next-line security/detect-object-injection
-      const getCriticalityVal = (c: string) => criticalityOrder[c] ?? 0
+      // Unrated sorts below Low — "we don't know" never outranks "we checked".
+      const getCriticalityVal = criticalityRank
 
       if (sortField === 'industry') {
         if (a.industry !== b.industry) {
@@ -600,6 +611,14 @@ export const ThreatsDashboard: React.FC<{
     return () => clearPageActions()
   }, [simEmbed])
 
+  // An old link to a threat that has since been retired: say so, rather than
+  // opening nothing.
+  const linkedId = threatIdParam(searchParams)
+  const retiredLinked =
+    linkedId && !threatsData.some((t) => t.threatId === linkedId)
+      ? retiredThreats.get(linkedId)
+      : undefined
+
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before the desktop JSX — a pure early return
   // with zero risk to the flag-off/simEmbed path (Rule 1).
@@ -619,9 +638,16 @@ export const ThreatsDashboard: React.FC<{
 
       {!simEmbed && <PersonaPageNote route="/threats" className="mb-4" />}
 
+      {retiredLinked && (
+        <RetiredThreatNotice
+          retired={retiredLinked}
+          onDismiss={() => syncFiltersToUrl({ id: null })}
+        />
+      )}
+
       <>
         {/* Persona-forward exposure hero — your scoped sector's applicable threats
-        AND the CRQC consensus window + your per-sector Mosca deadline, together,
+        AND the CRQC expert forecast window + your per-sector Mosca deadline, together,
         always, above the fold. Splitting these across two tabs used to leave the
         single most decision-forcing number on the page (your migration deadline)
         undiscovered behind a click most users never made. Section itself defaults
@@ -677,7 +703,7 @@ export const ThreatsDashboard: React.FC<{
             <div className="mb-2 flex flex-wrap items-center gap-1.5">
               <Network size={14} className="shrink-0 text-primary" aria-hidden="true" />
               <span className="mr-1 text-xs font-semibold text-foreground">By protocol:</span>
-              {LENS_PROTOCOLS.map((p) => (
+              {lensProtocols.map((p) => (
                 <Button
                   key={p}
                   variant="ghost"
@@ -1000,7 +1026,10 @@ export const ThreatsDashboard: React.FC<{
                             {
                               id: t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
                               label: t.industry,
-                              hint: `${filteredAndSortedData.filter((x) => x.industry === t.industry).length} threats`,
+                              hint: threatCountLabel(
+                                filteredAndSortedData.filter((x) => x.industry === t.industry)
+                                  .length
+                              ),
                             },
                           ])
                         ).values()

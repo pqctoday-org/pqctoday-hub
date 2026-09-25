@@ -28,6 +28,7 @@ const CRITICALITY_RANK: Record<ThreatData['criticality'], number> = {
   'Medium-High': 3,
   Medium: 2,
   Low: 1,
+  Unrated: 0,
 }
 
 const CRITICALITY_STYLE: Record<ThreatData['criticality'], string> = {
@@ -36,6 +37,7 @@ const CRITICALITY_STYLE: Record<ThreatData['criticality'], string> = {
   'Medium-High': 'bg-status-warning/15 text-status-warning border-status-warning/30',
   Medium: 'bg-status-warning/10 text-status-warning border-status-warning/20',
   Low: 'bg-muted text-muted-foreground border-border',
+  Unrated: 'bg-muted/40 text-muted-foreground border-border',
 }
 
 function complianceUrl(industry?: string, country?: string): string {

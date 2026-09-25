@@ -3,11 +3,11 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'entropy-randomness',
-  contentVersion: 7,
+  contentVersion: 8,
   lm_id: 'LM-003',
   title: 'Entropy & Randomness',
   description:
-    'Master entropy sources, DRBG mechanisms, and quantum randomness — NIST SP 800-90 standards, entropy testing, TRNG vs QRNG, and combining sources for defense-in-depth.',
+    'Entropy sources, SP 800-90A DRBGs, SP 800-90B entropy-source validation and SP 800-90C RBG constructions — why output tests are not entropy estimates, why a QRNG is judged by the same rules, and what random inputs ML-KEM, ML-DSA and SLH-DSA require.',
   whyThisMatters:
     "Every key this curriculum generates depends on entropy — a weak DRBG or predictable seed makes even a perfect PQC algorithm choice worthless, since the attack moves from 'break the math' to 'guess the seed'.",
   duration: '40 min',
@@ -19,15 +19,19 @@ const manifest: ModuleManifest = {
     { id: 'entropy', label: 'Entropy Sources' },
     { id: 'drbg', label: 'SP 800-90 DRBG' },
     { id: 'testing', label: 'Entropy Testing (90B)' },
-    { id: 'qrng', label: 'TRNG vs QRNG Comparison' },
+    // P0 cleanup (2026-09-24): matches the section heading; the separate
+    // QRNG comparison workshop step was removed (P0.7).
+    { id: 'qrng', label: 'TRNG vs QRNG' },
     { id: 'combining', label: 'Combining Sources' },
   ],
   workshopSteps: [
     { id: 'random-generation', label: 'Random Byte Generation' },
     { id: 'entropy-testing', label: 'Entropy Testing' },
     { id: 'esv-walkthrough', label: 'ESV Validation Walkthrough' },
-    { id: 'qrng-comparison', label: 'QRNG Exploration' },
+    { id: 'drbg-state-machine', label: 'DRBG State Machine' },
     { id: 'source-combining', label: 'Combining Sources' },
+    // Slice 1 (2026-09-24): appended LAST so existing ?step= links keep working.
+    { id: 'entropy-evidence-lab', label: 'Entropy Evidence Lab (SP 800-90B)' },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {

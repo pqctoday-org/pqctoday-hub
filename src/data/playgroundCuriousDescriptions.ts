@@ -11,9 +11,9 @@
  */
 export const PLAYGROUND_CURIOUS_DESCRIPTIONS: Record<string, string> = {
   'qrng-demo':
-    'Where random numbers come from. Every encryption key starts with a coin flip — this shows you the coin.',
+    'A simulation — no quantum hardware involved. A “quantum” sample, an ordinary computer sample and a broken one side by side: only the broken one stands out, because simple checks cannot tell where good random numbers came from.',
   'rng-demo':
-    'Classical random vs quantum random — same statistics, very different physics. A 2-minute reveal of why every encryption key still starts with one of these.',
+    'Good random vs predictable random — output that looks the same, very different security. A 2-minute reveal of why a random-looking generator can still be guessed.',
   'tls-simulator':
     'Watch a website handshake in slow motion. Every padlock icon hides a ~50-millisecond conversation between your browser and a server — step through it message by message.',
   'hybrid-encrypt':

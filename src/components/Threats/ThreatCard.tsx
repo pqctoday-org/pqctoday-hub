@@ -10,6 +10,7 @@ import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
 import { ThreatActionsMenu } from './ThreatActionsMenu'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { NOT_YET_SPECIFIED } from '@/data/threatRowRules'
 
 interface ThreatCardProps {
   item: ThreatItem
@@ -58,6 +59,10 @@ const Chips = ({
     .split(',')
     .map((v) => v.trim())
     .filter(Boolean)
+  // A blank field (a not-yet-filled row) says so, instead of an empty gap
+  // beside the arrow.
+  if (list.length === 0)
+    return <span className="font-sans italic text-muted-foreground">{NOT_YET_SPECIFIED}</span>
   const shown = list.slice(0, max)
   const extra = list.length - shown.length
   return (
@@ -67,7 +72,8 @@ const Chips = ({
           key={i}
           title={c}
           className={clsx(
-            'whitespace-nowrap rounded-sm border px-1.5 py-0.5 max-md:inline-block max-md:max-w-[22ch] max-md:truncate',
+            // UX-14: chips wrap inside the card instead of being clipped.
+            'max-w-full break-words rounded-sm border px-1.5 py-0.5',
             tone === 'risk'
               ? 'border-status-error/25 bg-status-error/5 text-status-error/90'
               : 'border-status-success/25 bg-status-success/5 text-status-success/90'
@@ -131,8 +137,8 @@ export const ThreatCard = ({
           </span>
           <span className="font-mono text-[11px] text-muted-foreground">{item.threatId}</span>
           {item.status && <StatusBadge status={item.status} size="sm" />}
-          <div className="ml-auto flex items-center gap-1.5">
-            <ThreatClassBadge threat={item} />
+          <div className="ml-auto flex flex-wrap items-center gap-1.5">
+            <ThreatClassBadge threat={item} className="whitespace-normal" />
             <TrustScoreBadge resourceType="threats" resourceId={item.threatId} size="sm" />
             <ThreatActionsMenu
               endorseUrl={buildEndorsementUrl({
@@ -145,7 +151,7 @@ export const ThreatCard = ({
                   `**Industry:** ${item.industry}`,
                   `**Criticality:** ${item.criticality}`,
                 ].join('\n'),
-                pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+                pageUrl: `/threats?id=${encodeURIComponent(item.threatId)}`,
               })}
               flagUrl={buildFlagUrl({
                 category: 'threat-endorsement',
@@ -157,7 +163,7 @@ export const ThreatCard = ({
                   `**Industry:** ${item.industry}`,
                   `**Criticality:** ${item.criticality}`,
                 ].join('\n'),
-                pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+                pageUrl: `/threats?id=${encodeURIComponent(item.threatId)}`,
               })}
               resourceLabel={item.threatId}
               resourceType="Threat"
@@ -195,7 +201,7 @@ export const ThreatCard = ({
             {/* Shor tier describes the urgency of breaking this specific crypto, so
             it lives alongside the at-risk chips rather than as a co-equal pill
             next to Criticality. */}
-            <ShorTierBadge threat={item} />
+            <ShorTierBadge threat={item} className="whitespace-normal text-left" />
             <Chips values={item.cryptoAtRisk} tone="risk" />
             <ArrowRight
               size={12}

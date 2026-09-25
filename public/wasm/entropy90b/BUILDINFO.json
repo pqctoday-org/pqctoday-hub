@@ -1,0 +1,18 @@
+{
+  "tool": "usnistgov/SP800-90B_EntropyAssessment",
+  "nistCommit": "87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289",
+  "toolVersionString": "1.1.8",
+  "compiler": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.10 (d6c521a7f05449857c76bd99e396895583cf2083)",
+  "cxxflags": "-std=c++11 -O2 -ffp-contract=off -Wno-unknown-pragmas -I/src/compat -I/opt/wasm/include",
+  "ldflags": "-sMODULARIZE=1 -sEXPORT_ES6=1 -sENVIRONMENT=web,worker,node -sINVOKE_RUN=0 -sEXIT_RUNTIME=1 -sEXPORTED_RUNTIME_METHODS=callMain,FS -sFORCE_FILESYSTEM=1 -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=64MB -sMAXIMUM_MEMORY=4GB -sSTACK_SIZE=8MB -sPRINTF_LONG_DOUBLE=1",
+  "sourcePatches": [],
+  "deps": {"bzip2": "1.0.8", "libdivsufsort": "2.0.1", "jsoncpp": "1.9.8", "openssl": "3.6.4"},
+  "files": {
+    "ea_iid.mjs": {"bytes": 72055, "sha256": "7d0f8276c287180345ad7a5b0aa58b4dbf95caa64a1b04b861b3af2656f6244b"},
+    "ea_non_iid.mjs": {"bytes": 71591, "sha256": "3ef71e2b44b36ae0ef5e6fb5d35b1e2638d925c72f3f43da2e62fff68a592cec"},
+    "ea_restart.mjs": {"bytes": 72071, "sha256": "3e0e690a99d5a1765e5f5b05890cf6cc10f814c9e02d8aa4b7b8f985545834e0"},
+    "ea_iid.wasm": {"bytes": 2371161, "sha256": "6c06533b3985e4fb75183461f3ca69cbe4bcc468b7dfb6627287745496a6e2a6"},
+    "ea_non_iid.wasm": {"bytes": 2287787, "sha256": "d0c2a5faca24319c97ac3dafb3de3a1c4469647f8e5047cce14f5eabf92c78cc"},
+    "ea_restart.wasm": {"bytes": 2393346, "sha256": "7b5b1eacf512581ed452cbbd052b2202fe2b468eb4aa4096e3de8bacaaee2de5"}
+  }
+}

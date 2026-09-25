@@ -3686,11 +3686,12 @@
       "url": "https://www.idmanagement.gov/fpki/",
       "sha256": "363049cf9240c45ba049c349e24662171ee9f23521349fa09d009f86e9f6f1f0",
       "artefact": "SOURCE",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-18T03:23:14.768402+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
-      "stampedAt": "2026-09-18T04:35:55.441116+00:00"
+      "stampedAt": "2026-09-18T04:35:55.441116+00:00",
+      "superseded_file": "_superseded-20260924/threats/GOV-004.html"
     },
     {
       "refId": "freebsd-foundation",

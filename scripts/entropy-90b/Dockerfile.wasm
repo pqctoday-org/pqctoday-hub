@@ -1,0 +1,103 @@
+# syntax=docker/dockerfile:1
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# WebAssembly build of the NIST SP 800-90B EntropyAssessment tool
+# (usnistgov/SP800-90B_EntropyAssessment) for the PQC Today Hub.
+#
+# Build (from the hub root; writes ea_*.mjs/.wasm + BUILDINFO.json to OUT):
+#   scripts/entropy-90b/build-wasm.sh [OUT]
+#
+# Every input is pinned: emsdk image tag, dependency tarballs by SHA-256, the
+# NIST tool by full commit SHA. No NIST source file is modified — OpenMP is
+# replaced by compat/omp.h (single-threaded), see that file.
+ARG EMSDK_VERSION=6.0.10
+FROM emscripten/emsdk:${EMSDK_VERSION} AS deps
+
+ENV PREFIX=/opt/wasm
+# LP64 data model. The NIST code assumes `long` is 64-bit (as on every Linux
+# it is tested on): e.g. utils.h n_choose_2() returns ((n*n)-n)/2 in a `long`
+# (~5e11 for 1M samples) and permutation_tests.h covariance() sums up to
+# 255*255*1e6 in an `unsigned long`. On wasm32 `long` is 32-bit and both wrap,
+# which flipped the IID LRS verdict on a 1M-sample dataset. -sMEMORY64=2
+# compiles everything (dependencies included) for wasm64 — `long` and
+# pointers are 64-bit — and then lowers the module to wasm32 so it still runs
+# on every wasm32 engine (all current browsers, Node 22). Applied to every
+# emcc/em++ call through EMCC_CFLAGS.
+ENV EMCC_CFLAGS="-sMEMORY64=2"
+WORKDIR /src
+
+# ---- bzip2 1.0.8 (BSD-style licence) -------------------------------------
+RUN curl -fsSL -o bzip2.tgz https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz \
+ && echo "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269  bzip2.tgz" | sha256sum -c - \
+ && tar xzf bzip2.tgz && cd bzip2-1.0.8 \
+ && for f in blocksort huffman crctable randtable compress decompress bzlib; do \
+      emcc -O2 -D_FILE_OFFSET_BITS=64 -c $f.c -o $f.o || exit 1; done \
+ && mkdir -p $PREFIX/lib $PREFIX/include \
+ && emar rcs $PREFIX/lib/libbz2.a blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o \
+ && cp bzlib.h $PREFIX/include/ && cp LICENSE /src/LICENSE.bzip2
+
+# ---- libdivsufsort 2.0.1 (MIT) — 32-bit and 64-bit index variants ---------
+RUN curl -fsSL -o divsufsort.tgz https://github.com/y-256/libdivsufsort/archive/refs/tags/2.0.1.tar.gz \
+ && echo "9164cb6044dcb6e430555721e3318d5a8f38871c2da9fd9256665746a69351e0  divsufsort.tgz" | sha256sum -c - \
+ && tar xzf divsufsort.tgz && cd libdivsufsort-2.0.1 \
+ && for v in OFF ON; do \
+      emcmake cmake -S . -B build64$v -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF \
+        -DBUILD_EXAMPLES=OFF -DUSE_OPENMP=OFF -DBUILD_DIVSUFSORT64=$v \
+        -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+      && cmake --build build64$v -j"$(nproc)" && cmake --install build64$v || exit 1; done \
+ && cp COPYING /src/LICENSE.libdivsufsort
+
+# ---- jsoncpp 1.9.8 (MIT / public domain) ---------------------------------
+RUN curl -fsSL -o jsoncpp.tgz https://github.com/open-source-parsers/jsoncpp/archive/refs/tags/1.9.8.tar.gz \
+ && echo "51828cf3574281d2b79ec2a1c56a9e4c20cc1103711321ea96384cffb8d2d904  jsoncpp.tgz" | sha256sum -c - \
+ && tar xzf jsoncpp.tgz && cd jsoncpp-1.9.8 \
+ && emcmake cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF \
+      -DBUILD_STATIC_LIBS=ON -DBUILD_OBJECT_LIBS=OFF -DJSONCPP_WITH_TESTS=OFF \
+      -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DJSONCPP_WITH_PKGCONFIG_SUPPORT=OFF \
+      -DJSONCPP_WITH_CMAKE_PACKAGE=OFF -DCMAKE_INSTALL_PREFIX=$PREFIX \
+ && cmake --build build -j"$(nproc)" && cmake --install build \
+ && cp LICENSE /src/LICENSE.jsoncpp
+
+# ---- OpenSSL 3.6.4 libcrypto (Apache-2.0) — used only for SHA-256 ----------
+RUN curl -fsSL -o openssl.tgz https://github.com/openssl/openssl/releases/download/openssl-3.6.4/openssl-3.6.4.tar.gz \
+ && echo "9bffaa1ad1e07b354c21bd3324ec02fa15579f45a7d0494b3e74bc449b7333ef  openssl.tgz" | sha256sum -c - \
+ && tar xzf openssl.tgz && cd openssl-3.6.4 \
+ && CC=emcc AR=emar RANLIB=emranlib ./Configure linux-generic64 \
+      no-asm no-threads no-shared no-dso no-engine no-afalgeng no-async no-sock \
+      no-ui-console no-tests no-apps no-docs no-module no-legacy \
+      --prefix=$PREFIX --libdir=lib --openssldir=/nonexistent \
+ && make -j"$(nproc)" build_generated libcrypto.a \
+ && cp libcrypto.a $PREFIX/lib/ && cp -r include/openssl $PREFIX/include/ \
+ && cp LICENSE.txt /src/LICENSE.openssl
+
+# ---- glibc 2.41 ldbl-128 logl/log2l/expl/powl/log1pl (LGPL-2.1-or-later) ---
+# emscripten's musl implements these for binary128 long double as a
+# "TODO: broken implementation" that calls the double-precision function, so
+# the NIST estimators that compute in long double would silently run at double
+# precision. Use glibc's own ldbl-128 code instead — the exact code the native
+# linux/arm64 build runs (Debian trixie ships glibc 2.41). See ldbl128/.
+COPY ldbl128 /src/ldbl128
+RUN curl -fsSL -o glibc.tar.xz https://ftp.gnu.org/gnu/glibc/glibc-2.41.tar.xz \
+ && echo "a5a26b22f545d6b7d7b3dd828e11e428f24f4fac43c934fb071b6a7d0828e901  glibc.tar.xz" | sha256sum -c - \
+ && tar xJf glibc.tar.xz glibc-2.41/sysdeps/ieee754/ldbl-128 glibc-2.41/COPYING.LIB \
+ && G=/src/glibc-2.41/sysdeps/ieee754/ldbl-128 && mkdir -p /src/ldbl128/obj \
+ && for f in e_logl e_log2l e_expl e_powl s_log1pl; do \
+      emcc -O2 -ffp-contract=off -fno-builtin -I/src/ldbl128/glibc-compat -I$G \
+        -c $G/$f.c -o /src/ldbl128/obj/$f.o || exit 1; done \
+ && emcc -O2 -ffp-contract=off -fno-builtin -I/src/ldbl128/glibc-compat -I$G \
+      -c /src/ldbl128/ldbl128_wrappers.c -o /src/ldbl128/obj/wrappers.o \
+ && emar rcs $PREFIX/lib/libldbl128.a /src/ldbl128/obj/*.o \
+ && cp glibc-2.41/COPYING.LIB /src/LICENSE.glibc-ldbl128
+
+# ---- NIST SP 800-90B EntropyAssessment, pinned commit ----------------------
+FROM deps AS tool
+ARG NIST_COMMIT=87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289
+RUN git clone --quiet https://github.com/usnistgov/SP800-90B_EntropyAssessment.git /src/nist \
+ && cd /src/nist && git checkout --quiet ${NIST_COMMIT} \
+ && test "$(git rev-parse HEAD)" = "${NIST_COMMIT}"
+COPY compat /src/compat
+COPY build-wasm-inner.sh /src/build-wasm-inner.sh
+RUN NIST_COMMIT=${NIST_COMMIT} bash /src/build-wasm-inner.sh /out
+
+FROM scratch AS artifacts
+COPY --from=tool /out/ /

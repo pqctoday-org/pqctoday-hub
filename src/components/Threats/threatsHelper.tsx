@@ -80,3 +80,8 @@ export function capChips(text: string, max = 3): { visible: string[]; hiddenCoun
     .filter(Boolean)
   return { visible: items.slice(0, max), hiddenCount: Math.max(0, items.length - max) }
 }
+
+/** "1 threat" / "5 threats" — never "1 threats" (UX-19). */
+export function threatCountLabel(n: number): string {
+  return `${n} threat${n === 1 ? '' : 's'}`
+}

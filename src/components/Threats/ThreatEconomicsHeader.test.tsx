@@ -2,12 +2,12 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { ThreatEconomicsHeader } from './ThreatEconomicsHeader'
-import { getCrqcConsensus } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import { getCrqcForecast } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
-// Default Z is single-sourced from CRQC_ESTIMATES (Threats #1) rather than a
-// hardcoded literal — compute it the same way the component does so this test
-// doesn't drift if the estimates list changes.
-const DEFAULT_Z = getCrqcConsensus().zEstimate
+// Default Z is the planning year of the one CRQC expert forecast (ruling R5)
+// rather than a hardcoded literal — compute it the same way the component does
+// so this test doesn't drift if the forecast changes.
+const DEFAULT_Z = getCrqcForecast().planningYear
 
 // Mirrors the component's own CURRENT_YEAR — used to derive slider inputs
 // that land on deterministic OVERDUE / non-OVERDUE rems regardless of what

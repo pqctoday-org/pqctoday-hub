@@ -1397,7 +1397,7 @@
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
       "stampedAt": "2026-09-17T13:15:29.240090+00:00"

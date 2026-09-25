@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { CRQC_ESTIMATES, getCrqcConsensus } from '../data/quantumConstants'
+import {
+  CRQC_ESTIMATES,
+  CRQC_ESTIMATE_KIND_LABELS,
+  getCrqcForecast,
+} from '../data/quantumConstants'
 import { Button } from '@/components/ui/button'
 
 const CURRENT_YEAR = new Date().getFullYear()
@@ -8,7 +12,9 @@ const CURRENT_YEAR = new Date().getFullYear()
 export const HNDLTimeline: React.FC = () => {
   const [dataLifetime, setDataLifetime] = useState(25)
   const [migrationTime, setMigrationTime] = useState(5)
-  const [crqcYear, setCrqcYear] = useState(() => getCrqcConsensus().zEstimate)
+  // Starts at the planning year of the one CRQC expert forecast (ruling R5):
+  // its midpoint, rounded down. The slider covers 2028–2045.
+  const [crqcYear, setCrqcYear] = useState(() => getCrqcForecast().planningYear)
 
   const migrationDeadline = useMemo(
     () => crqcYear - dataLifetime - migrationTime,
@@ -161,6 +167,9 @@ export const HNDLTimeline: React.FC = () => {
               {CRQC_ESTIMATES.slice(0, 3).map((estimate) => (
                 <div key={estimate.source} className="flex items-center gap-2 text-xs">
                   <span className="text-muted-foreground truncate">{estimate.source}:</span>
+                  <span className="shrink-0 font-semibold text-foreground/80">
+                    {CRQC_ESTIMATE_KIND_LABELS[estimate.kind]}
+                  </span>
                   <span className="text-foreground/80">{estimate.confidence}</span>
                 </div>
               ))}

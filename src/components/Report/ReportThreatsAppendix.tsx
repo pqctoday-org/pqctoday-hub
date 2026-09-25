@@ -26,14 +26,14 @@ export const ASSESS_TO_THREATS_INDUSTRY: Record<string, string[]> = {
     'Supply Chain / Logistics',
   ],
   'Energy & Utilities': [
-    // Canonicalized to one sector in threatsData.ts (Threats #5) — reference
-    // the single post-canonicalization label here.
-    'Critical Infrastructure / Energy',
+    // The Threats page's label since ruling R3 (2026-09-24); the old labels
+    // resolve to it through THREAT_INDUSTRY_ALIASES (threatRowRules.ts).
+    'Critical Infrastructure / OT',
     'Water / Wastewater',
     'Rail / Transit',
   ],
   Automotive: ['Automotive / Connected Vehicles'],
-  Aerospace: ['Aerospace / Aviation'],
+  Aerospace: ['Aerospace / Aviation / Space'],
   'Retail & E-Commerce': ['Retail & E-Commerce', 'Payment Card Industry'],
   Other: [],
 }
@@ -44,6 +44,7 @@ const criticalityConfig: Record<ThreatData['criticality'], { label: string; clas
   'Medium-High': { label: 'Med-High', className: 'bg-warning/5 text-warning' },
   Medium: { label: 'Medium', className: 'bg-muted text-muted-foreground' },
   Low: { label: 'Low', className: 'bg-success/10 text-success' },
+  Unrated: { label: 'Unrated', className: 'bg-muted/40 text-muted-foreground' },
 }
 
 const ThreatRow: React.FC<{
