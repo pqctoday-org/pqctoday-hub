@@ -202,7 +202,7 @@
       "id": "entropy-randomness",
       "lm_id": "LM-003",
       "title": "Entropy & Randomness",
-      "description": "Master entropy sources, DRBG mechanisms, and quantum randomness — NIST SP 800-90 standards, entropy testing, TRNG vs QRNG, and combining sources for defense-in-depth.",
+      "description": "Entropy sources, SP 800-90A DRBGs, SP 800-90B entropy-source validation and SP 800-90C RBG constructions — why output tests are not entropy estimates, why a QRNG is judged by the same rules, and what random inputs ML-KEM, ML-DSA and SLH-DSA require.",
       "duration": "40 min",
       "difficulty": "advanced",
       "frameworkPhase": "foundations"
@@ -617,7 +617,7 @@
     "emv-payment-pqc": 8,
     "email-signing": 4,
     "energy-utilities-pqc": 6,
-    "entropy-randomness": 5,
+    "entropy-randomness": 6,
     "exec-quantum-impact": 4,
     "5g-security": 3,
     "government-defense-pqc": 3,
@@ -1203,7 +1203,7 @@
       },
       {
         "id": "qrng",
-        "label": "TRNG vs QRNG Comparison"
+        "label": "TRNG vs QRNG"
       },
       {
         "id": "combining",
@@ -2546,12 +2546,16 @@
         "label": "ESV Validation Walkthrough"
       },
       {
-        "id": "qrng-comparison",
-        "label": "QRNG Exploration"
+        "id": "drbg-state-machine",
+        "label": "DRBG State Machine"
       },
       {
         "id": "source-combining",
         "label": "Combining Sources"
+      },
+      {
+        "id": "entropy-evidence-lab",
+        "label": "Entropy Evidence Lab (SP 800-90B)"
       }
     ],
     "exec-quantum-impact": [
@@ -3461,7 +3465,7 @@
           "id": "entropy-randomness",
           "lm_id": "LM-003",
           "title": "Entropy & Randomness",
-          "description": "Master entropy sources, DRBG mechanisms, and quantum randomness — NIST SP 800-90 standards, entropy testing, TRNG vs QRNG, and combining sources for defense-in-depth.",
+          "description": "Entropy sources, SP 800-90A DRBGs, SP 800-90B entropy-source validation and SP 800-90C RBG constructions — why output tests are not entropy estimates, why a QRNG is judged by the same rules, and what random inputs ML-KEM, ML-DSA and SLH-DSA require.",
           "duration": "40 min",
           "difficulty": "advanced",
           "frameworkPhase": "foundations"

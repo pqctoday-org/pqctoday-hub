@@ -1,0 +1,494 @@
+{
+  "_provenance": {
+    "purpose": "Known-answer vectors for the Entropy module HMAC_DRBG (SHA-256) teaching implementation, utils/hmacDrbg.ts. Passing them shows that implementation computes SP 800-90A Rev. 1 \u00a710.1.2 HMAC_DRBG correctly for these inputs; it is not a CAVP/ACVP validation and says nothing about entropy.",
+    "sources": [
+      {
+        "id": "acvp",
+        "producer": "NIST ACVP-Server (usnistgov/ACVP-Server) gen-val sample vector set hmacDRBG-1.0",
+        "repository": "https://github.com/usnistgov/ACVP-Server",
+        "commit": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "commitNote": "RELEASE/v1.1.0.43 including hotfix patches (committed 2026-08-12T19:29:36Z); newest master commit on 2026-09-24; same pin as the hub src/data/acvp ML-KEM/ML-DSA files and the feat/acvp-remediation-0924 PROVENANCE.json.",
+        "files": [
+          {
+            "upstreamPath": "gen-val/json-files/hmacDRBG-1.0/prompt.json",
+            "sourceUrl": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/hmacDRBG-1.0/prompt.json",
+            "sha256": "3613b3b990904ed9c98ea05ce223e660e29d45f370b03618e0e4cc8c0c43e004"
+          },
+          {
+            "upstreamPath": "gen-val/json-files/hmacDRBG-1.0/expectedResults.json",
+            "sourceUrl": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/hmacDRBG-1.0/expectedResults.json",
+            "sha256": "0d3a6e0d7bed5ef84ab9f2a27a0ad04b9478b38617ade7c9d9cd058a7a7f6598"
+          }
+        ],
+        "subsetPolicy": "mode SHA2-256 only: tgId 3 (predResistance true, reSeed true) and tgId 14 (predResistance false, reSeed true); the two lowest tcIds of each. The upstream SHA2-256 groups have no empty additional-input or personalization cases, hence the CAVP supplement below."
+      },
+      {
+        "id": "cavp",
+        "producer": "NIST CAVP DRBG test vectors (drbgtestvectors.zip, CAVS 14.3), HMAC_DRBG.rsp in each of the three inner archives",
+        "url": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/drbg/drbgtestvectors.zip",
+        "zipSha256": "5f7e5658ebd5b4e6785a7b12fa32333511d2acc2f2d9c5ae1ffa16b699377769",
+        "files": [
+          {
+            "path": "drbgvectors_no_reseed/HMAC_DRBG.rsp",
+            "sha256": "9fdd7f11dbbe75e0a7e19c6ae57660008dd4e74672ebb67119cab287c7aa5a79"
+          },
+          {
+            "path": "drbgvectors_pr_false/HMAC_DRBG.rsp",
+            "sha256": "4b7d03d4fb48c738c76baf09bd67d054514682f4fee36ff8741bec2ccd77b8d4"
+          },
+          {
+            "path": "drbgvectors_pr_true/HMAC_DRBG.rsp",
+            "sha256": "806f71be8d100702450191d847bbfe3c405f31cdaca219eee6918cb77a7a2f55"
+          }
+        ],
+        "subsetPolicy": "[SHA-256] groups only; in each file the first group for every (PersonalizationStringLen, AdditionalInputLen) combination; COUNT = 0 of that group."
+      }
+    ],
+    "retrieved": "2026-09-24",
+    "transformation": "Subset only. Every hex value is byte-copied (lower-cased). ACVP otherInput entries become ordered steps: intendedUse reSeed -> {op: reseed}; generate -> {op: generate}, carrying entropyInput only when predResistance is true. CAVP EntropyInputReseed/AdditionalInputReseed -> a leading reseed step; each AdditionalInput (and EntropyInputPR when PredictionResistance = True) -> a generate step. returnedBits is the output of the LAST generate step, as in both upstream formats.",
+    "semantics": "Instantiate(entropyInput, nonce, personalizationString); then run steps in order. A generate step with entropyInput (prediction resistance) is Reseed(entropyInput, additionalInput) followed by Generate with no additional input (SP 800-90A Rev. 1 \u00a79.3.1 step 7). Each generate returns returnedBitsLen bits.",
+    "licenseNote": "NIST-developed material; see usnistgov/ACVP-Server README License section. Acknowledge NIST as the source."
+  },
+  "algorithm": "HMAC_DRBG",
+  "hash": "SHA-256",
+  "cases": [
+    {
+      "id": "acvp-tg3-tc31",
+      "source": "acvp",
+      "upstream": {
+        "tgId": 3,
+        "tcId": 31
+      },
+      "predictionResistance": true,
+      "returnedBitsLen": 4096,
+      "entropyInput": "be5cb2b213db2ddbc5a27069e168ff8b80e9de0b0867c8519ada2f77e5c42c13f607c3d980dfdc387f36af12446f51ecd019f5c3c1fb8481353292f013ac1274b4b5d83354d0a475ad9f078ce9fd842cca4323f838e1c8cf3a17a9255589d786c3980fc99b1c30f4112ea58acbbe99df57e779eb32d50dc47e744f84c4b6a35229d24b83dddc13442e56cd46a647438a9c6edbf9db01590e1beda5af605e4bde",
+      "nonce": "9fe8c7544a09fe8aa28d255bd9f55ff35a732e474af3d476bc59333097ad057c",
+      "personalizationString": "526d9e8584b851b2ad18606c693f0e9a9299c353287c4350a2b7fb50006d9b70f35c05de6c59f5715608957ecdb0dbe57f9bb34f1f427e574c0bde7a29a8bb42972d1d44248e3545e8e295a6d3905c813125f8bbb0339d10a12a6da29ede53ecaf680f29320d0b77566382bd522081b9ad7d587d946aaba6574f5230068ba86b",
+      "steps": [
+        {
+          "op": "generate",
+          "additionalInput": "c0a65291771b2e759e51987b4f27d5a5c568b0a556ea11041c8c9026475dfc21a51cc7399f1b22162f43d7a68dfb76b256574e989c0c4d87e0f2ad9a325eb876f72676c6da2cfc14004db1a472f1f7ca26c38400d3f3471be2a1669c2f2364e1",
+          "entropyInput": "e84a9884c59d75db58228be4273029468eddbd973fa1c08faa3c63500754368c31d9d49c3886a7e45ac4a19482f15846f16df166b096babde6d00a6d81d09ffab60ed680761bb480436d2dfa5ea65fb5a9e520a74eed9b07594bb7ed06eb5187be003be2a6022b121540534b9e14089dbd1058d3575efaf1f17c82a12dcac097b9cb0e66441dc502b8780649de8c84dbede5b7c7820b53cc6780006c04e48a1b"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "744bd10f48364d33e055ec8be428b12424afe30f95179dfbe194b92b0ff49a1be2b16e576b67397f7e701079fc3aa2d518b5a4fa7a2d90e3a33c7682b6cca4f1cfe9c686fecad9c8aa5d3d25fb403858176ff7b3e56905a9386d224430e4ddbb",
+          "entropyInput": "960bba3593ba450f698a647fd6c850c581a76694873afd891e5a4143d942520edd13ee4b06b9ff7d047eeee3f3230379b0fb8782f2bbcf8457c0ee9338498e576d57a3da4200c10829594f57bf544a0ded798c689abf6580ee304cc7c229d753d6ad373d31f1f23d642141583bbdb5a388b1bc0f9c6405a594d4cb353e252a6bb18b1474f8d2bfaa8829cd9f64fa55ba668aecec9489deea223010f09c7b6731"
+        }
+      ],
+      "returnedBits": "e1738d19691cb73f3271d2939bf13d0277e1cd11cb29cc8c6ba4bf35c78e047a70510b87db8c19101e2a987b472c20066cf695fa499172e15e4545e5f73d74867a6d1f5f3edbf433ebdde723c0d63477b757f661d633ea1f836450b4d64acbff0a387bf6afccafd18b2219d0bd07c7d78bf0e7e88684f4696f6bc5c3f394db3976ac55a66d2e0b0c6dec84a30f83eaa3a57260aa87850fc499f2683eb92dbd1995c075d0909d7cf429c9022ab4dd995bffa0a9a5bdc8105f3db7e4edcc537ee75ea925b1146998fc5ed8ca642321e7c2a3a26dfefd1b1cabf6e04b82fd75854fdb9d604679fba0915409b0e3d80a2681c0e0db861e21e8e3dc3a16a81702c485a8fb933e02bced96dfe6c4baa0d6d2895c2390608dc1c284c682750379a74eac843fa7ef1a8d2b7acd1a8afea300def746d761c084653cb32b9fda5fe387eb1e90870ea6ecf1c1387c292a03b0f6d20899c4e8ba8ddce7be127ebd69ffe35a35096189234f9de87a9548b40e055dfe2f249b3897366422cb5c90b4b5bf978e69ae34675f6418985840c6e7a07c8bd0c41dfe3cd1d37aa82ab2e8fb38f8155c979ff54b7aa0698c57a24a7adffac0fe1625b1a48af30e760a4954ba6f06987607aca7f41bc6d758d0bc4049a9ab5b59c8e17bb848c838e19083d4df9035e122e97307359477ff836789a416bf229db6a043291e9e847fc2796102306b3f4b0779"
+    },
+    {
+      "id": "acvp-tg3-tc32",
+      "source": "acvp",
+      "upstream": {
+        "tgId": 3,
+        "tcId": 32
+      },
+      "predictionResistance": true,
+      "returnedBitsLen": 4096,
+      "entropyInput": "ccbadaad676e19652cf03550a2c986fb716e77c51a653a9f4d6c17f939a9d34f897b184f497311d8289c4195324fa26ecebd0e02c7e2a2e50a2321794641016e8668a0443754b87f713fa7bc4a44c36ee55e3b3a1859b729c050a401f38217cf598cdaf6bd87cc0af7265c7f0b6235ae2514fc5d115afb605f5ecc035fb0a6cdbeb31f80f3e982e2bb4c9513b916878c5303b19950d682780dcddf406987578c",
+      "nonce": "c59f04a9e0d47de21938d84fc94d01a3606282dc5b93023556d483642f785827",
+      "personalizationString": "e81566e66a3e7c4ab5f10a6cf2b814bf7cb4813bdff1699e2095a3fd30165b0dce72c2aaec264d956ff110cabdb9fee737e39fd9b6b760abc0530cb8d4ec3bc6bcc826f19f4ba31c8e38f33f9c29f12d4e77e96bdc17d6f46462f68f43dbce6231acf4afe64c5e204f7cf18cacc40db6e25094a24e6c72b1770d3efe6cf2997f",
+      "steps": [
+        {
+          "op": "generate",
+          "additionalInput": "4818b289a6b725545f7573ec9953e23363fa39f1ea6af2e5ce0dc31e6c7f05b9cf58d220a19c5ad56a3143bb0ec5b82b90cf51dd6780931b395425018c9085a33181b2517e7303b5d8a0727e852b39f40e50aef222363b81aa5093a5513375dd",
+          "entropyInput": "afc9e747b9c67b3fc17414a3023d6bccf97634026d356c19c96c18f9b2c529ed4375bbf1f8336a43521b278f5005edc24a466a7a20b9526bbadf7b240ace5be90364a8f000b61263f155bcbfa027f9459022c80dae2d52ec65bca70b975b980fdbc7b7494a7ee5125318a773a6b72761ea1280a2dd36b1baadf36ee6c9667c99c86276c789e35710c5a5435fe800dfd3a2707114f46071528f402da28eaab897"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "39159693ef89b2d6ad4c3393d3082d3e9e368bb63ce0e255460f09a5c0302eefe0681be75526c3dfb9ee79332bc98816729f70987737f555fcecbab3686cc5277f5e5c5b1ea0de0fcf02ed3135df4101c271118557ae4e3dc43a88333692e2a7",
+          "entropyInput": "20af126cca4b888424c846c575b990841ff0454a14e5d692cb27a7a72503d715c862ebc56461f108bc256a2e4019646be2ad370da8aa0a0b7577cdbc5444aa8ff687ded924723257feedf41ef04b0999e3fbeccf93cd9ca63c103796b8eff6b1445b794ab24867ce7dcadb4450471bac0e86ac4af6eeeb6fd191228b40af21d93245660cf8181f8f46e2be7e3d6e385f9c7846d9c929f6aa677262d2d8adb13b"
+        }
+      ],
+      "returnedBits": "322026adf3cda83fbd4419314041ec202f0d5a5204cd0389aaf798fab565a8240dbe3bacc432bdc42d265b997f1c87ce5b6117883271f2d0d0403f1318291fe1d3c9c5dad9fad00ae52c897efb4f9bf027ae08968db66a027f6b8b127bd49371dde68a45fa25f44301139010641834ac79c5e9f8304f955a188958d641845c4d473eb959281cb1e7421fdd85550d8a53e21e2c0f5961862117088d8a935a88371c5f017a2b00b12e725586d4fe5bb693c31b1aa0aaba484e377bcec7ceabdb9783a812834223a6a267a8925e2a4c923d640749a2d7c2dba49ce5d5181f3dcac97330cd98f283d37a740a1d1daa03347715404bfcc3b26c6e7ec0bf45563d53a094ba800d463d2d4d15b345aa8ee18b98285d69bb7b8481d0d238cc02d959fa1096ba7669a9aa86a02f9909ea5c24f54bdb048e8cbdc761c8250f1c5a6fdf414604c8906e3bb0e07442f231e4ca0e2331d4d42656a00e5956d7713d4509566cbd49dbe2533a88b86e54aaaa12e20e66b4e8efca082b136ded92620f8372a942ff741016faf1d07863c01f3f23c509d3567ed4a915424d3d35c8771c4fe1c43a9ca01b41ffc575f8cecad2fd106d8d091d2f80e78bb21346a532c2d3dc8289738e6f3a0d01a0b75cf80372602436286dd4a09d5f3e6c1bdb70962a749deb59c9334f16bd73157c41d1929dad4c375ab8fa27c6474522dd63f34300edb975f577e5"
+    },
+    {
+      "id": "acvp-tg14-tc196",
+      "source": "acvp",
+      "upstream": {
+        "tgId": 14,
+        "tcId": 196
+      },
+      "predictionResistance": false,
+      "returnedBitsLen": 4096,
+      "entropyInput": "4e77ae5d72ec8acc250e63ebbeb7c81b669e5846659729e13a3fd6bff57dfa4a3d3f69c2aa25afeda481c986f99ca5e9f7978c32372abab83a588322da2f4def945c8763a0c0b3f2d09071204f643abd61b0ee436c8ea7c5a20a835d17807e15a218ea3359069ae6daf8c1dff05dc2bdb69aa25844f0087e90e1693ba78dea926f617e1122f05704083333740d37a60c462beb0212ed77202a0c24b10aa31a0e",
+      "nonce": "32dccce9342957ebe75281b2fa8ebf11945e1c325c1761651338a10e38eced7b",
+      "personalizationString": "6ce23bcd9495bd90e291054e06fced2021210707b463dffc5b3035c46a95dc11c791c245413c74d1472e97fbfd521269d1d08c130b36b62e287d09086604be798d02a01966bef0ad35133d6a92077a64399bc9290f691467aa280432e9a9e48499290377b64c059af99b7d1f9e61572caff3b24b8958a3907a57666b59ea48b2",
+      "steps": [
+        {
+          "op": "reseed",
+          "entropyInput": "407f0da438e3cba8af9bec7d4f9e73e20552602969d0849409a4c47b95ad662a9a987fcd528a7fad8edaefe19436aad8b3f143cc4f2b27c04d602eb8905a839f7d81b3f97727d4481eb0559091d1f4385c55d5184de4ac4e92f7f427d39e5de36b80b3896e062d880a90b0fb79b9b742870256ed3eee20300b21ffa4b0ded9ceabcf4a48147c3bb34313076d15b770919ba505ac6d09b3b6c9c706a9b9709c11",
+          "additionalInput": "b217d75355259530dee946604a49b66c8d51cc00571eea15400fcc968f5879c69a32886f9899e772455f259d1e0a976636903eec50498a3b866fed3c98da8f0486656be1afedfdcb3d1d49e15970852d4c65711f5d002c0513385c956524908e"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "77c83cfc37db8ff97492a5fb26af35a25942a32591a1bf64b663f3089bdfcbddccf39fa36be20a756f725eab46bf7f5028d7363d96c3ae166ba7de4250ff6bd33eecbaa6005e7a907f39e83fb82b0c95a6440707b209ca879aa001e5728aaf57"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "6dce16966a09e9a29cb545bc10328bb49274dec29c586086f8e81b0b92f4b94ef044a798eb398025ed885a73746f084517b7a6c3f20a52156702cfea2ed62af728b92b1878a26b3937d1cdef6dc888c8d249e1bdebe2081b5c203b5772b8f6ba"
+        }
+      ],
+      "returnedBits": "da76ea8b94ff379de02ef43931ad75f77e7b2b81721ea1216864d22b7f1101391aeb5bca2ee79650683ae5e2cd1c59246616e63eeb7e517283580a446e31135145a5c430d4264ee444a0f3adebc9a9094c4d6a43b97b9117e4db951aa15d03ddc47114086dea28191ec7c2e9ee2a8f8836178c27cee09102f034206e75660e8ae0f75e1ce96ce0ef3809d9459ec3255e5ce48cb5be7569a4e572733ec30d6415b5511c3eb7c81f59dc87697d9548bab1e163b4b98ce69a4c25e13446a003a2ec8e393c0d66a38ad01d3f9f7c125bc9a5cb038d5fb9daf953f92450af0c9265645a8db94bd7f76ca93c9b46e445577953e897a8803386aa9141b250aaa3966def790be05ce85ebfb32c6e0c3409fb405d3cd0079820efab5a97efc1b0c72866b6cb6e1e4b6868e09b31e172da654cb73614e438fbf9ddd63468e69485df8046c9caac5b524352c5dc2edbf94930d6dfde1fee89c9c6d36b62094e99e9a8834206c8d2d7a117a4e97c97173b636be06e4106a5f3cf573ee1e3d57a8191a54d4dc79bacf93af94554e728576db055a4e6da75e1f65e5a01578d99759e7e8485e0c7cc412c5d7762cf7c9a56b5fb00615d638ae4a64e8ac4a577fe0b98bb04ebb8f9375705f03c9237a1ad2a5cb59b7573a66d7a79b9ee3fa1f3042f9af038c3b2b20bcc2916f1f04d2b98a24a3bb075f48451fa0c4d3ee13d63c093e1d703315738"
+    },
+    {
+      "id": "acvp-tg14-tc197",
+      "source": "acvp",
+      "upstream": {
+        "tgId": 14,
+        "tcId": 197
+      },
+      "predictionResistance": false,
+      "returnedBitsLen": 4096,
+      "entropyInput": "927c2388d05774528ac13a669e1862efe761d93f5a17fe2669b9a288aa384a314094711ebd20505cc540ba4299d61084e4775de945d66e039ae1a820b439934504d33dae9d4767444b1e16c91b990812da57c23d7d4f057d420f6524659b7bdb0ad5dba1e9eadca7b5db384a54b11300060ebc2f159d1be074269979ee1c1f83696a7a2e990e209687d7db982f7aa4dc895341851fe546850475af0a81637e90",
+      "nonce": "03e1e94a1458ad89f6d9f658bcce39ee8386e6a343726d56e25bcd259e1496da",
+      "personalizationString": "ff1e3cf5bd9875767e9e2397a3b80e6632b805ba525f16e5fc4ed572d382f6ff2d7d16f2c9d3fec0f864202088b20aeedc35180aa8d7b6161006c9bc596edb9fbfac4aada7eb9c4ac2ae92087626ecc50a2ee0ae21b5ac772bbedd651ec16e8b6c97477578151dbce439bf554ee1d4ee6ce77ec8f947360621c2c3c4a8808482",
+      "steps": [
+        {
+          "op": "reseed",
+          "entropyInput": "4e6edfc52ff51f510fb0a2c44137fae6f55c697c2bdee641b355e7b19026ff47118462c41fba894af913e0b60df588de0fab3d6cecaafdb132ff80b83f1864ef67afb9ca150a9132c95627298f1841330d26caf51666f7cb4f78ceb1ed52a0203c70cf4e299604daa153d2e3754d2a01b16e0bdf39a16036fee3601ae433859c399d76b91af2a118060497769df5aeb093b3e473eed9beb22ae940cbaf0bde38",
+          "additionalInput": "d1f0ded1c4977c6cd3bbed23dcf0d6096ececb35ea2c6de73d1c993672586a550d05cbdaff1eff4b3523a4a6ff0215a2680de0d6810e409ccbdeefc4e3b28f7861ed26f1923f174ea54d432ac939c52ce07ce802d0cb4233f75e1a166da59978"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "2adae3a5db1b9c6491204ac4e93dd32a2b928a45f46087c9cee0cc8a1dba0f59a107799403bdc41812f6ece82193177b325a83d45ee3e7a36ee6629f33ae5b7d086c5701b90684ae67e928db04f5af317f0039783818c5f809329a876c2c013b"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "7468c4f88d9c534793db155b221f5524301add6dad94eb2e6308caed55b4719c32feb8849ed5f766c0ee190a13a98ecf6205bef3ffb18e2cec63ce84021436ade52804b1eeb829ef0edc1e3bc0d891318dcd028b6157c537afa73dc8c40542df"
+        }
+      ],
+      "returnedBits": "e18126a5add619763fddddc319d61a1577ed856d42e155c35675afa2e1030ae7d66dac87fd47064082b2a8480785914f6d5c4802df4ae3e5c769dd0dbd2259c259f2b4f174ea5dd0abae5b94e1cf681702a69f7b54d48500963e8932f0e4f43f1740ff48c5bc6965244674dafd8263f570a5858e4ce94f4f75d9a2b7ed5c8b1c64addf1af66758850e047064f42f1f021a04894052296f7e0a8ac56b011a7c861ef818dbfaca6985cb4122e5c93b374f1a2cb2c1a4497c1745f5c47c1150dba22ff89c288c41dddd9a356f48139c7ae6bd3f0a3076fb9979ad01297e4209c6def60c4156c8df65c81bd4bd721058179e7497012671fcbfa3cbb32c48b82789b7649d6334f63919cc1cb0c220fc01f8573e6e327b757b21ef41b44ae2362d84b5ac5af810aeed6d51979040a4bc548e026b62b9dd6f7d8ccf336003ed87684a29d4a4ad94554e639342ba758e90c3a00496c98aee452c59713cc9ff3ddf9b5331bd1ec79e0d50f1c4474f44326e1587d2b17e3509c56e5e7d9f0ac90e0e1a918fc8d84919fa0e9674cf79f7903ec8e57fa23a5875f442676f1b674320940ec90ee8375fcb9969d25562b56116576ebe526d919dd2a5f8659ba0a8a82dc838c49c9dc57e9d7db20251cdac453b2c0c93afb31a5191acb4784eda2d0347596e49357d31ec07f3a31cea2555edeb004dbdd4f877b53ac3639fcab20205880a3a315f"
+    },
+    {
+      "id": "cavp-no-reseed-P0-A0-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_no_reseed/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = False] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 0] [AdditionalInputLen = 0] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": false,
+      "returnedBitsLen": 1024,
+      "entropyInput": "ca851911349384bffe89de1cbdc46e6831e44d34a4fb935ee285dd14b71a7488",
+      "nonce": "659ba96c601dc69fc902940805ec0ca8",
+      "personalizationString": "",
+      "steps": [
+        {
+          "op": "generate",
+          "additionalInput": ""
+        },
+        {
+          "op": "generate",
+          "additionalInput": ""
+        }
+      ],
+      "returnedBits": "e528e9abf2dece54d47c7e75e5fe302149f817ea9fb4bee6f4199697d04d5b89d54fbb978a15b5c443c9ec21036d2460b6f73ebad0dc2aba6e624abf07745bc107694bb7547bb0995f70de25d6b29e2d3011bb19d27676c07162c8b5ccde0668961df86803482cb37ed6d5c0bb8d50cf1f50d476aa0458bdaba806f48be9dcb8"
+    },
+    {
+      "id": "cavp-no-reseed-P0-A256-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_no_reseed/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = False] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 0] [AdditionalInputLen = 256] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": false,
+      "returnedBitsLen": 1024,
+      "entropyInput": "d3cc4d1acf3dde0c4bd2290d262337042dc632948223d3a2eaab87da44295fbd",
+      "nonce": "0109b0e729f457328aa18569a9224921",
+      "personalizationString": "",
+      "steps": [
+        {
+          "op": "generate",
+          "additionalInput": "3c311848183c9a212a26f27f8c6647e40375e466a0857cc39c4e47575d53f1f6"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "fcb9abd19ccfbccef88c9c39bfb3dd7b1c12266c9808992e305bc3cff566e4e4"
+        }
+      ],
+      "returnedBits": "9c7b758b212cd0fcecd5daa489821712e3cdea4467b560ef5ddc24ab47749a1f1ffdbbb118f4e62fcfca3371b8fbfc5b0646b83e06bfbbab5fac30ea09ea2bc76f1ea568c9be0444b2cc90517b20ca825f2d0eccd88e7175538b85d90ab390183ca6395535d34473af6b5a5b88f5a59ee7561573337ea819da0dcc3573a22974"
+    },
+    {
+      "id": "cavp-no-reseed-P256-A0-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_no_reseed/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = False] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 256] [AdditionalInputLen = 0] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": false,
+      "returnedBitsLen": 1024,
+      "entropyInput": "5cacc68165a2e2ee20812f35ec73a79dbf30fd475476ac0c44fc6174cdac2b55",
+      "nonce": "6f885496c1e63af620becd9e71ecb824",
+      "personalizationString": "e72dd8590d4ed5295515c35ed6199e9d211b8f069b3058caa6670b96ef1208d0",
+      "steps": [
+        {
+          "op": "generate",
+          "additionalInput": ""
+        },
+        {
+          "op": "generate",
+          "additionalInput": ""
+        }
+      ],
+      "returnedBits": "f1012cf543f94533df27fedfbf58e5b79a3dc517a9c402bdbfc9a0c0f721f9d53faf4aafdc4b8f7a1b580fcaa52338d4bd95f58966a243cdcd3f446ed4bc546d9f607b190dd69954450d16cd0e2d6437067d8b44d19a6af7a7cfa8794e5fbd728e8fb2f2e8db5dd4ff1aa275f35886098e80ff844886060da8b1e7137846b23b"
+    },
+    {
+      "id": "cavp-no-reseed-P256-A256-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_no_reseed/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = False] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 256] [AdditionalInputLen = 256] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": false,
+      "returnedBitsLen": 1024,
+      "entropyInput": "5d3286bc53a258a53ba781e2c4dcd79a790e43bbe0e89fb3eed39086be34174b",
+      "nonce": "c5422294b7318952ace7055ab7570abf",
+      "personalizationString": "2dba094d008e150d51c4135bb2f03dcde9cbf3468a12908a1b025c120c985b9d",
+      "steps": [
+        {
+          "op": "generate",
+          "additionalInput": "793a7ef8f6f0482beac542bb785c10f8b7b406a4de92667ab168ecc2cf7573c6"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "2238cdb4e23d629fe0c2a83dd8d5144ce1a6229ef41dabe2a99ff722e510b530"
+        }
+      ],
+      "returnedBits": "d04678198ae7e1aeb435b45291458ffde0891560748b43330eaf866b5a6385e74c6fa5a5a44bdb284d436e98d244018d6acedcdfa2e9f499d8089e4db86ae89a6ab2d19cb705e2f048f97fb597f04106a1fa6a1416ad3d859118e079a0c319eb95686f4cbcce3b5101c7a0b010ef029c4ef6d06cdfac97efb9773891688c37cf"
+    },
+    {
+      "id": "cavp-pr-false-P0-A0-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_pr_false/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = False] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 0] [AdditionalInputLen = 0] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": false,
+      "returnedBitsLen": 1024,
+      "entropyInput": "06032cd5eed33f39265f49ecb142c511da9aff2af71203bffaf34a9ca5bd9c0d",
+      "nonce": "0e66f71edc43e42a45ad3c6fc6cdc4df",
+      "personalizationString": "",
+      "steps": [
+        {
+          "op": "reseed",
+          "entropyInput": "01920a4e669ed3a85ae8a33b35a74ad7fb2a6bb4cf395ce00334a9c9a5a5d552",
+          "additionalInput": ""
+        },
+        {
+          "op": "generate",
+          "additionalInput": ""
+        },
+        {
+          "op": "generate",
+          "additionalInput": ""
+        }
+      ],
+      "returnedBits": "76fc79fe9b50beccc991a11b5635783a83536add03c157fb30645e611c2898bb2b1bc215000209208cd506cb28da2a51bdb03826aaf2bd2335d576d519160842e7158ad0949d1a9ec3e66ea1b1a064b005de914eac2e9d4f2d72a8616a80225422918250ff66a41bd2f864a6a38cc5b6499dc43f7f2bd09e1e0f8f5885935124"
+    },
+    {
+      "id": "cavp-pr-false-P0-A256-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_pr_false/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = False] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 0] [AdditionalInputLen = 256] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": false,
+      "returnedBitsLen": 1024,
+      "entropyInput": "05ac9fc4c62a02e3f90840da5616218c6de5743d66b8e0fbf833759c5928b53d",
+      "nonce": "2b89a17904922ed8f017a63044848545",
+      "personalizationString": "",
+      "steps": [
+        {
+          "op": "reseed",
+          "entropyInput": "2791126b8b52ee1fd9392a0a13e0083bed4186dc649b739607ac70ec8dcecf9b",
+          "additionalInput": "43bac13bae715092cf7eb280a2e10a962faf7233c41412f69bc74a35a584e54c"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "3f2fed4b68d506ecefa21f3f5bb907beb0f17dbc30f6ffbba5e5861408c53a1e"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "529030df50f410985fde068df82b935ec23d839cb4b269414c0ede6cffea5b68"
+        }
+      ],
+      "returnedBits": "02ddff5173da2fcffa10215b030d660d61179e61ecc22609b1151a75f1cbcbb4363c3a89299b4b63aca5e581e73c860491010aa35de3337cc6c09ebec8c91a6287586f3a74d9694b462d2720ea2e11bbd02af33adefb4a16e6b370fa0effd57d607547bdcfbb7831f54de7073ad2a7da987a0016a82fa958779a168674b56524"
+    },
+    {
+      "id": "cavp-pr-false-P256-A0-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_pr_false/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = False] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 256] [AdditionalInputLen = 0] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": false,
+      "returnedBitsLen": 1024,
+      "entropyInput": "fa0ee1fe39c7c390aa94159d0de97564342b591777f3e5f6a4ba2aea342ec840",
+      "nonce": "dd0820655cb2ffdb0da9e9310a67c9e5",
+      "personalizationString": "f2e58fe60a3afc59dad37595415ffd318ccf69d67780f6fa0797dc9aa43e144c",
+      "steps": [
+        {
+          "op": "reseed",
+          "entropyInput": "e0629b6d7975ddfa96a399648740e60f1f9557dc58b3d7415f9ba9d4dbb501f6",
+          "additionalInput": ""
+        },
+        {
+          "op": "generate",
+          "additionalInput": ""
+        },
+        {
+          "op": "generate",
+          "additionalInput": ""
+        }
+      ],
+      "returnedBits": "f92d4cf99a535b20222a52a68db04c5af6f5ffc7b66a473a37a256bd8d298f9b4aa4af7e8d181e02367903f93bdb744c6c2f3f3472626b40ce9bd6a70e7b8f93992a16a76fab6b5f162568e08ee6c3e804aefd952ddd3acb791c50f2ad69e9a04028a06a9c01d3a62aca2aaf6efe69ed97a016213a2dd642b4886764072d9cbe"
+    },
+    {
+      "id": "cavp-pr-false-P256-A256-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_pr_false/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = False] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 256] [AdditionalInputLen = 256] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": false,
+      "returnedBitsLen": 1024,
+      "entropyInput": "cdb0d9117cc6dbc9ef9dcb06a97579841d72dc18b2d46a1cb61e314012bdf416",
+      "nonce": "d0c0d01d156016d0eb6b7e9c7c3c8da8",
+      "personalizationString": "6f0fb9eab3f9ea7ab0a719bfa879bf0aaed683307fda0c6d73ce018b6e34faaa",
+      "steps": [
+        {
+          "op": "reseed",
+          "entropyInput": "8ec6f7d5a8e2e88f43986f70b86e050d07c84b931bcf18e601c5a3eee3064c82",
+          "additionalInput": "1ab4ca9014fa98a55938316de8ba5a68c629b0741bdd058c4d70c91cda5099b3"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "16e2d0721b58d839a122852abd3bf2c942a31c84d82fca74211871880d7162ff"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "53686f042a7b087d5d2eca0d2a96de131f275ed7151189f7ca52deaa78b79fb2"
+        }
+      ],
+      "returnedBits": "dda04a2ca7b8147af1548f5d086591ca4fd951a345ce52b3cd49d47e84aa31a183e31fbc42a1ff1d95afec7143c8008c97bc2a9c091df0a763848391f68cb4a366ad89857ac725a53b303ddea767be8dc5f605b1b95f6d24c9f06be65a973a089320b3cc42569dcfd4b92b62a993785b0301b3fc452445656fce22664827b88f"
+    },
+    {
+      "id": "cavp-pr-true-P0-A0-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_pr_true/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = True] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 0] [AdditionalInputLen = 0] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": true,
+      "returnedBitsLen": 1024,
+      "entropyInput": "9969e54b4703ff31785b879a7e5c0eae0d3e309559e9fe96b0676d49d591ea4d",
+      "nonce": "07d20d46d064757d3023cac2376127ab",
+      "personalizationString": "",
+      "steps": [
+        {
+          "op": "generate",
+          "additionalInput": "",
+          "entropyInput": "c60f2999100f738c10f74792676a3fc4a262d13721798046e29a295181569f54"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "",
+          "entropyInput": "c11d4524c9071bd3096015fcf7bc24a607f22fa065c937658a2a77a8699089f4"
+        }
+      ],
+      "returnedBits": "abc015856094803a938dffd20da94843870ef935b82cfec17706b8f551b8385044235dd44b599f94b39be78dd476e0cf11309c995a7334e0a78b37bc9586235086fa3b637ba91cf8fb65efa22a589c137531aa7b2d4e2607aac27292b01c698e6e01ae679eb87c01a89c7422d4372d6d754ababb4bf896fcb1cd09d692d0283f"
+    },
+    {
+      "id": "cavp-pr-true-P0-A256-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_pr_true/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = True] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 0] [AdditionalInputLen = 256] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": true,
+      "returnedBitsLen": 1024,
+      "entropyInput": "2cad88b2b6a06e703de46185ccb2ddcf5e0ee030995ebdf95cc4fbc38441f17f",
+      "nonce": "32310770e04172c0cf91f6590cce44a4",
+      "personalizationString": "",
+      "steps": [
+        {
+          "op": "generate",
+          "additionalInput": "ef6da5e6530e0d621749ab192e06327e995c3ac0c3963ab8c8cd2df2839ab5df",
+          "entropyInput": "448bfbc5ce9e3b9da3e9642daecd994dfe373e75253e8eb585141224eca7ad7b"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "44278b31ed853f0a510bd14650ac4b4971d8b426799a43511d016be68dedbb8d",
+          "entropyInput": "afb57f69799c0b892b3015990e133698d543aa87829ace868e4a5e9525d62357"
+        }
+      ],
+      "returnedBits": "4c7dfbe509dc5a3ac26998723c6a44cad20b197fc86117c778d1568ab828923862885e97198f77a1cb45113f5d78726a0f120aec94afc45f57c8dcc1cb092b343480012858ef5bc559f57023442209326ec4a54d91ca3a77dfdf9e75f117cef50e6fd2dc9af6ddce8e6515b4a97357a97b6cd274f68a042fa41bbd7b7261b034"
+    },
+    {
+      "id": "cavp-pr-true-P256-A0-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_pr_true/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = True] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 256] [AdditionalInputLen = 0] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": true,
+      "returnedBitsLen": 1024,
+      "entropyInput": "f7b90c797a4a376cdd9f5c435f5985e77f36ec1df1145a12072cbb2a0da378fc",
+      "nonce": "d95202986d45896e9f4a65f2f353fa35",
+      "personalizationString": "61535c5c045e784267fd0d85f2861778fa53c8e8586af67cf5c9f21a28ebb656",
+      "steps": [
+        {
+          "op": "generate",
+          "additionalInput": "",
+          "entropyInput": "130ab64f41a5d49d6a241e0260b4bb8a46a16c6ac9e234c84b5b26cdb518d459"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "",
+          "entropyInput": "f7670e817ac061ac60439be60982492000dc5da8bc6636bdac8b1cab03198dfd"
+        }
+      ],
+      "returnedBits": "8df4e349f9ea43cc509ecb2b1124358cda2de1f5cc9315edca63610a413478d68b8bb49c2814c82ce571f6e0a6780fa21c4b570610ee0c04d3edb92124f580f962d741330200c19885ca716502223247b728d66fbbeb7c6cc25cfe9866b1450b346227c7663074c8b15d189f1c6edba172a53c733d67c1c69bd7aca7e62013cd"
+    },
+    {
+      "id": "cavp-pr-true-P256-A256-c0",
+      "source": "cavp",
+      "upstream": {
+        "file": "drbgvectors_pr_true/HMAC_DRBG.rsp",
+        "groupHeader": "[SHA-256] [PredictionResistance = True] [EntropyInputLen = 256] [NonceLen = 128] [PersonalizationStringLen = 256] [AdditionalInputLen = 256] [ReturnedBitsLen = 1024]",
+        "COUNT": 0
+      },
+      "predictionResistance": true,
+      "returnedBitsLen": 1024,
+      "entropyInput": "4294671d493dc085b5184607d7de2ff2b6aceb734a1b026f6cfee7c5a90f03da",
+      "nonce": "d071544e599235d5eb38b64b551d2a6e",
+      "personalizationString": "63bc769ae1d95a98bde870e4db7776297041d37c8a5c688d4e024b78d83f4d78",
+      "steps": [
+        {
+          "op": "generate",
+          "additionalInput": "28848becd3f47696f124f4b14853a456156f69be583a7d4682cff8d44b39e1d3",
+          "entropyInput": "db9b4790b62336fbb9a684b82947065393eeef8f57bd2477141ad17e776dac34"
+        },
+        {
+          "op": "generate",
+          "additionalInput": "8bfce0b7132661c3cd78175d83926f643e36f7608eec2c5dac3ddcbacc8c2182",
+          "entropyInput": "4a9abe80f6f522f29878bedf8245b27940a76471006fb4a4110beb4decb6c341"
+        }
+      ],
+      "returnedBits": "e580dc969194b2b18a97478aef9d1a72390aff14562747bf080d741527a6655ce7fc135325b457483a9f9c70f91165a811cf4524b50d51199a0df3bd60d12abac27d0bf6618e6b114e05420352e23f3603dfe8a225dc19b3d1fff1dc245dc6b1df24c741744bec3f9437dbbf222df84881a457a589e7815ef132f686b760f012"
+    }
+  ]
+}
