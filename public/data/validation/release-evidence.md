@@ -8,18 +8,19 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 ## Headline figures
 
-| Figure                                                  |         Value | Source                                                 |
-| ------------------------------------------------------- | ------------: | ------------------------------------------------------ |
-| Selected public NIST ACVP-Server reference-sample files |            18 | `src/data/validation/validation-counts.generated.json` |
-| NIST ACVP-Server reference-sample cases (active)        |            90 | `src/data/validation/validation-counts.generated.json` |
-| Vector files (active / quarantined / total)             |   33 / 0 / 33 | `src/data/validation/validation-counts.generated.json` |
-| Cases (active / quarantined / total)                    | 121 / 1 / 122 | `src/data/validation/validation-counts.generated.json` |
-| Active cases: positive / negative                       |      104 / 17 | `src/data/validation/validation-counts.generated.json` |
-| C++: advertised capability cells (denominator)          |         1,635 | `public/data/validation/coverage-matrix.json`          |
-| Rust: advertised capability cells (denominator)         |         1,025 | `public/data/validation/coverage-matrix.json`          |
-| Coverage waivers (entries; all statuses)                |           207 | `src/data/validation/coverage-waivers.json`            |
-| Waivers approved                                        |             0 | `src/data/validation/coverage-waivers.json`            |
-| Open gaps (register entries)                            |           170 | `public/data/validation/coverage-matrix.json`          |
+| Figure                                                  |         Value | Source                                                            |
+| ------------------------------------------------------- | ------------: | ----------------------------------------------------------------- |
+| Selected public NIST ACVP-Server reference-sample files |            25 | `src/data/validation/validation-counts.generated.json`            |
+| NIST ACVP-Server reference-sample cases (active)        |           159 | `src/data/validation/validation-counts.generated.json`            |
+| Vector files (active / quarantined / total)             |   40 / 0 / 40 | `src/data/validation/validation-counts.generated.json`            |
+| Cases (active / quarantined / total)                    | 190 / 1 / 191 | `src/data/validation/validation-counts.generated.json`            |
+| Active cases: positive / negative                       |      152 / 38 | `src/data/validation/validation-counts.generated.json`            |
+| C++: advertised capability cells (denominator)          |         1,635 | `public/data/validation/coverage-matrix.json`                     |
+| Rust: advertised capability cells (denominator)         |         1,025 | `public/data/validation/coverage-matrix.json`                     |
+| Coverage waivers (entries; all statuses)                |           207 | `src/data/validation/coverage-waivers.json`                       |
+| Waivers approved                                        |             0 | `src/data/validation/coverage-waivers.json`                       |
+| Open gaps (register entries)                            |           170 | `public/data/validation/coverage-matrix.json`                     |
+| Workbench test groups / families                        |        42 / 7 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
 **Waivers:** All 207 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5).
 
@@ -27,7 +28,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Evidence class                    | Files | Active cases |
 | --------------------------------- | ----: | -----------: |
-| nist-acvp-reference-sample        |    18 |           90 |
+| nist-acvp-reference-sample        |    25 |          159 |
 | acvts-issued-vector               |     0 |            0 |
 | published-standard-kat            |     9 |           16 |
 | independent-oracle                |     4 |           11 |
@@ -176,7 +177,7 @@ Valid review records: 0.
 
 | Kind                      | Items not approved |
 | ------------------------- | -----------------: |
-| vector-source             |                 31 |
+| vector-source             |                 38 |
 | coverage-waiver           |                207 |
 | public-claim              |                  3 |
 | learn-module-practitioner |                  1 |
@@ -197,7 +198,7 @@ Machine-evaluated. A human item is never marked PASS.
 |   # | Item                                                                                                       | Status             | Evidence                                                                                                                                                                                                                                                                                                                   | Basis                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | --: | ---------------------------------------------------------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 |   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                          | All 197 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                |
-|   2 | All active vectors have provenance or are blocked/quarantined                                              | **PASS**           | `src/data/validation/vector-manifest.json`<br>`src/data/validation/validation-counts.generated.json`                                                                                                                                                                                                                       | 33 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1.                                                                                                                                                                                                                                                  |
+|   2 | All active vectors have provenance or are blocked/quarantined                                              | **PASS**           | `src/data/validation/vector-manifest.json`<br>`src/data/validation/validation-counts.generated.json`                                                                                                                                                                                                                       | 40 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1.                                                                                                                                                                                                                                                  |
 |   3 | Deck, script, UI and report counts are generated from the same manifest                                    | **HUMAN-REQUIRED** | `src/data/validation/validation-counts.generated.json`<br>`public/data/validation/release-evidence.json`<br>`scripts/audit-validation-claims.ts`                                                                                                                                                                           | This report and the UI read the generated counts (validation-counts.generated.json). The deck and script live outside this repo, so a person must run `npm run gen:release-evidence:check -- <presentation dir>` on the FINAL deck; `npm run release:freeze -- --presentation <dir>` records that result in the freeze manifest.                                                                                                                                                         |
 |   4 | The disclaimer is visible in the workbench and the report                                                  | **PASS**           | `src/components/Playground/dev/pipeline/suites/AcvpSuiteWorkbench.tsx`<br>`src/components/Algorithms/KATView.tsx`<br>`src/components/Algorithms/CoverageMatrixView.tsx`<br>`public/data/validation/coverage-matrix.{md,html}`<br>`public/data/validation/release-evidence.md`<br>`e2e/validation-release-evidence.spec.ts` | Workbench, Algorithms KAT view and coverage matrix render <ValidationDisclaimer/> (the one shared constant); the coverage exports and this report carry it verbatim; e2e/validation-release-evidence.spec.ts asserts it is visible in a browser.                                                                                                                                                                                                                                         |
 |   5 | ML-DSA demo: externally expected positive and deliberately invalid negative cases pass on both engines     | **PASS**           | `src/data/validation/run-results/wasm-node-useAcvpSuite.json`<br>`src/data/validation/coverage-matrix.generated.json`<br>`e2e/acvp-mldsa-evidence.spec.ts`                                                                                                                                                                 | 27 NIST ACVP-Server reference-sample positive and 15 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly).                                                                                                    |
@@ -220,5 +221,5 @@ Machine-evaluated. A human item is never marked PASS.
 | `src/data/validation/native-conformance.generated.json`       | `4896b6b29fe12e8d66d807ab82fd051b7fe79683a13123c42fa7a7f8ff903fc1` |
 | `src/data/validation/open-gaps.json`                          | `05819752ef114b16d5cb0ae38f43e1ad6a885e78dfd8a9bb9a91f90db91a86e0` |
 | `src/data/validation/run-results/wasm-node-useAcvpSuite.json` | `4fbc71c09e90cd1cb67b5116a2233ab30ac9b009c298b029d3eeb2c86959e8e6` |
-| `src/data/validation/validation-counts.generated.json`        | `cbc47b85c3ea8de33a796f62d835296b9ed86831c77943b764f1b62a23967548` |
-| `src/data/validation/vector-manifest.json`                    | `1689072a5a62f462930a68fce7be1824994e779b25dfc959830b8da1d972f9b8` |
+| `src/data/validation/validation-counts.generated.json`        | `782f68b73f39f323654d07a1a6c0dbee664bf27ade3e263096b39450ed8344e1` |
+| `src/data/validation/vector-manifest.json`                    | `95b54b52499c3a3dc17aed6b2145def51ef6db177f02c57517245c15794a118c` |

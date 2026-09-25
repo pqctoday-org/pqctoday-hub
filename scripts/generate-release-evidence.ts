@@ -50,7 +50,15 @@ import {
   type ReviewItem,
   type ReviewItemStatus,
 } from '../src/data/validation/reviewRecords'
-import { listFiles, runAudit, type ClaimFinding } from './audit-validation-claims'
+import {
+  countWorkbenchGroups,
+  listFiles,
+  runAudit,
+  scanWorkbenchCountDrift,
+  type ClaimFinding,
+  type WorkbenchGroups,
+} from './audit-validation-claims'
+import { TEST_REGISTRY } from '../src/data/validation/testRegistry'
 
 export const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 export const REPORT_JSON_REL = 'public/data/validation/release-evidence.json'
@@ -72,6 +80,8 @@ export const IN = {
   lm065Manifest: 'src/components/PKILearning/modules/AcvpLabWorkflow/manifest.ts',
   lm065Status: 'src/components/PKILearning/modules/AcvpLabWorkflow/data/reviewStatus.ts',
   lm065Content: 'src/components/PKILearning/modules/AcvpLabWorkflow/content.ts',
+  /** CATEGORIES table: workbench test groups and families (parsed, not imported). */
+  workbenchSuite: 'src/components/Playground/hsm/acvp/useAcvpSuite.ts',
 } as const
 
 /** Surfaces that must render the §2.2 disclaimer (A-4), checked by source scan. */
@@ -324,6 +334,7 @@ export interface ReleaseEvidence {
   recordedRuns: Json
   crossTarget: Json
   openGaps: Json
+  workbench: Json
   reviews: {
     rule: string
     validRecords: number
@@ -874,6 +885,7 @@ export const CLAIM_SECTIONS = [
   'recordedRuns',
   'crossTarget',
   'openGaps',
+  'workbench',
 ] as const
 
 /**
@@ -914,6 +926,14 @@ export function buildReleaseEvidence(root: string = ROOT): {
   const recordedRuns = buildRecordedRuns(runs)
   const crossTarget = buildCrossTarget(ctx, xplat)
   const openGaps = buildOpenGaps(matrix)
+  const wb = countWorkbenchGroups(path.join(root, IN.workbenchSuite))
+  const workbench = {
+    source: `${IN.workbenchSuite} (CATEGORIES)`,
+    note: 'Test groups per family as declared in the workbench CATEGORIES table; the file itself is not hashed here (it changes with every section edit), its parsed table is.',
+    families: wb.families,
+    groups: wb.groups,
+    categories: wb.categories,
+  }
 
   // The claims matrix a reviewer signs off = every figure section.
   const claimsSha = claimsSha256({
@@ -924,6 +944,7 @@ export function buildReleaseEvidence(root: string = ROOT): {
     recordedRuns,
     crossTarget,
     openGaps,
+    workbench,
   })
   const reviewItems = buildReviewItems(ctx, manifest, waiverFile, claimsSha)
   const records = readReviewRecords(root)
@@ -954,6 +975,7 @@ export function buildReleaseEvidence(root: string = ROOT): {
     recordedRuns: recordedRuns as unknown as Json,
     crossTarget: crossTarget as unknown as Json,
     openGaps,
+    workbench,
     reviews: {
       rule: `Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in ${IN.reviews}/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module ${LM_ID_RE.exec(readText(ctx, IN.lm065Manifest, false) ?? '')?.[1] ?? 'LM-065'} (acvp-lab-workflow, state ${lmState ?? 'unknown'}) additionally needs a validation-lab practitioner (plan WS-I).`,
       validRecords: ev.validRecords.length,
@@ -1078,6 +1100,10 @@ export function renderMarkdown(r: ReleaseEvidence): string {
   p(`| Coverage waivers (entries; all statuses) | ${fmt(w.entries)} | \`${IN.waivers}\` |`)
   p(`| Waivers approved | ${fmt(w.approvedEntries)} | \`${IN.waivers}\` |`)
   p(`| Open gaps (register entries) | ${fmt(og.total)} | \`${IN.publicMatrix}\` |`)
+  const wbk = r.workbench as unknown as { groups: number; families: number; source: string }
+  p(
+    `| Workbench test groups / families | ${fmt(wbk.groups)} / ${fmt(wbk.families)} | \`${wbk.source}\` |`
+  )
   p()
   p(`**Waivers:** ${w.statement}`)
   p()
@@ -1421,6 +1447,46 @@ export function scanFigures(text: string, file: string, rules: FigureRule[]): Cl
 
 // ── check ────────────────────────────────────────────────────────────────────
 
+/**
+ * The generated sources this report reads must themselves be fresh. This check
+ * NEVER regenerates them (that would hide the drift); it names the generator
+ * to run. Cheap equivalents of gen:coverage-matrix:check / gen:validation-counts:check
+ * on the recorded input hashes, so a stale input fails here with a clear cause.
+ */
+export function staleInputs(root: string = ROOT): string[] {
+  const out: string[] = []
+  const read = (rel: string) =>
+    fs.existsSync(path.join(root, rel)) ? fs.readFileSync(path.join(root, rel), 'utf8') : null
+  const matrixText = read(IN.publicMatrix)
+  if (matrixText) {
+    const recorded = (JSON.parse(matrixText) as { inputs?: Record<string, string> }).inputs ?? {}
+    for (const [rel, want] of Object.entries(recorded)) {
+      const now =
+        rel === 'src/data/validation/testRegistry.ts'
+          ? sha256(JSON.stringify(TEST_REGISTRY.map((t) => [t.id, t.engines, t.cases])))
+          : read(rel) === null
+            ? null
+            : sha256(read(rel)!)
+      if (now !== want)
+        out.push(
+          `stale input: ${IN.publicMatrix} was generated from ${rel} ${want.slice(0, 12)}…, which is now ${now ? `${now.slice(0, 12)}…` : 'absent'} — run npm run gen:coverage-matrix and commit it, then npm run gen:release-evidence (this check never regenerates its inputs)`
+        )
+    }
+  }
+  const counts = read(IN.counts)
+  const manifest = read(IN.manifest)
+  if (counts && manifest) {
+    const want = (JSON.parse(counts) as { manifestCanonicalSha256?: string })
+      .manifestCanonicalSha256
+    const now = sha256(JSON.stringify(JSON.parse(manifest)))
+    if (want !== now)
+      out.push(
+        `stale input: ${IN.counts} was generated from a different ${IN.manifest} — run npm run gen:validation-counts and commit it, then npm run gen:release-evidence`
+      )
+  }
+  return out
+}
+
 export interface CheckResult {
   errors: string[]
   notes: string[]
@@ -1430,7 +1496,7 @@ export async function checkReleaseEvidence(
   root: string = ROOT,
   extraPaths: string[] = []
 ): Promise<CheckResult> {
-  const errors: string[] = []
+  const errors: string[] = [...staleInputs(root)]
   const notes: string[] = []
   const { report, reviewProblems } = buildReleaseEvidence(root)
   const { json, md } = await renderOutputs(root, report)
@@ -1464,7 +1530,12 @@ export async function checkReleaseEvidence(
   const findings: ClaimFinding[] = []
   for (const d of ROOT_DOCS) {
     const abs = path.join(root, d)
-    if (fs.existsSync(abs)) findings.push(...scanFigures(fs.readFileSync(abs, 'utf8'), d, rules))
+    if (!fs.existsSync(abs)) continue
+    const text = fs.readFileSync(abs, 'utf8')
+    findings.push(...scanFigures(text, d, rules))
+    findings.push(
+      ...scanWorkbenchCountDrift(text, d, report.workbench as unknown as WorkbenchGroups)
+    )
   }
   if (extraPaths.length) {
     for (const p of extraPaths) {

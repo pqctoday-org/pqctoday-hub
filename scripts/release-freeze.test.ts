@@ -33,7 +33,8 @@ describe('release:freeze — dry run on the real tree', () => {
     expect(m.wasmBundles.find((b) => b.name === 'softhsm-cpp-engine')?.hsmCommit).toBeTruthy()
     const report = JSON.parse(fs.readFileSync(path.join(REPO, REPORT_JSON_REL), 'utf8'))
     expect(m.reportClaimsSha256).toBe(claimsSha256(report))
-    expect(m.checks.releaseEvidence).toBe('pass')
+    // Mirrors the real check (red while an input of the report is stale).
+    expect(m.checks.releaseEvidence).toBe(m.checks.errors.length ? 'fail' : 'pass')
   })
 
   it('the tree matches its own snapshot (no false drift)', () => {
@@ -48,6 +49,7 @@ describe('release:freeze — dry run on the real tree', () => {
       ...m,
       label: 'rc1',
       hub: { ...m.hub, clean: true },
+      checks: { releaseEvidence: 'pass', errors: [] },
       presentation: { dir: '/x', files: [], check: 'pass', findings: [] },
       engines: [
         {
@@ -57,6 +59,13 @@ describe('release:freeze — dry run on the real tree', () => {
       ],
     }
     expect(refuseToWrite(tampered).join('\n')).toMatch(/no longer matches the hash/)
+    expect(
+      refuseToWrite({
+        ...tampered,
+        engines: m.engines,
+        checks: { releaseEvidence: 'fail', errors: ['x'] },
+      }).join()
+    ).toMatch(/gen:release-evidence:check fails/)
     expect(refuseToWrite({ ...tampered, engines: m.engines })).toEqual([])
     expect(
       refuseToWrite({

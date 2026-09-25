@@ -18,9 +18,13 @@ import {
   claimsSha256,
   evaluateDod,
   figureRules,
+  renderOutputs as formatReportFiles,
   scanFigures,
+  sha256,
+  staleInputs,
   type ReleaseEvidence,
 } from './generate-release-evidence'
+import { TEST_REGISTRY } from '../src/data/validation/testRegistry'
 import { VALIDATION_DISCLAIMER } from '../src/data/validationDisclaimer'
 
 const REPO = process.cwd()
@@ -30,10 +34,16 @@ const readRepo = <T>(rel: string): T =>
   JSON.parse(fs.readFileSync(path.join(REPO, rel), 'utf8')) as T
 
 describe('release evidence — committed report', () => {
-  it('is exactly what the generated sources produce (the --check contract)', async () => {
+  it('is exactly what the committed generated sources produce (the --check contract)', async () => {
     const { errors } = await checkReleaseEvidence(REPO)
-    expect(errors).toEqual([])
+    expect(errors.filter((e) => !e.startsWith('stale input:'))).toEqual([])
   }, 60000)
+
+  it('reads only fresh generated sources (coverage matrix, validation counts)', () => {
+    // Fails — with the generator to run — when an input of this report is
+    // itself stale. The check never regenerates it.
+    expect(staleInputs(REPO)).toEqual([])
+  })
 
   it('pulls every headline figure from its generated source', () => {
     const r = committed()
@@ -188,6 +198,9 @@ describe('release evidence — sabotage on a temp copy', () => {
     IN.lm065Manifest,
     IN.lm065Status,
     IN.lm065Content,
+    IN.workbenchSuite,
+    'src/data/validation/mechanism-inventory.generated.json',
+    'src/data/validation/capability-map.json',
     REPORT_JSON_REL,
     REPORT_MD_REL,
     'public/data/validation/coverage-matrix.md',
@@ -195,7 +208,7 @@ describe('release evidence — sabotage on a temp copy', () => {
     '.prettierrc',
     ...DISCLAIMER_SURFACES,
   ]
-  beforeEach(() => {
+  beforeEach(async () => {
     tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'release-evidence-'))
     for (const rel of COPY) {
       const src = path.join(REPO, rel)
@@ -203,7 +216,25 @@ describe('release evidence — sabotage on a temp copy', () => {
       fs.mkdirSync(path.dirname(path.join(tmp, rel)), { recursive: true })
       fs.cpSync(src, path.join(tmp, rel), { recursive: true })
     }
-  })
+    // Make the copy self-consistent whatever the state of the real tree (the
+    // real tree's freshness is the test above): re-point the recorded input
+    // hashes at the copied inputs, then write the report the copy generates.
+    const t = (rel: string) => fs.readFileSync(path.join(tmp, rel), 'utf8')
+    const matrix = JSON.parse(t(IN.publicMatrix)) as { inputs: Record<string, string> }
+    for (const rel of Object.keys(matrix.inputs))
+      matrix.inputs[rel] =
+        rel === 'src/data/validation/testRegistry.ts'
+          ? sha256(JSON.stringify(TEST_REGISTRY.map((x) => [x.id, x.engines, x.cases])))
+          : sha256(t(rel))
+    for (const rel of [IN.publicMatrix, IN.matrix])
+      fs.writeFileSync(path.join(tmp, rel), JSON.stringify(matrix))
+    const counts = JSON.parse(t(IN.counts)) as { manifestCanonicalSha256: string }
+    counts.manifestCanonicalSha256 = sha256(JSON.stringify(JSON.parse(t(IN.manifest))))
+    fs.writeFileSync(path.join(tmp, IN.counts), JSON.stringify(counts, null, 2) + '\n')
+    const { json, md } = await formatReportFiles(tmp, buildReleaseEvidence(tmp).report)
+    fs.writeFileSync(path.join(tmp, REPORT_JSON_REL), json)
+    fs.writeFileSync(path.join(tmp, REPORT_MD_REL), md)
+  }, 60000)
   afterEach(() => fs.rmSync(tmp, { recursive: true, force: true }))
 
   it('the untouched copy passes', async () => {
@@ -226,6 +257,25 @@ describe('release evidence — sabotage on a temp copy', () => {
     fs.writeFileSync(p, JSON.stringify(c, null, 2) + '\n')
     const { errors } = await checkReleaseEvidence(tmp)
     expect(errors.join('\n')).toMatch(/release-evidence\.(json|md) differs/)
+  }, 60000)
+
+  it('SABOTAGE: an input changed without regenerating the matrix or counts is a named stale input', async () => {
+    fs.appendFileSync(path.join(tmp, IN.waivers), '\n')
+    const m = JSON.parse(fs.readFileSync(path.join(tmp, IN.manifest), 'utf8'))
+    m.files[0].sha256 = '0'.repeat(64)
+    fs.writeFileSync(path.join(tmp, IN.manifest), JSON.stringify(m, null, 2))
+    const stale = staleInputs(tmp).join('\n')
+    expect(stale).toMatch(
+      /generated from src\/data\/validation\/coverage-waivers\.json .* run npm run gen:coverage-matrix/
+    )
+    expect(stale).toMatch(
+      /validation-counts\.generated\.json was generated from a different .* run npm run gen:validation-counts/
+    )
+    // …and the check reports them first, without regenerating anything.
+    const before = fs.readFileSync(path.join(tmp, IN.publicMatrix))
+    const { errors } = await checkReleaseEvidence(tmp)
+    expect(errors[0]).toMatch(/^stale input:/)
+    expect(fs.readFileSync(path.join(tmp, IN.publicMatrix)).equals(before)).toBe(true)
   }, 60000)
 
   it('SABOTAGE: a published matrix that differs from the generated one fails', async () => {

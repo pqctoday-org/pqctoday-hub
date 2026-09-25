@@ -13,21 +13,21 @@
     "src/data/validation/native-conformance.generated.json": "4896b6b29fe12e8d66d807ab82fd051b7fe79683a13123c42fa7a7f8ff903fc1",
     "src/data/validation/open-gaps.json": "05819752ef114b16d5cb0ae38f43e1ad6a885e78dfd8a9bb9a91f90db91a86e0",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "4fbc71c09e90cd1cb67b5116a2233ab30ac9b009c298b029d3eeb2c86959e8e6",
-    "src/data/validation/validation-counts.generated.json": "cbc47b85c3ea8de33a796f62d835296b9ed86831c77943b764f1b62a23967548",
-    "src/data/validation/vector-manifest.json": "1689072a5a62f462930a68fce7be1824994e779b25dfc959830b8da1d972f9b8"
+    "src/data/validation/validation-counts.generated.json": "782f68b73f39f323654d07a1a6c0dbee664bf27ade3e263096b39450ed8344e1",
+    "src/data/validation/vector-manifest.json": "95b54b52499c3a3dc17aed6b2145def51ef6db177f02c57517245c15794a118c"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "ca1996cfbedd78f429ce18cfa506f02601d43327623d1c57482aee06f76a764d",
-    "nistReferenceSampleFiles": 18,
-    "nistReferenceSampleCases": 90,
+    "manifestCanonicalSha256": "a90dac21efe7430a7a6383464f93d6393ec70d1898575425f22f525884b3d662",
+    "nistReferenceSampleFiles": 25,
+    "nistReferenceSampleCases": 159,
     "vectorFiles": {
-      "total": 33,
-      "active": 33,
+      "total": 40,
+      "active": 40,
       "quarantined": 0
     },
     "filesByClass": {
-      "nist-acvp-reference-sample": 18,
+      "nist-acvp-reference-sample": 25,
       "acvts-issued-vector": 0,
       "published-standard-kat": 9,
       "independent-oracle": 4,
@@ -38,12 +38,12 @@
       "unverified": 0
     },
     "cases": {
-      "total": 122,
-      "active": 121,
+      "total": 191,
+      "active": 190,
       "quarantined": 1
     },
     "activeCasesByClass": {
-      "nist-acvp-reference-sample": 90,
+      "nist-acvp-reference-sample": 159,
       "acvts-issued-vector": 0,
       "published-standard-kat": 16,
       "independent-oracle": 11,
@@ -54,8 +54,8 @@
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 104,
-      "negative": 17
+      "positive": 152,
+      "negative": 38
     },
     "filesWithPublishabilityGap": {
       "generator-script-not-in-repo": 1,
@@ -1154,14 +1154,57 @@
       }
     ]
   },
+  "workbench": {
+    "source": "src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)",
+    "note": "Test groups per family as declared in the workbench CATEGORIES table; the file itself is not hashed here (it changes with every section edit), its parsed table is.",
+    "families": 7,
+    "groups": 42,
+    "categories": [
+      {
+        "id": "symmetric",
+        "label": "Symmetric / AEAD",
+        "groups": 6
+      },
+      {
+        "id": "hashing_mac",
+        "label": "Hashing & MAC",
+        "groups": 5
+      },
+      {
+        "id": "kdf",
+        "label": "KDF",
+        "groups": 5
+      },
+      {
+        "id": "classical",
+        "label": "Classical Asymmetric",
+        "groups": 10
+      },
+      {
+        "id": "ml_dsa",
+        "label": "ML-DSA",
+        "groups": 7
+      },
+      {
+        "id": "slh_stateful",
+        "label": "SLH-DSA & Stateful",
+        "groups": 6
+      },
+      {
+        "id": "ml_kem",
+        "label": "ML-KEM",
+        "groups": 3
+      }
+    ]
+  },
   "reviews": {
     "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-065 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
     "validRecords": 0,
     "statusCounts": {
-      "awaiting-review": 242
+      "awaiting-review": 249
     },
     "awaiting": {
-      "vector-source": 31,
+      "vector-source": 38,
       "coverage-waiver": 207,
       "public-claim": 3,
       "learn-module-practitioner": 1
@@ -1294,9 +1337,23 @@
         "status": "awaiting-review"
       },
       {
+        "id": "vector-source:mldsa_siggen_ctxmsg_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/mldsa_siggen_ctxmsg_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
         "id": "vector-source:mldsa_siggen_det_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_siggen_det_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:mldsa_siggen_prehash_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/mldsa_siggen_prehash_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -1311,6 +1368,20 @@
         "id": "vector-source:mldsa_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:mlkem_encapdecap_val_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/mlkem_encapdecap_val_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:mlkem_keygen_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/mlkem_keygen_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-KEM-keyGen-FIPS203/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -1381,6 +1452,27 @@
         "id": "vector-source:slhdsa_ctx_test",
         "kind": "vector-source",
         "title": "src/data/acvp/slhdsa_ctx_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:slhdsa_siggen_det_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/slhdsa_siggen_det_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:slhdsa_sigver_sha2_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/slhdsa_sigver_sha2_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigVer-FIPS205/internalProjection.json @ 975de31e)",
+        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "vector-source:slhdsa_sigver_shake_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/slhdsa_sigver_shake_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigVer-FIPS205/internalProjection.json @ 975de31e)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -2883,7 +2975,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "33 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1."
+      "basis": "40 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1."
     },
     {
       "n": 3,
