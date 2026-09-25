@@ -112,6 +112,7 @@ import {
   hsm_unwrapKeyMech,
   hsm_createObject,
   hsm_injectTestKey,
+  hsm_importECPrivateKey,
   writeBytes,
   CKO_SECRET_KEY,
   CKK_AES,
@@ -137,6 +138,7 @@ import {
   CKM_SHA3_512,
   CKP_PKCS5_PBKD2_HMAC_SHA256,
   CKP_PKCS5_PBKD2_HMAC_SHA512,
+  CKD_SHA256_KDF,
 } from '../wasm/softhsm'
 import type { SoftHSMModule } from '../wasm/softhsm'
 import { evidenceForKind, type KatEvidenceClass } from './katEvidence'
@@ -1393,77 +1395,184 @@ function getAlgorithmName(kind: KatKind): string {
   }
 }
 
-// ── 5G SUCI Profile B (3GPP TS 33.501 Annex C.4) KAT ───────────────────────
+// ── 5G SUCI Profile B (3GPP TS 33.501 Annex C.4.4.1) KAT ─────────────────────
+//
+// Every step checks a value PRINTED in TS 33.501 V19.5.0 Annex C.4.4.1
+// (ECIES Profile B, IMSI MCC|MNC 274012 / MSIN 001002086) — the file's
+// official_3gpp_vectors "profile-b-imsi" entry. (Until 2026-09-24 steps 4, 6
+// and 7 returned 'pass' without checking anything, and steps 3/5 compared
+// against the file's tool-default profiles.B values, which no published
+// source contains; see that file's _provenance note.)
+//
+//   1/2  inject the HN / ephemeral private scalars (import only)
+//   3    ECDH(eph priv, HN pub)                     → Eph. Shared Key
+//   4    ECDH + X9.63-KDF(SHA-256, SharedInfo = compressed eph pub, 64 B)
+//                                                   → Enc key ‖ ICB ‖ MAC key
+//   5    AES-128-CTR(Enc key, ICB) over the plaintext block → cipher text
+//   6    HMAC-SHA-256 _GENERAL, 8 B, over the cipher text     → MAC tag
+//   7    steps 3–6 chained on engine-derived keys → Scheme Output
+//        (compressed eph pub ‖ cipher text ‖ MAC tag). C.4.4.1 publishes the
+//        Scheme Output, not a full SUCI string (routing indicator and HN
+//        public-key identifier are not part of the test data), so that is
+//        what is compared.
+
+interface SuciProfileBVector {
+  hn_priv_hex: string
+  hn_pub_hex: string
+  eph_priv_hex: string
+  eph_pub_compressed_hex: string
+  eph_shared_key_hex: string
+  eph_enc_key_hex: string
+  icb_hex: string
+  eph_mac_key_hex: string
+  plaintext_block_hex: string
+  scheme_output: string
+  scheme_output_parts: { cipher_msin: string; mac_tag: string }
+}
+
+const suciVector = (): SuciProfileBVector => {
+  const v = (
+    suciProfileBTestVectors as unknown as {
+      official_3gpp_vectors: Array<{ id: string } & Partial<SuciProfileBVector>>
+    }
+  ).official_3gpp_vectors.find((x) => x.id === 'profile-b-imsi')
+  if (!v?.eph_enc_key_hex || !v.icb_hex || !v.eph_mac_key_hex || !v.plaintext_block_hex)
+    throw new Error(
+      'TS 33.501 C.4.4.1 profile-b-imsi vector missing from gsma_suci_ts33501_annex_c.json'
+    )
+  return v as SuciProfileBVector
+}
+
+const hexUpper = (b: Uint8Array): string =>
+  Array.from(b, (x) => x.toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase()
+
+const sameHex = (got: Uint8Array, wantHex: string) => hexUpper(got) === wantHex.toUpperCase()
 
 const runSUCIProfileBKAT = async (
   M: SoftHSMModule,
   hSession: number,
   step: string
 ): Promise<{ status: 'pass' | 'fail'; details: string }> => {
-  const vectors = suciProfileBTestVectors.profiles.B
+  const v = suciVector()
+  const mismatch = (what: string, got: Uint8Array, want: string) => ({
+    status: 'fail' as const,
+    details: `${what} mismatch vs TS 33.501 C.4.4.1: got ${hexUpper(got)}, published ${want.toUpperCase()}`,
+  })
 
   if (step === '1-unwrap-hn-priv') {
-    const hnPriv = hexToBytes(vectors.hn_priv_hex)
-    const hnHandle = await hsm_injectTestKey(M, hSession, hnPriv, 'P-256')
+    const h = await hsm_injectTestKey(M, hSession, hexToBytes(v.hn_priv_hex), 'P-256')
     return {
-      status: hnHandle ? 'pass' : 'fail',
-      details: `Imported HN Private Key: handle ${hnHandle}`,
+      status: h ? 'pass' : 'fail',
+      details: `Imported the C.4.4.1 home-network private key: handle ${h} (import only — step 3 checks the key material)`,
     }
   }
-
   if (step === '2-unwrap-eph-priv') {
-    const ephPriv = hexToBytes(vectors.eph_priv_hex)
-    const ephHandle = await hsm_injectTestKey(M, hSession, ephPriv, 'P-256')
+    const h = await hsm_injectTestKey(M, hSession, hexToBytes(v.eph_priv_hex), 'P-256')
     return {
-      status: ephHandle ? 'pass' : 'fail',
-      details: `Imported Ephemeral Private Key: handle ${ephHandle}`,
+      status: h ? 'pass' : 'fail',
+      details: `Imported the C.4.4.1 ephemeral private key: handle ${h} (import only — step 3 checks the key material)`,
     }
   }
 
-  const getHandles = async () => {
-    const hnPriv = await hsm_injectTestKey(M, hSession, hexToBytes(vectors.hn_priv_hex), 'P-256')
-    const ephPriv = await hsm_injectTestKey(M, hSession, hexToBytes(vectors.eph_priv_hex), 'P-256')
-    return { hnPriv, ephPriv }
+  // Steps 3–7 need the scalar, not the unwrap demo of steps 1–2: import it with
+  // C_CreateObject, which both engines accept. (hsm_injectTestKey's
+  // C_UnwrapKeyAuthenticated template carries CKA_EC_PARAMS; the C++ engine
+  // rejects that template with CKR_ATTRIBUTE_READ_ONLY — the same unwrap
+  // without CKA_EC_PARAMS succeeds, 2026-09-24 — while Rust accepts it.)
+  const ephPriv = async () =>
+    hsm_importECPrivateKey(M, hSession, hexToBytes(v.eph_priv_hex), 'P-256')
+  /** Engine ECDH(eph priv, HN pub) with the given KDF; returns the derived bytes. */
+  const derive = async (
+    kdf: number | undefined,
+    sharedInfo: Uint8Array | undefined,
+    keyLen: number
+  ) => {
+    const zHandle = hsm_ecdhDerive(
+      M,
+      hSession,
+      await ephPriv(),
+      hexToBytes(v.hn_pub_hex),
+      kdf,
+      sharedInfo,
+      {
+        keyLen,
+        extractable: true,
+      }
+    )
+    return hsm_extractKeyValue(M, hSession, zHandle)
   }
+  const kdfOut = () => derive(CKD_SHA256_KDF, hexToBytes(v.eph_pub_compressed_hex), 64)
+  const ctr = (encKey: Uint8Array, icb: Uint8Array) =>
+    hsm_aesCtrEncrypt(
+      M,
+      hSession,
+      hsm_importAESKey(M, hSession, encKey),
+      icb,
+      128,
+      hexToBytes(v.plaintext_block_hex)
+    )
+  const tag = (macKey: Uint8Array, ct: Uint8Array) =>
+    hsm_hmacGeneral(
+      M,
+      hSession,
+      hsm_importHMACKey(M, hSession, macKey),
+      ct,
+      8,
+      CKM_SHA256_HMAC_GENERAL
+    )
 
   if (step === '3-ecdh') {
-    const { ephPriv } = await getHandles()
-    const hnPub = hexToBytes(vectors.hn_pub_hex)
-
-    const zHandle = hsm_ecdhDerive(M, hSession, ephPriv, hnPub, undefined, undefined, {
-      keyLen: 32,
-      derive: true,
-      extractable: true,
-    })
-    const zBytes = hsm_extractKeyValue(M, hSession, zHandle)
-    const zHex = Buffer.from(zBytes).toString('hex').toUpperCase()
-    if (zHex !== vectors.Z_hex.toUpperCase())
-      throw new Error(`ECDH Z mismatch: expected ${vectors.Z_hex}, got ${zHex}`)
-    return { status: 'pass', details: `Z matched: ${zHex}` }
+    const z = await derive(undefined, undefined, 32) // default kdf = CKD_NULL (raw Z)
+    if (!sameHex(z, v.eph_shared_key_hex))
+      return mismatch('Eph. Shared Key', z, v.eph_shared_key_hex)
+    return {
+      status: 'pass',
+      details: `C_DeriveKey(CKM_ECDH1_DERIVE, CKD_NULL) → Eph. Shared Key matches: ${hexUpper(z)}`,
+    }
   }
 
   if (step === '4-kdf') {
-    return { status: 'pass', details: `KDF deferred to Phase 2 (ANSI X9.63)` }
+    const k = await kdfOut()
+    const want = v.eph_enc_key_hex + v.icb_hex + v.eph_mac_key_hex
+    if (!sameHex(k, want)) return mismatch('X9.63-KDF output (Enc key ‖ ICB ‖ MAC key)', k, want)
+    return {
+      status: 'pass',
+      details: `C_DeriveKey(CKM_ECDH1_DERIVE, CKD_SHA256_KDF, SharedInfo = compressed eph pub) → Enc key ${v.eph_enc_key_hex}, ICB ${v.icb_hex} and MAC key match`,
+    }
   }
 
   if (step === '5-encrypt') {
-    const kEncBytes = hexToBytes(vectors.K_enc_hex)
-    const kEncHandle = hsm_importAESKey(M, hSession, kEncBytes)
-    const msinBytes = hexToBytes(vectors.msin_bcd_hex)
-    const ctrIv = new Uint8Array(16) // TS 33.501 specifies all 0s
-    const ct = hsm_aesCtrEncrypt(M, hSession, kEncHandle, ctrIv, 128, msinBytes)
-    const ctHex = Buffer.from(ct).toString('hex').toUpperCase()
-    if (ctHex !== vectors.cipher_msin_hex.toUpperCase())
-      throw new Error(`Cipher MSIN mismatch: expected ${vectors.cipher_msin_hex}, got ${ctHex}`)
-    return { status: 'pass', details: `Cipher MSIN matched: ${ctHex}` }
+    const ct = ctr(hexToBytes(v.eph_enc_key_hex), hexToBytes(v.icb_hex))
+    if (!sameHex(ct, v.scheme_output_parts.cipher_msin))
+      return mismatch('Cipher text', ct, v.scheme_output_parts.cipher_msin)
+    return {
+      status: 'pass',
+      details: `AES-128-CTR(Enc key, ICB) over plaintext block ${v.plaintext_block_hex} → cipher text matches: ${hexUpper(ct)}`,
+    }
   }
 
   if (step === '6-mac') {
-    return { status: 'pass', details: `MAC check deferred until MAC input blob is available` }
+    const t = tag(hexToBytes(v.eph_mac_key_hex), hexToBytes(v.scheme_output_parts.cipher_msin))
+    if (!sameHex(t, v.scheme_output_parts.mac_tag))
+      return mismatch('MAC tag', t, v.scheme_output_parts.mac_tag)
+    return {
+      status: 'pass',
+      details: `C_Sign(CKM_SHA256_HMAC_GENERAL, 8 B) over the cipher text → MAC tag matches: ${hexUpper(t)}`,
+    }
   }
 
   if (step === '7-e2e') {
-    return { status: 'pass', details: `E2E matched: ${vectors.suci_string}` }
+    const k = await kdfOut()
+    const ct = ctr(k.slice(0, 16), k.slice(16, 32))
+    const t = tag(k.slice(32, 64), ct)
+    const out = new Uint8Array([...hexToBytes(v.eph_pub_compressed_hex), ...ct, ...t])
+    if (!sameHex(out, v.scheme_output)) return mismatch('Scheme Output', out, v.scheme_output)
+    return {
+      status: 'pass',
+      details: `ECDH → X9.63-KDF → AES-128-CTR → HMAC-SHA-256/64 chained on engine-derived keys → Scheme Output matches C.4.4.1 (${out.length} B). The full SUCI string is not part of the published test data and is not compared.`,
+    }
   }
 
   return { status: 'fail', details: `Unknown step ${step}` }

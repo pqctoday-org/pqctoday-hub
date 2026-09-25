@@ -1,8 +1,13 @@
+// Runs katRunner's SUCI Profile B chain on the real Rust engine against the
+// values printed in 3GPP TS 33.501 V19.5.0 Annex C.4.4.1 (Eph. Shared Key,
+// Enc key, ICB, MAC key, cipher text, MAC tag, Scheme Output). Until
+// 2026-09-24 steps 4, 6 and 7 returned 'pass' without checking anything, so
+// this suite could not fail on them. Both engines: katRunner.engines.local.test.ts.
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import * as SoftHSM from './softhsm'
 import { runKAT } from '../utils/katRunner'
 
-describe('Dual-Engine 5G SUCI Profile B (3GPP TS 33.501 Annex C.4) KATs', () => {
+describe('5G SUCI Profile B (3GPP TS 33.501 Annex C.4.4.1) KATs on the Rust engine', () => {
   let hsmd: SoftHSM.SoftHSMModule
   let sessionHandle: number
 
