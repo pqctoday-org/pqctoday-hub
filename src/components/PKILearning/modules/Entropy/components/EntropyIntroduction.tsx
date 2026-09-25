@@ -66,7 +66,9 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
                 /dev/urandom)
               </li>
               <li>
-                Hardware <InlineTooltip term="TRNG">TRNG</InlineTooltip> (Intel RDRAND, ARM RNDR)
+                Processor RNG instructions: Intel RDRAND and Arm RNDR return DRBG output, Intel
+                RDSEED returns conditioned seed values from the on-chip{' '}
+                <InlineTooltip term="TRNG">TRNG</InlineTooltip> — none is raw noise
               </li>
               <li>Continuous health monitoring per SP 800-90B</li>
             </ul>
@@ -152,9 +154,11 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           <Cog size={20} /> DRBG Mechanisms (SP 800-90A)
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          SP 800-90A defines approved DRBG mechanisms using symmetric primitives. All are
-          quantum-safe — Grover's algorithm at most halves the effective key length, which is
-          addressed by using 256-bit keys to achieve PQC Security Categories 3 and 5.
+          SP 800-90A defines approved DRBG mechanisms built on symmetric primitives: hash functions,
+          HMAC and block ciphers. Engineering judgment, not a NIST statement: Shor's algorithm does
+          not apply to these primitives, so a DRBG's resistance to quantum attack depends on the
+          primitive and security strength chosen — Rev. 1 CTR_DRBG still allows three-key TDEA
+          alongside AES.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
           {DRBG_MECHANISMS.map((mech) => (
