@@ -5,6 +5,976 @@
   "vectorRoot": "src/data/acvp",
   "files": [
     {
+      "id": "aescbc_acvp_test",
+      "path": "src/data/acvp/aescbc_acvp_test.json",
+      "sha256": "57623c4bf5bb3af4e8ea6246b91f9a418813292a274bcdb7936d5996c47947f0",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+          "upstreamSha256": "b6d11e684b279a384f27f4f711319dc2542bbe55f568bd8f11d5567a1df4a1df",
+          "retrieved": "2026-09-25",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-25",
+          "method": "Fetched the upstream file(s) at the pinned commit: SHA-256 recorded as upstreamSha256 (and per-group in _provenance.source_files where a file draws on several upstream files); every local case was produced by a byte-copying subset script and re-compared field-by-field with the upstream case of the same tcId.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json",
+              "sha256": "b6d11e684b279a384f27f4f711319dc2542bbe55f568bd8f11d5567a1df4a1df",
+              "retrieved": "2026-09-25"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/1/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/2/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/3/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/4/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/5/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/6/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/7/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/8/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/9/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/10/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/11/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/12/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/13/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/14/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/15/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/16/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/17/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "direction": "encrypt",
+            "internalTestType": "GFSBox",
+            "blocks": 1
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 1
+          },
+          "lineage": ["aescbc-acvp-test-1"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/1/tests/0",
+          "pointer": "/testGroups/1/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "direction": "encrypt",
+            "internalTestType": "MMT",
+            "blocks": 1
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 25,
+            "tcId": 2079
+          },
+          "lineage": ["aescbc-acvp-test-2"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/1/tests/1",
+          "pointer": "/testGroups/1/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "direction": "encrypt",
+            "internalTestType": "MMT",
+            "blocks": 10
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 25,
+            "tcId": 2088
+          },
+          "lineage": ["aescbc-acvp-test-2"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/2/tests/0",
+          "pointer": "/testGroups/2/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt-mct",
+          "parameters": {
+            "keyLen": 128,
+            "direction": "encrypt",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 37,
+            "tcId": 2151
+          },
+          "lineage": ["aescbc-acvp-test-3"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/3/tests/0",
+          "pointer": "/testGroups/3/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 128,
+            "direction": "decrypt",
+            "internalTestType": "GFSBox",
+            "blocks": 1
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 13,
+            "tcId": 1040
+          },
+          "lineage": ["aescbc-acvp-test-4"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/4/tests/0",
+          "pointer": "/testGroups/4/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 128,
+            "direction": "decrypt",
+            "internalTestType": "MMT",
+            "blocks": 1
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 28,
+            "tcId": 2109
+          },
+          "lineage": ["aescbc-acvp-test-5"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/4/tests/1",
+          "pointer": "/testGroups/4/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 128,
+            "direction": "decrypt",
+            "internalTestType": "MMT",
+            "blocks": 10
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 28,
+            "tcId": 2118
+          },
+          "lineage": ["aescbc-acvp-test-5"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/5/tests/0",
+          "pointer": "/testGroups/5/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt-mct",
+          "parameters": {
+            "keyLen": 128,
+            "direction": "decrypt",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 40,
+            "tcId": 2154
+          },
+          "lineage": ["aescbc-acvp-test-6"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/6/tests/0",
+          "pointer": "/testGroups/6/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "direction": "encrypt",
+            "internalTestType": "GFSBox",
+            "blocks": 1
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 5,
+            "tcId": 285
+          },
+          "lineage": ["aescbc-acvp-test-7"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/7/tests/0",
+          "pointer": "/testGroups/7/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "direction": "encrypt",
+            "internalTestType": "MMT",
+            "blocks": 1
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 26,
+            "tcId": 2089
+          },
+          "lineage": ["aescbc-acvp-test-8"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/7/tests/1",
+          "pointer": "/testGroups/7/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "direction": "encrypt",
+            "internalTestType": "MMT",
+            "blocks": 10
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 26,
+            "tcId": 2098
+          },
+          "lineage": ["aescbc-acvp-test-8"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/8/tests/0",
+          "pointer": "/testGroups/8/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt-mct",
+          "parameters": {
+            "keyLen": 192,
+            "direction": "encrypt",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 38,
+            "tcId": 2152
+          },
+          "lineage": ["aescbc-acvp-test-9"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/9/tests/0",
+          "pointer": "/testGroups/9/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 192,
+            "direction": "decrypt",
+            "internalTestType": "GFSBox",
+            "blocks": 1
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 17,
+            "tcId": 1324
+          },
+          "lineage": ["aescbc-acvp-test-10"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/10/tests/0",
+          "pointer": "/testGroups/10/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 192,
+            "direction": "decrypt",
+            "internalTestType": "MMT",
+            "blocks": 1
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 29,
+            "tcId": 2119
+          },
+          "lineage": ["aescbc-acvp-test-11"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/10/tests/1",
+          "pointer": "/testGroups/10/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 192,
+            "direction": "decrypt",
+            "internalTestType": "MMT",
+            "blocks": 10
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 29,
+            "tcId": 2128
+          },
+          "lineage": ["aescbc-acvp-test-11"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/11/tests/0",
+          "pointer": "/testGroups/11/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt-mct",
+          "parameters": {
+            "keyLen": 192,
+            "direction": "decrypt",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 41,
+            "tcId": 2155
+          },
+          "lineage": ["aescbc-acvp-test-12"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/12/tests/0",
+          "pointer": "/testGroups/12/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "direction": "encrypt",
+            "internalTestType": "GFSBox",
+            "blocks": 1
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 9,
+            "tcId": 635
+          },
+          "lineage": ["aescbc-acvp-test-13"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/13/tests/0",
+          "pointer": "/testGroups/13/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "direction": "encrypt",
+            "internalTestType": "MMT",
+            "blocks": 1
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 27,
+            "tcId": 2099
+          },
+          "lineage": ["aescbc-acvp-test-14"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/13/tests/1",
+          "pointer": "/testGroups/13/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "direction": "encrypt",
+            "internalTestType": "MMT",
+            "blocks": 10
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 27,
+            "tcId": 2108
+          },
+          "lineage": ["aescbc-acvp-test-14"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/14/tests/0",
+          "pointer": "/testGroups/14/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "encrypt-mct",
+          "parameters": {
+            "keyLen": 256,
+            "direction": "encrypt",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 39,
+            "tcId": 2153
+          },
+          "lineage": ["aescbc-acvp-test-15"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/15/tests/0",
+          "pointer": "/testGroups/15/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 256,
+            "direction": "decrypt",
+            "internalTestType": "GFSBox",
+            "blocks": 1
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 21,
+            "tcId": 1674
+          },
+          "lineage": ["aescbc-acvp-test-16"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/16/tests/0",
+          "pointer": "/testGroups/16/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 256,
+            "direction": "decrypt",
+            "internalTestType": "MMT",
+            "blocks": 2
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 30,
+            "tcId": 2130
+          },
+          "lineage": ["aescbc-acvp-test-17"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/16/tests/1",
+          "pointer": "/testGroups/16/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 256,
+            "direction": "decrypt",
+            "internalTestType": "MMT",
+            "blocks": 10
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 30,
+            "tcId": 2138
+          },
+          "lineage": ["aescbc-acvp-test-17"]
+        },
+        {
+          "caseId": "aescbc_acvp_test#/testGroups/17/tests/0",
+          "pointer": "/testGroups/17/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CBC",
+            "revision": "1.0"
+          },
+          "operation": "decrypt-mct",
+          "parameters": {
+            "keyLen": 256,
+            "direction": "decrypt",
+            "outerIterationsChecked": 1
+          },
+          "testType": "MCT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 42,
+            "tcId": 2156
+          },
+          "lineage": ["aescbc-acvp-test-18"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "aescbc-acvp-test-1",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/0/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT encrypt (keyLen 128, GFSBox)",
+          "localOperation": "C_Encrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1) taken from upstream tgId 1 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-2",
+          "appliesTo": [
+            "aescbc_acvp_test#/testGroups/1/tests/0",
+            "aescbc_acvp_test#/testGroups/1/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT encrypt (keyLen 128, MMT)",
+          "localOperation": "C_Encrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 2079, 2088) taken from upstream tgId 25 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-3",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/2/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT encrypt (keyLen 128)",
+          "localOperation": "MCT outer iteration 0 via 1000 single-block C_EncryptUpdate calls",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 2151) taken from upstream tgId 37 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100)"
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-4",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/3/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT decrypt (keyLen 128, GFSBox)",
+          "localOperation": "C_Decrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1040) taken from upstream tgId 13 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-5",
+          "appliesTo": [
+            "aescbc_acvp_test#/testGroups/4/tests/0",
+            "aescbc_acvp_test#/testGroups/4/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT decrypt (keyLen 128, MMT)",
+          "localOperation": "C_Decrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 2109, 2118) taken from upstream tgId 28 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-6",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/5/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT decrypt (keyLen 128)",
+          "localOperation": "MCT outer iteration 0 via 1000 single-block C_DecryptUpdate calls",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 2154) taken from upstream tgId 40 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100)"
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-7",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/6/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT encrypt (keyLen 192, GFSBox)",
+          "localOperation": "C_Encrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 285) taken from upstream tgId 5 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-8",
+          "appliesTo": [
+            "aescbc_acvp_test#/testGroups/7/tests/0",
+            "aescbc_acvp_test#/testGroups/7/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT encrypt (keyLen 192, MMT)",
+          "localOperation": "C_Encrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 2089, 2098) taken from upstream tgId 26 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-9",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/8/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT encrypt (keyLen 192)",
+          "localOperation": "MCT outer iteration 0 via 1000 single-block C_EncryptUpdate calls",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 2152) taken from upstream tgId 38 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100)"
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-10",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/9/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT decrypt (keyLen 192, GFSBox)",
+          "localOperation": "C_Decrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1324) taken from upstream tgId 17 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-11",
+          "appliesTo": [
+            "aescbc_acvp_test#/testGroups/10/tests/0",
+            "aescbc_acvp_test#/testGroups/10/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT decrypt (keyLen 192, MMT)",
+          "localOperation": "C_Decrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 2119, 2128) taken from upstream tgId 29 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-12",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/11/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT decrypt (keyLen 192)",
+          "localOperation": "MCT outer iteration 0 via 1000 single-block C_DecryptUpdate calls",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 2155) taken from upstream tgId 41 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100)"
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-13",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/12/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT encrypt (keyLen 256, GFSBox)",
+          "localOperation": "C_Encrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 635) taken from upstream tgId 9 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-14",
+          "appliesTo": [
+            "aescbc_acvp_test#/testGroups/13/tests/0",
+            "aescbc_acvp_test#/testGroups/13/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT encrypt (keyLen 256, MMT)",
+          "localOperation": "C_Encrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 2099, 2108) taken from upstream tgId 27 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-15",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/14/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT encrypt (keyLen 256)",
+          "localOperation": "MCT outer iteration 0 via 1000 single-block C_EncryptUpdate calls",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 2153) taken from upstream tgId 39 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100)"
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-16",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/15/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT decrypt (keyLen 256, GFSBox)",
+          "localOperation": "C_Decrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1674) taken from upstream tgId 21 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-17",
+          "appliesTo": [
+            "aescbc_acvp_test#/testGroups/16/tests/0",
+            "aescbc_acvp_test#/testGroups/16/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 AFT decrypt (keyLen 256, MMT)",
+          "localOperation": "C_Decrypt (CKM_AES_CBC) byte-compared",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 2130, 2138) taken from upstream tgId 30 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            }
+          ]
+        },
+        {
+          "id": "aescbc-acvp-test-18",
+          "appliesTo": ["aescbc_acvp_test#/testGroups/17/tests/0"],
+          "upstreamOperation": "ACVP-AES-CBC 1.0 MCT decrypt (keyLen 256)",
+          "localOperation": "MCT outer iteration 0 via 1000 single-block C_DecryptUpdate calls",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 2156) taken from upstream tgId 42 (2156 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per key length (128/192/256) x direction: the lowest-tcId GFSBox case (one block), and the shortest and longest MMT cases (1 and 10 blocks) excluding tcId 2129 (carried by aescbc_test.json); plus the MCT case with its first outer-iteration result only. KeySBox/VarTxt/VarKey/HACT groups (all single-block) are not carried."
+            },
+            {
+              "type": "subset",
+              "detail": "resultsArray truncated to its first element (outer iteration 0 of 100)"
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": []
+    },
+    {
       "id": "aescbc_test",
       "path": "src/data/acvp/aescbc_test.json",
       "sha256": "27a15b9cde4add9e70304774fd12711df31f61b7f39669a49364931857580dcb",
@@ -235,6 +1205,266 @@
       "copies": [],
       "publishabilityGaps": [],
       "notes": "Provenance resolved 2026-09-24 (file has no _provenance block). The in-file `source` string mis-cites SP 800-38B Section D.2."
+    },
+    {
+      "id": "aesctr_acvp_test",
+      "path": "src/data/acvp/aesctr_acvp_test.json",
+      "sha256": "a7bda9b3fa4a33b99992afcdee9f2893207d34c8f01125024f548dd8badf3ad5",
+      "status": "active",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "source": {
+        "kind": "nist-acvp-server",
+        "citation": "NIST ACVP-Server gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json @ 975de31e",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+        "nist": {
+          "repository": "https://github.com/usnistgov/ACVP-Server",
+          "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+          "upstreamPath": "gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json",
+          "upstreamSha256": "22cd3bb1666cc14231e5435a2f0c163e83c70a65ba353284828975a983a46a59",
+          "retrieved": "2026-09-25",
+          "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json"
+        },
+        "verification": {
+          "date": "2026-09-25",
+          "method": "Fetched the upstream file(s) at the pinned commit: SHA-256 recorded as upstreamSha256 (and per-group in _provenance.source_files where a file draws on several upstream files); every local case was produced by a byte-copying subset script and re-compared field-by-field with the upstream case of the same tcId.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json",
+              "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json",
+              "sha256": "22cd3bb1666cc14231e5435a2f0c163e83c70a65ba353284828975a983a46a59",
+              "retrieved": "2026-09-25"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/1/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/2/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 96,
+            "counterBits": 32,
+            "direction": "decrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 4,
+            "tcId": 83
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/0/tests/1",
+          "pointer": "/testGroups/0/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 1920,
+            "counterBits": 32,
+            "direction": "decrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 4,
+            "tcId": 100
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/1/tests/0",
+          "pointer": "/testGroups/1/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 8,
+            "counterBits": 32,
+            "direction": "decrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 5,
+            "tcId": 101
+          },
+          "lineage": ["aesctr-acvp-test-2"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/1/tests/1",
+          "pointer": "/testGroups/1/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 1920,
+            "counterBits": 32,
+            "direction": "decrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 5,
+            "tcId": 125
+          },
+          "lineage": ["aesctr-acvp-test-2"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/2/tests/0",
+          "pointer": "/testGroups/2/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 112,
+            "counterBits": 32,
+            "direction": "decrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 6,
+            "tcId": 134
+          },
+          "lineage": ["aesctr-acvp-test-3"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/2/tests/1",
+          "pointer": "/testGroups/2/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "decrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 1920,
+            "counterBits": 32,
+            "direction": "decrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 6,
+            "tcId": 150
+          },
+          "lineage": ["aesctr-acvp-test-3"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "aesctr-acvp-test-1",
+          "appliesTo": [
+            "aesctr_acvp_test#/testGroups/0/tests/0",
+            "aesctr_acvp_test#/testGroups/0/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-CTR 1.0 AFT decrypt (keyLen 128, RFC 3686 test mode)",
+          "localOperation": "C_Decrypt (CKM_AES_CTR) byte-compared, then C_Encrypt of the plaintext byte-compared to ct",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 83, 100) taken from upstream tgId 4 (150 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV."
+            },
+            {
+              "type": "operation-change",
+              "detail": "In addition to the upstream decryption, the same (key, counter block, pt, ct) tuple is run as an encryption: CTR encryption and decryption are the same keystream XOR, so ct is the expected encryption output."
+            }
+          ]
+        },
+        {
+          "id": "aesctr-acvp-test-2",
+          "appliesTo": [
+            "aesctr_acvp_test#/testGroups/1/tests/0",
+            "aesctr_acvp_test#/testGroups/1/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-CTR 1.0 AFT decrypt (keyLen 192, RFC 3686 test mode)",
+          "localOperation": "C_Decrypt (CKM_AES_CTR) byte-compared, then C_Encrypt of the plaintext byte-compared to ct",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 101, 125) taken from upstream tgId 5 (150 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV."
+            },
+            {
+              "type": "operation-change",
+              "detail": "In addition to the upstream decryption, the same (key, counter block, pt, ct) tuple is run as an encryption: CTR encryption and decryption are the same keystream XOR, so ct is the expected encryption output."
+            }
+          ]
+        },
+        {
+          "id": "aesctr-acvp-test-3",
+          "appliesTo": [
+            "aesctr_acvp_test#/testGroups/2/tests/0",
+            "aesctr_acvp_test#/testGroups/2/tests/1"
+          ],
+          "upstreamOperation": "ACVP-AES-CTR 1.0 AFT decrypt (keyLen 256, RFC 3686 test mode)",
+          "localOperation": "C_Decrypt (CKM_AES_CTR) byte-compared, then C_Encrypt of the plaintext byte-compared to ct",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "2 case(s) (upstream tcId 134, 150) taken from upstream tgId 6 (150 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV."
+            },
+            {
+              "type": "operation-change",
+              "detail": "In addition to the upstream decryption, the same (key, counter block, pt, ct) tuple is run as an encryption: CTR encryption and decryption are the same keystream XOR, so ct is the expected encryption output."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "3 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): deferred-iut-generated-iv."
     },
     {
       "id": "aesctr_test",
