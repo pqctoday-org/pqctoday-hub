@@ -139,6 +139,86 @@ const manifest: ModuleManifest = {
     },
   ],
   offPathSections: 'hide',
+  /**
+   * The four paths are alternative curricula, so a learner on the PCI path has
+   * no use for 21 CMVP documents and 8 Common Criteria ones. The groupings
+   * mirror the ones content.ts already keeps its `standards` array in.
+   *
+   * Only scheme-specific documents are listed. Anything absent is shared and
+   * shows on every path — the FIPS 203/204/205 algorithm standards the shared
+   * PQC section cites, and anything the library back-tags to this module
+   * without the module citing it directly.
+   */
+  referencePaths: {
+    // ── FIPS 140-3 / CMVP (Path A) ──
+    'FIPS-140-3-STANDARD': ['fips'],
+    'CMVP-MGMT-MANUAL': ['fips'],
+    'NIST-FIPS140-3-IG-PQC': ['fips'],
+    'NIST-CMVP-MIP-List': ['fips'],
+    'NIST-CMVP-Validated-Modules': ['fips'],
+    'NIST-CMVP-140-2-to-140-3-Transition-Timeline': ['fips'],
+    'EO-2026-06-22-Securing-the-Nation': ['fips'],
+    'NIST-SP-800-140': ['fips'],
+    'NIST-SP-800-140A': ['fips'],
+    'NIST-SP-800-140B': ['fips'],
+    'NIST-SP-800-140C': ['fips'],
+    'NIST-SP-800-140D': ['fips'],
+    'NIST-SP-800-140E': ['fips'],
+    'NIST-SP-800-140F': ['fips'],
+    'NIST-ACVP': ['fips'],
+    'NIST-CMVP-ESV': ['fips'],
+    'NIST-SP-1800-40B-IPD': ['fips'],
+    'NIST-SP-1800-40A-PD': ['fips'],
+    'NIST-CSWP-37A': ['fips'],
+    'NIST-CSWP-37B-IPD': ['fips'],
+    'NIST IR 8547': ['fips'],
+
+    // ── Common Criteria / CCRA (Path B) ──
+    // CCMC-011 is CCRA/EUCC co-existence, so it belongs to both schemes.
+    'CCMC-2023-04-001-CC2022-Transition-Policy': ['cc'],
+    'CCDB-014-Assurance-Continuity-v3-1': ['cc'],
+    'CCMC-011-CCRA-EUCC-Coexistence': ['cc', 'eucc-eidas'],
+    'COMMON-CRITERIA': ['cc'],
+    'CC-2022-PART2': ['cc'],
+    'CC-2022-PART3': ['cc'],
+    'CC-2022-PART4': ['cc'],
+    'CC-2022-PART5': ['cc'],
+    'CC-2022-CEM': ['cc'],
+
+    // ── EUCC, eIDAS and Protection Profiles (Path C) ──
+    // The protection profiles are evaluated under Common Criteria and cited by
+    // the EUCC path, so both paths get them.
+    'CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme': ['eucc-eidas'],
+    'CIR-EU-2024-3144-EUCC-Amendment': ['eucc-eidas'],
+    'CIR-EU-2025-2462-EUCC-Amendment': ['eucc-eidas'],
+    'EUCC v2.0 ACM': ['eucc-eidas'],
+    'ENISA-Hybridization-Standardisation-Status': ['eucc-eidas'],
+    'EU-NIS-CG-Roadmap-v1.1': ['eucc-eidas'],
+    'eIDAS-2-Regulation': ['eucc-eidas'],
+    'CIR-EU-2025-1567-Remote-QSCD-Management': ['eucc-eidas'],
+    'CIR-EU-2025-1570-QSCD-Certification-Notification': ['eucc-eidas'],
+    'CID-EU-2016-650-QSCD-Security-Assessment': ['eucc-eidas'],
+    'ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation': ['eucc-eidas'],
+    'ENISA-EUCC-Assurance-Continuity-Change-Scenarios': ['eucc-eidas'],
+    'ENISA-EUCC-Product-Series-Methodology': ['eucc-eidas'],
+    'ANSSI-CC-PP-2016-05-EN-419221-5': ['cc', 'eucc-eidas'],
+    'ANSSI-CC-PP-2016-05-M01': ['cc', 'eucc-eidas'],
+    'ANSSI-CC-PP-2018-02-EN-419241-2': ['cc', 'eucc-eidas'],
+    'BSI-CC-PP-0084-V2-2026': ['cc', 'eucc-eidas'],
+
+    // ── PCI (Path D) ──
+    'PCI-SSC-Blog-Publishes-PTS-HSM-v5-0': ['pci'],
+    'PCI-SSC-Bulletin-PTS-HSM-v4-Extension': ['pci'],
+    'PCI-PTS-HSM-Modular-Security-Requirements-v4-0': ['pci'],
+    'PCI-PTS-Program-Guide-v1-9': ['pci'],
+    'PCI-PTS-Listing-Field-Definitions': ['pci'],
+    'PCI-PIN-v3-1-ROC-Reporting-Template': ['pci'],
+    'PCI-P2PE-Security-Requirements-v3-1': ['pci'],
+    'PCI-SSC-P2PE-Program-Page': ['pci'],
+    'PCI-SSC-Blog-KMO-v1-0-Published': ['pci'],
+    'PCI-SSC-Blog-Authentication-Cryptography-Guidance': ['pci'],
+    'PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures': ['pci'],
+  },
   workshopSteps: [
     { id: 'scheme-selector', label: 'Which scheme answers the question?' },
     { id: 'boundary-drawer', label: 'Draw the certification boundary' },

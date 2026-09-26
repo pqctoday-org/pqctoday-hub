@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea, type TextareaProps } from '@/components/ui/textarea'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useActiveLearnPathId } from '@/components/PKILearning/common/useLearnPath'
+import { useModuleStore } from '@/store/useModuleStore'
 import manifest from '../manifest'
 import type { CertWorkshopStepProps } from '../data/types'
 import {
@@ -187,6 +188,7 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
       : 'fips'
   const [s, setS] = useState<CapstoneState>(() => emptyCapstone(initialPath))
   const [showExtended, setShowExtended] = useState(false)
+  const addExecutiveDocument = useModuleStore((st) => st.addExecutiveDocument)
   const focus = typeof config?.focus === 'string' ? config.focus : undefined
 
   useEffect(() => {
@@ -820,6 +822,21 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
         exportData={markdown}
         filename={`orrin-n7-capstone-${s.path}`}
         formats={['markdown', 'pdf']}
+        onExport={() => {
+          // Saves to the Command Center alongside the other executive
+          // artifacts, so the capstone survives a reload. addExecutiveDocument
+          // upserts on moduleId + type, so re-exporting after more work
+          // replaces the earlier plan rather than piling up drafts.
+          addExecutiveDocument({
+            id: `certification-plan-${Date.now()}`,
+            moduleId: manifest.id,
+            type: 'certification-plan',
+            title: `Certification Plan (${s.path.toUpperCase()}) — ${new Date().toLocaleDateString()}`,
+            data: markdown,
+            inputs: { capstone: s } satisfies { capstone: CapstoneState },
+            createdAt: Date.now(),
+          })
+        }}
       >
         <div className="space-y-3">
           <p className="text-sm text-muted-foreground">

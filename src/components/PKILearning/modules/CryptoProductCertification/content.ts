@@ -11,11 +11,8 @@
  * Grouped policy/program first, then specifications, so the spot-check stride
  * sample (moduleStandardsOrdering.driftguard.test.ts) reads scheme documents.
  *
- * Pending (not in the CSV yet — cite in plain text, build spec §6.2):
- * NIST-CSWP-37B-IPD, CCMC-011-CCRA-EUCC-Coexistence,
- * ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation,
- * ENISA-EUCC-Assurance-Continuity-Change-Scenarios,
- * ENISA-EUCC-Product-Series-Methodology, ANSSI-CC-PP-2018-02-EN-419241-2.
+ * The six rows that were pending here (build spec §6.2) landed on 2026-09-25
+ * and are now cited properly rather than in plain text.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
@@ -50,6 +47,7 @@ export const content: ModuleContent = {
     getStandard('NIST-SP-1800-40B-IPD'),
     getStandard('NIST-SP-1800-40A-PD'),
     getStandard('NIST-CSWP-37A'),
+    getStandard('NIST-CSWP-37B-IPD'),
     getStandard('NIST IR 8547'),
     // Algorithm standards the shared PQC section cites (sharedData.ts SHARED_SOURCES)
     getStandard('FIPS 203'),
@@ -59,6 +57,7 @@ export const content: ModuleContent = {
     // ── Common Criteria / CCRA (Path B) ──
     getStandard('CCMC-2023-04-001-CC2022-Transition-Policy'),
     getStandard('CCDB-014-Assurance-Continuity-v3-1'),
+    getStandard('CCMC-011-CCRA-EUCC-Coexistence'),
     getStandard('COMMON-CRITERIA'),
     getStandard('CC-2022-PART2'),
     getStandard('CC-2022-PART3'),
@@ -79,7 +78,11 @@ export const content: ModuleContent = {
     getStandard('CID-EU-2016-650-QSCD-Security-Assessment'),
     getStandard('ANSSI-CC-PP-2016-05-EN-419221-5'),
     getStandard('ANSSI-CC-PP-2016-05-M01'),
+    getStandard('ANSSI-CC-PP-2018-02-EN-419241-2'),
     getStandard('BSI-CC-PP-0084-V2-2026'),
+    getStandard('ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation'),
+    getStandard('ENISA-EUCC-Assurance-Continuity-Change-Scenarios'),
+    getStandard('ENISA-EUCC-Product-Series-Methodology'),
 
     // ── PCI (Path D; public documents only, plan r2 D4) ──
     getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),

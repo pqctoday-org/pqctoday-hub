@@ -150,6 +150,18 @@ export interface ModuleManifest {
    * step, excluded from completion) — see {@link WorkshopStepDef}.
    */
   workshopSteps?: WorkshopStepDef[]
+  /**
+   * Which learn paths each reference belongs to, keyed by library
+   * `reference_id` (equivalently a cited standard's id). Lets the References
+   * tab show a learner only the documents their path actually cites, instead
+   * of all four schemes' sources at once.
+   *
+   * Follows the same rule as {@link PathScoped}: a reference that is absent
+   * here, or maps to an empty list, is shared and shows on every path. So
+   * only the path-specific ones need listing, and a module that omits the
+   * field entirely keeps today's unfiltered behaviour.
+   */
+  referencePaths?: Record<string, string[]>
   /** step count for modules with no workshopSteps (quiz/assess only) */
   stepCountOverride?: number
 
