@@ -62,6 +62,9 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
     const rows = page.getByTestId('acvp-result-row')
     const row = (algorithm: string, testCase: string): Locator =>
       rows.filter({ hasText: algorithm }).filter({ hasText: testCase })
+    /** One row by its stable per-case id (data-row-id) — no text ambiguity. */
+    const byRowId = (p: Page, id: string): Locator =>
+      p.locator(`[data-testid="acvp-result-row"][data-row-id="${id}"]`)
     // Evidence class comes from the generated per-case records (manifest + registry).
     const evidenceBadge = (r: Locator) => r.getByTestId('case-evidence-badge').first()
     const details = (r: Locator) => r.locator('td').nth(4)
@@ -105,12 +108,27 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
         await expect(details(badKey)).toHaveAttribute('title', /ACCEPTED a key NIST marks invalid/)
 
       // ── SLH-DSA ──
-      const tooSmall = row(`SLH-DSA-SHAKE-128s (${engine})`, 'invalid signature - too small')
-      await expect(tooSmall.first()).toHaveAttribute('data-status', 'pass')
-      await expect(details(tooSmall.first())).toHaveAttribute(
-        'title',
-        /C_Verify → CKR_SIGNATURE_LEN_RANGE \(expected CKR_SIGNATURE_LEN_RANGE\)/
-      )
+      // Addressed by row id, NOT by text: the evidence badge renders each
+      // record's limitations, which quote the vector file's subset policy —
+      // and that policy names all six upstream negative reasons, so a
+      // hasText('invalid signature - too small') filter also matches this
+      // parameter set's POSITIVE row (tc343). With .first() that silently
+      // asserted the positive row instead (found 2026-09-25).
+      // Both upstream 'too small' cases of this set are pinned, pure (tc347)
+      // and pre-hash (tc355), including the byte length that reached the
+      // engine: a 7856B (= full FIPS 205 length) signature here would mean the
+      // case tests nothing, and must fail rather than pass.
+      for (const tc of ['tg25-tc347', 'tg26-tc355']) {
+        const tooSmall = byRowId(page, `slhdsa-sigver-nist-SLH-DSA-SHAKE-128s-${tc}-${engine}`)
+        await expect(tooSmall).toHaveCount(1)
+        await expect(tooSmall).toContainText('invalid signature - too small')
+        await expect(tooSmall).toHaveAttribute('data-status', 'pass')
+        await expect(details(tooSmall)).toHaveAttribute(
+          'title',
+          /C_Verify → CKR_SIGNATURE_LEN_RANGE \(expected CKR_SIGNATURE_LEN_RANGE\)/
+        )
+        await expect(details(tooSmall)).toHaveAttribute('title', /· sig 7855B ·/)
+      }
 
       const det = row(
         `SLH-DSA-SHA2-128s (${engine})`,
