@@ -94,6 +94,26 @@ export function shaMctOuter(
 
 const xor = (a: Uint8Array, b: Uint8Array) => a.map((x, i) => x ^ b[i]) // eslint-disable-line security/detect-object-injection
 
+/**
+ * Yield the main thread between MCT outer iterations.
+ *
+ * Why this exists (2026-09-25 browser-crash fix): each of these rows is
+ * 100 outer × 1000 inner WASM calls, and every inner call allocates (a
+ * CK_MECHANISM, three `_malloc`s and a `HEAPU8.slice()` output, ~3 KB of JS
+ * garbage in total). Run as one uninterrupted synchronous block that is
+ * ~1 000 000 allocations for the SHA section alone: measured in Chromium the
+ * heap climbed 198 → 1692 → 3217 MB in three seconds and the renderer was
+ * killed ("Page crashed") before the section's third row — V8 never gets a
+ * chance to complete a major GC inside a single macrotask, so nothing is ever
+ * reclaimed. A `setTimeout(0)` per outer iteration hands control back, the
+ * garbage from the preceding 1000 calls is collected, and the heap stays flat.
+ * It also lets the streamed progress label paint during a long row.
+ *
+ * Do NOT replace this with `await Promise.resolve()` — a microtask does not
+ * leave the current macrotask and does not let V8 run a full GC cycle.
+ */
+const yieldToGc = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
+
 interface ShaGroup {
   tgId: number
   mctVersion: 'standard' | 'alternate'
@@ -166,7 +186,7 @@ export async function runShaMctFullSection(ctx: ClassicalSectionCtx): Promise<vo
         testCase,
         meta,
         source: srcTag(P),
-        exec: (): RowOutcome => {
+        exec: async (): Promise<RowOutcome> => {
           const digest = (m: Uint8Array) => {
             const r = digestRv(M, h, mech!, m)
             if (!r.out) throw new Error(`${r.step} → ${rvName(r.rv)}`)
@@ -176,6 +196,9 @@ export async function runShaMctFullSection(ctx: ClassicalSectionCtx): Promise<vo
           const kind = g.hashAlg.startsWith('SHA3') ? 'sha3' : g.mctVersion
           let seed = seed0
           for (let j = 0; j < n; j++) {
+            // One outer iteration = 1000 C_Digest calls; yield before each so
+            // the preceding iteration's garbage is collectable (see yieldToGc).
+            await yieldToGc()
             const md = shaMctOuter(digest, seed, kind, seed0.length)
             if (!eqHex(md, t.resultsArray[j].md))
               return {
@@ -232,11 +255,14 @@ export async function runAesCbcMctFullSection(ctx: ClassicalSectionCtx): Promise
         testCase,
         meta,
         source: srcTag(P),
-        exec: (): RowOutcome => {
+        exec: async (): Promise<RowOutcome> => {
           let key = hexToBytes(t.key)
           let iv = hexToBytes(t.iv)
           let input = hexToBytes(enc ? t.pt! : t.ct!)
           for (let j = 0; j < n; j++) {
+            // 1000 chained C_*Update calls per outer iteration — same reason as
+            // the SHA MCT above (see yieldToGc).
+            await yieldToGc()
             const k = importSecretRv(M, h, WSE_CK.CKK_AES, key, { encrypt: true, decrypt: true })
             if (k.rv !== CKR_OK) {
               const o = `outer ${j}: C_CreateObject(AES key) → ${rvName(k.rv)}`

@@ -425,13 +425,17 @@ export async function runRow(
     testCase: string
     meta: AcvpCaseMeta
     source: string
-    exec: () => RowOutcome
+    // A case may be async so a very long inner loop (the 100-iteration MCTs,
+    // 100 000 WASM calls per row) can yield to the event loop between outer
+    // iterations — without that the allocation churn never gets a full GC and
+    // the renderer OOMs. See sections/mctFullAcvp.ts.
+    exec: () => RowOutcome | Promise<RowOutcome>
   }
 ): Promise<void> {
   const { pushResult, addLog, referenceUrl, eName } = ctx
   let out: RowOutcome
   try {
-    out = row.exec()
+    out = await row.exec()
   } catch (err: unknown) {
     const m = err instanceof Error ? err.message : String(err)
     out = { ok: false, observed: m, details: m }
