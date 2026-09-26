@@ -64,7 +64,10 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Canada:CCCS — Departmental PQC Migration Plans Due',
   ],
   'canada-cccs-full-gc-migration-complete': ['Canada:CCCS — Full GC Migration Complete'],
-  'canada-cccs-high-priority-migration-phase': ['Canada:CCCS — High Priority Migration Phase'],
+  'canada-cccs-high-priority-migration-phase': [
+    'Canada:CCCS — High Priority Migration Phase',
+    'Canada:CCCS — Transition Phase',
+  ],
   'canada-cccs-high-priority-systems-complete': ['Canada:CCCS — High Priority Systems Complete'],
   'canada-cccs-itsp-40-111-v4-pqc-algorithms-approved': [
     'Canada:CCCS — ITSP.40.111 v4 Adds NIST PQC Algorithms',
@@ -420,7 +423,10 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Japan:CRYPTREC — CRYPTREC Adds ML-KEM to Ciphers List',
   ],
   'japan-cryptrec-pqc-guideline-gl-2004-2022': ['Japan:CRYPTREC — PQC Guideline GL-2004-2022'],
-  'japan-cryptrec-pqc-guideline-gl-2004-2022-2': ['Japan:CRYPTREC — PQC Guideline GL-2004-2022'],
+  'japan-cryptrec-pqc-guideline-gl-2004-2022-2': [
+    'Japan:CRYPTREC — Cryptographic Technology Guideline: Post-Quantum Cryptography (March 2023)',
+    'Japan:CRYPTREC — PQC Guideline GL-2004-2022',
+  ],
   'japan-meti-nisc-cybersecurity-industry-policy-package': [
     'Japan:METI/NISC — Cybersecurity Industry Policy Package',
   ],

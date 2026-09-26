@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
+import Papa from 'papaparse'
 import {
   timelineData,
   computeTimelineConfidence,
@@ -193,6 +194,49 @@ describe('parseTimelineCSV — malformed year hardening', () => {
 
     expect(events).toHaveLength(0)
     expect(errorSpy).toHaveBeenCalled()
+  })
+
+  // Three real rows in the live CSV have one empty year boundary, and each is a
+  // DELIBERATE record of what its source does and does not say — not an oversight.
+  // Updated 2026-09-26 (timeline r11): the membership of this set changed wholesale.
+  //   • france-anssi-phase-2-hybridization-required — EndYear BLANKED in r11.
+  //     ANSSI says "This phase should last until at least 2030", a minimum; the
+  //     previous EndYear=2030 inverted that floor into a terminus.
+  //   • france-anssi-phase-3-standalone-pqc-optional — EndYear BLANKED in r11.
+  //     "2035" appears nowhere in any ANSSI source; the only Phase 3 bound is the
+  //     floor "probably not earlier than 2030".
+  //   • singapore-csa-mas-financial-sector-planning — EndYear genuinely open-ended.
+  // Left this set in r11: france-anssi-phase-1-pre-quantum-security gained
+  // EndYear=2025 (the roadmap figure's "≈ 2025" boundary), and
+  // canada-cccs-remaining-systems-migration (blank StartYear) was merged away
+  // into canada-cccs-high-priority-migration-phase's Transition Phase row.
+  it('the live CSV has exactly the three deliberate empty-year-boundary rows', async () => {
+    const { DATA_FILENAMES } = await import('./generated/dataFilenames.generated')
+    const name = DATA_FILENAMES.timeline
+    if (!name) throw new Error('DATA_FILENAMES.timeline is not set — run generate:data-filenames')
+    const modules = import.meta.glob('./timeline_*.csv', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    }) as Record<string, string>
+    const raw = modules[`./${name}`]
+    expect(raw, `${name} not found in src/data/`).toBeTruthy()
+
+    const { data: rows } = Papa.parse<Record<string, string>>(raw.trim(), {
+      header: true,
+      skipEmptyLines: true,
+    })
+    const blanks = rows
+      .filter((r) => (r['status'] ?? 'active').trim().toLowerCase() !== 'deprecated')
+      .filter((r) => !(r['StartYear'] ?? '').trim() || !(r['EndYear'] ?? '').trim())
+      .map((r) => r['event_id'])
+      .sort()
+
+    expect(blanks).toEqual([
+      'france-anssi-phase-2-hybridization-required',
+      'france-anssi-phase-3-standalone-pqc-optional',
+      'singapore-csa-mas-financial-sector-planning',
+    ])
   })
 })
 
