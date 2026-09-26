@@ -473,7 +473,7 @@ function countDomainCves(products: SoftwareItem[], snapshot: CveSnapshot | null)
   if (!snapshot) return 0
   let total = 0
   for (const product of products) {
-    const xref = cpeByProduct.get(product.softwareName)
+    const xref = cpeByProduct.get(product.productId) ?? cpeByProduct.get(product.softwareName)
     if (!xref || !xref.cpeUri || xref.status === 'not_found') continue
     total += snapshot.byCpe?.[xref.cpeUri]?.length ?? 0
   }

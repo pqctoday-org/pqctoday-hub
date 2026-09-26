@@ -9,6 +9,7 @@ import {
   archiveOnlyFindings,
   certRecords,
   contradictedFindings,
+  manifestEntries,
   parseNameStatus,
   typedEvidenceFindings,
   verdictLockFindings,
@@ -169,6 +170,16 @@ describe('LN-4 archive, never delete', () => {
         { status: 'D', from: 'src/data/glossary.json' },
       ])
     ).toHaveLength(0)
+  })
+})
+
+describe('manifestEntries', () => {
+  it('reads entries, downloads (migrate-proofs) and bare arrays', () => {
+    const e = [{ identity: 'MATCH' }]
+    expect(manifestEntries({ entries: e })).toBe(e)
+    expect(manifestEntries({ downloads: e })).toBe(e)
+    expect(manifestEntries(e)).toBe(e)
+    expect(manifestEntries({ other: 1 })).toBeNull()
   })
 })
 

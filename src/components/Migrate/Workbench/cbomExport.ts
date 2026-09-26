@@ -19,9 +19,25 @@ import {
   type DomainId,
 } from '@/data/migrationAssets'
 
+/** The catalogue fields a CBOM needs to pin a chosen product to a release. */
+export interface CbomProductRef {
+  productId: string
+  softwareName: string
+  formerNames?: string[]
+  latestVersion?: string
+  releaseDate?: string
+}
+
 interface PlanExportInput {
   planIds: string[]
   choice: Record<string, string[]>
+  /**
+   * Catalogue rows (and the snapshot file they came from) used to pin each
+   * chosen product to its product_id and recorded release (migrate
+   * remediation r2 J3). Optional: without them the export names products only.
+   */
+  products?: CbomProductRef[]
+  catalogSnapshot?: string
   /** ISO timestamp — passed in so the function stays deterministic/testable. */
   timestamp: string
 }
@@ -29,6 +45,26 @@ interface PlanExportInput {
 const ASSET_BY_ID = new Map<string, ReplaceAsset>(REPLACE_ASSETS.map((a) => [a.id, a]))
 
 export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
+  const byName = new Map<string, CbomProductRef>()
+  for (const p of input.products ?? []) {
+    byName.set(p.softwareName, p)
+    for (const n of p.formerNames ?? []) if (!byName.has(n)) byName.set(n, p)
+  }
+  // One chosen product → its name, plus id / recorded version / release date
+  // when the catalogue knows them, so the CBOM says WHICH release was planned.
+  const productProps = (name: string) => {
+    const ref = byName.get(name)
+    return [
+      { name: 'pqc:chosenProduct', value: name },
+      ...(ref ? [{ name: 'pqc:chosenProductId', value: ref.productId }] : []),
+      ...(ref?.latestVersion
+        ? [{ name: 'pqc:chosenProductVersion', value: ref.latestVersion }]
+        : []),
+      ...(ref?.releaseDate
+        ? [{ name: 'pqc:chosenProductReleaseDate', value: ref.releaseDate }]
+        : []),
+    ]
+  }
   const assets = input.planIds
     .map((id) => ASSET_BY_ID.get(id))
     .filter((a): a is ReplaceAsset => !!a)
@@ -49,7 +85,7 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
         { name: 'pqc:cnsaYear', value: String(asset.cnsaYear) },
         { name: 'pqc:hndl', value: String(asset.hndl) },
         // one property per chosen product (multi-select)
-        ...chosen.map((product) => ({ name: 'pqc:chosenProduct', value: product })),
+        ...chosen.flatMap(productProps),
       ],
     }
   })
@@ -73,7 +109,7 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
         description: `Foundation/infrastructure domain (no wave/CNSA-deadline model — see pqc:chosenProduct)`,
         properties: [
           { name: 'pqc:domainKind', value: 'foundation' },
-          ...chosen.map((product) => ({ name: 'pqc:chosenProduct', value: product })),
+          ...chosen.flatMap(productProps),
         ],
       }
     })
@@ -88,6 +124,9 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
       component: { type: 'application', name: 'PQC Migration Plan' },
       properties: [
         { name: 'pqc:standard', value: 'NIST IR 8547 (Initial Public Draft) / CNSA 2.0' },
+        ...(input.catalogSnapshot
+          ? [{ name: 'pqc:catalogSnapshot', value: input.catalogSnapshot }]
+          : []),
         { name: 'pqc:assetCount', value: String(allComponents.length) },
       ],
     },

@@ -10,6 +10,7 @@ const modules = import.meta.glob('./migrate_saas_xref_*.csv', {
 
 interface RawSaasRow {
   software_name: string
+  product_id?: string
   saas_url: string
   deployment_model: string
   last_verified_date: string
@@ -20,6 +21,7 @@ const { data: allSaas, metadata } = loadLatestCSV<RawSaasRow, SaasXref>(
   /saas_xref_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
   (row) => ({
     softwareName: row.software_name,
+    productId: row.product_id || '',
     saasUrl: row.saas_url,
     deploymentModel: row.deployment_model as SaasXref['deploymentModel'],
     lastVerifiedDate: row.last_verified_date,
@@ -29,9 +31,10 @@ const { data: allSaas, metadata } = loadLatestCSV<RawSaasRow, SaasXref>(
 /** All SaaS-only product cross-references (one row per product). */
 export const saasXrefs: SaasXref[] = allSaas
 
-/** Lookup: software_name → SaasXref */
+/** Lookup: product_id or software_name → SaasXref */
 export const saasByProduct: Map<string, SaasXref> = allSaas.reduce((map, x) => {
   map.set(x.softwareName, x)
+  if (x.productId) map.set(x.productId, x)
   return map
 }, new Map<string, SaasXref>())
 

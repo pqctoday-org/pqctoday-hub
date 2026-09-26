@@ -29,6 +29,88 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.123.3] - 2026-09-26
+
+### Fixed
+
+- **Searching for a product's old name now finds the product again.** [view:/migrate] [persona:ops] [persona:grc] When a duplicate entry is retired, its name is kept on the surviving entry so the old name still works. That worked on the catalogue page but not in site search, which had no record of the old names at all — so searching "Akamai PQC Edge" or "Zscaler ZTE" returned nothing rather than the product they were merged into. Site search now includes them.
+
+### Changed
+
+- **Correction to the 4.123.2 note below.** [persona:ops] That entry said searching a retired name still finds the surviving product. That was true of the catalogue page but not of site search until this release. The sentence was accurate about one surface and wrong about the other.
+
+## [4.123.2] - 2026-09-26
+
+### Fixed
+
+- **13 products were listed twice under different names, and the duplicates are now retired.** [view:/migrate] [persona:ops] [persona:grc] Each pair cited the identical vendor document: an acronym beside its full name (Zscaler ZTE and Zscaler Zero Trust Exchange, Microsoft RDS and Remote Desktop Services, CIRCL and Cloudflare CIRCL), or a general product row beside a second row for that same product's post-quantum support (Akamai Edge, Fastly Edge Cloud, F5 BIG-IP, Proton Mail, .NET, NVIDIA cuPQC, SAP Cryptographic Library, Sectigo Certificate Manager). Searching the retired name still finds the surviving product, and where the retired row held a version or date the surviving one lacked, that value was carried across rather than lost. BTQ Bitcoin Quantum was two rows for one testnet at different versions; it is now one row at v0.4.2, and where the two rows read the same document differently the more cautious reading was kept. The catalogue now lists 894 active products.
+- **Two products that look like duplicates are deliberately kept as separate rows.** [view:/migrate] [persona:ops] Red Hat Enterprise Linux 9.8 and 10.2 are listed separately because their post-quantum support genuinely differs — 10.2 adds SLH-DSA and the ML-DSA PKI, while 9.8 carries a narrower backport — and Android 16 is listed separately from Android 17 because the catalogue records that Android 16 has no documented post-quantum support. Collapsing either pair would have removed something true.
+- **A sweep of every catalogue column fixed 245 malformed values.** [view:/migrate] [persona:ops] [persona:grc] A "work in progress" flag written as `false` on 53 rows where every other row uses `False`; one product's technology tag capitalised inconsistently; one row listing a company name where a source link belongs; and 190 original-release-date values recorded as a year and month, now stored as the year alone to match how every other date in the catalogue is held. Each previous value is kept verbatim in the row's data-quality notes.
+- **23 products showed a placeholder where a version number should be, and now show nothing.** [view:/migrate] [persona:ops] [persona:developer] Values like "Current (SaaS)", "N/A — continuously deployed SaaS", "Not specified by vendor", "Pre-release", "Beta" and "unavailable (repository missing)" read on the page as if they were release versions. Release 4.123.0 cleared 218 of these but missed any that had an explanation attached to them. Each blanked value is kept verbatim in the row's data-quality notes, so nothing is lost. `btq-bitcoin-quantum` keeps "Testnet v0.3.0", which does state a version.
+
+## [4.123.1] - 2026-09-26
+
+### Fixed
+
+- **The HSM learning module no longer calls an algorithm validation an "ACVP certificate".** [view:/learn] [persona:developer] [persona:ops] [persona:grc] NIST's CAVP issues the validation; ACVP is the protocol used to submit it, so there is no such thing as an "ACVP certificate". Five vendor notes and one exercise now say CAVP, matching the wording the product catalogue moved to in 4.123.0. The FIPS Validation Tracker still refers to NIST ACVP where it means the protocol itself, which is correct.
+
+## [4.123.0] - 2026-09-25
+
+Every product in the migration catalogue was re-checked against its own evidence document, and anything a document does not actually say has been corrected or removed — including versions, dates and post-quantum claims.
+
+### Fixed
+
+- **47 products were described using the wrong company's document, and now cite their own.** [view:/migrate] [persona:ops] [persona:grc] [persona:architect] Some entries had been built from a page about a different product entirely — VMware Horizon from a VMware Cloud Foundation post, WhatsApp from Signal's announcement, Prometheus from Go's release notes, Thunderbird from an IETF draft that never mentions it. Each of these now points at a document about the product itself, and its description says only what that document states.
+- **81 products had a post-quantum status their evidence didn't support.** [view:/migrate] [view:/assess] [persona:ops] [persona:grc] Where a page never mentions post-quantum cryptography, the entry now says so plainly instead of implying support: 15 moved from "none" to "not documented", 16 from "available" to "partial". Where support comes only from an underlying library the vendor never documents (OpenSSL in Horizon, Go in Prometheus), that is now stated as inherited rather than presented as the vendor's own feature.
+- **27 products no longer carry a "Verified" badge they hadn't earned.** [view:/migrate] [persona:grc] [persona:ops] The badge now means a person checked the claim against the cited document. Where that check could not be completed, the entry says "Pending Verification" rather than showing a green badge.
+- **Version numbers that no document states are gone, and 64 were wrong.** [view:/migrate] [persona:ops] [persona:developer] 218 entries showed a "latest version" that appeared in no source — placeholders like "Current", "Rolling" or a bare year, which read as real version numbers on the page. Those are now blank. Where a document did give a version, the catalogue shows that one: OpenSSH 10.3p1 rather than 10.5p1, Apache Tomcat 11.0.22 rather than 11.0.24.
+- **Dates on 640 entries were unsupported or wrong.** [view:/migrate] [persona:ops] [persona:grc] 339 release dates and 201 publication dates could not be found in any cited document and are now blank; 115 release dates and 184 publication dates were corrected. A common error: a certificate's "first validated" date shown as the product's release date, and a page's "last updated" date shown as its publication date. Where only a month or year is supported, the entry shows the year.
+- **16 entries that were not products have been retired.** [view:/migrate] [persona:grc] A policy white paper, a 2022 feasibility study, a research division, duplicates of entries that already existed, and one product filed under the wrong company (SigningHub is Ascertia's, not DigiCert's). Nothing is deleted — retired entries are kept and marked.
+
+### Changed
+
+- **7 products now use the name their vendor actually uses.** [view:/migrate] [persona:ops] Including SecureCRT (there is no 10.x release), HPE Zerto Software, and CryptPad. Searching for the old name still finds the entry.
+- **Quantum key distribution and quantum random number generators are described for what they are.** [view:/migrate] [persona:researcher] [persona:grc] These are quantum-safe technologies but not NIST post-quantum algorithms, and two entries were network simulators rather than products that encrypt anything. Each now says which it is. The products remain in the catalogue.
+- **Algorithm validations are labelled "CAVP" rather than "ACVP" on 91 products.** [view:/migrate] [persona:developer] [persona:researcher] ACVP is the test protocol; NIST's CAVP issues the validation. The catalogue now matches the wording used on the certification pages.
+
+### Added
+
+- **Each product now says what kind of thing it is.** [view:/migrate] [persona:ops] [persona:architect] Library, appliance, cloud service, hardware module, firmware, tool, and so on. This is what decides how often an entry is re-checked — hardware every 90 days, software every 30.
+- **The catalogue says plainly that it is curated, not exhaustive.** [view:/migrate] [persona:executive] [persona:grc] The page states how many products are tracked for post-quantum support and how many are tracked as migration baselines, so the totals can't be mistaken for the whole market.
+
+## [4.122.0] - 2026-09-25
+
+The Timeline's review backlog is cleared: 19 rows that were already fully sourced but sitting unpublished are now live, taking the public Timeline from 163 events to 182, and the four still held back are held for a stated reason rather than by neglect.
+
+### Added
+
+- **19 Timeline events are now public.** [view:/timeline] [persona:grc] [persona:researcher] Each was already backed by a cached primary document with a confirmed date; they were invisible only because nobody had marked them reviewed. Among them: France's ANSSI PQC FAQ and its joint QKD position paper with BSI, NLNCSA and Sweden; the UK NCSC migration roadmap; Japan's 2035 target; CISA's EO 14306 deadline; NSM-10; the G7 financial-sector window; Dubai's DESC guideline; Thailand's NCSA migration strategy; Taiwan's national PQC Migration Guide; and NIST's IR 8545, IR 8547 comments and SP 800-227.
+- **The IETF hybrid key-exchange row now tracks a published standard.** [view:/timeline] [persona:developer] [persona:researcher] The draft it followed became **RFC 10024**, "Post-Quantum Traditional (PQ/T) Hybrid Key Agreement Mechanisms for TLS 1.3" (Proposed Standard, August 2026), defining X25519MLKEM768, SecP256r1MLKEM768 and SecP384r1MLKEM1024. Confirmed against both the IETF datatracker and the RFC Editor before the change.
+
+### Fixed
+
+- **Taiwan's row was invisible even when published.** [view:/timeline] [persona:grc] It carried no years at all, which meant the Gantt silently dropped it. It is now dated 2025 — when MODA actually published the guide — and filed under Guidance rather than Deadline, because no Taiwanese deadline is supported by the document.
+- **Three US rows were resource pages, not events.** [view:/timeline] [persona:grc] The DHS, NSA and NCCoE rows had no description at all and a placeholder 2026 date; their sources are standing agency hubs. They are retired rather than published with an invented event.
+- **A duplicate Malaysia row is retired.** [view:/timeline] [persona:grc] It covered the same National PQC Migration Plan already recorded from NACSA's own site and in the compliance dataset, but cited a news article instead.
+- **Two overstated fields corrected.** [view:/timeline] [persona:grc] NSM-10 showed an end year of 2026; it is a May 2022 memorandum. NIST SP 800-227 was marked a hard mandate; it is titled "Recommendations for Key-Encapsulation Mechanisms" and is now classified as guidance, matching SP 800-208.
+- **A DoD row was colliding with its own retired predecessor.** [persona:researcher] Both shared one country/organisation/title key, which corrupted an internal completeness metric. The live row now carries the memorandum's real title, "Preparing for Migration to Post-Quantum Cryptography".
+- **The UK's 2035 row had no source date.** [view:/timeline] [persona:researcher] Filled from the NCSC guidance it cites. The row itself stays unpublished — NCSC calls 2035 an "indicative target", which is not a confirmed deadline.
+
+### Changed
+
+- **Two published dates corrected.** [view:/timeline] [persona:grc] [persona:researcher] IBM's Heron R2 processor row said 2025; its own announcement is dated 13 Nov 2024. Algorand's first post-quantum mainnet-transaction row said 2024; its own page says "In 2025".
+- **Two QKD rows restored.** [view:/timeline] [persona:grc] Czech Republic's CZQCI backbone and the UAE's ADGM/TII testbed were deprecated as out-of-scope for the Timeline last release; quantum key distribution is in scope for the site, tracked separately from post-quantum cryptography, so both are back.
+- **Japan's PQC-migration row re-sourced and re-dated.** [view:/timeline] [persona:grc] [persona:researcher] NISC was reorganised into the National Cybersecurity Office on 1 July 2025; the row now cites NCO's own November 2025 interim summary, which sets 2035 as Japan's migration target — not the 2024–2026 window it previously showed (sourced to an unrelated CRYPTREC document).
+- **CISA's EO 14306 deadline now cites the actual order.** [view:/timeline] [persona:grc] Re-sourced from a generic CISA landing page to the Federal Register's EO 14306 text, which states the December 1, 2025 deadline directly; CISA's own release confirming the list shipped January 23, 2026 is noted alongside it.
+- **The G7 financial-sector deadline now cites the document that states it.** [view:/timeline] [persona:grc] The 2030–32 critical-systems date is in a January 2026 G7 statement, not the September 2024 one previously cited.
+- **A UAE row is honest about what's confirmed and what's self-reported.** [view:/timeline] [persona:researcher] TII's claimed contribution to 6 NIST Round 2 signature candidates is now cited to NIST's own dated status report (IR 8528) for the event itself, with TII's specific involvement noted as self-published, not NIST-confirmed.
+- **Two mis-scoped rows corrected.** [view:/timeline] [persona:grc] Taiwan's row no longer claims a "2027 interim milestone" the document doesn't state (the 2027 belongs to a NIST target, not Taiwan's own). A row titled "Cryptographic Inventory" is retitled to reflect what NSM-10 actually mandates — inventory is one sub-directive among several.
+- **Brazil's ICP-Brasil certificate-standards row is published.** [view:/timeline] [persona:grc] A closer read of the already-captured document confirms it's a real, dated (30 Jan 2026) instruction adding ML-DSA and ML-KEM.
+
+### Data
+
+- **Timeline 09252026_r7 → r9:** [view:/timeline] [persona:grc] [persona:researcher] r7 made 54 cell changes across 25 rows; r8 and r9 added 65 more across the review backlog. 311 rows total: 182 public, 125 retired, 4 still held. The four held back are Germany's 2030 and the UK's 2035 (both stated as targets rather than deadlines), Russia's TC26 working group (an ongoing activity with a year-only date) and CISA's ACDI window (whose dates come from a chart image, not text). Full reasoning in `pqctoday-priv/maintenance/lineage/timeline-review/claude-recommendations-09252026.md` and this session's record.
+
 ## [4.121.0] - 2026-09-25
 
 Every certification record now comes straight from its official source — NIST for FIPS 140-3 and CAVP, the Common Criteria Portal, ANSSI and ENISA — and anything a source does not back is gone.

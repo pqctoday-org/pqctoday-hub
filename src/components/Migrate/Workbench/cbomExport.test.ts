@@ -76,3 +76,41 @@ describe('buildPlanCbom', () => {
     expect(components[0].properties.find((p) => p.name === 'pqc:chosenProduct')).toBeUndefined()
   })
 })
+
+describe('buildPlanCbom — release pinning (migrate remediation r2 J3)', () => {
+  it('adds product_id, recorded version and release date for a catalogued product, and the snapshot', () => {
+    const cbom = buildPlanCbom({
+      planIds: ['foundations'],
+      choice: { foundations: ['liboqs'] },
+      timestamp: '2026-09-25T00:00:00Z',
+      products: [
+        {
+          productId: 'liboqs',
+          softwareName: 'liboqs',
+          latestVersion: '0.16.0',
+          releaseDate: '2026-07-09',
+        },
+      ],
+      catalogSnapshot: 'pqc_product_catalog_09252026_r1.csv',
+    }) as { components: { properties: { name: string; value: string }[] }[]; metadata: unknown }
+    const props = cbom.components.flatMap((c) => c.properties)
+    const get = (n: string) => props.find((p) => p.name === n)?.value
+    expect(get('pqc:chosenProductId')).toBe('liboqs')
+    expect(get('pqc:chosenProductVersion')).toBe('0.16.0')
+    expect(get('pqc:chosenProductReleaseDate')).toBe('2026-07-09')
+    expect(JSON.stringify(cbom.metadata)).toContain('pqc_product_catalog_09252026_r1.csv')
+  })
+
+  it('resolves a selection saved under a former name', () => {
+    const cbom = buildPlanCbom({
+      planIds: ['foundations'],
+      choice: { foundations: ['GitHub - aws/aws-lc-rs'] },
+      timestamp: '2026-09-25T00:00:00Z',
+      products: [
+        { productId: 'x', softwareName: 'aws-lc-rs', formerNames: ['GitHub - aws/aws-lc-rs'] },
+      ],
+    }) as { components: { properties: { name: string; value: string }[] }[] }
+    const props = cbom.components.flatMap((c) => c.properties)
+    expect(props.find((p) => p.name === 'pqc:chosenProductId')?.value).toBe('x')
+  })
+})

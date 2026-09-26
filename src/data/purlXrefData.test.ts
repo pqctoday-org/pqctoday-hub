@@ -36,9 +36,9 @@ describe('purlXrefData', () => {
     }
   })
 
-  it('purlByProduct map keys match softwareNames', () => {
+  it('purlByProduct is keyed by productId and by softwareName', () => {
     for (const [key, xref] of purlByProduct) {
-      expect(key).toBe(xref.softwareName)
+      expect([xref.productId, xref.softwareName]).toContain(key)
     }
   })
 })

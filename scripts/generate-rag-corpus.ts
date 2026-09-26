@@ -1187,8 +1187,19 @@ function processMigrateSoftware(): RAGChunk[] {
     const name = sanitize(r.software_name)
     if (!name) continue
 
+    // Retired duplicates fold their name into the survivor's former_names (MC-4), and
+    // migrateData.ts resolves a former name back to its row. The corpus excludes
+    // deprecated rows, so without this line a retired product name matched NOTHING in
+    // search even though /migrate still resolved it — found 2026-09-26, after 4.123.2
+    // shipped a changelog claiming retired names stay searchable.
+    const formerNames = sanitize(r.former_names)
+      .split(';')
+      .map((n) => n.trim())
+      .filter(Boolean)
+
     const content = [
       `Software: ${name}`,
+      formerNames.length ? `Also known as: ${formerNames.join(', ')}` : '',
       `Category: ${sanitize(r.category_name)} (${sanitize(r.infrastructure_layer)})`,
       `PQC Support: ${sanitize(r.pqc_support)}`,
       `PQC Capabilities: ${sanitize(r.pqc_capability_description)}`,
@@ -1251,6 +1262,7 @@ function processMigrateSoftware(): RAGChunk[] {
         ...(sanitize(r.trusted_source_id)
           ? { trustedSourceId: sanitize(r.trusted_source_id) }
           : {}),
+        ...(formerNames.length ? { formerNames: formerNames.join(', ') } : {}),
       },
       deepLink: migrateDeepLink,
     })

@@ -106,14 +106,24 @@ function daysSince(dateStr: string): number | null {
  */
 export function productVerificationBadge(item: SoftwareItem): VerificationBadge {
   const days = daysSince(item.lastVerifiedDate)
+  // lastVerifiedDate is stamped by the evidence FETCH step, not by a claim
+  // decision — so the tooltip says what it measures.
   const title = item.lastVerifiedDate
-    ? `Last verified ${item.lastVerifiedDate}${days !== null ? ` (${days} day${days === 1 ? '' : 's'} ago)` : ''}`
-    : 'Never verified'
+    ? `Evidence fetched ${item.lastVerifiedDate}${days !== null ? ` (${days} day${days === 1 ? '' : 's'} ago)` : ''}`
+    : 'Evidence never fetched'
   const stale = days !== null && days > STALE_DAYS
 
   switch ((item.verificationStatus || '').toLowerCase()) {
     case 'verified':
       return { label: 'Verified', tone: stale ? 'warning' : 'success', title }
+    case 'verified (no pqc)':
+      return { label: 'Verified (No PQC)', tone: stale ? 'warning' : 'success', title }
+    case 'needs review':
+      return {
+        label: 'Needs Review',
+        tone: 'warning',
+        title: `A claim on this product was contradicted by its evidence and is under review. ${title}`,
+      }
     case 'partially verified':
       return { label: 'Partially Verified', tone: 'info', title }
     case 'pending verification':

@@ -61,6 +61,17 @@ export type CisaCategoryType = (typeof CISA_CATEGORIES)[number]
 export interface SoftwareItem {
   productId: string
   softwareName: string
+  /** Earlier display names (from the catalogue's former_names column). */
+  formerNames?: string[]
+  /** What the product is (library, sdk, application, cloud_service, appliance, hsm,
+   *  semiconductor, firmware, protocol_implementation, tool, reference_implementation, other). */
+  productKind?: string
+  /** 'pqc_relevant' | 'migration_baseline' — reported separately, never one denominator. */
+  cataloguePopulation?: string
+  /** "<segment>: <why>" for a migration-baseline product. */
+  baselineRationale?: string
+  /** Product line this row belongs to; '' for a singleton. */
+  familyId?: string
   categoryId: string
   categoryName: string
   infrastructureLayer: string
@@ -198,6 +209,8 @@ export interface PurlXref {
 
 export interface SaasXref {
   softwareName: string
+  /** Catalogue product_id (blank on files older than 2026-09-24). */
+  productId?: string
   saasUrl: string
   deploymentModel: 'managed-service' | 'api-platform' | 'hybrid-cloud'
   lastVerifiedDate: string

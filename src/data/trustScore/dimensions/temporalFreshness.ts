@@ -21,8 +21,19 @@ export function scoreTemporalFreshness(dates: {
     return { rawScore: 0, rationale: 'No date information available', notApplicable: true }
   }
 
-  // Use the most recent date
-  const staleDays = Math.min(...candidates.map(daysSince))
+  // Use the most recent date that is not in the future: an expected release
+  // date ("2027-01-01") says nothing about how fresh the record is, and taking
+  // it would score the row as updated today. A future date is skipped, not
+  // treated as unparseable. One day of slack keeps "today" valid in time
+  // zones ahead of UTC, where a bare ISO date parses as a few hours ahead.
+  const ages = candidates
+    .map(daysSince)
+    .filter((d) => d === Infinity || d >= -1)
+    .map((d) => Math.max(d, 0))
+  if (ages.length === 0) {
+    return { rawScore: 0, rationale: 'Only future dates available', notApplicable: true }
+  }
+  const staleDays = Math.min(...ages)
 
   if (staleDays === Infinity) {
     return { rawScore: 10, rationale: 'Date could not be parsed' }

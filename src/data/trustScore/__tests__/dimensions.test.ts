@@ -118,6 +118,18 @@ describe('scoreCryptoSimulation', () => {
 })
 
 describe('scoreTemporalFreshness', () => {
+  it('ignores a future release date instead of scoring the row as fresh', () => {
+    const old = new Date(Date.now() - 400 * 86_400_000).toISOString().slice(0, 10)
+    const future = new Date(Date.now() + 200 * 86_400_000).toISOString().slice(0, 10)
+    const result = scoreTemporalFreshness({ lastVerifiedDate: old, releaseDate: future })
+    expect(result.rawScore).toBe(10)
+  })
+
+  it('is not applicable when the only date is in the future', () => {
+    const future = new Date(Date.now() + 200 * 86_400_000).toISOString().slice(0, 10)
+    expect(scoreTemporalFreshness({ releaseDate: future }).notApplicable).toBe(true)
+  })
+
   it('returns notApplicable when no dates', () => {
     const result = scoreTemporalFreshness({})
     expect(result.notApplicable).toBe(true)

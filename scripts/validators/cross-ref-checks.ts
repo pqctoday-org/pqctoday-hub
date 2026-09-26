@@ -196,7 +196,16 @@ export function runCrossRefChecks(): CheckResult[] {
     return id
   }
   const canonicalLibraryIds = new Set([...libraryIds].map((id) => canonicalizeLibraryHeading(id)))
-  const migrateNames = new Set(migrate.rows.map((r) => r.software_name).filter(Boolean))
+  // A cert xref written before a rename still names the OLD software_name;
+  // the catalogue's own convention for that (MC-4) is to keep it in
+  // former_names, and migrateData.ts / trustScoreData.ts already resolve a
+  // former name back to its row. This set matches that convention instead
+  // of flagging every rename as a dangling xref.
+  const migrateNames = new Set(
+    migrate.rows
+      .flatMap((r) => [r.software_name, ...(r.former_names || '').split(';').map((n) => n.trim())])
+      .filter(Boolean)
+  )
   const migrateCategoryIds = new Set(migrate.rows.map((r) => r.category_id).filter(Boolean))
   const threatIds = new Set(threats.rows.map((r) => r.threat_id).filter(Boolean))
   const algorithmNames = new Set(algorithms.rows.map((r) => r.Algorithm).filter(Boolean))
