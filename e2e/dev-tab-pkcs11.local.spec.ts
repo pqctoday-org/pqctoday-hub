@@ -447,6 +447,49 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   await expect(page.getByText('✓ ran').first()).toBeVisible()
 })
 
+// FIXED 2026-09-26 — this test was `test.fixme` for the product defect described
+// below, and is now the regression guard for the fix. The assertions are
+// unchanged from the fixme version; do NOT "fix" a future failure here by
+// weakening the key-registry assertion. Original diagnosis, live against the dev
+// server:
+//
+//   after Run, on Build:            "148 PKCS#11 calls · 3 keys — Inspect"
+//   after clicking through to
+//   Inspect › Keys:                 "No HSM keys generated yet."
+//   back on Build afterwards:       "152 PKCS#11 calls · 0 keys — Inspect"
+//
+// i.e. the three keys really ARE registered, and the act of navigating to the
+// Inspect tab DELETES them. Root cause: PkcsDevWorkbench.tsx's unmount cleanup
+// (the `useEffect(() => () => { … })` around devSlotSessionRef) closes the
+// DevSequences-slot session and then calls `forgetSession(devSlotSessionRef.current)`
+// = `clearHsmKeys({ sessionHandle })`, which purges every key registered on that
+// session from the shared registry. HsmPlayground's tabs unmount the Build panel
+// when you switch to Inspect, so the purge fires before the Inspect › Keys
+// HsmKeyTable can ever render them. That cleanup was written while the key table
+// still lived INSIDE the Build tab (same mount lifetime as the session); the
+// 2026-09-02 redesign (design_handoff_kmip_pkcs11_playground D3c) moved the key
+// inventory onto its own tab and made the purge unconditionally destructive.
+//
+// Ruled out while diagnosing:
+//   • `pruneDeadSlots` — hsm_getAllSlots() is C_GetSlotList(token_present=0),
+//     so the DevSequences slot (slot 1) is live and never pruned.
+//   • the locator/label — "HSM Key Registry" is still HsmKeyTable.tsx's heading;
+//     it simply isn't rendered, because the early `hsmKeys.length === 0` branch
+//     wins.
+// Secondary gap found at the same time: the empty state's "Discover Objects"
+// button cannot recover them either — `discoverHsmObjects` scans
+// `hsm.hSessionRef.current`, the MAIN token's session, while the objects live on
+// the separate DevSequences token.
+//
+// THE FIX (both halves):
+//   • the kept-open DevSequences session is now owned at WASM-module scope
+//     (devSlot.ts's ensureDevSlotSession/resetDevSlotCache), torn down by
+//     PlaygroundProvider on route unmount — where this hub already puts
+//     whole-module teardown — instead of by the Build panel's own unmount. No
+//     key purge happens on a tab switch, because a tab switch is not a session
+//     close.
+//   • the key table's Discover button now calls discoverHsmObjectsEverywhere,
+//     which scans the main session AND the open dev-slot session.
 test("the real PKCS#11 call log and key table show this tab's own run activity", async ({
   page,
 }) => {

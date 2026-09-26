@@ -167,33 +167,39 @@ test('the guided lesson drives the real Dev sub-tab end to end, including a live
   // sub-tab...") case-insensitively contains the title too.
   await expect(page.getByRole('heading', { name: 'The Dev tab' })).toBeVisible()
 
-  // Steps 2-3 (tourStep 1-2): the lesson resets the palette to Standard
-  // first, safe even when it's already Standard — the palette choice now
-  // persists across sessions (kmip3-corpus-palette-plan-09012026.md), so an
-  // earlier lesson (or a returning visitor) could otherwise leave this
-  // lesson's later steps (template/step-list/run) pointed at elements the
-  // Corpus palette doesn't render.
-  await page.getByRole('button', { name: /^Next/ }).click()
-  await expect(page.getByText('Palette: open the switch')).toBeVisible()
+  // Step 2 (tourStep 1): the lesson resets the palette to Standard, safe even
+  // when it's already Standard — the palette choice now persists across
+  // sessions (kmip3-corpus-palette-plan-09012026.md), so an earlier lesson (or
+  // a returning visitor) could otherwise leave this lesson's later steps
+  // (template/step-list/run) pointed at elements the Corpus palette doesn't
+  // render.
+  //
+  // This WAS two steps ("Palette: open the switch", then "Palette: back to
+  // Standard"). The Standard-vs-Corpus control became a 2-way toggle in the
+  // 2026-09-02 redesign, so the open-the-switch step had nothing left to do and
+  // the developer-lifecycle lesson now carries the single reset step —
+  // KmipPlaygroundView.tsx's `developer-lifecycle` steps are the source of
+  // truth: The Dev tab / Palette: back to Standard / Start from a template /
+  // Four kinds of step / Run it for real / The refusal IS the lesson. The spec
+  // was still pressing Next one extra time and asserting the deleted title.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('Palette: back to Standard')).toBeVisible()
 
-  // Step 4 (tourStep 3): act() clicked the real "Governed lifecycle"
-  // template button.
+  // Step 3: act() clicked the real "Governed lifecycle" template button.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('Start from a template')).toBeVisible()
 
-  // Step 5: no act, just narration over the real step list.
+  // Step 4: no act, just narration over the real step list.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('Four kinds of step')).toBeVisible()
 
-  // Step 6: act() fires the real Run click — wait for the genuine
+  // Step 5: act() fires the real Run click — wait for the genuine
   // completion signal, not the tour's own step-advance timing.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('Run it for real')).toBeVisible()
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
 
-  // Step 7 (last): spotlights the expect-deny card — the CACP teaching moment.
+  // Step 6 (last): spotlights the expect-deny card — the CACP teaching moment.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('The refusal IS the lesson')).toBeVisible()
   // Scoped to the step list — the generated Python in the Monaco panel also

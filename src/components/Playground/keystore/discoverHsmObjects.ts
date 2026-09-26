@@ -8,6 +8,7 @@
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { hsm_findAllObjects, hsm_getKeyAttributes, hsm_getSessionInfo } from '../../../wasm/softhsm'
 import type { HsmContextValue, HsmFamily, HsmKey, HsmKeyRole } from '../hsm/HsmContext'
+import { getDevSlotSession, reloginDevSlotSession } from '../dev/pipeline/devSlot'
 
 export const CKK_NAMES: Record<number, string> = {
   0x00: 'CKK_RSA',
@@ -186,6 +187,48 @@ export const discoverHsmObjects = (hsm: HsmContextValue): number => {
   const hSession = hsm.hSessionRef.current
   if (!M || !hSession) return 0
   return discoverObjectsOnSession(M, hSession, knownFromRegistry(hsm.hsmKeysRef), hsm.addHsmKey)
+}
+
+/**
+ * Every session this app currently holds open, not just `HsmContext`'s own —
+ * what a button literally labeled "Discover Objects" has to mean.
+ *
+ * `discoverHsmObjects` above scans the MAIN token's session, which is correct
+ * for its other caller (the Learn tab's per-step bookkeeping: a lesson step
+ * only ever touches the main token, and scanning anything else would file
+ * unrelated objects mid-lesson). It is NOT what the key table's Discover
+ * button needs: the Developer/Build tab keeps its own deliberately-isolated
+ * DevSequences token (devSlot.ts), so a run's keys live on a session this
+ * function never looked at — the button appeared to work and silently found
+ * nothing, which is exactly the recovery path a user reaches for when the
+ * registry looks empty.
+ *
+ * The dev-slot session is only scanned when one is already open (this is a
+ * read, so it never provisions a token to go looking), and only when it
+ * belongs to the same module instance being scanned — a session handle is
+ * meaningless in any other module. Re-authenticates first for the same reason
+ * the post-run scan does: a generated script's closing `s.logout()` is
+ * token-wide, and without a relogin C_FindObjects silently returns fewer
+ * objects than exist rather than erroring.
+ */
+export const discoverHsmObjectsEverywhere = (hsm: HsmContextValue): number => {
+  let added = discoverHsmObjects(hsm)
+  const dev = getDevSlotSession()
+  if (dev && dev.M === hsm.rawModuleRef.current) {
+    try {
+      reloginDevSlotSession(dev.M, dev.hSession)
+      added += discoverObjectsOnSession(
+        dev.M,
+        dev.hSession,
+        knownFromRegistry(hsm.hsmKeysRef),
+        hsm.addHsmKey
+      )
+    } catch (err) {
+      // A dead dev session must not fail the main scan that already succeeded.
+      console.error('discoverHsmObjectsEverywhere: dev-slot scan failed', err)
+    }
+  }
+  return added
 }
 
 /**

@@ -13,7 +13,7 @@ import {
   type KeyAttributeSet,
 } from '../../../wasm/softhsm'
 import { formatBytes } from './keySizeUtils'
-import { discoverHsmObjects } from './discoverHsmObjects'
+import { discoverHsmObjectsEverywhere } from './discoverHsmObjects'
 import { resolveKeyHandle, isSessionGoneError } from './resolveKeyHandle'
 import { keyIdentity } from './keyIdentity'
 import { estimateKeySize, KeyAttrModal } from '@/components/shared/hsmKeyAttrDisplay'
@@ -162,7 +162,11 @@ export const HsmKeyTable = () => {
   const discoverObjects = () => {
     setDiscovering(true)
     try {
-      const added = discoverHsmObjects(hsmCtx)
+      // …Everywhere, not the main-session-only form: the Build tab's keys live
+      // on the separate DevSequences token, and this button is the recovery
+      // path a user takes when the registry looks empty — see that function's
+      // doc comment.
+      const added = discoverHsmObjectsEverywhere(hsmCtx)
       setDiscoverCount(added)
       setTimeout(() => setDiscoverCount(null), 3000)
     } finally {
