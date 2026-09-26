@@ -528,6 +528,9 @@ export const WSE_MECH = {
   CKM_SHA3_512_HMAC: 0x2d1,
   CKM_AES_CMAC: 0x108a,
   CKM_HKDF_DERIVE: 0x402a,
+  // Project Wycheproof XDH adoption (sections/wycheproofNegative.ts): X25519 /
+  // X448 ECDH is CKM_ECDH1_DERIVE over CKK_EC_MONTGOMERY keys (§6.3.17).
+  CKM_ECDH1_DERIVE: 0x1050,
   CKM_SP800_108_COUNTER_KDF: 0x3ac,
   CKM_SP800_108_FEEDBACK_KDF: 0x3ad,
   CKM_SP800_108_DOUBLE_PIPELINE_KDF: 0x3ae,

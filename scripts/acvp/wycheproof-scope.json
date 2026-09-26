@@ -1,0 +1,4843 @@
+{
+  "_provenance": {
+    "producer": "Project Wycheproof, maintained by Google / C2SP",
+    "attribution": "Project Wycheproof, maintained by Google / C2SP — https://github.com/C2SP/wycheproof (Apache-2.0, see src/data/acvp/WYCHEPROOF-LICENSE.txt)",
+    "source_repo": "https://github.com/C2SP/wycheproof",
+    "source_commit": "3fa63dd0344abb611f1fb1d77e119938603ea230",
+    "retrieved": "2026-09-26",
+    "evidence_class": "independent-oracle",
+    "scope_rule": "WYC-SCOPE-1, filters F1-F4 — see scripts/acvp/vendor_wycheproof.py",
+    "generator": "python3 scripts/acvp/wycheproof_scope_census.py --clone <clone>",
+    "why_this_file_exists": "So that 'we support Wycheproof completely' is a checkable claim: every one of the 343 upstream files is accounted for here as vendored-and-executed, in-scope-runner-missing (with its case count, so the gap is a number) or out-of-scope (with the filter that excluded it)."
+  },
+  "totals": {
+    "upstream": {
+      "files": 343,
+      "cases": 144910
+    },
+    "inScope": {
+      "files": 173,
+      "cases": 39849,
+      "invalid": 18864
+    },
+    "vendored": {
+      "files": 6,
+      "cases": 1685,
+      "invalid": 448,
+      "acceptable": 502
+    },
+    "inScopeRunnerMissing": {
+      "files": 167,
+      "cases": 38164,
+      "invalid": 18416
+    },
+    "outOfScope": {
+      "files": 170,
+      "cases": 105061
+    }
+  },
+  "files": [
+    {
+      "upstreamPath": "testvectors_v1/a128cbc_hs256_test.json",
+      "algorithm": "A128CBC-HS256",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 94,
+      "byResult": {
+        "valid": 67,
+        "invalid": 27,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for A128CBC-HS256"
+    },
+    {
+      "upstreamPath": "testvectors_v1/a192cbc_hs384_test.json",
+      "algorithm": "A192CBC-HS384",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 94,
+      "byResult": {
+        "valid": 67,
+        "invalid": 27,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for A192CBC-HS384"
+    },
+    {
+      "upstreamPath": "testvectors_v1/a256cbc_hs512_test.json",
+      "algorithm": "A256CBC-HS512",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 94,
+      "byResult": {
+        "valid": 67,
+        "invalid": 27,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for A256CBC-HS512"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aead_aes_siv_cmac_test.json",
+      "algorithm": "AEAD-AES-SIV-CMAC",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 900,
+      "byResult": {
+        "valid": 252,
+        "invalid": 648,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AEAD-AES-SIV-CMAC"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aegis128L_test.json",
+      "algorithm": "AEGIS128L",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 479,
+      "byResult": {
+        "valid": 367,
+        "invalid": 112,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AEGIS128L"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aegis128_test.json",
+      "algorithm": "AEGIS128",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 475,
+      "byResult": {
+        "valid": 367,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AEGIS128"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aegis256_test.json",
+      "algorithm": "AEGIS256",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 472,
+      "byResult": {
+        "valid": 360,
+        "invalid": 112,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AEGIS256"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_cbc_pkcs5_test.json",
+      "algorithm": "AES-CBC-PKCS5",
+      "schema": "ind_cpa_test_schema_v1.json",
+      "cases": 216,
+      "byResult": {
+        "valid": 72,
+        "invalid": 144,
+        "acceptable": 0
+      },
+      "bucket": "AES",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ind_cpa_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ccm_test.json",
+      "algorithm": "AES-CCM",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 552,
+      "byResult": {
+        "valid": 405,
+        "invalid": 147,
+        "acceptable": 0
+      },
+      "bucket": "AES",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema aead_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_cmac_test.json",
+      "algorithm": "AES-CMAC",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 311,
+      "byResult": {
+        "valid": 63,
+        "invalid": 248,
+        "acceptable": 0
+      },
+      "bucket": "AES",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_eax_test.json",
+      "algorithm": "AES-EAX",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 240,
+      "byResult": {
+        "valid": 159,
+        "invalid": 81,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-EAX"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_base10_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_str_test_schema.json",
+      "cases": 3845,
+      "byResult": {
+        "valid": 3312,
+        "invalid": 533,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_base16_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_str_test_schema.json",
+      "cases": 3872,
+      "byResult": {
+        "valid": 3357,
+        "invalid": 515,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_base26_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_str_test_schema.json",
+      "cases": 3076,
+      "byResult": {
+        "valid": 2651,
+        "invalid": 425,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_base32_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_str_test_schema.json",
+      "cases": 2868,
+      "byResult": {
+        "valid": 2461,
+        "invalid": 407,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_base36_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_str_test_schema.json",
+      "cases": 2854,
+      "byResult": {
+        "valid": 2465,
+        "invalid": 389,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_base45_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_str_test_schema.json",
+      "cases": 2421,
+      "byResult": {
+        "valid": 2050,
+        "invalid": 371,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_base62_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_str_test_schema.json",
+      "cases": 2474,
+      "byResult": {
+        "valid": 2139,
+        "invalid": 335,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_base64_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_str_test_schema.json",
+      "cases": 2417,
+      "byResult": {
+        "valid": 2082,
+        "invalid": 335,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_base85_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_str_test_schema.json",
+      "cases": 1852,
+      "byResult": {
+        "valid": 1553,
+        "invalid": 299,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix10_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 3845,
+      "byResult": {
+        "valid": 3312,
+        "invalid": 533,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix16_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 3872,
+      "byResult": {
+        "valid": 3357,
+        "invalid": 515,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix255_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 1853,
+      "byResult": {
+        "valid": 1590,
+        "invalid": 263,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix256_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 2021,
+      "byResult": {
+        "valid": 1758,
+        "invalid": 263,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix26_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 3076,
+      "byResult": {
+        "valid": 2651,
+        "invalid": 425,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix32_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 2868,
+      "byResult": {
+        "valid": 2461,
+        "invalid": 407,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix36_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 2854,
+      "byResult": {
+        "valid": 2465,
+        "invalid": 389,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix45_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 2421,
+      "byResult": {
+        "valid": 2050,
+        "invalid": 371,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix62_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 2474,
+      "byResult": {
+        "valid": 2139,
+        "invalid": 335,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix64_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 2417,
+      "byResult": {
+        "valid": 2082,
+        "invalid": 335,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix65535_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 965,
+      "byResult": {
+        "valid": 834,
+        "invalid": 131,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix65536_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 1049,
+      "byResult": {
+        "valid": 918,
+        "invalid": 131,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_ff1_radix85_test.json",
+      "algorithm": "AES-FF1",
+      "schema": "fpe_list_test_schema.json",
+      "cases": 1852,
+      "byResult": {
+        "valid": 1553,
+        "invalid": 299,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-FF1"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_gcm_siv_test.json",
+      "algorithm": "AES-GCM-SIV",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 202,
+      "byResult": {
+        "valid": 136,
+        "invalid": 66,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-GCM-SIV"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_gcm_test.json",
+      "algorithm": "AES-GCM",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 316,
+      "byResult": {
+        "valid": 229,
+        "invalid": 87,
+        "acceptable": 0
+      },
+      "bucket": "AES",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema aead_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_gmac_test.json",
+      "algorithm": "AES-GMAC",
+      "schema": "mac_with_iv_test_schema_v1.json",
+      "cases": 414,
+      "byResult": {
+        "valid": 90,
+        "invalid": 324,
+        "acceptable": 0
+      },
+      "bucket": "AES",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_with_iv_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_kwp_test.json",
+      "algorithm": "AES-KWP",
+      "schema": "keywrap_test_schema_v1.json",
+      "cases": 254,
+      "byResult": {
+        "valid": 77,
+        "invalid": 177,
+        "acceptable": 0
+      },
+      "bucket": "AES",
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_aes_kwp_test.json"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_siv_cmac_test.json",
+      "algorithm": "AES-SIV-CMAC",
+      "schema": "daead_test_schema_v1.json",
+      "cases": 442,
+      "byResult": {
+        "valid": 118,
+        "invalid": 324,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for AES-SIV-CMAC"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_wrap_test.json",
+      "algorithm": "AES-WRAP",
+      "schema": "keywrap_test_schema_v1.json",
+      "cases": 165,
+      "byResult": {
+        "valid": 36,
+        "invalid": 126,
+        "acceptable": 3
+      },
+      "bucket": "AES",
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_aes_wrap_test.json"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aes_xts_test.json",
+      "algorithm": "AES-XTS",
+      "schema": "ind_cpa_test_schema_v1.json",
+      "cases": 123,
+      "byResult": {
+        "valid": 123,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "AES",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ind_cpa_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aria_cbc_pkcs5_test.json",
+      "algorithm": "ARIA-CBC-PKCS5",
+      "schema": "ind_cpa_test_schema_v1.json",
+      "cases": 216,
+      "byResult": {
+        "valid": 72,
+        "invalid": 144,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for ARIA-CBC-PKCS5"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aria_ccm_test.json",
+      "algorithm": "ARIA-CCM",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 552,
+      "byResult": {
+        "valid": 405,
+        "invalid": 147,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for ARIA-CCM"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aria_cmac_test.json",
+      "algorithm": "ARIA-CMAC",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 311,
+      "byResult": {
+        "valid": 63,
+        "invalid": 248,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for ARIA-CMAC"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aria_gcm_test.json",
+      "algorithm": "ARIA-GCM",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 311,
+      "byResult": {
+        "valid": 224,
+        "invalid": 87,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for ARIA-GCM"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aria_kwp_test.json",
+      "algorithm": "ARIA-KWP",
+      "schema": "keywrap_test_schema_v1.json",
+      "cases": 252,
+      "byResult": {
+        "valid": 75,
+        "invalid": 177,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for ARIA-KWP"
+    },
+    {
+      "upstreamPath": "testvectors_v1/aria_wrap_test.json",
+      "algorithm": "ARIA-WRAP",
+      "schema": "keywrap_test_schema_v1.json",
+      "cases": 159,
+      "byResult": {
+        "valid": 30,
+        "invalid": 126,
+        "acceptable": 3
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for ARIA-WRAP"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ascon128_test.json",
+      "algorithm": "ASCON128",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 192,
+      "byResult": {
+        "valid": 84,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for ASCON128"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ascon128a_test.json",
+      "algorithm": "ASCON128A",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 192,
+      "byResult": {
+        "valid": 84,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for ASCON128A"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ascon80pq_test.json",
+      "algorithm": "ASCON80PQ",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 192,
+      "byResult": {
+        "valid": 84,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for ASCON80PQ"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ascon_sp800_232_aead128_test.json",
+      "algorithm": "ASCON-AEAD128",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 252,
+      "byResult": {
+        "valid": 128,
+        "invalid": 124,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for ASCON-AEAD128"
+    },
+    {
+      "upstreamPath": "testvectors_v1/bls_hash_to_g2_test.json",
+      "algorithm": "BLS",
+      "schema": "bls_hash_to_g2_schema.json",
+      "cases": 34,
+      "byResult": {
+        "valid": 34,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for BLS"
+    },
+    {
+      "upstreamPath": "testvectors_v1/bls_sig_g2_aggregate_verify_test.json",
+      "algorithm": "BLS",
+      "schema": "bls_aggregate_verify_schema.json",
+      "cases": 19,
+      "byResult": {
+        "valid": 6,
+        "invalid": 13,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for BLS"
+    },
+    {
+      "upstreamPath": "testvectors_v1/bls_sig_g2_basic_verify_test.json",
+      "algorithm": "BLS",
+      "schema": "bls_sig_verify_schema.json",
+      "cases": 88,
+      "byResult": {
+        "valid": 29,
+        "invalid": 59,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for BLS"
+    },
+    {
+      "upstreamPath": "testvectors_v1/bls_sig_g2_pop_verify_test.json",
+      "algorithm": "BLS",
+      "schema": "bls_sig_verify_schema.json",
+      "cases": 26,
+      "byResult": {
+        "valid": 13,
+        "invalid": 13,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for BLS"
+    },
+    {
+      "upstreamPath": "testvectors_v1/c2sp_chunked_encryption_aes_128_gcm_test.json",
+      "algorithm": "Cobblestone-128",
+      "schema": "c2sp_chunked_encryption_schema.json",
+      "cases": 35,
+      "byResult": {
+        "valid": 10,
+        "invalid": 25,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for Cobblestone-128"
+    },
+    {
+      "upstreamPath": "testvectors_v1/c2sp_chunked_encryption_aes_256_gcm_test.json",
+      "algorithm": "Cobblestone-256",
+      "schema": "c2sp_chunked_encryption_schema.json",
+      "cases": 35,
+      "byResult": {
+        "valid": 10,
+        "invalid": 25,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for Cobblestone-256"
+    },
+    {
+      "upstreamPath": "testvectors_v1/camellia_cbc_pkcs5_test.json",
+      "algorithm": "CAMELLIA-CBC-PKCS5",
+      "schema": "ind_cpa_test_schema_v1.json",
+      "cases": 216,
+      "byResult": {
+        "valid": 72,
+        "invalid": 144,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for CAMELLIA-CBC-PKCS5"
+    },
+    {
+      "upstreamPath": "testvectors_v1/camellia_ccm_test.json",
+      "algorithm": "CAMELLIA-CCM",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 552,
+      "byResult": {
+        "valid": 405,
+        "invalid": 147,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for CAMELLIA-CCM"
+    },
+    {
+      "upstreamPath": "testvectors_v1/camellia_cmac_test.json",
+      "algorithm": "CAMELLIA-CMAC",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 311,
+      "byResult": {
+        "valid": 63,
+        "invalid": 248,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for CAMELLIA-CMAC"
+    },
+    {
+      "upstreamPath": "testvectors_v1/camellia_wrap_test.json",
+      "algorithm": "CAMELLIA-WRAP",
+      "schema": "keywrap_test_schema_v1.json",
+      "cases": 159,
+      "byResult": {
+        "valid": 30,
+        "invalid": 126,
+        "acceptable": 3
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for CAMELLIA-WRAP"
+    },
+    {
+      "upstreamPath": "testvectors_v1/chacha20_poly1305_test.json",
+      "algorithm": "CHACHA20-POLY1305",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 325,
+      "byResult": {
+        "valid": 256,
+        "invalid": 69,
+        "acceptable": 0
+      },
+      "bucket": "ChaCha20-Poly1305",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema aead_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/dsa_2048_224_sha224_p1363_test.json",
+      "algorithm": "DSA",
+      "schema": "dsa_p1363_verify_schema_v1.json",
+      "cases": 109,
+      "byResult": {
+        "valid": 51,
+        "invalid": 58,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for DSA"
+    },
+    {
+      "upstreamPath": "testvectors_v1/dsa_2048_224_sha224_test.json",
+      "algorithm": "DSA",
+      "schema": "dsa_verify_schema_v1.json",
+      "cases": 336,
+      "byResult": {
+        "valid": 52,
+        "invalid": 283,
+        "acceptable": 1
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for DSA"
+    },
+    {
+      "upstreamPath": "testvectors_v1/dsa_2048_224_sha256_p1363_test.json",
+      "algorithm": "DSA",
+      "schema": "dsa_p1363_verify_schema_v1.json",
+      "cases": 137,
+      "byResult": {
+        "valid": 79,
+        "invalid": 58,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for DSA"
+    },
+    {
+      "upstreamPath": "testvectors_v1/dsa_2048_224_sha256_test.json",
+      "algorithm": "DSA",
+      "schema": "dsa_verify_schema_v1.json",
+      "cases": 364,
+      "byResult": {
+        "valid": 80,
+        "invalid": 283,
+        "acceptable": 1
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for DSA"
+    },
+    {
+      "upstreamPath": "testvectors_v1/dsa_2048_256_sha256_p1363_test.json",
+      "algorithm": "DSA",
+      "schema": "dsa_p1363_verify_schema_v1.json",
+      "cases": 139,
+      "byResult": {
+        "valid": 81,
+        "invalid": 58,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for DSA"
+    },
+    {
+      "upstreamPath": "testvectors_v1/dsa_2048_256_sha256_test.json",
+      "algorithm": "DSA",
+      "schema": "dsa_verify_schema_v1.json",
+      "cases": 366,
+      "byResult": {
+        "valid": 82,
+        "invalid": 283,
+        "acceptable": 1
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for DSA"
+    },
+    {
+      "upstreamPath": "testvectors_v1/dsa_3072_256_sha256_p1363_test.json",
+      "algorithm": "DSA",
+      "schema": "dsa_p1363_verify_schema_v1.json",
+      "cases": 139,
+      "byResult": {
+        "valid": 81,
+        "invalid": 58,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for DSA"
+    },
+    {
+      "upstreamPath": "testvectors_v1/dsa_3072_256_sha256_test.json",
+      "algorithm": "DSA",
+      "schema": "dsa_verify_schema_v1.json",
+      "cases": 366,
+      "byResult": {
+        "valid": 82,
+        "invalid": 283,
+        "acceptable": 1
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for DSA"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ec_prime_order_curves_test.json",
+      "algorithm": "EcCurveTest",
+      "schema": "ec_curve_test_schema.json",
+      "cases": 26,
+      "byResult": {
+        "valid": 26,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for EcCurveTest"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_brainpoolP224r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 787,
+      "byResult": {
+        "valid": 499,
+        "invalid": 58,
+        "acceptable": 230
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP224r1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_brainpoolP256r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 804,
+      "byResult": {
+        "valid": 517,
+        "invalid": 57,
+        "acceptable": 230
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP256r1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_brainpoolP320r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 771,
+      "byResult": {
+        "valid": 489,
+        "invalid": 52,
+        "acceptable": 230
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP320r1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_brainpoolP384r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 936,
+      "byResult": {
+        "valid": 641,
+        "invalid": 65,
+        "acceptable": 230
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP384r1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_brainpoolP512r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 794,
+      "byResult": {
+        "valid": 511,
+        "invalid": 55,
+        "acceptable": 228
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP512r1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp224r1_ecpoint_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_ecpoint_test_schema_v1.json",
+      "cases": 458,
+      "byResult": {
+        "valid": 439,
+        "invalid": 18,
+        "acceptable": 1
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp224r1_pem_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_pem_test_schema_v1.json",
+      "cases": 714,
+      "byResult": {
+        "valid": 439,
+        "invalid": 45,
+        "acceptable": 230
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp224r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 714,
+      "byResult": {
+        "valid": 439,
+        "invalid": 45,
+        "acceptable": 230
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp256k1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 752,
+      "byResult": {
+        "valid": 473,
+        "invalid": 49,
+        "acceptable": 230
+      },
+      "bucket": "ECDH",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdh_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp256k1_webcrypto_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_webcrypto_test_schema_v1.json",
+      "cases": 496,
+      "byResult": {
+        "valid": 473,
+        "invalid": 23,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/WebCrypto), not an encoding the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp256r1_ecpoint_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_ecpoint_test_schema_v1.json",
+      "cases": 355,
+      "byResult": {
+        "valid": 330,
+        "invalid": 24,
+        "acceptable": 1
+      },
+      "bucket": "ECDH",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdh_ecpoint_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp256r1_pem_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_pem_test_schema_v1.json",
+      "cases": 612,
+      "byResult": {
+        "valid": 330,
+        "invalid": 52,
+        "acceptable": 230
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/WebCrypto), not an encoding the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp256r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 612,
+      "byResult": {
+        "valid": 330,
+        "invalid": 52,
+        "acceptable": 230
+      },
+      "bucket": "ECDH",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdh_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp256r1_webcrypto_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_webcrypto_test_schema_v1.json",
+      "cases": 353,
+      "byResult": {
+        "valid": 330,
+        "invalid": 23,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/WebCrypto), not an encoding the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp384r1_ecpoint_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_ecpoint_test_schema_v1.json",
+      "cases": 790,
+      "byResult": {
+        "valid": 771,
+        "invalid": 18,
+        "acceptable": 1
+      },
+      "bucket": "ECDH",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdh_ecpoint_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp384r1_pem_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_pem_test_schema_v1.json",
+      "cases": 1047,
+      "byResult": {
+        "valid": 771,
+        "invalid": 46,
+        "acceptable": 230
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/WebCrypto), not an encoding the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp384r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 1047,
+      "byResult": {
+        "valid": 771,
+        "invalid": 46,
+        "acceptable": 230
+      },
+      "bucket": "ECDH",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdh_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp384r1_webcrypto_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_webcrypto_test_schema_v1.json",
+      "cases": 794,
+      "byResult": {
+        "valid": 771,
+        "invalid": 23,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/WebCrypto), not an encoding the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp521r1_ecpoint_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_ecpoint_test_schema_v1.json",
+      "cases": 661,
+      "byResult": {
+        "valid": 632,
+        "invalid": 28,
+        "acceptable": 1
+      },
+      "bucket": "ECDH",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdh_ecpoint_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp521r1_pem_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_pem_test_schema_v1.json",
+      "cases": 916,
+      "byResult": {
+        "valid": 632,
+        "invalid": 56,
+        "acceptable": 228
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/WebCrypto), not an encoding the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp521r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 916,
+      "byResult": {
+        "valid": 632,
+        "invalid": 56,
+        "acceptable": 228
+      },
+      "bucket": "ECDH",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdh_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_secp521r1_webcrypto_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_webcrypto_test_schema_v1.json",
+      "cases": 655,
+      "byResult": {
+        "valid": 632,
+        "invalid": 23,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/WebCrypto), not an encoding the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_sect283k1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 267,
+      "byResult": {
+        "valid": 16,
+        "invalid": 22,
+        "acceptable": 229
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve sect283k1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_sect283r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 260,
+      "byResult": {
+        "valid": 16,
+        "invalid": 20,
+        "acceptable": 224
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve sect283r1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_sect409k1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 265,
+      "byResult": {
+        "valid": 14,
+        "invalid": 22,
+        "acceptable": 229
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve sect409k1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_sect409r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 14,
+        "invalid": 20,
+        "acceptable": 224
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve sect409r1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_sect571k1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 267,
+      "byResult": {
+        "valid": 18,
+        "invalid": 22,
+        "acceptable": 227
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve sect571k1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdh_sect571r1_test.json",
+      "algorithm": "ECDH",
+      "schema": "ecdh_test_schema_v1.json",
+      "cases": 257,
+      "byResult": {
+        "valid": 15,
+        "invalid": 20,
+        "acceptable": 222
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve sect571r1 is not in the hub-declared ECDH parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP224r1_sha224_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 229,
+      "byResult": {
+        "valid": 144,
+        "invalid": 85,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP224r1_sha224_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 453,
+      "byResult": {
+        "valid": 145,
+        "invalid": 308,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP224r1_sha3_224_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 471,
+      "byResult": {
+        "valid": 169,
+        "invalid": 302,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP256r1_sha256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 261,
+      "byResult": {
+        "valid": 175,
+        "invalid": 86,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP256r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP256r1_sha256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 485,
+      "byResult": {
+        "valid": 176,
+        "invalid": 309,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP256r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP256r1_sha3_256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 483,
+      "byResult": {
+        "valid": 181,
+        "invalid": 302,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP256r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP320r1_sha384_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 265,
+      "byResult": {
+        "valid": 178,
+        "invalid": 87,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP320r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP320r1_sha384_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 489,
+      "byResult": {
+        "valid": 179,
+        "invalid": 310,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP320r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP320r1_sha3_384_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 489,
+      "byResult": {
+        "valid": 185,
+        "invalid": 304,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP320r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP384r1_sha384_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 292,
+      "byResult": {
+        "valid": 206,
+        "invalid": 86,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP384r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP384r1_sha384_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 516,
+      "byResult": {
+        "valid": 207,
+        "invalid": 309,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP384r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP384r1_sha3_384_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 516,
+      "byResult": {
+        "valid": 213,
+        "invalid": 303,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP384r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP512r1_sha3_512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 553,
+      "byResult": {
+        "valid": 252,
+        "invalid": 301,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP512r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP512r1_sha512_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 337,
+      "byResult": {
+        "valid": 251,
+        "invalid": 86,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP512r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_brainpoolP512r1_sha512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 559,
+      "byResult": {
+        "valid": 252,
+        "invalid": 307,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve brainpoolP512r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp160k1_sha256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 224,
+      "byResult": {
+        "valid": 139,
+        "invalid": 85,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp160k1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp160k1_sha256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 447,
+      "byResult": {
+        "valid": 140,
+        "invalid": 307,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp160k1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp160r1_sha256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 228,
+      "byResult": {
+        "valid": 140,
+        "invalid": 88,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp160r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp160r1_sha256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 450,
+      "byResult": {
+        "valid": 141,
+        "invalid": 309,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp160r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp160r2_sha256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 227,
+      "byResult": {
+        "valid": 139,
+        "invalid": 88,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp160r2 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp160r2_sha256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 450,
+      "byResult": {
+        "valid": 140,
+        "invalid": 310,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp160r2 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp192k1_sha256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 228,
+      "byResult": {
+        "valid": 142,
+        "invalid": 86,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp192k1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp192k1_sha256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 452,
+      "byResult": {
+        "valid": 143,
+        "invalid": 309,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp192k1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp192r1_sha256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 230,
+      "byResult": {
+        "valid": 142,
+        "invalid": 88,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp192r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp192r1_sha256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 454,
+      "byResult": {
+        "valid": 143,
+        "invalid": 311,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp192r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224k1_sha224_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 197,
+      "byResult": {
+        "valid": 112,
+        "invalid": 85,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224k1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224k1_sha224_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 418,
+      "byResult": {
+        "valid": 113,
+        "invalid": 305,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224k1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224k1_sha256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 226,
+      "byResult": {
+        "valid": 139,
+        "invalid": 87,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224k1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224k1_sha256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 448,
+      "byResult": {
+        "valid": 140,
+        "invalid": 308,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224k1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224r1_sha224_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 229,
+      "byResult": {
+        "valid": 143,
+        "invalid": 86,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224r1_sha224_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 452,
+      "byResult": {
+        "valid": 144,
+        "invalid": 308,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224r1_sha256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 171,
+        "invalid": 87,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224r1_sha256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 481,
+      "byResult": {
+        "valid": 172,
+        "invalid": 309,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224r1_sha3_224_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 470,
+      "byResult": {
+        "valid": 168,
+        "invalid": 302,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224r1_sha3_256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 479,
+      "byResult": {
+        "valid": 176,
+        "invalid": 303,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224r1_sha3_512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 544,
+      "byResult": {
+        "valid": 241,
+        "invalid": 303,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224r1_sha512_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 327,
+      "byResult": {
+        "valid": 240,
+        "invalid": 87,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224r1_sha512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 550,
+      "byResult": {
+        "valid": 241,
+        "invalid": 309,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224r1_shake128_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 254,
+      "byResult": {
+        "valid": 173,
+        "invalid": 81,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp224r1_shake128_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 477,
+      "byResult": {
+        "valid": 174,
+        "invalid": 303,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: curve secp224r1 is not in the hub-declared EC parameter set"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256k1_sha256_bitcoin_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_bitcoin_verify_schema.json",
+      "cases": 463,
+      "byResult": {
+        "valid": 162,
+        "invalid": 301,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: Bitcoin low-S canonicalization is not a mechanism the hub advertises"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256k1_sha256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 252,
+      "byResult": {
+        "valid": 167,
+        "invalid": 85,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256k1_sha256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 476,
+      "byResult": {
+        "valid": 168,
+        "invalid": 308,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256k1_sha3_256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 474,
+      "byResult": {
+        "valid": 172,
+        "invalid": 302,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256k1_sha3_512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 540,
+      "byResult": {
+        "valid": 237,
+        "invalid": 303,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256k1_sha512_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 322,
+      "byResult": {
+        "valid": 236,
+        "invalid": 86,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256k1_sha512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 546,
+      "byResult": {
+        "valid": 237,
+        "invalid": 309,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256k1_shake128_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 248,
+      "byResult": {
+        "valid": 169,
+        "invalid": 79,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256k1_shake128_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 472,
+      "byResult": {
+        "valid": 170,
+        "invalid": 302,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256k1_shake256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 318,
+      "byResult": {
+        "valid": 238,
+        "invalid": 80,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256k1_shake256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 542,
+      "byResult": {
+        "valid": 239,
+        "invalid": 303,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256r1_sha256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 262,
+      "byResult": {
+        "valid": 173,
+        "invalid": 89,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256r1_sha256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 484,
+      "byResult": {
+        "valid": 174,
+        "invalid": 310,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256r1_sha3_256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 482,
+      "byResult": {
+        "valid": 178,
+        "invalid": 304,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256r1_sha3_512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 548,
+      "byResult": {
+        "valid": 243,
+        "invalid": 305,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256r1_sha512_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 332,
+      "byResult": {
+        "valid": 242,
+        "invalid": 90,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256r1_sha512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 554,
+      "byResult": {
+        "valid": 243,
+        "invalid": 311,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256r1_shake128_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 175,
+        "invalid": 83,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp256r1_shake128_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 480,
+      "byResult": {
+        "valid": 176,
+        "invalid": 304,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp384r1_sha256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 472,
+      "byResult": {
+        "valid": 162,
+        "invalid": 310,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp384r1_sha384_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 280,
+      "byResult": {
+        "valid": 193,
+        "invalid": 87,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp384r1_sha384_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 504,
+      "byResult": {
+        "valid": 194,
+        "invalid": 310,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp384r1_sha3_384_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 504,
+      "byResult": {
+        "valid": 200,
+        "invalid": 304,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp384r1_sha3_512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 536,
+      "byResult": {
+        "valid": 231,
+        "invalid": 305,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp384r1_sha512_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 318,
+      "byResult": {
+        "valid": 230,
+        "invalid": 88,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp384r1_sha512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 542,
+      "byResult": {
+        "valid": 231,
+        "invalid": 311,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp384r1_shake256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 314,
+      "byResult": {
+        "valid": 232,
+        "invalid": 82,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp384r1_shake256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 538,
+      "byResult": {
+        "valid": 233,
+        "invalid": 305,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp521r1_sha3_512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 534,
+      "byResult": {
+        "valid": 232,
+        "invalid": 302,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp521r1_sha512_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 318,
+      "byResult": {
+        "valid": 231,
+        "invalid": 87,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp521r1_sha512_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 542,
+      "byResult": {
+        "valid": 232,
+        "invalid": 310,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp521r1_shake256_p1363_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_p1363_verify_schema_v1.json",
+      "cases": 314,
+      "byResult": {
+        "valid": 233,
+        "invalid": 81,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_p1363_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ecdsa_secp521r1_shake256_test.json",
+      "algorithm": "ECDSA",
+      "schema": "ecdsa_verify_schema_v1.json",
+      "cases": 536,
+      "byResult": {
+        "valid": 234,
+        "invalid": 302,
+        "acceptable": 0
+      },
+      "bucket": "ECDSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema ecdsa_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ed25519_test.json",
+      "algorithm": "EDDSA",
+      "schema": "eddsa_verify_schema_v1.json",
+      "cases": 151,
+      "byResult": {
+        "valid": 88,
+        "invalid": 63,
+        "acceptable": 0
+      },
+      "bucket": "EDDSA",
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_ed25519_test.json"
+    },
+    {
+      "upstreamPath": "testvectors_v1/ed448_test.json",
+      "algorithm": "EDDSA",
+      "schema": "eddsa_verify_schema_v1.json",
+      "cases": 87,
+      "byResult": {
+        "valid": 17,
+        "invalid": 70,
+        "acceptable": 0
+      },
+      "bucket": "EDDSA",
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_ed448_test.json"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hkdf_sha1_test.json",
+      "algorithm": "HKDF-SHA-1",
+      "schema": "hkdf_test_schema_v1.json",
+      "cases": 87,
+      "byResult": {
+        "valid": 84,
+        "invalid": 3,
+        "acceptable": 0
+      },
+      "bucket": "HKDF",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema hkdf_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hkdf_sha256_test.json",
+      "algorithm": "HKDF-SHA-256",
+      "schema": "hkdf_test_schema_v1.json",
+      "cases": 86,
+      "byResult": {
+        "valid": 83,
+        "invalid": 3,
+        "acceptable": 0
+      },
+      "bucket": "HKDF",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema hkdf_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hkdf_sha384_test.json",
+      "algorithm": "HKDF-SHA-384",
+      "schema": "hkdf_test_schema_v1.json",
+      "cases": 83,
+      "byResult": {
+        "valid": 80,
+        "invalid": 3,
+        "acceptable": 0
+      },
+      "bucket": "HKDF",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema hkdf_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hkdf_sha512_test.json",
+      "algorithm": "HKDF-SHA-512",
+      "schema": "hkdf_test_schema_v1.json",
+      "cases": 83,
+      "byResult": {
+        "valid": 80,
+        "invalid": 3,
+        "acceptable": 0
+      },
+      "bucket": "HKDF",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema hkdf_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sha1_test.json",
+      "algorithm": "HMACSHA1",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 170,
+      "byResult": {
+        "valid": 66,
+        "invalid": 104,
+        "acceptable": 0
+      },
+      "bucket": "HMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sha224_test.json",
+      "algorithm": "HMACSHA224",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 172,
+      "byResult": {
+        "valid": 66,
+        "invalid": 106,
+        "acceptable": 0
+      },
+      "bucket": "HMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sha256_test.json",
+      "algorithm": "HMACSHA256",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 174,
+      "byResult": {
+        "valid": 66,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": "HMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sha384_test.json",
+      "algorithm": "HMACSHA384",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 174,
+      "byResult": {
+        "valid": 66,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": "HMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sha3_224_test.json",
+      "algorithm": "HMACSHA3-224",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 172,
+      "byResult": {
+        "valid": 66,
+        "invalid": 106,
+        "acceptable": 0
+      },
+      "bucket": "HMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sha3_256_test.json",
+      "algorithm": "HMACSHA3-256",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 174,
+      "byResult": {
+        "valid": 66,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": "HMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sha3_384_test.json",
+      "algorithm": "HMACSHA3-384",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 174,
+      "byResult": {
+        "valid": 66,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": "HMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sha3_512_test.json",
+      "algorithm": "HMACSHA3-512",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 174,
+      "byResult": {
+        "valid": 66,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": "HMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sha512_224_test.json",
+      "algorithm": "HMACSHA512/224",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 173,
+      "byResult": {
+        "valid": 66,
+        "invalid": 107,
+        "acceptable": 0
+      },
+      "bucket": "HMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sha512_256_test.json",
+      "algorithm": "HMACSHA512/256",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 175,
+      "byResult": {
+        "valid": 66,
+        "invalid": 109,
+        "acceptable": 0
+      },
+      "bucket": "HMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sha512_test.json",
+      "algorithm": "HMACSHA512",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 174,
+      "byResult": {
+        "valid": 66,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": "HMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/hmac_sm3_test.json",
+      "algorithm": "HMACSM3",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 174,
+      "byResult": {
+        "valid": 66,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for HMACSM3"
+    },
+    {
+      "upstreamPath": "testvectors_v1/json_web_crypto_test.json",
+      "algorithm": null,
+      "schema": "json_web_crypto_schema_v1.json",
+      "cases": 83,
+      "byResult": {
+        "valid": 6,
+        "invalid": 77,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for this file"
+    },
+    {
+      "upstreamPath": "testvectors_v1/json_web_encryption_test.json",
+      "algorithm": null,
+      "schema": "json_web_encryption_schema_v1.json",
+      "cases": 139,
+      "byResult": {
+        "valid": 65,
+        "invalid": 74,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for this file"
+    },
+    {
+      "upstreamPath": "testvectors_v1/json_web_key_test.json",
+      "algorithm": null,
+      "schema": "json_web_key_schema_v1.json",
+      "cases": 26,
+      "byResult": {
+        "valid": 5,
+        "invalid": 21,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for this file"
+    },
+    {
+      "upstreamPath": "testvectors_v1/json_web_signature_test.json",
+      "algorithm": null,
+      "schema": "json_web_signature_schema_v1.json",
+      "cases": 401,
+      "byResult": {
+        "valid": 46,
+        "invalid": 355,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for this file"
+    },
+    {
+      "upstreamPath": "testvectors_v1/kmac128_no_customization_test.json",
+      "algorithm": "KMAC128",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 174,
+      "byResult": {
+        "valid": 66,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": "KMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/kmac256_no_customization_test.json",
+      "algorithm": "KMAC256",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 261,
+      "byResult": {
+        "valid": 99,
+        "invalid": 162,
+        "acceptable": 0
+      },
+      "bucket": "KMAC",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mac_test_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mldsa_44_sign_noseed_test.json",
+      "algorithm": "ML-DSA-44",
+      "schema": "mldsa_sign_noseed_schema.json",
+      "cases": 73,
+      "byResult": {
+        "valid": 68,
+        "invalid": 5,
+        "acceptable": 0
+      },
+      "bucket": "ML-DSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_noseed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mldsa_44_sign_seed_test.json",
+      "algorithm": "ML-DSA-44",
+      "schema": "mldsa_sign_seed_schema.json",
+      "cases": 86,
+      "byResult": {
+        "valid": 82,
+        "invalid": 4,
+        "acceptable": 0
+      },
+      "bucket": "ML-DSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_seed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mldsa_44_verify_test.json",
+      "algorithm": "ML-DSA-44",
+      "schema": "mldsa_verify_schema.json",
+      "cases": 180,
+      "byResult": {
+        "valid": 77,
+        "invalid": 103,
+        "acceptable": 0
+      },
+      "bucket": "ML-DSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mldsa_65_sign_noseed_test.json",
+      "algorithm": "ML-DSA-65",
+      "schema": "mldsa_sign_noseed_schema.json",
+      "cases": 78,
+      "byResult": {
+        "valid": 73,
+        "invalid": 5,
+        "acceptable": 0
+      },
+      "bucket": "ML-DSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_noseed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mldsa_65_sign_seed_test.json",
+      "algorithm": "ML-DSA-65",
+      "schema": "mldsa_sign_seed_schema.json",
+      "cases": 105,
+      "byResult": {
+        "valid": 101,
+        "invalid": 4,
+        "acceptable": 0
+      },
+      "bucket": "ML-DSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_seed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mldsa_65_verify_test.json",
+      "algorithm": "ML-DSA-65",
+      "schema": "mldsa_verify_schema.json",
+      "cases": 210,
+      "byResult": {
+        "valid": 79,
+        "invalid": 131,
+        "acceptable": 0
+      },
+      "bucket": "ML-DSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mldsa_87_sign_noseed_test.json",
+      "algorithm": "ML-DSA-87",
+      "schema": "mldsa_sign_noseed_schema.json",
+      "cases": 69,
+      "byResult": {
+        "valid": 64,
+        "invalid": 5,
+        "acceptable": 0
+      },
+      "bucket": "ML-DSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_noseed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mldsa_87_sign_seed_test.json",
+      "algorithm": "ML-DSA-87",
+      "schema": "mldsa_sign_seed_schema.json",
+      "cases": 96,
+      "byResult": {
+        "valid": 92,
+        "invalid": 4,
+        "acceptable": 0
+      },
+      "bucket": "ML-DSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_sign_seed_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mldsa_87_verify_test.json",
+      "algorithm": "ML-DSA-87",
+      "schema": "mldsa_verify_schema.json",
+      "cases": 241,
+      "byResult": {
+        "valid": 71,
+        "invalid": 170,
+        "acceptable": 0
+      },
+      "bucket": "ML-DSA",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mldsa_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_1024_encaps_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_encaps_test_schema.json",
+      "cases": 269,
+      "byResult": {
+        "valid": 133,
+        "invalid": 136,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_encaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_1024_keygen_seed_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_keygen_seed_test_schema.json",
+      "cases": 100,
+      "byResult": {
+        "valid": 100,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_keygen_seed_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_1024_semi_expanded_decaps_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_semi_expanded_decaps_test_schema.json",
+      "cases": 9,
+      "byResult": {
+        "valid": 3,
+        "invalid": 6,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_semi_expanded_decaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_1024_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_test_schema.json",
+      "cases": 202,
+      "byResult": {
+        "valid": 162,
+        "invalid": 40,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_512_encaps_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_encaps_test_schema.json",
+      "cases": 261,
+      "byResult": {
+        "valid": 133,
+        "invalid": 128,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_encaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_512_keygen_seed_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_keygen_seed_test_schema.json",
+      "cases": 100,
+      "byResult": {
+        "valid": 100,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_keygen_seed_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_512_semi_expanded_decaps_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_semi_expanded_decaps_test_schema.json",
+      "cases": 9,
+      "byResult": {
+        "valid": 3,
+        "invalid": 6,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_semi_expanded_decaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_512_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_test_schema.json",
+      "cases": 200,
+      "byResult": {
+        "valid": 160,
+        "invalid": 40,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_768_encaps_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_encaps_test_schema.json",
+      "cases": 265,
+      "byResult": {
+        "valid": 133,
+        "invalid": 132,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_encaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_768_keygen_seed_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_keygen_seed_test_schema.json",
+      "cases": 100,
+      "byResult": {
+        "valid": 100,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_keygen_seed_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_768_semi_expanded_decaps_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_semi_expanded_decaps_test_schema.json",
+      "cases": 9,
+      "byResult": {
+        "valid": 3,
+        "invalid": 6,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_semi_expanded_decaps_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/mlkem_768_test.json",
+      "algorithm": "ML-KEM",
+      "schema": "mlkem_test_schema.json",
+      "cases": 201,
+      "byResult": {
+        "valid": 161,
+        "invalid": 40,
+        "acceptable": 0
+      },
+      "bucket": "ML-KEM",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema mlkem_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/morus1280_test.json",
+      "algorithm": "MORUS1280",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 916,
+      "byResult": {
+        "valid": 700,
+        "invalid": 216,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for MORUS1280"
+    },
+    {
+      "upstreamPath": "testvectors_v1/morus640_test.json",
+      "algorithm": "MORUS640",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 458,
+      "byResult": {
+        "valid": 350,
+        "invalid": 108,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for MORUS640"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha1_aes_128_test.json",
+      "algorithm": "PbeWithHmacSha1AndAes_128",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha1AndAes_128"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha1_aes_192_test.json",
+      "algorithm": "PbeWithHmacSha1AndAes_192",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha1AndAes_192"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha1_aes_256_test.json",
+      "algorithm": "PbeWithHmacSha1AndAes_256",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha1AndAes_256"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha224_aes_128_test.json",
+      "algorithm": "PbeWithHmacSha224AndAes_128",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha224AndAes_128"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha224_aes_192_test.json",
+      "algorithm": "PbeWithHmacSha224AndAes_192",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha224AndAes_192"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha224_aes_256_test.json",
+      "algorithm": "PbeWithHmacSha224AndAes_256",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha224AndAes_256"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha256_aes_128_test.json",
+      "algorithm": "PbeWithHmacSha256AndAes_128",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha256AndAes_128"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha256_aes_192_test.json",
+      "algorithm": "PbeWithHmacSha256AndAes_192",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha256AndAes_192"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha256_aes_256_test.json",
+      "algorithm": "PbeWithHmacSha256AndAes_256",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha256AndAes_256"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha384_aes_128_test.json",
+      "algorithm": "PbeWithHmacSha384AndAes_128",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha384AndAes_128"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha384_aes_192_test.json",
+      "algorithm": "PbeWithHmacSha384AndAes_192",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha384AndAes_192"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha384_aes_256_test.json",
+      "algorithm": "PbeWithHmacSha384AndAes_256",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha384AndAes_256"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha512_aes_128_test.json",
+      "algorithm": "PbeWithHmacSha512AndAes_128",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha512AndAes_128"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha512_aes_192_test.json",
+      "algorithm": "PbeWithHmacSha512AndAes_192",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha512AndAes_192"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbes2_hmacsha512_aes_256_test.json",
+      "algorithm": "PbeWithHmacSha512AndAes_256",
+      "schema": "pbe_test_schema.json",
+      "cases": 84,
+      "byResult": {
+        "valid": 84,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PbeWithHmacSha512AndAes_256"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbkdf2_hmacsha1_test.json",
+      "algorithm": "PBKDF2-HMACSHA1",
+      "schema": "pbkdf_test_schema.json",
+      "cases": 64,
+      "byResult": {
+        "valid": 64,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "PBKDF2",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema pbkdf_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbkdf2_hmacsha224_test.json",
+      "algorithm": "PBKDF2-HMACSHA224",
+      "schema": "pbkdf_test_schema.json",
+      "cases": 58,
+      "byResult": {
+        "valid": 58,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "PBKDF2",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema pbkdf_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbkdf2_hmacsha256_test.json",
+      "algorithm": "PBKDF2-HMACSHA256",
+      "schema": "pbkdf_test_schema.json",
+      "cases": 60,
+      "byResult": {
+        "valid": 60,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "PBKDF2",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema pbkdf_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbkdf2_hmacsha384_test.json",
+      "algorithm": "PBKDF2-HMACSHA384",
+      "schema": "pbkdf_test_schema.json",
+      "cases": 58,
+      "byResult": {
+        "valid": 58,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "PBKDF2",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema pbkdf_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/pbkdf2_hmacsha512_test.json",
+      "algorithm": "PBKDF2-HMACSHA512",
+      "schema": "pbkdf_test_schema.json",
+      "cases": 58,
+      "byResult": {
+        "valid": 58,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "PBKDF2",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema pbkdf_test_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/primality_test.json",
+      "algorithm": "PrimalityTest",
+      "schema": "primality_test_schema_v1.json",
+      "cases": 317,
+      "byResult": {
+        "valid": 66,
+        "invalid": 243,
+        "acceptable": 8
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for PrimalityTest"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_2048_sha1_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 36,
+      "byResult": {
+        "valid": 17,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_2048_sha224_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 31,
+      "byResult": {
+        "valid": 13,
+        "invalid": 18,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_2048_sha224_mgf1sha224_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 35,
+      "byResult": {
+        "valid": 17,
+        "invalid": 18,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_2048_sha256_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 31,
+      "byResult": {
+        "valid": 13,
+        "invalid": 18,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_2048_sha256_mgf1sha256_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 37,
+      "byResult": {
+        "valid": 18,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_2048_sha384_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 31,
+      "byResult": {
+        "valid": 13,
+        "invalid": 18,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_2048_sha384_mgf1sha384_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 34,
+      "byResult": {
+        "valid": 16,
+        "invalid": 18,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_2048_sha512_224_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 32,
+      "byResult": {
+        "valid": 13,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_2048_sha512_224_mgf1sha512_224_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 35,
+      "byResult": {
+        "valid": 16,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_2048_sha512_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 31,
+      "byResult": {
+        "valid": 13,
+        "invalid": 18,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_2048_sha512_mgf1sha512_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 33,
+      "byResult": {
+        "valid": 14,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_3072_sha256_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 32,
+      "byResult": {
+        "valid": 13,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_3072_sha256_mgf1sha256_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 37,
+      "byResult": {
+        "valid": 18,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_3072_sha512_256_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 31,
+      "byResult": {
+        "valid": 13,
+        "invalid": 18,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_3072_sha512_256_mgf1sha512_256_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 37,
+      "byResult": {
+        "valid": 18,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_3072_sha512_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 31,
+      "byResult": {
+        "valid": 13,
+        "invalid": 18,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_3072_sha512_mgf1sha512_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 33,
+      "byResult": {
+        "valid": 15,
+        "invalid": 18,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_4096_sha256_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 32,
+      "byResult": {
+        "valid": 13,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_4096_sha256_mgf1sha256_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 37,
+      "byResult": {
+        "valid": 18,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_4096_sha512_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 31,
+      "byResult": {
+        "valid": 13,
+        "invalid": 18,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_4096_sha512_mgf1sha512_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 36,
+      "byResult": {
+        "valid": 17,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_oaep_misc_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 395,
+      "byResult": {
+        "valid": 392,
+        "invalid": 0,
+        "acceptable": 3
+      },
+      "bucket": "RSA-OAEP",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_oaep_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pkcs1_1024_sig_gen_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_generate_schema_v1.json",
+      "cases": 33,
+      "byResult": {
+        "valid": 0,
+        "invalid": 0,
+        "acceptable": 33
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: RSA 1024-bit is below the hub minimum modulus"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pkcs1_1536_sig_gen_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_generate_schema_v1.json",
+      "cases": 32,
+      "byResult": {
+        "valid": 0,
+        "invalid": 0,
+        "acceptable": 32
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F2: RSA 1536-bit is below the hub minimum modulus"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pkcs1_2048_sig_gen_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_generate_schema_v1.json",
+      "cases": 43,
+      "byResult": {
+        "valid": 32,
+        "invalid": 0,
+        "acceptable": 11
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_generate_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pkcs1_2048_test.json",
+      "algorithm": "RSAES-PKCS1-v1_5",
+      "schema": "rsaes_pkcs1_decrypt_schema_v1.json",
+      "cases": 67,
+      "byResult": {
+        "valid": 42,
+        "invalid": 25,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PKCS1-enc",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_pkcs1_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pkcs1_3072_sig_gen_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_generate_schema_v1.json",
+      "cases": 26,
+      "byResult": {
+        "valid": 24,
+        "invalid": 0,
+        "acceptable": 2
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_generate_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pkcs1_3072_test.json",
+      "algorithm": "RSAES-PKCS1-v1_5",
+      "schema": "rsaes_pkcs1_decrypt_schema_v1.json",
+      "cases": 67,
+      "byResult": {
+        "valid": 41,
+        "invalid": 26,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PKCS1-enc",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_pkcs1_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pkcs1_4096_sig_gen_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_generate_schema_v1.json",
+      "cases": 24,
+      "byResult": {
+        "valid": 24,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_generate_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pkcs1_4096_test.json",
+      "algorithm": "RSAES-PKCS1-v1_5",
+      "schema": "rsaes_pkcs1_decrypt_schema_v1.json",
+      "cases": 67,
+      "byResult": {
+        "valid": 41,
+        "invalid": 26,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PKCS1-enc",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsaes_pkcs1_decrypt_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_sha1_mgf1_20_params_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_with_parameters_verify_schema.json",
+      "cases": 88,
+      "byResult": {
+        "valid": 42,
+        "invalid": 46,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_with_parameters_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_sha1_mgf1_20_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 88,
+      "byResult": {
+        "valid": 42,
+        "invalid": 46,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_sha256_mgf1_0_params_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_with_parameters_verify_schema.json",
+      "cases": 103,
+      "byResult": {
+        "valid": 61,
+        "invalid": 42,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_with_parameters_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_sha256_mgf1_0_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 103,
+      "byResult": {
+        "valid": 61,
+        "invalid": 42,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_sha256_mgf1_32_params_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_with_parameters_verify_schema.json",
+      "cases": 108,
+      "byResult": {
+        "valid": 63,
+        "invalid": 45,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_with_parameters_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_sha256_mgf1_32_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 108,
+      "byResult": {
+        "valid": 63,
+        "invalid": 45,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_sha256_mgf1sha1_20_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 108,
+      "byResult": {
+        "valid": 63,
+        "invalid": 45,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_sha384_mgf1_48_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 141,
+      "byResult": {
+        "valid": 95,
+        "invalid": 46,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_sha512_224_mgf1_28_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 100,
+      "byResult": {
+        "valid": 53,
+        "invalid": 47,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_sha512_256_mgf1_32_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 115,
+      "byResult": {
+        "valid": 69,
+        "invalid": 46,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_sha512_mgf1sha256_32_params_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_with_parameters_verify_schema.json",
+      "cases": 178,
+      "byResult": {
+        "valid": 132,
+        "invalid": 46,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_with_parameters_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_shake128_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 114,
+      "byResult": {
+        "valid": 69,
+        "invalid": 45,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_2048_shake256_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 184,
+      "byResult": {
+        "valid": 138,
+        "invalid": 46,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_3072_sha256_mgf1_32_params_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_with_parameters_verify_schema.json",
+      "cases": 108,
+      "byResult": {
+        "valid": 63,
+        "invalid": 45,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_with_parameters_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_3072_sha256_mgf1_32_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 108,
+      "byResult": {
+        "valid": 63,
+        "invalid": 45,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_3072_shake128_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 114,
+      "byResult": {
+        "valid": 69,
+        "invalid": 45,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_3072_shake256_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 184,
+      "byResult": {
+        "valid": 138,
+        "invalid": 46,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_4096_sha256_mgf1_32_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 108,
+      "byResult": {
+        "valid": 63,
+        "invalid": 45,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_4096_sha384_mgf1_48_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 141,
+      "byResult": {
+        "valid": 95,
+        "invalid": 46,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_4096_sha512_mgf1_32_params_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_with_parameters_verify_schema.json",
+      "cases": 177,
+      "byResult": {
+        "valid": 132,
+        "invalid": 45,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_with_parameters_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_4096_sha512_mgf1_32_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 177,
+      "byResult": {
+        "valid": 132,
+        "invalid": 45,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_4096_sha512_mgf1_64_params_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_with_parameters_verify_schema.json",
+      "cases": 179,
+      "byResult": {
+        "valid": 132,
+        "invalid": 47,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_with_parameters_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_4096_sha512_mgf1_64_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 179,
+      "byResult": {
+        "valid": 132,
+        "invalid": 47,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_4096_shake256_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 184,
+      "byResult": {
+        "valid": 138,
+        "invalid": 46,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_misc_params_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_with_parameters_verify_schema.json",
+      "cases": 150,
+      "byResult": {
+        "valid": 150,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_with_parameters_verify_schema.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_pss_misc_test.json",
+      "algorithm": "RSASSA-PSS",
+      "schema": "rsassa_pss_verify_schema_v1.json",
+      "cases": 150,
+      "byResult": {
+        "valid": 150,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": "RSA-PSS",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_2048_sha224_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 7,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_2048_sha256_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 259,
+      "byResult": {
+        "valid": 9,
+        "invalid": 249,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_2048_sha384_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 7,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_2048_sha3_224_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 7,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_2048_sha3_256_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 257,
+      "byResult": {
+        "valid": 7,
+        "invalid": 249,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_2048_sha3_384_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 7,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_2048_sha3_512_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 7,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_2048_sha512_224_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 7,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_2048_sha512_256_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 257,
+      "byResult": {
+        "valid": 7,
+        "invalid": 249,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_2048_sha512_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 259,
+      "byResult": {
+        "valid": 8,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_3072_sha256_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 259,
+      "byResult": {
+        "valid": 8,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_3072_sha384_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 259,
+      "byResult": {
+        "valid": 7,
+        "invalid": 251,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_3072_sha3_256_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 7,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_3072_sha3_384_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 259,
+      "byResult": {
+        "valid": 7,
+        "invalid": 251,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_3072_sha3_512_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 259,
+      "byResult": {
+        "valid": 7,
+        "invalid": 251,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_3072_sha512_256_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 7,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_3072_sha512_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 260,
+      "byResult": {
+        "valid": 8,
+        "invalid": 251,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_4096_sha256_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 7,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_4096_sha384_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 259,
+      "byResult": {
+        "valid": 7,
+        "invalid": 251,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_4096_sha512_256_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 7,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_4096_sha512_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 259,
+      "byResult": {
+        "valid": 7,
+        "invalid": 251,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_8192_sha256_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 258,
+      "byResult": {
+        "valid": 7,
+        "invalid": 250,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_8192_sha384_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 259,
+      "byResult": {
+        "valid": 7,
+        "invalid": 251,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_signature_8192_sha512_test.json",
+      "algorithm": "RSASSA-PKCS1-v1_5",
+      "schema": "rsassa_pkcs1_verify_schema_v1.json",
+      "cases": 259,
+      "byResult": {
+        "valid": 7,
+        "invalid": 251,
+        "acceptable": 1
+      },
+      "bucket": "RSA-PKCS1-sig",
+      "state": "in-scope-runner-missing",
+      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pkcs1_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_three_primes_oaep_2048_sha1_mgf1sha1_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 36,
+      "byResult": {
+        "valid": 17,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: multi-prime RSA private key is not a key form the hub imports"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_three_primes_oaep_3072_sha224_mgf1sha224_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 38,
+      "byResult": {
+        "valid": 19,
+        "invalid": 19,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: multi-prime RSA private key is not a key form the hub imports"
+    },
+    {
+      "upstreamPath": "testvectors_v1/rsa_three_primes_oaep_4096_sha256_mgf1sha256_test.json",
+      "algorithm": "RSAES-OAEP",
+      "schema": "rsaes_oaep_decrypt_schema_v1.json",
+      "cases": 36,
+      "byResult": {
+        "valid": 18,
+        "invalid": 18,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: multi-prime RSA private key is not a key form the hub imports"
+    },
+    {
+      "upstreamPath": "testvectors_v1/seed_ccm_test.json",
+      "algorithm": "SEED-CCM",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 184,
+      "byResult": {
+        "valid": 135,
+        "invalid": 49,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for SEED-CCM"
+    },
+    {
+      "upstreamPath": "testvectors_v1/seed_gcm_test.json",
+      "algorithm": "SEED-GCM",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 104,
+      "byResult": {
+        "valid": 75,
+        "invalid": 29,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for SEED-GCM"
+    },
+    {
+      "upstreamPath": "testvectors_v1/seed_wrap_test.json",
+      "algorithm": "SEED-WRAP",
+      "schema": "keywrap_test_schema_v1.json",
+      "cases": 35,
+      "byResult": {
+        "valid": 4,
+        "invalid": 30,
+        "acceptable": 1
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for SEED-WRAP"
+    },
+    {
+      "upstreamPath": "testvectors_v1/siphash_1_3_test.json",
+      "algorithm": "SipHash-1-3",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 40,
+      "byResult": {
+        "valid": 40,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for SipHash-1-3"
+    },
+    {
+      "upstreamPath": "testvectors_v1/siphash_2_4_test.json",
+      "algorithm": "SipHash-2-4",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 40,
+      "byResult": {
+        "valid": 40,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for SipHash-2-4"
+    },
+    {
+      "upstreamPath": "testvectors_v1/siphash_4_8_test.json",
+      "algorithm": "SipHash-4-8",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 40,
+      "byResult": {
+        "valid": 40,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for SipHash-4-8"
+    },
+    {
+      "upstreamPath": "testvectors_v1/siphashx_2_4_test.json",
+      "algorithm": "SipHashX-2-4",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 40,
+      "byResult": {
+        "valid": 40,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for SipHashX-2-4"
+    },
+    {
+      "upstreamPath": "testvectors_v1/siphashx_4_8_test.json",
+      "algorithm": "SipHashX-4-8",
+      "schema": "mac_test_schema_v1.json",
+      "cases": 40,
+      "byResult": {
+        "valid": 40,
+        "invalid": 0,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for SipHashX-4-8"
+    },
+    {
+      "upstreamPath": "testvectors_v1/sm4_ccm_test.json",
+      "algorithm": "SM4-CCM",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 184,
+      "byResult": {
+        "valid": 135,
+        "invalid": 49,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for SM4-CCM"
+    },
+    {
+      "upstreamPath": "testvectors_v1/sm4_gcm_test.json",
+      "algorithm": "SM4-GCM",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 104,
+      "byResult": {
+        "valid": 75,
+        "invalid": 29,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for SM4-GCM"
+    },
+    {
+      "upstreamPath": "testvectors_v1/vmac_128_test.json",
+      "algorithm": "VMAC-AES",
+      "schema": "mac_with_iv_test_schema_v1.json",
+      "cases": 764,
+      "byResult": {
+        "valid": 424,
+        "invalid": 340,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for VMAC-AES"
+    },
+    {
+      "upstreamPath": "testvectors_v1/vmac_64_test.json",
+      "algorithm": "VMAC-AES",
+      "schema": "mac_with_iv_test_schema_v1.json",
+      "cases": 764,
+      "byResult": {
+        "valid": 508,
+        "invalid": 256,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for VMAC-AES"
+    },
+    {
+      "upstreamPath": "testvectors_v1/x25519_asn_test.json",
+      "algorithm": "XDH",
+      "schema": "xdh_asn_comp_schema_v1.json",
+      "cases": 537,
+      "byResult": {
+        "valid": 265,
+        "invalid": 19,
+        "acceptable": 253
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/ASN.1 SPKI), not the raw 32/56-byte value the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/x25519_jwk_test.json",
+      "algorithm": "XDH",
+      "schema": "xdh_jwk_comp_schema_v1.json",
+      "cases": 531,
+      "byResult": {
+        "valid": 264,
+        "invalid": 13,
+        "acceptable": 254
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/ASN.1 SPKI), not the raw 32/56-byte value the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/x25519_pem_test.json",
+      "algorithm": "XDH",
+      "schema": "xdh_pem_comp_schema_v1.json",
+      "cases": 518,
+      "byResult": {
+        "valid": 264,
+        "invalid": 0,
+        "acceptable": 254
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/ASN.1 SPKI), not the raw 32/56-byte value the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/x25519_test.json",
+      "algorithm": "XDH",
+      "schema": "xdh_comp_schema_v1.json",
+      "cases": 518,
+      "byResult": {
+        "valid": 264,
+        "invalid": 0,
+        "acceptable": 254
+      },
+      "bucket": "XDH",
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_x25519_test.json"
+    },
+    {
+      "upstreamPath": "testvectors_v1/x448_asn_test.json",
+      "algorithm": "XDH",
+      "schema": "xdh_asn_comp_schema_v1.json",
+      "cases": 529,
+      "byResult": {
+        "valid": 253,
+        "invalid": 31,
+        "acceptable": 245
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/ASN.1 SPKI), not the raw 32/56-byte value the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/x448_jwk_test.json",
+      "algorithm": "XDH",
+      "schema": "xdh_jwk_comp_schema_v1.json",
+      "cases": 523,
+      "byResult": {
+        "valid": 253,
+        "invalid": 25,
+        "acceptable": 245
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/ASN.1 SPKI), not the raw 32/56-byte value the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/x448_pem_test.json",
+      "algorithm": "XDH",
+      "schema": "xdh_pem_comp_schema_v1.json",
+      "cases": 510,
+      "byResult": {
+        "valid": 253,
+        "invalid": 12,
+        "acceptable": 245
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F3: transport-encoding variant (PEM/JWK/ASN.1 SPKI), not the raw 32/56-byte value the hub hands to PKCS#11"
+    },
+    {
+      "upstreamPath": "testvectors_v1/x448_test.json",
+      "algorithm": "XDH",
+      "schema": "xdh_comp_schema_v1.json",
+      "cases": 510,
+      "byResult": {
+        "valid": 253,
+        "invalid": 12,
+        "acceptable": 245
+      },
+      "bucket": "XDH",
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_x448_test.json"
+    },
+    {
+      "upstreamPath": "testvectors_v1/xchacha20_poly1305_test.json",
+      "algorithm": "XCHACHA20-POLY1305",
+      "schema": "aead_test_schema_v1.json",
+      "cases": 315,
+      "byResult": {
+        "valid": 246,
+        "invalid": 69,
+        "acceptable": 0
+      },
+      "bucket": null,
+      "state": "out-of-scope",
+      "reason": "F1: no PKCS#11 mechanism in capability-map.json for XCHACHA20-POLY1305"
+    }
+  ]
+}

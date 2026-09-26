@@ -1191,6 +1191,137 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     [],
     'Skip rows are evidence of nothing; the "s" sets keep their NIST deterministic byte-matches at context 0 and 255 bytes, and their sign cells stay without a negative case.'
   ),
+  acvp(
+    '09e.prehash-siggen',
+    '§9e.1 (sections/slhdsaPreHash.ts)',
+    'HashSLH-DSA NIST pre-hash sigGen — all 120 (CKM_HASH_SLH_DSA_<hash> × parameter set) pairs: deterministic byte-match, verify of the NIST signature, hedged sign verified back, and the same three over the PKCS#11 v3.2 message-based interface',
+    [
+      ...casesOf('slhdsa_prehash_siggen_sha2_test'),
+      ...casesOf('slhdsa_prehash_siggen_shake_test'),
+    ].flatMap((c) => {
+      const ps = param(c, 'parameterSet')
+      const m = slhdsaMech(c)
+      const tag = `${ps}-${param(c, 'hashAlg')}-${upstreamIds(c)}`
+      return [
+        mc(
+          c.caseId,
+          NIST,
+          'positive',
+          [x(m, 'verify', ps)],
+          `slhdsa-prehash-sigver-${tag}-{engine}`,
+          'sigver'
+        ),
+        mc(
+          c.caseId,
+          NIST,
+          'positive',
+          [x(m, 'sign', ps, 'deterministic')],
+          `slhdsa-prehash-siggen-det-${tag}-{engine}`,
+          'siggen-det'
+        ),
+        mc(
+          c.caseId,
+          NIST,
+          'positive',
+          [x(m, 'sign', ps, 'hedged', { evidenceClass: RT })],
+          `slhdsa-prehash-siggen-hedged-${tag}-{engine}`,
+          'siggen-hedged'
+        ),
+        mc(
+          c.caseId,
+          NIST,
+          'positive',
+          [x(m, 'message-verify', ps)],
+          `slhdsa-prehash-msg-sigver-${tag}-{engine}`,
+          'msg-sigver'
+        ),
+        mc(
+          c.caseId,
+          NIST,
+          'positive',
+          [x(m, 'message-sign', ps, 'deterministic')],
+          `slhdsa-prehash-msg-siggen-det-${tag}-{engine}`,
+          'msg-siggen-det'
+        ),
+        mc(
+          c.caseId,
+          NIST,
+          'positive',
+          [x(m, 'message-sign', ps, 'hedged', { evidenceClass: RT })],
+          `slhdsa-prehash-msg-siggen-hedged-${tag}-{engine}`,
+          'msg-siggen-hedged'
+        ),
+      ]
+    }),
+    'A hedged row is a round-trip, not a byte-match: CKH_HEDGE_REQUIRED draws fresh randomness the NIST vector cannot pin, so those exercises carry functional-round-trip, not the case-level NIST class.'
+  ),
+  acvp(
+    '09e.prehash-sigver',
+    '§9e.2 (sections/slhdsaPreHash.ts)',
+    'HashSLH-DSA dedicated NIST pre-hash sigVer, single-part and message-based: the upstream disposition kept verbatim — 22 negative cases across all six upstream reasons in both hash families',
+    [
+      ...casesOf('slhdsa_prehash_sigver_sha2_test'),
+      ...casesOf('slhdsa_prehash_sigver_shake_test'),
+    ].flatMap((c) => {
+      const ps = param(c, 'parameterSet')
+      const m = slhdsaMech(c)
+      const tag = `${ps}-${upstreamIds(c)}`
+      return [
+        mc(
+          c.caseId,
+          NIST,
+          c.expectation,
+          [x(m, 'verify', ps)],
+          `slhdsa-prehash-nist-sigver-${tag}-{engine}`,
+          'single'
+        ),
+        mc(
+          c.caseId,
+          NIST,
+          c.expectation,
+          [x(m, 'message-verify', ps)],
+          `slhdsa-prehash-nist-msg-sigver-${tag}-{engine}`,
+          'message'
+        ),
+      ]
+    }),
+    'A too-small / too-large signature must return CKR_SIGNATURE_LEN_RANGE; any other invalid case CKR_SIGNATURE_INVALID.'
+  ),
+  acvp(
+    '09e.pure-message',
+    '§9e.3 (sections/slhdsaPreHash.ts)',
+    'Pure CKM_SLH_DSA over the message-based interface (C_MessageSignInit/C_SignMessage, C_MessageVerifyInit/C_VerifyMessage) for all 12 parameter sets: the slhdsa_ctx_test.json NIST tuples, no new vector bytes',
+    casesOf('slhdsa_ctx_test', '/sigGen/').flatMap((c) => {
+      const ps = param(c, 'parameterSet')
+      const tag = `${ps}-${upstreamIds(c)}`
+      return [
+        mc(
+          c.caseId,
+          NIST,
+          'positive',
+          [x('CKM_SLH_DSA', 'message-verify', ps)],
+          `slhdsa-pure-message-sigver-${tag}-{engine}`,
+          'msg-sigver'
+        ),
+        mc(
+          c.caseId,
+          NIST,
+          'positive',
+          [x('CKM_SLH_DSA', 'message-sign', ps, 'deterministic')],
+          `slhdsa-pure-message-siggen-det-${tag}-{engine}`,
+          'msg-siggen-det'
+        ),
+        mc(
+          c.caseId,
+          NIST,
+          'positive',
+          [x('CKM_SLH_DSA', 'message-sign', ps, 'hedged', { evidenceClass: RT })],
+          `slhdsa-pure-message-siggen-hedged-${tag}-{engine}`,
+          'msg-siggen-hedged'
+        ),
+      ]
+    })
+  ),
   acvp('10', '§10', 'SHA2-256 digest', digestCases('sha256_test', sha256V, 'CKM_SHA256', 'sha256')),
   acvp(
     '10b',
@@ -1740,6 +1871,93 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       'rsaoaep-selfcheck-{engine}'
     ),
   ]),
+
+  // ── PROJECT WYCHEPROOF (Google / C2SP) — sections/wycheproofNegative.ts ────
+  // Adversarial reject-path vectors NIST does not publish. ORACLE, never STD:
+  // Google/C2SP is not a standards body and no standard prints these values, so
+  // the permitted claim is "agrees with Project Wycheproof 3fa63dd0 for this
+  // case". Polarity comes from the manifest, where a Wycheproof `acceptable`
+  // case is registered POSITIVE on purpose (upstream permits refusing it, so
+  // counting it negative would inflate reject-path coverage) — the executed row
+  // still asserts "refused OR exactly the upstream value".
+  acvp(
+    '37.wycheproof-xdh',
+    '§37a (sections/wycheproofNegative.ts)',
+    'X25519 / X448 ECDH — Project Wycheproof (Google / C2SP): low-order and zero-shared-secret public keys, points on the twist, edge-case multiplications',
+    [
+      ...casesOf('wycheproof_x25519_test').map((c) =>
+        mc(
+          c.caseId,
+          ORACLE,
+          c.expectation,
+          [x('CKM_ECDH1_DERIVE', 'derive', 'X25519')],
+          `wyc-x25519-${upstreamIds(c)}-{engine}`
+        )
+      ),
+      ...casesOf('wycheproof_x448_test').map((c) =>
+        mc(
+          c.caseId,
+          ORACLE,
+          c.expectation,
+          [x('CKM_ECDH1_DERIVE', 'derive', 'X448')],
+          `wyc-x448-${upstreamIds(c)}-{engine}`
+        )
+      ),
+    ],
+    'Source: https://github.com/C2SP/wycheproof @ 3fa63dd0, Apache-2.0. A Wycheproof `invalid` case passes when C_CreateObject(private) or C_DeriveKey refuses it; producing a shared secret for it is a discrepancy row.'
+  ),
+  acvp(
+    '37.wycheproof-eddsa',
+    '§37b (sections/wycheproofNegative.ts)',
+    'Ed25519 / Ed448 verify — Project Wycheproof (Google / C2SP): signature malleability, r/s out of range, small-order and non-canonical encodings, truncated and appended signatures',
+    [
+      ...casesOf('wycheproof_ed25519_test').map((c) =>
+        mc(
+          c.caseId,
+          ORACLE,
+          c.expectation,
+          [x('CKM_EDDSA', 'verify', 'Ed25519')],
+          `wyc-ed25519-${upstreamIds(c)}-{engine}`
+        )
+      ),
+      ...casesOf('wycheproof_ed448_test').map((c) =>
+        mc(
+          c.caseId,
+          ORACLE,
+          c.expectation,
+          [x('CKM_EDDSA', 'verify', 'Ed448')],
+          `wyc-ed448-${upstreamIds(c)}-{engine}`
+        )
+      ),
+    ],
+    'Source: https://github.com/C2SP/wycheproof @ 3fa63dd0, Apache-2.0. A Wycheproof `invalid` case passes only when C_Verify does NOT return CKR_OK.'
+  ),
+  acvp(
+    '37.wycheproof-keywrap',
+    '§37c (sections/wycheproofNegative.ts)',
+    'AES-KW / AES-KWP unwrap — Project Wycheproof (Google / C2SP): modified padding, wrong-length and truncated wrapped keys, integrity failures',
+    [
+      ...casesOf('wycheproof_aes_wrap_test').map((c) =>
+        mc(
+          c.caseId,
+          ORACLE,
+          c.expectation,
+          [x('CKM_AES_KEY_WRAP', 'unwrap', `AES-${param(c, 'keyLen')}`)],
+          `wyc-aeskw-${upstreamIds(c)}-{engine}`
+        )
+      ),
+      ...casesOf('wycheproof_aes_kwp_test').map((c) =>
+        mc(
+          c.caseId,
+          ORACLE,
+          c.expectation,
+          [x('CKM_AES_KEY_WRAP_KWP', 'unwrap', `AES-${param(c, 'keyLen')}`)],
+          `wyc-aeskwp-${upstreamIds(c)}-{engine}`
+        )
+      ),
+    ],
+    'Source: https://github.com/C2SP/wycheproof @ 3fa63dd0, Apache-2.0. A Wycheproof `invalid` case passes when C_UnwrapKey refuses; unwrapping it successfully is a discrepancy row.'
+  ),
 ]
 
 // ── katRunner (src/utils/katRunner.ts) — Rust engine via useHSM() ───────────

@@ -116,7 +116,16 @@ describe('P5 PQC coverage sections — both engines, real vectors', () => {
     cppRef.current = await loadCppEngineInNode()
     rustRef.current = (await SoftHSM.getSoftHSMRustModule()) as SoftHSMModule
     results = await run(['ml_dsa', 'ml_kem', 'slh_stateful'])
-  }, 600_000)
+    // 1_200_000, not 600_000 (raised 2026-09-26). MEASURED on this worktree
+    // (M-series, Node 22.23.1): engine loading is NOT the cost — the C++ load
+    // is 0.0s and the Rust load 0.2s. The `run([...])` above is 599.1s, i.e.
+    // it was finishing 0.9s inside the old 600_000 budget, so this hook was
+    // passing or timing out essentially at random. The growth is real work,
+    // not a hang: the `slh_stateful` category now carries the §9e HashSLH-DSA
+    // pre-hash sections, taking the SLH-DSA registry case count from 176 to
+    // 980. 2x headroom over the measurement, so a slower machine or a further
+    // SLH-DSA addition does not reintroduce a coin-flip failure.
+  }, 1_200_000)
 
   const rows = () => results.filter((r) => NEW.test(r.id))
   const row = (id: string) => results.find((r) => r.id === id)
@@ -290,5 +299,10 @@ describe('P5 PQC coverage sections — sabotaged expectations fail', () => {
       vi.doUnmock('@/data/acvp/slhdsa_keygen_test.json')
       vi.doUnmock('@/data/acvp/slhdsa_siggen_ctx0_test.json')
     }
-  }, 600_000)
+    // 1_200_000 for the same measured reason as the beforeAll above: this
+    // sabotage proof re-runs ml_dsa + slh_stateful, measured at ~580s of the
+    // old 600_000 budget (whole-file duration 1179.9s, of which 599.1s is the
+    // beforeAll). A sabotage proof that dies on its own timeout proves
+    // nothing, so it gets the same 2x headroom.
+  }, 1_200_000)
 })

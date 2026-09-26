@@ -16,12 +16,29 @@ import type { GoldenComparison } from './compare'
 import type { PinnedVectorSetSchema } from './schemas/registry'
 import { validateAgainstSchema } from './schemaValidator'
 import fixtureProvenance from './__fixtures__/nist-acvp-server/PROVENANCE.json'
+// Relative, NOT the `@/` alias, and deliberately so: this module is on the
+// import path of `scripts/acvp-respond.ts` and `scripts/acvp-xplat-compare.ts`,
+// which run under `tsx`. tsx resolves path aliases from the ROOT
+// `tsconfig.json`, and that file is a solution file — `{"files": [], "references": [...]}`
+// with no `compilerOptions.paths`. The `@/*` -> `./src/*` mapping lives only in
+// `tsconfig.app.json`, which tsx never reads, so a VALUE import via `@/` here
+// dies at runtime with ERR_MODULE_NOT_FOUND. (Type-only `@/` imports survive
+// because tsx erases them; see `src/services/acvp-xplat/compare.ts` for the
+// same relative convention on this same CLI-reachable path.)
+import { VALIDATION_DISCLAIMER } from '../../data/validationDisclaimer'
 
 export const EVIDENCE_VERSION = 'pqctoday.acvp-evidence/2'
 
-/** Plan §2.2, first required disclaimer — verbatim. */
-export const DISCLAIMER_GENERAL =
-  'PQC Today executes selected public reference vectors, standards tests, conformance cases, and implementation probes. A passing result is evidence only for the identified test, operation, parameters, implementation build, and target. It is not an ACVTS verdict, a CAVP/CMVP certificate, or proof of exhaustive conformance.'
+/**
+ * Plan §2.2, first required disclaimer — verbatim.
+ *
+ * Re-exported from `src/data/validationDisclaimer`, not copied. Until 2026-09-26
+ * this was a byte-identical literal copy of `VALIDATION_DISCLAIMER`: two
+ * sources of truth for one required sentence, each with its own pinning test,
+ * so an approved wording change would have had to land twice and a missed one
+ * would have shipped two different "verbatim" disclaimers.
+ */
+export const DISCLAIMER_GENERAL = VALIDATION_DISCLAIMER
 
 /** Plan §2.2, second required disclaimer (prompt import) — verbatim. */
 export const DISCLAIMER_IMPORT =

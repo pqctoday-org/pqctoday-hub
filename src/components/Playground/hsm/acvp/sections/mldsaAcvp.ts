@@ -99,8 +99,15 @@ export const acvpHashToMech = (): Readonly<Record<string, number>> => ({
 export interface AcvpCaseMeta {
   /** product-authored-mutation: a NIST case with a PQC Today-made change;
    * product-authored-probe: a PQC Today-authored PKCS#11 behaviour check. */
+  /** third-party-oracle: a vendored third-party corpus (Project Wycheproof,
+   * maintained by Google / C2SP) — independent-oracle evidence, never a
+   * conformance claim. See sections/wycheproofNegative.ts. */
   origin:
-    'nist-acvp-server' | 'product-authored-mutation' | 'product-authored-probe' | 'not-executed'
+    | 'nist-acvp-server'
+    | 'third-party-oracle'
+    | 'product-authored-mutation'
+    | 'product-authored-probe'
+    | 'not-executed'
   upstreamOperation:
     | 'sigVer'
     | 'sigGen'
@@ -149,7 +156,18 @@ export interface AcvpCaseMeta {
   messageBytes?: number
   /** rejected/accepted: a VAL case whose upstream disposition is a boolean;
    * return-code: a boundary probe asserting an exact CK_RV (see expectedRv). */
-  expected: 'valid' | 'invalid' | 'byte-match' | 'not-run' | 'rejected' | 'accepted' | 'return-code'
+  /** refuse-or-match: a Wycheproof `acceptable` case — upstream states either
+   * outcome is defensible, so the row asserts "refused OR exactly the upstream
+   * value"; a third answer fails. */
+  expected:
+    | 'valid'
+    | 'invalid'
+    | 'byte-match'
+    | 'not-run'
+    | 'rejected'
+    | 'accepted'
+    | 'refuse-or-match'
+    | 'return-code'
   expectedReason?: string
   /** Exact CK_RV name the row asserts, when it asserts one. */
   expectedRv?: string

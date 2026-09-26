@@ -150,9 +150,15 @@ import { runMlkemAcvpSection } from './sections/mlkemAcvp'
 import { runMldsaNegBoundarySection } from './sections/mldsaNegBoundary'
 import { runMlkemKeyCheckDepthSection } from './sections/mlkemKeyCheckDepth'
 import { runSlhdsaCoverageSection } from './sections/slhdsaCoverage'
+import { runSlhdsaPreHashSection } from './sections/slhdsaPreHash'
 import { runSlhdsaAcvpSection } from './sections/slhdsaAcvp'
 import { runAesGcmAcvpSection } from './sections/aesGcmAcvp'
 import { runAesKwAcvpSection } from './sections/aesKwAcvp'
+import {
+  runWycheproofEddsaSection,
+  runWycheproofKeywrapSection,
+  runWycheproofXdhSection,
+} from './sections/wycheproofNegative'
 import { runAesCbcCtrAcvpSection } from './sections/aesCbcCtrAcvp'
 import { runHmacAcvpSection } from './sections/hmacAcvp'
 import { runShaAcvpSection } from './sections/shaAcvp'
@@ -417,6 +423,11 @@ export function useAcvpSuite() {
       hkdf: 'https://www.rfc-editor.org/rfc/rfc5869',
       kdaHkdf: 'https://csrc.nist.gov/pubs/sp/800/56/c/r2/final',
       kbkdf: 'https://csrc.nist.gov/pubs/sp/800/108/r1/upd1/final',
+      // Project Wycheproof, maintained by Google / C2SP — the source link every
+      // Wycheproof-sourced row points at (user ruling 2026-09-26: attribute it
+      // to Google, add a link to this source). Apache-2.0; independent-oracle
+      // evidence, never a conformance claim.
+      wycheproof: 'https://github.com/C2SP/wycheproof',
       aeskw: 'https://www.rfc-editor.org/rfc/rfc3394',
       aeskwp: 'https://www.rfc-editor.org/rfc/rfc5649',
       slhdsa: 'https://csrc.nist.gov/pubs/fips/205/final',
@@ -1795,6 +1806,22 @@ export function useAcvpSuite() {
             pushResult,
             addLog,
           })
+
+          // ── 9e. HashSLH-DSA (pre-hash) depth — the NIST external/preHash
+          // sigGen vectors for all 120 (CKM_HASH_SLH_DSA_<hash> × parameter
+          // set) pairs, run through single-part AND message-based sign/verify,
+          // plus the NIST preHash sigVer negatives (all six upstream reasons)
+          // and pure CKM_SLH_DSA over the message-based interface.
+          // sections/slhdsaPreHash.ts.
+          await runSlhdsaPreHashSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.slhdsa,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 10. SHA-256 Digest KAT (FIPS 180-4) ─────────────────────────
@@ -2919,6 +2946,41 @@ export function useAcvpSuite() {
             slot: engine.slot,
             mechs: engine.mechs,
             referenceUrl: REF.aeskw,
+            pushResult,
+            addLog,
+          })
+        }
+
+        // ── 20c. PROJECT WYCHEPROOF (Google / C2SP) adversarial vectors ────
+        // The reject-path coverage NIST does not publish: X25519/X448 low-order
+        // and twist points, forged/malleable EdDSA signatures, AES-KW/KWP
+        // modified-padding and integrity failures. independent-oracle evidence
+        // only — "agrees with Wycheproof <commit> for this case", never
+        // conformance. sections/wycheproofNegative.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          const wycCtx = {
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.wycheproof,
+            pushResult,
+            addLog,
+          }
+          await runWycheproofXdhSection(wycCtx)
+          await runWycheproofEddsaSection(wycCtx)
+        }
+        if (activeCategories.has('symmetric')) {
+          currentCategory = 'symmetric'
+          await runWycheproofKeywrapSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.wycheproof,
             pushResult,
             addLog,
           })

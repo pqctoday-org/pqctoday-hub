@@ -66,7 +66,19 @@ export const EVIDENCE_CLASSES: Record<EvidenceClassId, EvidenceClassMeta> = {
   'published-standard-kat': {
     id: 'published-standard-kat',
     label: 'Published standard KAT',
-    meaning: 'Expected values printed in a cited standard or RFC.',
+    // Boundary settled 2026-09-26, so it is not re-argued per source: this class
+    // admits vectors printed in a formal standard (NIST FIPS/SP, ISO, an OASIS
+    // Standard) AND in a consensus RFC, INCLUDING IRTF/Informational ones — e.g.
+    // RFC 8439 §2.4.2/§2.8.2 (ChaCha20, AEAD_CHACHA20_POLY1305), RFC 9180 App. A
+    // (HPKE), RFC 8032 §7 (EdDSA), RFC 7748 §5.2/§6 (X25519/X448). Several of
+    // those are Informational rather than Standards Track, and excluding them
+    // would have discarded good published vectors on a document-status
+    // technicality while we already rely on RFC 9180 and RFC 8032 elsewhere.
+    // What it does NOT admit: values from a third-party project that no standard
+    // prints (Google/C2SP Wycheproof is `independent-oracle`, not this), or from
+    // a draft with no consensus status. The citation must name the document and
+    // the section the values appear in, so a reader can check them.
+    meaning: 'Expected values printed in a cited standard or consensus RFC.',
     permittedClaim: "Passes the cited standard's example/KAT",
   },
   'independent-oracle': {

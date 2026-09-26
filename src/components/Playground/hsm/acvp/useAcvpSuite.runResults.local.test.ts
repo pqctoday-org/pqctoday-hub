@@ -176,7 +176,22 @@ describe('useAcvpSuite run results for the coverage matrix (both engines, real w
     cppRef.current = await loadCppEngineInNode()
     rustRef.current = (await SoftHSM.getSoftHSMRustModule()) as SoftHSMModule
     rows = await runWholeSuite()
-  }, 600_000)
+    // BUDGET: 1_500_000 ms (25 min). Was 600_000 and timed out once the §9e
+    // HashSLH-DSA pre-hash sections and the Wycheproof sections joined the
+    // suite — this beforeAll drives EVERY category on BOTH engines, so its
+    // cost grows with the whole corpus, not with this file.
+    // MEASURED 2026-09-26 on an M4 Pro, Node 22.23.1: 519 s for the whole
+    // file running alone (`vitest run --config vitest.local.config.ts <this
+    // file>`, reported Duration 519.11 s, of which the two `it`s are 42 ms —
+    // so beforeAll is effectively the whole figure). A ~697 s figure was
+    // reported for the same beforeAll under a concurrent full
+    // `npm run test:local` (CPU contention with the other 81 files); that one
+    // is second-hand, not measured here, and is the reason the budget is not
+    // simply 2x the solo number. 1_500_000 is ~2.9x the solo measurement and
+    // ~2.2x the reported contended one.
+    // Re-measure rather than nudge this if a new section lands: the failure
+    // mode of a too-small budget is a timeout that reads like a product bug.
+  }, 1_500_000)
 
   it('every registered useAcvpSuite rowId was produced for both engines', () => {
     const produced = new Set(rows.map((r) => r.id))
