@@ -65,6 +65,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   PKIWorkshop: 'pki-workshop',
   KmsPqc: 'kms-pqc',
   HsmPqc: 'hsm-pqc',
+  CryptoProductCertification: 'crypto-product-certification',
   DataAssetSensitivity: 'data-asset-sensitivity',
   StatefulSignatures: 'stateful-signatures',
   DigitalAssets: 'digital-assets',

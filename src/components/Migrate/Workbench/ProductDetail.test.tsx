@@ -202,4 +202,120 @@ describe('ProductDetail', () => {
       expect(screen.queryByText('Identifiers')).not.toBeInTheDocument()
     })
   })
+
+  /**
+   * "Holds a certificate" and "the certificate covers PQC" are different facts,
+   * and 11 active catalogue products are validated for classical algorithms
+   * only. A certificate badge on its own cannot express that, so a reader had
+   * no way to tell a FIPS 140-3 badge covering ML-KEM from one covering none.
+   */
+  describe('classical-only certification note', () => {
+    const NOTE = /Validated for classical algorithms only/
+
+    it('shows the note when the product is certified but not for PQC', () => {
+      render(
+        <MemoryRouter>
+          <ProductDetail product={makeItem({ hasCertification: 'yes', pqcCertified: 'no' })} />
+        </MemoryRouter>
+      )
+      expect(screen.getByTestId('classical-only-note')).toHaveTextContent(NOTE)
+    })
+
+    it('stays hidden when the certification does cover PQC', () => {
+      render(
+        <MemoryRouter>
+          <ProductDetail product={makeItem({ hasCertification: 'yes', pqcCertified: 'yes' })} />
+        </MemoryRouter>
+      )
+      expect(screen.queryByTestId('classical-only-note')).not.toBeInTheDocument()
+    })
+
+    it('stays hidden when no certificate is known, even if PQC is uncertified', () => {
+      // pqcCertified 'none' means the row says nothing about certification —
+      // very different from asserting the certificate excludes PQC. Without
+      // this case a filter keyed on pqcCertified alone would paint the note
+      // across the 802 rows that simply never mention a certification.
+      render(
+        <MemoryRouter>
+          <ProductDetail
+            product={makeItem({ hasCertification: 'unknown', pqcCertified: 'none' })}
+          />
+        </MemoryRouter>
+      )
+      expect(screen.queryByTestId('classical-only-note')).not.toBeInTheDocument()
+    })
+  })
+
+  /**
+   * A cloud KMS whose HSM is FIPS-validated relies on a real certificate that
+   * is not its own. `unknown` would hide that; `yes` would claim a validation
+   * the product does not hold.
+   */
+  describe('component-only certification note', () => {
+    it('says the product uses a validated module but holds no certificate itself', () => {
+      render(
+        <MemoryRouter>
+          <ProductDetail
+            product={makeItem({ hasCertification: 'component', pqcCertified: 'none' })}
+          />
+        </MemoryRouter>
+      )
+      expect(screen.getByTestId('component-only-note')).toHaveTextContent(
+        /validated module inside.*holds no certificate/
+      )
+      // and it must never be mistaken for the product's own classical-only validation
+      expect(screen.queryByTestId('classical-only-note')).not.toBeInTheDocument()
+    })
+
+    it('stays hidden for a product that holds its own certificate', () => {
+      render(
+        <MemoryRouter>
+          <ProductDetail product={makeItem({ hasCertification: 'yes', pqcCertified: 'no' })} />
+        </MemoryRouter>
+      )
+      expect(screen.queryByTestId('component-only-note')).not.toBeInTheDocument()
+    })
+  })
+
+  /**
+   * FIPS 140-3 track stages. CAVP algorithm validation is the prerequisite,
+   * not a certificate; "in progress" only when NIST lists the module.
+   */
+  describe('FIPS 140-3 track stage notes', () => {
+    const renderWith = (over: Partial<SoftwareItem>) =>
+      render(
+        <MemoryRouter>
+          <ProductDetail product={makeItem(over)} />
+        </MemoryRouter>
+      )
+
+    it('says CAVP is the prerequisite, never a certificate', () => {
+      renderWith({ hasCertification: 'cavp', pqcCertified: 'cavp' })
+      expect(screen.getByTestId('cavp-only-note')).toHaveTextContent(
+        /prerequisite for FIPS 140-3, not a certificate/
+      )
+      expect(screen.queryByTestId('fips-in-progress-note')).not.toBeInTheDocument()
+    })
+
+    it('says "in progress" only for the in_progress stage', () => {
+      renderWith({ hasCertification: 'in_progress', pqcCertified: 'none' })
+      expect(screen.getByTestId('fips-in-progress-note')).toHaveTextContent(/in progress/)
+      expect(screen.queryByTestId('cavp-only-note')).not.toBeInTheDocument()
+    })
+
+    it('flags a certified module whose PQC is only CAVP-validated (the K7 case)', () => {
+      renderWith({ hasCertification: 'yes', pqcCertified: 'cavp' })
+      expect(screen.getByTestId('pqc-cavp-only-note')).toHaveTextContent(
+        /CAVP-validated only — not yet covered by a FIPS 140-3 certificate/
+      )
+      expect(screen.queryByTestId('classical-only-note')).not.toBeInTheDocument()
+    })
+
+    it('shows no stage note for a product whose certificate covers PQC', () => {
+      renderWith({ hasCertification: 'yes', pqcCertified: 'yes' })
+      for (const id of ['cavp-only-note', 'fips-in-progress-note', 'pqc-cavp-only-note']) {
+        expect(screen.queryByTestId(id)).not.toBeInTheDocument()
+      }
+    })
+  })
 })

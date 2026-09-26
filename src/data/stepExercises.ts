@@ -1220,6 +1220,112 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 2,
     why: 'The composite score is a weighted average, so the four weights must always sum to 100%; when one slider moves, the remainder is redistributed across the other three in the same ratio they already had, and the last one absorbs any rounding.',
   },
+
+  // ── crypto-product-certification (PCI author, 2026-09-24) — keep identical to
+  //    modules/CryptoProductCertification/data/pciData.ts `stepExercises` ──
+  'crypto-product-certification/pci-evidence-review': {
+    prompt:
+      'A payment HSM’s PTS listing carries the Post Quantum Cryptography (PQC) notation. What does that notation establish?',
+    options: [
+      'That the evaluated device supports PQC; which algorithms it implements is stated in its Security Policy',
+      'That PCI has approved ML-KEM and ML-DSA for PIN processing on that device',
+      'That the device meets a PCI deadline for migrating to PQC',
+      'That the device’s FIPS 140-3 certificate also covers its PQC algorithms',
+    ],
+    answer: 0,
+    why: 'The listing field definition says the notation "is for the existence of PQC support": algorithm details sit in the Security Policy and readiness details come from the vendor. Public PCI material names no PQC algorithm, parameter set or deadline, and a FIPS certificate is separate evidence under a separate scheme.',
+  },
+
+  // ── crypto-product-certification — FIPS author (2026-09-24) ──
+  'crypto-product-certification/fips-level-planner': {
+    prompt:
+      'A customer’s PQC deadline is close, so Orrin N7 adds ML-KEM and ML-DSA to its already-validated HSM firmware. Which CMVP route does the planner accept?',
+    options: [
+      'TRNS — the deadline makes it an algorithm transition',
+      'UPDT if each of the five change ratios stays under 30 %, otherwise a Full Submission',
+      'ALG — it only adds algorithms',
+      'CVE — it closes a quantum vulnerability',
+    ],
+    answer: 1,
+    why: 'Route eligibility comes from the Management Manual, not the calendar: new approved algorithms, services and self-tests are security-relevant changes (UPDT under 30 % per category, else FS). TRNS needs a published CMVP transition, ALG allows no code change, and CVE may not add cryptography.',
+  },
+
+  // ── crypto-product-certification: CC/EU author (2026-09-24; cc-claim-decoder, eidas-trace) ──
+  'crypto-product-certification/cc-claim-decoder': {
+    prompt:
+      'Two HSM listings both read “EAL4+”: TrustWay Proteccio (ADV_IMP.2, ALC_CMC.5, ALC_DVS.2, ALC_FLR.3, AVA_VAN.5) and nShield5s (ALC_FLR.2, AVA_VAN.5). What can you conclude from the shared headline?',
+    options: [
+      'They have identical assurance, because both are EAL4+',
+      'Nothing about which components were added — the “+” only means the EAL4 package was augmented, so each list must be read',
+      'Proteccio is exactly one level higher, EAL5, because it has more components',
+    ],
+    answer: 1,
+    why: 'Augmentation adds or substitutes named components; “EAL4+” without the list does not say which. Here both reach AVA_VAN.5 but differ in development, configuration-management and flaw-remediation components, and an augmented EAL4 is not a higher EAL.',
+  },
+  'crypto-product-certification/eidas-trace': {
+    prompt:
+      'In the remote-signing trace, where does the duty to use a certified signing device come from, and where do its security requirements come from?',
+    options: [
+      'Both from eIDAS 2.0, which is the Protection Profile the HSM conforms to',
+      'Both from EUCC, which obliges every QTSP to use certified HSMs',
+      'The duty from eIDAS (910/2014 as amended by 2024/1183); the requirements from Protection Profiles such as EN 419221-5, evaluated under a CC-based scheme',
+    ],
+    answer: 2,
+    why: 'eIDAS is law: it defines QSCDs and requires their certification. It is not a Protection Profile. The evaluable requirements are in the PPs (EN 419221-5, EN 419241-2), and EUCC is the scheme that runs the evaluation.',
+  },
+
+  // ── crypto-product-certification (Shared author: core + shared steps) ──
+  'crypto-product-certification/scheme-selector': {
+    prompt:
+      'A payment processor already holds a FIPS 140-3 Level 3 validation for its HSM. Which question does that validation still leave unanswered?',
+    options: [
+      'Whether the module meets FIPS 140-3 requirements in its validated configuration',
+      'Whether the device is an approved PCI PTS HSM',
+      'Whether the module’s algorithms were tested under CAVP / ACVP',
+    ],
+    answer: 1,
+    why: 'Each scheme answers its own question about its own object: the CMVP validates a module, PCI SSC approves a payment device. PIN Security may accept the FIPS Level 3 HSM for the entity’s requirement, but that never makes it a PTS-approved device.',
+  },
+  'crypto-product-certification/boundary-drawer': {
+    prompt:
+      'Orrin N7’s cloud front end runs on the provider’s servers, outside every HSM. What does a FIPS 140-3 validation of the HSM module say about that front end?',
+    options: [
+      'It covers the front end at the same security level, because it is part of the product',
+      'It covers the front end only when the service runs in approved mode',
+      'Nothing — it is outside the module boundary, so a claim about the service must not borrow the certificate',
+    ],
+    answer: 2,
+    why: 'Scope comes before level: a certificate applies only to the named boundary, version and configuration. The security level describes that boundary, so a component outside it inherits no level and no validation.',
+  },
+  'crypto-product-certification/capstone': {
+    prompt:
+      'Firmware 5.0.0 has passed ACVP testing for ML-KEM and sits in the CMVP Modules-in-Process queue as a federal PQC deadline approaches. What should the release matrix show for its FIPS status?',
+    options: [
+      'In evaluation — not covered; the certified lane stays on the validated 4.2.1',
+      'Covered — algorithm testing passed and the module is in process',
+      'Provisionally covered, because the deadline makes the PQC release mandatory',
+    ],
+    answer: 0,
+    why: 'Coverage follows the authority’s published record. An ACVP pass is algorithm evidence, a MIP entry is a queue position, and a market deadline is urgency — none of them is certification, so the candidate stays claim-distinct from the certified baseline.',
+  },
+  'crypto-product-certification/change-analyzer': {
+    prompt:
+      'The vendor adds ML-KEM to the Orrin N7 firmware to meet a federal PQC deadline. Which CMVP revalidation route is ruled out?',
+    options: ['UPDT (update)', 'TRNS (algorithm transition)', 'FS (full submission)'],
+    answer: 1,
+    why: 'TRNS is only for changes made solely in response to a published CMVP algorithm transition that would move modules to the Historical list. A policy or market deadline is not one, so the addition goes through UPDT or a full submission.',
+  },
+  'crypto-product-certification/evidence-exchange': {
+    prompt:
+      'The submission endpoint answers “payload received, schema valid” for your evidence package. What has that established?',
+    options: [
+      'That the evidence is sufficient for validation',
+      'That the lab has attested the results',
+      'Only that the data arrived and was well-formed',
+    ],
+    answer: 2,
+    why: 'An acknowledgement is an automated result about the payload. Sufficiency needs evaluator judgement, attestation is the lab’s act, and only the authority decides — machine-readable exchange removes round trips, not those roles.',
+  },
 }
 
 export function stepExerciseFor(moduleId: string, stepId: string): StepExercise | undefined {

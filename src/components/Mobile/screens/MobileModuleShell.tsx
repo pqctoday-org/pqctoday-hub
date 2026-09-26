@@ -5,6 +5,7 @@ import { CheckCircle2, Circle, Network, ArrowRight, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 import { MODULE_TO_TRACK, LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
+import { requiredLearnSectionIdsFor } from '@/components/PKILearning/manifest/learnPathScope'
 // moduleRelations() is pure data/logic (no JSX) — src/components/Mobile may
 // not import a desktop VIEW component (RelatedModulesPanel), so this renders
 // its own mobile-styled list off the same computed relations instead of
@@ -45,6 +46,10 @@ export interface MobileModuleShellProps {
   onTabChange?: (tab: string) => void
   /** Wave C: opens the manifest's "Start here" workshop step (via ModuleShell's goToWorkshop). */
   onStartHere?: () => void
+  /** WS-0 (2026-09-24): ModuleShell's LearnPathPicker, for manifests that
+   *  declare learnPaths. Passed in as a node — this directory may not import
+   *  desktop view components (eslint no-restricted-imports). */
+  pathPicker?: ReactNode
 }
 
 /**
@@ -96,13 +101,21 @@ export function MobileModuleShell({
   activeTab,
   onTabChange,
   onStartHere,
+  pathPicker,
 }: MobileModuleShellProps) {
   const showWorkshop = Boolean(workshopContent) && activeTab === 'workshop'
   const modules = useModuleStore((s) => s.modules)
   const toggleLearnSection = useModuleStore((s) => s.toggleLearnSection)
 
   const track = MODULE_TO_TRACK[manifest.id]
-  const sections = LEARN_SECTIONS[manifest.id] ?? []
+  // The checklist shows the sections that count toward completion: the active
+  // learn path's, minus optional references (manifest/learnPathScope.ts). For a
+  // module with no paths and no optional sections that is every section. Read
+  // off the registry by id, like LEARN_SECTIONS — not off the `manifest` prop.
+  const requiredIds = new Set(
+    requiredLearnSectionIdsFor(manifest.id, modules[manifest.id]?.activeLearnPath)
+  )
+  const sections = (LEARN_SECTIONS[manifest.id] ?? []).filter((s) => requiredIds.has(s.id))
   const checks = modules[manifest.id]?.learnSectionChecks ?? {}
   const checkedCount = sections.filter((s) => checks[s.id]).length
   const { entries: relatedModules } = moduleRelations(manifest.id)
@@ -162,6 +175,8 @@ export function MobileModuleShell({
         {/* Round 9, wave 2 — "For your role" (src/data/personaBlocks.ts), phone twin. */}
         <MobilePersonaBlock route={`/learn/${manifest.id}`} className="mt-2" />
       </div>
+
+      {pathPicker}
 
       {workshopContent ? (
         <div

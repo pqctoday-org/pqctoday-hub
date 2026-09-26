@@ -80,6 +80,7 @@ export type ExecutiveDocumentType =
   | 'data-at-rest-strategy'
   | 'migration-verification'
   | 'sim-roadmap'
+  | 'certification-plan'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

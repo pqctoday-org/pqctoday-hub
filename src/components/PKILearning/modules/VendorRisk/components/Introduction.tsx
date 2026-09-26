@@ -194,17 +194,17 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               {
                 tier: 'FIPS 140-3 Validated',
                 color: 'text-status-success',
-                desc: 'Module has passed CMVP testing. Highest assurance level for cryptographic modules.',
+                desc: 'Module has an active CMVP certificate. Check its overall level, operational environments, caveats and approved-algorithm list, and that the product uses that module in that configuration.',
               },
               {
-                tier: 'FIPS 140-3 Submitted',
+                tier: 'FIPS 140-3 In Process (MIP)',
                 color: 'text-status-warning',
-                desc: 'Module is in the CMVP testing queue. Validation pending but commitment demonstrated.',
+                desc: 'Module is on the CMVP Modules in Process list. That is a queue position, not evidence of the outcome: a submission can stall, be withdrawn or fail. Treat it as a roadmap statement until a certificate is issued.',
               },
               {
                 tier: 'FIPS 140-2 Validated',
                 color: 'text-status-warning',
-                desc: 'Legacy validation. NIST sunsets FIPS 140-2 certificates; migration to 140-3 required.',
+                desc: 'Legacy validation. FIPS 140-2 certificates moved to the CMVP Historical list in September 2026: usable in existing systems, not for new procurement.',
               },
               {
                 tier: 'FIPS Mode / Self-Claim',

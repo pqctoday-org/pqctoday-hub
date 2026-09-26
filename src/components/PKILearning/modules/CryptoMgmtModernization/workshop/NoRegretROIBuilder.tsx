@@ -575,7 +575,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
           </p>
           <MathModel
             formula={`hsm_count × hsm_drift_rate × hsm_remediation_cost\n  + library_count × library_drift_rate × library_remediation_cost\n= ${fipsP.hsmCount} × ${fmtPct(fipsP.hsmDriftRate, 0)} × ${fmt$(fipsP.hsmRemediationCost)}\n  + ${fipsP.libraryCount} × ${fmtPct(fipsP.libraryDriftRate, 0)} × ${fmt$(fipsP.libraryRemediationCost)}\n= ${fmt$(fips)}/yr`}
-            explanation="Every CMVP certificate is bound to a specific version, firmware, and platform. The September 2025 FIPS 140-3 IG retroactively added new self-test requirements for ML-KEM/ML-DSA/SLH-DSA, and the CMVP Modules-in-Process queue runs 18–24 months. Drift rate captures how often a given HSM or library hits an IG update, EoL, or revocation event in a year. Remediation cost is the emergency re-procurement or re-validation expense when it does. Use ‘Pull from Step 3 CBOM’ to populate the asset counts from your inventory."
+            explanation="Every CMVP certificate is bound to a specific version, firmware, and platform. The September 2025 FIPS 140-3 IG retroactively added new self-test requirements for ML-KEM/ML-DSA/SLH-DSA, and a module on the CMVP Modules-in-Process list has a status, not a completion date. Drift rate captures how often a given HSM or library hits an IG update, EoL, or revocation event in a year. Remediation cost is the emergency re-procurement or re-validation expense when it does. Use ‘Pull from Step 3 CBOM’ to populate the asset counts from your inventory."
           >
             <ParamSlider
               label="HSM count"

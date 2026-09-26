@@ -93,14 +93,15 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             A <strong>Hardware Security Module (HSM)</strong> is a tamper-resistant physical device
             that performs cryptographic operations and protects keys within a certified security
             boundary. The <InlineTooltip term="FIPS 140-3">FIPS 140-3 standard</InlineTooltip>{' '}
-            defines four security levels:
+            defines four increasing, qualitative security levels. A module&apos;s certificate states
+            one overall level; its Security Policy lists the level reached in each requirement area.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
               {
                 level: 'Level 1',
-                desc: 'Basic security requirements. Software-only cryptographic module. No physical security mechanisms.',
+                desc: 'Lowest level: basic requirements, production-grade components, no specific physical-security mechanisms required. Not software-only: a Level 1 module can be hardware, software, firmware or hybrid, though many software libraries are validated here.',
               },
               {
                 level: 'Level 2',
@@ -391,7 +392,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   </div>
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
-                    <span className="text-warning font-medium">FIPS 140-3 Level 3 (submitted)</span>
+                    <span className="text-warning font-medium">
+                      FIPS 140-3 Level 3 (cert #5329; no PQC in its approved list)
+                    </span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">PQC Algorithms:</span>{' '}
@@ -408,7 +411,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <div className="mt-3 space-y-1 text-xs text-muted-foreground">
                   <p>
                     <strong>Upgrade Path:</strong> Firmware + PQSDK v1.2.1+ installation. 1&ndash;2
-                    hours per HSM. FIPS 140-3 re-submission in progress.
+                    hours per HSM. An nShield 5s module is on the CMVP Modules in Process list
+                    &mdash; a queue position, not evidence of the outcome.
                   </p>
                   <p>
                     <strong>Unique Features:</strong> Broadest algorithm support (includes SLH-DSA
@@ -435,8 +439,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   </div>
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
-                    <span className="text-success font-medium">
-                      FIPS 140-3 Level 3 (cert #3925)
+                    <span className="text-status-warning font-medium">
+                      FIPS 140-2 Level 3 (cert #3925, Historical)
                     </span>
                   </div>
                   <div>
@@ -456,7 +460,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     replacement). 1&ndash;3 hours per HSM. Existing keys preserved.
                   </p>
                   <p>
-                    <strong>Unique Features:</strong> FIPS 140-3 Level 3 (cert #3925). PQC simulator
+                    <strong>Unique Features:</strong> Cert #3925 is a FIPS 140-2 certificate, moved
+                    to the CMVP Historical list at sunset (checked 24 Sep 2026). PQC simulator
                     available for API testing. SLH-DSA on roadmap. PCIe form factor for data center
                     deployment.
                   </p>
@@ -509,14 +514,17 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS:</span>{' '}
-                  <span className="text-foreground">FIPS 140-3 Level 3 (via AWS-LC)</span>
+                  <span className="text-foreground">
+                    FIPS 140-3 Level 3 (hsm2m.medium: CMVP #4703, Marvell LS2; no PQC approved)
+                  </span>
                 </div>
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
                   PQC delivered via AWS-LC SDK, not HSM firmware change. Zero downtime for SDK
-                  update. AWS-LC is a FIPS 140-3 validated open-source library with ML-KEM and
-                  ML-DSA support.
+                  update. AWS-LC has its own CMVP certificates as a Level 1 software module (AWS-LC
+                  3, #5298/#5314, approve ML-KEM but not ML-DSA); they do not change the HSM&apos;s
+                  Level 3 certificate. Checked 24 Sep 2026.
                 </p>
                 <p>
                   <strong>Limitation:</strong> Native PKCS#11 PQC mechanisms not yet in firmware.
@@ -751,9 +759,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             </div>
 
             <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground">
-              <strong>Note:</strong> Recertification timelines for FIPS 140-3 typically range from
-              12&ndash;24 months. During this period, the HSM firmware operates with PQC algorithms
-              but the formal CMVP certificate has not yet been re-issued.
+              <strong>Note:</strong> Recertification time varies by module and queue; the CMVP
+              Modules in Process list shows where each submission is. Until a certificate listing
+              the PQC algorithms is issued, the firmware may run PQC algorithms, but the module
+              certificate does not cover them.
             </div>
           </div>
         </CollapsibleSection>

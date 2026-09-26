@@ -101,17 +101,33 @@ export const renderQuantumTech = (quantumTech: string | undefined): React.ReactE
   )
 }
 
-const CERT_TYPE_CONFIG: Record<string, { label: string; className: string }> = {
+/**
+ * `noun` is what one record of this type IS. A CAVP record is an algorithm
+ * validation — the prerequisite for FIPS 140-3, not a certificate (user
+ * decision 2026-09-26, matching NIST) — so it is never called a "cert" here.
+ * The data key stays 'ACVP' (the protocol the records come through); the
+ * label says CAVP, the program that issues them.
+ */
+const CERT_TYPE_CONFIG: Record<
+  string,
+  { label: string; noun: string; plural: string; className: string }
+> = {
   'FIPS 140-3': {
     label: 'FIPS',
+    noun: 'FIPS 140-3 certificate',
+    plural: 'FIPS 140-3 certificates',
     className: 'bg-status-success text-status-success',
   },
   ACVP: {
-    label: 'ACVP',
+    label: 'CAVP',
+    noun: 'CAVP algorithm validation (FIPS 140-3 prerequisite, not a certificate)',
+    plural: 'CAVP algorithm validations (FIPS 140-3 prerequisite, not certificates)',
     className: 'bg-primary/10 text-primary border-primary/20',
   },
   'Common Criteria': {
     label: 'CC',
+    noun: 'Common Criteria certificate',
+    plural: 'Common Criteria certificates',
     className: 'bg-status-warning text-status-warning',
   },
 }
@@ -231,7 +247,7 @@ const CertTypeBadge: React.FC<{
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
-        title={`${count} ${config.label} cert${hasPqc ? ` — PQC: ${newest.pqcAlgorithms}` : ''}`}
+        title={`${config.noun}${hasPqc ? ` — PQC: ${newest.pqcAlgorithms}` : ''}`}
         className={badgeClass}
       >
         {config.label}
@@ -248,7 +264,7 @@ const CertTypeBadge: React.FC<{
         ref={triggerRef}
         aria-haspopup="true"
         aria-expanded={popoverPosition !== null}
-        aria-label={`${count} ${config.label} certificates — view all`}
+        aria-label={`${count} ${config.plural} — view all`}
         onClick={(e) => {
           e.stopPropagation()
           setPopoverPosition((cur) => {
@@ -257,7 +273,7 @@ const CertTypeBadge: React.FC<{
             return rect ? computePopoverPosition(rect) : null
           })
         }}
-        title={`${count} ${config.label} certs${hasPqc ? ` — PQC: ${newest.pqcAlgorithms}` : ''}`}
+        title={`${count} ${config.plural}${hasPqc ? ` — PQC: ${newest.pqcAlgorithms}` : ''}`}
         className={`h-auto ${badgeClass}`}
       >
         {config.label}

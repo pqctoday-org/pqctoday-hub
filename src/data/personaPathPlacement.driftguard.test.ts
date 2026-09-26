@@ -172,6 +172,10 @@ const SINGLE_PATH_MODULES = new Set([
   'soc-implementation-pqc',
   'emv-payment-pqc',
   'automotive-pqc',
+  // Decided 24 Sep 2026 (user; certification plan r2 §3): GRC path only.
+  // Vendors and architects reach it via Browse and the cross-links from
+  // hsm-pqc / pqc-testing-validation, not via a second persona path.
+  'crypto-product-certification',
 ])
 
 /**

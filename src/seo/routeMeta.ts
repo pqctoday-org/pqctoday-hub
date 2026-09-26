@@ -528,6 +528,15 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('HSM & PQC Operations', 'PT90M', 'Advanced'),
   },
 
+  '/learn/crypto-product-certification': {
+    title:
+      'Cryptographic Product Certification — FIPS 140-3, Common Criteria, EUCC & PCI | PQC Today',
+    description:
+      'What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, how to read one, and how to add post-quantum cryptography to a certified product without losing certification.',
+    canonical: `${BASE_URL}/learn/crypto-product-certification`,
+    structuredData: buildModuleSchema('Cryptographic Product Certification', 'PT120M', 'Advanced'),
+  },
+
   '/learn/stateful-signatures': {
     title: 'Stateful Hash Signatures — LMS/HSS & XMSS Deep Dive | PQC Today',
     description:

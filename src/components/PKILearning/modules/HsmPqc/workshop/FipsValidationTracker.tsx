@@ -2,7 +2,11 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useMemo } from 'react'
 import { Filter, Calendar, Award, ChevronDown, ChevronUp, ExternalLink, Info } from 'lucide-react'
-import { FIPS_VALIDATIONS, type FipsValidationEntry } from '../data/hsmConstants'
+import {
+  FIPS_VALIDATIONS,
+  FIPS_VALIDATIONS_AS_OF,
+  type FipsValidationEntry,
+} from '../data/hsmConstants'
 import { Button } from '@/components/ui/button'
 
 type CertTypeFilter = 'all' | FipsValidationEntry['certType']
@@ -20,6 +24,7 @@ const STATUS_COLORS: Record<FipsValidationEntry['status'], string> = {
   Active: 'bg-success/10 text-success border-success/20',
   Pending: 'bg-warning/10 text-warning border-warning/20',
   Planned: 'bg-muted/50 text-muted-foreground border-border',
+  Historical: 'bg-muted/40 text-muted-foreground border-border',
 }
 
 export const FipsValidationTracker: React.FC = () => {
@@ -116,18 +121,19 @@ export const FipsValidationTracker: React.FC = () => {
           <Info size={14} className="text-primary shrink-0 mt-0.5" />
           <div className="space-y-1 text-xs text-foreground/80">
             <p>
-              <strong className="text-foreground">FIPS 140-3 (CMVP)</strong> certifies the
-              cryptographic hardware module — its physical security boundary and classical algorithm
-              implementations (AES, SHA, RSA, ECDH). As of early 2026,{' '}
-              <strong>
-                no HSM has a FIPS 140-3 module certificate that includes PQC algorithms
-              </strong>
-              .
+              <strong className="text-foreground">FIPS 140-3 (CMVP)</strong> validates a defined
+              cryptographic module against FIPS 140-3. Its certificate lists the approved algorithms
+              the module uses, normally each backed by an algorithm certificate. As of{' '}
+              {FIPS_VALIDATIONS_AS_OF},{' '}
+              <strong>several Level 3 HSM certificates list ML-KEM and ML-DSA as approved</strong>{' '}
+              (for example #5282, #5450, #5497, #5503). Many others list no PQC algorithm, so read
+              the approved-algorithm list of the exact certificate.
             </p>
             <p>
-              <strong className="text-foreground">ACVP</strong> validates individual algorithm
-              implementations against NIST test vectors. This is where PQC algorithm support is
-              formally validated — separate from module certification.
+              <strong className="text-foreground">CAVP, tested through ACVP</strong>, validates
+              individual algorithm implementations against NIST test vectors. An algorithm
+              certificate is not a module certificate: passing ACVP does not make a product FIPS
+              140-3 validated.
             </p>
           </div>
         </div>
@@ -199,20 +205,22 @@ export const FipsValidationTracker: React.FC = () => {
           {/* Status Filter */}
           <div className="flex items-center gap-1">
             <span className="text-xs text-muted-foreground">Status:</span>
-            {(['all', 'Active', 'Pending', 'Planned'] as StatusFilter[]).map((status) => (
-              <Button
-                variant="ghost"
-                key={status}
-                onClick={() => setStatusFilter(status)}
-                className={`text-xs px-2 py-1 rounded transition-colors ${
-                  statusFilter === status
-                    ? 'bg-primary/20 text-primary border border-primary/50'
-                    : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
-                }`}
-              >
-                {status}
-              </Button>
-            ))}
+            {(['all', 'Active', 'Pending', 'Planned', 'Historical'] as StatusFilter[]).map(
+              (status) => (
+                <Button
+                  variant="ghost"
+                  key={status}
+                  onClick={() => setStatusFilter(status)}
+                  className={`text-xs px-2 py-1 rounded transition-colors ${
+                    statusFilter === status
+                      ? 'bg-primary/20 text-primary border border-primary/50'
+                      : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
+                  }`}
+                >
+                  {status}
+                </Button>
+              )
+            )}
           </div>
 
           {/* Algorithm Filter */}
@@ -344,7 +352,9 @@ export const FipsValidationTracker: React.FC = () => {
 
                       <div className="mb-2">
                         <span className="text-xs text-muted-foreground">
-                          {v.certType === 'FIPS 140-3' ? 'PQC Coverage:' : 'Algorithms:'}
+                          {v.certType === 'FIPS 140-3' || v.certType === 'FIPS 140-2'
+                            ? 'PQC in approved-algorithm list:'
+                            : 'Algorithms:'}
                         </span>
                         {v.algorithms.length > 0 ? (
                           <div className="flex flex-wrap gap-1 mt-1">
@@ -359,7 +369,7 @@ export const FipsValidationTracker: React.FC = () => {
                           </div>
                         ) : (
                           <p className="text-[10px] text-muted-foreground mt-1 italic">
-                            None — module certs do not include PQC algorithm certification
+                            None listed as approved on this certificate
                           </p>
                         )}
                       </div>
@@ -463,10 +473,10 @@ export const FipsValidationTracker: React.FC = () => {
             </a>
           </p>
           <p>
-            <strong>Note:</strong> Validation data is based on publicly available NIST records and
-            vendor announcements as of early 2026. Check the official databases for the most current
-            status. FIPS 140-3 module certs currently show &ldquo;No PQC Mechanisms Detected&rdquo;
-            — only ACVP provides PQC algorithm validation.
+            <strong>Note:</strong> Entries were checked against the NIST CMVP and CAVP certificate
+            pages on {FIPS_VALIDATIONS_AS_OF}. Certificates change status (Active, Historical) and
+            new ones are issued, so check the official databases before relying on an entry. A
+            Modules in Process entry is a queue position, not evidence of the outcome.
           </p>
         </div>
       </div>
