@@ -380,6 +380,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'International:IETF — draft-ietf-lamps-kyber-certificates',
   ],
   'international-ietf-draft-ietf-tls-ecdhe-mlkem-hybrid-kex': [
+    'International:IETF — RFC 10024 — PQ/T Hybrid Key Agreement for TLS 1.3',
     'International:IETF — draft-ietf-tls-ecdhe-mlkem Hybrid KEX',
   ],
   'international-ietf-rfc-9370-multiple-key-exchanges-in-ikev2': [
@@ -433,6 +434,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'japan-nisc-critical-systems-migration': ['Japan:NISC — Critical Systems Migration'],
   'japan-nisc-pqc-migration-planning': [
     'Japan:CRYPTREC — PQC Migration Planning',
+    'Japan:NCO — PQC Migration Target Set for 2035',
     'Japan:NISC — PQC Migration Planning',
   ],
   'jordan-cbj-jordan-financial-sector-pqc-roadmap': [
@@ -559,8 +561,15 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Switzerland:NCSC Switzerland — Quantum Computers and Post-Quantum Cryptography — Technology Brief',
   ],
   'taiwan-moda-five-year-pqc-plan': ['Taiwan:MODA — Five-Year PQC Plan'],
-  'taiwan-moda-interim-quantum-safe-milestone': ['Taiwan:MODA — Interim Quantum-Safe Milestone'],
-  'thailand-ncsa-quantum-ready-2030-roadmap': ['Thailand:NCSA — Quantum-Ready 2030 Roadmap'],
+  'taiwan-moda-interim-quantum-safe-milestone': [
+    'Taiwan:MODA — Interim Quantum-Safe Milestone',
+    'Taiwan:MODA — PQC Migration Guide Published',
+  ],
+  'thailand-ncsa-quantum-ready-2030-roadmap': [
+    'Thailand:NCSA — Migration Strategy',
+    'Thailand:NCSA — NCSA PQC Migration Strategy (2024-2035)',
+    'Thailand:NCSA — Quantum-Ready 2030 Roadmap',
+  ],
   'uk-ico-quantum-computing-tech-horizons-report': [
     'United Kingdom:ICO — Quantum Computing (Tech Horizons Report)',
   ],
@@ -646,6 +655,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'united-states-dod-dod-pqc-migration-memorandum-2': [
     'United States:DoD — DoD PQC Migration Memorandum',
+    'United States:DoD — Preparing for Migration to Post-Quantum Cryptography (DoD CIO Memorandum)',
   ],
   'united-states-ethereum-foundation-strawmap-pqc-roadmap-published': [
     'United States:Ethereum Foundation — Strawmap PQC Roadmap Published',
@@ -727,6 +737,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'united-states-nist-nsa-cryptographic-inventory': [
     'United States:NIST/NSA — Cryptographic Inventory',
+    'United States:NIST/NSA — National Security Memorandum on Quantum Computing Risk (NSM-10)',
   ],
   'united-states-nist-sixth-pqc-standardization-conference': [
     'United States:NIST — Sixth PQC Standardization Conference',
