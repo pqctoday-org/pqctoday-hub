@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:206f638f-f3c4-4f79-8377-8d15b9128a2b",
+  "serialNumber": "urn:uuid:0141a02f-6b4d-41c1-88c7-7fe6a3fd5fcb",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-25T00:00:00.000Z",
+    "timestamp": "2026-09-26T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -20,9 +20,9 @@
   "components": [
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f83624211198281d",
+      "bom-ref": "e381a52f56bde669",
       "name": "BTQ Bitcoin Quantum",
-      "version": "Testnet v0.3.0",
+      "version": "v0.4.2-testnet",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -118,9 +118,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "87fd779d871353a9",
+      "bom-ref": "031cdc85c6a8ed29",
       "name": "Project Eleven Solana PQC",
-      "version": "Testnet",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -4399,8 +4398,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "6005d75b862f86c5",
+      "bom-ref": "a56de5d8c51fdff0",
       "name": "Proton Mail",
+      "version": "Mail app v7.0.0 (Android/iOS) — minimum version documented by Proton as required to access post-quantum protection; no distinct web/desktop version number published",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -6770,9 +6770,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "9237e66380b3161a",
+      "bom-ref": "4962af2c5d6f8571",
       "name": "Thales MISTRAL Encryptor",
-      "version": "Pre-release",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -7193,9 +7192,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "814b11940d7c69e8",
+      "bom-ref": "009006e4fb47b275",
       "name": "Thales 5G Quantum-Safe SIM",
-      "version": "Pilot",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -7804,9 +7802,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1a1ac09aa58ba81a",
+      "bom-ref": "9367108c5ea0b5d9",
       "name": "xmss-reference",
-      "version": "No tagged releases; last commit 171ccbd (2021-03-16)",
       "purl": "pkg:github/XMSS/xmss-reference",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -11666,9 +11663,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a618e0f07a16b438",
+      "bom-ref": "166d736ac27574db",
       "name": "pqc-flow",
-      "version": "No tagged release — unversioned (pre-1.0, main branch only)",
       "purl": "pkg:github/CipherIQ/pqc-flow",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -11900,9 +11896,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "bd757c38792a96e0",
+      "bom-ref": "361b21c4bfe65d2d",
       "name": "Crucible",
-      "version": "Unversioned (no GitHub releases or tags exist; project tracks the main branch)",
       "purl": "pkg:github/symbolicsoft/crucible",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -16797,9 +16792,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a9de31b1f239a2e8",
+      "bom-ref": "19077a14d5bd0e2f",
       "name": "Alibaba Cloud GVSM",
-      "version": "Beta",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -17457,9 +17451,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "5faf3470cdc040f4",
+      "bom-ref": "7b142af7edabe94f",
       "name": "Crypto4A QxVault",
-      "version": "Not publicly disclosed by vendor (no version number found on the QxVault product page or GA press release as of Aug 2026)",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -17714,9 +17707,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "93dca4ddcc9cadce",
+      "bom-ref": "0d92580344bd96b7",
       "name": "Fortanix PQC Central",
-      "version": "Not versioned — PQC Central is a continuously-updated feature within Fortanix Key Insight; no discrete version number is published anywhere on fortanix.com or support.fortanix.com",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -18102,9 +18094,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "211f2e82917ba054",
+      "bom-ref": "33e0d5302bae963d",
       "name": "PacketLight PQC Optical Encryption",
-      "version": "N/A — capability spans a product family, not one SKU: PL-4000T, PL-4000M, PL-2000T, PL-2000M, PL-2000ADS (per PacketLight's Quantum-Safe Optical Transport page) plus PL-1000TE Crypto (per Encryption Brochure); no single version number exists",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -18890,9 +18881,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "facc2812cbddd25b",
+      "bom-ref": "bf9d452bc0aa5e0d",
       "name": "Applivery UEM PQC",
-      "version": "Not applicable — continuously deployed SaaS; no discrete version number publicly stated",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -19639,9 +19629,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c8e08a2ff518f258",
+      "bom-ref": "52031a597bfb2023",
       "name": "Arqit 6WIND Telco PQC",
-      "version": "Not applicable – no distinct product version number is published for this integration (partnership/technology integration announced 2026-02-19; NetworkSecure and 6WIND VSR are each versioned separately by their vendors, but no combined version identifier exists)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -19685,9 +19674,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c40f9d2b2efeacde",
+      "bom-ref": "da61e82090ea1d2b",
       "name": "Qrypt VPN for NVIDIA Jetson",
-      "version": "No single published product version; deployment stack per vendor docs: strongSwan 6.0.0beta4 + liboqs 0.11.0 + custom Qrypt Yocto BSP (Scarthgap 5.0) on Linux kernel 6.6 LTS",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -19998,9 +19986,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "e1d635c0f1a76331",
+      "bom-ref": "7a95c95ec6822c72",
       "name": "TOPPAN SecureBridge HPKI PQC",
-      "version": "N/A - pilot/PoC stage, no commercial version number (targeting full-scale deployment 2030; most recent public milestone: April 2026 certificate-authority migration proof-of-concept)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -20564,9 +20551,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1d3b693551fd8812",
+      "bom-ref": "9af3a91fcef91037",
       "name": "SignQuantum PQC E-Signature",
-      "version": "Not specified by vendor",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -20611,9 +20597,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c8b6d4c7c12b968e",
+      "bom-ref": "b00ca0d4f06e1cc0",
       "name": "TikTok PQC Data Protection",
-      "version": "Not applicable / not stated — the source is an engineering blog post with no version number or publication date shown",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -21147,9 +21132,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b7d6cae5ebeac41f",
+      "bom-ref": "01059c864c414351",
       "name": "Confluent Cloud Kafka PQC",
-      "version": "N/A — Confluent Cloud is continuously deployed SaaS with no version numbers; dated release notes only (most recent entry seen 2026-08-12)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -21323,9 +21307,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d5c68fe81a8443b4",
+      "bom-ref": "d63e3d22161f542a",
       "name": "NTT PQC Secure Transport",
-      "version": "N/A (unversioned research prototype/demonstration, not a commercial release)",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -22118,9 +22101,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a056f874ed707338",
+      "bom-ref": "69e3d05782cd5b65",
       "name": "pQCee CNG Provider",
-      "version": "Not stated (launched 2026-03-23)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -28817,9 +28799,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7f82c9eeb0fda38d",
+      "bom-ref": "97ce92e4b08a2734",
       "name": "Red Hat Trusted Artifact Signer",
-      "version": "Preview",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -31858,9 +31839,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "8e5ef6f89cf6728b",
+      "bom-ref": "f39d957cd6e6a9ec",
       "name": "age-plugin-pqkem",
-      "version": "unavailable (repository missing)",
       "manufacturer": {
         "name": "str4d (Jack Grigg)"
       },
@@ -32100,12 +32080,7 @@
         }
       },
       "description": "OEM KMIP (1.0-3.0) and PKCS#11 (v3.2) client/server SDK toolkits (C/C++/C#/Java/Python). First PQC-ready KMIP 3.0 + PKCS#11 v3.2 SDKs (Mar 2025); supports ML-KEM (FIPS 203), ML-DSA (FIPS 204) and SLH-DSA (FIPS 205); completed multi-vendor KMIP PQC interoperability testing. Embedded inside many commercial KMS/HSM products.",
-      "externalReferences": [
-        {
-          "type": "website",
-          "url": "Cryptsoft"
-        }
-      ],
+      "externalReferences": [],
       "properties": [
         {
           "name": "pqctoday:product_id",
@@ -32188,9 +32163,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "343409c3488b4dd8",
+      "bom-ref": "536e5b354c716c26",
       "name": "Microsoft 365",
-      "version": "Current (SaaS)",
       "cpe": "cpe:2.3:a:microsoft:dynamics_365:8.0:*:*:*:*:*:*:*",
       "manufacturer": {
         "name": "Microsoft"

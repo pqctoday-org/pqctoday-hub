@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.123.2] - 2026-09-26
+
+### Fixed
+
+- **13 products were listed twice under different names, and the duplicates are now retired.** [view:/migrate] [persona:ops] [persona:grc] Each pair cited the identical vendor document: an acronym beside its full name (Zscaler ZTE and Zscaler Zero Trust Exchange, Microsoft RDS and Remote Desktop Services, CIRCL and Cloudflare CIRCL), or a general product row beside a second row for that same product's post-quantum support (Akamai Edge, Fastly Edge Cloud, F5 BIG-IP, Proton Mail, .NET, NVIDIA cuPQC, SAP Cryptographic Library, Sectigo Certificate Manager). Searching the retired name still finds the surviving product, and where the retired row held a version or date the surviving one lacked, that value was carried across rather than lost. BTQ Bitcoin Quantum was two rows for one testnet at different versions; it is now one row at v0.4.2, and where the two rows read the same document differently the more cautious reading was kept. The catalogue now lists 894 active products.
+- **Two products that look like duplicates are deliberately kept as separate rows.** [view:/migrate] [persona:ops] Red Hat Enterprise Linux 9.8 and 10.2 are listed separately because their post-quantum support genuinely differs — 10.2 adds SLH-DSA and the ML-DSA PKI, while 9.8 carries a narrower backport — and Android 16 is listed separately from Android 17 because the catalogue records that Android 16 has no documented post-quantum support. Collapsing either pair would have removed something true.
+- **A sweep of every catalogue column fixed 245 malformed values.** [view:/migrate] [persona:ops] [persona:grc] A "work in progress" flag written as `false` on 53 rows where every other row uses `False`; one product's technology tag capitalised inconsistently; one row listing a company name where a source link belongs; and 190 original-release-date values recorded as a year and month, now stored as the year alone to match how every other date in the catalogue is held. Each previous value is kept verbatim in the row's data-quality notes.
+- **23 products showed a placeholder where a version number should be, and now show nothing.** [view:/migrate] [persona:ops] [persona:developer] Values like "Current (SaaS)", "N/A — continuously deployed SaaS", "Not specified by vendor", "Pre-release", "Beta" and "unavailable (repository missing)" read on the page as if they were release versions. Release 4.123.0 cleared 218 of these but missed any that had an explanation attached to them. Each blanked value is kept verbatim in the row's data-quality notes, so nothing is lost. `btq-bitcoin-quantum` keeps "Testnet v0.3.0", which does state a version.
+
 ## [4.123.1] - 2026-09-26
 
 ### Fixed
