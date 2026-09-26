@@ -202,4 +202,47 @@ describe('ProductDetail', () => {
       expect(screen.queryByText('Identifiers')).not.toBeInTheDocument()
     })
   })
+
+  /**
+   * "Holds a certificate" and "the certificate covers PQC" are different facts,
+   * and 11 active catalogue products are validated for classical algorithms
+   * only. A certificate badge on its own cannot express that, so a reader had
+   * no way to tell a FIPS 140-3 badge covering ML-KEM from one covering none.
+   */
+  describe('classical-only certification note', () => {
+    const NOTE = /Validated for classical algorithms only/
+
+    it('shows the note when the product is certified but not for PQC', () => {
+      render(
+        <MemoryRouter>
+          <ProductDetail product={makeItem({ hasCertification: 'yes', pqcCertified: 'no' })} />
+        </MemoryRouter>
+      )
+      expect(screen.getByTestId('classical-only-note')).toHaveTextContent(NOTE)
+    })
+
+    it('stays hidden when the certification does cover PQC', () => {
+      render(
+        <MemoryRouter>
+          <ProductDetail product={makeItem({ hasCertification: 'yes', pqcCertified: 'yes' })} />
+        </MemoryRouter>
+      )
+      expect(screen.queryByTestId('classical-only-note')).not.toBeInTheDocument()
+    })
+
+    it('stays hidden when no certificate is known, even if PQC is uncertified', () => {
+      // pqcCertified 'none' means the row says nothing about certification —
+      // very different from asserting the certificate excludes PQC. Without
+      // this case a filter keyed on pqcCertified alone would paint the note
+      // across the 802 rows that simply never mention a certification.
+      render(
+        <MemoryRouter>
+          <ProductDetail
+            product={makeItem({ hasCertification: 'unknown', pqcCertified: 'none' })}
+          />
+        </MemoryRouter>
+      )
+      expect(screen.queryByTestId('classical-only-note')).not.toBeInTheDocument()
+    })
+  })
 })
