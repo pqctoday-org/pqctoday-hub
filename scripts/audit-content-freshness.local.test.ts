@@ -23,6 +23,21 @@ import {
 const NOW = new Date('2026-08-21T12:00:00Z')
 
 let fixture: string
+/** Byte-for-byte snapshot of a real src/ module, taken BEFORE any fixture is
+ *  written, so the no-write-path check compares against reality rather than a
+ *  hard-coded literal. See the note on that test. */
+let realModuleSnapshot: string
+
+const REAL_MODULE = join(
+  __dirname,
+  '..',
+  'src',
+  'components',
+  'PKILearning',
+  'modules',
+  'ConfidentialComputing',
+  'content.ts'
+)
 
 function writeModule(dir: string, moduleId: string, lastReviewedLiteral: string | null): void {
   const d = join(fixture, dir)
@@ -36,6 +51,7 @@ function writeModule(dir: string, moduleId: string, lastReviewedLiteral: string 
 }
 
 beforeAll(() => {
+  realModuleSnapshot = readFileSync(REAL_MODULE, 'utf8')
   fixture = mkdtempSync(join(tmpdir(), 'module-review-guard-'))
   writeModule('FreshOne', 'fresh-one', "'2026-08-10'") // 11d
   writeModule('EdgeInside', 'edge-inside', "'2026-04-23'") // 120d exactly — inside
@@ -107,16 +123,23 @@ describe('module lastReviewed — absolute-age guard', () => {
   })
 
   it('leaves the real module tree untouched (no write path into src/)', () => {
-    const real = join(
-      __dirname,
-      '..',
-      'src',
-      'components',
-      'PKILearning',
-      'modules',
-      'ConfidentialComputing',
-      'content.ts'
-    )
-    expect(readFileSync(real, 'utf8')).toContain("lastReviewed: '2026-04-12'")
+    // FIXED 2026-09-25. This used to assert the literal `lastReviewed:
+    // '2026-04-12'` in ConfidentialComputing/content.ts. That is not the
+    // invariant — it is a snapshot of one mutable field, and it went red the
+    // moment the module was legitimately re-reviewed (it now reads
+    // '2026-08-29', a real human edit). Pinning live content to pass a
+    // "we didn't write to src/" check makes every genuine review a test
+    // failure, which teaches everyone to edit the expectation rather than read
+    // it.
+    //
+    // What the suite actually promises is that nothing it does writes into
+    // src/. Comparing the whole file against a snapshot taken in beforeAll —
+    // i.e. before any fixture is written — checks exactly that, and checks it
+    // for the ENTIRE file rather than one line. It is strictly stronger and it
+    // cannot rot.
+    expect(readFileSync(REAL_MODULE, 'utf8')).toBe(realModuleSnapshot)
+    // And the fixture the suite does write to is nowhere near src/.
+    expect(fixture.startsWith(tmpdir())).toBe(true)
+    expect(REAL_MODULE.startsWith(fixture)).toBe(false)
   })
 })

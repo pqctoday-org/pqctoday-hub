@@ -79,7 +79,10 @@ function isActive(row: Record<string, string>): boolean {
   return (row.status ?? 'active').trim().toLowerCase() !== 'deprecated'
 }
 
-function findLatestCatalogCsv(dataDir: string): string {
+/** Exported for the local gate, which must resolve the SAME file this script
+ *  audits. A plain lexical `.sort()` over these names is wrong: the stamp is
+ *  MMDDYYYY, so `12312025` sorts after `09242026`. */
+export function findLatestCatalogCsv(dataDir: string): string {
   const re = /^pqc_product_catalog_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
   const matches = readdirSync(dataDir)
     .map((name) => {
