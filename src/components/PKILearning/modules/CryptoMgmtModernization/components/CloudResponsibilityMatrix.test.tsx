@@ -149,7 +149,11 @@ describe('buildCloudResponsibilityMatrix - cell content assertions', () => {
 describe('buildCloudResponsibilityMatrix - PQC availability lookup', () => {
   // Availability is now DERIVED from the product catalog (single source of
   // truth), so these expectations track the catalog: AWS KMS/CloudHSM + gateway
-  // products are 'available'; Oracle Key Vault is 'roadmap'.
+  // products are 'available'. Oracle Key Vault was 'roadmap' on an earlier
+  // catalog generation whose evidence was actually the Oracle Database crypto
+  // roadmap (a different product); re-sourced to Oracle's own Key Vault page
+  // (migrate remediation r2, 2026-09-25), which states no Key Vault PQC plan,
+  // so its canonical status is now 'unknown' → 'unverified' on this scale.
   it('AWS for TLS asset class returns "available" (catalog: AWS gateway/ALB available)', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
@@ -170,14 +174,14 @@ describe('buildCloudResponsibilityMatrix - PQC availability lookup', () => {
     expect(rec.matrix[0].pqcAvailability).toBe('available')
   })
 
-  it('Multi-provider takes the worst-case availability (AWS available + Oracle roadmap => roadmap)', () => {
+  it('Multi-provider takes the worst-case availability (AWS available + Oracle unverified => unverified)', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       cloudProviders: ['AWS', 'Oracle'],
       assetClasses: ['KMS-backed keys'],
       serviceModelMix: ['IaaS'],
     })
-    expect(rec.matrix[0].pqcAvailability).toBe('roadmap')
+    expect(rec.matrix[0].pqcAvailability).toBe('unverified')
   })
 })
 

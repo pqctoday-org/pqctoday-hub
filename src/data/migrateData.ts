@@ -14,6 +14,16 @@ const modules = import.meta.glob('./pqc_product_catalog_*.csv', {
 interface RawSoftwareItem {
   product_id?: string
   software_name: string
+  /** Earlier display names of this product (semicolon list), kept when a name is corrected. */
+  former_names?: string
+  /** What the product is (library, hsm, cloud_service, …) — drives its freshness class. */
+  product_kind?: string
+  /** pqc_relevant | migration_baseline (owner decision, migrate remediation r2 R3). */
+  catalogue_population?: string
+  /** Why a no-PQC product belongs in the catalogue ("<segment>: <why>"). */
+  baseline_rationale?: string
+  /** Product line this row is a release/edition/configuration of; blank for a singleton. */
+  family_id?: string
   category_id: string
   category_name: string
   infrastructure_layer: string
@@ -91,7 +101,12 @@ function deriveCisaCategory(categoryName: string, layer: string): string {
  * - Verified: proof_url present + validation confirms PQC (VALIDATED, FIPS_VERIFIED, CORRECTED)
  * - Partially Verified: proof_url present but validation incomplete or evidence indirect
  * - Pending Verification: no proof_url or validation negative
- * - Preserves manually set "Verified" if proof_url exists (manual override)
+ * - Needs Review: the maintenance flow withheld the row (csv
+ *   "Unverified — needs review") because a claim was contradicted — wins over
+ *   every other rule, VALIDATED_NO_PQC included
+ * - A csv "Verified" alone never produces Verified: the validation result must
+ *   confirm it (the old manual override let 15 rows with FIPS_ISSUE,
+ *   NEEDS_REVIEW, PENDING or blank results render as Verified)
  *
  * Exported for tests.
  */
@@ -107,16 +122,15 @@ export function deriveVerificationStatus(
   const ef = (evidenceFlags || '').toLowerCase()
   const hasProofContent = !!(proofRelevantInfo || '').trim()
 
-  // A proof that validated the ABSENCE of PQC must take precedence over the
-  // manual 'Verified' override below — otherwise rows whose evidence disproves
-  // the PQC claim display the same badge as rows whose evidence confirms it
-  // (160 active VALIDATED_NO_PQC rows leaked through as plain 'Verified').
+  // A withheld row stays withheld until a reviewed decision restores it.
+  if (csvStatus.trim().toLowerCase().startsWith('unverified')) return 'Needs Review'
+
+  // A proof that validated the ABSENCE of PQC is its own state — rows whose
+  // evidence disproves the PQC claim must not share a badge with rows whose
+  // evidence confirms it.
   if (vr === 'VALIDATED_NO_PQC') {
     return hasProofUrl ? 'Verified (No PQC)' : 'Pending Verification'
   }
-
-  // If CSV already says Verified and proof_url exists, trust it
-  if (csvStatus === 'Verified' && hasProofUrl) return 'Verified'
 
   // Derive from evidence
   if (hasProofUrl) {
@@ -128,6 +142,7 @@ export function deriveVerificationStatus(
 
   // No proof_url
   if (ef.includes('doc-extraction') || ef.includes('iec')) return 'Pending Verification'
+  if (csvStatus === 'Verified' || csvStatus === 'Partially Verified') return 'Pending Verification'
   if (csvStatus && csvStatus !== 'Needs Verification') return csvStatus
   return 'Needs Verification'
 }
@@ -136,6 +151,13 @@ export function deriveVerificationStatus(
 // at parse time, not authored) — surfaced to the UI so the proof-gate discipline is
 // visible rather than silently dropping rows from the catalog.
 let deprecatedRowCount = 0
+
+// A row deprecated as a duplicate ("duplicate of <id>" / "re-issued as <id>")
+// names the same product as the row it was merged into, so its display name is
+// a former name of that row: saved selections, share links and search chunks
+// that carry the old name resolve to the kept product (migrate remediation r2).
+const duplicateSuccessors: Array<[string, string]> = []
+const DUPLICATE_OF = /^(?:duplicate of|re-issued as) ([A-Za-z0-9._-]+)/
 
 const {
   data: currentItems,
@@ -147,11 +169,23 @@ const {
   (row) => {
     if (row.status && row.status !== 'active') {
       deprecatedRowCount += 1
+      const successor = DUPLICATE_OF.exec((row.deprecated_reason || '').trim())?.[1]
+      if (successor && row.software_name) {
+        duplicateSuccessors.push([row.software_name, successor.replace(/[:.,]+$/, '')])
+      }
       return null
     }
     return {
       productId: row.product_id || '',
       softwareName: row.software_name,
+      productKind: row.product_kind || '',
+      cataloguePopulation: row.catalogue_population || '',
+      baselineRationale: row.baseline_rationale || '',
+      familyId: row.family_id || '',
+      formerNames: (row.former_names || '')
+        .split(';')
+        .map((n) => n.trim())
+        .filter(Boolean),
       categoryId: row.category_id,
       categoryName: row.category_name,
       infrastructureLayer: row.infrastructure_layer,
@@ -218,9 +252,11 @@ const {
   true // withPrevious for status badges
 )
 
-// Compute status map if previous data exists
+// Compute status map if previous data exists. Keyed by product_id — the row's
+// immutable identity — so a display-name correction reads as "Updated", not as
+// one product vanishing and a "New" one appearing.
 const statusMap = previousItems
-  ? compareDatasets(currentItems, previousItems, 'softwareName')
+  ? compareDatasets(currentItems, previousItems, 'productId')
   : new Map<string, ItemStatus>()
 
 export const softwareMetadata = metadata
@@ -230,8 +266,15 @@ export const deprecatedProductCount = deprecatedRowCount
 
 export const softwareData: SoftwareItem[] = currentItems.map((item) => ({
   ...item,
-  status: statusMap.get(item.softwareName),
+  status: statusMap.get(item.productId),
 }))
+
+for (const [name, successorId] of duplicateSuccessors) {
+  const kept = softwareData.find((p) => p.productId === successorId)
+  if (kept && kept.softwareName !== name && !(kept.formerNames ?? []).includes(name)) {
+    kept.formerNames = [...(kept.formerNames ?? []), name]
+  }
+}
 
 // Compute productCount for each vendor
 softwareData.forEach((item) => {

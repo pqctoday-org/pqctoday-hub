@@ -17,7 +17,15 @@ import { Input } from '../../ui/input'
 import { AssetList } from './AssetList'
 import { ProductRow } from './ProductRow'
 import { Pill, DECISION_ICON } from './workbenchUi'
-import { productsForDomain, filterProducts } from './workbenchCatalog'
+import {
+  productsForDomain,
+  filterProducts,
+  applyProductFacets,
+  NO_FACETS,
+  type ProductFacets,
+} from './workbenchCatalog'
+import { getCertsForProduct } from '@/data/certificationXrefData'
+import { FilterDropdown } from '../../common/FilterDropdown'
 import { MobileFilterDrawer } from '../MobileFilterDrawer'
 
 const ASSET_BY_ID = new Map<string, ReplaceAsset>(REPLACE_ASSETS.map((a) => [a.id, a]))
@@ -56,6 +64,7 @@ export function ReplaceTab({
   const [selectedDomain, setSelectedDomain] = useState<DomainId | null>(initialDomain ?? 'tls')
   const [filter, setFilter] = useState(initialFilter ?? '')
   const [productIdFilter, setProductIdFilter] = useState<string[] | undefined>(initialProductIds)
+  const [facets, setFacets] = useState<ProductFacets>(NO_FACETS)
 
   // FIXED 2026-07-16 (Phase 5, U8 — caught by a failing regression test):
   // ReplaceTab is already mounted (tab defaults to 'replace') by the time
@@ -92,8 +101,13 @@ export function ReplaceTab({
     [selectedDomain]
   )
   const filtered = useMemo(
-    () => filterProducts(products, filter, productIdFilter),
-    [products, filter, productIdFilter]
+    () =>
+      applyProductFacets(
+        filterProducts(products, filter, productIdFilter),
+        facets,
+        (p) => getCertsForProduct(p.productId, p.softwareName).length > 0
+      ),
+    [products, filter, productIdFilter, facets]
   )
 
   const viewingLabel = asset?.label ?? (selectedDomain ? DOMAINS[selectedDomain].label : '')
@@ -103,7 +117,8 @@ export function ReplaceTab({
   // things `onClearAll` resets.
   const activeFilterCount =
     (selectedDomain !== 'tls' ? 1 : 0) +
-    (filter.trim() || (productIdFilter && productIdFilter.length > 0) ? 1 : 0)
+    (filter.trim() || (productIdFilter && productIdFilter.length > 0) ? 1 : 0) +
+    Object.values(facets).filter((v) => v !== 'all').length
 
   return (
     <div className="flex flex-col items-start gap-4 lg:flex-row">
@@ -184,6 +199,64 @@ export function ReplaceTab({
                   className="pl-8"
                 />
               </div>
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <FilterDropdown
+                size="sm"
+                ariaLabel="Filter by catalogue population"
+                defaultLabel="All products"
+                items={[
+                  { id: 'pqc_relevant', label: 'PQC capability or plan' },
+                  { id: 'migration_baseline', label: 'Migration baseline (no confirmed PQC)' },
+                ]}
+                selectedId={facets.population === 'all' ? 'All' : facets.population}
+                onSelect={(id) =>
+                  setFacets((f) => ({
+                    ...f,
+                    population: (id === 'All' || !id ? 'all' : id) as ProductFacets['population'],
+                  }))
+                }
+              />
+              <FilterDropdown
+                size="sm"
+                ariaLabel="Filter by PQC status"
+                defaultLabel="Any PQC status"
+                items={[
+                  { id: 'available', label: 'Available' },
+                  { id: 'partial', label: 'Partial' },
+                  { id: 'planned', label: 'Planned / roadmap' },
+                  { id: 'none', label: 'None' },
+                  { id: 'unknown', label: 'Not yet determined' },
+                ]}
+                selectedId={facets.pqc === 'all' ? 'All' : facets.pqc}
+                onSelect={(id) =>
+                  setFacets((f) => ({
+                    ...f,
+                    pqc: (id === 'All' || !id ? 'all' : id) as ProductFacets['pqc'],
+                  }))
+                }
+              />
+              <FilterDropdown
+                size="sm"
+                ariaLabel="Filter by certification link"
+                defaultLabel="Any certification"
+                items={[
+                  { id: 'linked', label: 'Has a certification link' },
+                  { id: 'none', label: 'No certification link' },
+                ]}
+                selectedId={facets.certified === 'all' ? 'All' : facets.certified}
+                onSelect={(id) =>
+                  setFacets((f) => ({
+                    ...f,
+                    certified: (id === 'All' || !id ? 'all' : id) as ProductFacets['certified'],
+                  }))
+                }
+              />
+              {filtered.length !== products.length && (
+                <span className="text-[11px] text-muted-foreground">
+                  Showing {filtered.length} of {products.length}
+                </span>
+              )}
             </div>
             {deprecatedProductCount > 0 && (
               <p className="mt-1 text-[11px] text-muted-foreground">

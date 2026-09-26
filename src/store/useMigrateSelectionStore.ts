@@ -98,8 +98,13 @@ interface MigrateSelectionState {
 
 /** softwareName → productId, for resolving workbench `choice` (which stores
  *  product names) back to the productId slugs the rest of the app keys on. */
+// Includes former names, so a selection saved under a since-corrected name
+// still resolves (former_names column, migrate remediation r2 W-B1).
 const PRODUCT_ID_BY_NAME = new Map<string, string>(
-  softwareData.map((s) => [s.softwareName, s.productId])
+  softwareData.flatMap((s) => [
+    [s.softwareName, s.productId] as [string, string],
+    ...(s.formerNames ?? []).map((n) => [n, s.productId] as [string, string]),
+  ])
 )
 
 /** Effective selected productIds = legacy `myProducts` (productId slugs) ∪ the
