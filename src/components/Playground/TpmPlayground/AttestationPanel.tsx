@@ -32,6 +32,7 @@ import {
   toHex,
 } from './v2p7-reference'
 import { derSeq, derOid, derBitString } from '../derCodec'
+import { EDUCATION_NOTICE } from '@/data/educationNotice'
 
 interface Props {
   isWasmReady: boolean
@@ -381,6 +382,14 @@ export function AttestationPanel({ isWasmReady }: Props) {
   const downloadBundle = () => {
     if (!result) return
     const bundle = {
+      // The notice leads the bundle. Without it this JSON — a signature, an
+      // attestation blob and two `fips_*_expected` assertions — reads exactly
+      // like a genuine attestation quote to anyone who did not see the panel
+      // that made it, and the panel's own notice does not travel with the file
+      // (education-notice remediation 2026-09-26).
+      notice: EDUCATION_NOTICE,
+      notice_detail:
+        'Simulated TPM attestation produced by an in-browser WASM TPM. The AK was locally provisioned, the EK certificate issuer is not a real CA, and the fips_*_expected fields are size expectations from FIPS 204 — not a FIPS validation, a certification, or a verdict of any kind. This bundle is not evidence about any real platform.',
       operation: result.operation,
       algorithm: result.ak.label,
       handle: `0x${result.ak.persistentHandle.toString(16)}`,

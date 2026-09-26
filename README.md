@@ -1,5 +1,7 @@
 # PQC Today Hub
 
+> **Status: PQC Today is an educational and demonstration platform, not a production system. Nothing it produces — keys, certificates, configurations, reports, or test results — is fit to protect real data, and none of it may be deployed or relied upon in production.** This applies to the engines it ships as well as to the UI, wherever they run — see [SECURITY.md](SECURITY.md#cryptographic-disclaimer).
+
 Test your PQC readiness with this interactive web application visualizing the global transition to Post-Quantum Cryptography.
 
 ## Features

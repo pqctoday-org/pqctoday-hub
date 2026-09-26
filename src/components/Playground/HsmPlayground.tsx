@@ -64,6 +64,7 @@ import { InspectChip } from './learnkit/InspectChip'
 import { isRailId, type RailId } from './hsm/railIds'
 import type { Pkcs11LessonStep } from './hsm/learn/pkcs11Lessons'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { EducationNotice } from '@/components/shared/EducationNotice'
 
 /**
  * Four modes (design handoff design_handoff_kmip_pkcs11_playground,
@@ -769,6 +770,12 @@ export const HsmPlayground = () => {
 
   return (
     <Card className="p-3 md:p-6 min-h-[60vh] md:min-h-[85vh] flex flex-col">
+      {/* Unconditional, above the role-gated banner: the only sentence on this
+          surface that said what it is used to live inside ExecutiveRedirectBanner,
+          rendered for executive/grc only — so the developer persona, the persona
+          most likely to carry an artefact out of here, saw nothing
+          (education-notice remediation 2026-09-26). */}
+      <EducationNotice tone="strong" className="mb-4 shrink-0" />
       {(role === 'executive' || role === 'grc') && (
         <ExecutiveRedirectBanner
           className="mb-4 shrink-0"

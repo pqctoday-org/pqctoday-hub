@@ -1,3 +1,16 @@
+// SPDX-License-Identifier: BSD-2-Clause
+/*
+ * @pqctoday/softhsm-wasm — SoftHSMv3 compiled to WebAssembly (PKCS#11 v3.2).
+ *
+ * Notice: Educational and demonstration build — not for production use, in any
+ * environment. Not security-audited, not certified, and not intended to
+ * protect real data.
+ *
+ * This applies wherever this module runs, Node.js included — not only in a
+ * browser. Do not use this module, or anything it produces, to protect real
+ * data or real systems. See ./NOTICE.
+ */
+
 export interface EmscriptenFS {
   mkdir(path: string): void
   writeFile(path: string, data: string | Uint8Array, opts?: object): void

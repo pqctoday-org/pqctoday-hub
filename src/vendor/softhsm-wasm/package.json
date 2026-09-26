@@ -1,8 +1,10 @@
 {
   "name": "@pqctoday/softhsm-wasm",
   "version": "0.4.23",
-  "description": "SoftHSMv3 compiled to WebAssembly — PKCS#11 v3.2 token with ML-KEM, ML-DSA, SLH-DSA for browsers and Node.js",
+  "description": "Educational and demonstration build — not for production use, in any environment. SoftHSMv3 compiled to WebAssembly: a PKCS#11 v3.2 token with ML-KEM, ML-DSA and SLH-DSA, for teaching and experimentation in browsers and Node.js.",
   "keywords": [
+    "educational",
+    "not-for-production",
     "pkcs11",
     "pqc",
     "post-quantum",
@@ -23,6 +25,7 @@
     "url": "https://github.com/pqctoday-org/pqctoday-hsm/issues"
   },
   "files": [
+    "NOTICE",
     "wasm/softhsm.js",
     "wasm/softhsm.wasm",
     "index.js",

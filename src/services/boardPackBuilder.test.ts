@@ -65,10 +65,13 @@ async function extract(blob: Blob): Promise<Record<string, string>> {
 }
 
 describe('buildBoardPackBlob', () => {
-  it('emits all 7 expected files inside the board-pack/ folder', async () => {
+  it('emits all 8 expected files inside the board-pack/ folder', async () => {
     const blob = await buildBoardPackBlob({ result: baseResult, profile: baseProfile })
     const files = await extract(blob)
     expect(Object.keys(files).sort()).toEqual([
+      // NOTICE.md added 2026-09-26: a board pack is forwarded and quoted by
+      // people who never opened the app, so the status travels in the archive.
+      'board-pack/NOTICE.md',
       'board-pack/README.md',
       'board-pack/compliance-deadlines.csv',
       'board-pack/executive-summary.md',

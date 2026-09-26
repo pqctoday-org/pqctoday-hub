@@ -1,0 +1,48 @@
+@pqctoday/softhsm-wasm — STATUS NOTICE
+======================================
+
+Notice: Educational and demonstration build — not for production use, in any
+environment. Not security-audited, not certified, and not intended to protect
+real data.
+
+What this package is
+--------------------
+
+SoftHSMv3 compiled to WebAssembly, exposing a PKCS#11 v3.2 interface with
+ML-KEM, ML-DSA and SLH-DSA. It exists so that people can *learn* and
+*experiment* with a post-quantum PKCS#11 token — in a browser or under Node.js
+— without provisioning hardware.
+
+What this package is not
+------------------------
+
+It is not a hardware security module and it is not a software substitute for
+one. In particular:
+
+- It has had no independent security audit and holds no certification. It is
+  not FIPS 140-validated, not Common Criteria evaluated, and no result it
+  produces is a CAVP/CMVP certificate or an ACVTS verdict.
+- Keys it generates live in ordinary process memory (and, in a browser, in
+  ordinary browser storage). There is no tamper resistance, no key isolation
+  boundary, no secure element, and no guarantee that key material is erased.
+- It makes no side-channel claims. Timing, cache and power side channels have
+  not been analysed or mitigated, and WebAssembly gives no constant-time
+  guarantees.
+- Its randomness, key storage, PIN handling, access control and audit
+  behaviour are teaching approximations, not a security design.
+
+Therefore: do not use this package, or anything it produces (keys,
+certificates, signatures, configurations, exported material), to protect real
+data, real users, or real systems. Do not embed it in a product, a service, or
+an infrastructure component. Treat every artefact it emits as a teaching
+artefact.
+
+This notice is not limited to browser use. The package advertises Node.js
+support and can be consumed by a server-side process that never renders any
+user interface; the status above applies wherever it runs.
+
+Licensing
+---------
+
+Distributed under BSD-2-Clause (see the upstream repository). Upstream
+SoftHSMv3: https://github.com/pqctoday-org/pqctoday-hsm

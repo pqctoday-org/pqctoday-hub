@@ -33,6 +33,7 @@ import path from 'path'
 import Papa from 'papaparse'
 import { glob } from 'glob'
 import { createHash } from 'crypto'
+import { EDUCATION_NOTICE } from '../src/data/educationNotice'
 
 const DATA_DIR = path.resolve(process.cwd(), 'src/data')
 const OUT_PATH = path.resolve(process.cwd(), 'public/data/pqctoday-cbom.json')
@@ -347,8 +348,12 @@ async function main() {
       component: {
         type: 'application',
         name: 'PQC Today Hub',
-        description: 'PQC algorithm and product registry for post-quantum migration planning',
+        // The status leads the description: this is a published, static,
+        // machine-readable artefact, so a consumer who never opens the UI must
+        // still be told what it is (education-notice remediation 2026-09-26).
+        description: `${EDUCATION_NOTICE} PQC algorithm and product registry for post-quantum migration planning.`,
       },
+      properties: [{ name: 'pqctoday:status', value: EDUCATION_NOTICE }],
     },
     components,
   }
