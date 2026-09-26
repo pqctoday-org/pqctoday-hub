@@ -2758,6 +2758,7 @@ export const SLH_DSA_PARAM_SETS: Array<{ value: number; label: string; sigBytes:
 // ── Internal crypto constants ─────────────────────────────────────────────────
 
 // MGF types (RSA-OAEP / PSS)
+const CKG_MGF1_SHA1 = 0x00000001
 const CKG_MGF1_SHA256_NEW = 0x00000002
 const CKG_MGF1_SHA384_NEW = 0x00000003
 const CKG_MGF1_SHA512_NEW = 0x00000004
@@ -2824,16 +2825,26 @@ export const writeBytes = (M: SoftHSMModule, bytes: Uint8Array): number => {
 /** Build CK_RSA_PKCS_OAEP_PARAMS (20 bytes) in WASM heap. */
 const buildOAEPParams = (
   M: SoftHSMModule,
-  hashAlgo: 'sha256' | 'sha384' | 'sha512'
+  // 'sha1' exists for the NIST KTS-IFC OAEP samples (tgId 3), which use SHA-1
+  // for both the OAEP hash and MGF1; SP 800-56B rev 2 still permits it there.
+  hashAlgo: 'sha1' | 'sha256' | 'sha384' | 'sha512'
 ): { ptr: number; len: number } => {
   const hashMech =
-    hashAlgo === 'sha512' ? CKM_SHA512 : hashAlgo === 'sha384' ? CKM_SHA384 : CKM_SHA256
+    hashAlgo === 'sha512'
+      ? CKM_SHA512
+      : hashAlgo === 'sha384'
+        ? CKM_SHA384
+        : hashAlgo === 'sha1'
+          ? CKM_SHA_1
+          : CKM_SHA256
   const mgf =
     hashAlgo === 'sha512'
       ? CKG_MGF1_SHA512_NEW
       : hashAlgo === 'sha384'
         ? CKG_MGF1_SHA384_NEW
-        : CKG_MGF1_SHA256_NEW
+        : hashAlgo === 'sha1'
+          ? CKG_MGF1_SHA1
+          : CKG_MGF1_SHA256_NEW
   const ptr = M._malloc(20)
   M.setValue(ptr, hashMech, 'i32') // hashAlg
   M.setValue(ptr + 4, mgf, 'i32') // mgf
@@ -3226,7 +3237,7 @@ export const hsm_rsaDecrypt = (
   hSession: number,
   privHandle: number,
   ciphertext: Uint8Array,
-  hashAlgo: 'sha256' | 'sha384' | 'sha512' = 'sha256'
+  hashAlgo: 'sha1' | 'sha256' | 'sha384' | 'sha512' = 'sha256'
 ): Uint8Array => {
   const oaepParams = buildOAEPParams(M, hashAlgo)
   const mech = buildMech(M, CKM_RSA_PKCS_OAEP, oaepParams.ptr, oaepParams.len)

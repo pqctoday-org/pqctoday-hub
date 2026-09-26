@@ -1,9 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
-// Verifies hsm_importRSAPrivateKey (new — no prior RSA private-key import
-// existed) against both real engines, using the CRT components already
-// stored in rsa_oaep_test.json (WS-4c: wiring that dead file). Decrypts the
-// file's own known ciphertext and checks it against the file's known
-// plaintext — the exact self-consistency check the ACVP tab performs.
+// Verifies hsm_importRSAPrivateKey and RSA-OAEP decryption against both real
+// engines on NIST's own vectors: rsa_oaep_test.json is the ACVP KTS-IFC
+// (SP 800-56B rev 2) sample, tgId 1 (OAEP SHA2-512) and tgId 3 (OAEP SHA-1),
+// 20 cases (scripts/acvp/build_kts_oaep_subset.py). Each case's ciphertext must
+// decrypt to NIST's plaintext.
+//
+// It also PINS a known engine difference (maintainer decision 2026-09-26: the
+// Rust limit stays, and the hub shows it). 18 of the 20 keys have public
+// exponents of 34-56 bits: OpenSSL (C++) accepts them, while the Rust engine
+// refuses any public exponent >= 2^33 by design (open gap
+// rust-rsa-private-import-requires-cka-value). The counts below are fixed, so a
+// crate upgrade or a corpus change that moves them fails here and forces the
+// decision to be made again, instead of drifting silently.
 import { describe, it, expect } from 'vitest'
 import { createRequire } from 'node:module'
 import path from 'node:path'
@@ -36,38 +44,107 @@ const hex = (s: string) => {
   return new Uint8Array(m.map((b) => parseInt(b, 16)))
 }
 
-describe.each([
-  ['rust', () => S.getSoftHSMRustModule()],
-  ['cpp', () => loadCppEngineInNode()],
-])('hsm_importRSAPrivateKey (%s engine)', (_name, getModule) => {
-  it('imports the OAEP test vector CRT key and decrypts its known ciphertext', async () => {
-    const M = (await getModule()) as SoftHSMModule
-    S.hsm_initialize(M)
-    const slot = S.hsm_getFirstFreeSlot(M)
-    const slotId = S.hsm_initToken(M, slot, '12345678', 'RSAImport')
-    const hSession = S.hsm_openUserSession(M, slotId, '12345678', 'user1234')
+type Case = {
+  tcId: number
+  n: string
+  e: string
+  d: string
+  p: string
+  q: string
+  dp: string
+  dq: string
+  qi: string
+  ct: string
+  pt: string
+}
+const OAEP_HASH: Record<string, 'sha1' | 'sha512'> = { 'SHA-1': 'sha1', 'SHA2-512': 'sha512' }
+const CASES = rsaOaepTestVectors.testGroups.flatMap((g) =>
+  (g.tests as Case[]).map((t) => ({ ...t, tgId: g.tgId, hash: OAEP_HASH[g.hashAlg] }))
+)
+const eBits = (e: string) => BigInt('0x' + e).toString(2).length
+const SMALL = CASES.filter((c) => eBits(c.e) <= 33)
+const WIDE = CASES.filter((c) => eBits(c.e) > 33)
 
-    const tv = rsaOaepTestVectors.testGroups[0].tests[0]
-    const privHandle = await S.hsm_importRSAPrivateKey(M, hSession, {
-      n: hex(tv.n),
-      e: hex(tv.e),
-      d: hex(tv.d),
-      p: hex(tv.p),
-      q: hex(tv.q),
-      dp: hex(tv.dp),
-      dq: hex(tv.dq),
-      qi: hex(tv.qi),
-    })
-    expect(privHandle).toBeGreaterThan(0)
+const openSession = (M: SoftHSMModule) => {
+  S.hsm_initialize(M)
+  const slot = S.hsm_getFirstFreeSlot(M)
+  const slotId = S.hsm_initToken(M, slot, '12345678', 'RSAImport')
+  return S.hsm_openUserSession(M, slotId, '12345678', 'user1234')
+}
 
-    const ciphertext = hex(tv.ct)
-    const plaintext = S.hsm_rsaDecrypt(M, hSession, privHandle, ciphertext, 'sha256')
-    const plaintextHex = Array.from(plaintext)
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('')
+/** Import one NIST key and decrypt its ciphertext; resolves to the plaintext hex, or throws. */
+const decryptCase = async (M: SoftHSMModule, hSession: number, c: (typeof CASES)[number]) => {
+  const privHandle = await S.hsm_importRSAPrivateKey(M, hSession, {
+    n: hex(c.n),
+    e: hex(c.e),
+    d: hex(c.d),
+    p: hex(c.p),
+    q: hex(c.q),
+    dp: hex(c.dp),
+    dq: hex(c.dq),
+    qi: hex(c.qi),
+  })
+  const plaintext = S.hsm_rsaDecrypt(M, hSession, privHandle, hex(c.ct), c.hash)
+  return Array.from(plaintext)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+}
 
-    expect(plaintextHex).toBe(tv.pt)
+describe('the NIST KTS-IFC OAEP corpus', () => {
+  it('has the shape the pinned counts below assume', () => {
+    expect(CASES).toHaveLength(20)
+    expect(CASES.every((c) => c.hash)).toBe(true)
+    expect(SMALL.map((c) => eBits(c.e)).sort()).toEqual([31, 32])
+    expect(WIDE).toHaveLength(18)
+  })
+})
 
+describe('C++ engine (OpenSSL): every NIST case', () => {
+  it('decrypts all 20 ciphertexts to NIST plaintexts, wide exponents included', async () => {
+    const M = await loadCppEngineInNode()
+    const hSession = openSession(M)
+    for (const c of CASES) {
+      expect(await decryptCase(M, hSession, c), `tgId ${c.tgId} tcId ${c.tcId}`).toBe(
+        c.pt.toLowerCase()
+      )
+    }
     S.hsm_finalize(M, hSession)
-  }, 30000)
+  }, 120000)
+})
+
+describe('Rust engine: two documented refusals, so no NIST OAEP case decrypts', () => {
+  // Measured 2026-09-26, and read from the source (pqctoday-hsm rust/src/ffi.rs,
+  // oaep_padding): every Rust OAEP path supports hashAlg SHA-256/384/512 only.
+  // The two small-exponent keys are both in the SHA-1 group (tgId 3), so Rust
+  // refuses them at C_DecryptInit with CKR_MECHANISM_PARAM_INVALID; the other 18
+  // are refused at import for their exponent. Net: 0 of NIST's 20 OAEP cases
+  // decrypt on Rust, while C++ decrypts all 20. Both refusals are pinned so a
+  // change to either fails here (open gap rust-rsa-private-import-requires-cka-value).
+  it('refuses SHA-1 OAEP for the 2 small-exponent NIST cases (CKR_MECHANISM_PARAM_INVALID)', async () => {
+    const M = (await S.getSoftHSMRustModule()) as SoftHSMModule
+    const hSession = openSession(M)
+    expect(SMALL.every((c) => c.hash === 'sha1')).toBe(true)
+    for (const c of SMALL) {
+      await expect(decryptCase(M, hSession, c), `tgId ${c.tgId} tcId ${c.tcId}`).rejects.toThrow(
+        /CKR_MECHANISM_PARAM_INVALID/
+      )
+    }
+    S.hsm_finalize(M, hSession)
+  }, 120000)
+
+  it('refuses all 18 wide-exponent NIST keys (public exponent >= 2^33)', async () => {
+    const M = (await S.getSoftHSMRustModule()) as SoftHSMModule
+    const hSession = openSession(M)
+    let refused = 0
+    for (const c of WIDE) {
+      await decryptCase(M, hSession, c).then(
+        () => undefined,
+        () => {
+          refused++
+        }
+      )
+    }
+    expect(refused).toBe(18)
+    S.hsm_finalize(M, hSession)
+  }, 120000)
 })

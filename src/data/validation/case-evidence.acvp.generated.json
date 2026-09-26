@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "164aa191c76ccf11073e9ca59c30b3df93e7b0fa7d3ae431a304a05ec844663c",
-    "registrySha256": "3ab25d41e22f10b0039259da32905dbac8edc4fce7f645a7ab05d47680522b2b"
+    "manifestSha256": "cc2e5ef36baca3057b5e37d6789034d8225f4066ca43c493c96a1704245f933f",
+    "registrySha256": "061ce9cd9b23a27d916e60b9ca7e9d7e63454a6f5ca0d18261f0db9a2c4a0cce"
   },
   "records": {
     "acvp.01#aesgcm_test#/testGroups/0/tests/0": {
@@ -74026,34 +74026,861 @@
     "acvp.36#rsa_oaep_test#/testGroups/0/tests/0": {
       "id": "acvp.36#rsa_oaep_test#/testGroups/0/tests/0",
       "test": "acvp.36",
-      "title": "RSA-OAEP (SHA-256) decrypt",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "rsa_oaep_test#/testGroups/0/tests/0",
-      "evidenceClass": "independent-oracle",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
-      "algorithm": "RSA-OAEP",
+      "algorithm": "KTS-IFC Sp800-56Br2",
       "operation": "decrypt",
-      "testType": "oracle-generated",
+      "testType": "AFT",
       "parameters": {
-        "hashAlg": "SHA-256",
-        "modLen": 2048
+        "hashAlg": "SHA2-512",
+        "modulo": 2048,
+        "publicExponentBits": 34,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 1
       },
       "source": {
-        "citation": "Generated via Node.js crypto (OpenSSL backend), RSA-2048 OAEP with SHA-256"
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
         "CKM_RSA_PKCS_OAEP decrypt"
       ],
       "limitations": [
-        "Upstream: none (no NIST ACVP or published vector used; see file _provenance.note) → executed here: decrypt",
-        "locally-generated: Computed with self-generated, oracle=OpenSSL (file _provenance).",
-        "The oracle version that produced the expected value is not recorded.",
-        "The source retrieval date is not recorded.",
-        "Oracle: Node.js crypto (OpenSSL backend) (version not recorded)"
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA2-512, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 1 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/0/tests/1": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/0/tests/1",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/0/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA2-512",
+        "modulo": 2048,
+        "publicExponentBits": 50,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 2
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA2-512, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 1 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/0/tests/2": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/0/tests/2",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/0/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA2-512",
+        "modulo": 2048,
+        "publicExponentBits": 52,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 3
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA2-512, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 1 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/0/tests/3": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/0/tests/3",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/0/tests/3",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA2-512",
+        "modulo": 2048,
+        "publicExponentBits": 46,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 4
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA2-512, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 1 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/0/tests/4": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/0/tests/4",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/0/tests/4",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA2-512",
+        "modulo": 2048,
+        "publicExponentBits": 35,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 5
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA2-512, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 1 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/0/tests/5": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/0/tests/5",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/0/tests/5",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA2-512",
+        "modulo": 2048,
+        "publicExponentBits": 39,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 6
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA2-512, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 1 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/0/tests/6": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/0/tests/6",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/0/tests/6",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA2-512",
+        "modulo": 2048,
+        "publicExponentBits": 40,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 7
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA2-512, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 1 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/0/tests/7": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/0/tests/7",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/0/tests/7",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA2-512",
+        "modulo": 2048,
+        "publicExponentBits": 52,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 8
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA2-512, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 1 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/0/tests/8": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/0/tests/8",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/0/tests/8",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA2-512",
+        "modulo": 2048,
+        "publicExponentBits": 34,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 9
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA2-512, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 1 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/0/tests/9": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/0/tests/9",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/0/tests/9",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA2-512",
+        "modulo": 2048,
+        "publicExponentBits": 36,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 10
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA2-512, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 1 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/1/tests/0": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/1/tests/0",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/1/tests/0",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA-1",
+        "modulo": 2048,
+        "publicExponentBits": 34,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 21
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA-1, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 3 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/1/tests/1": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/1/tests/1",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/1/tests/1",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA-1",
+        "modulo": 2048,
+        "publicExponentBits": 31,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 22
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA-1, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 3 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/1/tests/2": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/1/tests/2",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/1/tests/2",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA-1",
+        "modulo": 2048,
+        "publicExponentBits": 40,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 23
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA-1, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 3 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/1/tests/3": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/1/tests/3",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/1/tests/3",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA-1",
+        "modulo": 2048,
+        "publicExponentBits": 56,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 24
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA-1, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 3 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/1/tests/4": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/1/tests/4",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/1/tests/4",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA-1",
+        "modulo": 2048,
+        "publicExponentBits": 50,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 25
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA-1, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 3 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/1/tests/5": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/1/tests/5",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/1/tests/5",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA-1",
+        "modulo": 2048,
+        "publicExponentBits": 32,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 26
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA-1, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 3 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/1/tests/6": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/1/tests/6",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/1/tests/6",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA-1",
+        "modulo": 2048,
+        "publicExponentBits": 50,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 27
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA-1, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 3 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/1/tests/7": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/1/tests/7",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/1/tests/7",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA-1",
+        "modulo": 2048,
+        "publicExponentBits": 50,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 28
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA-1, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 3 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/1/tests/8": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/1/tests/8",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/1/tests/8",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA-1",
+        "modulo": 2048,
+        "publicExponentBits": 38,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 29
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA-1, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 3 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
+      ]
+    },
+    "acvp.36#rsa_oaep_test#/testGroups/1/tests/9": {
+      "id": "acvp.36#rsa_oaep_test#/testGroups/1/tests/9",
+      "test": "acvp.36",
+      "title": "RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "rsa_oaep_test#/testGroups/1/tests/9",
+      "evidenceClass": "nist-acvp-reference-sample",
+      "polarity": "positive",
+      "algorithm": "KTS-IFC Sp800-56Br2",
+      "operation": "decrypt",
+      "testType": "AFT",
+      "parameters": {
+        "hashAlg": "SHA-1",
+        "modulo": 2048,
+        "publicExponentBits": 44,
+        "scheme": "KTS-OAEP-Party_V-confirmation"
+      },
+      "upstream": {
+        "tgId": 3,
+        "tcId": 30
+      },
+      "source": {
+        "citation": "NIST ACVP-Server gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json @ 975de31e (tgId 1 and 3)",
+        "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
+      },
+      "exercises": [
+        "CKM_RSA_PKCS_OAEP decrypt"
+      ],
+      "limitations": [
+        "Upstream: KTS-IFC Sp800-56Br2 KTS-OAEP-Party_V-confirmation AFT, initiator role, OAEP SHA-1, no label → executed here: import the server's RSA private key, C_Decrypt/C_UnwrapKey(CKM_RSA_PKCS_OAEP, hash and MGF1 = the group's hashAlg, no label) of ct, byte-compare with pt",
+        "subset: 10 case(s) (every testPassed case) taken from upstream tgId 3 of gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json (sha256 f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3).",
+        "field-rename: serverN -> n; serverE -> e; serverD -> d; serverP -> p; serverQ -> q; iutC -> ct; iutK -> pt",
+        "field-drop: upstream fields not carried: deferred, testCaseDisposition, ktsParameter, macKey, macData, dkm, tag",
+        "field-add: local-only fields: dp, dq, qi",
+        "field-add: group-level hashAlg added: a copy of ktsConfiguration.hashAlg, which the OAEP hash and MGF1 hash both use",
+        "subset: dp, dq and qi are computed from d, p and q (dp = d mod (p-1), dq = d mod (q-1), qi = q^-1 mod p), because ACVP does not publish the CRT triple. The group's other upstream fields that no reader uses (isSample, kasMode, keyGenerationMethod, l, iutId, serverId, macConfiguration, keyConfirmationDirection, keyConfirmationRole) are not carried."
       ]
     },
     "acvp.37.wycheproof-eddsa#wycheproof_ed25519_test#/testGroups/0/tests/0": {
@@ -144821,8 +145648,65 @@
     "rsa-sigver-nist-4096-pkcs1v1.5-SHA2-256-tg13-tc78-{engine}": [
       "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/5"
     ],
-    "rsaoaep-selfcheck-{engine}": [
+    "rsaoaep-nist-tg1-tc1-{engine}": [
       "acvp.36#rsa_oaep_test#/testGroups/0/tests/0"
+    ],
+    "rsaoaep-nist-tg1-tc10-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/0/tests/9"
+    ],
+    "rsaoaep-nist-tg1-tc2-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/0/tests/1"
+    ],
+    "rsaoaep-nist-tg1-tc3-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/0/tests/2"
+    ],
+    "rsaoaep-nist-tg1-tc4-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/0/tests/3"
+    ],
+    "rsaoaep-nist-tg1-tc5-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/0/tests/4"
+    ],
+    "rsaoaep-nist-tg1-tc6-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/0/tests/5"
+    ],
+    "rsaoaep-nist-tg1-tc7-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/0/tests/6"
+    ],
+    "rsaoaep-nist-tg1-tc8-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/0/tests/7"
+    ],
+    "rsaoaep-nist-tg1-tc9-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/0/tests/8"
+    ],
+    "rsaoaep-nist-tg3-tc21-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/1/tests/0"
+    ],
+    "rsaoaep-nist-tg3-tc22-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/1/tests/1"
+    ],
+    "rsaoaep-nist-tg3-tc23-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/1/tests/2"
+    ],
+    "rsaoaep-nist-tg3-tc24-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/1/tests/3"
+    ],
+    "rsaoaep-nist-tg3-tc25-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/1/tests/4"
+    ],
+    "rsaoaep-nist-tg3-tc26-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/1/tests/5"
+    ],
+    "rsaoaep-nist-tg3-tc27-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/1/tests/6"
+    ],
+    "rsaoaep-nist-tg3-tc28-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/1/tests/7"
+    ],
+    "rsaoaep-nist-tg3-tc29-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/1/tests/8"
+    ],
+    "rsaoaep-nist-tg3-tc30-{engine}": [
+      "acvp.36#rsa_oaep_test#/testGroups/1/tests/9"
     ],
     "sha-mct-full-sha2-224-tg2-tc513-{engine}": [
       "acvp.10g#sha_mct_full_test#/testGroups/0/tests/0"

@@ -10,11 +10,11 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Figure                                                  |             Value | Source                                                            |
 | ------------------------------------------------------- | ----------------: | ----------------------------------------------------------------- |
-| Selected public NIST ACVP-Server reference-sample files |                52 | `src/data/validation/validation-counts.generated.json`            |
-| NIST ACVP-Server reference-sample cases (active)        |               920 | `src/data/validation/validation-counts.generated.json`            |
+| Selected public NIST ACVP-Server reference-sample files |                53 | `src/data/validation/validation-counts.generated.json`            |
+| NIST ACVP-Server reference-sample cases (active)        |               940 | `src/data/validation/validation-counts.generated.json`            |
 | Vector files (active / quarantined / total)             |       73 / 0 / 73 | `src/data/validation/validation-counts.generated.json`            |
-| Cases (active / quarantined / total)                    | 2,660 / 1 / 2,661 | `src/data/validation/validation-counts.generated.json`            |
-| Active cases: positive / negative                       |       1,937 / 723 | `src/data/validation/validation-counts.generated.json`            |
+| Cases (active / quarantined / total)                    | 2,679 / 1 / 2,680 | `src/data/validation/validation-counts.generated.json`            |
+| Active cases: positive / negative                       |       1,956 / 723 | `src/data/validation/validation-counts.generated.json`            |
 | C++: advertised capability cells (denominator)          |             1,635 | `public/data/validation/coverage-matrix.json`                     |
 | Rust: advertised capability cells (denominator)         |             1,028 | `public/data/validation/coverage-matrix.json`                     |
 | Coverage waivers (entries; all statuses)                |                23 | `src/data/validation/coverage-waivers.json`                       |
@@ -28,10 +28,10 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Evidence class                    | Files | Active cases |
 | --------------------------------- | ----: | -----------: |
-| nist-acvp-reference-sample        |    52 |          920 |
+| nist-acvp-reference-sample        |    53 |          940 |
 | acvts-issued-vector               |     0 |            0 |
 | published-standard-kat            |     9 |           16 |
-| independent-oracle                |    10 |        1,696 |
+| independent-oracle                |     9 |        1,695 |
 | cross-implementation-differential |     0 |            0 |
 | functional-round-trip             |     2 |           26 |
 | oasis-profile-case                |     0 |            0 |
@@ -49,7 +49,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
-| positive    |     182 |   1,256 |      197 |       1,635 |
+| positive    |     183 |   1,255 |      197 |       1,635 |
 | negative    |      77 |      63 |    1,495 |       1,635 |
 | boundary    |      41 |     173 |    1,421 |       1,635 |
 | state-error |     869 |       0 |      766 |       1,635 |
@@ -72,7 +72,7 @@ Artifacts:
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
-| positive    |     182 |     679 |      167 |       1,028 |
+| positive    |     183 |     678 |      167 |       1,028 |
 | negative    |      74 |      47 |      907 |       1,028 |
 | boundary    |      41 |     112 |      875 |       1,028 |
 | state-error |     586 |       0 |      442 |       1,028 |
@@ -343,11 +343,11 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).
 
-Valid review records: 58.
+Valid review records: 59.
 
 | Kind                      | Items not approved |
 | ------------------------- | -----------------: |
-| vector-source             |                 13 |
+| vector-source             |                 12 |
 | coverage-waiver           |                 23 |
 | public-claim              |                  3 |
 | learn-module-practitioner |                  1 |
@@ -367,8 +367,8 @@ Machine-evaluated. A human item is never marked PASS.
 
 |   # | Item                                                                                                       | Status             | Evidence                                                                                                                                                                                                                                                                                                                                                                              | Basis                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | --: | ---------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                                                                                     | All 5837 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                                                                                   |
-|   2 | All active vectors have provenance or are blocked/quarantined                                              | **PASS**           | `src/data/validation/vector-manifest.json`<br>`src/data/validation/validation-counts.generated.json`                                                                                                                                                                                                                                                                                  | 73 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1.                                                                                                                                                                                                                                                                                                                      |
+|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                                                                                     | All 5856 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                                                                                   |
+|   2 | All active vectors have provenance or are blocked/quarantined                                              | **PASS**           | `src/data/validation/vector-manifest.json`<br>`src/data/validation/validation-counts.generated.json`                                                                                                                                                                                                                                                                                  | 73 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×5.                                                                                                                                                                                                                                                                                                                                                      |
 |   3 | Deck, script, UI and report counts are generated from the same manifest                                    | **HUMAN-REQUIRED** | `src/data/validation/validation-counts.generated.json`<br>`public/data/validation/release-evidence.json`<br>`scripts/audit-validation-claims.ts`                                                                                                                                                                                                                                      | This report and the UI read the generated counts (validation-counts.generated.json). The deck and script live outside this repo, so a person must run `npm run gen:release-evidence:check -- <presentation dir>` on the FINAL deck; `npm run release:freeze -- --presentation <dir>` records that result in the freeze manifest.                                                                                                                                                                                                                             |
 |   4 | The disclaimer is visible in the workbench and the report                                                  | **PASS**           | `src/components/Playground/dev/pipeline/suites/AcvpSuiteWorkbench.tsx`<br>`src/components/Algorithms/KATView.tsx`<br>`src/components/Algorithms/CoverageMatrixView.tsx`<br>`public/data/validation/coverage-matrix.{md,html,json}`<br>`public/data/validation/release-evidence.md`<br>`e2e/validation-release-evidence.spec.ts`                                                       | Workbench, Algorithms KAT view and coverage matrix render <ValidationDisclaimer/> (the one shared constant); all three coverage exports (.md, .html and the machine-readable .json) and this report carry it verbatim; e2e/validation-release-evidence.spec.ts asserts it is visible in a browser.                                                                                                                                                                                                                                                           |
 |   5 | ML-DSA demo: externally expected positive and deliberately invalid negative cases pass on both engines     | **PASS**           | `src/data/validation/run-results/wasm-node-errorPathProbes.json`<br>`src/data/validation/run-results/wasm-node-katRunner.json`<br>`src/data/validation/run-results/wasm-node-useAcvpSuite.json`<br>`src/data/validation/coverage-matrix.generated.json`<br>`e2e/acvp-mldsa-evidence.spec.ts`                                                                                          | 52 NIST ACVP-Server reference-sample positive and 49 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly).                                                                                                                                                                        |
@@ -394,12 +394,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `65659e069e65324785d1cfa2a9baedba649697e6c72dda80d410b193e9419915` |
+| `public/data/validation/coverage-matrix.json`                           | `04108bcab4a9feb9d12c8a10f0f5fe274617f85db9df99259d5f30850c7841f3` |
 | `src/data/validation/coverage-waivers.json`                             | `87b928d900e95f966e744aed284f4b11933e03f3dab9ced277d1072154702980` |
 | `src/data/validation/native-conformance.generated.json`                 | `75d81d8ab8250f66574c6722d3bdf36911bcc3ba2b5b18902c93604bdf64efd7` |
-| `src/data/validation/open-gaps.json`                                    | `883a708d871494feba23af1bcaf08681dea850377d10e0cf4c15fdbcc6703700` |
+| `src/data/validation/open-gaps.json`                                    | `4c97f71fc7b244584f7282c0abafe9dd11a43235b591c385e13a67aa633590b0` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `3e3de40a719f4fb1b6081667b0c700012c1f6280372e4e8b824d1899352a12cd` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `6a836ba693944b9439f582f3d7c0e8f9e6af56b2607b572d9390c978af05af90` |
 | `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `67fa98bf8bbc49e2a67350eb1a35dcfe99b2b0f62d30d1648445f2ebc775abb4` |
-| `src/data/validation/validation-counts.generated.json`                  | `5625cffa7628f629ab25530eabc9226df2a8f0e3f5a3928e182deaaef9f50531` |
-| `src/data/validation/vector-manifest.json`                              | `e835ebaf8955179fcc3f4a1b80529e483bd30d7769d0f2d71ecd8878c7c6dc34` |
+| `src/data/validation/validation-counts.generated.json`                  | `617e2fafc08fbbb5d944f49edb5dff489ebe026302127e01d512961556d7e37f` |
+| `src/data/validation/vector-manifest.json`                              | `9f3416f6d5aec66935b614ae8c8b4580ae7cb125c0cda6abcc459c3843585714` |

@@ -4249,77 +4249,111 @@ export function useAcvpSuite() {
           }
         }
 
-        // ── 36. RSA-OAEP Decrypt Self-Consistency (no ACVP registration) ──
+        // ── 36. RSA-OAEP decrypt — NIST ACVP KTS-IFC reference samples ──
         if (activeCategories.has('classical')) {
           currentCategory = 'classical'
-          // New category (D-3/D-8): rsa_oaep_test.json was a dead file with
-          // zero importers (G-13/H-6) AND self-generated (H-3/H-4) — checked
-          // NIST's ACVP-Server directory listing directly (2026-08-27): RSA-OAEP
-          // has no ACVP algorithm registration at all, so there is no external
-          // vector to replace this with. Per D-8's fallback, the vector stays
-          // and is tiered honestly as self-consistency: this decrypts the
-          // file's own known ciphertext with an imported CRT private key and
-          // checks it against the file's own known plaintext — proving the
-          // engine's decrypt agrees with the value the fixture was generated
-          // against, not correctness against an external oracle.
+          // rsa_oaep_test.json is NIST's KTS-IFC (SP 800-56B rev 2) sample,
+          // tgId 1 (OAEP SHA2-512) and tgId 3 (OAEP SHA-1): 20 cases, built by
+          // scripts/acvp/build_kts_oaep_subset.py (2026-09-26). It replaced one
+          // Node/OpenSSL-generated case whose note said RSA-OAEP has no ACVP
+          // registration; it does, under KTS-IFC. In KTS-OAEP without a KDF the
+          // transported key is the OAEP payload, so ct must decrypt to pt.
+          //
+          // The OAEP and MGF1 hash come from each group's own hashAlg — a KAT
+          // harness reads the parameters its vectors state (open gap
+          // kat-harness-must-read-stated-parameters).
+          //
+          // Known difference: the C++ engine (OpenSSL) decrypts all 20; the Rust
+          // engine decrypts none. 18 keys have public exponents of 34-56 bits,
+          // which Rust refuses by design (>= 2^33), and the other 2 are SHA-1
+          // OAEP, which Rust's OAEP does not support (SHA-256/384/512 only). See
+          // open gap rust-rsa-private-import-requires-cka-value. Those Rust rows
+          // are recorded as failures with their reason, so the matrix shows the
+          // engines differ instead of implying parity.
+          const OAEP_HASH: Record<string, 'sha1' | 'sha512'> = {
+            'SHA-1': 'sha1',
+            'SHA2-512': 'sha512',
+          }
           if (engine.mechs.size > 0 && !engine.mechs.has(CKM_RSA_PKCS_OAEP)) {
             await pushSkip(
               `rsaoaep-skip-${eName}`,
               `RSA-OAEP (${eName})`,
-              'Decrypt Self-Consistency',
+              'NIST KTS-IFC OAEP decrypt',
               REF.rsaoaep,
               'RSA-OAEP: mechanism not supported'
             )
           } else {
-            const oaepTv = rsaOaepTestVectors.testGroups[0].tests[0]
-            const id36 = `rsaoaep-selfcheck-${eName}`
-            addLog(`[${eName}] Testing RSA-OAEP Decrypt Self-Consistency (no ACVP registration)...`)
-            try {
-              const privHandle = await hsm_importRSAPrivateKey(M, hSession, {
-                n: hexToBytes(oaepTv.n),
-                e: hexToBytes(oaepTv.e),
-                d: hexToBytes(oaepTv.d),
-                p: hexToBytes(oaepTv.p),
-                q: hexToBytes(oaepTv.q),
-                dp: hexToBytes(oaepTv.dp),
-                dq: hexToBytes(oaepTv.dq),
-                qi: hexToBytes(oaepTv.qi),
-              })
-              regKey({
-                handle: privHandle,
-                family: 'rsa',
-                role: 'private',
-                label: `Oracle RSA-OAEP Private (${eName})`,
-                engine: engineId,
-              })
-
-              const ciphertext = hexToBytes(oaepTv.ct)
-              const decrypted = hsm_rsaDecrypt(M, hSession, privHandle, ciphertext, 'sha256')
-              const decryptedHex = toHex(decrypted, decrypted.length)
-              const matches = decryptedHex === oaepTv.pt
-
-              await pushResult({
-                id: id36,
-                algorithm: `RSA-OAEP (${eName})`,
-                testCase: 'Decrypt Self-Consistency',
-                referenceUrl: REF.rsaoaep,
-                status: matches ? 'pass' : 'fail',
-                details: matches
-                  ? `Decrypted ${decrypted.length}B matches known plaintext ✓`
-                  : `Decrypted ${decryptedHex.slice(0, 32)}… ≠ expected ${oaepTv.pt.slice(0, 32)}…`,
-              })
-              addLog(`[${eName}] [id:${id36}] RSA-OAEP: ${matches ? 'PASS' : 'FAIL'}`)
-            } catch (e: unknown) {
-              const errMessage = e instanceof Error ? e.message : String(e)
-              await pushResult({
-                id: `rsaoaep-err-${eName}`,
-                algorithm: `RSA-OAEP (${eName})`,
-                testCase: 'Decrypt Self-Consistency',
-                referenceUrl: REF.rsaoaep,
-                status: 'fail',
-                details: errMessage,
-              })
-              addLog(`[DISCREPANCY] [${eName}] [id:${id36}] RSA-OAEP: ${errMessage}`)
+            for (const g of rsaOaepTestVectors.testGroups) {
+              const hash = OAEP_HASH[g.hashAlg]
+              for (const tv of g.tests) {
+                const id36 = `rsaoaep-nist-tg${g.tgId}-tc${tv.tcId}-${eName}`
+                const eBits = BigInt('0x' + tv.e).toString(2).length
+                const testCase = `NIST KTS-IFC tgId ${g.tgId} tcId ${tv.tcId} · OAEP ${g.hashAlg} · e ${eBits} bits`
+                addLog(`[${eName}] Testing RSA-OAEP decrypt (${testCase})...`)
+                if (!hash) {
+                  await pushResult({
+                    id: id36,
+                    algorithm: `RSA-OAEP (${eName})`,
+                    testCase,
+                    referenceUrl: REF.rsaoaep,
+                    status: 'fail',
+                    details: `vector names an OAEP hash this suite cannot map: ${g.hashAlg}`,
+                  })
+                  continue
+                }
+                try {
+                  const privHandle = await hsm_importRSAPrivateKey(M, hSession, {
+                    n: hexToBytes(tv.n),
+                    e: hexToBytes(tv.e),
+                    d: hexToBytes(tv.d),
+                    p: hexToBytes(tv.p),
+                    q: hexToBytes(tv.q),
+                    dp: hexToBytes(tv.dp),
+                    dq: hexToBytes(tv.dq),
+                    qi: hexToBytes(tv.qi),
+                  })
+                  regKey({
+                    handle: privHandle,
+                    family: 'rsa',
+                    role: 'private',
+                    label: `NIST KTS-IFC RSA-OAEP tc${tv.tcId} Private (${eName})`,
+                    engine: engineId,
+                  })
+                  const decrypted = hsm_rsaDecrypt(M, hSession, privHandle, hexToBytes(tv.ct), hash)
+                  const decryptedHex = toHex(decrypted, decrypted.length)
+                  const matches = decryptedHex.toLowerCase() === tv.pt.toLowerCase()
+                  await pushResult({
+                    id: id36,
+                    algorithm: `RSA-OAEP (${eName})`,
+                    testCase,
+                    referenceUrl: REF.rsaoaep,
+                    status: matches ? 'pass' : 'fail',
+                    details: matches
+                      ? `Decrypted NIST's ciphertext to NIST's ${decrypted.length}B plaintext ✓`
+                      : `Decrypted ${decryptedHex.slice(0, 32)}… ≠ NIST ${tv.pt.slice(0, 32)}…`,
+                  })
+                  addLog(`[${eName}] [id:${id36}] RSA-OAEP: ${matches ? 'PASS' : 'FAIL'}`)
+                } catch (e: unknown) {
+                  const errMessage = e instanceof Error ? e.message : String(e)
+                  const known =
+                    engineId !== 'rust'
+                      ? ''
+                      : eBits > 33
+                        ? ` — documented Rust limitation: public exponents >= 2^33 are refused (open gap rust-rsa-private-import-requires-cka-value); the C++ engine accepts this key`
+                        : hash === 'sha1'
+                          ? ` — documented Rust limitation: its OAEP supports SHA-256/384/512 only, not SHA-1 (rust/src/ffi.rs oaep_padding); the C++ engine accepts it`
+                          : ''
+                  await pushResult({
+                    id: id36,
+                    algorithm: `RSA-OAEP (${eName})`,
+                    testCase,
+                    referenceUrl: REF.rsaoaep,
+                    status: 'fail',
+                    details: errMessage + known,
+                  })
+                  addLog(`[DISCREPANCY] [${eName}] [id:${id36}] RSA-OAEP: ${errMessage}${known}`)
+                }
+              }
             }
           }
         }

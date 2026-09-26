@@ -1,0 +1,24 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:rsa_oaep_test",
+  "subjectSha256": "6ee020081268de6ec20e71823506f9276ee15c489be6923a820f7f0152154249",
+  "fileSha256": "66dedfbbfc5e5047cf8491176d167e9e6dfad1703fe8bf5118e1a6e7966fa74b",
+  "result": "match",
+  "tool": "scripts/acvp/subset_reproduce.py",
+  "command": "python3 scripts/acvp/subset_reproduce.py --id rsa_oaep_test --strict",
+  "upstream": {
+    "repository": "https://github.com/usnistgov/ACVP-Server",
+    "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "files": [
+      {
+        "path": "gen-val/json-files/KTS-IFC-Sp800-56Br2/internalProjection.json",
+        "sha256": "f4afecd5fdd49dab985ae142285dfeb73326818c992417134ea75a09345fcab3"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 20,
+    "values": 196
+  },
+  "checkedAt": "2026-09-26"
+}

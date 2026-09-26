@@ -1862,15 +1862,20 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       )
     )
   ),
-  acvp('36', '§36', 'RSA-OAEP (SHA-256) decrypt', [
-    mc(
-      'rsa_oaep_test#/testGroups/0/tests/0',
-      ORACLE,
-      'positive',
-      [x('CKM_RSA_PKCS_OAEP', 'decrypt')],
-      'rsaoaep-selfcheck-{engine}'
-    ),
-  ]),
+  acvp(
+    '36',
+    '§36',
+    'RSA-OAEP decrypt: NIST ACVP KTS-IFC (SP 800-56B rev 2) reference samples, OAEP SHA2-512 and SHA-1, empty label (20 cases)',
+    casesOf('rsa_oaep_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        c.expectation,
+        [x('CKM_RSA_PKCS_OAEP', 'decrypt')],
+        `rsaoaep-nist-${upstreamIds(c)}-{engine}`
+      )
+    )
+  ),
 
   // ── PROJECT WYCHEPROOF (Google / C2SP) — sections/wycheproofNegative.ts ────
   // Adversarial reject-path vectors NIST does not publish. ORACLE, never STD:
