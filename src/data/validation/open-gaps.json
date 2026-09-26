@@ -49,21 +49,21 @@
     },
     {
       "id": "rust-only-mechanisms",
-      "title": "7 mechanisms advertised by Rust only",
-      "detail": "CKM_RIPEMD160, CKM_RIPEMD160_HMAC, CKM_RIPEMD160_HMAC_GENERAL, CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN, CKM_PQCTODAY_FRODOKEM_ENCAPSULATE, CKM_KECCAK_256 and CKM_EC_MONTGOMERY_KEY_DERIVE are listed by the Rust engine only; their C++ cells are unsupported.",
+      "title": "9 mechanisms advertised by Rust only",
+      "detail": "CKM_RIPEMD160, CKM_RIPEMD160_HMAC, CKM_RIPEMD160_HMAC_GENERAL, CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN, CKM_PQCTODAY_FRODOKEM_ENCAPSULATE, CKM_KECCAK_256, CKM_EC_MONTGOMERY_KEY_DERIVE, and — new as of the P3 combined rebuild (2026-09-25, hsm a22e6ca0, E19) — CKM_HPKE_KEM_KEY_PAIR_GEN and CKM_HPKE (advertise==dispatch closed what dispatched-not-advertised previously hid; these two are now visible, untested, Rust-only cells, waived pending-review as baseline-CKM_HPKE_KEM_KEY_PAIR_GEN / baseline-CKM_HPKE) are listed by the Rust engine only; their C++ cells are unsupported.",
       "planItem": "G-9",
       "owner": "unassigned",
       "status": "open",
       "scope": "C++"
     },
     {
-      "id": "rust-hpke-dispatched-not-advertised",
-      "title": "Rust dispatches CKM_HPKE / CKM_HPKE_KEM_KEY_PAIR_GEN without advertising them",
-      "detail": "The dispatch report (mechanism-dispatch-report.generated.json) finds 0x80000013/0x80000014 on Rust dispatch paths but not in C_GetMechanismList, so they are outside every denominator here. Also dispatched-not-advertised: Rust CKM_BIP32_*_LEGACY and C++ CKM_RIPEMD160*.",
+      "id": "rust-bip32-legacy-dispatched-not-advertised",
+      "title": "Rust dispatches CKM_BIP32_*_LEGACY without advertising them; C++ still dispatches RIPEMD160* only under its own non-advertised build flag",
+      "detail": "PARTIALLY CLOSED 2026-09-25 (P3 combined rebuild, hsm a22e6ca0, E19): CKM_HPKE / CKM_HPKE_KEM_KEY_PAIR_GEN are fixed — Rust now advertises what it dispatches (advertise==dispatch), confirmed via the regenerated mechanism-dispatch-report (0x80000013/0x80000014 no longer in Rust's dispatchedMinusAdvertised list; they moved to rust-only-mechanisms as real, advertised, untested cells). Still open: the dispatch report still lists Rust CKM_BIP32_MASTER_DERIVE_LEGACY / CKM_BIP32_CHILD_DERIVE_LEGACY as dispatched-not-advertised (unchanged by any of the 6 PRs), and C++'s 3 RIPEMD160 mechanisms remain dispatched only under `WITH_RIPEMD160` while un-advertised in the same build (their dispatch site now correctly carries the same `[only if defined(WITH_RIPEMD160)]` guard as their advertisement, closing the SOURCE-level inconsistency E19 targeted for C++ — but the static dispatch report cannot see which build flag ships, so the finding itself stays open).",
       "planItem": "G-7",
       "owner": "unassigned",
       "status": "open",
-      "scope": "Rust (and C++ RIPEMD160)"
+      "scope": "Rust (BIP32 legacy) + C++ (RIPEMD160, build-flag-gated)"
     },
     {
       "id": "native-targets-not-run",
@@ -138,42 +138,6 @@
       "scope": "C++ + Rust"
     },
     {
-      "id": "rust-mlkem-no-key-input-checks",
-      "title": "Rust engine accepts every invalid NIST ML-KEM encapsulation/decapsulation key (18 of 18)",
-      "detail": "The NIST ACVP ML-KEM encapDecap VAL key-check cases (mlkem_encapdecap_val_test: modified H, ek values too large) are accepted by the Rust engine: its C_EncapsulateKey / C_DecapsulateKey paths perform no FIPS 203 §7.2 encapsulation-key or §7.3 decapsulation-key input checks (bundle 417c47a2; unchanged on pqctoday-hsm origin/main). The workbench rows stay failing on Rust (acvp.07b.keycheck). Since gap-closure P5 the 12 further invalid encapsulation keys of mlkem_ekcheck_depth_test (every remaining testPassed=false case of the upstream encapsulationKeyCheck groups) are accepted as well (acvp.07c.ekcheck-depth); the C++ engine rejects all 18. The fix is on pqctoday-hsm fix/mlkem-input-checks-0925 and reaches these rows with the next WASM rebuild. Engine defect — not patched in the hub.",
-      "planItem": "D1-5",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm)"
-    },
-    {
-      "id": "cpp-hashslhdsa-double-wrap",
-      "title": "C++ HashSLH-DSA wraps M′ twice — valid NIST pre-hash signatures rejected",
-      "detail": "OSSLSLHDSA.cpp (bundle 7795799b, lines ~341-402) builds M′ = 0x01 ‖ len(ctx) ‖ ctx ‖ OID ‖ PH(M) itself and then passes it to OpenSSL's pure SLH-DSA via EVP_DigestSign together with OSSL_SIGNATURE_PARAM_CONTEXT_STRING, so OpenSSL wraps it again as a pure message: all 5 valid NIST pre-hash sigVer signatures are rejected and deterministic pre-hash signatures differ at byte 0. Unchanged on pqctoday-hsm origin/main. Rows stay failing on C++ (acvp.09c). Engine defect — not patched in the hub.",
-      "planItem": "D3-3",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "C++ (wasm)"
-    },
-    {
-      "id": "mlkem-wrong-length-return-codes",
-      "title": "ML-KEM wrong-length inputs: return codes differ from PKCS #11 v3.2 and between engines",
-      "detail": "Wrong-length ciphertext at C_DecapsulateKey: Rust returns CKR_ENCRYPTED_DATA_INVALID (not in the return-value list of PKCS #11 v3.2 §5.18.9), C++ returns CKR_WRAPPED_KEY_LEN_RANGE. The C++ engine accepts a decapsulation key 1 byte short at C_CreateObject; both engines accept a short encapsulation key. The boundary rows (acvp.07b.boundary) pin each engine's observed code, so a pass there means 'behaves as pinned', not 'conforms'.",
-      "planItem": "D1-5 / G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "C++ + Rust (wasm)"
-    },
-    {
-      "id": "pbkdf2-min-iterations-divergence",
-      "title": "PBKDF2 iteration floor differs between engines (Rust refuses c < 1000)",
-      "detail": "The Rust engine refuses CKM_PKCS5_PBKD2 with iterations < 1000 (rust/src/ffi.rs:11125 at 417c47a2: CKR_ARGUMENTS_BAD, a code that does not name the parameter); the C++ engine accepts c = 1 (SoftHSM_keygen.cpp ~3012-3030 at 7795799b). A policy divergence, not an algorithm error. The c = 1 oracle cases (pbkdf2_test tests/0) are therefore not registered; katRunner and the workbench run the c = 4096 cases, which pass on both engines.",
-      "planItem": "G-9",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "C++ vs Rust (wasm)"
-    },
-    {
       "id": "ecdsa-p521-cpp-ec-point-der",
       "title": "ECDSA P-521 NIST sample failed on C++ — hub CKA_EC_POINT encoding (fixed hub-side)",
       "detail": "Root cause (triage 2026-09-24): hsm_importECPublicKey wrote the DER OCTET STRING length of the 133-byte P-521 point as the single byte 0x85, which DER reads as '5 length octets follow'; the C++ engine parsed a garbage CKA_EC_POINT and rejected the NIST ACVP-Server ECDSA-SigVer-FIPS186-5 sample (workbench §33), while Rust passed because it reads the raw CKA_VALUE copy. Hub adapter bug, not an engine defect. Fixed by the X.690 long-form length (softhsm/helpers derOctetString); the re-recorded run shows the case passing on both engines. Kept on record until the release freeze re-captures evidence on the browser host.",
@@ -192,132 +156,6 @@
       "scope": "C++ (wasm) — hub helper"
     },
     {
-      "id": "g8-cpp-init-accepts-wrong-key-type",
-      "title": "C++: sign/verify inits accept a key of the wrong type (CKR_OK instead of CKR_KEY_TYPE_INCONSISTENT)",
-      "detail": "C_SignInit and C_VerifyInit with an AES secret key return CKR_OK for 33 mechanisms (CKM_ECDSA and the 9 CKM_ECDSA_SHA*, CKM_EDDSA, CKM_RSA_PKCS, CKM_RSA_X_509, CKM_RSA_PKCS_PSS and every CKM_*_RSA_PKCS / CKM_*_RSA_PKCS_PSS hash variant); C_MessageSignInit / C_MessageVerifyInit do the same for the 30 ECDSA/RSA message-sign mechanisms; C_DeriveKey(CKM_HKDF_DERIVE) accepts an EC private key. PKCS #11 v3.2 §5.13.1, §5.15.1, §5.14.1, §5.16.1, §5.18.5 list CKR_KEY_TYPE_INCONSISTENT and §5.1.6 defines it (\"The specified key is not the correct type of key to use with the specified mechanism\"). ML-DSA/SLH-DSA/HMAC/CMAC inits reject the same key correctly. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "C++ (wasm, pqctoday-hsm 7795799b)"
-    },
-    {
-      "id": "g8-cpp-function-not-permitted-before-type",
-      "title": "C++: CKR_KEY_FUNCTION_NOT_PERMITTED returned where CKR_KEY_TYPE_INCONSISTENT has priority",
-      "detail": "C_SignRecoverInit / C_VerifyRecoverInit (CKM_RSA_PKCS, CKM_RSA_X_509) and C_EncapsulateKey (CKM_ML_KEM all three sets, CKM_ECDH1_DERIVE P-256/384/521) given a key of the wrong type (which also lacks the usage attribute) return CKR_KEY_FUNCTION_NOT_PERMITTED. §5.1.6: CKR_KEY_TYPE_INCONSISTENT \"has a higher priority than CKR_KEY_FUNCTION_NOT_PERMITTED\"; §5.18.8 does not list CKR_KEY_FUNCTION_NOT_PERMITTED for C_EncapsulateKey at all. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "C++ (wasm, pqctoday-hsm 7795799b)"
-    },
-    {
-      "id": "g8-cpp-unwrap-wrapping-code",
-      "title": "C++: C_UnwrapKey returns CKR_WRAPPING_KEY_TYPE_INCONSISTENT for a wrong unwrapping key",
-      "detail": "C_UnwrapKey(CKM_AES_CBC / CKM_AES_CBC_PAD, all AES sizes) with an EC private key returns CKR_WRAPPING_KEY_TYPE_INCONSISTENT. §5.18.4 lists CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT; §5.1.6 says CKR_WRAPPING_KEY_TYPE_INCONSISTENT \"can only be returned by C_WrapKey\". Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "C++ (wasm, pqctoday-hsm 7795799b)"
-    },
-    {
-      "id": "g8-cpp-signmessage-buffer-too-small-terminates",
-      "title": "C++: C_SignMessage ends the message-signing process on CKR_BUFFER_TOO_SMALL",
-      "detail": "For all 54 C++ message-sign mechanisms, C_SignMessage into a 1-byte buffer correctly returns CKR_BUFFER_TOO_SMALL with the needed length, but the next C_SignMessage with a full buffer returns CKR_OPERATION_NOT_INITIALIZED. §5.14.2: a call \"begins and terminates a message signing operation unless it returns CKR_BUFFER_TOO_SMALL\", and \"C_SignMessage does not finish the message-based signing process\" (only C_MessageSignFinal does, §5.14.5). Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "C++ (wasm, pqctoday-hsm 7795799b)"
-    },
-    {
-      "id": "g8-cpp-bad-mechanism-param-arguments-bad",
-      "title": "C++: a malformed mechanism parameter returns CKR_ARGUMENTS_BAD, not CKR_MECHANISM_PARAM_INVALID",
-      "detail": "A 1-byte mechanism parameter returns CKR_ARGUMENTS_BAD from C_EncryptInit / C_DecryptInit (CKM_AES_CCM, CKM_AES_CTR, CKM_AES_GCM, CKM_CHACHA20_POLY1305, CKM_RSA_PKCS_OAEP), C_SignInit / C_VerifyInit (CKM_HASH_ML_DSA, CKM_HASH_SLH_DSA, CKM_RSA_PKCS_PSS and the 9 CKM_*_RSA_PKCS_PSS), C_WrapKey / C_UnwrapKey (CKM_AES_CBC, CKM_AES_CBC_PAD, CKM_RSA_PKCS_OAEP) and C_DeriveKey(CKM_HKDF_DERIVE). §5.1.6 defines CKR_MECHANISM_PARAM_INVALID for \"Invalid parameters were supplied to the mechanism\". Review note: C_EncryptInit (§5.8.1) does not list CKR_ARGUMENTS_BAD at all; the other functions do, and §5.1.7 lets a token return any applicable code — a reviewer may rule those an accepted limitation, the probe keeps the specific code. The CBC/ECB/OFB/CFB IV mechanisms return CKR_MECHANISM_PARAM_INVALID correctly. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "C++ (wasm, pqctoday-hsm 7795799b)"
-    },
-    {
-      "id": "g8-rust-init-accepts-wrong-key-type",
-      "title": "Rust: operation inits and C_DeriveKey accept a key of the wrong type (CKR_OK instead of CKR_KEY_TYPE_INCONSISTENT)",
-      "detail": "With a key of another type, CKR_OK is returned by C_SignInit and C_VerifyInit for all 85 probed sign mechanisms (ML-DSA, HashML-DSA, External-Mu, SLH-DSA, HashSLH-DSA, ECDSA, EdDSA, RSA, HMAC, AES-CMAC, AES-GMAC), by C_MessageSignInit / C_MessageVerifyInit (CKM_ML_DSA, CKM_SLH_DSA), by C_EncryptInit / C_DecryptInit for CKM_RSA_PKCS and CKM_RSA_PKCS_OAEP (AES key), and by C_DeriveKey for all 17 probed derive mechanisms (CKM_ECDH1_COFACTOR_DERIVE on secp256k1 returns CKR_ARGUMENTS_BAD). §5.13.1, §5.15.1, §5.14.1, §5.16.1, §5.8.1, §5.10.1, §5.18.5 list CKR_KEY_TYPE_INCONSISTENT (§5.1.6). Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm, pqctoday-hsm 417c47a2)"
-    },
-    {
-      "id": "g8-rust-function-not-permitted-before-type",
-      "title": "Rust: CKR_KEY_FUNCTION_NOT_PERMITTED returned where CKR_KEY_TYPE_INCONSISTENT has priority",
-      "detail": "Given a wrong-type key (which also lacks the usage attribute): C_EncryptInit / C_DecryptInit for 13 AES/ChaCha20 mechanisms, C_SignRecoverInit / C_VerifyRecoverInit (CKM_RSA_PKCS, CKM_RSA_X_509), C_MessageEncryptInit / C_MessageDecryptInit (CKM_AES_GCM), C_EncapsulateKey (CKM_ML_KEM, CKM_ECDH1_DERIVE) and C_WrapKey / C_UnwrapKey (CKM_AES_CBC, CKM_AES_CBC_PAD, CKM_AES_KEY_WRAP, _PAD, _KWP) return CKR_KEY_FUNCTION_NOT_PERMITTED. §5.1.6 gives CKR_KEY_TYPE_INCONSISTENT higher priority; §5.18.3/§5.18.4/§5.18.8 do not list CKR_KEY_FUNCTION_NOT_PERMITTED for C_WrapKey, C_UnwrapKey or C_EncapsulateKey. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm, pqctoday-hsm 417c47a2)"
-    },
-    {
-      "id": "g8-rust-wrap-unwrap-type-code",
-      "title": "Rust: RSA C_WrapKey / C_UnwrapKey return CKR_KEY_TYPE_INCONSISTENT instead of the (UN)WRAPPING_KEY codes",
-      "detail": "C_WrapKey / C_UnwrapKey with CKM_RSA_PKCS or CKM_RSA_PKCS_OAEP and an AES wrapping key return CKR_KEY_TYPE_INCONSISTENT. §5.18.3 lists CKR_WRAPPING_KEY_TYPE_INCONSISTENT and §5.18.4 CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT; neither lists CKR_KEY_TYPE_INCONSISTENT. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm, pqctoday-hsm 417c47a2)"
-    },
-    {
-      "id": "g8-rust-malformed-param-accepted",
-      "title": "Rust: a 1-byte mechanism parameter is accepted (CKR_OK) for RSA-PSS and RSA-OAEP",
-      "detail": "C_SignInit / C_VerifyInit accept a 1-byte parameter for the 9 CKM_*_RSA_PKCS_PSS hash variants, and C_EncryptInit / C_DecryptInit / C_WrapKey / C_UnwrapKey accept one for CKM_RSA_PKCS_OAEP. The parameter is a CK_RSA_PKCS_PSS_PARAMS / CK_RSA_PKCS_OAEP_PARAMS structure (§6.1.9, §6.1.7); §5.1.6 CKR_MECHANISM_PARAM_INVALID. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm, pqctoday-hsm 417c47a2)"
-    },
-    {
-      "id": "g8-rust-bad-param-or-handle-arguments-bad",
-      "title": "Rust: malformed parameter / key handle 0 return CKR_ARGUMENTS_BAD",
-      "detail": "A 1-byte parameter returns CKR_ARGUMENTS_BAD from C_EncryptInit / C_DecryptInit for 11 mechanisms (CKM_AES_CBC, _CBC_PAD, _CCM, _CFB1, _CFB8, _CFB128, _GCM, _OFB, _XTS, CKM_CHACHA20, CKM_CHACHA20_POLY1305; CKM_AES_CTR answers correctly) instead of CKR_MECHANISM_PARAM_INVALID (§5.1.6; C_EncryptInit §5.8.1 does not list CKR_ARGUMENTS_BAD), and C_DeriveKey with hBaseKey = 0 returns CKR_ARGUMENTS_BAD for CKM_ECDH1_DERIVE, CKM_ECDH1_COFACTOR_DERIVE and CKM_HKDF_DERIVE instead of CKR_KEY_HANDLE_INVALID (\"0 is never a valid key handle\", §5.1.6). Review note as for the C++ entry: §5.1.7 lets a token return any applicable code where the function lists CKR_ARGUMENTS_BAD. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm, pqctoday-hsm 417c47a2)"
-    },
-    {
-      "id": "g8-rust-ro-session-token-object",
-      "title": "Rust: C_EncapsulateKey / C_DecapsulateKey create a token object in a read-only session",
-      "detail": "With CKA_TOKEN = CK_TRUE in the new-key template, C_EncapsulateKey and C_DecapsulateKey on a session opened without CKF_RW_SESSION return CKR_OK (CKM_ML_KEM all three sets, CKM_ECDH1_DERIVE P-256/384/521). §5.18.8 / §5.18.9 list CKR_SESSION_READ_ONLY (§5.1.6). C_GenerateKey(Pair), C_DeriveKey and C_UnwrapKey refuse correctly. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm, pqctoday-hsm 417c47a2)"
-    },
-    {
-      "id": "g8-rust-message-init-not-exclusive",
-      "title": "Rust: a second C_MessageEncryptInit / C_MessageDecryptInit while one is active returns CKR_OK",
-      "detail": "CKM_AES_GCM (AES-128, AES-256): the second message-based init on the same session returns CKR_OK instead of CKR_OPERATION_ACTIVE (§5.9.1 / §5.11.1 return values, §5.1.6). Message-sign/verify and every single-part init refuse correctly. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm, pqctoday-hsm 417c47a2)"
-    },
-    {
-      "id": "g8-rust-keygen-template-inconsistent",
-      "title": "Rust: Edwards / Montgomery key-pair generation accepts an inconsistent CKA_KEY_TYPE",
-      "detail": "C_GenerateKeyPair(CKM_EC_EDWARDS_KEY_PAIR_GEN, Ed25519/Ed448) and (CKM_EC_MONTGOMERY_KEY_PAIR_GEN, X25519/X448) with CKA_KEY_TYPE = CKK_RSA in the public template return CKR_OK. §5.18.2: a template key type inconsistent with the mechanism \"fails and returns the error code CKR_TEMPLATE_INCONSISTENT\". Every other key-generation mechanism refuses correctly. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm, pqctoday-hsm 417c47a2)"
-    },
-    {
-      "id": "g8-rust-advertised-cells-do-not-execute",
-      "title": "Rust: advertised cells whose operation does not execute",
-      "detail": "The G-2/G-8 probes found advertised capability cells that fail on a valid key: CKM_ECDSA_SHA1 and CKM_ECDSA_SHA224 — C_SignInit CKR_OK then C_Sign CKR_MECHANISM_INVALID on P-256, P-384, P-521 and secp256k1; CKM_ECDSA (raw) on P-521 with a 32-byte input — C_Sign CKR_FUNCTION_FAILED (§6.3 allows any input length for raw ECDSA); AES-192 (inside the advertised 16–32 byte range) — CKM_AES_CBC_PAD C_Encrypt returns CKR_KEY_TYPE_INCONSISTENT and CKM_AES_GCM C_MessageEncryptInit CKR_KEY_SIZE_RANGE; CKM_EC_KEY_PAIR_GEN_W_EXTRA_BITS on secp256k1 (in the advertised 256–521 range) — CKR_CURVE_NOT_SUPPORTED. Either the operation or the advertisement (C_GetMechanismInfo range / flags, plan G-7) is wrong. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
-      "planItem": "G-8",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm, pqctoday-hsm 417c47a2)"
-    },
-    {
       "id": "g8-spec-decapsulate-return-codes",
       "title": "PKCS #11 v3.2 gives no single key-handle / key-type code for C_DecapsulateKey — not probed",
       "detail": "§5.18.9 lists CKR_UNWRAPPING_KEY_HANDLE_INVALID and CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT (not CKR_KEY_HANDLE_INVALID / CKR_KEY_TYPE_INCONSISTENT), while §5.1.6 says the UNWRAPPING_* codes \"can only be returned by C_UnwrapKey\". With no single specified value there is no key-handle or key-type probe for C_DecapsulateKey (the engines differ: C++ returns CKR_UNWRAPPING_KEY_HANDLE_INVALID for handle 0, Rust CKR_KEY_HANDLE_INVALID). Likewise C_WrapKey, C_UnwrapKey, C_DeriveKey and C_EncapsulateKey require the usage attribute but do not list CKR_KEY_FUNCTION_NOT_PERMITTED, so no key-usage probe exists for them. Specification ambiguity, not an engine defect. Recorded by the G-8 error-path probes (errorPathCatalog.ts / errorPathProbes.ts) in run-results/wasm-node-errorPathProbes.json; the rows stay failing — the assertion is the PKCS #11 v3.2 value and is not loosened.",
@@ -327,33 +165,6 @@
       "scope": "C++ + Rust — specification"
     },
     {
-      "id": "rust-gcm-iv-96-only",
-      "title": "Rust engine refuses AES-GCM IVs other than 96 bits",
-      "detail": "The NIST ACVP-Server ACVP-AES-GCM-1.0 sample (aesgcm_acvp_test, workbench §1b) has two groups with a 120-bit IV (tg2 encrypt, tg4 decrypt). The Rust engine refuses them at C_EncryptInit/C_DecryptInit with CKR_MECHANISM_PARAM_INVALID (rust/src/ffi.rs ~8158 at 7795799b: 'AES-GCM requires a 12-byte nonce'); SP 800-38D and PKCS#11 v3.2 §6.13.2 allow other IV lengths and the C++ engine passes all 60 cases. The 30 Rust rows fail, including tg4's upstream authentication failures, which are refused before the tag is checked and therefore do not count as rejections. Engine limitation or advertisement to narrow — a decision for the engine owner.",
-      "planItem": "E (AES-GCM) / G-9",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm)"
-    },
-    {
-      "id": "rust-ecdsa-p224-unsupported",
-      "title": "Rust engine accepts P-224 keys but cannot verify P-224 ECDSA signatures",
-      "detail": "ECDSA-SigVer-FIPS186-5 P-224 groups (ecdsa_sigver_acvp_test, workbench §4b): C_CreateObject accepts the P-224 public key, then every C_Verify returns CKR_SIGNATURE_LEN_RANGE for the 56-byte r||s — the Rust crate set has no P-224 (no p224 dependency at 7795799b) although CKM_ECDSA* advertise ulMinKeySize 112. All 28 Rust P-224 rows fail (valid cases rejected; invalid cases refused for the wrong reason, which the section does not count as a rejection). C++ passes all 112 ECDSA cases. P-224 is also outside the capability map's EC curve set, so these cases map to no capability cell; their results are recorded.",
-      "planItem": "E (ECDSA) / G-7 / G-9",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm)"
-    },
-    {
-      "id": "hmac-min-key-size-advertisement",
-      "title": "HMAC keys below the advertised ulMinKeySize are accepted by both engines",
-      "detail": "C_GetMechanismInfo advertises ulMinKeySize = the digest length in bytes for every CKM_<hash>_HMAC[_GENERAL] (e.g. 32 for SHA2-256), yet both engines compute and verify NIST HMAC 2.0 cases with shorter keys (down to 1 byte) correctly (hmac_acvp_matrix_test, workbench §2b; each row records keyInAdvertisedRange). FIPS 198-1 allows any key length, so the results are correct; the advertisement understates what the engines accept. Recorded, not enforced.",
-      "planItem": "G-1 / G-7",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "C++ + Rust (wasm) — advertisement"
-    },
-    {
       "id": "wse-nist-sample-scope",
       "title": "Classical NIST reference samples cover only what the pinned upstream samples register",
       "detail": "The pinned ACVP-Server@975de31e samples bound what WS-E can claim: ACVP-AES-GCM-1.0 registers AES-128 only (IV 96/120, tag 128/32, payload/AAD 0/120 bits) — AES-192/256-GCM, 64-bit tags and other lengths have no NIST case; HMAC 2.0 registers macLen 80..160 bits — no full-length (untruncated) tag, so CKM_<hash>_HMAC (non-general) has no NIST case; EDDSA-SigVer-1.0 carries no context string (contexts are exercised only through the EDDSA-SigGen-1.0 byte-match cases of eddsa_siggen_acvp_test); ECDSA SHA2-512/256 and SHAKE groups have no PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (skip rows). Checked again 2026-09-25 (GitHub API, gap-closure P5): 975de31e (2026-08-12, \"RELEASE/v1.1.0.43 including hotfix patches\") is still the head of usnistgov/ACVP-Server master and the only other branch (jbrock24-patch-1, 2024) changes the README only, so no newer upstream commit carries AES-192/256-GCM or full-length HMAC tag samples; the scope gap stays.",
@@ -361,42 +172,6 @@
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ + Rust"
-    },
-    {
-      "id": "rust-cbc-iv-length-arguments-bad",
-      "title": "Rust engine answers a wrong-length AES-CBC IV with CKR_ARGUMENTS_BAD",
-      "detail": "Product-authored probe aescbc-probe-iv15 (workbench §12b): C_EncryptInit(CKM_AES_CBC) with a 15-byte IV. The C++ engine returns CKR_MECHANISM_PARAM_INVALID; the Rust engine returns CKR_ARGUMENTS_BAD, which PKCS#11 v3.2 §5.8.1 does not list for C_EncryptInit (CKR_MECHANISM_PARAM_INVALID is the listed code for a bad mechanism parameter). The Rust row stays red; the probe pins the spec code for both engines.",
-      "planItem": "G-8 / G-9",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm)"
-    },
-    {
-      "id": "rust-rsa-public-exponent-limit",
-      "title": "Rust engine cannot verify RSA signatures whose public exponent exceeds 2^33 - 1",
-      "detail": "RSA-SigVer-FIPS186-5 (rsa_sigver_acvp_test, workbench §4d): the upstream 4096-bit PKCS#1 v1.5 group (e = 0xC9986A9C84FEE9, 56 bits) and the 2048-bit PSS/SHA3-256 group (e = 0x0ACC245201D531, 52 bits) import, but every C_Verify returns CKR_KEY_TYPE_INCONSISTENT on the Rust engine — rsa::RsaPublicKey::new (rust/src/crypto/handlers.rs ~2895 at 7795799b) refuses exponents above 2^33 - 1. FIPS 186-5 §A.1.1 allows 2^16 < e < 2^256. 12 Rust rows fail (valid cases rejected, invalid ones refused for the wrong reason); C++ passes all 24. The groups were chosen by the deterministic subset policy (first group per combination), not by result.",
-      "planItem": "E (RSA) / G-9",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm)"
-    },
-    {
-      "id": "rust-pbkdf2-prf-limited",
-      "title": "Rust engine's CKM_PKCS5_PBKD2 implements only the HMAC-SHA-256/384/512 PRFs",
-      "detail": "PBKDF 1.0 (pbkdf2_acvp_test, workbench §18b): the pinned NIST sample registers HMAC-SHA2-224 only. The Rust engine answers CKP_PKCS5_PBKD2_HMAC_SHA224 with CKR_ARGUMENTS_BAD (rust/src/ffi.rs ~11138 at 7795799b: prf match arms SHA256/384/512 only, every other PRF -> CKR_ARGUMENTS_BAD, a code that does not name the parameter); CKM_PKCS5_PBKD2 is advertised without any PRF restriction. All 5 Rust rows fail; C++ passes all 5, including the 1-iteration case that the Rust iteration floor (pbkdf2-min-iterations-divergence) would refuse anyway.",
-      "planItem": "E (PBKDF2) / G-7 / G-9",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm)"
-    },
-    {
-      "id": "kmac-verify-ignores-output-length",
-      "title": "KMAC C_Verify accepts only the default MAC length, whatever ulOutputLen says",
-      "detail": "KMAC-128 1.0 MVT (kmac_acvp_test, workbench §35b): the valid case tc799 has a 478-byte MAC; both engines accept CK_PQCTODAY_KMAC_PARAMS.ulOutputLen = 478 at C_VerifyInit but C_Verify returns CKR_SIGNATURE_LEN_RANGE because the signature length is checked against the mechanism's fixed default (32 bytes for KMAC-128; rust/src/ffi.rs ~7295-7336 at 7795799b lists CKM_KMAC_128/256 among the fixed-length MACs). The invalid case tc771 (a 32-byte MAC) is rejected with CKR_SIGNATURE_INVALID on both. The pinned KMAC-256 sample has no byte-aligned non-XOF case, so KMAC-256 still has no NIST case (the older kmac_test KMAC256 case stays quarantined). Vendor mechanism, both engines.",
-      "planItem": "E (KMAC) / G-9",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "C++ + Rust (wasm) — vendor mechanism"
     },
     {
       "id": "wse-remaining-classical-acvp",
