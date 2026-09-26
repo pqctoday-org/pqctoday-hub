@@ -17,7 +17,14 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 const require_ = createRequire(import.meta.url)
 
 const loadCppEngineInNode = async (): Promise<SoftHSMModule> => {
-  const gluePath = require_.resolve('@pqctoday/softhsm-wasm/wasm/softhsm.js')
+  // process.cwd()-relative, NOT require.resolve('@pqctoday/softhsm-wasm/...'):
+  // that file: package resolves through node_modules, and in a worktree whose
+  // node_modules is itself symlinked to a SIBLING worktree (a real, supported
+  // setup), a relative symlink one level inside that shared node_modules
+  // resolves relative to where IT lives, silently landing on the sibling
+  // worktree's src/vendor/softhsm-wasm instead of this one's -- probing the
+  // wrong C++ binary with no error (found 2026-09-25, P3 combined rebuild).
+  const gluePath = path.resolve(process.cwd(), 'src/vendor/softhsm-wasm/wasm/softhsm.js')
   const wasmPath = path.join(path.dirname(gluePath), 'softhsm.wasm')
   const createSoftHSMModule = require_(gluePath) as (
     arg?: Record<string, unknown>

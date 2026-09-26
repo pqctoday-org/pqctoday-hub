@@ -11,8 +11,8 @@
 //  - every NIST decapsulation VAL case (valid and modified-ciphertext) returns
 //    CKR_OK with the exact NIST k, i.e. implicit rejection yields the NIST
 //    rejection value;
-//  - NIST key-check VAL cases: C++ rejects every invalid key; the Rust engine
-//    ACCEPTS them (FINDING — pinned below so a fix or a regression both show);
+//  - NIST key-check VAL cases: both engines reject every invalid key (E2
+//    fixed, 2026-09-25, hsm a22e6ca0 — was a Rust-only FINDING before);
 //  - a product-authored ciphertext bit flip decapsulates to J(z‖c′) and never
 //    to the original secret, without the secret appearing in any row text;
 //  - boundary probes return exactly the CK_RV pinned for each engine;
@@ -39,7 +39,14 @@ const classesOf = (rowId: string) =>
 
 const require_ = createRequire(import.meta.url)
 const loadCppEngineInNode = async (): Promise<SoftHSMModule> => {
-  const gluePath = require_.resolve('@pqctoday/softhsm-wasm/wasm/softhsm.js')
+  // process.cwd()-relative, NOT require.resolve('@pqctoday/softhsm-wasm/...'):
+  // that file: package resolves through node_modules, and in a worktree whose
+  // node_modules is itself symlinked to a SIBLING worktree (a real, supported
+  // setup), a relative symlink one level inside that shared node_modules
+  // resolves relative to where IT lives, silently landing on the sibling
+  // worktree's src/vendor/softhsm-wasm instead of this one's -- probing the
+  // wrong C++ binary with no error (found 2026-09-25, P3 combined rebuild).
+  const gluePath = path.resolve(process.cwd(), 'src/vendor/softhsm-wasm/wasm/softhsm.js')
   const wasmPath = path.join(path.dirname(gluePath), 'softhsm.wasm')
   const create = require_(gluePath) as (arg?: Record<string, unknown>) => Promise<SoftHSMModule>
   return create({ locateFile: (p: string) => (p.endsWith('.wasm') ? wasmPath : p) })
@@ -169,25 +176,17 @@ describe('ML-KEM reference samples — both engines, real vectors', () => {
     for (const r of rows) expect(r.status, `${r.testCase}: ${r.details}`).toBe('pass')
   })
 
-  it('FINDING: the Rust engine accepts every NIST-invalid ML-KEM key (no FIPS 203 §7.2/§7.3 input check)', () => {
+  it('the Rust engine now enforces the FIPS 203 key checks too (E2 fixed: no more accepting NIST-invalid keys)', () => {
+    // Was 'FINDING: the Rust engine accepts every NIST-invalid ML-KEM key (no
+    // FIPS 203 §7.2/§7.3 input check)' until 2026-09-25 (P3 combined rebuild,
+    // hsm a22e6ca0): E2 (fix(rust): enforce FIPS 203 §7.2/§7.3 ML-KEM key
+    // input checks) closes exactly the 6 cases this test used to pin as
+    // failing — confirmed against the rebuilt engine, not guessed.
     const rows = section().filter(
       (r) => r.id.startsWith('mlkem-keycheck-') && engineOf(r) === 'Rust'
     )
-    const failed = rows.filter((r) => r.status === 'fail')
-    expect(failed.map(caseKey).sort()).toEqual(
-      rows
-        .filter((r) => r.caseMeta?.expected === 'rejected')
-        .map(caseKey)
-        .sort()
-    )
-    expect(failed).toHaveLength(6)
-    for (const r of failed) {
-      expect(r.details).toMatch(/ACCEPTED a key NIST marks invalid/)
-      expect(r.caseMeta?.observed).toMatch(/→ CKR_OK$/)
-    }
-    // Valid keys are still accepted — the rows are not failing for another reason.
-    for (const r of rows.filter((x) => x.caseMeta?.expected === 'accepted'))
-      expect(r.status).toBe('pass')
+    expect(rows).toHaveLength(12)
+    for (const r of rows) expect(r.status, `${r.testCase}: ${r.details}`).toBe('pass')
   })
 
   it('decapsulates a product-authored ciphertext bit flip to J(z‖c′), never the original secret', () => {
@@ -211,10 +210,15 @@ describe('ML-KEM reference samples — both engines, real vectors', () => {
         expect(row!.caseMeta?.observed).toBe(engine === 'C++' ? pin.cpp : pin.rust)
         expect(classesOf(row!.id)).not.toContain('nist-acvp-reference-sample')
       }
-    // Findings the rows must surface, not hide.
+    // decap-ct-short used to be a finding (Rust returned the unlisted
+    // CKR_ENCRYPTED_DATA_INVALID, disagreeing with C++) until 2026-09-25 (P3
+    // combined rebuild, hsm a22e6ca0, E4): both engines now agree on
+    // CKR_WRAPPED_KEY_LEN_RANGE, a §5.18.9-listed code.
     const rustDecap = results.find((r) => r.id === 'mlkem-boundary-decap-ct-short-Rust')!
-    expect(rustDecap.details).toMatch(/not among the return values PKCS#11 v3.2 §5\.18\.9 lists/)
-    expect(rustDecap.details).toMatch(/engines disagree/)
+    expect(rustDecap.details).not.toMatch(
+      /not among the return values PKCS#11 v3.2 §5\.18\.9 lists/
+    )
+    expect(rustDecap.details).not.toMatch(/engines disagree/)
     const buf = results.find((r) => r.id === 'mlkem-boundary-encap-short-buffer-C++')!
     expect(buf.details).toMatch(/\*pulCiphertextLen = 768 \(expected 768\)/)
   })
@@ -238,13 +242,15 @@ describe('ML-KEM reference samples — both engines, real vectors', () => {
       expect(pair, key).toHaveLength(2)
       if (pair[0].caseMeta?.observed !== pair[1].caseMeta?.observed) disagreements.push(key)
     }
+    // Both the boundary-pin disagreements and the key-check disagreements
+    // this test used to expect are closed as of 2026-09-25 (P3 combined
+    // rebuild, hsm a22e6ca0: E2, E3, E4 — both engines now agree everywhere
+    // in this section) — confirmed against the rebuilt engine, not guessed.
     const boundaryDisagree = Object.entries(MLKEM_BOUNDARY_PINS)
       .filter(([, p]) => p.cpp !== p.rust)
       .map(([k]) => `mlkem-boundary-${k}`)
-    const keyChecks = [...byKey.keys()].filter(
-      (k) => k.startsWith('mlkem-keycheck-') && byKey.get(k)![0].caseMeta?.expected === 'rejected'
-    )
-    expect(disagreements.sort()).toEqual([...boundaryDisagree, ...keyChecks].sort())
+    expect(boundaryDisagree).toEqual([])
+    expect(disagreements.sort()).toEqual([])
   })
 
   it('labels the pre-existing decapsulation KAT with its encapsulation-group lineage (D1-1)', () => {
@@ -306,11 +312,12 @@ describe('ML-KEM reference samples — sabotaged expectations fail', () => {
         expect(c?.status).toBe('fail')
         expect(c?.details).toMatch(/ACCEPTED a key NIST marks invalid/)
       }
-      // Exactly the sabotaged rows failed, plus the 6 Rust key-check findings and
-      // the 12 Rust findings of the section 7c ek-check depth rows (same gap:
-      // rust-mlkem-no-key-input-checks).
+      // Exactly the sabotaged rows failed (3 × 2 engines). The 6 Rust
+      // key-check findings and 12 Rust ek-check-depth findings this used to
+      // add (rust-mlkem-no-key-input-checks) are fixed as of the P3 combined
+      // rebuild (2026-09-25, hsm a22e6ca0, E2).
       const failed = results.filter((r) => r.status === 'fail')
-      expect(failed).toHaveLength(6 + 6 + 12)
+      expect(failed).toHaveLength(6)
       expect(
         failed
           .filter((r) => r.id.startsWith('mlkem-ekcheck-depth-'))

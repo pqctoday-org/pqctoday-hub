@@ -32,7 +32,12 @@ import { runErrorPathProbes, type ErrorPathResult } from './errorPathProbes'
 import type { ErrorPathCase, ErrorPathOp, ProbeKindId } from './errorPathCatalog'
 
 const require_ = createRequire(import.meta.url)
-const CPP_GLUE = require_.resolve('@pqctoday/softhsm-wasm/wasm/softhsm.js')
+// process.cwd()-relative, not require.resolve('@pqctoday/softhsm-wasm/...') —
+// see useAcvpSuite.runResults.local.test.ts's CPP_GLUE comment (P3 combined
+// rebuild, 2026-09-25): that package resolution can silently land in a
+// SIBLING worktree via a relative symlink one level inside a shared,
+// symlinked node_modules, testing the wrong C++ binary with no error.
+const CPP_GLUE = path.resolve(process.cwd(), 'src/vendor/softhsm-wasm/wasm/softhsm.js')
 const CPP_WASM = path.join(path.dirname(CPP_GLUE), 'softhsm.wasm')
 const RUST_WASM = path.resolve(process.cwd(), 'src/wasm/softhsmrustv3_bg.wasm')
 const OUT = path.resolve(

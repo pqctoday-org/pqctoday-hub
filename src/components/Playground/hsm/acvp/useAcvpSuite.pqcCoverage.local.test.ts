@@ -37,7 +37,14 @@ const classesOf = (rowId: string) =>
 
 const require_ = createRequire(import.meta.url)
 const loadCppEngineInNode = async (): Promise<SoftHSMModule> => {
-  const gluePath = require_.resolve('@pqctoday/softhsm-wasm/wasm/softhsm.js')
+  // process.cwd()-relative, NOT require.resolve('@pqctoday/softhsm-wasm/...'):
+  // that file: package resolves through node_modules, and in a worktree whose
+  // node_modules is itself symlinked to a SIBLING worktree (a real, supported
+  // setup), a relative symlink one level inside that shared node_modules
+  // resolves relative to where IT lives, silently landing on the sibling
+  // worktree's src/vendor/softhsm-wasm instead of this one's -- probing the
+  // wrong C++ binary with no error (found 2026-09-25, P3 combined rebuild).
+  const gluePath = path.resolve(process.cwd(), 'src/vendor/softhsm-wasm/wasm/softhsm.js')
   const wasmPath = path.join(path.dirname(gluePath), 'softhsm.wasm')
   const create = require_(gluePath) as (arg?: Record<string, unknown>) => Promise<SoftHSMModule>
   return create({ locateFile: (p: string) => (p.endsWith('.wasm') ? wasmPath : p) })
@@ -220,15 +227,17 @@ describe('P5 PQC coverage sections — both engines, real vectors', () => {
     }
   })
 
-  it('FINDING: the Rust engine accepts every invalid NIST ML-KEM encapsulation key (rust-mlkem-no-key-input-checks)', () => {
+  it('the Rust engine now rejects every invalid NIST ML-KEM encapsulation key too (E2 fixed, 2026-09-25, hsm a22e6ca0)', () => {
+    // Was 'FINDING: the Rust engine accepts every invalid NIST ML-KEM
+    // encapsulation key (rust-mlkem-no-key-input-checks)' — confirmed against
+    // the rebuilt engine, not guessed.
     const rust = rows().filter(
       (r) => r.id.startsWith('mlkem-ekcheck-depth-') && engineOf(r) === 'Rust'
     )
     expect(rust).toHaveLength(12)
     for (const r of rust) {
-      expect(r.status).toBe('fail')
-      expect(r.details).toMatch(/ACCEPTED a key NIST marks invalid/)
-      expect(r.caseMeta?.observed).toBe('C_CreateObject → CKR_OK; C_EncapsulateKey → CKR_OK')
+      expect(r.status, r.details).toBe('pass')
+      expect(r.caseMeta?.expected).toBe('rejected')
     }
   })
 

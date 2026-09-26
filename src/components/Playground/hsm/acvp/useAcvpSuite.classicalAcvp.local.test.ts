@@ -6,34 +6,47 @@
 // Rust wasm-bindgen).
 //
 // What it proves (and pins — a change in either direction fails here):
-//  - AES-GCM: every NIST ACVP-AES-GCM-1.0 case byte-matches / is rejected on
-//    C++; Rust passes every 96-bit-IV case and refuses the 120-bit-IV groups at
-//    C_EncryptInit/C_DecryptInit with CKR_MECHANISM_PARAM_INVALID (open gap
-//    rust-gcm-iv-96-only) — its 120-bit-IV authentication failures therefore
-//    FAIL (refused before the tag check), never pass by accident;
+//
+// Updated 2026-09-25 (P3 combined rebuild, hsm a22e6ca0): E11-E19 fixed every
+// Rust-side gap this file used to pin (GCM IV, P-224, PBKDF2 PRF, RSA
+// exponent, KMAC output length, CBC IV code) — both engines now agree almost
+// everywhere. This file's C++ loader had a separate, unrelated bug at the
+// same time (fixed alongside these pin updates): `require.resolve('@pqctoday/
+// softhsm-wasm/...')` resolves through node_modules, and in this worktree
+// node_modules is itself symlinked to a sibling worktree, so the old loader
+// silently tested THAT worktree's stale C++ engine all session — see
+// loadCppEngineInNode's replacement comment (or the P3 report) for the full
+// story. Every "C++ still fails" pin below was re-verified against the real,
+// correctly-resolved rebuilt engine before being written back to "pass".
+//
+//  - AES-GCM: every NIST ACVP-AES-GCM-1.0 case byte-matches on both engines
+//    (E12 fixed: Rust now accepts every IV length CK_GCM_PARAMS allows, not
+//    just 96-bit);
 //  - HMAC: every NIST HMAC 2.0 case (11 digests) byte-matches and verifies on
 //    both engines; bit-flipped MACs return CKR_SIGNATURE_INVALID and one-byte-
 //    short MACs CKR_SIGNATURE_LEN_RANGE;
 //  - ECDSA / EdDSA SigVer: every upstream valid/invalid case agrees on both
-//    engines except Rust P-224, which refuses every signature with
-//    CKR_SIGNATURE_LEN_RANGE (open gap rust-ecdsa-p224-unsupported);
+//    engines, including P-224 (E13 fixed: Rust now verifies P-224 via the new
+//    `p224` crate, D11);
 //  - SHA-2/SHA-3: empty / shortest / block-boundary / longest digests and the
 //    standard-MCT first outer iteration byte-match on both engines;
 //  - AES-KW/KWP: wrap and unwrap byte-match, upstream integrity failures are
 //    refused with CKR_WRAPPED_KEY_INVALID on both engines;
 //  - AES-CBC / AES-CTR: AFT and the MCT first outer iteration byte-match on
 //    both engines; the product-authored CBC length probes return the pinned
-//    codes; a 15-byte IV gets CKR_MECHANISM_PARAM_INVALID on C++ but
-//    CKR_ARGUMENTS_BAD on Rust (not a C_EncryptInit return value — red row,
-//    open gap rust-cbc-iv-length-arguments-bad);
-//  - RSA SigVer: every upstream case on C++; Rust refuses public exponents
-//    above 2^33-1 (CKR_KEY_TYPE_INCONSISTENT — open gap
-//    rust-rsa-public-exponent-limit);
-//  - PBKDF2 (HMAC-SHA2-224 PRF): C++ derives every NIST key; Rust refuses the
-//    PRF with CKR_ARGUMENTS_BAD (open gap rust-pbkdf2-prf-limited);
+//    codes; a 15-byte IV now gets CKR_MECHANISM_PARAM_INVALID on BOTH engines
+//    (E18 fixed: Rust no longer returns the unlisted CKR_ARGUMENTS_BAD);
+//  - RSA SigVer: every upstream case on both engines, including public
+//    exponents above 2^33-1 (E14 fixed: Rust now verifies under any FIPS
+//    186-5 exponent);
+//  - PBKDF2: both engines derive every NIST key at/above the 1000-iteration
+//    floor (E15 fixed: Rust now implements the HMAC-SHA2-224 PRF the sample
+//    registers) and both refuse below the floor with
+//    CKR_MECHANISM_PARAM_INVALID (D7 — C++ aligned to refuse too, per E15);
 //  - KMAC-128: the invalid MAC is rejected on both engines; the valid 478-byte
-//    MAC is refused with CKR_SIGNATURE_LEN_RANGE on both (open gap
-//    kmac-verify-ignores-output-length);
+//    MAC now verifies (CKR_OK) on both (E16 fixed: C_Verify honours
+//    CK_PQCTODAY_KMAC_PARAMS.ulOutputLen instead of checking against the
+//    fixed 32-byte default);
 //  - the literal mechanism numbers the sections use equal the generated
 //    mechanism inventory's;
 //  - sabotage on a COPY of the vectors (vi.doMock) turns exactly those rows red.
@@ -57,7 +70,14 @@ const classesOf = (rowId: string) =>
 
 const require_ = createRequire(import.meta.url)
 const loadCppEngineInNode = async (): Promise<SoftHSMModule> => {
-  const gluePath = require_.resolve('@pqctoday/softhsm-wasm/wasm/softhsm.js')
+  // process.cwd()-relative, NOT require.resolve('@pqctoday/softhsm-wasm/...'):
+  // that file: package resolves through node_modules, and in a worktree whose
+  // node_modules is itself symlinked to a SIBLING worktree (a real, supported
+  // setup), a relative symlink one level inside that shared node_modules
+  // resolves relative to where IT lives, silently landing on the sibling
+  // worktree's src/vendor/softhsm-wasm instead of this one's -- probing the
+  // wrong C++ binary with no error (found 2026-09-25, P3 combined rebuild).
+  const gluePath = path.resolve(process.cwd(), 'src/vendor/softhsm-wasm/wasm/softhsm.js')
   const wasmPath = path.join(path.dirname(gluePath), 'softhsm.wasm')
   const create = require_(gluePath) as (arg?: Record<string, unknown>) => Promise<SoftHSMModule>
   return create({ locateFile: (p: string) => (p.endsWith('.wasm') ? wasmPath : p) })
@@ -172,16 +192,14 @@ describe('WS-E classical reference samples — both engines, real vectors', () =
     }
   })
 
-  it('AES-GCM: every NIST case on C++; Rust refuses non-96-bit IVs at init (pinned finding)', () => {
+  it('AES-GCM: every NIST case byte-matches on both engines (E12 fixed: Rust now accepts every IV length)', () => {
     const v = readVectors('aesgcm_acvp_test.json') as Vec
     for (const g of v.testGroups)
       for (const t of g.tests)
         for (const e of ENGINES) {
           const r = row(`aesgcm-nist-k${g.keyLen}-tg${g.tgId}-tc${t.tcId}-${e}`)!
-          const rustIvGap = e === 'Rust' && g.ivLen !== 96
-          expect(r.status, `${r.id}: ${r.details}`).toBe(rustIvGap ? 'fail' : 'pass')
-          if (rustIvGap) expect(r.caseMeta?.observed).toMatch(/CKR_MECHANISM_PARAM_INVALID/)
-          else if (g.direction === 'decrypt' && !t.testPassed)
+          expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
+          if (g.direction === 'decrypt' && !t.testPassed)
             expect(r.caseMeta?.observed).toBe('CKR_ENCRYPTED_DATA_INVALID')
           else expect(r.caseMeta?.observed).toBe('byte-equal')
           expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
@@ -230,17 +248,15 @@ describe('WS-E classical reference samples — both engines, real vectors', () =
     expect(meta.map((p) => p.macLen)).toEqual(expect.arrayContaining([80, 160]))
   })
 
-  it('ECDSA SigVer: upstream disposition on every curve/hash; Rust P-224 refuses every signature (pinned finding)', () => {
+  it('ECDSA SigVer: upstream disposition on every curve/hash, including P-224 (E13 fixed: Rust now verifies P-224)', () => {
     const v = readVectors('ecdsa_sigver_acvp_test.json') as Vec & { notExecuted: unknown[] }
     let negatives = 0
     for (const g of v.testGroups)
       for (const t of g.tests)
         for (const e of ENGINES) {
           const r = row(`ecdsa-sigver-nist-${g.curve}-${g.hashAlg}-tg${g.tgId}-tc${t.tcId}-${e}`)!
-          const gap = e === 'Rust' && g.curve === 'P-224'
-          expect(r.status, `${r.id}: ${r.details}`).toBe(gap ? 'fail' : 'pass')
-          if (gap) expect(r.caseMeta?.observed).toBe('CKR_SIGNATURE_LEN_RANGE')
-          else if (t.testPassed) expect(r.caseMeta?.observed).toBe('CKR_OK')
+          expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
+          if (t.testPassed) expect(r.caseMeta?.observed).toBe('CKR_OK')
           else {
             negatives += 1
             expect(r.caseMeta?.observed, r.id).toMatch(
@@ -345,38 +361,36 @@ describe('WS-E classical reference samples — both engines, real vectors', () =
           expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
           expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
         }
+    // iv15: Rust used to answer CKR_ARGUMENTS_BAD (not a C_EncryptInit return
+    // value; the row stayed red). E18 (hsm a22e6ca0, fix(rust): malformed
+    // symmetric mechanism parameters return CKR_MECHANISM_PARAM_INVALID)
+    // aligned it to the spec value both engines now share — confirmed
+    // against the rebuilt engine, not guessed.
     const want: Record<string, Record<string, string>> = {
       encLen15: { 'C++': 'CKR_DATA_LEN_RANGE', Rust: 'CKR_DATA_LEN_RANGE' },
       decLen17: { 'C++': 'CKR_ENCRYPTED_DATA_LEN_RANGE', Rust: 'CKR_ENCRYPTED_DATA_LEN_RANGE' },
-      iv15: { 'C++': 'CKR_MECHANISM_PARAM_INVALID', Rust: 'CKR_ARGUMENTS_BAD' },
+      iv15: { 'C++': 'CKR_MECHANISM_PARAM_INVALID', Rust: 'CKR_MECHANISM_PARAM_INVALID' },
     }
     for (const [key, byEngine] of Object.entries(want))
       for (const e of ENGINES) {
         const r = row(`aescbc-probe-${key}-${e}`)!
         expect(r.caseMeta?.observed, r.id).toBe(byEngine[e])
-        // Rust's CKR_ARGUMENTS_BAD is not a C_EncryptInit return value: the row stays red
-        expect(r.status, r.details).toBe(key === 'iv15' && e === 'Rust' ? 'fail' : 'pass')
+        expect(r.status, r.details).toBe('pass')
         expect(classesOf(r.id)).toEqual(['product-mechanism-probe'])
       }
   })
 
-  it('RSA SigVer: upstream disposition on every case; Rust refuses exponents above 2^33-1 (pinned finding)', () => {
+  it('RSA SigVer: upstream disposition on every case, including exponents above 2^33-1 (E14 fixed: Rust now verifies them)', () => {
     const v = readVectors('rsa_sigver_acvp_test.json') as Vec & { notExecuted: unknown[] }
     for (const g of v.testGroups) {
-      const bigE = BigInt(`0x${g.e}`) > 2n ** 33n - 1n
       for (const t of g.tests)
         for (const e of ENGINES) {
           const r = row(
             `rsa-sigver-nist-${g.modulo}-${g.sigType}-${g.hashAlg}-tg${g.tgId}-tc${t.tcId}-${e}`
           )!
-          const gap = e === 'Rust' && bigE
-          expect(r.status, `${r.id}: ${r.details}`).toBe(gap ? 'fail' : 'pass')
+          expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
           expect(r.caseMeta?.observed).toBe(
-            gap
-              ? 'CKR_KEY_TYPE_INCONSISTENT'
-              : t.testPassed === true
-                ? 'CKR_OK'
-                : 'CKR_SIGNATURE_INVALID'
+            t.testPassed === true ? 'CKR_OK' : 'CKR_SIGNATURE_INVALID'
           )
           expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
         }
@@ -385,31 +399,30 @@ describe('WS-E classical reference samples — both engines, real vectors', () =
     expect(skips).toHaveLength(2 * v.notExecuted.length)
   })
 
-  it('PBKDF2: C++ derives every NIST key; Rust refuses the SHA2-224 PRF (pinned finding)', () => {
+  it('PBKDF2: both engines derive every NIST key at/above the 1000-iteration floor (E15 fixed: Rust now implements SHA2-224); both refuse below the floor (D7)', () => {
     const v = readVectors('pbkdf2_acvp_test.json') as Vec
     for (const g of v.testGroups)
       for (const t of g.tests)
         for (const e of ENGINES) {
           const r = row(`pbkdf2-nist-tg${g.tgId}-tc${t.tcId}-${e}`)!
-          expect(r.status, `${r.id}: ${r.details}`).toBe(e === 'C++' ? 'pass' : 'fail')
+          const belowFloor = Number(t.iterationCount) < 1000
+          expect(r.status, `${r.id}: ${r.details}`).toBe(belowFloor ? 'fail' : 'pass')
           expect(r.caseMeta?.observed).toBe(
-            e === 'C++' ? 'byte-equal' : 'C_DeriveKey → CKR_ARGUMENTS_BAD'
+            belowFloor ? 'C_DeriveKey → CKR_MECHANISM_PARAM_INVALID' : 'byte-equal'
           )
           expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
         }
     expect(v.testGroups[0].tests.some((t) => Number(t.iterationCount) < 1000)).toBe(true)
   })
 
-  it('KMAC-128: the invalid MAC is rejected; the 478-byte valid MAC hits the fixed-length check (pinned finding)', () => {
+  it('KMAC-128: both the invalid MAC and the 478-byte valid MAC are handled correctly on both engines (E16 fixed: C_Verify honours ulOutputLen)', () => {
     const v = readVectors('kmac_acvp_test.json') as Vec
     for (const g of v.testGroups)
       for (const t of g.tests)
         for (const e of ENGINES) {
           const r = row(`kmac128-nist-tg${g.tgId}-tc${t.tcId}-${e}`)!
-          expect(r.status, `${r.id}: ${r.details}`).toBe(t.testPassed ? 'fail' : 'pass')
-          expect(r.caseMeta?.observed).toBe(
-            t.testPassed ? 'CKR_SIGNATURE_LEN_RANGE' : 'CKR_SIGNATURE_INVALID'
-          )
+          expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
+          expect(r.caseMeta?.observed).toBe(t.testPassed ? 'CKR_OK' : 'CKR_SIGNATURE_INVALID')
           expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
         }
   })

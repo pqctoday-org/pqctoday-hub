@@ -27,7 +27,14 @@ const classesOf = (rowId: string) =>
 
 const require_ = createRequire(import.meta.url)
 const loadCppEngineInNode = async (): Promise<SoftHSMModule> => {
-  const gluePath = require_.resolve('@pqctoday/softhsm-wasm/wasm/softhsm.js')
+  // process.cwd()-relative, NOT require.resolve('@pqctoday/softhsm-wasm/...'):
+  // that file: package resolves through node_modules, and in a worktree whose
+  // node_modules is itself symlinked to a SIBLING worktree (a real, supported
+  // setup), a relative symlink one level inside that shared node_modules
+  // resolves relative to where IT lives, silently landing on the sibling
+  // worktree's src/vendor/softhsm-wasm instead of this one's -- probing the
+  // wrong C++ binary with no error (found 2026-09-25, P3 combined rebuild).
+  const gluePath = path.resolve(process.cwd(), 'src/vendor/softhsm-wasm/wasm/softhsm.js')
   const wasmPath = path.join(path.dirname(gluePath), 'softhsm.wasm')
   const create = require_(gluePath) as (arg?: Record<string, unknown>) => Promise<SoftHSMModule>
   return create({ locateFile: (p: string) => (p.endsWith('.wasm') ? wasmPath : p) })
@@ -189,7 +196,7 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
     }
   })
 
-  it('ECDSA sigGen verify-back: engine round-trip + independent oracle; Rust SHA-224 does not execute', () => {
+  it('ECDSA sigGen verify-back: engine round-trip + independent oracle, on both engines including SHA-224 (E11a fixed: Rust now dispatches CKM_ECDSA_SHA224)', () => {
     const v = readVectors('ecdsa_siggen_acvp_test.json')
     for (const g of v.testGroups)
       for (const t of g.tests)
@@ -199,15 +206,9 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
           const or = row(`${base}-oracle-${engine}`)!
           expect(classesOf(rt.id)).toEqual(['functional-round-trip'])
           expect(classesOf(or.id)).toEqual(['independent-oracle'])
-          if (engine === 'Rust' && g.hashAlg === 'SHA2-224') {
-            expect(rt.status).toBe('fail') // g8-rust-advertised-cells-do-not-execute
-            expect(rt.caseMeta?.observed).toBe('C_Sign → CKR_MECHANISM_INVALID')
-            expect(or.status).toBe('fail')
-          } else {
-            expect(rt.status, rt.details).toBe('pass')
-            expect(rt.caseMeta?.observed).toBe('C_Verify → CKR_OK')
-            expect(or.status, or.details).toBe('pass')
-          }
+          expect(rt.status, rt.details).toBe('pass')
+          expect(rt.caseMeta?.observed).toBe('C_Verify → CKR_OK')
+          expect(or.status, or.details).toBe('pass')
         }
   })
 

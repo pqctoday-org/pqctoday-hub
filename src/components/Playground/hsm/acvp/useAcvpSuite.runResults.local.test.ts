@@ -35,7 +35,18 @@ import { caseKeyOf, type EngineId, type RunResult } from '@/data/validation/cove
 import { ALL_CATEGORY_IDS, type TestResult } from './useAcvpSuite'
 
 const require_ = createRequire(import.meta.url)
-const CPP_GLUE = require_.resolve('@pqctoday/softhsm-wasm/wasm/softhsm.js')
+// process.cwd()-relative, NOT require.resolve('@pqctoday/softhsm-wasm/...'):
+// that package is a `file:` dependency resolved through node_modules, and in
+// a worktree whose node_modules is itself symlinked to a SIBLING worktree
+// (a real, supported setup — see AGENTS/worktree docs), a relative symlink
+// one level inside that shared node_modules resolves relative to where IT
+// lives, landing on the sibling worktree's src/vendor/softhsm-wasm instead of
+// this one's — silently testing a stale/different C++ .wasm binary with no
+// error (found 2026-09-25, P3 combined rebuild: every C++ result in this
+// suite was actually exercising another worktree's engine for the whole
+// session, until this fix). RUST_WASM below never had this bug because it
+// was already cwd-relative.
+const CPP_GLUE = path.resolve(process.cwd(), 'src/vendor/softhsm-wasm/wasm/softhsm.js')
 const CPP_WASM = path.join(path.dirname(CPP_GLUE), 'softhsm.wasm')
 const RUST_WASM = path.resolve(process.cwd(), 'src/wasm/softhsmrustv3_bg.wasm')
 const OUT = path.resolve(
