@@ -31,7 +31,21 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.122.0] - 2026-09-25
 
-A Codex spot-check of 27 already-published Timeline rows caught two date errors nobody had flagged, plus a round of document research closed most of the remaining sourcing gaps from the last two releases.
+The Timeline's review backlog is cleared: 19 rows that were already fully sourced but sitting unpublished are now live, taking the public Timeline from 163 events to 182, and the four still held back are held for a stated reason rather than by neglect.
+
+### Added
+
+- **19 Timeline events are now public.** [view:/timeline] [persona:grc] [persona:researcher] Each was already backed by a cached primary document with a confirmed date; they were invisible only because nobody had marked them reviewed. Among them: France's ANSSI PQC FAQ and its joint QKD position paper with BSI, NLNCSA and Sweden; the UK NCSC migration roadmap; Japan's 2035 target; CISA's EO 14306 deadline; NSM-10; the G7 financial-sector window; Dubai's DESC guideline; Thailand's NCSA migration strategy; Taiwan's national PQC Migration Guide; and NIST's IR 8545, IR 8547 comments and SP 800-227.
+- **The IETF hybrid key-exchange row now tracks a published standard.** [view:/timeline] [persona:developer] [persona:researcher] The draft it followed became **RFC 10024**, "Post-Quantum Traditional (PQ/T) Hybrid Key Agreement Mechanisms for TLS 1.3" (Proposed Standard, August 2026), defining X25519MLKEM768, SecP256r1MLKEM768 and SecP384r1MLKEM1024. Confirmed against both the IETF datatracker and the RFC Editor before the change.
+
+### Fixed
+
+- **Taiwan's row was invisible even when published.** [view:/timeline] [persona:grc] It carried no years at all, which meant the Gantt silently dropped it. It is now dated 2025 — when MODA actually published the guide — and filed under Guidance rather than Deadline, because no Taiwanese deadline is supported by the document.
+- **Three US rows were resource pages, not events.** [view:/timeline] [persona:grc] The DHS, NSA and NCCoE rows had no description at all and a placeholder 2026 date; their sources are standing agency hubs. They are retired rather than published with an invented event.
+- **A duplicate Malaysia row is retired.** [view:/timeline] [persona:grc] It covered the same National PQC Migration Plan already recorded from NACSA's own site and in the compliance dataset, but cited a news article instead.
+- **Two overstated fields corrected.** [view:/timeline] [persona:grc] NSM-10 showed an end year of 2026; it is a May 2022 memorandum. NIST SP 800-227 was marked a hard mandate; it is titled "Recommendations for Key-Encapsulation Mechanisms" and is now classified as guidance, matching SP 800-208.
+- **A DoD row was colliding with its own retired predecessor.** [persona:researcher] Both shared one country/organisation/title key, which corrupted an internal completeness metric. The live row now carries the memorandum's real title, "Preparing for Migration to Post-Quantum Cryptography".
+- **The UK's 2035 row had no source date.** [view:/timeline] [persona:researcher] Filled from the NCSC guidance it cites. The row itself stays unpublished — NCSC calls 2035 an "indicative target", which is not a confirmed deadline.
 
 ### Changed
 
@@ -46,7 +60,7 @@ A Codex spot-check of 27 already-published Timeline rows caught two date errors 
 
 ### Data
 
-- **Timeline 09252026_r7:** [view:/timeline] [persona:grc] [persona:researcher] 54 cell changes across 25 rows; 311 rows total. 7 new source documents captured and admitted. Full reasoning in `pqctoday-priv/maintenance/lineage/timeline-review/claude-recommendations-09252026.md` and this session's record.
+- **Timeline 09252026_r7 → r9:** [view:/timeline] [persona:grc] [persona:researcher] r7 made 54 cell changes across 25 rows; r8 and r9 added 65 more across the review backlog. 311 rows total: 182 public, 125 retired, 4 still held. The four held back are Germany's 2030 and the UK's 2035 (both stated as targets rather than deadlines), Russia's TC26 working group (an ongoing activity with a year-only date) and CISA's ACDI window (whose dates come from a chart image, not text). Full reasoning in `pqctoday-priv/maintenance/lineage/timeline-review/claude-recommendations-09252026.md` and this session's record.
 
 ## [4.121.0] - 2026-09-25
 

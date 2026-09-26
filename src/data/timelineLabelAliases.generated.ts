@@ -380,6 +380,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'International:IETF — draft-ietf-lamps-kyber-certificates',
   ],
   'international-ietf-draft-ietf-tls-ecdhe-mlkem-hybrid-kex': [
+    'International:IETF — RFC 10024 — PQ/T Hybrid Key Agreement for TLS 1.3',
     'International:IETF — draft-ietf-tls-ecdhe-mlkem Hybrid KEX',
   ],
   'international-ietf-rfc-9370-multiple-key-exchanges-in-ikev2': [
@@ -566,6 +567,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'thailand-ncsa-quantum-ready-2030-roadmap': [
     'Thailand:NCSA — Migration Strategy',
+    'Thailand:NCSA — NCSA PQC Migration Strategy (2024-2035)',
     'Thailand:NCSA — Quantum-Ready 2030 Roadmap',
   ],
   'uk-ico-quantum-computing-tech-horizons-report': [
@@ -653,6 +655,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'united-states-dod-dod-pqc-migration-memorandum-2': [
     'United States:DoD — DoD PQC Migration Memorandum',
+    'United States:DoD — Preparing for Migration to Post-Quantum Cryptography (DoD CIO Memorandum)',
   ],
   'united-states-ethereum-foundation-strawmap-pqc-roadmap-published': [
     'United States:Ethereum Foundation — Strawmap PQC Roadmap Published',
