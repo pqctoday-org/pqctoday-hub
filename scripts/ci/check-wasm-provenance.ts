@@ -23,6 +23,14 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import {
+  DOC_ONLY_EXCLUDES,
+  cargoBundlePaths,
+  commitsTouching,
+  deriveCargoInputs,
+  gitCargoIo,
+  type DerivedInputs,
+} from './wasm-build-inputs'
 
 const CHECK = process.argv.includes('--check')
 const ONLY = new Set(
@@ -35,6 +43,16 @@ type Bundle = {
   files: string[]
   buildScript: string
   sourceDirs: string[]
+  /**
+   * Rust bundles: the Cargo.toml the build runs from (hsm-relative). When set,
+   * the watched inputs are DERIVED from that manifest's build graph (see
+   * wasm-build-inputs.ts) and `sourceDirs` is ignored for drift — it stays only
+   * as documentation. Added 2026-09-26, after a hand-written `sourceDirs` both
+   * missed a linked crate and flagged changes that cannot alter the binary.
+   */
+  cargoManifest?: string
+  /** Non-Cargo inputs a Cargo bundle also builds from (C sources, build scripts). */
+  extraInputs?: string[]
   track: 'tip' | 'pinned'
   status: 'built' | 'pending-refresh' | 'current'
   hsmCommit: string | null
@@ -131,7 +149,19 @@ const resolveBaseline = (): { ref: string; sha: string } => {
  * bundle that does not match its source, which is far worse than the cost of a
  * needless rebuild.
  */
-const DOC_ONLY_EXCLUDES = [':(exclude)**/*.md', ':(exclude)**/LICENSE', ':(exclude)**/LICENSE.*']
+// DOC_ONLY_EXCLUDES now lives in wasm-build-inputs.ts (shared with the derived-input path).
+
+/** Derived inputs are read at the BASELINE commit — the graph that would ship. */
+const derivedCache = new Map<string, DerivedInputs>()
+const derivedFor = (b: Bundle): DerivedInputs => {
+  const key = b.cargoManifest!
+  let d = derivedCache.get(key)
+  if (!d) {
+    d = deriveCargoInputs(key, gitCargoIo(git, baseline.sha))
+    derivedCache.set(key, d)
+  }
+  return d
+}
 
 const baseline = resolveBaseline()
 console.log(
@@ -152,23 +182,46 @@ for (const b of manifest.bundles) {
     continue
   }
   let behind = '0'
+  let watched = b.sourceDirs.join(', ')
   try {
-    behind = git(
-      'rev-list',
-      '--count',
-      `${b.hsmCommit}..${baseline.sha}`,
-      '--',
-      ...b.sourceDirs,
-      // Documentation cannot change a compiled artifact, so counting it as
-      // drift only produces false stalls. It has: a one-line fix to
-      // `rust/README.md` (hsm 318cf11) marked BOTH rust-derived bundles stale,
-      // which blocks every hub push until someone rebuilds two multi-megabyte
-      // wasm binaries whose inputs did not move. A guard that cries wolf gets
-      // worked around, and the workaround is editing the provenance record by
-      // hand — which is exactly the thing this file exists to make trustworthy.
-      ...DOC_ONLY_EXCLUDES
-    )
-  } catch {
+    if (b.cargoManifest) {
+      const d = derivedFor(b)
+      watched = `${d.crates.length} crate(s) in ${b.cargoManifest}'s build graph (${d.crates.join(', ')})`
+      behind = String(
+        commitsTouching(git, b.hsmCommit, baseline.sha, cargoBundlePaths(b, d), d.includes).size
+      )
+    } else {
+      behind = git(
+        'rev-list',
+        '--count',
+        `${b.hsmCommit}..${baseline.sha}`,
+        '--',
+        ...b.sourceDirs,
+        // Documentation cannot change a compiled artifact, so counting it as
+        // drift only produces false stalls. It has: a one-line fix to
+        // `rust/README.md` (hsm 318cf11) marked BOTH rust-derived bundles stale,
+        // which blocks every hub push until someone rebuilds two multi-megabyte
+        // wasm binaries whose inputs did not move. A guard that cries wolf gets
+        // worked around, and the workaround is editing the provenance record by
+        // hand — which is exactly the thing this file exists to make trustworthy.
+        ...DOC_ONLY_EXCLUDES
+      )
+    }
+  } catch (e) {
+    if (
+      b.cargoManifest &&
+      !(
+        e instanceof Error &&
+        /Invalid revision range|bad revision|unknown revision/i.test(e.message)
+      )
+    ) {
+      // A derivation failure is a broken check, not a stale bundle: say so plainly.
+      console.log(
+        `  ⚠️  ${b.name}: could not derive build inputs — ${e instanceof Error ? e.message : String(e)}`
+      )
+      drift = true
+      continue
+    }
     console.log(
       `  ⚠️  ${b.name}: recorded commit ${b.hsmCommit.slice(0, 9)} not in hsm history — rebuild`
     )
@@ -177,7 +230,7 @@ for (const b of manifest.bundles) {
   }
   if (Number(behind) > 0) {
     console.log(
-      `  ❌  ${b.name}: STALE — ${behind} hsm commit(s) to ${b.sourceDirs.join(', ')} since this bundle (built @ ${b.hsmCommit.slice(0, 9)}). Rebuild: ${b.buildScript}`
+      `  ❌  ${b.name}: STALE — ${behind} hsm commit(s) to ${watched} since this bundle (built @ ${b.hsmCommit.slice(0, 9)}). Rebuild: ${b.buildScript}`
     )
     drift = true
   } else {
