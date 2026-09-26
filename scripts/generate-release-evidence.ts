@@ -51,7 +51,9 @@ import { format, resolveConfig } from 'prettier'
 import { VALIDATION_DISCLAIMER } from '../src/data/validationDisclaimer'
 import { EVIDENCE_CLASS_IDS } from '../src/data/validation/evidenceClasses'
 import {
+  REVIEWED_STATUSES,
   evaluateReviews,
+  sourceCheckEligible,
   type ReviewItem,
   type ReviewItemStatus,
 } from '../src/data/validation/reviewRecords'
@@ -64,6 +66,14 @@ import {
   type WorkbenchGroups,
 } from './audit-validation-claims'
 import { TEST_REGISTRY } from '../src/data/validation/testRegistry'
+
+/**
+ * Manifest `source.kind` values whose bytes can be re-verified against an
+ * external pinned upstream, so one named reviewer suffices (2026-09-26).
+ * Everything else keeps the two-distinct-reviewer rule. See
+ * ReviewItem.singleReviewerOk.
+ */
+const SINGLE_REVIEWER_SOURCE_KINDS = new Set(['nist-acvp-server'])
 
 export const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 export const REPORT_JSON_REL = 'public/data/validation/release-evidence.json'
@@ -584,8 +594,13 @@ export function buildReviewItems(
       id: `vector-source:${f.id}`,
       kind: 'vector-source',
       title: `${f.path} — ${f.evidenceClass} (${f.source.citation})`,
-      requirement:
-        'Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).',
+      requirement: sourceCheckEligible(f.source)
+        ? 'Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.'
+        : SINGLE_REVIEWER_SOURCE_KINDS.has(f.source?.kind ?? '')
+          ? 'One named reviewer: the expected values are byte-comparable against the pinned upstream commit cited above, so the source verification and implementation review may be recorded by the same person (2026-09-26).'
+          : 'Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).',
+      singleReviewerOk: SINGLE_REVIEWER_SOURCE_KINDS.has(f.source?.kind ?? ''),
+      sourceCheckOk: sourceCheckEligible(f.source),
       subjectSha256: sha256(canonical(f)),
     })
   }
@@ -635,8 +650,11 @@ export function buildReviewItems(
   return items
 }
 
-function readReviewRecords(root: string): Array<{ file: string; record: unknown }> {
-  return listDir(root, IN.reviews, (n) => n.endsWith('.review.json')).map((r) => {
+function readReviewRecords(
+  root: string,
+  suffix = '.review.json'
+): Array<{ file: string; record: unknown }> {
+  return listDir(root, IN.reviews, (n) => n.endsWith(suffix)).map((r) => {
     let record: unknown
     try {
       record = JSON.parse(fs.readFileSync(path.join(root, r), 'utf8'))
@@ -719,7 +737,11 @@ export function evaluateDod(d: DodInputs): DodItem[] {
       const src = exists(d.root, f) ? fs.readFileSync(path.join(d.root, f), 'utf8') : ''
       return !/<ValidationDisclaimer\b/.test(src)
     })
-    const exportsMissing = ['md', 'html']
+    // `json` added 2026-09-26: this list was ['md','html'], so the one coverage
+    // export a consumer is most likely to ingest programmatically carried no
+    // disclaimer of either kind. generate-coverage-matrix.ts now emits a
+    // top-level `$disclaimer` in it.
+    const exportsMissing = ['md', 'html', 'json']
       .map((ext) => `public/data/validation/coverage-matrix.${ext}`)
       .filter((f) => {
         if (!exists(d.root, f)) return true
@@ -732,12 +754,12 @@ export function evaluateDod(d: DodInputs): DodItem[] {
       status: ok ? 'PASS' : 'FAIL',
       evidence: [
         ...DISCLAIMER_SURFACES,
-        'public/data/validation/coverage-matrix.{md,html}',
+        'public/data/validation/coverage-matrix.{md,html,json}',
         REPORT_MD_REL,
         'e2e/validation-release-evidence.spec.ts',
       ],
       basis: ok
-        ? 'Workbench, Algorithms KAT view and coverage matrix render <ValidationDisclaimer/> (the one shared constant); the coverage exports and this report carry it verbatim; e2e/validation-release-evidence.spec.ts asserts it is visible in a browser.'
+        ? 'Workbench, Algorithms KAT view and coverage matrix render <ValidationDisclaimer/> (the one shared constant); all three coverage exports (.md, .html and the machine-readable .json) and this report carry it verbatim; e2e/validation-release-evidence.spec.ts asserts it is visible in a browser.'
         : `Missing on: ${[...missing, ...exportsMissing].join(', ')}.`,
     })
   }
@@ -968,14 +990,17 @@ export function buildReleaseEvidence(root: string = ROOT): {
   const reviewItems = buildReviewItems(ctx, manifest, waiverFile, claimsSha)
   const records = readReviewRecords(root)
   const today = new Date().toISOString().slice(0, 10)
-  const ev = evaluateReviews(reviewItems, records, today)
+  // Machine-written *.source-check.json records (npm run acvp:source-check) —
+  // they review eligible NIST/Wycheproof sources when no human record exists.
+  const sourceChecks = readReviewRecords(root, '.source-check.json')
+  const ev = evaluateReviews(reviewItems, records, today, sourceChecks)
 
   const statusCounts: Record<string, number> = {}
   const awaiting: Record<string, number> = {}
   for (const it of reviewItems) {
     const s = ev.status[it.id]
     statusCounts[s] = (statusCounts[s] ?? 0) + 1
-    if (s !== 'approved') awaiting[it.kind] = (awaiting[it.kind] ?? 0) + 1
+    if (!REVIEWED_STATUSES.has(s)) awaiting[it.kind] = (awaiting[it.kind] ?? 0) + 1
   }
   const lmState = REVIEW_STATE_RE.exec(readText(ctx, IN.lm065Status, false) ?? '')?.[1] ?? null
 

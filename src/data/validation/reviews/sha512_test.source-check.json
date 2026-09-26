@@ -1,0 +1,24 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:sha512_test",
+  "subjectSha256": "c989e58504985ad4875d6c458d46a14d8af8b09e99840f47da7c3f816ea4b523",
+  "fileSha256": "4c39beee8b699bce6cb369fcf448fdc7b30178cd20739628b62c568faa44ffbe",
+  "result": "match",
+  "tool": "scripts/acvp/subset_reproduce.py",
+  "command": "python3 scripts/acvp/subset_reproduce.py --id sha512_test --strict",
+  "upstream": {
+    "repository": "https://github.com/usnistgov/ACVP-Server",
+    "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "files": [
+      {
+        "path": "gen-val/json-files/SHA2-512-1.0/internalProjection.json",
+        "sha256": "2b514c517a2ef150d240efc52fdb2c4127925f0b4291b5a5b9153515e0ec7478"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 3,
+    "values": 11
+  },
+  "checkedAt": "2026-09-26"
+}

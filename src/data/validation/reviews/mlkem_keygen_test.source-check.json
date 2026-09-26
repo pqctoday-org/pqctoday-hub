@@ -1,0 +1,24 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:mlkem_keygen_test",
+  "subjectSha256": "8c2438351cde09fb15c766c5a55de3536282d1d239ee63459e96fb4695f9cebc",
+  "fileSha256": "52ed4c9f67d62e45b0edb2d4cf0e8c1d1255e2308515666274a14c101293b8af",
+  "result": "match",
+  "tool": "scripts/acvp/subset_reproduce.py",
+  "command": "python3 scripts/acvp/subset_reproduce.py --id mlkem_keygen_test --strict",
+  "upstream": {
+    "repository": "https://github.com/usnistgov/ACVP-Server",
+    "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "files": [
+      {
+        "path": "gen-val/json-files/ML-KEM-keyGen-FIPS203/internalProjection.json",
+        "sha256": "d7a62a2c3476957f56dd8d24f9004ea6776ccfe995ffe71a65bb9506dc9c7b1b"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 9,
+    "values": 54
+  },
+  "checkedAt": "2026-09-26"
+}

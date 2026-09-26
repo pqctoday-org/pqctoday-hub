@@ -1,0 +1,24 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:hmac_test",
+  "subjectSha256": "2feaa20645a7e04a4071e133771df4fad6d893b84e2956fb8e439936d76d65f0",
+  "fileSha256": "bed2ee70520afdd4d8e80623b03e64b76dca198cabf64422a9e91cc5923d2207",
+  "result": "match",
+  "tool": "scripts/acvp/subset_reproduce.py",
+  "command": "python3 scripts/acvp/subset_reproduce.py --id hmac_test --strict",
+  "upstream": {
+    "repository": "https://github.com/usnistgov/ACVP-Server",
+    "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "files": [
+      {
+        "path": "gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json",
+        "sha256": "a9d0734b93aee71bc6f30b47daab782fd96b39688afe4fbddb009e99402ec989"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 1,
+    "values": 6
+  },
+  "checkedAt": "2026-09-26"
+}

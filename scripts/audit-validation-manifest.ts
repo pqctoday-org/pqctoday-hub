@@ -50,11 +50,23 @@ import type {
   VectorFileEntry,
 } from '../src/data/validation/validationCaseManifest'
 import {
+  sourceCheckEligible,
   validateReviewRecord,
+  validateSourceCheck,
   type ReviewItem,
   type ReviewRecord,
+  type SourceCheckRecord,
 } from '../src/data/validation/reviewRecords'
 import { canonical } from './generate-release-evidence'
+
+/**
+ * Manifest `source.kind` values whose bytes can be re-verified against an
+ * external pinned upstream, so one named reviewer suffices (2026-09-26).
+ * Everything else keeps the two-distinct-reviewer rule. Separately, a source
+ * that `sourceCheckEligible` accepts may be reviewed by an automated source
+ * check instead of any person (see ReviewItem.sourceCheckOk).
+ */
+const SINGLE_REVIEWER_SOURCE_KINDS = new Set(['nist-acvp-server'])
 
 export const MANIFEST_REL = 'src/data/validation/vector-manifest.json'
 export const SCHEMA_REL = 'src/data/validation/validationCaseManifest.schema.json'
@@ -138,7 +150,8 @@ export const REVIEWS_REL = 'src/data/validation/reviews'
 /** What a contributed (non-baseline) vector record is missing, one message per gap. */
 export function contributionProblems(
   e: VectorFileEntry,
-  reviews: ReadonlyArray<{ file: string; record: unknown }>
+  reviews: ReadonlyArray<{ file: string; record: unknown }>,
+  sourceChecks: ReadonlyArray<{ file: string; record: unknown }> = []
 ): { code: string; message: string }[] {
   const out: { code: string; message: string }[] = []
   const note = e.license?.note ?? ''
@@ -178,7 +191,14 @@ export function contributionProblems(
     id: `vector-source:${e.id}`,
     kind: 'vector-source',
     title: e.path,
-    requirement: 'two-person review',
+    // Externally-verifiable sources need one reviewer, not two (2026-09-26) —
+    // see ReviewItem.singleReviewerOk. Derived from the source kind, never from
+    // the record, so a record cannot claim the relaxation for itself.
+    requirement: SINGLE_REVIEWER_SOURCE_KINDS.has(e.source?.kind ?? '')
+      ? 'one named reviewer (externally-verifiable source)'
+      : 'two-person review',
+    singleReviewerOk: SINGLE_REVIEWER_SOURCE_KINDS.has(e.source?.kind ?? ''),
+    sourceCheckOk: sourceCheckEligible(e.source),
     subjectSha256: createHash('sha256').update(canonical(e)).digest('hex'),
   }
   const items = new Map([[item.id, item]])
@@ -189,12 +209,28 @@ export function contributionProblems(
       (r.record as ReviewRecord).decision === 'approved' &&
       (r.record as ReviewRecord).subjectSha256 === item.subjectSha256
   )
-  if (!ok)
+  // An automated source match stands in for the review on eligible sources
+  // (maintainer decision 2026-09-26) — but only a current one, bound to this
+  // exact entry, and only when no human record exists to decide instead.
+  const checked =
+    !recs.length &&
+    item.sourceCheckOk === true &&
+    sourceChecks.some(
+      (r) =>
+        (r.record as Partial<SourceCheckRecord>)?.item === item.id &&
+        validateSourceCheck(r.record, items).length === 0 &&
+        (r.record as SourceCheckRecord).subjectSha256 === item.subjectSha256
+    )
+  if (!ok && !checked)
     out.push({
       code: 'CONTRIB_REVIEW',
       message: recs.length
         ? `the review record for ${item.id} is invalid, not approved, or stale (subject SHA-256 now ${item.subjectSha256})`
-        : `no two-person review record for ${item.id} in ${REVIEWS_REL} (source verification + implementation review by two distinct named people)`,
+        : item.sourceCheckOk
+          ? `no current source check for ${item.id} in ${REVIEWS_REL} (run npm run acvp:source-check; a named review record also satisfies this)`
+          : item.singleReviewerOk
+            ? `no review record for ${item.id} in ${REVIEWS_REL} (source verification + implementation review; one named person may record both, because this source is byte-verifiable against its pinned upstream)`
+            : `no two-person review record for ${item.id} in ${REVIEWS_REL} (source verification + implementation review by two distinct named people)`,
     })
   return out
 }
@@ -278,6 +314,12 @@ export function inFileClass(doc: Json): string | undefined {
   if (typeof producer !== 'string' || !producer) return undefined
   if (producer.startsWith('NIST ACVP-Server')) return 'nist-acvp-reference-sample'
   if (producer.startsWith('self-generated')) return 'independent-oracle'
+  // A vendored third-party corpus is an oracle, not a standard: Project
+  // Wycheproof is maintained by Google / C2SP, which is not a standards body,
+  // and no standard prints its values. Without this branch the fallback below
+  // would imply `published-standard-kat` for every Wycheproof file and force 6
+  // spurious inFileProvenanceConflict declarations that say the same thing.
+  if (producer.startsWith('Project Wycheproof')) return 'independent-oracle'
   return 'published-standard-kat'
 }
 
@@ -720,24 +762,28 @@ export function auditManifest(opts: AuditOptions): {
   // 9. contributor flow (WS-I): a vector added after the baseline is trusted
   //    only with complete provenance, license, expectations and a two-person review.
   const reviewsDir = path.join(root, REVIEWS_REL)
-  const reviews = fs.existsSync(reviewsDir)
-    ? fs
-        .readdirSync(reviewsDir)
-        .filter((f) => f.endsWith('.review.json'))
-        .map((f) => {
-          try {
-            return {
-              file: f,
-              record: JSON.parse(fs.readFileSync(path.join(reviewsDir, f), 'utf8')),
+  const readRecords = (suffix: string) =>
+    fs.existsSync(reviewsDir)
+      ? fs
+          .readdirSync(reviewsDir)
+          .filter((f) => f.endsWith(suffix))
+          .map((f) => {
+            try {
+              return {
+                file: f,
+                record: JSON.parse(fs.readFileSync(path.join(reviewsDir, f), 'utf8')),
+              }
+            } catch {
+              return { file: f, record: null }
             }
-          } catch {
-            return { file: f, record: null }
-          }
-        })
-    : []
+          })
+      : []
+  const reviews = readRecords('.review.json')
+  const sourceChecks = readRecords('.source-check.json')
   for (const e of manifest.files) {
     if (e.status !== 'active' || PRE_CONTRIBUTOR_FLOW_FILES.has(e.id)) continue
-    for (const p of contributionProblems(e, reviews)) err(p.code, `${e.id}: ${p.message}`, e.path)
+    for (const p of contributionProblems(e, reviews, sourceChecks))
+      err(p.code, `${e.id}: ${p.message}`, e.path)
   }
 
   return { findings, manifest, loaded }

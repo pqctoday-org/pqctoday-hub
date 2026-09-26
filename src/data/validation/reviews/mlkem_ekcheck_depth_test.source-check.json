@@ -1,0 +1,24 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:mlkem_ekcheck_depth_test",
+  "subjectSha256": "155c1a799a4221aa0d2c0c58a78ae7b25f50ce9fd7765cfb5d844c89fa6c019a",
+  "fileSha256": "ec5a90d200271d015d40ecf410e7369c14907951fa74d05d18744210b0198ca5",
+  "result": "match",
+  "tool": "scripts/acvp/subset_reproduce.py",
+  "command": "python3 scripts/acvp/subset_reproduce.py --id mlkem_ekcheck_depth_test --strict",
+  "upstream": {
+    "repository": "https://github.com/usnistgov/ACVP-Server",
+    "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "files": [
+      {
+        "path": "gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json",
+        "sha256": "a556952ce869bb89c3a3196a701dad89647c193a34c86eafb61a9d710d5b810f"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 12,
+    "values": 60
+  },
+  "checkedAt": "2026-09-26"
+}
