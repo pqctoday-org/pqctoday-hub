@@ -245,4 +245,35 @@ describe('ProductDetail', () => {
       expect(screen.queryByTestId('classical-only-note')).not.toBeInTheDocument()
     })
   })
+
+  /**
+   * A cloud KMS whose HSM is FIPS-validated relies on a real certificate that
+   * is not its own. `unknown` would hide that; `yes` would claim a validation
+   * the product does not hold.
+   */
+  describe('component-only certification note', () => {
+    it('says the product uses a validated module but holds no certificate itself', () => {
+      render(
+        <MemoryRouter>
+          <ProductDetail
+            product={makeItem({ hasCertification: 'component', pqcCertified: 'none' })}
+          />
+        </MemoryRouter>
+      )
+      expect(screen.getByTestId('component-only-note')).toHaveTextContent(
+        /validated module inside.*holds no certificate/
+      )
+      // and it must never be mistaken for the product's own classical-only validation
+      expect(screen.queryByTestId('classical-only-note')).not.toBeInTheDocument()
+    })
+
+    it('stays hidden for a product that holds its own certificate', () => {
+      render(
+        <MemoryRouter>
+          <ProductDetail product={makeItem({ hasCertification: 'yes', pqcCertified: 'no' })} />
+        </MemoryRouter>
+      )
+      expect(screen.queryByTestId('component-only-note')).not.toBeInTheDocument()
+    })
+  })
 })

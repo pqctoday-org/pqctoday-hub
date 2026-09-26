@@ -188,7 +188,7 @@ export function checkRenamesKeepFormerNames(
 }
 
 const PQC_CERTIFIED_VALUES = new Set(['yes', 'partial', 'no', 'none'])
-const HAS_CERTIFICATION_VALUES = new Set(['yes', 'no', 'unknown'])
+const HAS_CERTIFICATION_VALUES = new Set(['yes', 'no', 'unknown', 'component'])
 
 /**
  * MC-5 — the two certification verdicts stay inside their vocabularies, and
@@ -206,6 +206,13 @@ const HAS_CERTIFICATION_VALUES = new Set(['yes', 'no', 'unknown'])
  * pairing is legitimate, including the one these columns were added to
  * express — hasCertification=yes with pqcCertified=no, a product FIPS-validated
  * for classical algorithms only (11 active rows).
+ *
+ * `component` (added 2026-09-26, WS-D) means the product relies on a validated
+ * module it embeds but holds no certificate itself — a cloud KMS whose HSM is
+ * validated. pqcCertified describes the PRODUCT's own certification, so
+ * claiming PQC certification alongside `component` is the same contradiction
+ * as alongside `no`: a certificate is being claimed that the row says the
+ * product does not hold.
  */
 export function checkCertificationVerdicts(rows: CsvRow[], file: string): Finding[] {
   const findings: Finding[] = []
@@ -231,13 +238,16 @@ export function checkCertificationVerdicts(rows: CsvRow[], file: string): Findin
         message: `${row.product_id}: has_certification must be one of ${[...HAS_CERTIFICATION_VALUES].join('|')}`,
       })
     }
-    if ((pc === 'yes' || pc === 'partial') && hc === 'no') {
+    if ((pc === 'yes' || pc === 'partial') && (hc === 'no' || hc === 'component')) {
       findings.push({
         csv: file,
         row: i + 2,
         field: 'pqc_certified',
         value: `${pc} / ${hc}`,
-        message: `${row.product_id}: claims PQC certification (${pc}) while has_certification says no certificate exists`,
+        message:
+          hc === 'component'
+            ? `${row.product_id}: claims PQC certification (${pc}) but has_certification says only an embedded module is validated`
+            : `${row.product_id}: claims PQC certification (${pc}) while has_certification says no certificate exists`,
       })
     }
   })

@@ -7,7 +7,15 @@
 
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { ExternalLink, FileText, BookOpen, Newspaper, BookText, AlertTriangle } from 'lucide-react'
+import {
+  ExternalLink,
+  FileText,
+  BookOpen,
+  Newspaper,
+  BookText,
+  AlertTriangle,
+  Info,
+} from 'lucide-react'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { getCertsForProduct } from '@/data/certificationXrefData'
 import { cpeByProduct } from '@/data/cpeXrefData'
@@ -67,6 +75,14 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
   // over the prose cannot tell a claim from its denial, which is exactly how
   // "No (CMVP certificate #5038 … contains no ML-KEM)" used to read as a claim.
   const classicalOnly = product.hasCertification === 'yes' && product.pqcCertified === 'no'
+
+  // Relies on a validated module it embeds, but holds no certificate itself —
+  // a cloud KMS whose HSM is FIPS-validated, a service built on a validated
+  // library. The certificate is real; it is just not this product's. Saying
+  // "unknown" would hide a known fact, and saying "yes" would claim a
+  // validation the product does not have — the validation-boundary confusion
+  // the certification learning module exists to teach.
+  const componentOnly = product.hasCertification === 'component'
 
   const verification = productVerificationBadge(product)
   // Other rows of the same product line (family_id) — releases, editions or
@@ -161,7 +177,7 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
         </div>
       )}
 
-      {(certs.length > 0 || classicalOnly) && (
+      {(certs.length > 0 || classicalOnly || componentOnly) && (
         <div>
           <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
             Certifications
@@ -183,6 +199,15 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
             >
               <AlertTriangle size={12} aria-hidden />
               Validated for classical algorithms only — this certification does not cover PQC
+            </p>
+          )}
+          {componentOnly && (
+            <p
+              data-testid="component-only-note"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info px-2 py-1 text-xs text-status-info"
+            >
+              <Info size={12} aria-hidden />
+              Uses a validated module inside — the product itself holds no certificate
             </p>
           )}
         </div>

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import {
+  checkApprovedBoundaryClaims,
+  checkCertificationVerdicts,
   checkNoPqcConsistency,
   checkProductIdUniqueness,
   checkReleaseDates,
@@ -84,6 +86,89 @@ describe('MC-4 renames keep former names', () => {
       checkRenamesKeepFormerNames(
         prev,
         [{ product_id: 'x', software_name: 'aws-lc-rs', former_names: 'GitHub - aws/aws-lc-rs' }],
+        'c'
+      )
+    ).toHaveLength(0)
+  })
+})
+
+describe('MC-5 certification verdicts', () => {
+  const row = (pc: string, hc: string, status = 'active') => ({
+    product_id: 'p',
+    pqc_certified: pc,
+    has_certification: hc,
+    status,
+  })
+
+  it('accepts every legitimate pairing, including classical-only and component', () => {
+    for (const [pc, hc] of [
+      ['yes', 'yes'],
+      ['no', 'yes'], // FIPS-validated for classical algorithms only
+      ['none', 'unknown'],
+      ['none', 'component'], // a validated module inside, the product itself not
+      ['no', 'component'],
+    ]) {
+      expect(checkCertificationVerdicts([row(pc, hc)], 'c'), `${pc}/${hc}`).toHaveLength(0)
+    }
+  })
+
+  it('rejects values outside either vocabulary', () => {
+    expect(checkCertificationVerdicts([row('maybe', 'unknown')], 'c')).toHaveLength(1)
+    expect(checkCertificationVerdicts([row('none', 'probably')], 'c')).toHaveLength(1)
+  })
+
+  it('rejects a PQC-certification claim when no certificate exists', () => {
+    expect(checkCertificationVerdicts([row('yes', 'no')], 'c')).toHaveLength(1)
+    expect(checkCertificationVerdicts([row('partial', 'no')], 'c')).toHaveLength(1)
+  })
+
+  it('rejects a PQC-certification claim when only an embedded module is validated', () => {
+    // pqc_certified describes the PRODUCT's own certification; `component`
+    // says it holds none. A cloud KMS is not PQC-certified because its HSM is.
+    const f = checkCertificationVerdicts([row('yes', 'component')], 'c')
+    expect(f).toHaveLength(1)
+    expect(f[0].message).toMatch(/embedded module/)
+    expect(checkCertificationVerdicts([row('partial', 'component')], 'c')).toHaveLength(1)
+  })
+
+  it('ignores deprecated rows', () => {
+    expect(checkCertificationVerdicts([row('yes', 'no', 'deprecated')], 'c')).toHaveLength(0)
+  })
+})
+
+describe('MC-6 approved-boundary claims', () => {
+  it('flags pqc_certified=yes whose own note puts PQC outside the approved mode', () => {
+    const f = checkApprovedBoundaryClaims(
+      [
+        {
+          product_id: 'ls2',
+          pqc_certified: 'yes',
+          pqc_support: 'Yes (ML-KEM, ML-DSA in non-FIPS operating mode)',
+          status: 'active',
+        },
+      ],
+      'c'
+    )
+    expect(f).toHaveLength(1)
+  })
+
+  it('leaves partial claims and clean yes claims alone', () => {
+    expect(
+      checkApprovedBoundaryClaims(
+        [
+          {
+            product_id: 'a',
+            pqc_certified: 'partial',
+            pqc_support: 'Partial (non-Approved services only)',
+            status: 'active',
+          },
+          {
+            product_id: 'b',
+            pqc_certified: 'yes',
+            pqc_support: 'Yes (ML-KEM approved, CMVP #5497)',
+            status: 'active',
+          },
+        ],
         'c'
       )
     ).toHaveLength(0)

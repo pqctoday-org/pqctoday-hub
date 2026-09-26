@@ -106,10 +106,15 @@ export interface SoftwareItem {
    * `unknown` means nothing in the data asserts either way, which is the
    * honest default — no row currently asserts `no`.
    *
+   * `component` means the product relies on a validated module it embeds —
+   * a cloud KMS whose HSM is validated — but holds no certificate itself.
+   * Distinct from `yes` (that would claim a validation the product does not
+   * have) and from `unknown` (that would hide a known fact).
+   *
    * Optional for the same reason as {@link pqcCertified}; the loader always
    * sets it, defaulting to `unknown`.
    */
-  hasCertification?: 'yes' | 'no' | 'unknown'
+  hasCertification?: 'yes' | 'no' | 'unknown' | 'component'
   /** Normalized PQC status from the catalog: available | partial | roadmap |
    *  none | unknown (the single source of truth for product PQC status).
    *  Optional so test mocks / older data may omit it; the loader always sets it. */
