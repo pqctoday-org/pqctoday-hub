@@ -151,7 +151,7 @@ describe('NIST ACVP-Server vectors verify against the real Rust engine', () => {
           hexToBytes(tv.signature),
           {
             context: tv.context ? hexToBytes(tv.context) : undefined,
-            preHash: tv.hashAlg as SoftHSM.MLDSAPreHash,
+            preHash: SoftHSM.mldsaPreHashFromAcvp(tv.hashAlg),
           }
         )
         expect(isValid).toBe(true)

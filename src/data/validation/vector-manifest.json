@@ -6031,7 +6031,7 @@
     {
       "id": "ecdsa_p521_test",
       "path": "src/data/acvp/ecdsa_p521_test.json",
-      "sha256": "c0bd097d1ce05cef4982f361c7079257e254d59abd0933de113911f2e27fb433",
+      "sha256": "1fa6f6317c86400f56d54cb2554d377e580180bb49682871890578305d71e175",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -10570,7 +10570,7 @@
     {
       "id": "eddsa_ed448_test",
       "path": "src/data/acvp/eddsa_ed448_test.json",
-      "sha256": "b1dcc75d1b00ad2cc33b0c58c008c8eafbe58d069e53c90e278ed50d28e5a642",
+      "sha256": "07a197c53a764a4284cfe2daa65c81a2c8611ba10a28d576e0a0687b8a3f6a01",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -19535,7 +19535,7 @@
     {
       "id": "mldsa_extended_test",
       "path": "src/data/acvp/mldsa_extended_test.json",
-      "sha256": "1839e8af68dc700d11e50d6fbeca7856bdae493a78eda8c1b7b48f3556ecaa96",
+      "sha256": "b1ddc5af17fd5ba2f59f9d2973229dfc65c9266d8b0c802851050a9427f3e908",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {

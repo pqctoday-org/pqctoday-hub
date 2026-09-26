@@ -1,0 +1,24 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:mldsa_extended_test",
+  "subjectSha256": "f2d3b6d2a0a3897591cd67443fb17015b16e48d70e465fa3a5bef61e29d3322d",
+  "fileSha256": "b1ddc5af17fd5ba2f59f9d2973229dfc65c9266d8b0c802851050a9427f3e908",
+  "result": "match",
+  "tool": "scripts/acvp/subset_reproduce.py",
+  "command": "python3 scripts/acvp/subset_reproduce.py --id mldsa_extended_test --strict",
+  "upstream": {
+    "repository": "https://github.com/usnistgov/ACVP-Server",
+    "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "files": [
+      {
+        "path": "gen-val/json-files/ML-DSA-sigGen-FIPS204-tr1/internalProjection.json",
+        "sha256": "b61576c765b1eb0e6a667a67a68380df944592be8740f9c020c9ea5a89136f18"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 6,
+    "values": 39
+  },
+  "checkedAt": "2026-09-26"
+}

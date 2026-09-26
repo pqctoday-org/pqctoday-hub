@@ -53,7 +53,7 @@ import {
   hsm_importMLDSAPublicKey,
   hsm_verifyBytes,
   hsm_verifyBytesMLDSA,
-  type MLDSAPreHash,
+  mldsaPreHashFromAcvp,
   hsm_generateMLDSAKeyPair,
   hsm_sign,
   hsm_verify,
@@ -1200,7 +1200,7 @@ export function useAcvpSuite() {
                 hexToBytes(tv.signature),
                 {
                   context: tv.context ? hexToBytes(tv.context) : undefined,
-                  preHash: tv.hashAlg as MLDSAPreHash,
+                  preHash: mldsaPreHashFromAcvp(tv.hashAlg),
                 }
               )
               await pushResult({

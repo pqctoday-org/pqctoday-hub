@@ -343,11 +343,11 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).
 
-Valid review records: 55.
+Valid review records: 58.
 
 | Kind                      | Items not approved |
 | ------------------------- | -----------------: |
-| vector-source             |                 16 |
+| vector-source             |                 13 |
 | coverage-waiver           |                 23 |
 | public-claim              |                  3 |
 | learn-module-practitioner |                  1 |
@@ -394,12 +394,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `efd60a576798c42694120ba024b00a7481ac9a72b44d7221acceeb453e827056` |
+| `public/data/validation/coverage-matrix.json`                           | `65659e069e65324785d1cfa2a9baedba649697e6c72dda80d410b193e9419915` |
 | `src/data/validation/coverage-waivers.json`                             | `87b928d900e95f966e744aed284f4b11933e03f3dab9ced277d1072154702980` |
 | `src/data/validation/native-conformance.generated.json`                 | `75d81d8ab8250f66574c6722d3bdf36911bcc3ba2b5b18902c93604bdf64efd7` |
 | `src/data/validation/open-gaps.json`                                    | `883a708d871494feba23af1bcaf08681dea850377d10e0cf4c15fdbcc6703700` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `3e3de40a719f4fb1b6081667b0c700012c1f6280372e4e8b824d1899352a12cd` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `6a836ba693944b9439f582f3d7c0e8f9e6af56b2607b572d9390c978af05af90` |
 | `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `67fa98bf8bbc49e2a67350eb1a35dcfe99b2b0f62d30d1648445f2ebc775abb4` |
-| `src/data/validation/validation-counts.generated.json`                  | `46265c621106a9bfcbd860d387994a57b684362402545cd89eac0efc08d8d676` |
-| `src/data/validation/vector-manifest.json`                              | `d72b7db4e11ff5810fe271c99736fcac6879ed658eb7b24b1d9628a23cc1a335` |
+| `src/data/validation/validation-counts.generated.json`                  | `5625cffa7628f629ab25530eabc9226df2a8f0e3f5a3928e182deaaef9f50531` |
+| `src/data/validation/vector-manifest.json`                              | `e835ebaf8955179fcc3f4a1b80529e483bd30d7769d0f2d71ecd8878c7c6dc34` |

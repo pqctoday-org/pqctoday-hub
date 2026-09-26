@@ -1951,6 +1951,34 @@ export type MLDSAPreHash =
   | 'shake128'
   | 'shake256'
 
+/**
+ * NIST ACVP hash names (`SHA2-256`, `SHA3-224`, `SHAKE-128`, …) as the engine's
+ * pre-hash identifiers. Vector files keep NIST's exact spelling so they stay
+ * byte-identical to upstream (2026-09-26); callers translate here rather than
+ * casting, and an unknown name throws instead of reaching the engine unchecked.
+ */
+export function mldsaPreHashFromAcvp(name: string): MLDSAPreHash {
+  const n = name.toUpperCase()
+  const map: Record<string, MLDSAPreHash> = {
+    'SHA2-224': 'sha224',
+    'SHA2-256': 'sha256',
+    'SHA2-384': 'sha384',
+    'SHA2-512': 'sha512',
+    'SHA3-224': 'sha3-224',
+    'SHA3-256': 'sha3-256',
+    'SHA3-384': 'sha3-384',
+    'SHA3-512': 'sha3-512',
+    'SHAKE-128': 'shake128',
+    'SHAKE-256': 'shake256',
+  }
+  // A name already in the engine's own form (a file whose lineage declares that
+  // normalization, e.g. mldsa_extended_test's ML-DSA-87 'sha224') passes through.
+  const native = Object.values(map).find((m) => m === name)
+  const v = map[n] ?? native
+  if (!v) throw new Error(`unknown ACVP hash name for ML-DSA pre-hash: ${name}`)
+  return v
+}
+
 export interface MLDSASignOptions {
   hedging?: 'preferred' | 'required' | 'deterministic'
   context?: Uint8Array // 0-255 bytes (FIPS 204 max context length)
