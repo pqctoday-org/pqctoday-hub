@@ -1,0 +1,73 @@
+Third-party notices — public/wasm/entropy90b/ (ea_non_iid, ea_iid, ea_restart)
+================================================================================
+
+These WebAssembly modules are a build of the NIST SP 800-90B EntropyAssessment
+tool and the libraries it links. The PQC Today Hub itself is GPL-3.0-only; each
+component below keeps its own licence, all compatible with GPL-3.0 distribution.
+Full licence texts are in ./licenses/.
+
+Reproduce: scripts/entropy-90b/build-wasm.sh (pinned emsdk image, pinned
+tarball SHA-256s, pinned NIST commit). BUILDINFO.json records the compiler,
+flags and the SHA-256 of every file.
+
+1. NIST SP 800-90B EntropyAssessment
+   Source:  https://github.com/usnistgov/SP800-90B_EntropyAssessment
+   Commit:  87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289 (master, 2026-05-26;
+            reports itself as version 1.1.8)
+   Licence: NIST software notice (public domain in the United States; see
+            licenses/NOTICE.nist-sp800-90b). Source: National Institute of
+            Standards and Technology.
+   Change notice (as that notice asks for modified works): the NIST source
+   files are compiled UNMODIFIED. For the WebAssembly build (2026-09-24,
+   PQC Today) OpenMP is not available, so a single-threaded stand-in for
+   <omp.h> (scripts/entropy-90b/compat/omp.h) is placed on the include path;
+   every "#pragma omp" region therefore runs on one thread, the same
+   semantics as the native tool with OMP_NUM_THREADS=1. Compiled with
+   emscripten/clang instead of GCC; -ffloat-store and -march=native (x86-only
+   / host-only flags in the upstream Makefile) are not used.
+   Data model: built with emscripten -sMEMORY64=2 (LP64: 64-bit `long`,
+   lowered to a wasm32 module), because the NIST code relies on 64-bit
+   `long` (e.g. n_choose_2() and the covariance permutation statistic
+   overflow a 32-bit `long` on 1M-sample datasets).
+   Long double math: emscripten's musl implements logl/log2l/expl/powl/log1pl
+   for binary128 long double by calling the double-precision functions, so
+   those five are replaced by glibc's ldbl-128 implementations (item 7).
+   Only ea_non_iid, ea_iid and ea_restart are built. ea_conditioning and
+   ea_transpose are NOT built, so GMP and MPFR (LGPL-3.0, used only by
+   ea_conditioning) are NOT linked into anything here.
+
+2. bzip2 / libbzip2 1.0.8
+   Source:  https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+   Licence: bzip2 licence (BSD-style), Copyright (C) 1996-2019 Julian R Seward.
+            licenses/LICENSE.bzip2
+
+3. libdivsufsort 2.0.1 (32- and 64-bit index builds)
+   Source:  https://github.com/y-256/libdivsufsort (tag 2.0.1)
+   Licence: MIT, Copyright (c) 2003-2008 Yuta Mori. licenses/LICENSE.libdivsufsort
+
+4. JsonCpp 1.9.8
+   Source:  https://github.com/open-source-parsers/jsoncpp (tag 1.9.8)
+   Licence: MIT, or public domain where recognised ("The JsonCpp Authors").
+            licenses/LICENSE.jsoncpp
+
+5. OpenSSL 3.6.4 — libcrypto only (used by the tool solely for SHA-256 of the
+   input file)
+   Source:  https://github.com/openssl/openssl/releases/tag/openssl-3.6.4
+   Licence: Apache License 2.0 (compatible with GPL-3.0). licenses/LICENSE.openssl
+
+6. Emscripten runtime (JavaScript glue in ea_*.mjs, musl libc, libc++,
+   compiler-rt linked into the .wasm) — emsdk 6.0.10
+   Licence: MIT / University of Illinois NCSA (Emscripten), MIT (musl),
+            Apache-2.0 WITH LLVM-exception (libc++, libc++abi, compiler-rt).
+   https://github.com/emscripten-core/emscripten/blob/main/LICENSE
+
+7. GNU C Library (glibc) 2.41 — sysdeps/ieee754/ldbl-128 e_logl.c,
+   e_log2l.c, e_expl.c (+ t_expl.h), e_powl.c, s_log1pl.c, compiled unmodified
+   against a small compatibility header (scripts/entropy-90b/ldbl128/)
+   Source:  https://ftp.gnu.org/gnu/glibc/glibc-2.41.tar.xz
+   Licence: LGPL-2.1-or-later (compatible with GPL-3.0). licenses/LICENSE.glibc-ldbl128
+
+What these modules are, and are not: running them reproduces the NIST
+estimators' output for a dataset. That output is NOT an ESV submission, CSTL
+analysis, CMVP review, or any certificate, and the JSON it writes is the NIST
+tool's own report format — it is not claimed to be an "ESV format".

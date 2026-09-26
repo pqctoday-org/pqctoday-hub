@@ -7,7 +7,12 @@
  * whole design exists to prevent, so it is what the tests pin.
  */
 import { describe, it, expect } from 'vitest'
-import { LENS_PROTOCOLS, protocolsForThreat, threatTouchesProtocol } from './threatProtocolLens'
+import {
+  LENS_PROTOCOLS,
+  lensProtocolsFor,
+  protocolsForThreat,
+  threatTouchesProtocol,
+} from './threatProtocolLens'
 import { threatsData, type ThreatItem } from './threatsData'
 
 const threat = (over: Partial<ThreatItem>): ThreatItem =>
@@ -49,10 +54,23 @@ describe('threat protocol lens', () => {
   })
 
   it('never offers a filter that returns nothing on the live corpus', () => {
-    for (const p of LENS_PROTOCOLS) {
+    const offered = lensProtocolsFor(threatsData)
+    expect(offered.length).toBeGreaterThan(0)
+    for (const p of offered) {
       const hits = threatsData.filter((t) => threatTouchesProtocol(t, p))
       expect(hits.length, `protocol "${p}" matches no active threat`).toBeGreaterThan(0)
     }
+  })
+
+  it('drops a protocol no row touches, keeping the filter order', () => {
+    const rows = [
+      threat({ cryptoAtRisk: 'SSH host keys' }),
+      threat({ cryptoAtRisk: 'TLS certificates' }),
+    ]
+    const offered = lensProtocolsFor(rows)
+    expect(offered).toEqual(LENS_PROTOCOLS.filter((p) => offered.includes(p)))
+    expect(offered).toContain('SSH')
+    expect(offered).not.toContain('Payments (SWIFT, EMV, FIX)')
   })
 
   it('keeps a real mix of stated and inferred across the corpus', () => {

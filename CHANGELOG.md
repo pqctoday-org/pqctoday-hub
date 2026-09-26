@@ -29,6 +29,92 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.121.0] - 2026-09-25
+
+Every certification record now comes straight from its official source — NIST for FIPS 140-3 and CAVP, the Common Criteria Portal, ANSSI and ENISA — and anything a source does not back is gone.
+
+### Fixed
+
+- **562 records labelled "FIPS 140-3 Active" were really FIPS 140-2 certificates, and they are gone.** [view:/compliance] [view:/migrate] [persona:grc] [persona:ops] [persona:executive] NIST moved every FIPS 140-2 certificate to its historical list on 21–22 September 2026, and a FIPS 140-2 module cannot carry post-quantum algorithms. The records page now covers FIPS 140-3 only: 712 active certificates (exactly NIST's live list, including 21 that were missing) and 71 historical ones, each with the status NIST shows today.
+- **Post-quantum algorithms on FIPS records now come only from NIST's Approved Algorithms list.** [view:/compliance] [persona:grc] [persona:researcher] [persona:ops] They used to be read out of the module's security policy document, which also names algorithms a module does not approve. Some modules therefore showed ML-KEM or ML-DSA they are not validated for; the Luna M7 (#5300) approves only LMS, and the Marvell LS2 (#5502) approves none. 24 FIPS 140-3 modules approve a post-quantum algorithm; each record lists its approved algorithms with a link to the CAVP validation behind each one.
+- **Product pages no longer show validations that do not apply to the product.** [view:/migrate] [persona:ops] [persona:grc] A product-to-certificate link now stays only if the certificate is the product's own: the record names the product and comes from the product's vendor, or the product's documentation cites the certificate number. A shared generic word ("Series", "Center"), a build variant, a different major release (a Red Hat Enterprise Linux 8 module on a RHEL 9 product), or another company's validation of the same code no longer counts. 133 links were retired: 38 pointed at FIPS 140-2 certificates, 80 were not backed by the record, 1 pointed at a CAVP validation NIST no longer lists, and 14 gave way to a newer certificate for the same module. 30 links were added, mostly newly listed validations and each release's own modules, and a module that approves a post-quantum algorithm is now preferred over a newer one that does not.
+- **"Live certification records" and "refreshed daily" were not true, and are gone.** [view:/compliance] [view:/business] [persona:executive] [persona:grc] The page shows a dated snapshot, and each source now states when it was retrieved: NIST CMVP, NIST CAVP, the Common Criteria Portal, ANSSI and ENISA. The newest certificate date appears on its own line.
+
+### Changed
+
+- **Algorithm validations are labelled "NIST CAVP", not "ACVP".** [view:/compliance] [persona:developer] [persona:researcher] ACVP is the testing protocol; the validation comes from NIST's CAVP. All 268 post-quantum CAVP validations (ML-KEM, ML-DSA, SLH-DSA, LMS) are included with no date cut-off, and each shows its parameter sets, functions and tested environments from NIST.
+- **French CSPN certifications have their own label.** [view:/compliance] [persona:grc] 43 ANSSI records were CSPN certifications (France's national first-level scheme) filed under Common Criteria. They now appear as "CSPN (ANSSI)" and are no longer counted as Common Criteria.
+- **Historical and archived certificates are hidden unless you ask for them.** [view:/compliance] [persona:grc] [persona:ops] A status filter switches between current certificates and everything, and exports say which view they contain.
+
+### Data
+
+- **Common Criteria, ANSSI and EUCC records were re-checked against their issuers.** [view:/compliance] [persona:grc] 833 Common Criteria records match the Portal's current or archived lists (three corrected where the Portal changed a date, level or name). All 190 ANSSI records appear in ANSSI's September catalogue. The EUCC list matches ENISA's 107 certificates: 28 added, and 19 duplicate entries folded into their certificate.
+
+## [4.119.0] - 2026-09-25
+
+The 122 rows where the Timeline's two reviewers disagreed on 25 September were resolved by a closer read of what each one actually quoted from the source document.
+
+### Changed
+
+- **The Timeline drops 16 more entries that aren't post-quantum milestones.** [view:/timeline] [persona:grc] [persona:researcher] A closer read found a QKD hardware testbed, a general national quantum strategy, a workshop write-up, a research grant, and a generic risk-report sentence among entries that had been flagged as post-quantum milestones. Nothing is deleted — these are marked out-of-scope and carried forward, the same as the earlier 60.
+- **14 more entries are confirmed and now shown.** [view:/timeline] [persona:grc] [persona:researcher] Each one's cited document states the event in the past tense with a date, rather than as a plan — including NIST's Additional Signatures Round 3 candidates, ANSSI's first PQC accreditations, and Singapore's NQSN+ launch.
+- **Germany and the UK's country deadlines are held back pending stronger evidence.** [view:/timeline] [view:/assess] [view:/report] [persona:executive] [persona:grc] Both cited documents use future-target language ("should... by end of 2030", "target date of 2035") rather than confirming a completed regulatory deadline. Assess, Report and the Simulation now show 8 countries with a reviewed deadline instead of 10; both entries return as soon as a stronger source is found.
+- **26 field corrections across Description, Title, OrgFullName, binding force and dates.** [view:/timeline] [persona:grc] [persona:researcher] Each checked against the specific sentence in the cited document that supports it, including Spain's four-phase roadmap end date (was reading the plan's first-edition date), a NIST title corrected from "Complete" to the document's actual "to be completed by" language, and several organisation names trimmed to what the document itself states.
+
+### Data
+
+- **Timeline 09252026_r6:** [view:/timeline] [persona:grc] [persona:researcher] 58 rows changed (16 deprecated, 14 published, 2 withdrawn pending evidence, 26 field corrections); 311 rows total. Full row-by-row reasoning, with the deciding quote for each call, in `pqctoday-priv/maintenance/lineage/timeline-review/claude-recommendations-09252026.md`.
+
+## [4.118.0] - 2026-09-25
+
+Every entry on the Timeline was checked against its own source document by two independent reviewers, and the Timeline now shows only government, regulator and standards-body milestones — with honest labels for what was checked and when.
+
+### Changed
+
+- **The Timeline now covers government, regulator and standards milestones only.** [view:/timeline] [persona:executive] [persona:grc] [persona:architect] Vendor product news, quantum-hardware announcements, conferences and general privacy or cyber laws with no post-quantum milestone were retired from the Timeline (60 entries). Nothing was deleted: 11 of them already live in Compliance, Vendor Roadmaps or the Library, and the rest keep their history. The empty "Vendor" filter option is gone.
+- **Entries are shown only once they have been reviewed.** [view:/timeline] [persona:grc] [persona:researcher] Every remaining entry was read against its cited document by two independent reviewers, and a change was applied only where both agreed — corrected dates, titles and descriptions, and a recorded "binding force" (law, mandatory for a defined scope, official target, recommendation, draft or informational). Entries still awaiting review, or whose cited document does not support them, are held back instead of shown unlabelled. The Timeline shows 173 entries.
+- **Country deadlines in Assess, Report and the Simulation come only from reviewed entries, labelled binding or guidance.** [view:/assess] [view:/report] [persona:executive] [persona:grc] Canada's 2031 and India's 2027 dates are now labelled as guidance targets (their documents recommend rather than mandate), France's 2027 qualification requirement as mandatory for its scope, Australia's 2030 as an official target, and Korea's 2035 comes from its national PQC master plan rather than a page that only forecast quantum-computer timing.
+- **Dates on Timeline cards say what they are.** [view:/timeline] [persona:curious] [persona:grc] A card shows the source document's publication date as "Published <date>" instead of colouring old documents "Stale" or red "Critical", and the per-country date now reads "Sources checked" — it records when the sources were last re-checked, not a claim-by-claim review.
+- **Authority links read correctly.** [view:/timeline] [persona:grc] Forty-six entries linked to a registered authority were wrongly badged "Unverified"; they now show their tier. A source that is reputable secondary reporting rather than the issuer's own publication carries a "Secondary source" chip.
+
+### Added
+
+- **New milestones: the G7 Call to Action and the HAWK withdrawal.** [view:/timeline] [persona:researcher] [persona:executive] The G7 Cybersecurity Working Group's "Preparing for the Post-Quantum Era: A Call to Action" (3 September 2026), and the withdrawal of the HAWK signature scheme from NIST's additional-signatures process (29 July 2026).
+
+### Fixed
+
+- **A regulatory deadline in the Learn modules no longer borrows another policy's year.** [view:/learn] [persona:developer] [persona:grc] The CNSA 2.0 software-signing deadline was wired to the US executive-order key-establishment year, which only happened to match. Every hard-coded deadline used by the Learn modules now traces to a reviewed Timeline entry or a named document, and an unsupported "ANSSI 2025 migration-plan target" was removed from the Hybrid Cryptography module.
+
+### Data
+
+- **Timeline 09252026_r5:** [view:/timeline] [persona:researcher] [persona:grc] 311 rows, 173 public; all 265 previously active rows reviewed; binding force recorded; one evidence manifest keyed by entry id. The site search index is rebuilt with the reviewed rows only, and retitled rows keep their document analysis under their current title.
+
+## [4.117.0] - 2026-09-25
+
+Every threat on the Threats page now says only what its cited document says — 71 threats are published, each with its main claims checked against the source, and 49 more are held back until a document that backs them is found.
+
+### Changed
+
+- **The Threats page shows fewer threats, and every one it shows is backed by its source.** [view:/threats] [persona:grc] [persona:executive] [persona:researcher] Each threat's quantum risk, the cryptography it puts at risk and the recommended replacement were checked against the document it cites. Where the document said less, the entry was trimmed to what it does say; where the document did not state the threat at all, we first searched for a better source and, failing that, held the entry back as a draft. The page goes from 122 threats to 71; the 49 held-back entries return as soon as a document that states them is on file. Two duplicate entries were retired.
+- **The Evidence panel explains where each claim comes from.** [view:/threats] [persona:grc] [persona:researcher] It shows the source's history, whether it was peer reviewed and which body vetted it, any second source that confirms it, and when a claim was confirmed by an AI second reader rather than a person. Where a cited source doesn't itself state the entry's quantum points, a short note says so.
+- **One quantum-computer arrival window everywhere.** [view:/threats] [persona:executive] [persona:grc] The page uses a single expert-forecast window instead of several hand-typed ranges.
+- **Threat classes and industry labels are reviewed, not inferred.** [view:/threats] [persona:grc] Each threat's class comes from a reviewed column, and industry labels are tidied — old links using the previous labels keep working. A sector whose threats are all awaiting a source stays listed but is no longer a dead link.
+- **Criticality left blank reads "Unrated".** [view:/threats] [persona:grc] Missing details say "Not yet specified", retired source links are explained, and internal maintenance notes are hidden.
+
+### Fixed
+
+- **Threat links work.** [view:/threats] [persona:curious] [persona:grc] Links to a single threat open it directly — including on phones — and links to the horizon view work.
+- **The Shor risk tier is graded from the cryptography actually at risk.** [view:/threats] [persona:researcher] A threat is never shown as "PQC-safe" just because a field was empty.
+- **Detection & Response tabs show the real SOC use cases and playbooks.** [view:/threats] [persona:ops]
+- **The Threats page fits a laptop screen, and short searches match at the start of words.** [view:/threats] [persona:curious] The desktop table and cards fit a 1440px-wide window, and the dialog and copy got small fixes.
+- **Phones: the first-run notice sits below the role picker, with larger tap targets.** [persona:curious]
+- **Pages that don't need the in-browser crypto engines no longer reload on first visit.** [persona:curious]
+
+### Data
+
+- **Threat sources point at the documents themselves.** [view:/threats] [persona:researcher] [persona:grc] Source links were corrected to the exact documents on file, titles were fixed, 21 changed documents were re-captured, and several threats gained a confirming second source from a trusted body.
+- **The site search and assistant only know published threats.** [view:/threats] [persona:curious] The search index was rebuilt, so held-back threats no longer turn up in answers.
+
 ## [4.116.0] - 2026-09-23
 
 The in-browser crypto engines carry the latest upstream security fixes, the About page's software list is accurate again, and a compliance chart stops risking a misleading tooltip.

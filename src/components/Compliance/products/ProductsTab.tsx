@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { certsByProduct } from '@/data/certificationXrefData'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import type { CertificationXref } from '@/types/MigrateTypes'
+import { recordTypeLabel } from '../recordSemantics'
 import {
   buildProductRows,
   isPqcCertificate,
@@ -168,7 +169,7 @@ function ProductRow({
           <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10.5px] font-normal text-muted-foreground">
             {row.schemes.map((s) => (
               <span key={s.scheme} className="rounded bg-muted px-1.5 py-0.5">
-                {s.scheme}
+                {recordTypeLabel(s.scheme)}
                 {s.count > 1 ? ` ×${s.count}` : ''}
               </span>
             ))}
@@ -201,7 +202,9 @@ function CertificateRow({ cert }: { cert: CertificationXref }) {
       }`}
     >
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <span className="text-[11.5px] font-semibold text-foreground">{cert.certType}</span>
+        <span className="text-[11.5px] font-semibold text-foreground">
+          {recordTypeLabel(cert.certType)}
+        </span>
         <span className="font-mono text-[10.5px] text-muted-foreground">{cert.certId}</span>
         {cert.certLink && (
           <a

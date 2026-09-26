@@ -390,6 +390,11 @@ export default defineConfig([
                 '!@/components/Threats',
                 '@/components/Threats/*',
                 '!@/components/Threats/threatClassification',
+                // threatsUrlParams.ts (Threats) — pure URL parsing, no JSX:
+                // the ?id/?threat/?industry/?q/?class contract the desktop
+                // dashboard reads, so a shared link opens the same threat and
+                // filters on a phone as on desktop.
+                '!@/components/Threats/threatsUrlParams',
                 // useLibraryPipeline.ts / libraryPills.ts (Library/redesign)
                 // — the real filter/sort pipeline and pill-formatting
                 // helpers every desktop Library surface already reads (no

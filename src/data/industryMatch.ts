@@ -22,6 +22,7 @@
  * every personalized view.
  */
 import { resolveToNaicsSet } from './sectorVocabularyData'
+import { THREAT_INDUSTRY_ALIASES } from './threatRowRules'
 
 /**
  * Sector keys for a freeform industry string, or null when the vocabulary
@@ -36,6 +37,28 @@ export function sectorKeysFor(industry: string): string[] | null {
   if (keys.length === 0) return null
   if (keys.length === 1 && keys[0] === trimmed) return null // unknown-token echo
   return keys
+}
+
+/**
+ * Sector keys for a data row's industry label. A Threats-page label renamed by
+ * ruling R3 (2026-09-24) — "Critical Infrastructure / OT", "Aerospace /
+ * Aviation / Space" — is not (yet) an alias in the sector vocabulary CSV, so
+ * it resolves through the old label(s) it replaced, taking the most specific
+ * (fewest keys): "Critical Infrastructure / OT" keeps the NAICS 22 its
+ * predecessor "Critical Infrastructure / Energy" had, rather than the
+ * five-sector expansion of the cross-sector "Critical Infrastructure".
+ */
+export function rowSectorKeysFor(rowIndustry: string): string[] | null {
+  const direct = sectorKeysFor(rowIndustry)
+  if (direct) return direct
+  const label = (rowIndustry || '').trim()
+  let best: string[] | null = null
+  for (const [old, current] of Object.entries(THREAT_INDUSTRY_ALIASES)) {
+    if (current !== label) continue
+    const keys = sectorKeysFor(old)
+    if (keys && (!best || keys.length < best.length)) best = keys
+  }
+  return best
 }
 
 /** Cross-industry rows ('Cross-Industry', 'Cross-Industry / HSM') apply to every industry. */
@@ -54,7 +77,7 @@ export function matchesIndustry(rowIndustry: string, userIndustry: string): bool
   const user = (userIndustry || '').trim()
   if (!user) return false
   if (isCrossIndustry(rowIndustry)) return true
-  const rowKeys = sectorKeysFor(rowIndustry)
+  const rowKeys = rowSectorKeysFor(rowIndustry)
   const userKeys = sectorKeysFor(user)
   if (rowKeys && userKeys) {
     const userSet = new Set(userKeys)

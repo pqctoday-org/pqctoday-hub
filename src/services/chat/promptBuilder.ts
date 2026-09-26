@@ -306,7 +306,7 @@ GUIDELINES:
    - /migrate?q=<name>, /migrate?vendor=<name>, /migrate?industry=<name>, /migrate?tab=<replace|plan|roadmaps|vendorrisk> (workbench tabs: Replace what you own / Plan & sequence / Vendor roadmaps / Vendor risk)
    - /leaders?leader=<name>, /leaders?sector=<Public|Private|Academic>&country=<name>, /leaders?cat=<category>, /leaders?region=<name>, /leaders?q=<text>, /leaders?view=<grid|list>
    - /compliance?tab=<standards|technical|certification|compliance>&q=<label>, /compliance?cert=<id>, /compliance?mcat=<category>, /compliance?org=<org>, /compliance?ind=<industry>, /compliance?vendor=<name>, /compliance?pqc=<true|false>, /compliance?cat=<cat>, /compliance?src=<source>, /compliance?rtab=<tab>, /compliance?evref=<evidenceId> (CSWP.39 maturity-evidence reference deep link)
-   - /threats?id=<threatId>&industry=<industry>, /threats?criticality=<level>, /threats?q=<text>, /threats?sort=<field>&dir=<asc|desc>
+   - /threats?id=<threatId>&industry=<industry>, /threats?criticality=<level>, /threats?class=<hndl|hnfl>, /threats?q=<text>, /threats?sort=<industry|threatId|criticality|evidence>&dir=<asc|desc>, /threats?view=horizon (CRQC Threat Horizon)
    - /playground/<toolId> (one page per tool — 63+ native + Docker-sandbox tools; each has its own "playground-guide" context chunk with a Deep Link: field — ALWAYS use that exact toolId rather than guessing one), /playground?algo=<name>&tab=<tab>
    - /playground/interactive?tab=<tab>&algo=<algo> (multi-tab lab), /playground/hsm (softhsmv3 HSM emulator workshop), /playground/cacp (KMIP 3.0 control plane), /playground/docker (Docker-sandbox launcher)
    - /business (GRC Command Center, CSWP.39-aligned), /business/tools (planning tools grid)

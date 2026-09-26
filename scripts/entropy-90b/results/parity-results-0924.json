@@ -1,0 +1,4921 @@
+{
+  "generatedAt": "2026-09-25T04:25:02.482Z",
+  "wasmBuildInfo": {
+    "tool": "usnistgov/SP800-90B_EntropyAssessment",
+    "nistCommit": "87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289",
+    "toolVersionString": "1.1.8",
+    "compiler": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.10 (d6c521a7f05449857c76bd99e396895583cf2083)",
+    "cxxflags": "-std=c++11 -O2 -ffp-contract=off -Wno-unknown-pragmas -I/src/compat -I/opt/wasm/include",
+    "ldflags": "-sMODULARIZE=1 -sEXPORT_ES6=1 -sENVIRONMENT=web,worker,node -sINVOKE_RUN=0 -sEXIT_RUNTIME=1 -sEXPORTED_RUNTIME_METHODS=callMain,FS -sFORCE_FILESYSTEM=1 -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=64MB -sMAXIMUM_MEMORY=4GB -sSTACK_SIZE=8MB -sPRINTF_LONG_DOUBLE=1",
+    "sourcePatches": [],
+    "deps": {
+      "bzip2": "1.0.8",
+      "libdivsufsort": "2.0.1",
+      "jsoncpp": "1.9.8",
+      "openssl": "3.6.4"
+    },
+    "files": {
+      "ea_iid.mjs": {
+        "bytes": 72055,
+        "sha256": "7d0f8276c287180345ad7a5b0aa58b4dbf95caa64a1b04b861b3af2656f6244b"
+      },
+      "ea_non_iid.mjs": {
+        "bytes": 71591,
+        "sha256": "3ef71e2b44b36ae0ef5e6fb5d35b1e2638d925c72f3f43da2e62fff68a592cec"
+      },
+      "ea_restart.mjs": {
+        "bytes": 72071,
+        "sha256": "3e0e690a99d5a1765e5f5b05890cf6cc10f814c9e02d8aa4b7b8f985545834e0"
+      },
+      "ea_iid.wasm": {
+        "bytes": 2371161,
+        "sha256": "6c06533b3985e4fb75183461f3ca69cbe4bcc468b7dfb6627287745496a6e2a6"
+      },
+      "ea_non_iid.wasm": {
+        "bytes": 2287787,
+        "sha256": "d0c2a5faca24319c97ac3dafb3de3a1c4469647f8e5047cce14f5eabf92c78cc"
+      },
+      "ea_restart.wasm": {
+        "bytes": 2393346,
+        "sha256": "7b5b1eacf512581ed452cbbd052b2202fe2b468eb4aa4096e3de8bacaaee2de5"
+      }
+    }
+  },
+  "node": "v22.23.1",
+  "runsPerRandomisedCheck": 5,
+  "parityUrandomSeedSha256": "7c5d7e2b38facdb37eedb0af0666babe1f2fe8bec1e641f58f91f96d0aade332",
+  "results": [
+    {
+      "id": "kat-markov-1bit-20k",
+      "source": "kat",
+      "bits": 1,
+      "sha256": "c9443b93e2f390ba1e4f362d437a927af66e3fa7aa6e7d8be6e7df5daaa47f04",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hOriginal": 0.959159016531773,
+          "Most Common Value / mcvEstimateMode": 10105,
+          "Most Common Value / mcvEstimatePHat": 0.50525,
+          "Most Common Value / mcvEstimatePU": 0.5143566574744197,
+          "Collision Test (for bit strings only) / hOriginal": 0.2748248562298956,
+          "Markov Test (for bit strings only) / hOriginal": 0.5220577322278712,
+          "Compression Test (for bit strings only) / hOriginal": 0.3416613008703955,
+          "T-Tuple Test / tTupleRes": 0.5001803103643944,
+          "LRS Test / lrsRes": 0.7770158293454122,
+          "Multi Most Common in Window Test / hOriginal": 0.900522962326061,
+          "Lag Prediction Test / hOriginal": 0.508354637992731,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 0.5083853022418827,
+          "LZ78Y Test / hOriginal": 0.5078266994786679,
+          "Overall / dataWordSize": 1,
+          "Overall / hAssessed": 0.2748248562298956,
+          "Overall / hOriginal": 0.2748248562298956
+        },
+        "wasmMs": 298,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hOriginal",
+                "a": 0.5220577322278712,
+                "b": 0.5220577322278711
+              },
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 0.900522962326061,
+                "b": 0.9005229623260587
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Collision Estimate: sigma-hat = 0.45801244445561445",
+                "Literal Collision Estimate: sigma-hat = 0.4580124444556144"
+              ]
+            },
+            "ms": 1405
+          },
+          "native-arm64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hOriginal",
+                "a": 0.5220577322278712,
+                "b": 0.5220577322278711
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Collision Estimate: sigma-hat = 0.45801244445561445",
+                "Literal Collision Estimate: sigma-hat = 0.4580124444556144"
+              ]
+            },
+            "ms": 1594
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 0.900522962326061,
+                "b": 0.9005229623260587
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.6986609596092517791107",
+                "Literal t-Tuple Estimate: p-hat_max = 0.6986609596092517790998"
+              ]
+            },
+            "ms": 1516
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 1599
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "Multi Most Common in Window Test / hOriginal",
+            "a": 0.9005229623260587,
+            "b": 0.900522962326061
+          }
+        ],
+        "nativeArm64VsArm64Strict": [
+          {
+            "field": "Markov Test (for bit strings only) / hOriginal",
+            "a": 0.5220577322278711,
+            "b": 0.5220577322278712
+          }
+        ]
+      },
+      "iidSeeded": {
+        "wasm": {
+          " / binary": true,
+          " / hAssessed": 0.959159016531773,
+          " / hBitstring": 1,
+          " / hOriginal": 0.959159016531773,
+          " / mean": 0.50525,
+          " / median": 0.5,
+          " / passedChiSquareTests": false,
+          " / passedIidPermutationTests": false,
+          " / passedLongestRepeatedSubstringTest": true
+        },
+        "wasmMs": 83708,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Chi square goodness of fit: P-value = 0.0019974082383945446",
+                "Chi square goodness of fit: P-value = 0.0019974082383945454"
+              ]
+            },
+            "ms": 83782
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Chi square goodness of fit: P-value = 0.0019974082383945446",
+                "Chi square goodness of fit: P-value = 0.0019974082383945454"
+              ]
+            },
+            "ms": 83767
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Longest Repeated Substring results: P_col = 0.5000551249999999995151",
+                "Literal Longest Repeated Substring results: P_col = 0.5000551249999999995103"
+              ]
+            },
+            "ms": 83755
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 83742
+          }
+        }
+      },
+      "iidUnseeded": {
+        "verdicts": [
+          {
+            "platform": "wasm",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 74680
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 74667
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 74665
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 74663
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 74661
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 68419
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 68433
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 68430
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 68422
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 68419
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 72558
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 72576
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 72576
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 72574
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 72569
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 92223
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 92309
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 92285
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 92270
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 92260
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 85452
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 85466
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 85463
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 85462
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=false lrs=true perm=false",
+            "ms": 85458
+          }
+        ],
+        "distinctVerdicts": ["chi2=false lrs=true perm=false"],
+        "deterministicFieldDiffs": []
+      }
+    },
+    {
+      "id": "kat-biased-1bit-20k",
+      "source": "kat",
+      "bits": 1,
+      "sha256": "81c1c7f99eda513a0fe7ebdff3c2962933da61a69ac8d9ee257275f7be6d8fe3",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hOriginal": 0.3954321122196466,
+          "Most Common Value / mcvEstimateMode": 15048,
+          "Most Common Value / mcvEstimatePHat": 0.7524,
+          "Most Common Value / mcvEstimatePU": 0.7602616309535842,
+          "Collision Test (for bit strings only) / hOriginal": 0.3876102213516465,
+          "Markov Test (for bit strings only) / hOriginal": 0.41439912503706855,
+          "Compression Test (for bit strings only) / hOriginal": 0.24148095080836415,
+          "T-Tuple Test / tTupleRes": 0.38530729773701555,
+          "LRS Test / lrsRes": 0.6477045272045873,
+          "Multi Most Common in Window Test / hOriginal": 0.39499418493681704,
+          "Lag Prediction Test / hOriginal": 0.6620992653609734,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 0.3954778564417162,
+          "LZ78Y Test / hOriginal": 0.39610323709028045,
+          "Overall / dataWordSize": 1,
+          "Overall / hAssessed": 0.24148095080836415,
+          "Overall / hOriginal": 0.24148095080836415
+        },
+        "wasmMs": 210,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Collision Estimate: sigma-hat = 0.48383200140852267",
+                "Literal Collision Estimate: sigma-hat = 0.48383200140852256"
+              ]
+            },
+            "ms": 1107
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Collision Estimate: sigma-hat = 0.48383200140852267",
+                "Literal Collision Estimate: sigma-hat = 0.48383200140852256"
+              ]
+            },
+            "ms": 1023
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.757812760769957625644",
+                "Literal t-Tuple Estimate: p-hat_max = 0.7578127607699576256256"
+              ]
+            },
+            "ms": 1070
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 975
+          }
+        },
+        "nativeAmd64VsArm64": [],
+        "nativeArm64VsArm64Strict": []
+      },
+      "iidSeeded": {
+        "wasm": {
+          " / binary": true,
+          " / hAssessed": 0.3954321122196466,
+          " / hBitstring": 1,
+          " / hOriginal": 0.3954321122196466,
+          " / mean": 0.7524,
+          " / median": 0.5,
+          " / passedChiSquareTests": true,
+          " / passedIidPermutationTests": true,
+          " / passedLongestRepeatedSubstringTest": true
+        },
+        "wasmMs": 170,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Chi square independence: P-value = 0.14100541976634634",
+                "Chi square independence: P-value = 0.14100541976634637"
+              ]
+            },
+            "ms": 1118
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Chi square independence: P-value = 0.14100541976634634",
+                "Chi square independence: P-value = 0.14100541976634637"
+              ]
+            },
+            "ms": 977
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Longest Repeated Substring results: P_col = 0.6274115199999999298277",
+                "Literal Longest Repeated Substring results: P_col = 0.6274115199999999298026"
+              ]
+            },
+            "ms": 1065
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 1020
+          }
+        }
+      },
+      "iidUnseeded": {
+        "verdicts": [
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 94
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 768
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 644
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 737
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 695
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 113
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 741
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 706
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 767
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 754
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 121
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 678
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 536
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 650
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 563
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 109
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 735
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 682
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 754
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 643
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 136
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 1258
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 1226
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 1240
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 1177
+          }
+        ],
+        "distinctVerdicts": ["chi2=true lrs=true perm=true"],
+        "deterministicFieldDiffs": []
+      }
+    },
+    {
+      "id": "d4-stuck-8bit",
+      "source": "synthetic-d4",
+      "bits": 8,
+      "sha256": "d29751f2649b32ff572b5e0a9f541ea660a50f94ff0beedfb0b692b924cc8025",
+      "nonIid": {
+        "wasm": {
+          "error": "Symbol alphabet consists of 1 symbol. No entropy awarded..."
+        },
+        "wasmMs": 40,
+        "wasmExit": -1,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 1535
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 1442
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 1494
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 1492
+          }
+        },
+        "nativeAmd64VsArm64": [],
+        "nativeArm64VsArm64Strict": []
+      },
+      "iidSeeded": {
+        "wasm": {
+          "error": "Symbol alphabet consists of 1 symbol. No entropy awarded..."
+        },
+        "wasmMs": 41,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 658
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 713
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 930
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 833
+          }
+        }
+      },
+      "iidUnseeded": {
+        "verdicts": [
+          {
+            "platform": "wasm",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 34
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 1690
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 1535
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 1694
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 1616
+          },
+          {
+            "platform": "wasm",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 22
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 712
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 608
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 675
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 629
+          },
+          {
+            "platform": "wasm",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 23
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 994
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 1113
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 1036
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 986
+          },
+          {
+            "platform": "wasm",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 39
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 896
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 800
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 913
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 879
+          },
+          {
+            "platform": "wasm",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 19
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 589
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 643
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 714
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "error:Symbol alphabet consists of 1 symbol. No entropy awarded...",
+            "ms": 679
+          }
+        ],
+        "distinctVerdicts": ["error:Symbol alphabet consists of 1 symbol. No entropy awarded..."],
+        "deterministicFieldDiffs": []
+      }
+    },
+    {
+      "id": "d4-biased-1bit",
+      "source": "synthetic-d4",
+      "bits": 1,
+      "sha256": "d7bebe423cb6e3c70629e47243906a11319312f19f6b75039272bd9dfe8742eb",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hOriginal": 0.41322924813933704,
+          "Most Common Value / mcvEstimateMode": 749825,
+          "Most Common Value / mcvEstimatePHat": 0.749825,
+          "Most Common Value / mcvEstimatePU": 0.7509406274949888,
+          "Collision Test (for bit strings only) / hOriginal": 0.4125160540159102,
+          "Markov Test (for bit strings only) / hOriginal": 0.415600216293067,
+          "Compression Test (for bit strings only) / hOriginal": 0.24986677682420314,
+          "T-Tuple Test / tTupleRes": 0.41094083185733465,
+          "LRS Test / lrsRes": 0.6497111443162181,
+          "Multi Most Common in Window Test / hOriginal": 0.41323831443950754,
+          "Lag Prediction Test / hOriginal": 0.6768118664138895,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 0.4132417158880351,
+          "LZ78Y Test / hOriginal": 0.41323738868975957,
+          "Overall / dataWordSize": 1,
+          "Overall / hAssessed": 0.24986677682420314,
+          "Overall / hOriginal": 0.24986677682420314
+        },
+        "wasmMs": 3607,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hOriginal",
+                "a": 0.415600216293067,
+                "b": 0.41560021629306704
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Collision Estimate: sigma-hat = 0.48427988242906267",
+                "Literal Collision Estimate: sigma-hat = 0.48427988242906289"
+              ]
+            },
+            "ms": 3612
+          },
+          "native-arm64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hOriginal",
+                "a": 0.415600216293067,
+                "b": 0.41560021629306704
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Collision Estimate: sigma-hat = 0.48427988242906267",
+                "Literal Collision Estimate: sigma-hat = 0.48427988242906289"
+              ]
+            },
+            "ms": 3611
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.7510188736859850896884",
+                "Literal t-Tuple Estimate: p-hat_max = 0.7510188736859850896967"
+              ]
+            },
+            "ms": 3610
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 3609
+          }
+        },
+        "nativeAmd64VsArm64": [],
+        "nativeArm64VsArm64Strict": [
+          {
+            "field": "Markov Test (for bit strings only) / hOriginal",
+            "a": 0.41560021629306704,
+            "b": 0.415600216293067
+          }
+        ]
+      },
+      "iidSeeded": {
+        "wasm": {
+          " / binary": true,
+          " / hAssessed": 0.41322924813933704,
+          " / hBitstring": 1,
+          " / hOriginal": 0.41322924813933704,
+          " / mean": 0.749825,
+          " / median": 0.5,
+          " / passedChiSquareTests": true,
+          " / passedIidPermutationTests": true,
+          " / passedLongestRepeatedSubstringTest": true
+        },
+        "wasmMs": 10683,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Chi square independence: P-value = 0.44572392611142631",
+                "Chi square independence: P-value = 0.4457239261114137"
+              ]
+            },
+            "ms": 10703
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Chi square independence: P-value = 0.44572392611142631",
+                "Chi square independence: P-value = 0.4457239261114137"
+              ]
+            },
+            "ms": 10702
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Longest Repeated Substring results: P_col = 0.6248250612499999360127",
+                "Literal Longest Repeated Substring results: P_col = 0.6248250612499999360225"
+              ]
+            },
+            "ms": 10700
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 10693
+          }
+        }
+      },
+      "iidUnseeded": {
+        "verdicts": [
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14965
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 15010
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 15001
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14993
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14974
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 11129
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 11143
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 11141
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 11139
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 11134
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 13531
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 13540
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 13538
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 13536
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 13535
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14509
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14554
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14543
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14525
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14513
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 20371
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 20395
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 20388
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 20385
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 20380
+          }
+        ],
+        "distinctVerdicts": ["chi2=true lrs=true perm=true"],
+        "deterministicFieldDiffs": []
+      }
+    },
+    {
+      "id": "d4-markov-1bit",
+      "source": "synthetic-d4",
+      "bits": 1,
+      "sha256": "974dbc8bb0253ef6a18b8277150f146bef3ae68ab9513aee640b6335b99f5e47",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hOriginal": 0.995428381947596,
+          "Most Common Value / mcvEstimateMode": 500299,
+          "Most Common Value / mcvEstimatePHat": 0.500299,
+          "Most Common Value / mcvEstimatePU": 0.5015869150654505,
+          "Collision Test (for bit strings only) / hOriginal": 0.29269606813553806,
+          "Markov Test (for bit strings only) / hOriginal": 0.5199480566752913,
+          "Compression Test (for bit strings only) / hOriginal": 0.3518473042356598,
+          "T-Tuple Test / tTupleRes": 0.5416636076646117,
+          "LRS Test / lrsRes": 0.7734910461161928,
+          "Multi Most Common in Window Test / hOriginal": 0.7913772777262754,
+          "Lag Prediction Test / hOriginal": 0.5141112409754742,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 0.514118033257503,
+          "LZ78Y Test / hOriginal": 0.5141149575464082,
+          "Overall / dataWordSize": 1,
+          "Overall / hAssessed": 0.29269606813553806,
+          "Overall / hOriginal": 0.29269606813553806
+        },
+        "wasmMs": 3768,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 0.7913772777262754,
+                "b": 0.7913772777261958
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Collision Estimate: sigma-hat = 0.45895619247098884",
+                "Literal Collision Estimate: sigma-hat = 0.45895619247098912"
+              ]
+            },
+            "ms": 3792
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Collision Estimate: sigma-hat = 0.45895619247098884",
+                "Literal Collision Estimate: sigma-hat = 0.45895619247098912"
+              ]
+            },
+            "ms": 3788
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 0.7913772777262754,
+                "b": 0.7913772777261958
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.6857825709253807258798",
+                "Literal t-Tuple Estimate: p-hat_max = 0.6857825709253807258898"
+              ]
+            },
+            "ms": 3783
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 3776
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "Multi Most Common in Window Test / hOriginal",
+            "a": 0.7913772777261958,
+            "b": 0.7913772777262754
+          }
+        ],
+        "nativeArm64VsArm64Strict": []
+      }
+    },
+    {
+      "id": "d4-healthy-iid-8bit",
+      "source": "synthetic-d4",
+      "bits": 8,
+      "sha256": "603ce2d3d7429242a88ff9cea83869ffd40665b0e9aec19723d41ad745cf6968",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.9980011706723845,
+          "Most Common Value / hOriginal": 7.876484395264145,
+          "Most Common Value / mcvEstimateMode": 4091,
+          "Most Common Value / mcvEstimatePHat": 0.004091,
+          "Most Common Value / mcvEstimatePU": 0.004255415162114699,
+          "Collision Test (for bit strings only) / hBitstring": 0.9343910450165258,
+          "Markov Test (for bit strings only) / hBitstring": 0.9991085676707075,
+          "Compression Test (for bit strings only) / hBitstring": 0.9271106655903032,
+          "T-Tuple Test / binTTupleRes": 0.9294675887066989,
+          "T-Tuple Test / tTupleRes": 7.876484395264145,
+          "LRS Test / binLrsRes": 0.996353663389543,
+          "LRS Test / lrsRes": 7.864200611802139,
+          "Multi Most Common in Window Test / hBitstring": 0.998771965028285,
+          "Multi Most Common in Window Test / hOriginal": 7.960796322957976,
+          "Lag Prediction Test / hBitstring": 0.9984624474823383,
+          "Lag Prediction Test / hOriginal": 7.972673992696105,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.99800405173457,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.918949773687415,
+          "LZ78Y Test / hBitstring": 0.9993403801874724,
+          "LZ78Y Test / hOriginal": 7.91892813474644,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 7.416885324722426,
+          "Overall / hBitstring": 0.9271106655903032,
+          "Overall / hOriginal": 7.864200611802139
+        },
+        "wasmMs": 16685,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49999994674550408",
+                "Bitstring Collision Estimate: sigma-hat = 0.49999994674550363"
+              ]
+            },
+            "ms": 21359
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49999994674550408",
+                "Bitstring Collision Estimate: sigma-hat = 0.49999994674550363"
+              ]
+            },
+            "ms": 18948
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.5245972756632644185599",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.5245972756632644185817"
+              ]
+            },
+            "ms": 21815
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 18683
+          }
+        },
+        "nativeAmd64VsArm64": [],
+        "nativeArm64VsArm64Strict": []
+      },
+      "iidSeeded": {
+        "wasm": {
+          " / hAssessed": 7.876484395264145,
+          " / hBitstring": 0.9980011706723845,
+          " / hOriginal": 7.876484395264145,
+          " / mean": 127.403681,
+          " / median": 127,
+          " / passedChiSquareTests": true,
+          " / passedIidPermutationTests": true,
+          " / passedLongestRepeatedSubstringTest": true
+        },
+        "wasmMs": 6344,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Chi square independence: P-value = 0.22713380047020831",
+                "Chi square independence: P-value = 0.22713380047020837"
+              ]
+            },
+            "ms": 6571
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Chi square independence: P-value = 0.22713380047020831",
+                "Chi square independence: P-value = 0.22713380047020837"
+              ]
+            },
+            "ms": 6352
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Longest Repeated Substring results: P_col = 0.003907372224000000004059",
+                "Literal Longest Repeated Substring results: P_col = 0.003907372224000000004504"
+              ]
+            },
+            "ms": 6350
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 6349
+          }
+        }
+      },
+      "iidUnseeded": {
+        "verdicts": [
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7782
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7792
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7790
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7788
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7786
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8467
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8536
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8520
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8502
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8490
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7239
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7246
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7244
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7243
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7242
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7971
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7976
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7974
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7973
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 7972
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8047
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8063
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8058
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8055
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8050
+          }
+        ],
+        "distinctVerdicts": ["chi2=true lrs=true perm=true"],
+        "deterministicFieldDiffs": []
+      }
+    },
+    {
+      "id": "d4-healthy-iid-8bit-restart",
+      "source": "synthetic-d4",
+      "bits": 8,
+      "sha256": "9f2c1502f6e888d7e1212f89f46ce314a08a5bd54257cf3a408c4b0034e899ff",
+      "hI": 7.416885324722426,
+      "restartSeeded": {
+        "wasm": {
+          "Most Common Value / dataWordSize": 8,
+          "Most Common Value / h_c": 7.883069951369399,
+          "Most Common Value / h_r": 7.883069951369399,
+          "T-Tuple Test / dataWordSize": 8,
+          "T-Tuple Test / h_c": 7.883069951369399,
+          "T-Tuple Test / h_r": 7.883069951369399,
+          "LRS Test / dataWordSize": 8,
+          "LRS Test / h_c": 7.718814129976409,
+          "LRS Test / h_r": 7.922391446194899,
+          "Multi Most Common in Window Test / dataWordSize": 8,
+          "Multi Most Common in Window Test / h_c": 7.968890262803326,
+          "Multi Most Common in Window Test / h_r": 7.929948391875881,
+          "Lag Prediction Test / dataWordSize": 8,
+          "Lag Prediction Test / h_c": 7.932553222374486,
+          "Lag Prediction Test / h_r": 7.956855937538419,
+          "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_c": 7.969347262138781,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_r": 7.9484650642969354,
+          "LZ78Y Test / dataWordSize": 8,
+          "LZ78Y Test / h_c": 7.9704331921872535,
+          "LZ78Y Test / h_r": 7.947716233800193,
+          "Overall / h_c": 7.718814129976409,
+          "Overall / h_i": 7.416885324722426,
+          "Overall / h_r": 7.883069951369399
+        },
+        "wasmMs": 75361,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.004072",
+                "Literal t-Tuple Estimate: p-hat_max = 0.004071999999999999999964"
+              ]
+            },
+            "ms": 83656
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 75384
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.004072",
+                "Literal t-Tuple Estimate: p-hat_max = 0.004071999999999999999964"
+              ]
+            },
+            "ms": 85897
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 75381
+          }
+        }
+      },
+      "restartUnseeded": {
+        "verdicts": [
+          {
+            "platform": "wasm",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 27606
+          },
+          {
+            "platform": "native-amd64",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 59870
+          },
+          {
+            "platform": "native-arm64",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 49218
+          },
+          {
+            "platform": "native-amd64-strict",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 59267
+          },
+          {
+            "platform": "native-arm64-strict",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 48012
+          },
+          {
+            "platform": "wasm",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 25726
+          },
+          {
+            "platform": "native-amd64",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 68902
+          },
+          {
+            "platform": "native-arm64",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 55350
+          },
+          {
+            "platform": "native-amd64-strict",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 68944
+          },
+          {
+            "platform": "native-arm64-strict",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 51973
+          },
+          {
+            "platform": "wasm",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 24173
+          },
+          {
+            "platform": "native-amd64",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 47372
+          },
+          {
+            "platform": "native-arm64",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 39424
+          },
+          {
+            "platform": "native-amd64-strict",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 47185
+          },
+          {
+            "platform": "native-arm64-strict",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 37631
+          },
+          {
+            "platform": "wasm",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 20759
+          },
+          {
+            "platform": "native-amd64",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 44047
+          },
+          {
+            "platform": "native-arm64",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 36204
+          },
+          {
+            "platform": "native-amd64-strict",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 44095
+          },
+          {
+            "platform": "native-arm64-strict",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 34032
+          },
+          {
+            "platform": "wasm",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 23593
+          },
+          {
+            "platform": "native-amd64",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 46484
+          },
+          {
+            "platform": "native-arm64",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 39535
+          },
+          {
+            "platform": "native-amd64-strict",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 46352
+          },
+          {
+            "platform": "native-arm64-strict",
+            "exitCode": 0,
+            "xCutoff": "23",
+            "xMax": "16",
+            "verdict": "passed",
+            "ms": 37194
+          }
+        ],
+        "distinctVerdicts": ["passed"],
+        "distinctXCutoff": ["23"],
+        "jsonDiffsAcrossRuns": []
+      }
+    },
+    {
+      "id": "d4-restart-correlated-8bit",
+      "source": "synthetic-d4",
+      "bits": 8,
+      "sha256": "ec0af63b4c24594df49b908fcc99d177a08b6ae4741860be5385d1789a4b4f60",
+      "hI": 7.416885324722426,
+      "restartSeeded": {
+        "wasm": {
+          "error": "Restart Sanity Check Failed."
+        },
+        "wasmMs": 6576,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 13384
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 11767
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 17799
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 11785
+          }
+        }
+      },
+      "restartUnseeded": {
+        "verdicts": [
+          {
+            "platform": "wasm",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8609
+          },
+          {
+            "platform": "native-amd64",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8614
+          },
+          {
+            "platform": "native-arm64",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8612
+          },
+          {
+            "platform": "native-amd64-strict",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8611
+          },
+          {
+            "platform": "native-arm64-strict",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8611
+          },
+          {
+            "platform": "wasm",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8761
+          },
+          {
+            "platform": "native-amd64",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8766
+          },
+          {
+            "platform": "native-arm64",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8765
+          },
+          {
+            "platform": "native-amd64-strict",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8764
+          },
+          {
+            "platform": "native-arm64-strict",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8763
+          },
+          {
+            "platform": "wasm",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8151
+          },
+          {
+            "platform": "native-amd64",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8156
+          },
+          {
+            "platform": "native-arm64",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8154
+          },
+          {
+            "platform": "native-amd64-strict",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8153
+          },
+          {
+            "platform": "native-arm64-strict",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8152
+          },
+          {
+            "platform": "wasm",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8920
+          },
+          {
+            "platform": "native-amd64",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8925
+          },
+          {
+            "platform": "native-arm64",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8924
+          },
+          {
+            "platform": "native-amd64-strict",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8923
+          },
+          {
+            "platform": "native-arm64-strict",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 8922
+          },
+          {
+            "platform": "wasm",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 9524
+          },
+          {
+            "platform": "native-amd64",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 9530
+          },
+          {
+            "platform": "native-arm64",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 9528
+          },
+          {
+            "platform": "native-amd64-strict",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 9527
+          },
+          {
+            "platform": "native-arm64-strict",
+            "exitCode": -1,
+            "xCutoff": "23",
+            "xMax": "993",
+            "verdict": "failed: Restart Sanity Check Failed.",
+            "ms": 9526
+          }
+        ],
+        "distinctVerdicts": ["failed: Restart Sanity Check Failed."],
+        "distinctXCutoff": ["23"],
+        "jsonDiffsAcrossRuns": []
+      }
+    },
+    {
+      "id": "d4-sha256-conditioned-stuck-8bit",
+      "source": "synthetic-d4",
+      "bits": 8,
+      "sha256": "07435bb8db483643a74516697f9980493498d7b82561abb0d6e2546412395ccb",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.9983242831813781,
+          "Most Common Value / hOriginal": 7.8688967585902265,
+          "Most Common Value / mcvEstimateMode": 4113,
+          "Most Common Value / mcvEstimatePHat": 0.004113,
+          "Most Common Value / mcvEstimatePU": 0.004277854832758939,
+          "Collision Test (for bit strings only) / hBitstring": 0.9472269682317923,
+          "Markov Test (for bit strings only) / hBitstring": 0.9994609450921483,
+          "Compression Test (for bit strings only) / hBitstring": 0.9296184351387166,
+          "T-Tuple Test / binTTupleRes": 0.9335692443037781,
+          "T-Tuple Test / tTupleRes": 7.8688967585902265,
+          "LRS Test / binLrsRes": 0.9963210414594342,
+          "LRS Test / lrsRes": 7.908302533028919,
+          "Multi Most Common in Window Test / hBitstring": 0.9986678219359711,
+          "Multi Most Common in Window Test / hOriginal": 7.954573190648349,
+          "Lag Prediction Test / hBitstring": 0.998607651493025,
+          "Lag Prediction Test / hOriginal": 7.949922001947857,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.9988103489789407,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.960884323447434,
+          "LZ78Y Test / hBitstring": 0.999086243178289,
+          "LZ78Y Test / hOriginal": 7.961229597139845,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 7.4369474811097325,
+          "Overall / hBitstring": 0.9296184351387166,
+          "Overall / hOriginal": 7.8688967585902265
+        },
+        "wasmMs": 16388,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hBitstring",
+                "a": 0.9994609450921483,
+                "b": 0.9994609450921482
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Markov Estimate: p-hat_max = 3.0827004950946807e-39",
+                "Bitstring Markov Estimate: p-hat_max = 3.0827004950947113e-39"
+              ]
+            },
+            "ms": 19113
+          },
+          "native-arm64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hBitstring",
+                "a": 0.9994609450921483,
+                "b": 0.9994609450921482
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Markov Estimate: p-hat_max = 3.0827004950946807e-39",
+                "Bitstring Markov Estimate: p-hat_max = 3.0827004950947113e-39"
+              ]
+            },
+            "ms": 16391
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.5231065809785962716118",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.523106580978596271607"
+              ]
+            },
+            "ms": 19995
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 16621
+          }
+        },
+        "nativeAmd64VsArm64": [],
+        "nativeArm64VsArm64Strict": [
+          {
+            "field": "Markov Test (for bit strings only) / hBitstring",
+            "a": 0.9994609450921482,
+            "b": 0.9994609450921483
+          }
+        ]
+      },
+      "iidSeeded": {
+        "wasm": {
+          " / hAssessed": 7.8688967585902265,
+          " / hBitstring": 0.9983242831813781,
+          " / hOriginal": 7.8688967585902265,
+          " / mean": 127.565145,
+          " / median": 128,
+          " / passedChiSquareTests": true,
+          " / passedIidPermutationTests": true,
+          " / passedLongestRepeatedSubstringTest": true
+        },
+        "wasmMs": 13504,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Chi square independence: P-value = 0.29930315644542016",
+                "Chi square independence: P-value = 0.29930315642799854"
+              ]
+            },
+            "ms": 14198
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Chi square independence: P-value = 0.29930315644542016",
+                "Chi square independence: P-value = 0.29930315642799854"
+              ]
+            },
+            "ms": 13509
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal Longest Repeated Substring results: P_col = 0.003907300321999999989833",
+                "Literal Longest Repeated Substring results: P_col = 0.003907300321999999990788"
+              ]
+            },
+            "ms": 13508
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 13507
+          }
+        }
+      },
+      "iidUnseeded": {
+        "verdicts": [
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 26524
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 26532
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 26530
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 26528
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 26527
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14951
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14957
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14955
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14954
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 14953
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 11285
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 11292
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 11290
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 11289
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 11287
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 21392
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 21399
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 21397
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 21396
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 21394
+          },
+          {
+            "platform": "wasm",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8806
+          },
+          {
+            "platform": "native-amd64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 11167
+          },
+          {
+            "platform": "native-arm64",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 8812
+          },
+          {
+            "platform": "native-amd64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 10231
+          },
+          {
+            "platform": "native-arm64-strict",
+            "verdict": "chi2=true lrs=true perm=true",
+            "ms": 9168
+          }
+        ],
+        "distinctVerdicts": ["chi2=true lrs=true perm=true"],
+        "deterministicFieldDiffs": []
+      }
+    },
+    {
+      "id": "real-frdm-imx95-contrast-getrandom",
+      "source": "real",
+      "bits": 8,
+      "sha256": "658583c7aa59e7e21f1107e6dab4bd4d5ac36f17124ac8205d6b88c5c2435903",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.9986063904451192,
+          "Most Common Value / hOriginal": 7.882722585054418,
+          "Most Common Value / mcvEstimateMode": 4073,
+          "Most Common Value / mcvEstimatePHat": 0.004073,
+          "Most Common Value / mcvEstimatePU": 0.004237054540587136,
+          "Collision Test (for bit strings only) / hBitstring": 0.9466701610048351,
+          "Markov Test (for bit strings only) / hBitstring": 0.9994416139386699,
+          "Compression Test (for bit strings only) / hBitstring": 0.8946279007921792,
+          "T-Tuple Test / binTTupleRes": 0.9237031354634258,
+          "T-Tuple Test / tTupleRes": 7.333765872584084,
+          "LRS Test / binLrsRes": 0.9382564317573393,
+          "LRS Test / lrsRes": 7.940072467840486,
+          "Multi Most Common in Window Test / hBitstring": 0.9991860893443608,
+          "Multi Most Common in Window Test / hOriginal": 7.953477800874841,
+          "Lag Prediction Test / hBitstring": 0.9986912495186472,
+          "Lag Prediction Test / hOriginal": 8,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.999305591481398,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.9616182430791405,
+          "LZ78Y Test / hBitstring": 0.9505661679344829,
+          "LZ78Y Test / hOriginal": 7.960862684480493,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 7.157023206337434,
+          "Overall / hBitstring": 0.8946279007921792,
+          "Overall / hOriginal": 7.333765872584084
+        },
+        "wasmMs": 20127,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 7.953477800874841,
+                "b": 7.9534778008748415
+              },
+              {
+                "field": "LZ78Y Test / hBitstring",
+                "a": 0.9505661679344829,
+                "b": 0.9505661679336799
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007800572999",
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007800572988"
+              ]
+            },
+            "ms": 25862
+          },
+          "native-arm64": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 7.953477800874841,
+                "b": 7.9534778008748415
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007800572999",
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007800572988"
+              ]
+            },
+            "ms": 20131
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "LZ78Y Test / hBitstring",
+                "a": 0.9505661679344829,
+                "b": 0.9505661679336799
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.5266994764722639104966",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.5266994764722639105225"
+              ]
+            },
+            "ms": 27668
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 21100
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "LZ78Y Test / hBitstring",
+            "a": 0.9505661679336799,
+            "b": 0.9505661679344829
+          }
+        ],
+        "nativeArm64VsArm64Strict": [
+          {
+            "field": "Multi Most Common in Window Test / hOriginal",
+            "a": 7.9534778008748415,
+            "b": 7.953477800874841
+          }
+        ]
+      }
+    },
+    {
+      "id": "real-frdm-imx95-contrast-hwrng",
+      "source": "real",
+      "bits": 8,
+      "sha256": "fd37a63cef201d8a97ab629aa00af25e8ac0cceefffe2acd527accb216fd5c97",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.9977130600745439,
+          "Most Common Value / hOriginal": 7.878560765856192,
+          "Most Common Value / mcvEstimateMode": 4085,
+          "Most Common Value / mcvEstimatePHat": 0.004085,
+          "Most Common Value / mcvEstimatePU": 0.004249295044342793,
+          "Collision Test (for bit strings only) / hBitstring": 0.9438369441138743,
+          "Markov Test (for bit strings only) / hBitstring": 0.9994521328562412,
+          "Compression Test (for bit strings only) / hBitstring": 0.9127164436779164,
+          "T-Tuple Test / binTTupleRes": 0.9294675887066989,
+          "T-Tuple Test / tTupleRes": 7.878560765856192,
+          "LRS Test / binLrsRes": 0.9728721070769432,
+          "LRS Test / lrsRes": 7.941577186734111,
+          "Multi Most Common in Window Test / hBitstring": 0.9986588133715518,
+          "Multi Most Common in Window Test / hOriginal": 7.889944193688296,
+          "Lag Prediction Test / hBitstring": 0.9982747488376594,
+          "Lag Prediction Test / hOriginal": 7.962721272943603,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.9989782942529364,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.9404862539904,
+          "LZ78Y Test / hBitstring": 0.9982279158233464,
+          "LZ78Y Test / hOriginal": 7.939741474570171,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 7.301731549423331,
+          "Overall / hBitstring": 0.9127164436779164,
+          "Overall / hOriginal": 7.878560765856192
+        },
+        "wasmMs": 16563,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007350339382",
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007350339404"
+              ]
+            },
+            "ms": 20570
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007350339382",
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007350339404"
+              ]
+            },
+            "ms": 18689
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.5245972756632644185599",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.5245972756632644185817"
+              ]
+            },
+            "ms": 20906
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 18518
+          }
+        },
+        "nativeAmd64VsArm64": [],
+        "nativeArm64VsArm64Strict": []
+      }
+    },
+    {
+      "id": "real-frdm-imx95-idle-sequential-jent-raw-noise",
+      "source": "real",
+      "bits": 8,
+      "sha256": "42ed98d11733478587eb90a83d30104ebe632d3ec464d2bac0d4873ef9eac0e8",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.8133560930541404,
+          "Most Common Value / hOriginal": 3.4899739385518087,
+          "Most Common Value / mcvEstimateMode": 88274,
+          "Most Common Value / mcvEstimatePHat": 0.088274,
+          "Most Common Value / mcvEstimatePU": 0.08900474502933195,
+          "Collision Test (for bit strings only) / hBitstring": 0.7267214571912685,
+          "Markov Test (for bit strings only) / hBitstring": 0.8074583392324108,
+          "Compression Test (for bit strings only) / hBitstring": 0.32779474316800844,
+          "T-Tuple Test / binTTupleRes": 0.36887334398627397,
+          "T-Tuple Test / tTupleRes": 2.66074109826624,
+          "LRS Test / binLrsRes": 0.4391155874707676,
+          "LRS Test / lrsRes": 3.227836995271567,
+          "Multi Most Common in Window Test / hBitstring": 0.7736609555295091,
+          "Multi Most Common in Window Test / hOriginal": 3.517728026462738,
+          "Lag Prediction Test / hBitstring": 0.4962037844781436,
+          "Lag Prediction Test / hOriginal": 3.7798743187804753,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.44608878970105176,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 3.301738046784277,
+          "LZ78Y Test / hBitstring": 0.8133634855099882,
+          "LZ78Y Test / hOriginal": 3.301735302980927,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 2.6223579453440675,
+          "Overall / hBitstring": 0.32779474316800844,
+          "Overall / hOriginal": 2.66074109826624
+        },
+        "wasmMs": 13614,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.4962037844781436,
+                "b": 0.49620378447731445
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 3.7798743187804753,
+                "b": 3.7798743187813284
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.44608878970105176,
+                "b": 0.4460887897004135
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 3.301738046784277,
+                "b": 3.301738046785141
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 3.301735302980927,
+                "b": 3.301735302980537
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49955759987794929",
+                "Bitstring Collision Estimate: sigma-hat = 0.4995575998779494"
+              ]
+            },
+            "ms": 16436
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49955759987794929",
+                "Bitstring Collision Estimate: sigma-hat = 0.4995575998779494"
+              ]
+            },
+            "ms": 14326
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.4962037844781436,
+                "b": 0.49620378447731445
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 3.7798743187804753,
+                "b": 3.7798743187813284
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.44608878970105176,
+                "b": 0.4460887897004135
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 3.301738046784277,
+                "b": 3.301738046785141
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 3.301735302980927,
+                "b": 3.301735302980537
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.7740061253524812588902",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.7740061253524812589274"
+              ]
+            },
+            "ms": 16104
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 14365
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "Lag Prediction Test / hBitstring",
+            "a": 0.49620378447731445,
+            "b": 0.4962037844781436
+          },
+          {
+            "field": "Lag Prediction Test / hOriginal",
+            "a": 3.7798743187813284,
+            "b": 3.7798743187804753
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+            "a": 0.4460887897004135,
+            "b": 0.44608878970105176
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+            "a": 3.301738046785141,
+            "b": 3.301738046784277
+          },
+          {
+            "field": "LZ78Y Test / hOriginal",
+            "a": 3.301735302980537,
+            "b": 3.301735302980927
+          }
+        ],
+        "nativeArm64VsArm64Strict": []
+      }
+    },
+    {
+      "id": "real-frdm-imx95-loaded-sequential-jent-raw-noise",
+      "source": "real",
+      "bits": 8,
+      "sha256": "d01a9a61e1a028cf0bffb6876925bec9d18104b8876e3044051124e1cd3c54df",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.8413965391478402,
+          "Most Common Value / hOriginal": 3.8661918266130786,
+          "Most Common Value / mcvEstimateMode": 67926,
+          "Most Common Value / mcvEstimatePHat": 0.067926,
+          "Most Common Value / mcvEstimatePU": 0.0685741275969853,
+          "Collision Test (for bit strings only) / hBitstring": 0.7458680426965668,
+          "Markov Test (for bit strings only) / hBitstring": 0.8143312781593529,
+          "Compression Test (for bit strings only) / hBitstring": 0.3776631615935377,
+          "T-Tuple Test / binTTupleRes": 0.4372744721819089,
+          "T-Tuple Test / tTupleRes": 3.1488065698994605,
+          "LRS Test / binLrsRes": 0.5438955767973503,
+          "LRS Test / lrsRes": 3.872577932559578,
+          "Multi Most Common in Window Test / hBitstring": 0.8108892254817852,
+          "Multi Most Common in Window Test / hOriginal": 3.779861395177073,
+          "Lag Prediction Test / hBitstring": 0.6699896298932339,
+          "Lag Prediction Test / hOriginal": 4.416496938375501,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.4871053325850518,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 3.301738046784277,
+          "LZ78Y Test / hBitstring": 0.8414021984546025,
+          "LZ78Y Test / hOriginal": 3.301735302980927,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 3.0213052927483015,
+          "Overall / hBitstring": 0.3776631615935377,
+          "Overall / hOriginal": 3.1488065698994605
+        },
+        "wasmMs": 11225,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hBitstring",
+                "a": 0.8143312781593529,
+                "b": 0.8143312781593528
+              },
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 3.779861395177073,
+                "b": 3.77986139517811
+              },
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.6699896298932339,
+                "b": 0.6699896298921052
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 4.416496938375501,
+                "b": 4.416496938374595
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.4871053325850518,
+                "b": 0.487105332584119
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 3.301738046784277,
+                "b": 3.301738046785141
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 3.301735302980927,
+                "b": 3.301735302980537
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.4996819283013188",
+                "Bitstring Collision Estimate: sigma-hat = 0.49968192830131836"
+              ]
+            },
+            "ms": 14189
+          },
+          "native-arm64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hBitstring",
+                "a": 0.8143312781593529,
+                "b": 0.8143312781593528
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.4996819283013188",
+                "Bitstring Collision Estimate: sigma-hat = 0.49968192830131836"
+              ]
+            },
+            "ms": 11788
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 3.779861395177073,
+                "b": 3.77986139517811
+              },
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.6699896298932339,
+                "b": 0.6699896298921052
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 4.416496938375501,
+                "b": 4.416496938374595
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.4871053325850518,
+                "b": 0.487105332584119
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 3.301738046784277,
+                "b": 3.301738046785141
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 3.301735302980927,
+                "b": 3.301735302980537
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.7381281243968031497635",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.7381281243968031497349"
+              ]
+            },
+            "ms": 13988
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 11829
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "Multi Most Common in Window Test / hOriginal",
+            "a": 3.77986139517811,
+            "b": 3.779861395177073
+          },
+          {
+            "field": "Lag Prediction Test / hBitstring",
+            "a": 0.6699896298921052,
+            "b": 0.6699896298932339
+          },
+          {
+            "field": "Lag Prediction Test / hOriginal",
+            "a": 4.416496938374595,
+            "b": 4.416496938375501
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+            "a": 0.487105332584119,
+            "b": 0.4871053325850518
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+            "a": 3.301738046785141,
+            "b": 3.301738046784277
+          },
+          {
+            "field": "LZ78Y Test / hOriginal",
+            "a": 3.301735302980537,
+            "b": 3.301735302980927
+          }
+        ],
+        "nativeArm64VsArm64Strict": [
+          {
+            "field": "Markov Test (for bit strings only) / hBitstring",
+            "a": 0.8143312781593528,
+            "b": 0.8143312781593529
+          }
+        ]
+      }
+    },
+    {
+      "id": "real-kv260-contrast-getrandom",
+      "source": "real",
+      "bits": 8,
+      "sha256": "8506530d8ff3494485b6d7f792f0b6954c6f864519e7d23677e8cbe201f1f4bf",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.9984302020405313,
+          "Most Common Value / hOriginal": 7.885503884082155,
+          "Most Common Value / mcvEstimateMode": 4065,
+          "Most Common Value / mcvEstimatePHat": 0.004065,
+          "Most Common Value / mcvEstimatePU": 0.004228894005442876,
+          "Collision Test (for bit strings only) / hBitstring": 0.9382859097767847,
+          "Markov Test (for bit strings only) / hBitstring": 0.9994624788938282,
+          "Compression Test (for bit strings only) / hBitstring": 0.8815704116200852,
+          "T-Tuple Test / binTTupleRes": 0.9294675887066989,
+          "T-Tuple Test / tTupleRes": 7.885503884082155,
+          "LRS Test / binLrsRes": 0.998146656112768,
+          "LRS Test / lrsRes": 7.718814129976409,
+          "Multi Most Common in Window Test / hBitstring": 0.9989330593037271,
+          "Multi Most Common in Window Test / hOriginal": 7.947286415367585,
+          "Lag Prediction Test / hBitstring": 0.9987211586106199,
+          "Lag Prediction Test / hOriginal": 7.916815325448953,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.998148489167379,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.926092571028164,
+          "LZ78Y Test / hBitstring": 0.9998837708823042,
+          "LZ78Y Test / hOriginal": 7.926070932082738,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 7.052563292960682,
+          "Overall / hBitstring": 0.8815704116200852,
+          "Overall / hOriginal": 7.718814129976409
+        },
+        "wasmMs": 14818,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.50000002282959766",
+                "Bitstring Collision Estimate: sigma-hat = 0.50000002282959821"
+              ]
+            },
+            "ms": 22038
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.50000002282959766",
+                "Bitstring Collision Estimate: sigma-hat = 0.50000002282959821"
+              ]
+            },
+            "ms": 17066
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.5245972756632644185599",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.5245972756632644185817"
+              ]
+            },
+            "ms": 22216
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 16886
+          }
+        },
+        "nativeAmd64VsArm64": [],
+        "nativeArm64VsArm64Strict": []
+      }
+    },
+    {
+      "id": "real-kv260-idle-sequential-jent-raw-noise",
+      "source": "real",
+      "bits": 8,
+      "sha256": "5d9e7dc34e4ab4489f48248fac1cd51ef58c473003b7330bb89cc954f6ef29ec",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.9981308392322152,
+          "Most Common Value / hOriginal": 4.244717427899894,
+          "Most Common Value / mcvEstimateMode": 52176,
+          "Most Common Value / mcvEstimatePHat": 0.052176,
+          "Most Common Value / mcvEstimatePU": 0.0527488178437305,
+          "Collision Test (for bit strings only) / hBitstring": 1,
+          "Markov Test (for bit strings only) / hBitstring": 0.9073391855152779,
+          "Compression Test (for bit strings only) / hBitstring": 0.35245175917941923,
+          "T-Tuple Test / binTTupleRes": 0.521533484570088,
+          "T-Tuple Test / tTupleRes": 3.6776417964560992,
+          "LRS Test / binLrsRes": 0.5892331866620389,
+          "LRS Test / lrsRes": 4.320454572501267,
+          "Multi Most Common in Window Test / hBitstring": 1,
+          "Multi Most Common in Window Test / hOriginal": 4.283668188507438,
+          "Lag Prediction Test / hBitstring": 0.7638512571586495,
+          "Lag Prediction Test / hOriginal": 4.416496938375501,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.5630405912356486,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 4.25165930470689,
+          "LZ78Y Test / hBitstring": 0.9053910763927447,
+          "LZ78Y Test / hOriginal": 4.263036686578234,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 2.819614073435354,
+          "Overall / hBitstring": 0.35245175917941923,
+          "Overall / hOriginal": 3.6776417964560992
+        },
+        "wasmMs": 16628,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 4.416496938375501,
+                "b": 4.416496938374595
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49975859546473639",
+                "Bitstring Collision Estimate: sigma-hat = 0.49975859546473611"
+              ]
+            },
+            "ms": 22206
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49975859546473639",
+                "Bitstring Collision Estimate: sigma-hat = 0.49975859546473611"
+              ]
+            },
+            "ms": 18729
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 4.416496938375501,
+                "b": 4.416496938374595
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.6962121485171784382526",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.6962121485171784382754"
+              ]
+            },
+            "ms": 21856
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 18745
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "Lag Prediction Test / hOriginal",
+            "a": 4.416496938374595,
+            "b": 4.416496938375501
+          }
+        ],
+        "nativeArm64VsArm64Strict": []
+      }
+    },
+    {
+      "id": "real-kv260-loaded-sequential-jent-raw-noise",
+      "source": "real",
+      "bits": 8,
+      "sha256": "570f1995af0d82bb0ffd6c3dcac497dfcbf5ab3ac8011ea4fd072f305517336b",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.9942408185157176,
+          "Most Common Value / hOriginal": 4.2834765957153,
+          "Most Common Value / mcvEstimateMode": 50785,
+          "Most Common Value / mcvEstimatePHat": 0.050785,
+          "Most Common Value / mcvEstimatePU": 0.05135054520088968,
+          "Collision Test (for bit strings only) / hBitstring": 1,
+          "Markov Test (for bit strings only) / hBitstring": 0.9033458458690451,
+          "Compression Test (for bit strings only) / hBitstring": 0.36294733304160404,
+          "T-Tuple Test / binTTupleRes": 0.5440793829196592,
+          "T-Tuple Test / tTupleRes": 3.959264214521601,
+          "LRS Test / binLrsRes": 0.6111899669789106,
+          "LRS Test / lrsRes": 4.51311260208928,
+          "Multi Most Common in Window Test / hBitstring": 1,
+          "Multi Most Common in Window Test / hOriginal": 4.3197093093911585,
+          "Lag Prediction Test / hBitstring": 0.7016045366636763,
+          "Lag Prediction Test / hOriginal": 4.816667509126807,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.5499407446052432,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 4.287631449761541,
+          "LZ78Y Test / hBitstring": 0.9013864148656346,
+          "LZ78Y Test / hOriginal": 4.287524843433781,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 2.9035786643328323,
+          "Overall / hBitstring": 0.36294733304160404,
+          "Overall / hOriginal": 3.959264214521601
+        },
+        "wasmMs": 19683,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hBitstring",
+                "a": 0.9033458458690451,
+                "b": 0.9033458458690452
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.4996210707015265",
+                "Bitstring Collision Estimate: sigma-hat = 0.49962107070152645"
+              ]
+            },
+            "ms": 23036
+          },
+          "native-arm64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hBitstring",
+                "a": 0.9033458458690451,
+                "b": 0.9033458458690452
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.4996210707015265",
+                "Bitstring Collision Estimate: sigma-hat = 0.49962107070152645"
+              ]
+            },
+            "ms": 20668
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.6854060221557761619527",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.6854060221557761619607"
+              ]
+            },
+            "ms": 22802
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 20720
+          }
+        },
+        "nativeAmd64VsArm64": [],
+        "nativeArm64VsArm64Strict": [
+          {
+            "field": "Markov Test (for bit strings only) / hBitstring",
+            "a": 0.9033458458690452,
+            "b": 0.9033458458690451
+          }
+        ]
+      }
+    },
+    {
+      "id": "real-mac-m5max-native-contrast-urandom",
+      "source": "real",
+      "bits": 8,
+      "sha256": "075b87d1627406983deedc8724eaf71dd87f59601e794353e8fd1f0713500776",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.9974631707711649,
+          "Most Common Value / hOriginal": 7.878907121291836,
+          "Most Common Value / mcvEstimateMode": 4084,
+          "Most Common Value / mcvEstimatePHat": 0.004084,
+          "Most Common Value / mcvEstimatePU": 0.00424827501603375,
+          "Collision Test (for bit strings only) / hBitstring": 0.9452930793515494,
+          "Markov Test (for bit strings only) / hBitstring": 0.9990725318316316,
+          "Compression Test (for bit strings only) / hBitstring": 0.9119446733094926,
+          "T-Tuple Test / binTTupleRes": 0.9357063477806017,
+          "T-Tuple Test / tTupleRes": 7.878907121291836,
+          "LRS Test / binLrsRes": 0.9845018196574385,
+          "LRS Test / lrsRes": 7.937063691751974,
+          "Multi Most Common in Window Test / hBitstring": 0.9998267927622018,
+          "Multi Most Common in Window Test / hOriginal": 6.638382735456088,
+          "Lag Prediction Test / hBitstring": 0.9979999098952496,
+          "Lag Prediction Test / hOriginal": 7.943383926252729,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.9978646707283947,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.977860663566709,
+          "LZ78Y Test / hBitstring": 0.9978464809568007,
+          "LZ78Y Test / hOriginal": 7.977839024589366,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 6.638382735456088,
+          "Overall / hBitstring": 0.9119446733094926,
+          "Overall / hOriginal": 6.638382735456088
+        },
+        "wasmMs": 13130,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 6.638382735456088,
+                "b": 6.638382735457862
+              },
+              {
+                "field": "Overall / hAssessed",
+                "a": 6.638382735456088,
+                "b": 6.638382735457862
+              },
+              {
+                "field": "Overall / hOriginal",
+                "a": 6.638382735456088,
+                "b": 6.638382735457862
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007740193775",
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007740193764"
+              ]
+            },
+            "ms": 17751
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007740193775",
+                "Bitstring Collision Estimate: sigma-hat = 0.50000007740193764"
+              ]
+            },
+            "ms": 15113
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 6.638382735456088,
+                "b": 6.638382735457862
+              },
+              {
+                "field": "Overall / hAssessed",
+                "a": 6.638382735456088,
+                "b": 6.638382735457862
+              },
+              {
+                "field": "Overall / hOriginal",
+                "a": 6.638382735456088,
+                "b": 6.638382735457862
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.522331557195134622921",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.5223315571951346229047"
+              ]
+            },
+            "ms": 17683
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 15152
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "Multi Most Common in Window Test / hOriginal",
+            "a": 6.638382735457862,
+            "b": 6.638382735456088
+          },
+          {
+            "field": "Overall / hAssessed",
+            "a": 6.638382735457862,
+            "b": 6.638382735456088
+          },
+          {
+            "field": "Overall / hOriginal",
+            "a": 6.638382735457862,
+            "b": 6.638382735456088
+          }
+        ],
+        "nativeArm64VsArm64Strict": []
+      }
+    },
+    {
+      "id": "real-mac-m5max-native-idle-sequential-jent-raw-noise",
+      "source": "real",
+      "bits": 8,
+      "sha256": "1022b752d3527c8a9a6f4eb2986ab818a891842d501a3b7ff9640cd74031ec22",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.9068022762256892,
+          "Most Common Value / hOriginal": 3.6327275296775796,
+          "Most Common Value / mcvEstimateMode": 79921,
+          "Most Common Value / mcvEstimatePHat": 0.079921,
+          "Most Common Value / mcvEstimatePU": 0.08061949018932042,
+          "Collision Test (for bit strings only) / hBitstring": 0.63851093591685,
+          "Markov Test (for bit strings only) / hBitstring": 0.8837615808948268,
+          "Compression Test (for bit strings only) / hBitstring": 0.36636662852613777,
+          "T-Tuple Test / binTTupleRes": 0.2364616607454963,
+          "T-Tuple Test / tTupleRes": 1.5641523532665877,
+          "LRS Test / binLrsRes": 0.2682358898386038,
+          "LRS Test / lrsRes": 1.9170218890015367,
+          "Multi Most Common in Window Test / hBitstring": 0.9083039938406767,
+          "Multi Most Common in Window Test / hOriginal": 2.6314157003027816,
+          "Lag Prediction Test / hBitstring": 0.30180926137119957,
+          "Lag Prediction Test / hOriginal": 2.1841357396080743,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.237600299299741,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 1.8646447932056422,
+          "LZ78Y Test / hBitstring": 0.9068103690195491,
+          "LZ78Y Test / hOriginal": 1.8646432044707664,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 1.5641523532665877,
+          "Overall / hBitstring": 0.2364616607454963,
+          "Overall / hOriginal": 1.5641523532665877
+        },
+        "wasmMs": 12314,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Compression Test (for bit strings only) / hBitstring",
+                "a": 0.36636662852613777,
+                "b": 0.3663666285261397
+              },
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 2.6314157003027816,
+                "b": 2.631415700302115
+              },
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.30180926137119957,
+                "b": 0.3018092613708335
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 2.1841357396080743,
+                "b": 2.18413573960789
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.237600299299741,
+                "b": 0.23760029929965695
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 1.8646447932056422,
+                "b": 1.8646447932056494
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 1.8646432044707664,
+                "b": 1.8646432044711514
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49841114686921173",
+                "Bitstring Collision Estimate: sigma-hat = 0.4984111468692119"
+              ]
+            },
+            "ms": 14573
+          },
+          "native-arm64": {
+            "diffsVsWasm": [
+              {
+                "field": "Compression Test (for bit strings only) / hBitstring",
+                "a": 0.36636662852613777,
+                "b": 0.3663666285261397
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49841114686921173",
+                "Bitstring Collision Estimate: sigma-hat = 0.4984111468692119"
+              ]
+            },
+            "ms": 13002
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 2.6314157003027816,
+                "b": 2.631415700302115
+              },
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.30180926137119957,
+                "b": 0.3018092613708335
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 2.1841357396080743,
+                "b": 2.18413573960789
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.237600299299741,
+                "b": 0.23760029929965695
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 1.8646447932056422,
+                "b": 1.8646447932056494
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 1.8646432044707664,
+                "b": 1.8646432044711514
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.8484980624692285031459",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.8484980624692285031629"
+              ]
+            },
+            "ms": 15037
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 12929
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "Multi Most Common in Window Test / hOriginal",
+            "a": 2.631415700302115,
+            "b": 2.6314157003027816
+          },
+          {
+            "field": "Lag Prediction Test / hBitstring",
+            "a": 0.3018092613708335,
+            "b": 0.30180926137119957
+          },
+          {
+            "field": "Lag Prediction Test / hOriginal",
+            "a": 2.18413573960789,
+            "b": 2.1841357396080743
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+            "a": 0.23760029929965695,
+            "b": 0.237600299299741
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+            "a": 1.8646447932056494,
+            "b": 1.8646447932056422
+          },
+          {
+            "field": "LZ78Y Test / hOriginal",
+            "a": 1.8646432044711514,
+            "b": 1.8646432044707664
+          }
+        ],
+        "nativeArm64VsArm64Strict": [
+          {
+            "field": "Compression Test (for bit strings only) / hBitstring",
+            "a": 0.3663666285261397,
+            "b": 0.36636662852613777
+          }
+        ]
+      }
+    },
+    {
+      "id": "real-mac-m5max-native-loaded-sequential-jent-raw-noise",
+      "source": "real",
+      "bits": 8,
+      "sha256": "2bd2930b5e22017bb6d1a55305c346bfbf888ffc8c72b938cec1ddbc5e0fbff7",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.8972652580862597,
+          "Most Common Value / hOriginal": 3.1695106361923946,
+          "Most Common Value / mcvEstimateMode": 110336,
+          "Most Common Value / mcvEstimatePHat": 0.110336,
+          "Most Common Value / mcvEstimatePU": 0.11114302859502191,
+          "Collision Test (for bit strings only) / hBitstring": 0.606808107550809,
+          "Markov Test (for bit strings only) / hBitstring": 0.8797767488240918,
+          "Compression Test (for bit strings only) / hBitstring": 0.3493678125186544,
+          "T-Tuple Test / binTTupleRes": 0.2087929632094109,
+          "T-Tuple Test / tTupleRes": 1.3861930693786795,
+          "LRS Test / binLrsRes": 0.2056405877245641,
+          "LRS Test / lrsRes": 1.489731140659631,
+          "Multi Most Common in Window Test / hBitstring": 0.8981247167491575,
+          "Multi Most Common in Window Test / hOriginal": 2.1841281058948794,
+          "Lag Prediction Test / hBitstring": 0.25667601429417697,
+          "Lag Prediction Test / hOriginal": 1.8646448991204507,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.2332549398200404,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 1.625180705105821,
+          "LZ78Y Test / hBitstring": 0.8972934292551303,
+          "LZ78Y Test / hOriginal": 1.6251793107457748,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 1.3861930693786795,
+          "Overall / hBitstring": 0.2056405877245641,
+          "Overall / hOriginal": 1.3861930693786795
+        },
+        "wasmMs": 12172,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Compression Test (for bit strings only) / hBitstring",
+                "a": 0.3493678125186544,
+                "b": 0.3493678125186563
+              },
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 2.1841281058948794,
+                "b": 2.184128105894846
+              },
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.25667601429417697,
+                "b": 0.2566760142941242
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 1.8646448991204507,
+                "b": 1.8646448991209688
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.2332549398200404,
+                "b": 0.23325493982042825
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 1.625180705105821,
+                "b": 1.6251807051059832
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 1.6251793107457748,
+                "b": 1.625179310745423
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49765516223957074",
+                "Bitstring Collision Estimate: sigma-hat = 0.49765516223957085"
+              ]
+            },
+            "ms": 14773
+          },
+          "native-arm64": {
+            "diffsVsWasm": [
+              {
+                "field": "Compression Test (for bit strings only) / hBitstring",
+                "a": 0.3493678125186544,
+                "b": 0.3493678125186563
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49765516223957074",
+                "Bitstring Collision Estimate: sigma-hat = 0.49765516223957085"
+              ]
+            },
+            "ms": 13060
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 2.1841281058948794,
+                "b": 2.184128105894846
+              },
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.25667601429417697,
+                "b": 0.2566760142941242
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 1.8646448991204507,
+                "b": 1.8646448991209688
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.2332549398200404,
+                "b": 0.23325493982042825
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 1.625180705105821,
+                "b": 1.6251807051059832
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 1.6251793107457748,
+                "b": 1.625179310745423
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.8649495982694594267181",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.8649495982694594267215"
+              ]
+            },
+            "ms": 15242
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 12836
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "Multi Most Common in Window Test / hOriginal",
+            "a": 2.184128105894846,
+            "b": 2.1841281058948794
+          },
+          {
+            "field": "Lag Prediction Test / hBitstring",
+            "a": 0.2566760142941242,
+            "b": 0.25667601429417697
+          },
+          {
+            "field": "Lag Prediction Test / hOriginal",
+            "a": 1.8646448991209688,
+            "b": 1.8646448991204507
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+            "a": 0.23325493982042825,
+            "b": 0.2332549398200404
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+            "a": 1.6251807051059832,
+            "b": 1.625180705105821
+          },
+          {
+            "field": "LZ78Y Test / hOriginal",
+            "a": 1.625179310745423,
+            "b": 1.6251793107457748
+          }
+        ],
+        "nativeArm64VsArm64Strict": [
+          {
+            "field": "Compression Test (for bit strings only) / hBitstring",
+            "a": 0.3493678125186563,
+            "b": 0.3493678125186544
+          }
+        ]
+      }
+    },
+    {
+      "id": "real-mac-orbstack-linux-vm-contrast-getrandom",
+      "source": "real",
+      "bits": 8,
+      "sha256": "4da1011b4b6c6b6cddcd9f6b6c2c3813cba4c040adc1ac64a65719b9d0d36753",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.9985332462229612,
+          "Most Common Value / hOriginal": 7.880640159507053,
+          "Most Common Value / mcvEstimateMode": 4079,
+          "Most Common Value / mcvEstimatePHat": 0.004079,
+          "Most Common Value / mcvEstimatePU": 0.0042431748372323995,
+          "Collision Test (for bit strings only) / hBitstring": 0.9615476648204596,
+          "Markov Test (for bit strings only) / hBitstring": 0.9993765621468911,
+          "Compression Test (for bit strings only) / hBitstring": 0.8914006695081245,
+          "T-Tuple Test / binTTupleRes": 0.9335692443037781,
+          "T-Tuple Test / tTupleRes": 7.880640159507053,
+          "LRS Test / binLrsRes": 0.9986765575843884,
+          "LRS Test / lrsRes": 7.941812249902919,
+          "Multi Most Common in Window Test / hBitstring": 0.999149321537492,
+          "Multi Most Common in Window Test / hOriginal": 7.954573190648349,
+          "Lag Prediction Test / hBitstring": 0.9993558821672546,
+          "Lag Prediction Test / hOriginal": 7.9118439687548,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.9985714391017299,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 7.930036392287813,
+          "LZ78Y Test / hBitstring": 0.9187775279241779,
+          "LZ78Y Test / hOriginal": 7.930373823243518,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 7.131205356064996,
+          "Overall / hBitstring": 0.8914006695081245,
+          "Overall / hOriginal": 7.880640159507053
+        },
+        "wasmMs": 12884,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hBitstring",
+                "a": 0.9993765621468911,
+                "b": 0.999376562146891
+              },
+              {
+                "field": "LZ78Y Test / hBitstring",
+                "a": 0.9187775279241779,
+                "b": 0.9187775279232692
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49999995196425251",
+                "Bitstring Collision Estimate: sigma-hat = 0.49999995196425301"
+              ]
+            },
+            "ms": 16817
+          },
+          "native-arm64": {
+            "diffsVsWasm": [
+              {
+                "field": "Markov Test (for bit strings only) / hBitstring",
+                "a": 0.9993765621468911,
+                "b": 0.999376562146891
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49999995196425251",
+                "Bitstring Collision Estimate: sigma-hat = 0.49999995196425301"
+              ]
+            },
+            "ms": 14074
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "LZ78Y Test / hBitstring",
+                "a": 0.9187775279241779,
+                "b": 0.9187775279232692
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.5231065809785962716118",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.523106580978596271607"
+              ]
+            },
+            "ms": 16551
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 14137
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "LZ78Y Test / hBitstring",
+            "a": 0.9187775279232692,
+            "b": 0.9187775279241779
+          }
+        ],
+        "nativeArm64VsArm64Strict": [
+          {
+            "field": "Markov Test (for bit strings only) / hBitstring",
+            "a": 0.999376562146891,
+            "b": 0.9993765621468911
+          }
+        ]
+      }
+    },
+    {
+      "id": "real-mac-orbstack-linux-vm-idle-sequential-jent-raw-noise",
+      "source": "real",
+      "bits": 8,
+      "sha256": "cca4fb2b9ac4453dd6459b8dfeeb8dcc65e1ef7a2c4f9b6cc3c7ef4b8b8c6f27",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.933302215951196,
+          "Most Common Value / hOriginal": 4.406876155817153,
+          "Most Common Value / mcvEstimateMode": 46598,
+          "Most Common Value / mcvEstimatePHat": 0.046598,
+          "Most Common Value / mcvEstimatePU": 0.04714092390556691,
+          "Collision Test (for bit strings only) / hBitstring": 1,
+          "Markov Test (for bit strings only) / hBitstring": 0.8570578714290946,
+          "Compression Test (for bit strings only) / hBitstring": 0.25608579266353565,
+          "T-Tuple Test / binTTupleRes": 0.3247838034598323,
+          "T-Tuple Test / tTupleRes": 2.350836467390609,
+          "LRS Test / binLrsRes": 0.3687997567211933,
+          "LRS Test / lrsRes": 2.7669759391292668,
+          "Multi Most Common in Window Test / hBitstring": 0.8867556035849632,
+          "Multi Most Common in Window Test / hOriginal": 2.3874615188025254,
+          "Lag Prediction Test / hBitstring": 0.3371036254451017,
+          "Lag Prediction Test / hOriginal": 2.9294621054159617,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.30901592619140844,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 2.3874696951630847,
+          "LZ78Y Test / hBitstring": 0.7435818797815416,
+          "LZ78Y Test / hOriginal": 2.3874676846289806,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 2.048686341308285,
+          "Overall / hBitstring": 0.25608579266353565,
+          "Overall / hOriginal": 2.350836467390609
+        },
+        "wasmMs": 11303,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 2.3874615188025254,
+                "b": 2.3874615188029455
+              },
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.3371036254451017,
+                "b": 0.3371036254452466
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 2.9294621054159617,
+                "b": 2.929462105416496
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.30901592619140844,
+                "b": 0.3090159261921226
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 2.3874696951630847,
+                "b": 2.3874696951633703
+              },
+              {
+                "field": "LZ78Y Test / hBitstring",
+                "a": 0.7435818797815416,
+                "b": 0.7435818797825724
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 2.3874676846289806,
+                "b": 2.3874676846283256
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49633913108827138",
+                "Bitstring Collision Estimate: sigma-hat = 0.4963391310882711"
+              ]
+            },
+            "ms": 13359
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49633913108827138",
+                "Bitstring Collision Estimate: sigma-hat = 0.4963391310882711"
+              ]
+            },
+            "ms": 11308
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 2.3874615188025254,
+                "b": 2.3874615188029455
+              },
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.3371036254451017,
+                "b": 0.3371036254452466
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 2.9294621054159617,
+                "b": 2.929462105416496
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.30901592619140844,
+                "b": 0.3090159261921226
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 2.3874696951630847,
+                "b": 2.3874696951633703
+              },
+              {
+                "field": "LZ78Y Test / hBitstring",
+                "a": 0.7435818797815416,
+                "b": 0.7435818797825724
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 2.3874676846289806,
+                "b": 2.3874676846283256
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.7980524243343801669095",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.7980524243343801668875"
+              ]
+            },
+            "ms": 13285
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 11363
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "Multi Most Common in Window Test / hOriginal",
+            "a": 2.3874615188029455,
+            "b": 2.3874615188025254
+          },
+          {
+            "field": "Lag Prediction Test / hBitstring",
+            "a": 0.3371036254452466,
+            "b": 0.3371036254451017
+          },
+          {
+            "field": "Lag Prediction Test / hOriginal",
+            "a": 2.929462105416496,
+            "b": 2.9294621054159617
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+            "a": 0.3090159261921226,
+            "b": 0.30901592619140844
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+            "a": 2.3874696951633703,
+            "b": 2.3874696951630847
+          },
+          {
+            "field": "LZ78Y Test / hBitstring",
+            "a": 0.7435818797825724,
+            "b": 0.7435818797815416
+          },
+          {
+            "field": "LZ78Y Test / hOriginal",
+            "a": 2.3874676846283256,
+            "b": 2.3874676846289806
+          }
+        ],
+        "nativeArm64VsArm64Strict": []
+      }
+    },
+    {
+      "id": "real-mac-orbstack-linux-vm-loaded-sequential-jent-raw-noise",
+      "source": "real",
+      "bits": 8,
+      "sha256": "7339da5a5d1d3103ba890df9a280190fe8d41cb9f4e2ef4a82e2cc9d7a26c5bc",
+      "nonIid": {
+        "wasm": {
+          "Most Common Value / hBitstring": 0.9881130852630722,
+          "Most Common Value / hOriginal": 4.771393145305838,
+          "Most Common Value / mcvEstimateMode": 36135,
+          "Most Common Value / mcvEstimatePHat": 0.036135,
+          "Most Common Value / mcvEstimatePU": 0.036615716945463554,
+          "Collision Test (for bit strings only) / hBitstring": 1,
+          "Markov Test (for bit strings only) / hBitstring": 0.8202209264683611,
+          "Compression Test (for bit strings only) / hBitstring": 0.28185555308061033,
+          "T-Tuple Test / binTTupleRes": 0.355350584516543,
+          "T-Tuple Test / tTupleRes": 2.7728579349591294,
+          "LRS Test / binLrsRes": 0.4275285571698583,
+          "LRS Test / lrsRes": 3.158902871496054,
+          "Multi Most Common in Window Test / hBitstring": 0.9260241821235538,
+          "Multi Most Common in Window Test / hOriginal": 3.3017268883934836,
+          "Lag Prediction Test / hBitstring": 0.3870535935351544,
+          "Lag Prediction Test / hOriginal": 2.9294621054159617,
+          "Multi Markov Model with Counting Test (MultiMMC) / hBitstring": 0.37062268395495185,
+          "Multi Markov Model with Counting Test (MultiMMC) / hOriginal": 2.9294619423778574,
+          "LZ78Y Test / hBitstring": 0.7049199822911671,
+          "LZ78Y Test / hOriginal": 2.929459496786682,
+          "Overall / dataWordSize": 8,
+          "Overall / hAssessed": 2.2548444246448827,
+          "Overall / hBitstring": 0.28185555308061033,
+          "Overall / hOriginal": 2.7728579349591294
+        },
+        "wasmMs": 10372,
+        "wasmExit": 0,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 3.3017268883934836,
+                "b": 3.3017268883935986
+              },
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.3870535935351544,
+                "b": 0.38705359353436264
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 2.9294621054159617,
+                "b": 2.929462105416496
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.37062268395495185,
+                "b": 0.3706226839555091
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 2.9294619423778574,
+                "b": 2.929461942377898
+              },
+              {
+                "field": "LZ78Y Test / hBitstring",
+                "a": 0.7049199822911671,
+                "b": 0.7049199822918744
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 2.929459496786682,
+                "b": 2.929459496786783
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49571155274233397",
+                "Bitstring Collision Estimate: sigma-hat = 0.49571155274233381"
+              ]
+            },
+            "ms": 11962
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring Collision Estimate: sigma-hat = 0.49571155274233397",
+                "Bitstring Collision Estimate: sigma-hat = 0.49571155274233381"
+              ]
+            },
+            "ms": 10599
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / hOriginal",
+                "a": 3.3017268883934836,
+                "b": 3.3017268883935986
+              },
+              {
+                "field": "Lag Prediction Test / hBitstring",
+                "a": 0.3870535935351544,
+                "b": 0.38705359353436264
+              },
+              {
+                "field": "Lag Prediction Test / hOriginal",
+                "a": 2.9294621054159617,
+                "b": 2.929462105416496
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+                "a": 0.37062268395495185,
+                "b": 0.3706226839555091
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+                "a": 2.9294619423778574,
+                "b": 2.929461942377898
+              },
+              {
+                "field": "LZ78Y Test / hBitstring",
+                "a": 0.7049199822911671,
+                "b": 0.7049199822918744
+              },
+              {
+                "field": "LZ78Y Test / hOriginal",
+                "a": 2.929459496786682,
+                "b": 2.929459496786783
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.7813032203039096493712",
+                "Bitstring t-Tuple Estimate: p-hat_max = 0.781303220303909649381"
+              ]
+            },
+            "ms": 11792
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 10563
+          }
+        },
+        "nativeAmd64VsArm64": [
+          {
+            "field": "Multi Most Common in Window Test / hOriginal",
+            "a": 3.3017268883935986,
+            "b": 3.3017268883934836
+          },
+          {
+            "field": "Lag Prediction Test / hBitstring",
+            "a": 0.38705359353436264,
+            "b": 0.3870535935351544
+          },
+          {
+            "field": "Lag Prediction Test / hOriginal",
+            "a": 2.929462105416496,
+            "b": 2.9294621054159617
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hBitstring",
+            "a": 0.3706226839555091,
+            "b": 0.37062268395495185
+          },
+          {
+            "field": "Multi Markov Model with Counting Test (MultiMMC) / hOriginal",
+            "a": 2.929461942377898,
+            "b": 2.9294619423778574
+          },
+          {
+            "field": "LZ78Y Test / hBitstring",
+            "a": 0.7049199822918744,
+            "b": 0.7049199822911671
+          },
+          {
+            "field": "LZ78Y Test / hOriginal",
+            "a": 2.929459496786783,
+            "b": 2.929459496786682
+          }
+        ],
+        "nativeArm64VsArm64Strict": []
+      }
+    },
+    {
+      "id": "real-frdm-imx95-idle-restart-matrix",
+      "source": "real",
+      "bits": 8,
+      "sha256": "da79f25366f720977fa096f71194bfad78ea3f16a7598e45880aa72ab0e69d5f",
+      "hI": 2.6223579453440675,
+      "restartSeeded": {
+        "wasm": {
+          "Most Common Value / dataWordSize": 8,
+          "Most Common Value / h_c": 4.861178488316306,
+          "Most Common Value / h_r": 4.861178488316306,
+          "T-Tuple Test / dataWordSize": 8,
+          "T-Tuple Test / h_c": 4.128809509093441,
+          "T-Tuple Test / h_r": 3.532083786115518,
+          "LRS Test / dataWordSize": 8,
+          "LRS Test / h_c": 5.301003233404144,
+          "LRS Test / h_r": 4.550045553956011,
+          "Multi Most Common in Window Test / dataWordSize": 8,
+          "Multi Most Common in Window Test / h_c": 4.765603519738691,
+          "Multi Most Common in Window Test / h_r": 3.779861395177073,
+          "Lag Prediction Test / dataWordSize": 8,
+          "Lag Prediction Test / h_c": 5.30624875805084,
+          "Lag Prediction Test / h_r": 4.416496938375501,
+          "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_c": 4.946471100063534,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_r": 3.7798741103416282,
+          "LZ78Y Test / dataWordSize": 8,
+          "LZ78Y Test / h_c": 4.946449464427151,
+          "LZ78Y Test / h_r": 3.7798709837338627,
+          "Overall / h_c": 4.128809509093441,
+          "Overall / h_i": 2.6223579453440675,
+          "Overall / h_r": 3.532083786115518
+        },
+        "wasmMs": 32653,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / h_r",
+                "a": 3.779861395177073,
+                "b": 3.77986139517811
+              },
+              {
+                "field": "Lag Prediction Test / h_c",
+                "a": 5.30624875805084,
+                "b": 5.3062487580515745
+              },
+              {
+                "field": "Lag Prediction Test / h_r",
+                "a": 4.416496938375501,
+                "b": 4.416496938374595
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_r",
+                "a": 3.7798741103416282,
+                "b": 3.779874110341048
+              },
+              {
+                "field": "LZ78Y Test / h_r",
+                "a": 3.7798709837338627,
+                "b": 3.779870983734821
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.08572327718349420386059",
+                "Literal t-Tuple Estimate: p-hat_max = 0.08572327718349420386197"
+              ]
+            },
+            "ms": 42802
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 36394
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / h_r",
+                "a": 3.779861395177073,
+                "b": 3.77986139517811
+              },
+              {
+                "field": "Lag Prediction Test / h_c",
+                "a": 5.30624875805084,
+                "b": 5.3062487580515745
+              },
+              {
+                "field": "Lag Prediction Test / h_r",
+                "a": 4.416496938375501,
+                "b": 4.416496938374595
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_r",
+                "a": 3.7798741103416282,
+                "b": 3.779874110341048
+              },
+              {
+                "field": "LZ78Y Test / h_r",
+                "a": 3.7798709837338627,
+                "b": 3.779870983734821
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.08572327718349420386059",
+                "Literal t-Tuple Estimate: p-hat_max = 0.08572327718349420386197"
+              ]
+            },
+            "ms": 48649
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 34959
+          }
+        }
+      }
+    },
+    {
+      "id": "real-frdm-imx95-loaded-restart-matrix",
+      "source": "real",
+      "bits": 8,
+      "sha256": "766ba8dd12576d570dd663071e31f5ae2526c40dbb87f7e8d1307c3020c1ba8f",
+      "hI": 3.0213052927483015,
+      "restartSeeded": {
+        "wasm": {
+          "Most Common Value / dataWordSize": 8,
+          "Most Common Value / h_c": 4.607286591438465,
+          "Most Common Value / h_r": 4.607286591438465,
+          "T-Tuple Test / dataWordSize": 8,
+          "T-Tuple Test / h_c": 4.042048987160313,
+          "T-Tuple Test / h_r": 3.639821415354496,
+          "LRS Test / dataWordSize": 8,
+          "LRS Test / h_c": 5.155162790939231,
+          "LRS Test / h_r": 4.444705497915046,
+          "Multi Most Common in Window Test / dataWordSize": 8,
+          "Multi Most Common in Window Test / h_c": 4.416481906898158,
+          "Multi Most Common in Window Test / h_r": 4.416481906898158,
+          "Lag Prediction Test / dataWordSize": 8,
+          "Lag Prediction Test / h_c": 5.30624875805084,
+          "Lag Prediction Test / h_r": 4.972825002295752,
+          "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_c": 4.416496695939723,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_r": 4.416496695939723,
+          "LZ78Y Test / dataWordSize": 8,
+          "LZ78Y Test / h_c": 4.416493059373925,
+          "LZ78Y Test / h_r": 4.416493059373925,
+          "Overall / h_c": 4.042048987160313,
+          "Overall / h_i": 3.0213052927483015,
+          "Overall / h_r": 3.639821415354496
+        },
+        "wasmMs": 17346,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / h_c",
+                "a": 4.416481906898158,
+                "b": 4.416481906897107
+              },
+              {
+                "field": "Multi Most Common in Window Test / h_r",
+                "a": 4.416481906898158,
+                "b": 4.416481906897107
+              },
+              {
+                "field": "Lag Prediction Test / h_c",
+                "a": 5.30624875805084,
+                "b": 5.3062487580515745
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_c",
+                "a": 4.416496695939723,
+                "b": 4.416496695939296
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_r",
+                "a": 4.416496695939723,
+                "b": 4.416496695939296
+              },
+              {
+                "field": "LZ78Y Test / h_c",
+                "a": 4.416493059373925,
+                "b": 4.4164930593734715
+              },
+              {
+                "field": "LZ78Y Test / h_r",
+                "a": 4.416493059373925,
+                "b": 4.4164930593734715
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.07952713252212155924405",
+                "Literal t-Tuple Estimate: p-hat_max = 0.0795271325221215592431"
+              ]
+            },
+            "ms": 51819
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 43744
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / h_c",
+                "a": 4.416481906898158,
+                "b": 4.416481906897107
+              },
+              {
+                "field": "Multi Most Common in Window Test / h_r",
+                "a": 4.416481906898158,
+                "b": 4.416481906897107
+              },
+              {
+                "field": "Lag Prediction Test / h_c",
+                "a": 5.30624875805084,
+                "b": 5.3062487580515745
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_c",
+                "a": 4.416496695939723,
+                "b": 4.416496695939296
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_r",
+                "a": 4.416496695939723,
+                "b": 4.416496695939296
+              },
+              {
+                "field": "LZ78Y Test / h_c",
+                "a": 4.416493059373925,
+                "b": 4.4164930593734715
+              },
+              {
+                "field": "LZ78Y Test / h_r",
+                "a": 4.416493059373925,
+                "b": 4.4164930593734715
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.07952713252212155924405",
+                "Literal t-Tuple Estimate: p-hat_max = 0.0795271325221215592431"
+              ]
+            },
+            "ms": 59548
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 39214
+          }
+        }
+      }
+    },
+    {
+      "id": "real-kv260-idle-restart-matrix",
+      "source": "real",
+      "bits": 8,
+      "sha256": "7895b9c59a125e80860de2621742ecdb7d002d24148a939579de1085294ea2ea",
+      "hI": 2.819614073435354,
+      "restartSeeded": {
+        "wasm": {
+          "Most Common Value / dataWordSize": 8,
+          "Most Common Value / h_c": 4.252574110430856,
+          "Most Common Value / h_r": 4.252574110430856,
+          "T-Tuple Test / dataWordSize": 8,
+          "T-Tuple Test / h_c": 3.935746641929024,
+          "T-Tuple Test / h_r": 3.630957405193705,
+          "LRS Test / dataWordSize": 8,
+          "LRS Test / h_c": 4.753014740183944,
+          "LRS Test / h_r": 4.302037832570723,
+          "Multi Most Common in Window Test / dataWordSize": 8,
+          "Multi Most Common in Window Test / h_c": 4.286807210585217,
+          "Multi Most Common in Window Test / h_r": 4.297577060481744,
+          "Lag Prediction Test / dataWordSize": 8,
+          "Lag Prediction Test / h_c": 4.949027819895825,
+          "Lag Prediction Test / h_r": 4.764074508575957,
+          "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_c": 4.282654894595966,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_r": 4.261694561132298,
+          "LZ78Y Test / dataWordSize": 8,
+          "LZ78Y Test / h_c": 4.282576807413357,
+          "LZ78Y Test / h_r": 4.272619383729565,
+          "Overall / h_c": 3.935746641929024,
+          "Overall / h_i": 2.819614073435354,
+          "Overall / h_r": 3.630957405193705
+        },
+        "wasmMs": 52198,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.08001958411627003347437",
+                "Literal t-Tuple Estimate: p-hat_max = 0.08001958411627003346991"
+              ]
+            },
+            "ms": 88021
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 82395
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.08001958411627003347437",
+                "Literal t-Tuple Estimate: p-hat_max = 0.08001958411627003346991"
+              ]
+            },
+            "ms": 92853
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 81996
+          }
+        }
+      }
+    },
+    {
+      "id": "real-kv260-loaded-restart-matrix",
+      "source": "real",
+      "bits": 8,
+      "sha256": "350ca12c102f000ee5fa6b59a3373fa523052d79867ef5fb8bde38c9ba7d7574",
+      "hI": 2.9035786643328323,
+      "restartSeeded": {
+        "wasm": {
+          "Most Common Value / dataWordSize": 8,
+          "Most Common Value / h_c": 4.323280240267859,
+          "Most Common Value / h_r": 4.323280240267859,
+          "T-Tuple Test / dataWordSize": 8,
+          "T-Tuple Test / h_c": 4.078683402055553,
+          "T-Tuple Test / h_r": 3.97433255531275,
+          "LRS Test / dataWordSize": 8,
+          "LRS Test / h_c": 4.890474486458975,
+          "LRS Test / h_r": 4.425820945404257,
+          "Multi Most Common in Window Test / dataWordSize": 8,
+          "Multi Most Common in Window Test / h_c": 4.35364866620749,
+          "Multi Most Common in Window Test / h_r": 4.362215392999674,
+          "Lag Prediction Test / dataWordSize": 8,
+          "Lag Prediction Test / h_c": 5.0435101700261775,
+          "Lag Prediction Test / h_r": 4.8682008697763814,
+          "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_c": 4.361676990167737,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_r": 4.352313808529274,
+          "LZ78Y Test / dataWordSize": 8,
+          "LZ78Y Test / h_c": 4.361625534681335,
+          "LZ78Y Test / h_r": 4.352262546583656,
+          "Overall / h_c": 4.078683402055553,
+          "Overall / h_i": 2.9035786643328323,
+          "Overall / h_r": 3.97433255531275
+        },
+        "wasmMs": 24173,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.06299609449216798464568",
+                "Literal t-Tuple Estimate: p-hat_max = 0.06299609449216798464125"
+              ]
+            },
+            "ms": 51527
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 46904
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.06299609449216798464568",
+                "Literal t-Tuple Estimate: p-hat_max = 0.06299609449216798464125"
+              ]
+            },
+            "ms": 54028
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 45437
+          }
+        }
+      }
+    },
+    {
+      "id": "real-mac-m5max-native-idle-restart-matrix",
+      "source": "real",
+      "bits": 8,
+      "sha256": "e18dd93f6adbe1d99337f8eceea214fa8d4f4ec7e08b1805178865fe4b200aa1",
+      "hI": 1.5641523532665877,
+      "restartSeeded": {
+        "wasm": {
+          "Most Common Value / dataWordSize": 8,
+          "Most Common Value / h_c": 3.978121361081935,
+          "Most Common Value / h_r": 3.978121361081935,
+          "T-Tuple Test / dataWordSize": 8,
+          "T-Tuple Test / h_c": 3.488320523715848,
+          "T-Tuple Test / h_r": 1.717100868975375,
+          "LRS Test / dataWordSize": 8,
+          "LRS Test / h_c": 4.805790274489225,
+          "LRS Test / h_r": 2.06437267659048,
+          "Multi Most Common in Window Test / dataWordSize": 8,
+          "Multi Most Common in Window Test / h_c": 3.9544696289359855,
+          "Multi Most Common in Window Test / h_r": 2.9294519967444796,
+          "Lag Prediction Test / dataWordSize": 8,
+          "Lag Prediction Test / h_c": 4.416496938375501,
+          "Lag Prediction Test / h_r": 2.1841357396080743,
+          "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_c": 3.987399037409642,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_r": 2.012086970093582,
+          "LZ78Y Test / dataWordSize": 8,
+          "LZ78Y Test / h_c": 3.990230872513923,
+          "LZ78Y Test / h_r": 1.8646432044707664,
+          "Overall / h_c": 3.488320523715848,
+          "Overall / h_i": 1.5641523532665877,
+          "Overall / h_r": 1.717100868975375
+        },
+        "wasmMs": 18701,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / h_r",
+                "a": 2.9294519967444796,
+                "b": 2.9294519967436017
+              },
+              {
+                "field": "Lag Prediction Test / h_c",
+                "a": 4.416496938375501,
+                "b": 4.416496938374595
+              },
+              {
+                "field": "Lag Prediction Test / h_r",
+                "a": 2.1841357396080743,
+                "b": 2.18413573960789
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_r",
+                "a": 2.012086970093582,
+                "b": 2.0120869700938098
+              },
+              {
+                "field": "LZ78Y Test / h_r",
+                "a": 1.8646432044707664,
+                "b": 1.8646432044711514
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.3029756135296252485585",
+                "Literal t-Tuple Estimate: p-hat_max = 0.3029756135296252485614"
+              ]
+            },
+            "ms": 44690
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 37712
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / h_r",
+                "a": 2.9294519967444796,
+                "b": 2.9294519967436017
+              },
+              {
+                "field": "Lag Prediction Test / h_c",
+                "a": 4.416496938375501,
+                "b": 4.416496938374595
+              },
+              {
+                "field": "Lag Prediction Test / h_r",
+                "a": 2.1841357396080743,
+                "b": 2.18413573960789
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_r",
+                "a": 2.012086970093582,
+                "b": 2.0120869700938098
+              },
+              {
+                "field": "LZ78Y Test / h_r",
+                "a": 1.8646432044707664,
+                "b": 1.8646432044711514
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.3029756135296252485585",
+                "Literal t-Tuple Estimate: p-hat_max = 0.3029756135296252485614"
+              ]
+            },
+            "ms": 50952
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 37540
+          }
+        }
+      }
+    },
+    {
+      "id": "real-mac-m5max-native-loaded-restart-matrix",
+      "source": "real",
+      "bits": 8,
+      "sha256": "c38a09fe1f3dfb2385f1efd985ddce7bda43e2818141c688193468bb6dd76a64",
+      "hI": 1.3861930693786795,
+      "restartSeeded": {
+        "wasm": {
+          "Most Common Value / dataWordSize": 8,
+          "Most Common Value / h_c": 3.735273795967888,
+          "Most Common Value / h_r": 3.735273795967888,
+          "T-Tuple Test / dataWordSize": 8,
+          "T-Tuple Test / h_c": 3.2513767605201638,
+          "T-Tuple Test / h_r": 1.4560510312679416,
+          "LRS Test / dataWordSize": 8,
+          "LRS Test / h_c": 4.181820429118964,
+          "LRS Test / h_r": 1.9032182034213767,
+          "Multi Most Common in Window Test / dataWordSize": 8,
+          "Multi Most Common in Window Test / h_c": 3.7163792716594237,
+          "Multi Most Common in Window Test / h_r": 2.9199140167262296,
+          "Lag Prediction Test / dataWordSize": 8,
+          "Lag Prediction Test / h_c": 4.416496938375501,
+          "Lag Prediction Test / h_r": 2.1841357396080743,
+          "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_c": 3.715382196307981,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_r": 1.625180705105821,
+          "LZ78Y Test / dataWordSize": 8,
+          "LZ78Y Test / h_c": 3.717722071381537,
+          "LZ78Y Test / h_r": 1.8646432044707664,
+          "Overall / h_c": 3.2513767605201638,
+          "Overall / h_i": 1.3861930693786795,
+          "Overall / h_r": 1.4560510312679416
+        },
+        "wasmMs": 20091,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Lag Prediction Test / h_c",
+                "a": 4.416496938375501,
+                "b": 4.416496938374595
+              },
+              {
+                "field": "Lag Prediction Test / h_r",
+                "a": 2.1841357396080743,
+                "b": 2.18413573960789
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_r",
+                "a": 1.625180705105821,
+                "b": 1.6251807051059832
+              },
+              {
+                "field": "LZ78Y Test / h_r",
+                "a": 1.8646432044707664,
+                "b": 1.8646432044711514
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.363250641554830478475",
+                "Literal t-Tuple Estimate: p-hat_max = 0.3632506415548304784719"
+              ]
+            },
+            "ms": 44309
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 37347
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Lag Prediction Test / h_c",
+                "a": 4.416496938375501,
+                "b": 4.416496938374595
+              },
+              {
+                "field": "Lag Prediction Test / h_r",
+                "a": 2.1841357396080743,
+                "b": 2.18413573960789
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_r",
+                "a": 1.625180705105821,
+                "b": 1.6251807051059832
+              },
+              {
+                "field": "LZ78Y Test / h_r",
+                "a": 1.8646432044707664,
+                "b": 1.8646432044711514
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.363250641554830478475",
+                "Literal t-Tuple Estimate: p-hat_max = 0.3632506415548304784719"
+              ]
+            },
+            "ms": 49646
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 37366
+          }
+        }
+      }
+    },
+    {
+      "id": "real-mac-orbstack-linux-vm-idle-restart-matrix",
+      "source": "real",
+      "bits": 8,
+      "sha256": "e43c3761b15c2e85823f41d964e53546461c4534229bc8ae3f3492e0074457b1",
+      "hI": 2.048686341308285,
+      "restartSeeded": {
+        "wasm": {
+          "Most Common Value / dataWordSize": 8,
+          "Most Common Value / h_c": 4.481431974931621,
+          "Most Common Value / h_r": 4.481431974931621,
+          "T-Tuple Test / dataWordSize": 8,
+          "T-Tuple Test / h_c": 4.238165520680903,
+          "T-Tuple Test / h_r": 2.355234227365574,
+          "LRS Test / dataWordSize": 8,
+          "LRS Test / h_c": 5.243585772270153,
+          "LRS Test / h_r": 2.7669759391292668,
+          "Multi Most Common in Window Test / dataWordSize": 8,
+          "Multi Most Common in Window Test / h_c": 4.385949467816507,
+          "Multi Most Common in Window Test / h_r": 2.9294519967444796,
+          "Lag Prediction Test / dataWordSize": 8,
+          "Lag Prediction Test / h_c": 5.30624875805084,
+          "Lag Prediction Test / h_r": 2.6314248208948783,
+          "Multi Markov Model with Counting Test (MultiMMC) / dataWordSize": 8,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_c": 4.550339456710497,
+          "Multi Markov Model with Counting Test (MultiMMC) / h_r": 2.184135616487433,
+          "LZ78Y Test / dataWordSize": 8,
+          "LZ78Y Test / h_c": 4.700990558497917,
+          "LZ78Y Test / h_r": 2.929459496786682,
+          "Overall / h_c": 4.238165520680903,
+          "Overall / h_i": 2.048686341308285,
+          "Overall / h_r": 2.184135616487433
+        },
+        "wasmMs": 16876,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / h_r",
+                "a": 2.9294519967444796,
+                "b": 2.9294519967436017
+              },
+              {
+                "field": "Lag Prediction Test / h_c",
+                "a": 5.30624875805084,
+                "b": 5.3062487580515745
+              },
+              {
+                "field": "Lag Prediction Test / h_r",
+                "a": 2.6314248208948783,
+                "b": 2.631424820895488
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_r",
+                "a": 2.184135616487433,
+                "b": 2.184135616487581
+              },
+              {
+                "field": "LZ78Y Test / h_r",
+                "a": 2.929459496786682,
+                "b": 2.929459496786783
+              },
+              {
+                "field": "Overall / h_r",
+                "a": 2.184135616487433,
+                "b": 2.184135616487581
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.1944162917378805405779",
+                "Literal t-Tuple Estimate: p-hat_max = 0.1944162917378805405661"
+              ]
+            },
+            "ms": 39080
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 34095
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [
+              {
+                "field": "Multi Most Common in Window Test / h_r",
+                "a": 2.9294519967444796,
+                "b": 2.9294519967436017
+              },
+              {
+                "field": "Lag Prediction Test / h_c",
+                "a": 5.30624875805084,
+                "b": 5.3062487580515745
+              },
+              {
+                "field": "Lag Prediction Test / h_r",
+                "a": 2.6314248208948783,
+                "b": 2.631424820895488
+              },
+              {
+                "field": "Multi Markov Model with Counting Test (MultiMMC) / h_r",
+                "a": 2.184135616487433,
+                "b": 2.184135616487581
+              },
+              {
+                "field": "LZ78Y Test / h_r",
+                "a": 2.929459496786682,
+                "b": 2.929459496786783
+              },
+              {
+                "field": "Overall / h_r",
+                "a": 2.184135616487433,
+                "b": 2.184135616487581
+              }
+            ],
+            "stdoutVsWasm": {
+              "identical": false,
+              "firstDiff": [
+                "Literal t-Tuple Estimate: p-hat_max = 0.1944162917378805405779",
+                "Literal t-Tuple Estimate: p-hat_max = 0.1944162917378805405661"
+              ]
+            },
+            "ms": 43928
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 34123
+          }
+        }
+      }
+    },
+    {
+      "id": "real-mac-orbstack-linux-vm-loaded-restart-matrix",
+      "source": "real",
+      "bits": 8,
+      "sha256": "c5672666108c39fdb5c86857c6b44a6bc86584448cfb3808faf4cb06f9df000b",
+      "hI": 2.2548444246448827,
+      "restartSeeded": {
+        "wasm": {
+          "error": "Restart Sanity Check Failed."
+        },
+        "wasmMs": 7077,
+        "native": {
+          "native-amd64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 13174
+          },
+          "native-arm64": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 12933
+          },
+          "native-amd64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 17525
+          },
+          "native-arm64-strict": {
+            "diffsVsWasm": [],
+            "stdoutVsWasm": {
+              "identical": true
+            },
+            "ms": 13045
+          }
+        }
+      }
+    }
+  ]
+}

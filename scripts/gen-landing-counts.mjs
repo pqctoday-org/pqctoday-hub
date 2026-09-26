@@ -67,6 +67,17 @@ function countActive(rows) {
     .length
 }
 
+// Timeline rows a reviewer has not cleared are withheld from the public timeline
+// (timelineReviewPolicy.json, timeline remediation r2 T-B1) — the hero count must
+// not count them either.
+const UNREVIEWED = new Set(
+  JSON.parse(readFileSync(join(DATA, 'timelineReviewPolicy.json'), 'utf8')).unreviewedStatuses.map(
+    (s) => s.trim().toLowerCase()
+  )
+)
+const reviewed = (rows) =>
+  rows.filter((r) => !UNREVIEWED.has((r.Status ?? '').trim().toLowerCase()))
+
 function derive() {
   const algoFile = latestCsv('pqc_complete_algorithm_reference_')
   const timelineFile = latestCsv('timeline_')
@@ -77,7 +88,7 @@ function derive() {
     timelineFile,
     libraryFile,
     algorithmCount: parseRows(algoFile).length,
-    timelineEventCount: countActive(parseRows(timelineFile)),
+    timelineEventCount: countActive(reviewed(parseRows(timelineFile))),
     libraryCount: countActive(parseRows(libraryFile)),
   }
 }

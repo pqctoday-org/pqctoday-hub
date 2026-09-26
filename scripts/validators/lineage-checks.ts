@@ -184,12 +184,41 @@ export const CERT_STAMPED_FIELDS: ReadonlyArray<{ field: string; stamp: string }
   { field: 'securityTargetUrls', stamp: 'securityTargetUrlsVerifiedAt' },
 ]
 
+/**
+ * Official-source read stamps (2026-09-24, product-certification plan r2 /
+ * user rule D-SRC). certdata-truth-repair.py rebuilds a record from its
+ * issuing scheme's own page or list and stamps WHEN it read it. That read is
+ * a newer verdict than any earlier stamp: a FIPS pqcCoverage now comes only
+ * from the certificate page's Approved Algorithms list, and the old
+ * Security-Policy token-scan stamp (pqcCoverageVerifiedAt) is dropped. The
+ * lock therefore takes the newest of the field's own stamp and these.
+ */
+export const CERT_SOURCE_STAMPS: readonly string[] = [
+  'cmvpDetailsFetchedAt',
+  'cmvpListObservedAt',
+  'cavpDetailsFetchedAt',
+  'ccListObservedAt',
+  'anssiObservedAt',
+  'euccObservedAt',
+]
+
+function newestStamp(r: CertRecord, stamp: string): string {
+  let best = ''
+  for (const key of [stamp, ...CERT_SOURCE_STAMPS]) {
+    // eslint-disable-next-line security/detect-object-injection -- keys come from the constants above, not user input
+    const v = r[key]
+    const s = typeof v === 'string' ? v : ''
+    if (s > best) best = s
+  }
+  return best
+}
+
 function stableValue(v: unknown): string {
   if (v === undefined || v === null) return ''
   return typeof v === 'string' ? v : JSON.stringify(v)
 }
 
-function certRecords(json: string | null, field: string, stamp: string): StampedRecord[] {
+export function certRecords(json: string | null, field: string, stamp: string): StampedRecord[] {
   if (!json) return []
   let parsed: unknown
   try {
@@ -204,8 +233,7 @@ function certRecords(json: string | null, field: string, stamp: string): Stamped
       id: String(r.id),
       // eslint-disable-next-line security/detect-object-injection -- field/stamp come from CERT_STAMPED_FIELDS, not user input
       value: stableValue(r[field]),
-      // eslint-disable-next-line security/detect-object-injection -- field/stamp come from CERT_STAMPED_FIELDS, not user input
-      stamp: stableValue(r[stamp]),
+      stamp: newestStamp(r, stamp),
     }))
 }
 

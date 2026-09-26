@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// The 6 acronyms that gate comprehension of the Compliance Records tab
-// (FIPS 140-3 / ACVP / CC / EUCC / CNSA 2.0 / HNDL). Pure-moved out of
+// The 7 acronyms that gate comprehension of the Compliance Records tab
+// (FIPS 140-3 / NIST CAVP / CC / CSPN / EUCC / CNSA 2.0 / HNDL). Pure-moved out of
 // RecordsGlossaryStrip.tsx (2026-08-24 audit R3.3) — MobileComplianceView.tsx
 // carried a verbatim second copy of this same regulatory content, which
 // would have silently drifted from the desktop definitions on the next
@@ -20,14 +20,19 @@ export const RECORDS_GLOSSARY: GlossaryTerm[] = [
     def: 'NIST cryptographic module validation standard (supersedes 140-2). CMVP certifies the whole module. Required for US federal procurement.',
   },
   {
-    term: 'ACVP',
-    short: 'algorithm testing',
-    def: 'Automated Cryptographic Validation Protocol — CAVP algorithm-level testing. Prerequisite for a FIPS 140-3 module cert.',
+    term: 'NIST CAVP',
+    short: 'algorithm validation',
+    def: 'Cryptographic Algorithm Validation Program — validates individual algorithm implementations (tested through the ACVP protocol). A prerequisite for a FIPS 140-3 module certificate, not a module certificate itself.',
   },
   {
     term: 'CC',
     short: 'product evaluation',
     def: 'Common Criteria (ISO/IEC 15408). Issued under national schemes, mutually recognised under CCRA up to EAL2/EAL4.',
+  },
+  {
+    term: 'CSPN',
+    short: 'ANSSI national scheme',
+    def: "ANSSI's Certification de Sécurité de Premier Niveau — a French national first-level certification, separate from Common Criteria and not recognised under CCRA.",
   },
   {
     term: 'EUCC',

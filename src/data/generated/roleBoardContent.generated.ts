@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_09182026.csv
+ * Source: src/data/role_board_content_09242026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -31,8 +31,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '1183 documents, trust-tiered',
-          'Regulatory data verified 12 Sept 2026',
+          '1194 documents, trust-tiered',
+          'Regulatory data verified 25 Sept 2026',
         ],
         sideCard: {
           title: 'Your exposure window',
@@ -41,11 +41,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'Data must stay secret', value: '12 yrs' },
             { label: 'Your migration takes', value: '5 yrs' },
-            { label: 'Cryptographically relevant quantum computer', value: '2033 (2030–2036)' },
+            { label: 'Cryptographically relevant quantum computer', value: '2035 (2030–2041)' },
           ],
-          punchline: 'Your start-by year was 2016 — you are ten years past it.',
+          punchline: 'Your start-by year was 2018 — you are eight years past it.',
           footnote:
-            "Mosca's inequality: Z 2033 − X 12 yrs − Y 5 yrs = 2016. A 5-year migration had to finish by 2021, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. The 2033 estimate is the median across 6 tracked sources; 2030–2036 is the consensus window, not a forecast.",
+            "Mosca's inequality: Z 2035 − X 12 yrs − Y 5 yrs = 2018. A 5-year migration had to finish by 2023, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. Z 2035 is the midpoint, rounded down, of the published CRQC expert forecast, 2030–2041 (one expert survey); migration deadlines set by regulators are not forecasts and are not part of it.",
         },
         gridTitle: 'What you walk out with',
         gridSub: 'Your own answers, not a sample estate',
@@ -98,7 +98,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/threats',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Regulatory data verified 12 Sept 2026',
+          'Regulatory data verified 25 Sept 2026',
           'The CRQC estimate carries its dissent',
         ],
         sideCard: {
@@ -107,7 +107,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'CNSA 2.0 exclusive use (web, cloud, OS)', value: '2033' },
-            { label: 'CRQC consensus', value: '2033 (2030–2036)' },
+            { label: 'CRQC expert forecast', value: '2035 (2030–2041)' },
             { label: 'Your migration takes', value: '5 yrs' },
             { label: 'All national-security systems', value: '2035' },
           ],
@@ -164,8 +164,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '1183 documents, trust-tiered',
-          'Regulatory data verified 12 Sept 2026',
+          '1194 documents, trust-tiered',
+          'Regulatory data verified 25 Sept 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -236,7 +236,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/compliance',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Regulatory data verified 12 Sept 2026',
+          'Regulatory data verified 25 Sept 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -301,7 +301,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '1183 documents, trust-tiered',
+          '1194 documents, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
@@ -441,7 +441,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1183 documents, trust-tiered', 'Regulatory data verified 12 Sept 2026'],
+        proofChips: ['1194 documents, trust-tiered', 'Regulatory data verified 25 Sept 2026'],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -512,7 +512,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/risk-register',
         ctaSecondary: 'See a finished example report',
         ctaSecondaryHref: '/report?example=1',
-        proofChips: ['1183 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
+        proofChips: ['1194 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
         sideCard: {
           title: 'What the register is built from',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -584,7 +584,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Review what applies first',
         ctaSecondaryHref: '/compliance?tab=obligations',
         proofChips: [
-          'Regulatory data verified 12 Sept 2026',
+          'Regulatory data verified 25 Sept 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -654,7 +654,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/vendor-scorecard',
         ctaSecondary: 'Browse the migration catalog',
         ctaSecondaryHref: '/migrate',
-        proofChips: ['1183 documents, trust-tiered', 'Six-dimension vendor scorecard'],
+        proofChips: ['1194 documents, trust-tiered', 'Six-dimension vendor scorecard'],
         sideCard: {
           title: 'What the scorecard checks',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -723,7 +723,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1183 documents, trust-tiered', 'Regulatory data verified 12 Sept 2026'],
+        proofChips: ['1194 documents, trust-tiered', 'Regulatory data verified 25 Sept 2026'],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -796,7 +796,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/report?example=1',
         proofChips: [
           'Organised around the NIST CSWP.39 zones',
-          'Regulatory data verified 12 Sept 2026',
+          'Regulatory data verified 25 Sept 2026',
         ],
         sideCard: {
           title: 'What closure requires',
@@ -1250,7 +1250,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Work the compliance checklist',
         ctaSecondaryHref: '/business/tools/compliance-checklist',
         proofChips: [
-          'Regulatory data verified 12 Sept 2026',
+          'Regulatory data verified 25 Sept 2026',
           'Draft and final are labelled, never merged',
           'Every requirement links to its source',
         ],
@@ -1869,7 +1869,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Your own answers, not a sample estate',
           'Organised around the NIST CSWP.39 zones',
-          'Regulatory data verified 12 Sept 2026',
+          'Regulatory data verified 25 Sept 2026',
         ],
         sideCard: {
           title: 'What the score is built on',
@@ -2481,21 +2481,21 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every source dated and tiered',
           'Authoritative / Core / Supporting / Contextual source tiers',
-          '1183 documents, trust-tiered',
+          '1194 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
-          title: 'The CRQC consensus',
+          title: 'The CRQC expert forecast',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Consensus estimate', value: '2033 (2030–2036)' },
+            { label: 'Consensus estimate', value: '2035 (2030–2041)' },
             { label: 'Assumed secrecy need', value: '12 yrs' },
             { label: 'Assumed migration time', value: '5 yrs' },
           ],
-          punchline: 'Your start-by year was 2016 — you are ten years past it.',
+          punchline: 'Your start-by year was 2018 — you are eight years past it.',
           footnote:
-            "Mosca's inequality: Z 2033 − X 12 yrs − Y 5 yrs = 2016. A 5-year migration had to finish by 2021, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. The 2033 estimate is the median across 6 tracked sources; 2030–2036 is the consensus window, not a forecast.",
+            "Mosca's inequality: Z 2035 − X 12 yrs − Y 5 yrs = 2018. A 5-year migration had to finish by 2023, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. Z 2035 is the midpoint, rounded down, of the published CRQC expert forecast, 2030–2041 (one expert survey); migration deadlines set by regulators are not forecasts and are not part of it.",
         },
         gridTitle: 'What the workspace gives you',
         gridSub: 'The estimate and its dissent',
@@ -2790,7 +2790,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'Encrypted data captured today', value: 'still readable later' },
             { label: 'If it must stay secret for', value: '12 years' },
-            { label: 'And the machine arrives in', value: '2033 (2030–2036)' },
+            { label: 'And the machine arrives in', value: '2035 (2030–2041)' },
           ],
           punchline: 'The deadline already passed for some data.',
           footnote:
@@ -2863,7 +2863,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'The maths breaking', value: 'settled' },
-            { label: 'The year it breaks', value: 'a range, 2030–2036' },
+            { label: 'The year it breaks', value: '2035 (2030–2041)' },
             { label: 'The replacement', value: 'published and final' },
           ],
           punchline: 'Uncertain timing is not the same as uncertain outcome.',
