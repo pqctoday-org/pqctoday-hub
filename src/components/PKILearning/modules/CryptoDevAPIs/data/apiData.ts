@@ -134,7 +134,11 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     ],
     radar: { maturity: 7, pqcReadiness: 5, platformReach: 3, hsmIntegration: 10, communitySize: 3 },
     languages: ['Java'],
-    standards: ['PKCS#11 v2.40/v3.0', 'FIPS 140-2/3 Level 3', 'Common Criteria EAL4+'],
+    standards: [
+      'PKCS#11 v2.40/v3.0',
+      'FIPS 140-2/3 Level 3',
+      'Common Criteria EAL4 + ALC_FLR.2 + AVA_VAN.5 (Luna K7 module, NSCIB-CC-2400054, 2025)',
+    ],
   },
   {
     id: 'openssl',

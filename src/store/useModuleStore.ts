@@ -13,6 +13,11 @@ import {
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from '../components/PKILearning/moduleData'
 import { applyModuleRenames } from '../components/PKILearning/manifest/contentVersion'
 import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
+import {
+  requiredLearnSectionIds,
+  requiredWorkshopStepIds,
+  type ScopeManifest,
+} from '../components/PKILearning/manifest/learnPathScope'
 
 const MODULE_STORE_VERSION = 16
 const KPI_HISTORY_CAP = 30
@@ -22,29 +27,38 @@ const KPI_HISTORY_CAP = 30
 let _activeSession: { moduleId: string; startTime: number } | null = null
 
 /**
+ * The manifest slice the learn-path scope rules read. Every module with learn
+ * sections or workshop steps has a manifest today; the LEARN_SECTIONS /
+ * WORKSHOP_STEPS fallback only matters for ids with no manifest (tests,
+ * synthetic ids), where it reproduces the pre-path behaviour exactly.
+ */
+const scopeFor = (moduleId: string): ScopeManifest =>
+  MANIFEST_BY_ID[moduleId] ?? {
+    learnSections: LEARN_SECTIONS[moduleId],
+    workshopSteps: WORKSHOP_STEPS[moduleId],
+  }
+
+/**
  * Sections that must be checked for `moduleId` to count as complete.
  *
- * Default is every section, which is what every module did before learn paths
- * existed and what every module without `learnPaths` still does. When the
- * module declares paths AND the learner has picked one, only that path's
- * sections are required — a banking learner shouldn't be held to POS key
- * injection to finish the Financial Services module.
+ * Default is every non-optional section, which is what every module did before
+ * learn paths existed and what every module without `learnPaths` still does.
+ * When the module declares paths AND the learner has picked one, only that
+ * path's sections are required — a banking learner shouldn't be held to POS
+ * key injection to finish the Financial Services module. Sections marked
+ * `optional` (reference material) are never required.
  *
  * Falls back to all sections if the stored path id no longer exists (a path
  * renamed or removed between releases), so stale progress degrades to the
  * old, stricter behaviour rather than silently marking a module complete.
+ * The rules live in manifest/learnPathScope.ts.
  */
-const requiredSectionIds = (moduleId: string, activePathId?: string): string[] => {
-  const all = (LEARN_SECTIONS[moduleId] ?? []).map((s) => s.id)
-  if (!activePathId) return all
-  const path = MANIFEST_BY_ID[moduleId]?.learnPaths?.find((p) => p.id === activePathId)
-  if (!path) return all
-  // Intersect with real section ids so a typo'd manifest can't make a module
-  // completable by checking nothing.
-  const known = new Set(all)
-  const required = path.sections.filter((id) => known.has(id))
-  return required.length > 0 ? required : all
-}
+const requiredSectionIds = (moduleId: string, activePathId?: string): string[] =>
+  requiredLearnSectionIds(scopeFor(moduleId), activePathId)
+
+/** Workshop steps that must be completed — the same path/optional rules. */
+const requiredStepIds = (moduleId: string, activePathId?: string): string[] =>
+  requiredWorkshopStepIds(scopeFor(moduleId), activePathId)
 
 interface ModuleState extends LearningProgress {
   // Actions
@@ -240,10 +254,13 @@ export const useModuleStore = create<ModuleState>()(
           if (module && !module.completedSteps.includes(stepId)) {
             logStepComplete(moduleId, module.completedSteps.length, workshopStep)
             const completedSteps = [...module.completedSteps, stepId]
-            // Auto-flip status to 'completed' when every registered workshop step
+            // Auto-flip status to 'completed' when every required workshop step
             // for this module has been marked. The set membership check guards
             // against unrelated step ids (e.g. learn-tab ids that share this action).
-            const workshopStepIds = WORKSHOP_STEPS[moduleId]?.map((s) => s.id) ?? []
+            // "Required" = the steps on the learner's active path, minus optional
+            // reference steps; for a module with no path tags and no optional
+            // steps that is every WORKSHOP_STEPS entry, as before.
+            const workshopStepIds = requiredStepIds(moduleId, module.activeLearnPath)
             const allWorkshopDone =
               workshopStepIds.length > 0 &&
               workshopStepIds.every((id) => completedSteps.includes(id))

@@ -108,6 +108,10 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'data-at-rest-strategy': 'architecture',
   // Simulation-produced roadmap (WS-15) — same pillar as a migration roadmap.
   'sim-roadmap': 'architecture',
+  // The certification capstone's output is a submission plan against a scheme
+  // (FIPS 140-3, CC, EUCC/eIDAS or PCI), so it sits with the other
+  // conformance-evidence artifacts rather than with architecture.
+  'certification-plan': 'compliance',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {
@@ -152,6 +156,10 @@ const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
   // tool they were split from.
   'crypto-champion-roster': 'risk-management',
   'team-sizing-plan': 'risk-management',
+  // Produced by the crypto-product-certification capstone, not by a Command
+  // Center builder. Certification is how a mitigation is evidenced, so it
+  // buckets with mitigation rather than with governance.
+  'certification-plan': 'mitigation',
 }
 
 /** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from

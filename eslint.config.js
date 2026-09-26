@@ -446,6 +446,10 @@ export default defineConfig([
                 '@/components/PKILearning/manifest/*',
                 '!@/components/PKILearning/manifest/registry',
                 '!@/components/PKILearning/manifest/types',
+                // learnPathScope.ts — pure learn-path scope rules (no JSX), so
+                // the phone section checklist counts exactly what desktop and
+                // the store's completion count.
+                '!@/components/PKILearning/manifest/learnPathScope',
                 // learnRedesign.helpers.ts — CHECKPOINT_PASS_THRESHOLD /
                 // isCheckpointPassed, the real per-category >=80% pass rule.
                 // Reused directly rather than reimplemented so a checkpoint

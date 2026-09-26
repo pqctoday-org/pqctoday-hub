@@ -121,7 +121,21 @@ function complianceIds(raw: string): Set<string> {
     const dropped = [...baseIds].filter((id) => !headIds.has(id))
     const waiver = allow.complianceRecordDropOk
     let dropAllowed = waiver === true
-    if (waiver && typeof waiver === 'object') {
+    if (dropped.length === 0) {
+      // No drop at all is the state this check exists to protect, so it can
+      // never be a failure — not even against a waiver that expected one.
+      // Once the covered change merges, every later branch diffs 0 against the
+      // new base while the waiver is still live; requiring an exact match then
+      // failed every branch (observed 2026-09-25, waiver expectedDrop 583).
+      // A stale waiver is a cleanup note, not a reason to block.
+      dropAllowed = true
+      if (waiver && typeof waiver === 'object') {
+        console.log(
+          `✓ compliance-data.json: no records dropped. The waiver in ${ALLOWLIST} ` +
+            `("${waiver.reason}") has already landed on the base branch and can be removed.`
+        )
+      }
+    } else if (waiver && typeof waiver === 'object') {
       const today = new Date().toISOString().slice(0, 10)
       if (waiver.until < today) {
         failures.push(

@@ -108,6 +108,15 @@
       "difficulty": "intermediate",
       "frameworkPhase": "p1"
     },
+    "crypto-product-certification": {
+      "id": "crypto-product-certification",
+      "lm_id": "LM-065",
+      "title": "Cryptographic Product Certification",
+      "description": "FIPS 140-3, Common Criteria, EUCC and PCI: what each certificate proves, how to read one, and how to add PQC without losing certification.",
+      "duration": "120 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p7"
+    },
     "crypto-registry": {
       "id": "crypto-registry",
       "lm_id": "LM-062",
@@ -607,6 +616,7 @@
     "crypto-agility": 4,
     "crypto-dev-apis": 8,
     "crypto-mgmt-modernization": 9,
+    "crypto-product-certification": 9,
     "crypto-registry": 2,
     "dnssec-pqc": 3,
     "data-asset-sensitivity": 5,
@@ -954,6 +964,136 @@
       {
         "id": "no-regret-roi",
         "label": "The No-Regret ROI"
+      }
+    ],
+    "crypto-product-certification": [
+      {
+        "id": "four-questions",
+        "label": "Four schemes, four questions"
+      },
+      {
+        "id": "scope-before-level",
+        "label": "Scope before level"
+      },
+      {
+        "id": "fips-what-it-is",
+        "label": "FIPS 140-3 and the CMVP"
+      },
+      {
+        "id": "fips-requirement-areas",
+        "label": "The eleven requirement areas"
+      },
+      {
+        "id": "fips-levels",
+        "label": "Security Levels 1–4"
+      },
+      {
+        "id": "fips-lifecycle",
+        "label": "Validation lifecycle and the MIP queue"
+      },
+      {
+        "id": "fips-acvp-bridge",
+        "label": "Algorithm validation is not the certificate"
+      },
+      {
+        "id": "fips-landscape",
+        "label": "Today’s landscape and the 2026 horizon"
+      },
+      {
+        "id": "fips-route-table",
+        "label": "CMVP submission routes (Manual v2.7)",
+        "optional": true
+      },
+      {
+        "id": "cc-model",
+        "label": "The Common Criteria model"
+      },
+      {
+        "id": "cc-eal-decoding",
+        "label": "EALs and \"EAL4+\""
+      },
+      {
+        "id": "cc-lifecycle",
+        "label": "Certification lifecycle and CC:2022 transition"
+      },
+      {
+        "id": "cc-continuity",
+        "label": "Assurance continuity (CCDB-014)",
+        "optional": true
+      },
+      {
+        "id": "eucc-scheme",
+        "label": "EUCC is a scheme, not a PP"
+      },
+      {
+        "id": "eidas-chain",
+        "label": "From eIDAS to a certified device"
+      },
+      {
+        "id": "pp-en419221-5",
+        "label": "PP case: EN 419221-5 HSM"
+      },
+      {
+        "id": "pp-security-ic",
+        "label": "PP case: Security IC Platform",
+        "optional": true
+      },
+      {
+        "id": "eucc-pqc-today",
+        "label": "PQC under EUCC today (ACM v2)"
+      },
+      {
+        "id": "pci-pts-approval",
+        "label": "PTS HSM device approval"
+      },
+      {
+        "id": "pci-v5-changes",
+        "label": "What PTS HSM v5.0 changed"
+      },
+      {
+        "id": "pci-pqc-truth",
+        "label": "PQC and PCI: what is and isn’t required"
+      },
+      {
+        "id": "pci-operating-stack",
+        "label": "PIN, P2PE, KMO and key-injection: the boundary"
+      },
+      {
+        "id": "pci-pin-security",
+        "label": "PCI PIN Security v3.1",
+        "optional": true
+      },
+      {
+        "id": "pci-p2pe-kif",
+        "label": "P2PE and key-injection facilities",
+        "optional": true
+      },
+      {
+        "id": "pci-kmo",
+        "label": "PCI KMO v1.0",
+        "optional": true
+      },
+      {
+        "id": "pqc-impact",
+        "label": "What PQC changes in certification"
+      },
+      {
+        "id": "agility-latency",
+        "label": "Crypto agility vs certification latency"
+      },
+      {
+        "id": "transition-deadlines",
+        "label": "Deadlines: urgency without shortcuts"
+      },
+      {
+        "id": "change-routes-detail",
+        "label": "Incremental-change routes by scheme",
+        "optional": true
+      },
+      {
+        "id": "electronic-exchange",
+        "label": "Electronic evidence exchange",
+        "optional": true
       }
     ],
     "crypto-registry": [
@@ -2318,6 +2458,50 @@
       {
         "id": "clm-vendor-evaluator",
         "label": "CLM Vendor Evaluator"
+      }
+    ],
+    "crypto-product-certification": [
+      {
+        "id": "scheme-selector",
+        "label": "Which scheme answers the question?"
+      },
+      {
+        "id": "boundary-drawer",
+        "label": "Draw the certification boundary"
+      },
+      {
+        "id": "fips-level-planner",
+        "label": "Level and boundary planner",
+        "paths": ["fips"]
+      },
+      {
+        "id": "cc-claim-decoder",
+        "label": "Decode the certificate claim",
+        "paths": ["cc"]
+      },
+      {
+        "id": "eidas-trace",
+        "label": "Regulation-to-certificate trace",
+        "paths": ["eucc-eidas"]
+      },
+      {
+        "id": "pci-evidence-review",
+        "label": "Payment HSM evidence review",
+        "paths": ["pci"]
+      },
+      {
+        "id": "capstone",
+        "label": "One product, four markets"
+      },
+      {
+        "id": "change-analyzer",
+        "label": "PQC change analyzer",
+        "optional": true
+      },
+      {
+        "id": "evidence-exchange",
+        "label": "Evidence exchange demo",
+        "optional": true
       }
     ],
     "crypto-registry": [
@@ -3709,6 +3893,15 @@
           "duration": "100 min",
           "difficulty": "advanced",
           "frameworkPhase": "p6"
+        },
+        {
+          "id": "crypto-product-certification",
+          "lm_id": "LM-065",
+          "title": "Cryptographic Product Certification",
+          "description": "FIPS 140-3, Common Criteria, EUCC and PCI: what each certificate proves, how to read one, and how to add PQC without losing certification.",
+          "duration": "120 min",
+          "difficulty": "advanced",
+          "frameworkPhase": "p7"
         }
       ]
     },
@@ -4112,6 +4305,10 @@
     "crypto-mgmt-modernization": {
       "algorithms": ["ML-DSA", "ML-KEM", "SLH-DSA"],
       "standards": ["NIST SP 800-90B", "RFC 8555", "OMB M-23-02", "NIST SP 800-131A", "RFC 9370"]
+    },
+    "crypto-product-certification": {
+      "algorithms": ["ML-KEM", "ML-DSA"],
+      "standards": ["FIPS 140-3", "NIST IR 8547"]
     },
     "crypto-registry": {
       "standards": ["CycloneDX Cryptography Registry"]

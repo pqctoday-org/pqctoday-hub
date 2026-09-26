@@ -8,6 +8,9 @@ import {
   MODULE_CITED_STANDARDS,
 } from '@/data/moduleContentRegistry'
 import { EmptyState } from '@/components/ui/empty-state'
+import { MANIFEST_BY_ID } from '../manifest/registry'
+import { isInLearnPath } from '../manifest/learnPathScope'
+import { useActiveLearnPathId } from './useLearnPath'
 
 interface ModuleReferencesTabProps {
   moduleId: string
@@ -48,7 +51,13 @@ function LastReviewedNote({ moduleId }: { moduleId: string }) {
  * teach from", which is a much shorter and more useful answer, and it was not
  * shown anywhere in the product before 2026-08-21.
  */
-function CitedStandards({ moduleId }: { moduleId: string }) {
+function CitedStandards({
+  moduleId,
+  onPath,
+}: {
+  moduleId: string
+  onPath: (refId: string) => boolean
+}) {
   const raw = MODULE_CITED_STANDARDS[moduleId] // eslint-disable-line security/detect-object-injection
   if (!raw || raw.length === 0) return null
   // A module's content.ts can call getStandard() more than once for the same
@@ -58,8 +67,9 @@ function CitedStandards({ moduleId }: { moduleId: string }) {
   const cited = raw.filter((std) => {
     if (seen.has(std.id)) return false
     seen.add(std.id)
-    return true
+    return onPath(std.id)
   })
+  if (cited.length === 0) return null
   return (
     <section className="mb-6">
       <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5 mb-1">
@@ -105,10 +115,26 @@ function CitedStandards({ moduleId }: { moduleId: string }) {
 }
 
 export function ModuleReferencesTab({ moduleId }: ModuleReferencesTabProps) {
-  const cited = MODULE_CITED_STANDARDS[moduleId] ?? [] // eslint-disable-line security/detect-object-injection
-  const citedIds = new Set(cited.map((s) => s.id))
-  // Anything already named above is not repeated here.
-  const items = getLibraryItemsForModule(moduleId).filter((i) => !citedIds.has(i.referenceId))
+  // Path scoping is opt-in per module: without `referencePaths`, or with no
+  // path chosen, `isInLearnPath` says yes to everything and this is the same
+  // unfiltered tab it has always been. Only a module that maps a reference to
+  // specific paths ever hides anything, and an unmapped reference stays
+  // shared — the PathScoped rule the sections and workshop steps already use.
+  const manifest = MANIFEST_BY_ID[moduleId] // eslint-disable-line security/detect-object-injection
+  const activePathId = useActiveLearnPathId(moduleId, manifest)
+  const refPaths = manifest?.referencePaths
+  const onPath = (refId: string) =>
+    isInLearnPath(refPaths ? { paths: refPaths[refId] } : undefined, activePathId) // eslint-disable-line security/detect-object-injection
+
+  const citedAll = MODULE_CITED_STANDARDS[moduleId] ?? [] // eslint-disable-line security/detect-object-injection
+  const cited = citedAll.filter((s) => onPath(s.id))
+  // Anything already named above is not repeated here — matched against every
+  // cited id, not just the visible ones, so scoping can never resurrect a
+  // document in the lower list that the upper list has hidden.
+  const citedIds = new Set(citedAll.map((s) => s.id))
+  const items = getLibraryItemsForModule(moduleId).filter(
+    (i) => !citedIds.has(i.referenceId) && onPath(i.referenceId)
+  )
 
   if (items.length === 0 && cited.length === 0) {
     return (
@@ -126,7 +152,7 @@ export function ModuleReferencesTab({ moduleId }: ModuleReferencesTabProps) {
   return (
     <div className="space-y-3">
       <LastReviewedNote moduleId={moduleId} />
-      <CitedStandards moduleId={moduleId} />
+      <CitedStandards moduleId={moduleId} onPath={onPath} />
       {items.length > 0 && (
         <p className="text-sm text-muted-foreground mb-4">
           {cited.length > 0 ? 'Further s' : 'S'}tandards, RFCs, and guidance documents relevant to

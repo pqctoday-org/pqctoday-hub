@@ -53,4 +53,5 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'accelerated-execution-profile': 'Accelerated Execution Profile',
   'data-at-rest-strategy': 'Data-at-Rest Strategy',
   'sim-roadmap': 'Simulation Roadmap',
+  'certification-plan': 'Certification Plan',
 }

@@ -129,7 +129,8 @@ export const AUTOMOTIVE_HSM_TIERS: AutomotiveHSMTier[] = [
     id: 'factory-hsm',
     name: 'Factory / OEM Backend HSM',
     location: 'OEM data center & manufacturing facility',
-    standard: 'FIPS 140-3 Level 3 / CC EAL4+',
+    standard:
+      'FIPS 140-3 Level 3 / CC EAL4 augmented (check the certificate for the named components)',
     fipsLevel: 'Level 3',
     pqcSupport: 'Available (firmware upgrade from major vendors)',
     typicalVendors: ['Thales Luna', 'Entrust nShield', 'Utimaco CryptoServer', 'AWS CloudHSM'],

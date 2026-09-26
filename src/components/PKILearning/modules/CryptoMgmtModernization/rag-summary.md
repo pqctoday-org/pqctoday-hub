@@ -18,7 +18,7 @@ schedule or never?"
 2. **FIPS 140-3 Level 3 validation drift**. Every CMVP certificate is bound to a specific
    version, firmware, and platform. The September 2025 FIPS 140-3 Implementation Guidance
    retroactively added new self-test requirements for ML-KEM/ML-DSA/SLH-DSA. The CMVP
-   Modules-in-Process queue runs 18–24 months. Tracking this is a continuous monthly monitor,
+   Modules-in-Process list gives each module's status and status date, not a completion date. Tracking this is a continuous monthly monitor,
    not an annual audit.
 3. **Library EoL and CVE cadence**. OpenSSL 1.1.1 EoL (September 2023). Bouncy Castle
    high-severity CVEs per release. OMB M-23-02 annual cryptographic inventory mandate for US

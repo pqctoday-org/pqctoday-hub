@@ -221,7 +221,7 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
     },
     fipsStatus: 'in-progress',
     fipsDetails:
-      'BC-FIPS variant is FIPS 140-2 validated for classical algorithms. PQC algorithms are being added to BC-FIPS as NIST standards finalize.',
+      'BC-FIPS Java holds FIPS 140-3 certificate #4943 (BC-FJA 2.1.1, Level 1), whose only approved PQC-family algorithm is LMS signature verification. A BC-FJA entry is on the CMVP Modules-in-Process list (Review, 4 Sep 2026), which is not evidence of the outcome (checked 2026-09-24).',
     platforms: ['Any JVM (Java)', 'Any CLR (.NET)', 'Android', 'Xamarin'],
     performanceTier: 'reference',
     performanceNotes:
@@ -347,7 +347,7 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
     },
     fipsStatus: 'validated',
     fipsDetails:
-      'FIPS 140-3 validated (CMVP certificate). ML-KEM-768 included in FIPS boundary. First FIPS-validated PQC KEM implementation.',
+      'FIPS 140-3 Level 1 software module. The AWS-LC 3 certificates #5298 (dynamic, 3 Jun 2026) and #5314 (static, 5 Jun 2026) list ML-KEM KeyGen and Encap/Decap as approved; ML-DSA is not in their approved-algorithm list (CMVP, checked 2026-09-24).',
     platforms: ['Linux', 'macOS', 'Windows', 'ARM64', 'x86-64'],
     performanceTier: 'optimized',
     performanceNotes:
@@ -415,7 +415,7 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
     },
     fipsStatus: 'validated',
     fipsDetails:
-      'BoringCrypto module is FIPS 140-2 validated. Used by Google Cloud and Go crypto/tls. ML-KEM being added to FIPS boundary.',
+      'BoringCrypto holds FIPS 140-3 certificate #5244 (Level 1, 18 Apr 2026) with no PQC algorithm approved. Used by Google Cloud and Go crypto/tls. BoringCrypto entries on the CMVP Modules-in-Process list are not evidence of the outcome (checked 2026-09-24).',
     platforms: ['Linux', 'macOS', 'Windows', 'Android', 'iOS', 'Fuchsia'],
     performanceTier: 'optimized',
     performanceNotes:
@@ -476,7 +476,7 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
     },
     fipsStatus: 'validated',
     fipsDetails:
-      'wolfCrypt FIPS 140-2 Level 1 validated (certificate #3389). FIPS 140-3 validation in progress. PQC algorithms in non-FIPS module.',
+      'wolfCrypt holds FIPS 140-3 certificate #4718 (Level 1) with no PQC algorithm approved; PQC algorithms are outside the validated module (checked 2026-09-24).',
     platforms: [
       'Linux',
       'macOS',
