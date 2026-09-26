@@ -189,7 +189,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     supportedPQCAlgorithms: ['Planned: ML-KEM, ML-DSA (via Cloud KMS integration)'],
     formFactor: 'cloud',
     notes:
-      'Hardware HSM backing for Cloud KMS keys. Cloud KMS software is in public preview for ML-KEM, ML-DSA, and SLH-DSA (SHA2-128S) as of 2025. Hardware HSM-backed PQC keys remain roadmap — Google is working with HSM and EKM partners. No ACVP certificates for Cloud HSM hardware yet.',
+      'Hardware HSM backing for Cloud KMS keys. Cloud KMS software is in public preview for ML-KEM, ML-DSA, and SLH-DSA (SHA2-128S) as of 2025. Hardware HSM-backed PQC keys remain roadmap — Google is working with HSM and EKM partners. No CAVP validations for Cloud HSM hardware yet.',
     firmwareVersion: 'Planned',
     pkcs11Version: 'N/A (Cloud KMS API)',
     hybridSupport: false,
