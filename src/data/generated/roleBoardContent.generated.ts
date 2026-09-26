@@ -32,7 +32,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every regulatory date links to its source',
           '1173 documents, trust-tiered',
-          'Regulatory data verified 25 Sept 2026',
+          'Regulatory data verified 26 Sept 2026',
         ],
         sideCard: {
           title: 'Your exposure window',
@@ -98,7 +98,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/threats',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Regulatory data verified 25 Sept 2026',
+          'Regulatory data verified 26 Sept 2026',
           'The CRQC estimate carries its dissent',
         ],
         sideCard: {
@@ -165,7 +165,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
           '1173 documents, trust-tiered',
-          'Regulatory data verified 25 Sept 2026',
+          'Regulatory data verified 26 Sept 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -236,7 +236,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/compliance',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Regulatory data verified 25 Sept 2026',
+          'Regulatory data verified 26 Sept 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -441,7 +441,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1173 documents, trust-tiered', 'Regulatory data verified 25 Sept 2026'],
+        proofChips: ['1173 documents, trust-tiered', 'Regulatory data verified 26 Sept 2026'],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -584,7 +584,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Review what applies first',
         ctaSecondaryHref: '/compliance?tab=obligations',
         proofChips: [
-          'Regulatory data verified 25 Sept 2026',
+          'Regulatory data verified 26 Sept 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -723,7 +723,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1173 documents, trust-tiered', 'Regulatory data verified 25 Sept 2026'],
+        proofChips: ['1173 documents, trust-tiered', 'Regulatory data verified 26 Sept 2026'],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -796,7 +796,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/report?example=1',
         proofChips: [
           'Organised around the NIST CSWP.39 zones',
-          'Regulatory data verified 25 Sept 2026',
+          'Regulatory data verified 26 Sept 2026',
         ],
         sideCard: {
           title: 'What closure requires',
@@ -1250,7 +1250,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Work the compliance checklist',
         ctaSecondaryHref: '/business/tools/compliance-checklist',
         proofChips: [
-          'Regulatory data verified 25 Sept 2026',
+          'Regulatory data verified 26 Sept 2026',
           'Draft and final are labelled, never merged',
           'Every requirement links to its source',
         ],
@@ -1869,7 +1869,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Your own answers, not a sample estate',
           'Organised around the NIST CSWP.39 zones',
-          'Regulatory data verified 25 Sept 2026',
+          'Regulatory data verified 26 Sept 2026',
         ],
         sideCard: {
           title: 'What the score is built on',
