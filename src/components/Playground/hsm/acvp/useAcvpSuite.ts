@@ -249,8 +249,46 @@ export function useAcvpSuite() {
     addHsmStepLog,
   } = useHsmContext()
 
-  const addLog = (msg: string) =>
-    setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`])
+  // ── Batched streaming commit ────────────────────────────────────────────
+  //
+  // The live table, progress label and execution log are committed to React
+  // state in BATCHES, not once per result row.
+  //
+  // Why (2026-09-25 browser-crash/slow-run fix): `pushResult` used to call
+  // setResults + setProgress, and `addLog` setLogs, for every single row. Each
+  // of those re-renders the whole workbench — a table with one <tr> per row
+  // (6 cells, two lucide SVGs and a CaseEvidenceBadge each), a category
+  // sidebar that re-filters the whole results array 3× per category, and one
+  // <div> per log line. With the 62-group suite that is ~1100 rows × ~2200
+  // full-table renders: O(n²). Measured in Chromium against the production
+  // build, the full Rust-engine run took 173.8 s while the same categories run
+  // in isolation sum to ~60 s of actual crypto — the rest was re-render, and
+  // it pushed the run past e2e/acvp-validator.spec.ts's 180 s completion wait.
+  // Committing at most every COMMIT_MS makes it O(n × commits); the table
+  // still visibly streams (~7 fps) and the final state is force-committed, so
+  // nothing is lost and no assertion sees a partial table.
+  const COMMIT_MS = 150
+  const logBufRef = useRef<string[]>([])
+  const resultBufRef = useRef<TestResult[]>([])
+  const progressBufRef = useRef<{ done: number; current: string } | null>(null)
+  const lastCommitRef = useRef(0)
+  /** True for the whole duration of a run — see the guard at the top of runTests. */
+  const runningRef = useRef(false)
+
+  /** Push the buffered rows/logs/progress into React state (throttled unless forced). */
+  const commitStream = (force = false) => {
+    const now = Date.now()
+    if (!force && now - lastCommitRef.current < COMMIT_MS) return
+    lastCommitRef.current = now
+    setResults(resultBufRef.current.slice())
+    setLogs(logBufRef.current.slice())
+    setProgress(progressBufRef.current)
+  }
+
+  const addLog = (msg: string) => {
+    logBufRef.current[logBufRef.current.length] = `[${new Date().toLocaleTimeString()}] ${msg}`
+    commitStream()
+  }
 
   const ts = () => new Date().toLocaleTimeString([], { hour12: false })
 
@@ -286,7 +324,18 @@ export function useAcvpSuite() {
   }, [])
 
   const runTests = async (overrideCategories?: Set<CategoryId>): Promise<TestResult[]> => {
-    if (loading) return []
+    // Reentrancy guard on a REF, not on the `loading` state.
+    //
+    // `loading` is a render value: two triggers in the same tick (which is
+    // exactly what e2e/acvp-validator.spec.ts does — it dispatches
+    // `e2e:trigger_acvp` and clicks "Run All" back to back, by design, so a
+    // missed trigger can't hang the spec) both read `loading === false` and
+    // both proceed. Two concurrent runs then interleave C_* calls on the same
+    // PKCS#11 session and share the streaming buffers, which made the full
+    // run non-deterministically take ~2× as long or never report completion.
+    // A ref is written synchronously, so the second call returns immediately.
+    if (runningRef.current || loading) return []
+    runningRef.current = true
     // "Run All" (and the e2e trigger) pass ALL_CATEGORY_IDS explicitly here so
     // the full suite runs regardless of the sidebar's checkbox state; "Run
     // Selected" omits the override and uses whatever's currently checked.
@@ -300,14 +349,17 @@ export function useAcvpSuite() {
       const ok = await autoInit()
       if (!ok || !moduleRef.current) {
         addLog('Error: HSM initialization failed. Reload the page and retry.')
+        runningRef.current = false
         return []
       }
     }
 
     setLoading(true)
-    setResults([])
-    setLogs([])
-    setProgress({ done: 0, current: 'Starting…' })
+    logBufRef.current = []
+    resultBufRef.current = []
+    progressBufRef.current = { done: 0, current: 'Starting…' }
+    lastCommitRef.current = 0
+    commitStream(true)
     // Genuinely global reset: a fresh ACVP run starts with an empty
     // inventory regardless of which slot/engine any leftover key came
     // from — the one deliberate use of the 'all' escape hatch outside
@@ -321,7 +373,7 @@ export function useAcvpSuite() {
     addHsmStepLog('Cryptographic Validation Workbench run')
     addLog('Starting Cryptographic Validation Workbench via PKCS#11...')
 
-    const newResults: TestResult[] = []
+    const newResults: TestResult[] = resultBufRef.current
     // Paint the "running" state before the (heavy, synchronous) engine setup.
     await new Promise((resolve) => setTimeout(resolve, 0))
 
@@ -337,8 +389,8 @@ export function useAcvpSuite() {
     // global push→pushResult rewrite below doesn't recurse into this helper.)
     const pushResult = async (r: Omit<TestResult, 'category'>) => {
       newResults[newResults.length] = { ...r, category: currentCategory }
-      setResults(newResults.slice())
-      setProgress({ done: newResults.length, current: r.algorithm })
+      progressBufRef.current = { done: newResults.length, current: r.algorithm }
+      commitStream()
       // The crypto ops are synchronous WASM calls that block the main thread for
       // the whole run, so React never paints intermediate state. Yield a macrotask
       // after each result so the streamed table + progress label actually render.
@@ -4225,10 +4277,15 @@ export function useAcvpSuite() {
           hSessionRef.current = primary.hSession
         }
       }
-      setResults(newResults)
+      runningRef.current = false
       setLoading(false)
-      setProgress(null)
-      addLog('Cryptographic Validation Workbench run completed.')
+      progressBufRef.current = null
+      // Force the final commit so the table, the counters and the log are
+      // complete the moment `loading` clears — anything still buffered by the
+      // COMMIT_MS throttle lands here, before the "run completed" line.
+      logBufRef.current[logBufRef.current.length] =
+        `[${new Date().toLocaleTimeString()}] Cryptographic Validation Workbench run completed.`
+      commitStream(true)
     }
     return newResults
   }

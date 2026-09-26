@@ -11,7 +11,7 @@
 // bridge. Execution is the untouched hsm/acvp/useAcvpSuite.ts runner —
 // e2e/acvp-validator.spec.ts's testids and its `e2e:trigger_acvp` window
 // event are preserved.
-import { useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import {
   Play,
   CheckCircle,
@@ -27,7 +27,12 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useHsmContext } from '../../../hsm/HsmContext'
-import { useAcvpSuite, CATEGORIES, ALL_CATEGORY_IDS } from '../../../hsm/acvp/useAcvpSuite'
+import {
+  useAcvpSuite,
+  CATEGORIES,
+  ALL_CATEGORY_IDS,
+  type TestResult,
+} from '../../../hsm/acvp/useAcvpSuite'
 import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
 import { CaseEvidenceBadge, coverageMatrixUrl } from '@/components/shared/CaseEvidenceBadge'
 import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
@@ -36,6 +41,72 @@ import { VALIDATION_DISCLAIMER_TEXT } from '@/data/validationDisclaimer'
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
 import { emitAcvpSuite } from './suiteCodegen'
 import { createAcvpBridge, runSuiteScript } from './suiteBridges'
+
+/**
+ * One streamed result row, memoized on the result object.
+ *
+ * Why memo (2026-09-25 slow-run fix): the runner streams ~1100 rows and
+ * commits them in batches, and without this every commit re-rendered every
+ * row's whole subtree — a CATEGORIES lookup, an `evidenceForRowId` lookup, a
+ * CaseEvidenceBadge and two lucide SVGs each. That is O(rows × commits) real
+ * render work and it dominated the full-suite wall time (measured 173.8 s →
+ * 122.5 s from batching alone, then 122.5 s → see the spec's timing comment
+ * from this memo). `res` objects are created once by pushResult and never
+ * mutated, so reference equality is a sound bail-out.
+ */
+const AcvpResultRow = memo(({ res }: { res: TestResult }) => (
+  <tr
+    data-testid="acvp-result-row"
+    data-category={res.category}
+    data-status={res.status}
+    className="hover:bg-muted/30 transition-colors"
+  >
+    <td className="p-2 text-[10.5px] text-muted-foreground whitespace-nowrap">
+      {CATEGORIES.find((c) => c.id === res.category)?.label ?? res.category}
+    </td>
+    <td className="p-2 font-medium text-foreground">{res.algorithm}</td>
+    <td className="p-2 text-muted-foreground">
+      {res.testCase}
+      <CaseEvidenceBadge records={evidenceForRowId(res.id)} className="mt-1" />
+    </td>
+    <td className="p-2">
+      <span
+        className={clsx(
+          'px-2 py-0.5 rounded text-[10px] uppercase font-bold flex items-center gap-1 w-fit',
+          res.status === 'pass'
+            ? 'bg-status-success/20 text-status-success'
+            : res.status === 'skip'
+              ? 'bg-status-warning/20 text-status-warning'
+              : 'bg-destructive/20 text-destructive'
+        )}
+      >
+        {res.status === 'pass' ? (
+          <CheckCircle size={12} />
+        ) : res.status === 'skip' ? (
+          <MinusCircle size={12} />
+        ) : (
+          <XCircle size={12} />
+        )}
+        {res.status}
+      </span>
+    </td>
+    <td className="p-2 text-muted-foreground truncate max-w-[200px]" title={res.details}>
+      {res.details}
+    </td>
+    <td className="p-2">
+      <a
+        href={res.referenceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-primary hover:text-primary/70 transition-colors"
+        title={res.referenceUrl}
+      >
+        <ExternalLink size={12} />
+      </a>
+    </td>
+  </tr>
+))
+AcvpResultRow.displayName = 'AcvpResultRow'
 
 export const AcvpSuiteWorkbench = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
@@ -66,6 +137,26 @@ export const AcvpSuiteWorkbench = () => {
     () => emitAcvpSuite(selectedCategories, engineMode),
     [selectedCategories, engineMode]
   )
+
+  // Per-category pass/fail counts in one pass over `results`, memoized.
+  // This used to be 3 full `results.filter()` scans per category (21 scans of a
+  // ~1100-row array) on every render, and the runner renders on every batched
+  // commit during a run — part of the same O(rows × commits) cost the memoized
+  // row above addresses.
+  const catCounts = useMemo(() => {
+    const acc = new Map<string, { total: number; passed: number; failed: number }>()
+    for (const r of results) {
+      let e = acc.get(r.category)
+      if (!e) {
+        e = { total: 0, passed: 0, failed: 0 }
+        acc.set(r.category, e)
+      }
+      e.total += 1
+      if (r.status === 'pass') e.passed += 1
+      else if (r.status === 'fail') e.failed += 1
+    }
+    return acc
+  }, [results])
 
   // Engineering-workbench surface — same gate as the suite trigger in
   // DeveloperTab; belt and braces for a stale/hand-crafted deep link.
@@ -113,9 +204,9 @@ export const AcvpSuiteWorkbench = () => {
       </div>
       <div className="space-y-1">
         {CATEGORIES.map((cat) => {
-          const catResults = results.filter((r) => r.category === cat.id)
-          const catPassed = catResults.filter((r) => r.status === 'pass').length
-          const catFailed = catResults.filter((r) => r.status === 'fail').length
+          const c = catCounts.get(cat.id)
+          const catPassed = c?.passed ?? 0
+          const catFailed = c?.failed ?? 0
           return (
             <label
               key={cat.id}
@@ -142,7 +233,7 @@ export const AcvpSuiteWorkbench = () => {
                   <span className="font-medium text-foreground">{cat.label}</span>
                   <span className="font-mono text-[10px] text-muted-foreground">{cat.groups}</span>
                 </span>
-                {catResults.length > 0 && (
+                {(c?.total ?? 0) > 0 && (
                   <span className="block text-[10.5px] text-muted-foreground">
                     <span className="text-status-success">{catPassed} ok</span>
                     {catFailed > 0 && (
@@ -265,62 +356,7 @@ export const AcvpSuiteWorkbench = () => {
                   </td>
                 </tr>
               ) : (
-                results.map((res) => (
-                  <tr
-                    key={res.id}
-                    data-testid="acvp-result-row"
-                    data-category={res.category}
-                    data-status={res.status}
-                    className="hover:bg-muted/30 transition-colors"
-                  >
-                    <td className="p-2 text-[10.5px] text-muted-foreground whitespace-nowrap">
-                      {CATEGORIES.find((c) => c.id === res.category)?.label ?? res.category}
-                    </td>
-                    <td className="p-2 font-medium text-foreground">{res.algorithm}</td>
-                    <td className="p-2 text-muted-foreground">
-                      {res.testCase}
-                      <CaseEvidenceBadge records={evidenceForRowId(res.id)} className="mt-1" />
-                    </td>
-                    <td className="p-2">
-                      <span
-                        className={clsx(
-                          'px-2 py-0.5 rounded text-[10px] uppercase font-bold flex items-center gap-1 w-fit',
-                          res.status === 'pass'
-                            ? 'bg-status-success/20 text-status-success'
-                            : res.status === 'skip'
-                              ? 'bg-status-warning/20 text-status-warning'
-                              : 'bg-destructive/20 text-destructive'
-                        )}
-                      >
-                        {res.status === 'pass' ? (
-                          <CheckCircle size={12} />
-                        ) : res.status === 'skip' ? (
-                          <MinusCircle size={12} />
-                        ) : (
-                          <XCircle size={12} />
-                        )}
-                        {res.status}
-                      </span>
-                    </td>
-                    <td
-                      className="p-2 text-muted-foreground truncate max-w-[200px]"
-                      title={res.details}
-                    >
-                      {res.details}
-                    </td>
-                    <td className="p-2">
-                      <a
-                        href={res.referenceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:text-primary/70 transition-colors"
-                        title={res.referenceUrl}
-                      >
-                        <ExternalLink size={12} />
-                      </a>
-                    </td>
-                  </tr>
-                ))
+                results.map((res) => <AcvpResultRow key={res.id} res={res} />)
               )}
             </tbody>
           </table>
