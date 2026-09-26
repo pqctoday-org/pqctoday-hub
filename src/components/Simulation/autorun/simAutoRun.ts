@@ -365,8 +365,13 @@ export interface AutoRunQueueItem {
 
 /** A deduplication key for a step based on its completion-predicate key.
  *  Steps with the same key satisfy the same completion check, so only the
- *  first occurrence in the queue needs to be shown. */
-function stepDedupeKey(step: TreeStep): string | null {
+ *  first occurrence in the queue needs to be shown. A `null` key means the step
+ *  has no shared completion predicate and is therefore never deduplicated.
+ *
+ *  Exported for the queue gates, which must reason in the same terms the queue
+ *  builders dedupe in — deriving an approximation (e.g. `kind:to`) gets it
+ *  wrong: two p6 steps share a `to` while having different keys. */
+export function stepDedupeKey(step: TreeStep): string | null {
   switch (step.kind) {
     case 'learn':
       return step.moduleId ? `learn:${step.moduleId}` : null
