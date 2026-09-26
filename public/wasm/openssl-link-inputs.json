@@ -1,17 +1,17 @@
 {
   "_comment": "SHA-256 of every archive linked into openssl.wasm, recorded at link time. Compare against a fresh build of the same commit: if these differ, the bundle was linked from stale intermediates even though its recorded hsm commit looks current.",
-  "linked_at": "2026-09-25T11:54:19Z",
+  "linked_at": "2026-09-25T23:57:41Z",
   "inputs": {
     "pkcs11_provider_ar": {
       "path": "build-wasm/lib/libpkcs11-provider.a",
-      "sha256": "5be6ea248ebdbb75ab587ec4eb5ae6804f31b8c4301e65485adf43d92ff6cc93",
-      "built_at": "2026-09-25T11:53:22Z"
+      "sha256": "a988e6cd409f5ca8b70dd335505dd9f060440c3318ce93b0c7ab5149c85ed347",
+      "built_at": "2026-09-25T23:57:16Z"
     },
     "softhsm_ar": {
       "path": "rust/target/wasm32-unknown-emscripten/release/libsofthsmrustv3.a",
-      "sha256": "445b62ea6d0bb4555f484742b64d9249e36f6adb5b3f6edb9adaad203289d04c",
-      "built_at": "2026-09-25T11:50:16Z"
+      "sha256": "358102e1f413aedee173b339e05058bda8a03c2e9e15f6a6fe2242d46610de9e",
+      "built_at": "2026-09-25T23:56:13Z"
     }
   },
-  "output_sha256": "7b6d5801ba5c916cdf5d47bec08340b6a9d5c220a2fd6aeb45e68f96e9b635f4"
+  "output_sha256": "121fff9b787a3775899ad7758c5f4b9ef42ccd21b14edd558988c941bff51611"
 }
