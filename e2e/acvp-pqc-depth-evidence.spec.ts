@@ -138,6 +138,11 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
       await expect(det).toHaveAttribute('data-status', 'pass')
 
       // Valid NIST HashSLH-DSA signature: Rust accepts; C++ rejects (finding).
+      // STALE as of 2026-09-25 and left as-is deliberately: the P3 combined
+      // rebuild (hsm a22e6ca0, E1) fixed C++ HashSLH-DSA, so this row and the
+      // red-row counts below now pin engine behaviour that no longer exists —
+      // useAcvpSuite.slhdsaAcvp.local.test.ts already expects pass on both
+      // engines. Reported for a decision rather than relaxed here.
       const pre = row(
         `SLH-DSA-SHA2-128f (${engine})`,
         'NIST sigVer tg2/tc25 · HashSLH-DSA/SHA2-256'
