@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.122.0] - 2026-09-25
+## [4.123.0] - 2026-09-25
 
 Every product in the migration catalogue was re-checked against its own evidence document, and anything a document does not actually say has been corrected or removed — including versions, dates and post-quantum claims.
 
@@ -52,6 +52,39 @@ Every product in the migration catalogue was re-checked against its own evidence
 
 - **Each product now says what kind of thing it is.** [view:/migrate] [persona:ops] [persona:architect] Library, appliance, cloud service, hardware module, firmware, tool, and so on. This is what decides how often an entry is re-checked — hardware every 90 days, software every 30.
 - **The catalogue says plainly that it is curated, not exhaustive.** [view:/migrate] [persona:executive] [persona:grc] The page states how many products are tracked for post-quantum support and how many are tracked as migration baselines, so the totals can't be mistaken for the whole market.
+
+## [4.122.0] - 2026-09-25
+
+The Timeline's review backlog is cleared: 19 rows that were already fully sourced but sitting unpublished are now live, taking the public Timeline from 163 events to 182, and the four still held back are held for a stated reason rather than by neglect.
+
+### Added
+
+- **19 Timeline events are now public.** [view:/timeline] [persona:grc] [persona:researcher] Each was already backed by a cached primary document with a confirmed date; they were invisible only because nobody had marked them reviewed. Among them: France's ANSSI PQC FAQ and its joint QKD position paper with BSI, NLNCSA and Sweden; the UK NCSC migration roadmap; Japan's 2035 target; CISA's EO 14306 deadline; NSM-10; the G7 financial-sector window; Dubai's DESC guideline; Thailand's NCSA migration strategy; Taiwan's national PQC Migration Guide; and NIST's IR 8545, IR 8547 comments and SP 800-227.
+- **The IETF hybrid key-exchange row now tracks a published standard.** [view:/timeline] [persona:developer] [persona:researcher] The draft it followed became **RFC 10024**, "Post-Quantum Traditional (PQ/T) Hybrid Key Agreement Mechanisms for TLS 1.3" (Proposed Standard, August 2026), defining X25519MLKEM768, SecP256r1MLKEM768 and SecP384r1MLKEM1024. Confirmed against both the IETF datatracker and the RFC Editor before the change.
+
+### Fixed
+
+- **Taiwan's row was invisible even when published.** [view:/timeline] [persona:grc] It carried no years at all, which meant the Gantt silently dropped it. It is now dated 2025 — when MODA actually published the guide — and filed under Guidance rather than Deadline, because no Taiwanese deadline is supported by the document.
+- **Three US rows were resource pages, not events.** [view:/timeline] [persona:grc] The DHS, NSA and NCCoE rows had no description at all and a placeholder 2026 date; their sources are standing agency hubs. They are retired rather than published with an invented event.
+- **A duplicate Malaysia row is retired.** [view:/timeline] [persona:grc] It covered the same National PQC Migration Plan already recorded from NACSA's own site and in the compliance dataset, but cited a news article instead.
+- **Two overstated fields corrected.** [view:/timeline] [persona:grc] NSM-10 showed an end year of 2026; it is a May 2022 memorandum. NIST SP 800-227 was marked a hard mandate; it is titled "Recommendations for Key-Encapsulation Mechanisms" and is now classified as guidance, matching SP 800-208.
+- **A DoD row was colliding with its own retired predecessor.** [persona:researcher] Both shared one country/organisation/title key, which corrupted an internal completeness metric. The live row now carries the memorandum's real title, "Preparing for Migration to Post-Quantum Cryptography".
+- **The UK's 2035 row had no source date.** [view:/timeline] [persona:researcher] Filled from the NCSC guidance it cites. The row itself stays unpublished — NCSC calls 2035 an "indicative target", which is not a confirmed deadline.
+
+### Changed
+
+- **Two published dates corrected.** [view:/timeline] [persona:grc] [persona:researcher] IBM's Heron R2 processor row said 2025; its own announcement is dated 13 Nov 2024. Algorand's first post-quantum mainnet-transaction row said 2024; its own page says "In 2025".
+- **Two QKD rows restored.** [view:/timeline] [persona:grc] Czech Republic's CZQCI backbone and the UAE's ADGM/TII testbed were deprecated as out-of-scope for the Timeline last release; quantum key distribution is in scope for the site, tracked separately from post-quantum cryptography, so both are back.
+- **Japan's PQC-migration row re-sourced and re-dated.** [view:/timeline] [persona:grc] [persona:researcher] NISC was reorganised into the National Cybersecurity Office on 1 July 2025; the row now cites NCO's own November 2025 interim summary, which sets 2035 as Japan's migration target — not the 2024–2026 window it previously showed (sourced to an unrelated CRYPTREC document).
+- **CISA's EO 14306 deadline now cites the actual order.** [view:/timeline] [persona:grc] Re-sourced from a generic CISA landing page to the Federal Register's EO 14306 text, which states the December 1, 2025 deadline directly; CISA's own release confirming the list shipped January 23, 2026 is noted alongside it.
+- **The G7 financial-sector deadline now cites the document that states it.** [view:/timeline] [persona:grc] The 2030–32 critical-systems date is in a January 2026 G7 statement, not the September 2024 one previously cited.
+- **A UAE row is honest about what's confirmed and what's self-reported.** [view:/timeline] [persona:researcher] TII's claimed contribution to 6 NIST Round 2 signature candidates is now cited to NIST's own dated status report (IR 8528) for the event itself, with TII's specific involvement noted as self-published, not NIST-confirmed.
+- **Two mis-scoped rows corrected.** [view:/timeline] [persona:grc] Taiwan's row no longer claims a "2027 interim milestone" the document doesn't state (the 2027 belongs to a NIST target, not Taiwan's own). A row titled "Cryptographic Inventory" is retitled to reflect what NSM-10 actually mandates — inventory is one sub-directive among several.
+- **Brazil's ICP-Brasil certificate-standards row is published.** [view:/timeline] [persona:grc] A closer read of the already-captured document confirms it's a real, dated (30 Jan 2026) instruction adding ML-DSA and ML-KEM.
+
+### Data
+
+- **Timeline 09252026_r7 → r9:** [view:/timeline] [persona:grc] [persona:researcher] r7 made 54 cell changes across 25 rows; r8 and r9 added 65 more across the review backlog. 311 rows total: 182 public, 125 retired, 4 still held. The four held back are Germany's 2030 and the UK's 2035 (both stated as targets rather than deadlines), Russia's TC26 working group (an ongoing activity with a year-only date) and CISA's ACDI window (whose dates come from a chart image, not text). Full reasoning in `pqctoday-priv/maintenance/lineage/timeline-review/claude-recommendations-09252026.md` and this session's record.
 
 ## [4.121.0] - 2026-09-25
 
