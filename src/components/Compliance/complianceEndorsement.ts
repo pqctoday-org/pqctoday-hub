@@ -2,6 +2,7 @@
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import type { ComplianceFramework } from '@/data/complianceData'
 import type { ComplianceRecord } from './types'
+import { recordTypeLabel } from './recordSemantics'
 
 /* ── Compliance frameworks (standards / certification / regulatory) ── */
 
@@ -45,7 +46,8 @@ function recordDetails(record: ComplianceRecord): string {
   return [
     `**Product:** ${record.productName}`,
     record.vendor ? `**Vendor:** ${record.vendor}` : '',
-    record.type ? `**Type:** ${record.type}` : '',
+    record.type ? `**Type:** ${recordTypeLabel(record.type)}` : '',
+    record.status ? `**Status:** ${record.status}` : '',
     record.source ? `**Source:** ${record.source}` : '',
     record.certificationLevel ? `**Level:** ${record.certificationLevel}` : '',
   ]

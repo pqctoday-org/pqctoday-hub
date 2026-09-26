@@ -11,7 +11,7 @@
  *   node scripts/gen-timeline-facts.mjs --check    # exit 1 if stale (CI gate)
  *
  * Derivation rule (decision 2026-06-18): each country's COUNTRY_DEADLINE_YEAR =
- * the StartYear of the row a human TAGGED `is_sim_deadline=true` in the CSV (its
+ * the EndYear of the row a human TAGGED `is_sim_deadline=true` in the CSV (its
  * canonical PQC migration deadline — the flat `Category=Deadline` mixes legacy,
  * soft and protocol-specific rows, so the choice is curated in the CSV, not
  * heuristic). Untagged countries are omitted → the sim falls back to the Q-Day anchor.
@@ -20,6 +20,7 @@ import { readFileSync, writeFileSync, readdirSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import Papa from 'papaparse'
+import prettier from 'prettier'
 
 const DATA = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data')
 const OUT = join(DATA, 'timelineFacts.generated.ts')
@@ -38,6 +39,17 @@ function latestCsv() {
   return best.file
 }
 
+// Rows a reviewer has not cleared yet (shared with the loader, landing counts and
+// RAG corpus — one policy file).
+const UNREVIEWED = new Set(
+  JSON.parse(readFileSync(join(DATA, 'timelineReviewPolicy.json'), 'utf8')).unreviewedStatuses.map(
+    (s) => s.trim().toLowerCase()
+  )
+)
+const isUnreviewed = (status) => UNREVIEWED.has((status ?? '').trim().toLowerCase())
+/** Tagged deadline/milestone rows skipped because they are unreviewed (reported on stderr). */
+const withheld = []
+
 // CSV uses ISO-3166 flags; the sim uses 'UK' for Great Britain.
 const FLAG_TO_SIM = { GB: 'UK' }
 
@@ -52,7 +64,19 @@ function derive() {
     header: true,
     skipEmptyLines: true,
   })
-  const active = data.filter((r) => r.status !== 'deprecated')
+  // Lifecycle: deprecated/obsolete rows never derive a fact. Review: a row whose
+  // capital-S Status is unreviewed (timelineReviewPolicy.json) cannot become a
+  // country's canonical deadline or milestone either — Assess/Report present these
+  // as regulatory facts (timeline remediation r2 T-B2, 2026-09-24). The country
+  // falls back to the Q-Day anchor until the row is reviewed.
+  const lifecycleActive = data.filter(
+    (r) => !['deprecated', 'obsolete'].includes((r.status ?? '').trim().toLowerCase())
+  )
+  const active = lifecycleActive.filter((r) => !isUnreviewed(r.Status))
+  for (const r of lifecycleActive) {
+    if (isUnreviewed(r.Status) && (r.is_sim_deadline === 'true' || (r.sim_milestone ?? '').trim()))
+      withheld.push(`${r.event_id || r.Title} (Status=${(r.Status ?? '').trim()})`)
+  }
 
   // The row each country tagged `is_sim_deadline=true` (curated canonical deadline).
   // Keyed by sim code (UK/US/…) for the sim/timeline, and by full Country NAME for
@@ -62,7 +86,10 @@ function derive() {
   for (const r of active) {
     if (r.is_sim_deadline !== 'true') continue
     const code = FLAG_TO_SIM[r.FlagCode] ?? r.FlagCode
-    const yr = parseInt(r.StartYear, 10)
+    // The deadline is the END of the tagged row's window (2026-09-25): a plan row
+    // that starts in 2023 and targets 2035 is a 2035 deadline. Every point-event
+    // deadline row has StartYear === EndYear, so this changes none of them.
+    const yr = parseInt(r.EndYear || r.StartYear, 10)
     if (!code || !Number.isFinite(yr)) continue
     const mandate = (r.mandate_type ?? '').trim() || 'NONE'
     deadline[code] = { year: yr, title: r.Title, mandate }
@@ -150,6 +177,8 @@ ${mlines.join('\n')}
 
 const args = process.argv.slice(2)
 const derived = derive()
+for (const w of withheld)
+  console.warn(`⚠ unreviewed row withheld from the generated deadline facts: ${w}`)
 
 if (args.includes('--print')) {
   console.log(`source: ${derived.file}\n`)
@@ -158,21 +187,86 @@ if (args.includes('--print')) {
   process.exit(0)
 }
 
+// ── event_id → every enrichment label the row has carried ────────────────────
+// Enrichment sections are keyed "{Country}:{OrgName} — {Title}", so a title
+// edit orphaned a row's enrichment (8 rows after the 2026-09-24 review). Every
+// label a row has had in ANY generation (current + src/data/archive) maps back
+// to its stable event_id, so readers can find the enrichment by event_id
+// (timeline remediation r2 W-B).
+const ALIAS_OUT = join(DATA, 'timelineLabelAliases.generated.ts')
+function deriveAliases() {
+  const re = /^timeline_\d{8}(?:_r\d+)?\.csv$/
+  const files = [
+    ...readdirSync(DATA)
+      .filter((f) => re.test(f))
+      .map((f) => join(DATA, f)),
+    ...readdirSync(join(DATA, 'archive'))
+      .filter((f) => re.test(f))
+      .map((f) => join(DATA, 'archive', f)),
+  ]
+  const byId = {}
+  for (const f of files) {
+    const { data } = Papa.parse(readFileSync(f, 'utf8'), { header: true, skipEmptyLines: true })
+    for (const r of data) {
+      const id = (r.event_id ?? '').trim()
+      const c = (r.Country ?? '').trim()
+      const o = (r.OrgName ?? '').trim()
+      const t = (r.Title ?? '').trim()
+      if (!id || !c || !o || !t) continue
+      ;(byId[id] ??= new Set()).add(`${c}:${o} — ${t}`)
+    }
+  }
+  return byId
+}
+function generateAliases(byId) {
+  const ids = Object.keys(byId).sort()
+  const lines = ids.map(
+    (id) =>
+      `  ${propKey(id)}: [${[...byId[id]]
+        .sort()
+        .map((l) => `'${l.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`)
+        .join(', ')}],`
+  )
+  return `// SPDX-License-Identifier: GPL-3.0-only
+// GENERATED by scripts/gen-timeline-facts.mjs from every timeline_*.csv generation — DO NOT EDIT BY HAND.
+
+/** event_id → every "{Country}:{OrgName} — {Title}" label the row has carried. */
+export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
+${lines.join('\n')}
+}
+`
+}
+
 const next = generate(derived)
+// Formatted with the project's Prettier config so the pre-commit formatter and
+// the --check gate agree byte for byte.
+const nextAliases = await prettier.format(generateAliases(deriveAliases()), {
+  ...(await prettier.resolveConfig(ALIAS_OUT)),
+  filepath: ALIAS_OUT,
+})
 if (args.includes('--check')) {
-  let current = ''
-  try {
-    current = readFileSync(OUT, 'utf8')
-  } catch {
-    /* missing → stale */
+  let stale = false
+  for (const [path, want] of [
+    [OUT, next],
+    [ALIAS_OUT, nextAliases],
+  ]) {
+    let current = ''
+    try {
+      current = readFileSync(path, 'utf8')
+    } catch {
+      /* missing → stale */
+    }
+    if (current !== want) {
+      console.error(`✗ ${path} is stale vs ${derived.file} — run \`npm run gen:timeline-facts\``)
+      stale = true
+    }
   }
-  if (current !== next) {
-    console.error(`✗ ${OUT} is stale vs ${derived.file} — run \`npm run gen:timeline-facts\``)
-    process.exit(1)
-  }
+  if (stale) process.exit(1)
   console.log('✓ timeline facts up to date')
   process.exit(0)
 }
 
 writeFileSync(OUT, next)
+writeFileSync(ALIAS_OUT, nextAliases)
 console.log(`wrote ${OUT} from ${derived.file} (${Object.keys(derived.deadline).length} countries)`)
+console.log(`wrote ${ALIAS_OUT}`)

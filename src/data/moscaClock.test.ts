@@ -54,10 +54,11 @@ describe('moscaClock', () => {
   })
 
   // Deadlines are DERIVED from the timeline CSV (the is_sim_deadline-tagged row),
-  // not hardcoded. The 10 tagged jurisdictions resolve; SG (guidance-only, no
-  // tagged row) falls back to the Q-Day anchor.
+  // not hardcoded. The 10 REVIEWED tagged jurisdictions resolve (AU and KR were
+  // settled by the user on 2026-09-25 after the Claude + Codex review); SG
+  // (guidance-only, no tagged row) falls back to the Q-Day anchor.
   it('derives per-country deadlines from the timeline CSV (tagged rows)', () => {
-    for (const c of ['US', 'DE', 'FR', 'UK', 'EU', 'CA', 'KR', 'JP', 'AU', 'IN'] as const) {
+    for (const c of ['US', 'FR', 'EU', 'CA', 'KR', 'JP', 'AU', 'IN'] as const) {
       expect(typeof COUNTRY_DEADLINE_YEAR[c], `${c} deadline`).toBe('number')
       expect(COUNTRY_DEADLINE_PROVENANCE[c], `${c} provenance`).toBe('planning')
     }
@@ -66,14 +67,19 @@ describe('moscaClock', () => {
     // JP's deadline (2035) is after Q-Day → falls back to the Q-Day anchor.
     expect(horizonYearFor('JP')).toBe(SIM_CRQC_YEAR)
     // Guidance-only jurisdictions have no national deadline milestone → fall back to Q-Day.
-    for (const c of ['SG'] as const) {
+    // DE and UK moved here 2026-09-25: both countries' only tagged deadline row
+    // was withdrawn to Unverified pending stronger evidence (the cited guidance
+    // used future-target language, not a confirmed regulatory deadline) — see
+    // timeline review disagreement resolution, germany-bsi-critical-applications-
+    // pqc-hybrid-no-longer-required and united-kingdom-ncsc-full-pqc-compliance.
+    for (const c of ['SG', 'DE', 'UK'] as const) {
       expect(COUNTRY_DEADLINE_YEAR[c], `${c} absent`).toBeUndefined()
       expect(horizonYearFor(c), `${c} fallback`).toBe(SIM_CRQC_YEAR)
     }
   })
 
   it('tagged jurisdictions at/after Q-Day resolve Z to the Q-Day anchor', () => {
-    for (const c of ['EU', 'CA', 'KR', 'UK', 'US', 'DE', 'JP', 'AU'] as const) {
+    for (const c of ['EU', 'CA', 'KR', 'US', 'JP', 'AU'] as const) {
       expect(horizonYearFor(c), `${c} horizon`).toBe(SIM_CRQC_YEAR)
     }
     // IN's CII deadline (2027) falls before Q-Day → binds the horizon directly.

@@ -239,7 +239,7 @@ describe('SimpleGanttChart', () => {
       const table = screen.getByRole('table')
       // getCountryLastVerified reads from country.bodies[].events[] — the
       // most recent of the two dates set above should win.
-      expect(within(table).getByText('Verified 2026-07-16')).toBeInTheDocument()
+      expect(within(table).getByText('Sources checked 2026-07-16')).toBeInTheDocument()
     })
   })
 

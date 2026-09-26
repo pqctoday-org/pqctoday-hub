@@ -63,7 +63,6 @@ vi.mock('./services', () => ({
     error: null,
     lastUpdated: new Date('2026-02-17'),
     refresh: vi.fn(),
-    enrichRecord: vi.fn(),
   }),
   AUTHORITATIVE_SOURCES: {
     FIPS: 'https://csrc.nist.gov/fips',
@@ -84,7 +83,6 @@ vi.mock('./ComplianceTable', () => ({
     onRefresh: () => void
     isRefreshing: boolean
     lastUpdated: Date | null
-    onEnrich?: (id: string) => void
     selectedRecordId?: string
   }) => (
     <div data-testid="compliance-table">

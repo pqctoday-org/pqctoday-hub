@@ -63,7 +63,8 @@ describe('useExecutiveData', () => {
         date: '2025-01-01',
         link: '',
         type: 'ACVP',
-        status: 'Active',
+        // CAVP rows are 'Validated' (no lifecycle status) and must count as current.
+        status: 'Validated',
         pqcCoverage: false,
         productName: 'P2',
         productCategory: 'C2',
@@ -97,8 +98,29 @@ describe('useExecutiveData', () => {
 
     const { result } = renderHook(() => useExecutiveData(complianceData))
 
-    // Only 3 types are Active (FIPS 140-3, ACVP, Common Criteria); EUCC is Revoked
+    // Only 3 types are current (FIPS 140-3 Active, ACVP Validated, Common
+    // Criteria Active); EUCC is Revoked
     expect(result.current.activeStandards).toBe(3)
+  })
+
+  it('does not count historical, archived or unknown statuses as current', () => {
+    const base = {
+      source: 'NIST' as const,
+      date: '2025-01-01',
+      link: '',
+      pqcCoverage: false,
+      productName: 'P',
+      productCategory: 'C',
+      vendor: 'V',
+    }
+    const complianceData: ComplianceRecord[] = [
+      { ...base, id: '1', type: 'FIPS 140-3', status: 'Active' },
+      { ...base, id: '2', type: 'ACVP', status: 'Historical' },
+      { ...base, id: '3', type: 'Common Criteria', status: 'Archived' },
+      { ...base, id: '4', type: 'CSPN', status: 'SomethingNew' },
+    ]
+    const { result } = renderHook(() => useExecutiveData(complianceData))
+    expect(result.current.activeStandards).toBe(1)
   })
 
   it('generates static priority actions without assessment', () => {

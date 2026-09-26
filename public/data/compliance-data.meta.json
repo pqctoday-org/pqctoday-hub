@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "publicationId": "92718bbfa3a83965084dfac1210c0adeb2ed1f31fdceda7811fdfb80773d9b81",
+  "generatedAt": "2026-09-25T12:52:56+00:00",
+  "scope": {
+    "fips": "FIPS 140-3 only (NIST CMVP)",
+    "cavp": "NIST CAVP validations for ML-KEM, ML-DSA, SLH-DSA, LMS",
+    "cc": "Common Criteria Portal certified + archived lists, ANSSI (CC and CSPN), ENISA EUCC",
+    "excluded": ["FIPS 140-2", "national programmes other than those listed"]
+  },
+  "partitions": {
+    "fips": {
+      "label": "NIST CMVP \u2014 FIPS 140-3",
+      "sourceUrl": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search/all?searchMode=Advanced&Standard=FIPS+140-3&ValidationStatus=Active",
+      "retrievedAt": "2026-09-25T02:42:00+00:00",
+      "count": 783
+    },
+    "cavp": {
+      "label": "NIST CAVP \u2014 ML-KEM, ML-DSA, SLH-DSA, LMS",
+      "sourceUrl": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/validation-search",
+      "retrievedAt": "2026-09-25T03:14:18+00:00",
+      "count": 268
+    },
+    "cc": {
+      "label": "Common Criteria Portal",
+      "sourceUrl": "https://www.commoncriteriaportal.org/products/",
+      "retrievedAt": "2026-09-25T02:44:12+00:00",
+      "count": 833
+    },
+    "anssi": {
+      "label": "ANSSI (CC and CSPN)",
+      "sourceUrl": "https://messervices.cyber.gouv.fr/visas/catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-agrees-anssi.pdf",
+      "retrievedAt": "2026-09-25T04:36:00+00:00",
+      "count": 190
+    },
+    "eucc": {
+      "label": "ENISA EUCC",
+      "sourceUrl": "https://certification.enisa.europa.eu/certificates_en",
+      "retrievedAt": "2026-09-25T04:36:41+00:00",
+      "count": 107
+    }
+  },
+  "exclusions": {
+    "byReason": {
+      "fips-140-2-out-of-scope": 562,
+      "not-in-nist-cavp-search": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3090-2026-0000000012-00000": 2,
+      "not-on-enisa-certificate-list": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3090-2025-0000000001-00001": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3110-2026-2500076-01-00000": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3110-2025-2500098-01-00000": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3110-2025-2500051-01-00000": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3110-2025-0002500093-00001": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3110-2025-0002500053-00001": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3110-2025-0002500052-00001": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3095-2025-0000000001-00000": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3087-2026-04-0004": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3096-2026-001-00000": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3089-2026-001-00000": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3087-2026-0010-00000": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3087-2026-0011-00000": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3087-2026-0000000006-00000": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3110-2026-2500078-01": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3095-2026-0000000005-00000": 1,
+      "duplicate-of-enisa-eucc-eucc-eucc-3135-2026-0000000001-00000": 1
+    }
+  },
+  "fieldSources": {
+    "fips": {
+      "status/cmvpStandard/overallLevel/sunsetDate/caveat/embodiment/moduleType/operationalEnvironments": "NIST CMVP certificate page",
+      "pqcCoverage/classicalAlgorithms/cmvpApprovedAlgorithms": "NIST CMVP certificate page \u2014 Approved Algorithms",
+      "date/lab/cmvpValidationHistory": "NIST CMVP certificate page \u2014 Validation History",
+      "vendor/productName": "NIST CMVP certificate page",
+      "securityTargetUrls": "link to the NIST-hosted Security Policy (document link only)"
+    },
+    "cavp": {
+      "vendor/productName/date/pqcCoverage": "NIST CAVP validation search",
+      "cavpFirstValidated/cavpImplementationVersion/cavpImplementationType": "NIST CAVP product page",
+      "cavpCapabilities": "NIST CAVP product page + its capability endpoint"
+    },
+    "cc": {
+      "status/ccArchivedDate/protectionProfile": "CC Portal certified/archived CSV",
+      "pqcCoverage/classicalAlgorithms/lab": "CC Portal-hosted ST/CR PDFs (kept as-is, D-SRC-3)"
+    },
+    "anssi": {
+      "status": "ANSSI catalogue or CC Portal list",
+      "type": "CSPN when the ANSSI reference is CSPN"
+    },
+    "eucc": {
+      "*": "ENISA certificate page",
+      "pqcCoverage": "ENISA-hosted documents (kept as-is, D-SRC-3); empty for newly listed certificates"
+    }
+  }
+}

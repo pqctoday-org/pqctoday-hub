@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // Persistent acronym glossary for the Product Records tab. Replaces the
-// hidden "Glossary" toggle — these six terms gate comprehension of the whole
+// hidden "Glossary" toggle — these terms gate comprehension of the whole
 // page, so they stay on-screen. Each chip carries its full definition in a
 // title tooltip.
 import { RECORDS_GLOSSARY } from '@/data/recordsGlossary'

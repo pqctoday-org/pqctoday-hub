@@ -3,7 +3,7 @@
  * Structured content for the Hybrid Cryptography module.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
-import { CNSA_2_0, ANSSI_TIMELINE } from '@/data/regulatoryTimelines'
+import { CNSA_2_0 } from '@/data/regulatoryTimelines'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
   version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-20',
+  lastEdited: '2026-09-25',
 
   standards: [
     getStandard('FIPS 203'),
@@ -97,11 +97,6 @@ export const content: ModuleContent = {
       label: 'NSA mandates PQC adoption for national security systems',
       year: CNSA_2_0.softwareExclusive,
       source: 'CNSA 2.0',
-    },
-    {
-      label: 'ANSSI migration plan target',
-      year: ANSSI_TIMELINE.migrationPlanTarget,
-      source: 'ANSSI',
     },
   ],
 

@@ -1,0 +1,4 @@
+{
+  "_comment": "Timeline review policy (timeline remediation r2 T-B1/T-B2, user decision T4, 2026-09-24). A row whose capital-S `Status` is one of `unreviewedStatuses` is not public: the loader, the deadline codegen (gen-timeline-facts), the landing counts and the RAG corpus all skip it until a reviewer changes its Status. Compared case-insensitively after trimming. One file so every reader (TS, .mjs, tsx scripts) applies the same rule.",
+  "unreviewedStatuses": ["New", "Unverified — needs review"]
+}

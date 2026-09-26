@@ -4,6 +4,7 @@ import { threatsData } from '../data/threatsData'
 import { algorithmsData } from '../data/algorithmsData'
 import { softwareData } from '../data/migrateData'
 import type { ComplianceRecord } from '../components/Compliance/types'
+import { isCurrentRecord } from '../components/Compliance/recordSemantics'
 import type { AssessmentResult } from './assessmentTypes'
 import type { CategoryScores } from './assessmentTypes'
 
@@ -54,9 +55,12 @@ export function useExecutiveData(
     // Count migration tools
     const migrationToolsAvailable = softwareData.length
 
-    // Count distinct active compliance framework types
+    // Count distinct certification-record types with at least one CURRENT
+    // record — Active (CMVP / CC / ANSSI / EUCC) or Validated (CAVP, which has
+    // no lifecycle status). Historical / Archived / Revoked / unknown statuses
+    // are not current validations.
     const activeStandards = complianceData?.length
-      ? new Set(complianceData.filter((r) => r.status === 'Active').map((r) => r.type)).size
+      ? new Set(complianceData.filter(isCurrentRecord).map((r) => r.type)).size
       : 3 // Fallback: FIPS 203/204/205
 
     // Generate priority actions — use assessment recommendations if available

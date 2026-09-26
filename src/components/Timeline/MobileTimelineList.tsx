@@ -182,7 +182,7 @@ export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimeli
                   <p className="text-xs text-muted-foreground">{country.bodies[0]?.name}</p>
                   {lastVerified && (
                     <p className="text-[9px] text-muted-foreground font-mono">
-                      Verified {lastVerified}
+                      Sources checked {lastVerified}
                     </p>
                   )}
                 </div>
@@ -268,7 +268,7 @@ export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimeli
                     <p className="text-xs text-muted-foreground">{country.bodies[0]?.name}</p>
                     {lastVerified && (
                       <p className="text-[9px] text-muted-foreground font-mono">
-                        Verified {lastVerified}
+                        Sources checked {lastVerified}
                       </p>
                     )}
                   </div>

@@ -18,7 +18,6 @@ vi.mock('../Compliance/services', () => ({
     error: null,
     lastUpdated: null,
     refresh: vi.fn(),
-    enrichRecord: vi.fn(),
   }),
 }))
 

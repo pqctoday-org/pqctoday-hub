@@ -69,23 +69,19 @@ describe('entity-type category classification (FR-T-06)', () => {
     for (const e of events) expect(valid.has(e.entityType)).toBe(true)
   })
 
-  it('all three categories are represented', () => {
+  it('the public timeline has government and standards events and no vendor events (scope decision T2)', () => {
     const present = new Set(events.map((e) => e.entityType))
     expect(present.has('government')).toBe(true)
     expect(present.has('standards')).toBe(true)
-    expect(present.has('vendor')).toBe(true)
+    expect(present.has('vendor')).toBe(false)
   })
 
   it('default filter hides vendor events but keeps gov + standards', () => {
     expect(CATEGORY_DEFAULT).toEqual(['government', 'standards'])
-    const govEvent = events.find((e) => e.entityType === 'government')!
-    const vendorEvent = events.find((e) => e.entityType === 'vendor')!
-    expect(matchesCategoryFilter(CATEGORY_DEFAULT, govEvent.entityType)).toBe(true)
-    expect(matchesCategoryFilter(CATEGORY_DEFAULT, vendorEvent.entityType)).toBe(false)
+    expect(matchesCategoryFilter(CATEGORY_DEFAULT, 'government')).toBe(true)
+    expect(matchesCategoryFilter(CATEGORY_DEFAULT, 'vendor')).toBe(false)
     // Opting vendor in shows it.
-    expect(
-      matchesCategoryFilter(['government', 'standards', 'vendor'], vendorEvent.entityType)
-    ).toBe(true)
+    expect(matchesCategoryFilter(['government', 'standards', 'vendor'], 'vendor')).toBe(true)
   })
 })
 
@@ -250,5 +246,56 @@ describe('getCountryLastVerified (Phase 8.4 — per-country freshness stamp)', (
       bodies: [{ name: 'Agency', fullName: 'Agency Full', countryCode: 'EM', events: [] }],
     }
     expect(getCountryLastVerified(country)).toBeUndefined()
+  })
+})
+
+describe('parseTimelineCSV — review status (timeline remediation r2 T-B1)', () => {
+  const header =
+    'Country,FlagCode,OrgName,OrgFullName,OrgLogoUrl,Type,Category,StartYear,EndYear,Title,Description,SourceUrl,SourceDate,Status,status,event_id'
+  const csv = [
+    header,
+    'Testland,TL,Agency,Agency Full,,Milestone,Deadline,2030,2030,Reviewed Row,d,,,Completed,active,tl-reviewed',
+    'Testland,TL,Agency,Agency Full,,Milestone,Deadline,2031,2031,New Row,d,,,New,active,tl-new',
+    'Testland,TL,Agency,Agency Full,,Milestone,Deadline,2032,2032,Unverified Row,d,,,Unverified — needs review,active,tl-unverified',
+  ].join('\n')
+  const titles = (countries: CountryData[]) =>
+    countries.flatMap((c) => c.bodies.flatMap((b) => b.events.map((e) => e.title)))
+
+  it('withholds New and Unverified rows from the public output', () => {
+    expect(titles(parseTimelineCSV(csv))).toEqual(['Reviewed Row'])
+  })
+
+  it('keeps them only when explicitly asked (private review tooling)', () => {
+    expect(titles(parseTimelineCSV(csv, new Date(), { includeUnreviewed: true }))).toHaveLength(3)
+  })
+
+  it('carries the CSV Status as reviewStatus and leaves the change status unset', () => {
+    const [event] = parseTimelineCSV(csv)[0].bodies[0].events
+    expect(event.reviewStatus).toBe('Completed')
+    expect(event.status).toBeUndefined()
+  })
+
+  it('the live dataset exposes no unreviewed row', () => {
+    const events = timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events))
+    const unreviewed = events.filter((e) =>
+      ['new', 'unverified — needs review'].includes((e.reviewStatus ?? '').toLowerCase())
+    )
+    expect(unreviewed).toEqual([])
+  })
+})
+
+describe('timeline joins keyed the way their data is (timeline remediation r2 W-B)', () => {
+  it('attaches compliance frameworks by Country:OrgName', () => {
+    const withRefs = timelineData
+      .flatMap((c) => c.bodies.flatMap((b) => b.events))
+      .filter((e) => (e.complianceRefs ?? []).length > 0)
+    expect(withRefs.length).toBeGreaterThan(0)
+  })
+
+  it('resolves a concept id from the event_id', async () => {
+    const { conceptIdForTimelineEvent } = await import('./timelineData')
+    const ev = timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events)).find((e) => e.eventId)
+    expect(conceptIdForTimelineEvent({ eventId: ev?.eventId })).toBeTruthy()
+    expect(conceptIdForTimelineEvent({})).toBeUndefined()
   })
 })

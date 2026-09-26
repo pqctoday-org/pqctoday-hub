@@ -48,9 +48,8 @@ const SMOKE_SPECS = [
 //   - timeline-freshness-badge.spec.ts: its `?country=` param drives a
 //     desktop-only Gantt→DocumentTable selection (TimelineView.tsx);
 //     MobileTimelineView.tsx has no URL-driven country selection at all
-//     (region comes from the persona store) and shows freshness as plain
-//     "Verified {date}" text (Phase 8.4), not the timeline-freshness-badge
-//     testid/state pill this spec checks for.
+//     (region comes from the persona store) and shows a plain "Sources checked {date}"
+//     text (Phase 8.4), not the desktop evidence badge this spec checks for.
 //   - compliance-foryou-executive.spec.ts: tests the desktop "For You" tab
 //     (ExecutiveTimelineView / ApplicabilityPanel via ?tab=foryou).
 //     MobileComplianceView.tsx explicitly drops Progress/Products/For You

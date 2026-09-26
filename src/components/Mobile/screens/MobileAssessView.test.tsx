@@ -413,9 +413,9 @@ describe('MobileAssessView', () => {
       // (same source Step13TimelinePressure.tsx reads) — the country-specific
       // branch always appends the "No Specific Deadline" fallback, same as
       // desktop, so a country WITH data still isn't a dead end.
-      expect(
-        screen.getByText(/CISA PQC Product Category List — EO 14306 Deadline/)
-      ).toBeInTheDocument()
+      // (The CISA EO 14306 row this used to pin was withheld by the 2026-09-25
+      // timeline review — its cited page never mentions EO 14306.)
+      expect(screen.getAllByText(/Key-Establishment Migration Deadline/).length).toBeGreaterThan(0)
       expect(screen.getByText('No Specific Deadline')).toBeInTheDocument()
       expect(screen.queryByText('Regulatory Deadline Within 1 Year')).not.toBeInTheDocument()
     })

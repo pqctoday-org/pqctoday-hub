@@ -54,11 +54,11 @@ describe('isAmbiguousPqcMatch', () => {
 describe('buildMonthlyPqcCertificationTrend', () => {
   const referenceDate = new Date('2024-08-15T00:00:00Z')
 
-  it('buckets FIPS 140-2 and FIPS 140-3 together', () => {
+  it('counts FIPS 140-3 only — a legacy FIPS 140-2 row is not counted', () => {
     const records = [
       makeRecord({ type: 'FIPS 140-3', date: '2024-05-01', pqcCoverage: 'ML-KEM' }),
-      // Raw compliance-data.json carries 'FIPS 140-2' even though it's outside the
-      // narrower ComplianceType union — the model must still bucket it correctly.
+      // The dataset is FIPS 140-3 only (user decision 2026-09-24). Should an old
+      // publication still carry a 'FIPS 140-2' row, it must not be counted.
       makeRecord({
         type: 'FIPS 140-2' as ComplianceRecord['type'],
         date: '2024-05-02',
@@ -66,7 +66,21 @@ describe('buildMonthlyPqcCertificationTrend', () => {
       }),
     ]
     const trend = buildMonthlyPqcCertificationTrend(records, referenceDate)
-    expect(trend.find((t) => t.month === '2024-05')?.fips).toBe(2)
+    const may = trend.find((t) => t.month === '2024-05')
+    expect(may?.fips).toBe(1)
+    expect(may?.total).toBe(1)
+  })
+
+  it('keeps CSPN separate from Common Criteria', () => {
+    const records = [
+      makeRecord({ type: 'Common Criteria', date: '2024-05-01', pqcCoverage: 'ML-KEM' }),
+      makeRecord({ type: 'CSPN', date: '2024-05-02', pqcCoverage: 'ML-KEM' }),
+    ]
+    const trend = buildMonthlyPqcCertificationTrend(records, referenceDate)
+    const may = trend.find((t) => t.month === '2024-05')
+    expect(may?.cc).toBe(1)
+    expect(may?.cspn).toBe(1)
+    expect(may?.total).toBe(2)
   })
 
   it('buckets EUCC with Common Criteria', () => {

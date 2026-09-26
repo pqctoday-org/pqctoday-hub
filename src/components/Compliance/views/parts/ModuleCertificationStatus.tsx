@@ -3,6 +3,13 @@ import React, { useMemo } from 'react'
 import { Link } from 'react-router'
 import { ShieldCheck, AlertTriangle, ExternalLink, ArrowRight } from 'lucide-react'
 import type { ComplianceRecord } from '../../types'
+import {
+  isCurrentRecord,
+  isNistValidationType,
+  isSecurityTargetType,
+  pqcCoverageState,
+  pqcNames,
+} from '../../recordSemantics'
 
 interface Props {
   /** Cert records from useComplianceRefresh / the compliance service. */
@@ -12,10 +19,17 @@ interface Props {
 /**
  * Module-level certification status panel (P11-P1-05).
  *
- * Surfaces the FIPS / ACVP / CC landscape from compliance-data.json as a small
- * "where the industry is" summary so a developer can see how many crypto
- * modules already carry PQC validation and how many don't — without scrolling
- * the full records table.
+ * Surfaces the FIPS 140-3 / NIST CAVP / CC / CSPN snapshot from
+ * compliance-data.json as a small "where the industry is" summary so a
+ * developer can see how many crypto modules already carry PQC validation and
+ * how many don't — without scrolling the full records table.
+ *
+ * Counts CURRENT records only (Active / Validated): a Historical, Revoked or
+ * Archived certificate is not a current validation. "Validated" tiles count
+ * NIST records only (FIPS 140-3 Approved Algorithms list, CAVP validations);
+ * a PQC algorithm merely named in a CC / EUCC / CSPN Security Target is
+ * reported separately, never as validated. pqcCoverage '' (page not read) is
+ * unknown, not classical-only.
  *
  * Computes counts client-side from the records the caller already loaded; no
  * extra fetch.
@@ -26,7 +40,7 @@ export const ModuleCertificationStatus: React.FC<Props> = ({ records }) => {
   // Empty data → render nothing (compliance service may still be loading).
   if (counts.total === 0) return null
 
-  const pqcPct = counts.total > 0 ? Math.round((counts.pqc / counts.total) * 100) : 0
+  const pqcPct = counts.nistTotal > 0 ? Math.round((counts.pqc / counts.nistTotal) * 100) : 0
 
   return (
     <section
@@ -38,17 +52,17 @@ export const ModuleCertificationStatus: React.FC<Props> = ({ records }) => {
         <ShieldCheck size={16} className="text-primary" />
         <h3 className="text-base font-semibold text-foreground">Module certification landscape</h3>
         <span className="text-xs text-muted-foreground">
-          FIPS 140-3 / ACVP / CC records across the public registries
+          Current FIPS 140-3 / NIST CAVP / CC / CSPN records in the published snapshot
         </span>
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Tile label="Modules tracked" value={counts.total.toLocaleString()} tone="muted" />
+        <Tile label="Current records" value={counts.total.toLocaleString()} tone="muted" />
         <Tile
-          label="With PQC support"
+          label="PQC in NIST validation"
           value={counts.pqc.toLocaleString()}
           tone="success"
-          accent={`${pqcPct}%`}
+          accent={`${pqcPct}% of NIST`}
         />
         <Tile label="ML-KEM validated" value={counts.mlkem.toLocaleString()} tone="primary" />
         <Tile label="ML-DSA validated" value={counts.mldsa.toLocaleString()} tone="primary" />
@@ -61,9 +75,16 @@ export const ModuleCertificationStatus: React.FC<Props> = ({ records }) => {
           aria-hidden="true"
         />
         <p>
-          {counts.noPqc.toLocaleString()} modules confirmed classical-only
+          {counts.noPqc.toLocaleString()} records list no PQC algorithm
           {counts.unanalyzed > 0 && (
-            <> · {counts.unanalyzed.toLocaleString()} not yet analyzed for PQC</>
+            <> · {counts.unanalyzed.toLocaleString()} not read / not yet analyzed for PQC</>
+          )}
+          {counts.stNamed > 0 && (
+            <>
+              {' '}
+              · {counts.stNamed.toLocaleString()} CC / EUCC / CSPN records name PQC in their
+              Security Target (not a validation)
+            </>
           )}{' '}
           — if your dependency tree includes classical-only modules, the CI gate above will trip.
           Browse the full Records tab to find your exact upstream.
@@ -84,6 +105,8 @@ export const ModuleCertificationStatus: React.FC<Props> = ({ records }) => {
 
 interface CertCounts {
   total: number
+  nistTotal: number
+  stNamed: number
   pqc: number
   noPqc: number
   unanalyzed: number
@@ -93,12 +116,11 @@ interface CertCounts {
   lms: number
 }
 
-// Labels that are heuristic-only or unanalyzed — not confirmed PQC.
-const UNCONFIRMED_RE = /potentially pqc|not yet analyzed|pending check/i
-
 function computeCounts(records: readonly ComplianceRecord[]): CertCounts {
   const c: CertCounts = {
     total: 0,
+    nistTotal: 0,
+    stNamed: 0,
     pqc: 0,
     noPqc: 0,
     unanalyzed: 0,
@@ -108,17 +130,26 @@ function computeCounts(records: readonly ComplianceRecord[]): CertCounts {
     lms: 0,
   }
   for (const r of records) {
+    if (!isCurrentRecord(r)) continue
     c.total++
-    const cov = typeof r.pqcCoverage === 'string' ? r.pqcCoverage : ''
-    if (!cov || /no pqc/i.test(cov)) {
+    const nist = isNistValidationType(r.type)
+    if (nist) c.nistTotal++
+    const state = pqcCoverageState(r.pqcCoverage)
+    if (state === 'none') {
       c.noPqc++
       continue
     }
-    if (UNCONFIRMED_RE.test(cov)) {
+    if (state !== 'named') {
+      // '' (page not read), pending, name-match heuristics, bare booleans.
       c.unanalyzed++
       continue
     }
+    if (!nist) {
+      if (isSecurityTargetType(r.type)) c.stNamed++
+      continue
+    }
     c.pqc++
+    const cov = pqcNames(r.pqcCoverage).join(', ')
     if (/ML-KEM/i.test(cov)) c.mlkem++
     if (/ML-DSA/i.test(cov)) c.mldsa++
     if (/SLH-DSA/i.test(cov)) c.slhdsa++

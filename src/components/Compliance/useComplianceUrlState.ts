@@ -10,6 +10,7 @@ import { defaultTabForPersona } from './obligations/roleLens'
 import type { RegionBloc, DeadlinePhase } from '@/data/complianceData'
 import type { FrameworkSortOption } from './ComplianceLandscape'
 import type { SortColumn, SortDirection } from './ComplianceTable'
+import type { RecordScope } from './recordSemantics'
 import type { ViewMode } from '@/components/Library/ViewToggle'
 
 // ── Section type ────────────────────────────────────────────────────────
@@ -285,6 +286,11 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   const [recCertId, setRecCertId] = useState<string | undefined>(
     () => searchParams.get('cert') ?? undefined
   )
+  // `?rstatus=all` includes historical / archived / revoked records; the
+  // default (param absent) shows current records only (Active + Validated).
+  const [recScope, setRecScope] = useState<RecordScope>(() =>
+    searchParams.get('rstatus') === 'all' ? 'all' : 'current'
+  )
 
   // ── syncFiltersToUrl ──────────────────────────────────────────────────
 
@@ -310,6 +316,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
       dir?: SortDirection
       page?: number
       cert?: string
+      rstatus?: RecordScope
     }) => {
       setSearchParams(
         (prev) => {
@@ -337,6 +344,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
             'dir',
             'page',
             'cert',
+            'rstatus',
           ]) {
             next.delete(key)
           }
@@ -376,6 +384,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
             const dir = overrides.dir ?? recSortDir
             const page = overrides.page ?? recPage
             const cert = overrides.cert ?? recCertId
+            const rstatus = overrides.rstatus ?? recScope
 
             if (rt !== 'all') next.set('rtab', rt)
             if (q) next.set('q', q)
@@ -388,6 +397,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
             if (dir !== 'desc') next.set('dir', dir)
             if (page > 1) next.set('page', String(page))
             if (cert) next.set('cert', cert)
+            if (rstatus === 'all') next.set('rstatus', 'all')
           }
 
           return next
@@ -416,6 +426,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
       recSortDir,
       recPage,
       recCertId,
+      recScope,
       setSearchParams,
     ]
   )
@@ -479,6 +490,8 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
       setRecPage((prev) => (prev !== nextPage ? nextPage : prev))
       const nextCert = searchParams.get('cert') ?? undefined
       setRecCertId((prev) => (prev !== nextCert ? nextCert : prev))
+      const nextScope: RecordScope = searchParams.get('rstatus') === 'all' ? 'all' : 'current'
+      setRecScope((prev) => (prev !== nextScope ? nextScope : prev))
     }
     // `certParam` is derived from `searchParams` in the same render, so it can
     // never be stale here — it is listed to keep exhaustive-deps quiet rather
@@ -659,6 +672,15 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     [syncFiltersToUrl]
   )
 
+  const handleRecScopeChange = useCallback(
+    (scope: RecordScope) => {
+      setRecScope(scope)
+      setRecPage(1)
+      syncFiltersToUrl({ rstatus: scope, page: 1 })
+    },
+    [syncFiltersToUrl]
+  )
+
   return {
     // Raw URL access (needed for evref / cert mutations in ComplianceView)
     searchParams,
@@ -696,6 +718,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     recSortDir,
     recPage,
     recCertId,
+    recScope,
     // URL writer
     syncFiltersToUrl,
     // Landscape handlers
@@ -718,5 +741,6 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     handleRecSortColChange,
     handleRecSortDirChange,
     handleRecPageChange,
+    handleRecScopeChange,
   }
 }

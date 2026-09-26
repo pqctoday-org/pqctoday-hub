@@ -28,7 +28,15 @@ export interface TimelineEvent {
   description: string
   sourceUrl?: string
   sourceDate?: string
-  status?: string // e.g. "Completed", "In Progress", "New", "Updated"
+  // CHANGE status relative to the previous CSV snapshot ('New' | 'Updated'), set by
+  // the loader's snapshot comparison. NOT the CSV's editorial `Status` column —
+  // that is `reviewStatus` below (split 2026-09-24, timeline remediation r2 T-B1:
+  // the comparison used to overwrite it, so no component ever saw it).
+  status?: string
+  // The CSV's capital-S `Status`, verbatim (Validated / Completed / Active / …).
+  // Rows whose review status is unreviewed (timelineReviewPolicy.json) never
+  // reach the public loader output.
+  reviewStatus?: string
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
   sourceUrlQuality?: string
@@ -49,11 +57,24 @@ export interface TimelineEvent {
   // Org classification for the category filter (FR-T-06)
   entityType: EntityType
 
-  // Stable row identity + last human-verification date (added 2026-07-16,
-  // timeline maintainer-process remediation Phase 3). Maintenance-facing;
-  // not yet consumed by any UI.
+  // Stable row identity (added 2026-07-16). `lastVerified` is the CSV's
+  // `last_verified` column, which today is a bulk stamp (stamp-last-verified.py,
+  // close-remaining-coverage.py), NOT a per-row claim decision — do not present
+  // it as "verified" in the UI (timeline remediation r2 §1 #11).
   eventId?: string
   lastVerified?: string
+  // Reviewed binding character (CSV `binding_force`, timeline remediation r2);
+  // absent until a Claude + Codex agreed review sets it.
+  bindingForce?:
+    | 'binding'
+    | 'mandatory_for_scope'
+    | 'official_target'
+    | 'recommendation'
+    | 'draft'
+    | 'informational'
+  // primary = the issuer's own publication; secondary = reputable secondary
+  // reporting, allowed only when flagged (user decision T5). Absent = unclassified.
+  sourceClass?: 'primary' | 'secondary'
 
   // Derived fields — populated at load time, not from CSV (FR-T-05)
   complianceRefs?: string[]

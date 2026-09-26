@@ -5,6 +5,11 @@ import type { LibraryItem } from '@/data/libraryData'
 import type { AlgorithmDetail } from '@/data/pqcAlgorithmsData'
 import type { TimelineEvent } from '@/types/timeline'
 import type { ComplianceRecord } from '@/components/Compliance/types'
+import {
+  isCurrentStatus,
+  pqcCoverageSummary,
+  recordTypeLabel,
+} from '@/components/Compliance/recordSemantics'
 import type { Leader } from '@/data/leadersData'
 
 export const MIGRATE_CSV_COLUMNS: CsvColumnConfig<SoftwareItem>[] = [
@@ -84,18 +89,40 @@ export const TIMELINE_CSV_COLUMNS: CsvColumnConfig<TimelineEvent>[] = [
   { header: 'Source Date', accessor: (i) => i.sourceDate },
 ]
 
+/**
+ * Certification-record export. 'Type' uses the user-facing label ('NIST CAVP'
+ * for the internal 'ACVP' value, 'CSPN (ANSSI)' for CSPN); 'PQC Coverage'
+ * says where the PQC names come from (Approved Algorithms list, CAVP
+ * validation, or merely named in a Security Target) and keeps "not read"
+ * distinct from "none". Prepend `complianceExportPreamble()` (recordsExport.ts)
+ * so the file carries the dataset scope.
+ */
 export const COMPLIANCE_CSV_COLUMNS: CsvColumnConfig<ComplianceRecord>[] = [
   { header: 'ID', accessor: (i) => i.id },
   { header: 'Product Name', accessor: (i) => i.productName },
   { header: 'Vendor', accessor: (i) => i.vendor },
   { header: 'Category', accessor: (i) => i.productCategory },
-  { header: 'Type', accessor: (i) => i.type },
+  { header: 'Type', accessor: (i) => recordTypeLabel(i.type) },
   { header: 'Source', accessor: (i) => i.source },
   { header: 'Status', accessor: (i) => i.status },
+  { header: 'Current', accessor: (i) => (isCurrentStatus(i.status) ? 'yes' : 'no') },
   { header: 'Certification Level', accessor: (i) => i.certificationLevel },
-  { header: 'PQC Coverage', accessor: (i) => String(i.pqcCoverage) },
+  { header: 'PQC Coverage', accessor: (i) => pqcCoverageSummary(i) },
   { header: 'Classical Algorithms', accessor: (i) => i.classicalAlgorithms },
   { header: 'Date', accessor: (i) => i.date },
+  { header: 'FIPS Standard', accessor: (i) => i.cmvpStandard },
+  { header: 'Status Observed At', accessor: (i) => i.cmvpDetailsFetchedAt },
+  { header: 'Sunset Date', accessor: (i) => i.sunsetDate },
+  {
+    header: 'Approved Algorithms (CAVP refs)',
+    accessor: (i) =>
+      i.cmvpApprovedAlgorithms
+        ?.map((a) => (a.cavpRefs?.length ? `${a.name} [${a.cavpRefs.join(' ')}]` : a.name))
+        .join('; '),
+  },
+  { header: 'CAVP First Validated', accessor: (i) => i.cavpFirstValidated },
+  { header: 'CC Archived Date', accessor: (i) => i.ccArchivedDate },
+  { header: 'Security Target', accessor: (i) => i.securityTargetUrls?.[0] },
   { header: 'Link', accessor: (i) => i.link },
 ]
 

@@ -263,13 +263,13 @@ describe('MobileTimelineList', () => {
 
     it('renders the Verified date in swipe mode when present', () => {
       render(<MobileTimelineList data={dataWithVerified} />)
-      expect(screen.getByText('Verified 2026-07-16')).toBeInTheDocument()
+      expect(screen.getByText('Sources checked 2026-07-16')).toBeInTheDocument()
     })
 
     it('renders the Verified date in compact ("All phases") mode when present', () => {
       render(<MobileTimelineList data={dataWithVerified} />)
       fireEvent.click(screen.getByRole('button', { name: /All phases/i }))
-      expect(screen.getByText('Verified 2026-07-16')).toBeInTheDocument()
+      expect(screen.getByText('Sources checked 2026-07-16')).toBeInTheDocument()
     })
   })
 

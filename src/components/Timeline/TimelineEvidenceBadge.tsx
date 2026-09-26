@@ -10,11 +10,17 @@ interface TimelineEvidenceBadgeProps {
    * in the private repo. Removed 2026-07-12 rather than left silently 404ing.) */
   sourceUrl?: string
   /**
-   * ISO date used to compute freshness state (C9). When set, renders a
-   * `current` (≤365d), `stale` (≤730d), or `critical` (>730d) pill alongside
-   * the tier and confidence chips.
+   * The source document's own publication date (CSV `SourceDate`), shown as a
+   * neutral `Published <date>` chip. It is NOT a freshness state: until
+   * 2026-09-24 this date was fed to computeFreshnessState, so a 2022 roadmap
+   * read red "Critical" and FIPS 203 read "Stale" purely for being old
+   * (63 / 101 of 265 rows). A verification pill returns only when a real
+   * per-row decision time exists (timeline remediation r2 T-B3).
    */
-  lastVerifiedDate?: string
+  publishedDate?: string
+  /** `secondary` renders a "Secondary source" chip (user decision T5: a
+   * reputable secondary source is allowed only when flagged as such). */
+  sourceClass?: 'primary' | 'secondary'
   compact?: boolean
 }
 
@@ -31,18 +37,6 @@ export function computeFreshnessState(
   if (days <= 365) return 'current'
   if (days <= 730) return 'stale'
   return 'critical'
-}
-
-const FRESHNESS_CLS: Record<FreshnessState, string> = {
-  current: 'bg-status-success/10 text-status-success border-status-success/30',
-  stale: 'bg-status-warning/10 text-status-warning border-status-warning/30',
-  critical: 'bg-status-error/10 text-status-error border-status-error/30',
-}
-
-const FRESHNESS_LABEL: Record<FreshnessState, string> = {
-  current: 'Current',
-  stale: 'Stale',
-  critical: 'Critical',
 }
 
 function tierLabel(status: string | undefined): { text: string; cls: string } {
@@ -72,11 +66,12 @@ export function TimelineEvidenceBadge({
   confidenceScore,
   trustedSourceIdStatus,
   sourceUrl,
-  lastVerifiedDate,
+  publishedDate,
+  sourceClass,
   compact = false,
 }: TimelineEvidenceBadgeProps) {
-  const freshness = computeFreshnessState(lastVerifiedDate)
-  if (!trustedSourceIdStatus && confidenceScore === undefined && !freshness) return null
+  const published = (publishedDate ?? '').trim()
+  if (!trustedSourceIdStatus && confidenceScore === undefined && !published) return null
 
   const tier = tierLabel(trustedSourceIdStatus)
   const docHref = sourceUrl
@@ -89,14 +84,21 @@ export function TimelineEvidenceBadge({
         >
           {tier.text}
         </span>
-        {freshness && (
+        {sourceClass === 'secondary' && (
           <span
-            data-testid="timeline-freshness-badge"
-            data-freshness={freshness}
-            aria-label={`Source freshness: ${FRESHNESS_LABEL[freshness]}`}
-            className={`inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-medium ${FRESHNESS_CLS[freshness]}`}
+            data-testid="timeline-secondary-source"
+            title="Cited from reputable secondary reporting, not the issuer's own publication"
+            className="inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-medium bg-status-warning/10 text-status-warning border-status-warning/30"
           >
-            {FRESHNESS_LABEL[freshness]}
+            Secondary source
+          </span>
+        )}
+        {published && (
+          <span
+            data-testid="timeline-published-date"
+            className="inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-medium bg-muted text-muted-foreground border-border"
+          >
+            Published {published}
           </span>
         )}
         {confidenceScore !== undefined && (
@@ -128,14 +130,21 @@ export function TimelineEvidenceBadge({
         >
           {tier.text}
         </span>
-        {freshness && (
+        {sourceClass === 'secondary' && (
           <span
-            data-testid="timeline-freshness-badge"
-            data-freshness={freshness}
-            aria-label={`Source freshness: ${FRESHNESS_LABEL[freshness]}`}
-            className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-medium ${FRESHNESS_CLS[freshness]}`}
+            data-testid="timeline-secondary-source"
+            title="Cited from reputable secondary reporting, not the issuer's own publication"
+            className="inline-flex items-center px-2 py-0.5 rounded border text-xs font-medium bg-status-warning/10 text-status-warning border-status-warning/30"
           >
-            {FRESHNESS_LABEL[freshness]}
+            Secondary source
+          </span>
+        )}
+        {published && (
+          <span
+            data-testid="timeline-published-date"
+            className="inline-flex items-center px-2 py-0.5 rounded border text-xs font-medium bg-muted text-muted-foreground border-border"
+          >
+            Published {published}
           </span>
         )}
         {confidenceScore !== undefined && (

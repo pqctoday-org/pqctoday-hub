@@ -171,14 +171,14 @@ describe('MobileComplianceView', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('Records shows the real 6-term certification glossary', () => {
+  it('Records shows the real certification glossary', () => {
     render(
       <MemoryRouter>
         <MobileComplianceView />
       </MemoryRouter>
     )
     fireEvent.click(screen.getByText('Records'))
-    for (const term of ['FIPS 140-3', 'ACVP', 'CC', 'EUCC', 'CNSA 2.0', 'HNDL']) {
+    for (const term of ['FIPS 140-3', 'NIST CAVP', 'CC', 'CSPN', 'EUCC', 'CNSA 2.0', 'HNDL']) {
       expect(screen.getByText(term)).toBeInTheDocument()
     }
   })

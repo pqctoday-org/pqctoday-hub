@@ -13,9 +13,8 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { DocumentAnalysis } from '../common/DocumentAnalysis'
 import { TimelineAnalysisPanel } from './TimelineAnalysisPanel'
 import {
-  timelineEnrichments,
+  getTimelineEnrichment,
   hasSubstantiveEnrichment,
-  getTimelineEnrichmentKey,
   timelineToLibraryRef,
 } from '../../data/timelineEnrichmentData'
 import type { Phase } from '../../types/timeline'
@@ -44,6 +43,7 @@ export interface TimelineDocumentRow {
   sourceUrlQuality?: string
   trustedSourceId?: string
   trustedSourceIdStatus?: string
+  sourceClass?: 'primary' | 'secondary'
   localFile?: string
   confidenceScore?: number
   dataQualityNotes?: string
@@ -98,8 +98,7 @@ export const TimelineDocumentDetailPopover = ({
         ? String(row.startYear)
         : `${row.startYear} – ${row.endYear}`
 
-  const enrichmentKey = getTimelineEnrichmentKey(row.countryName, row.org, row.title)
-  const enrichment = timelineEnrichments[enrichmentKey]
+  const enrichment = getTimelineEnrichment(row.eventId, row.countryName, row.org, row.title)
   const isEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
 
   // Check if this timeline doc's SourceUrl matches a library record
@@ -321,8 +320,9 @@ export const TimelineDocumentDetailPopover = ({
                   <TimelineEvidenceBadge
                     confidenceScore={row.confidenceScore}
                     trustedSourceIdStatus={row.trustedSourceIdStatus}
+                    sourceClass={row.sourceClass}
                     sourceUrl={row.sourceUrl}
-                    lastVerifiedDate={row.sourceDate}
+                    publishedDate={row.sourceDate}
                     compact={false}
                   />
                   {row.peerReviewed && (

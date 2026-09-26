@@ -57,8 +57,9 @@ import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
-import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
-import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
+import { downloadCsv, csvFilename } from '@/utils/csvExport'
+import { buildComplianceCsv } from './recordsExport'
+import { applyRecordScope } from './recordSemantics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { complianceFrameworks, complianceMetadata } from '@/data/complianceData'
@@ -272,7 +273,7 @@ export const ComplianceView = ({
   const [drawerPillar, setDrawerPillar] = useState<PillarId>('comply')
 
   const tierFilter = useTrustTierFilter()
-  const { data, loading, error, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
+  const { data, loading, error, refresh, lastUpdated, meta } = useComplianceRefresh()
   // Page-wide loading/error state — shared across every tab (Landscape,
   // Product Records, For You, CSWP.39 Agility all read the same `data`), not
   // duplicated per tab. Only the very first load shows the skeleton; a
@@ -307,18 +308,6 @@ export const ComplianceView = ({
 
   const [exportError, setExportError] = useState<string | null>(null)
 
-  const handleExportCsv = useCallback(() => {
-    try {
-      const csv = generateCsv(data, COMPLIANCE_CSV_COLUMNS)
-      downloadCsv(csv, csvFilename('pqc-compliance'))
-      setExportError(null)
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error generating CSV export.'
-      console.error('Compliance CSV export failed:', err)
-      setExportError(message)
-    }
-  }, [data])
-
   // ── URL-synced filter state ──────────────────────────────────────────
 
   const {
@@ -350,6 +339,7 @@ export const ComplianceView = ({
     recSortCol,
     recSortDir,
     recPage,
+    recScope,
     syncFiltersToUrl,
     handleLsOrgChange,
     handleLsIndustryChange,
@@ -369,7 +359,29 @@ export const ComplianceView = ({
     handleRecSortColChange,
     handleRecSortDirChange,
     handleRecPageChange,
+    handleRecScopeChange,
   } = useComplianceUrlState(simEmbed, initialTab, initialCert)
+
+  // Records the reader chose to see: current only (Active + Validated) by
+  // default, or everything incl. historical / archived / revoked. The trend
+  // chart and every export follow the same scope as the table.
+  const scopedRecords = useMemo(() => applyRecordScope(data, recScope), [data, recScope])
+
+  const handleExportCsv = useCallback(() => {
+    try {
+      const csv = buildComplianceCsv(data, {
+        meta,
+        scope: recScope,
+        newestRecordDate: lastUpdated,
+      })
+      downloadCsv(csv, csvFilename('pqc-compliance'))
+      setExportError(null)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error generating CSV export.'
+      console.error('Compliance CSV export failed:', err)
+      setExportError(message)
+    }
+  }, [data, meta, recScope, lastUpdated])
 
   // Active pillar — derived from the landscape tab, kept in local state so the
   // pipeline can drive it independently.
@@ -823,16 +835,18 @@ export const ComplianceView = ({
             <SectionHeader
               icon={<GlobeLock size={20} className="text-primary" />}
               title="Product Certification Records"
-              description="Live certification records from NIST CMVP, NIST CAVP, and Common Criteria Portal — searchable product validations for FIPS 140-3, ACVP algorithm testing, and CC evaluations."
+              description="Certification records snapshot from NIST CMVP (FIPS 140-3), NIST CAVP and Common Criteria sources (CC Portal, ANSSI, ENISA EUCC) — searchable FIPS 140-3 module validations, NIST CAVP algorithm validations, Common Criteria / EUCC certificates and ANSSI CSPN certificates."
             />
             <RecordsGlossaryStrip />
-            <PqcCertificationTrendChart data={data} asOf={lastUpdated} />
+            <PqcCertificationTrendChart data={scopedRecords} asOf={lastUpdated} />
             <ComplianceTable
               data={data}
               onRefresh={refresh}
               isRefreshing={loading}
               lastUpdated={lastUpdated}
-              onEnrich={enrichRecord}
+              meta={meta}
+              recordScope={recScope}
+              onRecordScopeChange={handleRecScopeChange}
               certType={rtab}
               onCertTypeChange={handleRtabChange}
               filterText={recSearchInput}

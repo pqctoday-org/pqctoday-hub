@@ -40,8 +40,8 @@ describe('ModuleCertificationStatus', () => {
       stub({ id: '3', pqcCoverage: 'No PQC Mechanisms Detected' }),
     ])
     // 3 total, 2 with confirmed PQC (67%), ML-KEM=2 (rows 1+2), ML-DSA=1 (row 1)
-    expect(screen.getByText('Modules tracked').parentElement).toHaveTextContent('3')
-    const pqcTile = screen.getByText('With PQC support').parentElement
+    expect(screen.getByText('Current records').parentElement).toHaveTextContent('3')
+    const pqcTile = screen.getByText('PQC in NIST validation').parentElement
     expect(pqcTile).toHaveTextContent('2')
     expect(pqcTile).toHaveTextContent('67%')
     expect(screen.getByText('ML-KEM validated').parentElement).toHaveTextContent('2')
@@ -57,20 +57,51 @@ describe('ModuleCertificationStatus', () => {
       stub({ id: '5', pqcCoverage: 'Pending Check...' }), // ACVP pending
     ])
     // Only row 1 counts as confirmed PQC
-    const pqcTile = screen.getByText('With PQC support').parentElement
+    const pqcTile = screen.getByText('PQC in NIST validation').parentElement
     expect(pqcTile).toHaveTextContent('1')
     // 4 unanalyzed rows appear in the footer note
     expect(screen.getByText(/not yet analyzed for PQC/)).toBeInTheDocument()
   })
 
-  it('mentions the count of classical-only modules in the footer', () => {
+  it('counts an empty pqcCoverage as not read, never as classical-only', () => {
     renderPanel([
       stub({ id: '1', pqcCoverage: 'No PQC Mechanisms Detected' }),
       stub({ id: '2', pqcCoverage: '' }),
       stub({ id: '3', pqcCoverage: 'ML-KEM' }),
     ])
-    // 2 are confirmed no-PQC (one explicit, one empty string)
-    expect(screen.getByText(/2 modules confirmed classical-only/)).toBeInTheDocument()
+    // Only the explicit 'No PQC Mechanisms Detected' row lists no PQC; '' means
+    // the certificate page could not be read (unknown).
+    expect(screen.getByText(/1 records list no PQC algorithm/)).toBeInTheDocument()
+    expect(screen.getByText(/1 not read \/ not yet analyzed for PQC/)).toBeInTheDocument()
+  })
+
+  it('counts current records only (Active / Validated)', () => {
+    renderPanel([
+      stub({ id: '1', status: 'Active', pqcCoverage: 'ML-KEM' }),
+      stub({ id: 'A2', type: 'ACVP', status: 'Validated', pqcCoverage: 'ML-DSA' }),
+      stub({ id: '3', status: 'Historical', pqcCoverage: 'ML-KEM' }),
+      stub({ id: '4', status: 'Revoked', pqcCoverage: 'ML-KEM' }),
+      stub({ id: '5', status: 'SomethingNew', pqcCoverage: 'ML-KEM' }),
+    ])
+    expect(screen.getByText('Current records').parentElement).toHaveTextContent('2')
+    expect(screen.getByText('PQC in NIST validation').parentElement).toHaveTextContent('2')
+  })
+
+  it('never counts PQC named in a CC / CSPN Security Target as validated', () => {
+    renderPanel([
+      stub({
+        id: 'cc-1',
+        type: 'Common Criteria',
+        source: 'Common Criteria',
+        pqcCoverage: 'ML-KEM',
+      }),
+      stub({ id: 'cspn-1', type: 'CSPN', source: 'ANSSI', pqcCoverage: 'ML-DSA' }),
+      stub({ id: '3', pqcCoverage: 'ML-KEM' }),
+    ])
+    expect(screen.getByText('PQC in NIST validation').parentElement).toHaveTextContent('1')
+    expect(screen.getByText('ML-KEM validated').parentElement).toHaveTextContent('1')
+    expect(screen.getByText('ML-DSA validated').parentElement).toHaveTextContent('0')
+    expect(screen.getByText(/2 CC \/ EUCC \/ CSPN records name PQC/)).toBeInTheDocument()
   })
 
   it('shows unanalyzed count in footer when non-zero', () => {
@@ -78,7 +109,7 @@ describe('ModuleCertificationStatus', () => {
       stub({ id: '1', pqcCoverage: 'Not Yet Analyzed' }),
       stub({ id: '2', pqcCoverage: 'ML-KEM' }),
     ])
-    expect(screen.getByText(/1 not yet analyzed for PQC/)).toBeInTheDocument()
+    expect(screen.getByText(/1 not read \/ not yet analyzed for PQC/)).toBeInTheDocument()
   })
 
   it('omits unanalyzed note in footer when count is zero', () => {
