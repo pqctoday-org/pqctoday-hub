@@ -29,6 +29,8 @@ interface RawSoftwareItem {
   infrastructure_layer: string
   cisa_category?: string
   pqc_support: string
+  pqc_certified?: string
+  has_certification?: string
   pqc_status_canonical?: string
   pqc_capability_description: string
   license_type: string
@@ -192,6 +194,8 @@ const {
       cisaCategory:
         row.cisa_category || deriveCisaCategory(row.category_name, row.infrastructure_layer),
       pqcSupport: row.pqc_support,
+      pqcCertified: (row.pqc_certified || 'none') as SoftwareItem['pqcCertified'],
+      hasCertification: (row.has_certification || 'unknown') as SoftwareItem['hasCertification'],
       pqcStatusCanonical: row.pqc_status_canonical || '',
       pqcCapabilityDescription: row.pqc_capability_description,
       licenseType: row.license_type,
