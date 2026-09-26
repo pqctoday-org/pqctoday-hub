@@ -26,7 +26,18 @@ import Papa from 'papaparse'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const CSV_DIR = join(ROOT, 'src/data')
-const MANIFEST_PATH = join(ROOT, 'public/timeline/evidence/manifest.json')
+// Repointed 2026-09-24 (timeline remediation r2 T-E1): the download script's
+// run log now lives in the private repo; public/timeline/evidence/manifest.json
+// is deleted (the lineage manifest public/timeline/manifest.json is the one
+// public evidence manifest).
+const MANIFEST_PATH = join(
+  ROOT,
+  '..',
+  'pqctoday-priv',
+  'maintenance',
+  'reports',
+  'timeline-download-manifest.json'
+)
 
 const DRY_RUN = process.argv.slice(2).includes('--dry-run')
 

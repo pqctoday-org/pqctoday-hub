@@ -1,8 +1,53 @@
 // SPDX-License-Identifier: GPL-3.0-only
 export type ComplianceSource =
   'NIST' | 'Common Criteria' | 'BSI Germany' | 'ANSSI' | 'ENISA' | 'Other'
-export type ComplianceType = 'FIPS 140-3' | 'ACVP' | 'Common Criteria' | 'EUCC'
-export type ComplianceStatus = 'Active' | 'Historical' | 'Pending' | 'In Process' | 'Revoked'
+/**
+ * Record types published in compliance-data.json. FIPS 140-2 is deliberately
+ * absent: the dataset keeps FIPS 140-3 (NIST CMVP) records only. 'ACVP' is the
+ * internal value for NIST CAVP algorithm validations — show it to users through
+ * `recordTypeLabel()` (recordSemantics.ts), never raw. 'CSPN' is ANSSI's French
+ * national first-level scheme, a separate scheme from Common Criteria.
+ */
+export type ComplianceType = 'FIPS 140-3' | 'ACVP' | 'Common Criteria' | 'EUCC' | 'CSPN'
+
+/**
+ * Statuses the sources publish verbatim. FIPS 140-3 (CMVP): Active / Historical
+ * / Revoked. CAVP: Validated (no lifecycle — NIST shows "First Validated").
+ * CC Portal / ANSSI / EUCC: Active / Archived / Expired / Withdrawn.
+ * 'Pending' and 'In Process' are legacy values kept only so an older cached
+ * copy still renders; no current source writes them (the in-browser scrape that
+ * did was removed 2026-09-25).
+ *
+ * The union is open (`string & {}`) on purpose: an unknown status string must
+ * render as-is and be treated as NOT current — see `isCurrentStatus()`.
+ */
+export type KnownComplianceStatus =
+  | 'Active'
+  | 'Validated'
+  | 'Historical'
+  | 'Revoked'
+  | 'Archived'
+  | 'Expired'
+  | 'Withdrawn'
+  | 'Pending'
+  | 'In Process'
+export type ComplianceStatus = KnownComplianceStatus | (string & {})
+
+/** One entry of a FIPS 140-3 certificate page's "Approved Algorithms" list. */
+export interface CmvpApprovedAlgorithm {
+  name: string
+  /** CAVP validation references on the certificate page, e.g. 'A1234'. */
+  cavpRefs: string[]
+}
+
+/** One capability row of a NIST CAVP validation details page. */
+export interface CavpCapability {
+  algorithm: string
+  operatingEnvironment: string
+  parameterSets: string[]
+  functions: string[]
+  details: string[]
+}
 
 export interface ComplianceRecord {
   id: string
@@ -11,7 +56,13 @@ export interface ComplianceRecord {
   link: string
   type: ComplianceType
   status: ComplianceStatus
-  pqcCoverage: boolean | string // boolean or description like "SHA-3"
+  /**
+   * FIPS 140-3: PQC names from the certificate page's Approved Algorithms list,
+   * 'No PQC Mechanisms Detected' when the page was read and lists none, or ''
+   * when the page could not be read (unknown — never "none").
+   * CC / EUCC / CSPN: PQC names found in the Security Target (not a validation).
+   */
+  pqcCoverage: boolean | string
   classicalAlgorithms?: string // Comma-separated list of classical algos (e.g. "AES, SHA-256")
   productName: string
   productCategory: string
@@ -32,4 +83,65 @@ export interface ComplianceRecord {
   cemVersion?: string // CEM version (e.g., "ISO/IEC 18045:2022")
   avaVanLevel?: string // AVA_VAN level
   packageInfo?: string // Full package/augmentation details
+
+  // ── FIPS 140-3 (NIST CMVP certificate page) ──
+  cmvpStandard?: string
+  cmvpStatus?: string
+  cmvpHistoricalReason?: string | null
+  /** When the certificate page (and so the status) was read — ISO datetime. */
+  cmvpDetailsFetchedAt?: string
+  cmvpApprovedAlgorithms?: CmvpApprovedAlgorithm[]
+  sunsetDate?: string | null
+  overallLevel?: number | null
+  caveat?: string
+  embodiment?: string
+  moduleType?: string
+  operationalEnvironments?: string[] | null
+
+  // ── NIST CAVP validation details page ──
+  cavpFirstValidated?: string
+  cavpImplementationVersion?: string
+  cavpImplementationType?: string
+  cavpProductUrl?: string
+  cavpDetailsFetchedAt?: string
+  cavpCapabilities?: CavpCapability[]
+
+  // ── Common Criteria (CC Portal lists) ──
+  ccArchivedDate?: string | null
+  ccListObservedAt?: string
+
+  /** Official sources that disagree on a field — both shown, neither chosen. */
+  sourceConflicts?: SourceConflict[]
+}
+
+/** One field on which two official sources state different values. */
+export interface SourceConflict {
+  field: string
+  note?: string
+  values: Array<{ value: string; source: string; url?: string; quote?: string }>
+}
+
+/** One source partition of the published snapshot (compliance-data.meta.json). */
+export interface ComplianceMetaPartition {
+  label: string
+  sourceUrl?: string
+  retrievedAt?: string
+  count?: number
+}
+
+/** Sidecar describing a compliance-data.json publication. */
+export interface ComplianceMeta {
+  schemaVersion: number
+  /** sha256 of the compliance-data.json this sidecar describes. */
+  publicationId?: string
+  generatedAt?: string
+  scope?: {
+    fips?: string
+    cavp?: string
+    cc?: string
+    excluded?: string[]
+  }
+  partitions?: Record<string, ComplianceMetaPartition>
+  exclusions?: { byReason?: Record<string, number> }
+  fieldSources?: Record<string, Record<string, string>>
 }

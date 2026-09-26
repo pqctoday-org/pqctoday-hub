@@ -1,0 +1,459 @@
+{
+  "_comment": "Pinned NATIVE results of the NIST SP 800-90B tool (commit 87c104d0) on the two KAT fixtures, produced by scripts/entropy-90b/parity.ts in the Dockerfile.native containers. 'reference' = linux/arm64 g++ with the upstream flags plus -ffp-contract=off (the build the WASM matches bit-for-bit, verbose stdout included). 'upstream' = the unmodified upstream Makefile builds; they differ from the reference and from each other in the last bits (g++ FMA contraction; x87 80-bit long double on amd64).",
+  "nistCommit": "87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289",
+  "nonIid": {
+    "fixture": "kat-markov-1bit-20k",
+    "argv": ["-v", "-v", "-o", "<out>", "<in>", "1"],
+    "reference": {
+      "IID": false,
+      "errorLevel": 0,
+      "sha256": "c9443b93e2f390ba1e4f362d437a927af66e3fa7aa6e7d8be6e7df5daaa47f04",
+      "testCases": [
+        {
+          "hOriginal": 0.959159016531773,
+          "mcvEstimateMode": 10105.0,
+          "mcvEstimatePHat": 0.50525,
+          "mcvEstimatePU": 0.5143566574744197,
+          "testCaseDesc": "Most Common Value"
+        },
+        {
+          "hOriginal": 0.2748248562298956,
+          "testCaseDesc": "Collision Test (for bit strings only)"
+        },
+        {
+          "hOriginal": 0.5220577322278712,
+          "testCaseDesc": "Markov Test (for bit strings only)"
+        },
+        {
+          "hOriginal": 0.3416613008703955,
+          "testCaseDesc": "Compression Test (for bit strings only)"
+        },
+        {
+          "tTupleRes": 0.5001803103643944,
+          "testCaseDesc": "T-Tuple Test"
+        },
+        {
+          "lrsRes": 0.7770158293454122,
+          "testCaseDesc": "LRS Test"
+        },
+        {
+          "hOriginal": 0.900522962326061,
+          "testCaseDesc": "Multi Most Common in Window Test"
+        },
+        {
+          "hOriginal": 0.508354637992731,
+          "testCaseDesc": "Lag Prediction Test"
+        },
+        {
+          "hOriginal": 0.5083853022418827,
+          "testCaseDesc": "Multi Markov Model with Counting Test (MultiMMC)"
+        },
+        {
+          "hOriginal": 0.5078266994786679,
+          "testCaseDesc": "LZ78Y Test"
+        },
+        {
+          "dataWordSize": 1.0,
+          "hAssessed": 0.2748248562298956,
+          "hOriginal": 0.2748248562298956,
+          "testCaseDesc": "Overall"
+        }
+      ],
+      "toolVersion": "1.1.8",
+      "type": ""
+    },
+    "upstream": {
+      "amd64": {
+        "IID": false,
+        "errorLevel": 0,
+        "sha256": "c9443b93e2f390ba1e4f362d437a927af66e3fa7aa6e7d8be6e7df5daaa47f04",
+        "testCases": [
+          {
+            "hOriginal": 0.959159016531773,
+            "mcvEstimateMode": 10105.0,
+            "mcvEstimatePHat": 0.50525,
+            "mcvEstimatePU": 0.5143566574744197,
+            "testCaseDesc": "Most Common Value"
+          },
+          {
+            "hOriginal": 0.2748248562298956,
+            "testCaseDesc": "Collision Test (for bit strings only)"
+          },
+          {
+            "hOriginal": 0.5220577322278711,
+            "testCaseDesc": "Markov Test (for bit strings only)"
+          },
+          {
+            "hOriginal": 0.3416613008703955,
+            "testCaseDesc": "Compression Test (for bit strings only)"
+          },
+          {
+            "tTupleRes": 0.5001803103643944,
+            "testCaseDesc": "T-Tuple Test"
+          },
+          {
+            "lrsRes": 0.7770158293454122,
+            "testCaseDesc": "LRS Test"
+          },
+          {
+            "hOriginal": 0.9005229623260587,
+            "testCaseDesc": "Multi Most Common in Window Test"
+          },
+          {
+            "hOriginal": 0.508354637992731,
+            "testCaseDesc": "Lag Prediction Test"
+          },
+          {
+            "hOriginal": 0.5083853022418827,
+            "testCaseDesc": "Multi Markov Model with Counting Test (MultiMMC)"
+          },
+          {
+            "hOriginal": 0.5078266994786679,
+            "testCaseDesc": "LZ78Y Test"
+          },
+          {
+            "dataWordSize": 1.0,
+            "hAssessed": 0.2748248562298956,
+            "hOriginal": 0.2748248562298956,
+            "testCaseDesc": "Overall"
+          }
+        ],
+        "toolVersion": "1.1.8",
+        "type": ""
+      },
+      "arm64": {
+        "IID": false,
+        "errorLevel": 0,
+        "sha256": "c9443b93e2f390ba1e4f362d437a927af66e3fa7aa6e7d8be6e7df5daaa47f04",
+        "testCases": [
+          {
+            "hOriginal": 0.959159016531773,
+            "mcvEstimateMode": 10105.0,
+            "mcvEstimatePHat": 0.50525,
+            "mcvEstimatePU": 0.5143566574744197,
+            "testCaseDesc": "Most Common Value"
+          },
+          {
+            "hOriginal": 0.2748248562298956,
+            "testCaseDesc": "Collision Test (for bit strings only)"
+          },
+          {
+            "hOriginal": 0.5220577322278711,
+            "testCaseDesc": "Markov Test (for bit strings only)"
+          },
+          {
+            "hOriginal": 0.3416613008703955,
+            "testCaseDesc": "Compression Test (for bit strings only)"
+          },
+          {
+            "tTupleRes": 0.5001803103643944,
+            "testCaseDesc": "T-Tuple Test"
+          },
+          {
+            "lrsRes": 0.7770158293454122,
+            "testCaseDesc": "LRS Test"
+          },
+          {
+            "hOriginal": 0.900522962326061,
+            "testCaseDesc": "Multi Most Common in Window Test"
+          },
+          {
+            "hOriginal": 0.508354637992731,
+            "testCaseDesc": "Lag Prediction Test"
+          },
+          {
+            "hOriginal": 0.5083853022418827,
+            "testCaseDesc": "Multi Markov Model with Counting Test (MultiMMC)"
+          },
+          {
+            "hOriginal": 0.5078266994786679,
+            "testCaseDesc": "LZ78Y Test"
+          },
+          {
+            "dataWordSize": 1.0,
+            "hAssessed": 0.2748248562298956,
+            "hOriginal": 0.2748248562298956,
+            "testCaseDesc": "Overall"
+          }
+        ],
+        "toolVersion": "1.1.8",
+        "type": ""
+      }
+    }
+  },
+  "iidSeeded": {
+    "fixture": "kat-biased-1bit-20k",
+    "argv": ["-v", "-v", "-o", "<out>", "<in>", "1"],
+    "urandomSeedHex": "90244ac2d5a006451abd6282eab058329931bf832c47b388d4efa722a2a26e9f",
+    "urandomSeedNote": "sha256('pqctoday-90b-parity-seed-v1'); native: bind-mounted over /dev/urandom with OMP_NUM_THREADS=1",
+    "reference": {
+      "IID": true,
+      "errorLevel": 0,
+      "sha256": "81c1c7f99eda513a0fe7ebdff3c2962933da61a69ac8d9ee257275f7be6d8fe3",
+      "testCases": [
+        {
+          "binary": true,
+          "hAssessed": 0.3954321122196466,
+          "hBitstring": 1.0,
+          "hOriginal": 0.3954321122196466,
+          "mean": 0.7524,
+          "median": 0.5,
+          "passedChiSquareTests": true,
+          "passedIidPermutationTests": true,
+          "passedLongestRepeatedSubstringTest": true,
+          "permutationTestResults": [
+            {
+              "avgCollision": 27.0,
+              "compression": 5.0,
+              "covariance1": 5.0,
+              "covariance16": 6.0,
+              "covariance2": 6.0,
+              "covariance32": 25.0,
+              "covariance8": 10.0,
+              "excursion": 62.0,
+              "iteration": 0,
+              "lenDirectionalRuns": 1.0,
+              "lenRunsMedian": 40.0,
+              "maxCollision": 5.0,
+              "numDirectionalRuns": 6.0,
+              "numIncreasesDecreases": 16.0,
+              "numRunsMedian": 6.0,
+              "periodicity1": 11.0,
+              "periodicity16": 15.0,
+              "periodicity2": 6.0,
+              "periodicity32": 11.0,
+              "periodicity8": 20.0
+            },
+            {
+              "avgCollision": 0.0,
+              "compression": 1.0,
+              "covariance1": 1.0,
+              "covariance16": 0.0,
+              "covariance2": 0.0,
+              "covariance32": 0.0,
+              "covariance8": 0.0,
+              "excursion": 0.0,
+              "iteration": 1,
+              "lenDirectionalRuns": 5.0,
+              "lenRunsMedian": 2.0,
+              "maxCollision": 1.0,
+              "numDirectionalRuns": 0.0,
+              "numIncreasesDecreases": 0.0,
+              "numRunsMedian": 0.0,
+              "periodicity1": 0.0,
+              "periodicity16": 0.0,
+              "periodicity2": 0.0,
+              "periodicity32": 0.0,
+              "periodicity8": 1.0
+            },
+            {
+              "avgCollision": 6.0,
+              "compression": 10.0,
+              "covariance1": 84.0,
+              "covariance16": 8.0,
+              "covariance2": 7.0,
+              "covariance32": 6.0,
+              "covariance8": 6.0,
+              "excursion": 6.0,
+              "iteration": 2,
+              "lenDirectionalRuns": 31.0,
+              "lenRunsMedian": 4.0,
+              "maxCollision": 5.0,
+              "numDirectionalRuns": 16.0,
+              "numIncreasesDecreases": 6.0,
+              "numRunsMedian": 29.0,
+              "periodicity1": 6.0,
+              "periodicity16": 6.0,
+              "periodicity2": 19.0,
+              "periodicity32": 6.0,
+              "periodicity8": 5.0
+            }
+          ],
+          "testCaseDesc": ""
+        }
+      ],
+      "toolVersion": "1.1.8",
+      "type": ""
+    },
+    "upstream": {
+      "amd64": {
+        "IID": true,
+        "errorLevel": 0,
+        "sha256": "81c1c7f99eda513a0fe7ebdff3c2962933da61a69ac8d9ee257275f7be6d8fe3",
+        "testCases": [
+          {
+            "binary": true,
+            "hAssessed": 0.3954321122196466,
+            "hBitstring": 1.0,
+            "hOriginal": 0.3954321122196466,
+            "mean": 0.7524,
+            "median": 0.5,
+            "passedChiSquareTests": true,
+            "passedIidPermutationTests": true,
+            "passedLongestRepeatedSubstringTest": true,
+            "permutationTestResults": [
+              {
+                "avgCollision": 27.0,
+                "compression": 5.0,
+                "covariance1": 5.0,
+                "covariance16": 6.0,
+                "covariance2": 6.0,
+                "covariance32": 25.0,
+                "covariance8": 10.0,
+                "excursion": 62.0,
+                "iteration": 0,
+                "lenDirectionalRuns": 1.0,
+                "lenRunsMedian": 40.0,
+                "maxCollision": 5.0,
+                "numDirectionalRuns": 6.0,
+                "numIncreasesDecreases": 16.0,
+                "numRunsMedian": 6.0,
+                "periodicity1": 11.0,
+                "periodicity16": 15.0,
+                "periodicity2": 6.0,
+                "periodicity32": 11.0,
+                "periodicity8": 20.0
+              },
+              {
+                "avgCollision": 0.0,
+                "compression": 1.0,
+                "covariance1": 1.0,
+                "covariance16": 0.0,
+                "covariance2": 0.0,
+                "covariance32": 0.0,
+                "covariance8": 0.0,
+                "excursion": 0.0,
+                "iteration": 1,
+                "lenDirectionalRuns": 5.0,
+                "lenRunsMedian": 2.0,
+                "maxCollision": 1.0,
+                "numDirectionalRuns": 0.0,
+                "numIncreasesDecreases": 0.0,
+                "numRunsMedian": 0.0,
+                "periodicity1": 0.0,
+                "periodicity16": 0.0,
+                "periodicity2": 0.0,
+                "periodicity32": 0.0,
+                "periodicity8": 1.0
+              },
+              {
+                "avgCollision": 6.0,
+                "compression": 10.0,
+                "covariance1": 84.0,
+                "covariance16": 8.0,
+                "covariance2": 7.0,
+                "covariance32": 6.0,
+                "covariance8": 6.0,
+                "excursion": 6.0,
+                "iteration": 2,
+                "lenDirectionalRuns": 31.0,
+                "lenRunsMedian": 4.0,
+                "maxCollision": 5.0,
+                "numDirectionalRuns": 16.0,
+                "numIncreasesDecreases": 6.0,
+                "numRunsMedian": 29.0,
+                "periodicity1": 6.0,
+                "periodicity16": 6.0,
+                "periodicity2": 19.0,
+                "periodicity32": 6.0,
+                "periodicity8": 5.0
+              }
+            ],
+            "testCaseDesc": ""
+          }
+        ],
+        "toolVersion": "1.1.8",
+        "type": ""
+      },
+      "arm64": {
+        "IID": true,
+        "errorLevel": 0,
+        "sha256": "81c1c7f99eda513a0fe7ebdff3c2962933da61a69ac8d9ee257275f7be6d8fe3",
+        "testCases": [
+          {
+            "binary": true,
+            "hAssessed": 0.3954321122196466,
+            "hBitstring": 1.0,
+            "hOriginal": 0.3954321122196466,
+            "mean": 0.7524,
+            "median": 0.5,
+            "passedChiSquareTests": true,
+            "passedIidPermutationTests": true,
+            "passedLongestRepeatedSubstringTest": true,
+            "permutationTestResults": [
+              {
+                "avgCollision": 27.0,
+                "compression": 5.0,
+                "covariance1": 5.0,
+                "covariance16": 6.0,
+                "covariance2": 6.0,
+                "covariance32": 25.0,
+                "covariance8": 10.0,
+                "excursion": 62.0,
+                "iteration": 0,
+                "lenDirectionalRuns": 1.0,
+                "lenRunsMedian": 40.0,
+                "maxCollision": 5.0,
+                "numDirectionalRuns": 6.0,
+                "numIncreasesDecreases": 16.0,
+                "numRunsMedian": 6.0,
+                "periodicity1": 11.0,
+                "periodicity16": 15.0,
+                "periodicity2": 6.0,
+                "periodicity32": 11.0,
+                "periodicity8": 20.0
+              },
+              {
+                "avgCollision": 0.0,
+                "compression": 1.0,
+                "covariance1": 1.0,
+                "covariance16": 0.0,
+                "covariance2": 0.0,
+                "covariance32": 0.0,
+                "covariance8": 0.0,
+                "excursion": 0.0,
+                "iteration": 1,
+                "lenDirectionalRuns": 5.0,
+                "lenRunsMedian": 2.0,
+                "maxCollision": 1.0,
+                "numDirectionalRuns": 0.0,
+                "numIncreasesDecreases": 0.0,
+                "numRunsMedian": 0.0,
+                "periodicity1": 0.0,
+                "periodicity16": 0.0,
+                "periodicity2": 0.0,
+                "periodicity32": 0.0,
+                "periodicity8": 1.0
+              },
+              {
+                "avgCollision": 6.0,
+                "compression": 10.0,
+                "covariance1": 84.0,
+                "covariance16": 8.0,
+                "covariance2": 7.0,
+                "covariance32": 6.0,
+                "covariance8": 6.0,
+                "excursion": 6.0,
+                "iteration": 2,
+                "lenDirectionalRuns": 31.0,
+                "lenRunsMedian": 4.0,
+                "maxCollision": 5.0,
+                "numDirectionalRuns": 16.0,
+                "numIncreasesDecreases": 6.0,
+                "numRunsMedian": 29.0,
+                "periodicity1": 6.0,
+                "periodicity16": 6.0,
+                "periodicity2": 19.0,
+                "periodicity32": 6.0,
+                "periodicity8": 5.0
+              }
+            ],
+            "testCaseDesc": ""
+          }
+        ],
+        "toolVersion": "1.1.8",
+        "type": ""
+      }
+    }
+  }
+}

@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { MainLayout } from './MainLayout'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { useDisclaimerStore } from '../../store/useDisclaimerStore'
 
 vi.mock('../../vite-env.d.ts', () => ({
   __BUILD_TIMESTAMP__: 'Dec 6, 2024, 5:00 PM CST',
@@ -36,6 +37,7 @@ function renderLayout(initialEntry = '/') {
         <Route element={<MainLayout />}>
           <Route path="/" element={<div>Home Page</div>} />
           <Route path="/timeline" element={<div>Timeline Page</div>} />
+          <Route path="/threats" element={<div>Threats Page</div>} />
         </Route>
       </Routes>
     </MemoryRouter>
@@ -71,6 +73,18 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     expect(await screen.findByRole('button', { name: /Learn/ })).toBeInTheDocument()
   })
 
+  it('flag on, first run: the disclaimer sits in flow below the role picker, not fixed over it (UX-17)', async () => {
+    useDisclaimerStore.getState().resetForTesting()
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderLayout('/')
+    const picker = await screen.findByText("Who's asking?")
+    const banner = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
+    expect(banner.className).not.toMatch(/\bfixed\b/)
+    // Document order: the picker comes first, the disclaimer after it.
+    expect(picker.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.getAllByRole('alert', { name: 'Welcome to PQC Today' })).toHaveLength(1)
+  })
+
   it('flag on, no persona chosen and not skipped: shows the first-run role picker WITH the header and bottom nav still visible', async () => {
     // Real gap found by the user directly ("i dont see the top bar and
     // bottom bar"): an earlier version rendered the picker as a fixed
@@ -94,6 +108,22 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     // here.
     expect(await screen.findByRole('button', { name: 'Search' })).toBeInTheDocument()
     expect(await screen.findByRole('button', { name: /Home/ })).toBeInTheDocument()
+  })
+
+  // UX-9: a shared threat link used to land a first-time phone visitor on the
+  // role picker instead of the threat they were sent.
+  it('flag on, no persona chosen: a /threats deep link shows the page, not the first-run picker', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderLayout('/threats?id=FIN-001')
+    expect(await screen.findByText('Threats Page')).toBeInTheDocument()
+    expect(screen.queryByText("Who's asking?")).not.toBeInTheDocument()
+  })
+
+  it('flag on, no persona chosen: plain /threats (no deep link) still shows the first-run picker', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderLayout('/threats')
+    expect(await screen.findByText("Who's asking?")).toBeInTheDocument()
+    expect(screen.queryByText('Threats Page')).not.toBeInTheDocument()
   })
 
   it('flag on, personalization explicitly skipped: shows the normal mobile chrome, not the picker again', async () => {

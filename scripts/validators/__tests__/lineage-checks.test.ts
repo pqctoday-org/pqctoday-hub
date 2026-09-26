@@ -7,6 +7,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   archiveOnlyFindings,
+  certRecords,
   contradictedFindings,
   manifestEntries,
   parseNameStatus,
@@ -52,6 +53,39 @@ describe('LN-1 verdict lock', () => {
     expect(
       verdictLockFindings(before, [{ id: '9001', value: 'ML-KEM', stamp: '' }], opts)
     ).toHaveLength(1)
+  })
+
+  it('a newer official-source read (certificate page) authorises the change and drops the old stamp', () => {
+    // #5300: a token-scan verdict stamped 09-17 is replaced by the certificate
+    // page's Approved Algorithms list, read 09-25 (user rule D-SRC-1, 2026-09-24).
+    const baseJson = JSON.stringify([
+      {
+        id: '5300',
+        pqcCoverage: 'ML-KEM, ML-DSA, LMS',
+        pqcCoverageVerifiedAt: '2026-09-17T21:49:07Z',
+      },
+    ])
+    const headJson = JSON.stringify([
+      { id: '5300', pqcCoverage: 'LMS', cmvpDetailsFetchedAt: '2026-09-25T02:40:28+00:00' },
+    ])
+    const before = certRecords(baseJson, 'pqcCoverage', 'pqcCoverageVerifiedAt')
+    const after = certRecords(headJson, 'pqcCoverage', 'pqcCoverageVerifiedAt')
+    expect(verdictLockFindings(before, after, opts)).toHaveLength(0)
+  })
+
+  it('an official-source stamp OLDER than the verdict does not authorise the change', () => {
+    const baseJson = JSON.stringify([
+      { id: '5301', pqcCoverage: 'ML-KEM', pqcCoverageVerifiedAt: '2026-09-17T21:49:07Z' },
+    ])
+    const headJson = JSON.stringify([
+      { id: '5301', pqcCoverage: 'LMS', cmvpDetailsFetchedAt: '2026-09-01T00:00:00+00:00' },
+    ])
+    const f = verdictLockFindings(
+      certRecords(baseJson, 'pqcCoverage', 'pqcCoverageVerifiedAt'),
+      certRecords(headJson, 'pqcCoverage', 'pqcCoverageVerifiedAt'),
+      opts
+    )
+    expect(f).toHaveLength(1)
   })
 
   it('unchanged values, new records and removed records are not findings', () => {

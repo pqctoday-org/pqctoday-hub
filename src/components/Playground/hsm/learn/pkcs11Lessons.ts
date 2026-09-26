@@ -398,7 +398,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
     tone: 'ok',
     title: 'Digests & randomness',
     blurb:
-      'Two stateless building blocks used everywhere else in this curriculum: hashing and true randomness.',
+      'Two stateless building blocks used everywhere else in this curriculum: hashing and random-number generation.',
     setup:
       'C_Digest computes a hash with no key involved. C_GenerateRandom asks the token for cryptographically strong random bytes — the same source the token uses internally to generate keys and IVs.',
     steps: [

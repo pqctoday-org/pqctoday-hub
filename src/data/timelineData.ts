@@ -11,6 +11,7 @@ import type {
 } from '../types/timeline'
 import { complianceFrameworks } from './complianceData'
 import { filterActive } from './loaderUtils'
+import timelineReviewPolicy from './timelineReviewPolicy.json'
 
 // Re-export types for backward compatibility
 export type {
@@ -139,6 +140,17 @@ interface RawTimelineRow {
   // source document's own publication date). Blank means "never row-verified",
   // which IS the staleness signal; enrichment never sets this field.
   last_verified?: string
+  // Added 2026-09-24 (timeline remediation r2). binding_force: the reviewed
+  // binding character (binding | mandatory_for_scope | official_target |
+  // recommendation | draft | informational), set only by a Claude + Codex
+  // agreed review. source_class: primary (the issuer's own publication) or
+  // secondary (reputable secondary reporting, allowed when flagged — user
+  // decision T5); blank = not yet classified. trusted_source_linked_at: when
+  // the trusted_source_id link was made (moved out of the old free-text
+  // trusted_source_id_status values).
+  binding_force?: string
+  source_class?: string
+  trusted_source_linked_at?: string
 }
 
 // ─── Graded confidence score ─────────────────────────────────────────────────
@@ -216,9 +228,28 @@ function parseSaneYear(raw: string | undefined, context: string): number | null 
   return year
 }
 
+const UNREVIEWED_STATUSES: ReadonlySet<string> = new Set(
+  timelineReviewPolicy.unreviewedStatuses.map((s) => s.trim().toLowerCase())
+)
+
+/**
+ * True when a CSV `Status` value marks a row as not yet reviewed
+ * (timelineReviewPolicy.json). Such rows are withheld from the public timeline
+ * until a reviewer changes their Status (user decision T4, 2026-09-24).
+ */
+export function isUnreviewedStatus(status: string | undefined): boolean {
+  return UNREVIEWED_STATUSES.has((status ?? '').trim().toLowerCase())
+}
+
+export interface ParseTimelineOptions {
+  /** Keep rows whose Status is unreviewed. Off for everything public. */
+  includeUnreviewed?: boolean
+}
+
 export function parseTimelineCSV(
   csvContent: string,
-  referenceDate: Date = new Date()
+  referenceDate: Date = new Date(),
+  options: ParseTimelineOptions = {}
 ): CountryData[] {
   const { data: allRows } = Papa.parse<RawTimelineRow>(csvContent.trim(), {
     header: true,
@@ -227,7 +258,11 @@ export function parseTimelineCSV(
 
   // DS01: exclude deprecated/obsolete rows from the Gantt. Rows without a
   // `status` column are treated as active (backwards-compatible).
-  const rows = filterActive(allRows)
+  // Timeline remediation r2 T-B1: unreviewed rows are withheld from the public
+  // output (they stay in the CSV and in the private review queue).
+  const rows = filterActive(allRows).filter(
+    (r) => options.includeUnreviewed || !isUnreviewedStatus(r.Status)
+  )
 
   const countriesMap = new Map<string, CountryData>()
 
@@ -282,7 +317,7 @@ export function parseTimelineCSV(
       description: row.Description || '',
       sourceUrl: row.SourceUrl || '',
       sourceDate: row.SourceDate || '',
-      status: row.Status?.trim(),
+      reviewStatus: row.Status?.trim() || undefined,
       peerReviewed:
         (row.peer_reviewed?.toLowerCase() as TimelineEvent['peerReviewed']) || undefined,
       vettingBody: row.vetting_body
@@ -301,6 +336,8 @@ export function parseTimelineCSV(
       entityType: (row.entity_type?.trim() as TimelineEvent['entityType']) || 'government',
       eventId: row.event_id || undefined,
       lastVerified: row.last_verified || undefined,
+      bindingForce: (row.binding_force?.trim() as TimelineEvent['bindingForce']) || undefined,
+      sourceClass: (row.source_class?.trim() as TimelineEvent['sourceClass']) || undefined,
       complianceRefs: [],
       xwalkEdgeIds: [],
       // Populate denormalized fields
@@ -389,6 +426,11 @@ function getLatestTimelineFiles(): {
   }
 }
 
+/** Snapshot-comparison key: the row's stable event_id, else the legacy composite. */
+function changeKey(countryName: string, bodyName: string, e: TimelineEvent): string {
+  return e.eventId || `${countryName}:${bodyName}:${e.phase}:${e.title}`
+}
+
 // Parse the CSV content to get the timeline data
 let parsedData: CountryData[] = []
 let metadata: { filename: string; lastUpdate: Date } | null = null
@@ -402,14 +444,26 @@ try {
     const currentCountries = parseTimelineCSV(current.content, current.date)
     const previousCountries = previous ? parseTimelineCSV(previous.content, previous.date) : []
 
-    // Flatten events to compare them
-    // Unique ID for event: Country + Org + Phase + Title
+    // Flatten events to compare them. Keyed by the stable event_id (timeline
+    // remediation r2 W-B: a title edit used to read as a brand-new event), with
+    // the old composite as a fallback for rows without one. Only the CONTENT a
+    // reader sees is compared — adding a metadata column, or the confidence
+    // score drifting with the snapshot date, is not an "Updated" event.
     const flattenEvents = (countries: CountryData[]) => {
       return countries.flatMap((c) =>
         c.bodies.flatMap((b) =>
           b.events.map((e) => ({
-            ...e,
-            id: `${c.countryName}:${b.name}:${e.phase}:${e.title}`,
+            id: changeKey(c.countryName, b.name, e),
+            title: e.title,
+            description: e.description,
+            startYear: e.startYear,
+            endYear: e.endYear,
+            phase: e.phase,
+            type: e.type,
+            sourceUrl: e.sourceUrl,
+            sourceDate: e.sourceDate,
+            reviewStatus: e.reviewStatus,
+            mandateType: e.mandateType,
           }))
         )
       )
@@ -429,10 +483,9 @@ try {
       bodies: c.bodies.map((b) => ({
         ...b,
         events: b.events.map((e) => {
-          const id = `${c.countryName}:${b.name}:${e.phase}:${e.title}`
           return {
             ...e,
-            status: statusMap.get(id),
+            status: statusMap.get(changeKey(c.countryName, b.name, e)),
           }
         }),
       })),
@@ -449,23 +502,28 @@ try {
 }
 
 // ─── complianceRefs post-pass ────────────────────────────────────────────────
-// Inverts compliance.timelineRefs → event.complianceRefs, so each event knows
-// which compliance frameworks cite it (no CSV change needed).
+// Inverts compliance.timeline_refs → event.complianceRefs. timeline_refs holds
+// "Country:OrgName" tuples (CSVmaintenance.md §5.1), so a framework is attached
+// to every event of that country/body. Until 2026-09-24 this looked the tuples
+// up by event TITLE — 0 of 80 ever matched, so no event carried a reference
+// (timeline remediation r2 W-B). The lane key mirrors the loader's CNSA split.
 function attachComplianceRefs(countries: CountryData[]): void {
-  const titleToIds = new Map<string, string[]>()
+  const byPair = new Map<string, string[]>()
   for (const fw of complianceFrameworks) {
     for (const ref of fw.timelineRefs ?? []) {
-      const arr = titleToIds.get(ref) ?? []
-      arr.push(fw.id)
-      titleToIds.set(ref, arr)
+      const key = ref.trim().toLowerCase()
+      const arr = byPair.get(key) ?? []
+      if (!arr.includes(fw.id)) arr.push(fw.id)
+      byPair.set(key, arr)
     }
   }
   for (const country of countries) {
+    const csvCountry =
+      country.countryName === 'United States (CNSA)' ? 'United States' : country.countryName
     for (const body of country.bodies) {
-      for (const event of body.events) {
-        const refs = titleToIds.get(event.title)
-        if (refs && refs.length > 0) event.complianceRefs = refs
-      }
+      const refs = byPair.get(`${csvCountry}:${body.name}`.toLowerCase())
+      if (!refs || refs.length === 0) continue
+      for (const event of body.events) event.complianceRefs = [...refs]
     }
   }
 }
@@ -476,13 +534,14 @@ export const timelineData: CountryData[] = parsedData
 export const timelineMetadata = metadata
 
 /**
- * Canonical concept_id for a timeline event — PR 3c. Timeline events have no
- * stable ID column in the source CSV; `title` is the natural key used by the
- * registry build script.
+ * Canonical concept_id for a timeline event. The concept registry keys timeline
+ * rows by their stable event_id (all 294 source_row_ids are event_ids); this
+ * used to look them up by title, which never matched (timeline remediation r2
+ * W-B).
  */
 import { conceptIdForStoreKey } from './conceptRegistry'
-export function conceptIdForTimelineEvent(event: { title: string }): string | undefined {
-  return conceptIdForStoreKey('timeline', event.title)
+export function conceptIdForTimelineEvent(event: { eventId?: string }): string | undefined {
+  return event.eventId ? conceptIdForStoreKey('timeline', event.eventId) : undefined
 }
 
 /**

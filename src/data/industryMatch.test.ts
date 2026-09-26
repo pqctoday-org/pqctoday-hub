@@ -7,7 +7,7 @@
 // silently emptying the supply-chain matrix's Impact axis, and Cross-Industry
 // threats matched nobody at all.
 import { describe, it, expect } from 'vitest'
-import { matchesIndustry, sectorKeysFor, isCrossIndustry } from './industryMatch'
+import { matchesIndustry, sectorKeysFor, isCrossIndustry, rowSectorKeysFor } from './industryMatch'
 import { threatsData } from './threatsData'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 
@@ -45,5 +45,25 @@ describe('industryMatch — sector-key join', () => {
   it('returns null sector keys for empty or unknown tokens', () => {
     expect(sectorKeysFor('')).toBeNull()
     expect(sectorKeysFor('Not A Real Industry')).toBeNull()
+  })
+})
+
+describe('Threats-page labels renamed by ruling R3 (2026-09-24)', () => {
+  it('"Critical Infrastructure / OT" keeps the sector its predecessor label had', () => {
+    expect(rowSectorKeysFor('Critical Infrastructure / OT')).toEqual(
+      rowSectorKeysFor('Critical Infrastructure / Energy')
+    )
+    expect(matchesIndustry('Critical Infrastructure / OT', 'Energy & Utilities')).toBe(true)
+    expect(matchesIndustry('Critical Infrastructure / OT', 'Finance & Banking')).toBe(false)
+  })
+
+  it('"Hardware Security Modules" stays its own threats sector and joins Technology, not everyone', () => {
+    expect(isCrossIndustry('Hardware Security Modules')).toBe(false)
+    expect(matchesIndustry('Hardware Security Modules', 'Technology')).toBe(true)
+    expect(matchesIndustry('Hardware Security Modules', 'Healthcare')).toBe(false)
+  })
+
+  it('"Aerospace / Aviation / Space" matches the aerospace sector', () => {
+    expect(matchesIndustry('Aerospace / Aviation / Space', 'Aerospace')).toBe(true)
   })
 })

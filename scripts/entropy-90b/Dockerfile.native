@@ -1,0 +1,40 @@
+# syntax=docker/dockerfile:1
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Native (reference) build of the NIST SP 800-90B EntropyAssessment tool, used
+# ONLY as the parity oracle for the WebAssembly build. Built from the same
+# pinned commit with the upstream Makefile unchanged (GCC, -fopenmp, -O2,
+# -ffloat-store; -march=native on amd64 exactly as upstream's ARCH=x86
+# default) -> /usr/local/bin/ea_*.
+# A second, diagnostic set in /usr/local/bin/strict/ uses the same flags minus
+# -march=native plus -ffp-contract=off: g++ compiles C++ with
+# -ffp-contract=fast by default (FMA contraction wherever the target has FMA),
+# which makes the upstream binaries' last bits depend on the CPU. The strict
+# set shows how much of any WASM difference is contraction.
+#
+#   docker buildx build --platform linux/amd64 -f Dockerfile.native -t ea-native:amd64 --load .
+#   docker buildx build --platform linux/arm64 -f Dockerfile.native -t ea-native:arm64 --load .
+ARG DEBIAN_TAG=trixie-slim
+FROM debian:${DEBIAN_TAG}
+ARG NIST_COMMIT=87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289
+ARG TARGETARCH
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      g++ make git ca-certificates libbz2-dev libdivsufsort-dev libjsoncpp-dev \
+      libssl-dev libgmp-dev libmpfr-dev \
+ && rm -rf /var/lib/apt/lists/*
+RUN git clone --quiet https://github.com/usnistgov/SP800-90B_EntropyAssessment.git /nist \
+ && cd /nist && git checkout --quiet ${NIST_COMMIT} \
+ && test "$(git rev-parse HEAD)" = "${NIST_COMMIT}"
+# Upstream Makefile: ARCH=x86 (default) adds -march=native; any other value omits it.
+RUN cd /nist/cpp \
+ && if [ "$TARGETARCH" = "amd64" ]; then make iid non_iid restart; \
+    else make ARCH=${TARGETARCH} iid non_iid restart; fi \
+ && install -m755 ea_iid ea_non_iid ea_restart /usr/local/bin/ \
+ && make clean >/dev/null \
+ && make CXXFLAGS="-std=c++11 -fopenmp -O2 -ffloat-store -ffp-contract=off -I/usr/include/jsoncpp" iid non_iid restart \
+ && mkdir -p /usr/local/bin/strict && install -m755 ea_iid ea_non_iid ea_restart /usr/local/bin/strict/ \
+ && { echo "nistCommit=${NIST_COMMIT}"; echo "arch=${TARGETARCH}"; g++ --version | head -1; \
+      dpkg-query -W -f='${Package}=${Version}\n' libbz2-dev libdivsufsort-dev libjsoncpp-dev libssl-dev; \
+      echo "march-native-flags=$(g++ -march=native -Q --help=target 2>/dev/null | grep -E '^\s+-m(fma|avx2|avx512f)\s' | tr -s ' \t' ' ' | tr '\n' ';')"; \
+    } > /BUILDINFO.txt
+WORKDIR /work

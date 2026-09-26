@@ -10,6 +10,10 @@
  * via REGULATORY_DEADLINE_YEAR (re-exported from timelineFacts.generated.ts).
  * Edit the CSV → rebuild → all consumers pick up the new year automatically.
  *
+ * Provenance of every date below: regulatoryConstantProvenance.ts (timeline /
+ * generated / derived / policy constant / planning / unsourced), enforced by
+ * regulatoryConstantProvenance.test.ts against the reviewed timeline CSV.
+ *
  * Sources:
  *   - CNSA 2.0: NSA Cybersecurity Advisory (September 2022, updated March 2024)
  *   - NIST IR 8547: Transition to Post-Quantum Cryptography Standards (November 2024)
@@ -28,10 +32,15 @@ import { TIMELINE_COUNTRY_DEADLINE_YEAR } from './timelineFacts.generated'
  */
 export const REGULATORY_DEADLINE_YEAR: Record<string, number> = TIMELINE_COUNTRY_DEADLINE_YEAR
 
-// CSV-sourced deadline aliases — single-country lookups with a safety fallback
-// so regulatoryTimelines.ts stays usable even before the first codegen run.
-const US_DEADLINE = TIMELINE_COUNTRY_DEADLINE_YEAR['US'] ?? 2030
-const DE_DEADLINE = TIMELINE_COUNTRY_DEADLINE_YEAR['DE'] ?? 2030
+// CSV-sourced deadline aliases — single-country lookups. `2030` is a bootstrap
+// safety net for the (now historical) case where codegen never ran and the
+// generated map is empty; it must NOT paper over a country that codegen DID
+// run for but that has no reviewed deadline right now (2026-09-25: Germany's
+// only tagged deadline row was withdrawn pending stronger evidence — an `?? 2030`
+// here would have silently kept reporting the withdrawn value as current).
+const codegenRan = Object.keys(TIMELINE_COUNTRY_DEADLINE_YEAR).length > 0
+const US_DEADLINE = TIMELINE_COUNTRY_DEADLINE_YEAR['US'] ?? (codegenRan ? undefined : 2030)
+const DE_DEADLINE = TIMELINE_COUNTRY_DEADLINE_YEAR['DE'] ?? (codegenRan ? undefined : 2030)
 
 // ── CNSA 2.0 (NSA) — National Security Systems ────────────────────────────
 
@@ -43,8 +52,11 @@ export const CNSA_2_0 = {
    * support + new acquisitions, NOT networking — networking support is 2026). Field
    * name kept for back-compat. */
   networkingRequired: 2027,
-  /** Software/firmware signing must exclusively use CNSA 2.0 (= US sim deadline, from CSV) */
-  softwareExclusive: US_DEADLINE,
+  /** Software/firmware signing and traditional networking must exclusively use CNSA 2.0.
+   * Restates the reviewed timeline row united-states-nsa-cnsa-2-0-exclusive-network-signing
+   * (regulatoryConstantProvenance.ts). It used to read US_DEADLINE — EO 14412's
+   * key-establishment year, a different policy that happens to be 2030 too. */
+  softwareExclusive: 2030,
   /** Web browsers, servers, cloud services & operating systems exclusively CNSA 2.0.
    * (Traditional networking equipment is exclusive by 2030, not 2033.) Field name kept
    * for back-compat. */
@@ -171,8 +183,10 @@ export const ANSSI_TIMELINE = {
   hybridMandatory: true,
   /** Hash-based signatures (SLH-DSA, LMS, XMSS) may be used standalone */
   hashBasedStandaloneAllowed: true,
-  /** Target year for organizations to have PQC migration plans */
-  migrationPlanTarget: 2025,
+  // migrationPlanTarget (2025) REMOVED 2026-09-25 (timeline remediation r2 W-K,
+  // user decision): no ANSSI document sets a 2025 migration-plan target for
+  // organisations. ANSSI's 2025 dates are its own guide updates (end 2025) and
+  // phase 1 lasting "until after 2025" (2022 position paper).
 } as const
 
 // ── BSI (Germany) ─────────────────────────────────────────────────────────
@@ -180,7 +194,12 @@ export const ANSSI_TIMELINE = {
 export const BSI_TIMELINE = {
   /** BSI recommends hybrid PQC+classical for transition period */
   hybridRecommended: true,
-  /** Target for quantum-safe by default (= DE sim deadline, from CSV) */
+  /**
+   * Target for quantum-safe by default (= DE sim deadline, from CSV).
+   * `undefined` when Germany has no currently-reviewed deadline row — see the
+   * DE_DEADLINE note above; a UI reading this must handle the absent case
+   * rather than assume a target always exists.
+   */
   quantumSafeDefault: DE_DEADLINE,
 } as const
 

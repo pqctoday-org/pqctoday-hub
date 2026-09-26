@@ -13,6 +13,7 @@ export interface MonthlyTrendPoint {
   fips: number
   acvp: number
   cc: number
+  cspn: number
   total: number
 }
 
@@ -46,11 +47,15 @@ function nextMonth(ym: string): string {
 }
 
 /**
- * Buckets confirmed-PQC records by month and scheme — FIPS (140-2 and 140-3
- * merged; the raw JSON carries both, though only 140-3 is in `ComplianceType`),
- * ACVP, and CC (Common Criteria and EUCC merged, EUCC being the EU's CC
- * scheme). Zero-fills every month in `[startMonth, referenceDate's month]` so
- * a quiet month reads as zero, not as a gap in the axis.
+ * Buckets confirmed-PQC records by month and scheme — FIPS 140-3 only (a
+ * legacy 'FIPS 140-2' row, should one ever reappear, is ignored: the dataset
+ * is FIPS 140-3 only), NIST CAVP (internal type 'ACVP'), CC (Common Criteria
+ * and EUCC merged, EUCC being the EU's CC scheme) and CSPN (ANSSI's national
+ * scheme — never counted as CC). For CC / EUCC / CSPN the PQC names are those
+ * named in the Security Target. Zero-fills every month in
+ * `[startMonth, referenceDate's month]` so a quiet month reads as zero, not as
+ * a gap in the axis. Callers pass records already filtered to the scope the
+ * reader chose (current only by default).
  */
 export function buildMonthlyPqcCertificationTrend(
   records: ComplianceRecord[],
@@ -61,7 +66,7 @@ export function buildMonthlyPqcCertificationTrend(
 
   const buckets = new Map<string, MonthlyTrendPoint>()
   for (let ym = startMonth; ym <= endMonth; ym = nextMonth(ym)) {
-    buckets.set(ym, { month: ym, fips: 0, acvp: 0, cc: 0, total: 0 })
+    buckets.set(ym, { month: ym, fips: 0, acvp: 0, cc: 0, cspn: 0, total: 0 })
   }
 
   for (const record of records) {
@@ -69,9 +74,10 @@ export function buildMonthlyPqcCertificationTrend(
     const bucket = buckets.get(monthKey(record.date))
     if (!bucket) continue // outside [startMonth, endMonth]
 
-    if (record.type.startsWith('FIPS')) bucket.fips += 1
+    if (record.type === 'FIPS 140-3') bucket.fips += 1
     else if (record.type === 'ACVP') bucket.acvp += 1
     else if (record.type === 'Common Criteria' || record.type === 'EUCC') bucket.cc += 1
+    else if (record.type === 'CSPN') bucket.cspn += 1
     else continue
 
     bucket.total += 1

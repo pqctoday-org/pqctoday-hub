@@ -57,9 +57,13 @@ export function CategoryFilter({ className }: CategoryFilterProps) {
     ? searchParams.getAll('cat').filter(isEntityType)
     : CATEGORY_DEFAULT
 
-  const options: FilterDropdownItem[] = (['government', 'standards', 'vendor'] as EntityType[]).map(
-    (id) => ({ id, label: `${CATEGORY_LABELS[id]} (${counts[id]})` })
-  )
+  // A category with no events is not offered: since the 2026-09-25 scope
+  // decision (government, regulator and standards milestones only) the vendor
+  // category is empty, and an option that can only ever show "(0)" is noise.
+  const options: FilterDropdownItem[] = (['government', 'standards', 'vendor'] as EntityType[])
+    // eslint-disable-next-line security/detect-object-injection
+    .filter((id) => counts[id] > 0 || selected.includes(id))
+    .map((id) => ({ id, label: `${CATEGORY_LABELS[id]} (${counts[id]})` }))
 
   function handleChange(next: string[]) {
     const cats = next.filter(isEntityType)

@@ -225,41 +225,46 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
       why: 'A linear congruential generator has a small internal state and a fixed step; once a few outputs are known, every later one follows, which no cryptographic use can tolerate.',
     },
   ],
+  // Entropy remediation P0 cleanup (2026-09-24): the three entries below were
+  // rewritten against the grouped checks and the assumption-driven combining
+  // verdict (workshop/sourceAssessment.ts); outcomes checked against the code.
   'entropy-test': [
     {
-      prompt: 'Load Repeating Pattern and run the static tests. Which check fails first?',
+      prompt:
+        'Load Repeating Pattern and run the checks. Which SP 800-90B health test signals a failure, and why?',
       options: [
-        'The runs or serial test, because the pattern repeats',
-        'The monobit test, because there are no ones',
-        'None — patterns pass',
+        'Adaptive Proportion — one value keeps recurring, though never back-to-back',
+        'Repetition Count — the same byte repeats in a row',
+        'Neither — health tests only look at the bit balance',
       ],
       answer: 0,
-      why: 'A repeating pattern can have a balanced bit count yet fail structure tests; that is why several statistics are needed, and why real validation uses the SP 800-90B tool.',
+      why: 'No byte of 0xDEADBEEF repeats consecutively, so Repetition Count (built for a stuck source, SP 800-90B §4.4.1) stays quiet. Adaptive Proportion counts how often a value recurs within a window (§4.4.2) and signals it — here on a partial 64-sample window, so it demonstrates the idea rather than the test as specified.',
     },
   ],
   'qrng-demo': [
     {
       prompt:
-        'After Run Entropy Tests on Both Samples, how do the QRNG reference and the CSPRNG compare?',
+        'After Run the Checks on All Three Samples, how do the Simulated QRNG and the CSPRNG compare?',
       options: [
-        'Statistically equivalent; only the Weak PRNG stands out',
-        'The QRNG scores far higher',
+        'The same, within sampling noise; only the Weak PRNG stands out',
+        'The Simulated QRNG scores far higher',
         'The CSPRNG fails monobit',
       ],
       answer: 0,
-      why: 'Good randomness from a physical quantum source and from an OS CSPRNG look the same to statistical tests; the page also says this demo generates the "QRNG" sample with crypto.getRandomValues.',
+      why: 'The page says the simulated QRNG sample is crypto.getRandomValues() output, the same kind as the CSPRNG. Output checks could not separate a real QRNG from a working CSPRNG either: they describe output, not the noise source SP 800-90B assesses.',
     },
   ],
   'source-combining': [
     {
-      prompt: 'Replace Source A with all zeros and run the pipeline. What does the output show?',
+      prompt:
+        'Load the "Stuck source, detected" counterexample. Source B is healthy — what is the verdict, and why?',
       options: [
-        "Source B's entropy survives Hash_df conditioning",
-        'The output is all zeros',
-        'The pipeline refuses to run',
+        'Not enough evidence — only Source B is credited, short of the entropy needed, and neither source is validated',
+        'Consistent with the stated assumptions — Source B carries the construction',
+        'Construction is unsafe — Source A is all zeros',
       ],
       answer: 0,
-      why: 'Concatenation then Hash_df (SP 800-90C §3.1, §3.2) means one dead source does not zero the result; that is the reason for combining sources at all.',
+      why: 'The raw-sample health tests catch Source A and exclude it (SP 800-90C §3.1 item 4.a.1). Source B alone is credited 256 bits, below the 3s/2 = 384 bits needed to instantiate a 256-bit DRBG (§2.6 item 11), and output of non-validated entropy sources is only used as a personalization string or additional input (§2.6 item 2).',
     },
   ],
   'drbg-demo': [

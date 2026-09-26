@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router'
+import { CrossOriginIsolationGuard } from './components/CrossOriginIsolationGuard'
 
 import { logPageView, logStreakMilestone } from './utils/analytics'
 import { useEffect, useRef } from 'react'
@@ -482,6 +483,7 @@ function App() {
       <AchievementSectionTracker />
       <DailyVisitTracker />
       <HistorySeeder />
+      <CrossOriginIsolationGuard />
       <PageMeta />
       <Suspense
         fallback={

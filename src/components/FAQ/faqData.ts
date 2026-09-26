@@ -845,7 +845,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the Entropy & Randomness module?',
         answer:
-          'The Entropy & Randomness module covers the foundations of cryptographic randomness: entropy sources (hardware TRNGs, OS entropy pools, QRNGs), NIST SP 800-90A/B/C deterministic random bit generators (DRBGs), entropy testing and health checks, and strategies for combining sources for defense-in-depth. It includes interactive exercises for visualizing entropy collection, configuring DRBG parameters, and comparing TRNG versus QRNG output quality. The module is especially relevant for teams deploying HSMs and PQC key generation at scale.',
+          'The Entropy & Randomness module covers the foundations of cryptographic randomness: entropy sources (hardware noise sources, OS entropy, QRNGs), NIST SP 800-90A deterministic random bit generators (DRBGs), SP 800-90B entropy-source validation and health tests, SP 800-90C RBG constructions, and the conditions under which combining sources adds assurance. Its workshops generate and check random bytes, walk through entropy-source validation, step through an HMAC_DRBG state machine, and health-test raw sources before conditioning. The module is especially relevant for teams deploying HSMs and PQC key generation at scale.',
         deepLink: '/learn/entropy-randomness',
       },
     ],

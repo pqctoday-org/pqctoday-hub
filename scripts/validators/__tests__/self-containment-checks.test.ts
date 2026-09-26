@@ -12,7 +12,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { setDataDir, getDataDir } from '../data-loader.js'
-import { runSelfContainmentChecks } from '../self-containment-checks.js'
+import { runSelfContainmentChecks, runStatusColumnChecks } from '../self-containment-checks.js'
 
 const REAL_DATA_DIR = getDataDir()
 let tmpDir: string | null = null
@@ -68,5 +68,35 @@ describe('self-containment-checks: compliance_ family vs sibling-prefix collisio
     expect(ds03.status).toBe('FAIL')
     expect(ds03.findings).toHaveLength(1)
     expect(ds03.findings[0].value).toBe('b')
+  })
+})
+
+describe('DS19: threats accepts draft rows, other families do not', () => {
+  const THREATS_HEADER = 'threat_id,status,deprecated_at,deprecated_reason,local_file\n'
+
+  it('passes a threats snapshot carrying a draft row', () => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds19-draft-'))
+    setDataDir(tmpDir)
+    write(
+      tmpDir,
+      'quantum_threats_hsm_industries_09232026.csv',
+      THREATS_HEADER + 'T-1,active,,,a.pdf\nT-2,draft,,,b.pdf\n'
+    )
+    const [ds19] = runStatusColumnChecks()
+    expect(ds19.id).toBe('DS19')
+    expect(ds19.findings).toHaveLength(0)
+  })
+
+  it('still rejects an unknown threats status and a draft compliance row', () => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds19-bad-'))
+    setDataDir(tmpDir)
+    write(
+      tmpDir,
+      'quantum_threats_hsm_industries_09232026.csv',
+      THREATS_HEADER + 'T-1,pending,,,a.pdf\n'
+    )
+    write(tmpDir, 'compliance_09232026.csv', COMPLIANCE_HEADER + 'c,C,draft\n')
+    const [ds19] = runStatusColumnChecks()
+    expect(ds19.findings.map((f) => f.value).sort()).toEqual(['draft', 'pending'])
   })
 })

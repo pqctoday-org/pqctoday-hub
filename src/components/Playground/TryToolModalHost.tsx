@@ -63,6 +63,10 @@ export function TryToolModalHost() {
         // eslint-disable-next-line security/detect-object-injection
         const Comp = toolId in reg.ONBACK_COMPONENTS ? undefined : reg.TOOL_COMPONENTS[toolId]
         if (!tool || !Comp) return fallback()
+        // A SharedArrayBuffer tool can't run in place on a page that isn't
+        // cross-origin isolated (only routes that need it reload for it —
+        // src/utils/crossOriginIsolation.ts); its real route gets isolated.
+        if (tool.requires.includes('sab') && window.crossOriginIsolated === false) return fallback()
         useAchievementStore.getState().recordPlaygroundToolUsage(tool.id)
         setLoaded({ id: tool.id, name: tool.name, category: tool.category, Comp })
       })

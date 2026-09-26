@@ -10,6 +10,7 @@
  */
 import fs from 'fs'
 import path from 'path'
+import { TIMELINE_LABEL_ALIASES } from '../src/data/timelineLabelAliases.generated'
 import { createHash } from 'crypto'
 import Papa from 'papaparse'
 import { validateCorpusDeepLinks } from '../src/services/search/deepLinkGrammar'
@@ -31,6 +32,13 @@ import {
   CRQC_ESTIMATES,
 } from '../src/data/regulatoryTimelines'
 import { FRAMEWORK_MAX_FINE_USD_MILLIONS } from '../src/data/frameworkFines'
+import {
+  buildThreatsPageGuide,
+  isUnpublishedThreatRow,
+  publishedThreatIds,
+  publishedThreatRecords,
+  threatDeepLink,
+} from './lib/threatsCorpus'
 // NOTE: workshopRegistry.tsx uses `@/*`-aliased imports internally, so this
 // script must be invoked with TSX_TSCONFIG_PATH=tsconfig.app.json (see
 // refresh-index.sh and scripts/ci/check-index-freshness.ts) for tsx to
@@ -268,6 +276,22 @@ function isInactiveRow(rows: string[][], i: number): boolean {
   return v === 'deprecated' || v === 'obsolete'
 }
 
+// Timeline rows whose capital-S `Status` is unreviewed are withheld from every
+// public surface, the assistant's corpus included (timelineReviewPolicy.json,
+// timeline remediation r2 T-B1, 2026-09-24).
+const TIMELINE_UNREVIEWED: ReadonlySet<string> = new Set(
+  (
+    JSON.parse(
+      fs.readFileSync(path.join(DATA_DIR, 'timelineReviewPolicy.json'), 'utf-8')
+    ) as { unreviewedStatuses: string[] }
+  ).unreviewedStatuses.map((s) => s.trim().toLowerCase())
+)
+function isUnreviewedTimelineRow(rows: string[][], i: number): boolean {
+  const idx = rows[0]?.indexOf('Status') ?? -1
+  if (idx === -1) return false
+  return TIMELINE_UNREVIEWED.has((rows[i]?.[idx] ?? '').trim().toLowerCase())
+}
+
 function isInactiveRecord(rec: Record<string, string>): boolean {
   const v = (rec.status ?? '').trim().toLowerCase()
   return v === 'deprecated' || v === 'obsolete'
@@ -291,28 +315,46 @@ function getLibraryRefIds(): Set<string> {
 }
 
 /**
- * Load all ACTIVE timeline enrichment keys ("{country}:{orgName} — {title}").
- * Used to keep doc-enrichment chunks in sync with the Gantt: deprecated rows
- * and stale-key orphan enrichments (present in older dated md files) are
- * excluded, mirroring the library safeguard in processDocumentEnrichments().
+ * Load all ACTIVE timeline enrichment keys ("{country}:{orgName} — {title}"),
+ * each mapped to the row's CURRENT key. Used to keep doc-enrichment chunks in
+ * sync with the Gantt: deprecated rows and stale-key orphan enrichments
+ * (present in older dated md files) are excluded, mirroring the library
+ * safeguard in processDocumentEnrichments(). A retitled row's earlier labels
+ * (r2 W-B) map to its current key so its enrichment is emitted under the
+ * label the trust scorer and the Gantt know.
  */
-let _timelineRefIds: Set<string> | null = null
-function getTimelineRefIds(): Set<string> {
+let _timelineRefIds: Map<string, string> | null = null
+function getTimelineRefIds(): Map<string, string> {
   if (_timelineRefIds) return _timelineRefIds
-  _timelineRefIds = new Set<string>()
+  _timelineRefIds = new Map<string, string>()
   const file = findLatestCSV('timeline_')
   if (file) {
     const rows = readCSV(file)
     for (let i = 1; i < rows.length; i++) {
-      if (isInactiveRow(rows, i)) continue
+      if (isInactiveRow(rows, i) || isUnreviewedTimelineRow(rows, i)) continue
       const row = rows[i]
       const country = sanitize(row[0])
       const orgName = sanitize(row[2])
       const title = sanitize(row[9])
-      if (country && title) _timelineRefIds.add(`${country}:${orgName} — ${title}`)
+      if (!country || !title) continue
+      const current = `${country}:${orgName} — ${title}`
+      _timelineRefIds.set(current, current)
+      const eid = (row[rows[0].indexOf('event_id')] ?? '').trim()
+      // eslint-disable-next-line security/detect-object-injection
+      for (const label of (eid && TIMELINE_LABEL_ALIASES[eid]) || [])
+        if (!_timelineRefIds.has(label)) _timelineRefIds.set(label, current)
     }
   }
   return _timelineRefIds
+}
+
+/** Ids of the threats the page shows (see scripts/lib/threatsCorpus.ts). */
+let _publishedThreatIds: Set<string> | null = null
+function getPublishedThreatIds(): Set<string> {
+  if (_publishedThreatIds) return _publishedThreatIds
+  const file = findLatestCSV('quantum_threats_hsm_industries_')
+  _publishedThreatIds = file ? publishedThreatIds(readCSV(file)) : new Set()
+  return _publishedThreatIds
 }
 
 /** Find a library referenceId mentioned in the given text */
@@ -642,7 +684,7 @@ function processTimeline(): RAGChunk[] {
 
   // Skip header row
   for (let i = 1; i < rows.length; i++) {
-    if (isInactiveRow(rows, i)) continue
+    if (isInactiveRow(rows, i) || isUnreviewedTimelineRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 12) continue
 
@@ -673,7 +715,13 @@ function processTimeline(): RAGChunk[] {
     // Augment with enrichment dimensions when available
     // Enrichment key format matches the Python script: "{country}:{orgName} — {title}"
     const enrichKey = `${sanitize(country)}:${sanitize(orgName)} — ${sanitize(title)}`
-    const enrich = enrichLookup.get(enrichKey)
+    const eventId = (row[rows[0].indexOf('event_id')] ?? '').trim()
+    const enrich =
+      enrichLookup.get(enrichKey) ??
+      // eslint-disable-next-line security/detect-object-injection
+      ((eventId && TIMELINE_LABEL_ALIASES[eventId]) || [])
+        .map((l) => enrichLookup.get(l))
+        .find((e) => e !== undefined)
     const enrichMetadata: Record<string, string> = {}
     if (enrich) {
       const skip = new Set(['None detected', 'Not specified', 'See document for details.'])
@@ -1006,7 +1054,7 @@ function processThreats(): RAGChunk[] {
   const chunks: RAGChunk[] = []
 
   for (let i = 1; i < rows.length; i++) {
-    if (isInactiveRow(rows, i)) continue
+    if (isUnpublishedThreatRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 7) continue
 
@@ -1049,9 +1097,9 @@ function processThreats(): RAGChunk[] {
         ...(relatedModules ? { relatedModules } : {}),
         ...(trustedSourceId ? { trustedSourceId } : {}),
       },
-      ...(sanitize(threatId)
-        ? { deepLink: `/threats?id=${encodeParam(threatId)}&industry=${encodeParam(industry)}` }
-        : {}),
+      // &industry= carries the label the page shows (it merges some raw CSV
+      // labels), via the same rule the page's loader applies.
+      ...(sanitize(threatId) ? { deepLink: threatDeepLink(threatId, industry) } : {}),
       prov: buildChunkProv({ csvFile: path.basename(file), csvRow: i, attributedTo: 'human' }),
     })
   }
@@ -3697,11 +3745,26 @@ function processDocumentEnrichments(): RAGChunk[] {
       .sort()
       .reverse()[0]
 
-    for (const [refId, fields] of enrichLookup) {
+    const emittedTimelineKeys = new Set<string>()
+    for (const [lookupKey, fields] of enrichLookup) {
       // Skip enrichment chunks for deprecated/inactive library entries so the
       // corpus stays in sync with what the UI actually surfaces.
-      if (collection === 'library' && !getLibraryRefIds().has(refId)) continue
-      if (collection === 'timeline' && !getTimelineRefIds().has(refId)) continue
+      if (collection === 'library' && !getLibraryRefIds().has(lookupKey)) continue
+      // Same for threats: enrichments exist for retired (and draft) threats
+      // too, and a chunk for one would link /threats?id=<id> the page no
+      // longer opens.
+      if (collection === 'threats' && !getPublishedThreatIds().has(lookupKey)) continue
+      let refId = lookupKey
+      if (collection === 'timeline') {
+        const current = getTimelineRefIds().get(lookupKey)
+        if (!current) continue
+        // An earlier label yields to the row's own current-label enrichment,
+        // and one row gets one enrichment chunk however many labels it had.
+        if (current !== lookupKey && enrichLookup.has(current)) continue
+        if (emittedTimelineKeys.has(current)) continue
+        emittedTimelineKeys.add(current)
+        refId = current
+      }
 
       const title = fields['Title'] || refId
       if (title === '---') continue
@@ -3778,7 +3841,7 @@ function processDocumentEnrichments(): RAGChunk[] {
         ...(collection === 'library' && refId
           ? { deepLink: `/library?ref=${encodeParam(refId)}` }
           : collection === 'threats' && refId
-            ? { deepLink: `/threats?id=${encodeParam(refId)}` }
+            ? { deepLink: threatDeepLink(refId) }
             : collection === 'catalog' && refId
               ? { deepLink: `/migrate?q=${encodeParam(refId)}` }
               : collection === 'timeline' && refId
@@ -3896,6 +3959,12 @@ async function processUserManuals(): Promise<RAGChunk[]> {
 // Page-level guides (non-learn pages)
 // ---------------------------------------------------------------------------
 
+/** Published threats rows, for the Threats page guide. */
+function threatsGuideRecords(): Record<string, string>[] {
+  const file = findLatestCSV('quantum_threats_hsm_industries_')
+  return file ? publishedThreatRecords(readCSV(file)) : []
+}
+
 function processPageGuides(): RAGChunk[] {
   return [
     // --- Landing Page ---
@@ -3947,8 +4016,9 @@ function processPageGuides(): RAGChunk[] {
       id: 'page-guide-threats',
       source: 'documentation',
       title: 'Threats Page — Industry-Specific Quantum Risk Dashboard',
-      content:
-        'Threats Page Overview\n\nThe Threats dashboard shows 80+ quantum threat scenarios across 20 industries: Aerospace, Automotive, Cloud Computing, Cryptocurrency/Blockchain, Cross-Industry, Energy/Critical Infrastructure, Financial Services, Government/Defense, Healthcare, Insurance, IoT, IT/Software, Legal/eSignature, Media/DRM, Payment Card, Rail/Transit, Retail, Supply Chain, Telecommunications, and Water/Wastewater.\n\nThreat severity levels: Critical (immediate action required), High (1–3 year timeline), Medium-High, Medium, and Low.\n\nKey concepts:\n- HNDL (Harvest Now, Decrypt Later): Adversaries intercept and store encrypted data today to decrypt when quantum computers arrive. Primary near-term threat.\n- HNFL (Harvest Now, Forge Later): Adversaries plan to forge digital signatures (code signing, certificates, legal documents) once quantum computers break ECDSA/RSA.\n- CRQC (Cryptographically Relevant Quantum Computer): Global Risk Institute 2024 estimates 19–34% probability within 10 years.\n\nEach threat entry includes: threat ID, industry, detailed description, criticality level, crypto at risk, PQC replacement recommendation, regulation/source, confidence percentage, trust score badge, and related learning modules. A persona-aware summary card highlights the most impactful threats for your role (e.g., "3 high-impact threats across 2 industries require board-level attention" for executives).\n\nURL filter parameters (all combinable):\n- ?id=<threatId> — open a specific threat detail (e.g., /threats?id=FIN-001)\n- ?industry=<name> — multi-select industry filter; comma-join for multiple industries (e.g., /threats?industry=Finance,Healthcare); valid values: Aerospace, Automotive, Cloud Computing, Cryptocurrency/Blockchain, Cross-Industry, Energy/Critical Infrastructure, Financial Services, Government/Defense, Healthcare, Insurance, IoT, IT/Software, Legal/eSignature, Media/DRM, Payment Card, Rail/Transit, Retail, Supply Chain, Telecommunications, Water/Wastewater\n- ?criticality=<level> — filter by severity: Critical | High | Medium-High | Medium | Low\n- ?q=<text> — search across threat descriptions, crypto at risk, and PQC recommendations\n- ?sort=<field> — sort column: industry (default) | threatId | criticality\n- ?dir=<order> — sort direction: asc (default) | desc\n\nExample links: /threats?industry=Financial+Services&criticality=Critical (critical finance threats), /threats?industry=Healthcare,Government%2FDefense&sort=threatId (multi-industry sorted by ID), /threats?id=FIN-001 (open specific threat), /threats?q=HNDL&criticality=High (high-severity HNDL threats).',
+      // Counts, industries and criticality levels come from the published
+      // threats rows; parameters are the ones the page reads.
+      content: buildThreatsPageGuide(threatsGuideRecords()),
       category: 'page-guide',
       metadata: { page: 'threats' },
       deepLink: '/threats',

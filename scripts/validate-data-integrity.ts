@@ -58,6 +58,7 @@ import { runThreatsProofRule } from './validators/threats-proof-rule.js'
 import { runMigrateProofRule } from './validators/migrate-proof-rule.js'
 import { runMigrateCatalogIntegrity } from './validators/migrate-catalog-integrity.js'
 import { runLineageChecks } from './validators/lineage-checks.js'
+import { runTimelinePublicationChecks } from './validators/timeline-publication-checks.js'
 import { buildReport, printReport } from './validators/report-builder.js'
 import type { CheckResult } from './validators/types.js'
 import fs from 'fs'
@@ -200,6 +201,9 @@ try {
   // silently regressed across two later catalog passes with nothing
   // catching it. See: pqctoday-hub-migrate-data-remediation-plan-07072026.md
   allResults.push(...runMigrateProofRule())
+  // 7h.5. Timeline publication boundary (TL-VOCAB/DEADLINE/NEW/LEGACY/SCOPE) —
+  // added 2026-09-24, timeline remediation r2. See the file's docblock.
+  allResults.push(...runTimelinePublicationChecks())
   // 7i. Data accuracy & lineage guarantee (LN-1 verdict lock, LN-4 archive-
   // never-delete, LN-6 CONTRADICTED-never-ships) — added 2026-09-17 after the
   // 4.86.0 release surfaced each as a real leak (see

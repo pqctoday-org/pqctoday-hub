@@ -16,6 +16,7 @@ import { glob } from 'glob'
 import Papa from 'papaparse'
 import type { CheckResult, Finding } from './types.js'
 import { findLatestQACSV, loadQACSV, type QARow } from './qa-consistency-checks.js'
+import { THREAT_INDUSTRY_SLUGS } from '../../src/data/threatRowRules.js'
 
 const REPO_ROOT = path.resolve(process.cwd())
 // RELOCATED 2026-07-12 (see maintenance/LOCAL-FILES-REMEDIATION-PLAN-07122026.md
@@ -568,25 +569,27 @@ async function runCmCswp(): Promise<CheckResult> {
     : pass('CM-CSWP', 'cswp39_tags closed set validation', relPath)
 }
 
-// ── CM-G: Threats NAICS / PQC overlay code validation (warning/grace period) ─
+// ── CM-G: Threats applicable_industries_normalized vocabulary (warning) ─────
+//
+// The column holds lowercase industry slugs (`financial-services;banking`),
+// not the NAICS / PQC-* overlay codes this check was first written for — so
+// until 2026-09-23 it flagged every value in the file and the warning carried
+// no signal. It now checks each slug against the vocabulary the data uses
+// (THREAT_INDUSTRY_SLUGS); NAICS codes and PQC-* overlays are still accepted
+// in case the column migrates to them.
 
 const NAICS_RE = /^\d{2,6}$/
 const PQC_OVERLAY_RE = /^PQC-[A-Z][A-Z0-9-]+$/
 
-async function runCmG(): Promise<CheckResult> {
-  const files = await glob('src/data/quantum_threats_hsm_industries_*.csv', { cwd: REPO_ROOT })
-  files.sort(datedCsvCompare)
-  const latest = files.at(-1)
-  const sourceDesc = 'src/data/quantum_threats_hsm_industries_*.csv'
-  if (!latest)
-    return pass('CM-G', 'Threats NAICS/PQC overlay validation (grace period)', sourceDesc)
-
-  const relPath = path.relative(REPO_ROOT, latest)
-  const src = fs.readFileSync(latest, 'utf-8')
-  const parsed = Papa.parse<Record<string, string>>(src, { header: true, skipEmptyLines: true })
+/** CM-G findings for parsed threats rows — pure, so it can be tested on an
+ *  in-memory fixture. Empty cells are skipped (grace period). */
+export function cmgFindings(
+  rows: readonly Record<string, string>[],
+  relPath: string,
+  vocabulary: ReadonlySet<string> = THREAT_INDUSTRY_SLUGS
+): Finding[] {
   const findings: Finding[] = []
-
-  for (const row of parsed.data) {
+  for (const row of rows) {
     const normalized = (row['applicable_industries_normalized'] ?? '').trim()
     if (!normalized) continue // Empty is OK during grace period
 
@@ -595,27 +598,35 @@ async function runCmG(): Promise<CheckResult> {
       .map((s) => s.trim())
       .filter(Boolean)
     for (const code of codes) {
-      if (!NAICS_RE.test(code) && !PQC_OVERLAY_RE.test(code)) {
-        findings.push({
-          csv: relPath,
-          row: null,
-          field: 'applicable_industries_normalized',
-          value: row['threat_id'] ?? '',
-          message: `Threat '${row['threat_id']}' industry code '${code}' is neither a valid NAICS code nor a PQC-* overlay code`,
-        })
-      }
+      if (vocabulary.has(code) || NAICS_RE.test(code) || PQC_OVERLAY_RE.test(code)) continue
+      findings.push({
+        csv: relPath,
+        row: null,
+        field: 'applicable_industries_normalized',
+        value: row['threat_id'] ?? '',
+        message: `Threat '${row['threat_id']}' industry slug '${code}' is not in the threats industry vocabulary (src/data/threatRowRules.ts THREAT_INDUSTRY_SLUGS), nor a NAICS or PQC-* overlay code`,
+      })
     }
   }
-  // Warning only — NAICS normalization is a grace-period migration
+  return findings
+}
+
+async function runCmG(): Promise<CheckResult> {
+  const files = await glob('src/data/quantum_threats_hsm_industries_*.csv', { cwd: REPO_ROOT })
+  files.sort(datedCsvCompare)
+  const latest = files.at(-1)
+  const sourceDesc = 'src/data/quantum_threats_hsm_industries_*.csv'
+  const title = 'Threats industry-slug vocabulary (applicable_industries_normalized)'
+  if (!latest) return pass('CM-G', title, sourceDesc)
+
+  const relPath = path.relative(REPO_ROOT, latest)
+  const src = fs.readFileSync(latest, 'utf-8')
+  const parsed = Papa.parse<Record<string, string>>(src, { header: true, skipEmptyLines: true })
+  const findings = cmgFindings(parsed.data, relPath)
+  // Warning only — a new slug may be a real new sector awaiting the vocabulary.
   return findings.length > 0
-    ? fail(
-        'CM-G',
-        'Threats NAICS/PQC overlay validation (grace period)',
-        relPath,
-        findings,
-        'WARNING'
-      )
-    : pass('CM-G', 'Threats NAICS/PQC overlay validation (grace period)', relPath)
+    ? fail('CM-G', title, relPath, findings, 'WARNING')
+    : pass('CM-G', title, relPath)
 }
 
 // ── CM-T: Timeline evidence quality checks ───────────────────────────────────
