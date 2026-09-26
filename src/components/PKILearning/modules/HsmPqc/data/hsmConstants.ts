@@ -20,7 +20,7 @@ export interface FipsValidationEntry {
   status: 'Active' | 'Pending' | 'Planned'
   date: string
   level?: string
-  /** Direct link to NIST CMVP or ACVP certificate page */
+  /** Direct link to the NIST CMVP or CAVP validation page */
   certLink?: string
   /** Contextual note shown in the UI */
   note?: string
@@ -509,7 +509,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     date: '2026-01-30',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20796',
-    note: 'LMS validated (nShield 5 v13 + nShield XC v12 on NXP QorIQ T1024). ML-KEM, ML-DSA, and SLH-DSA CAVP validated Sep 2025 (firmware v13.8.0+); separate ACVP certificate pending NIST database listing.',
+    note: 'LMS validated (nShield 5 v13 + nShield XC v12 on NXP QorIQ T1024). ML-KEM, ML-DSA, and SLH-DSA CAVP validated Sep 2025 (firmware v13.8.0+); separate CAVP validation pending NIST database listing.',
   },
   {
     vendorId: 'entrust-nshield',
@@ -521,7 +521,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     date: '2025-09-10',
     certLink:
       'https://www.entrust.com/company/newsroom/entrust-nshield-hsms-achieve-validation-from-nist-cryptographic-algorithm-validation-program',
-    note: 'ML-KEM (512/768/1024), ML-DSA (44/65/87), SLH-DSA (all 12 param sets) CAVP validated. ACVP certificate number pending NIST database listing. FIPS 140-3 Level 3 resubmission in progress.',
+    note: 'ML-KEM (512/768/1024), ML-DSA (44/65/87), SLH-DSA (all 12 param sets) CAVP validated. CAVP validation number pending NIST database listing. FIPS 140-3 Level 3 resubmission in progress.',
   },
   {
     vendorId: 'utimaco',
@@ -800,7 +800,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     upgradeComplexity: 'low',
     estimatedDowntime: 'Zero — SDK update only',
     notes:
-      'PQC delivered via AWS-LC SDK, not HSM firmware change — hardware FIPS boundary unchanged. Customers update SDK dependency only. No downtime required. ML-DSA (all 3 variants) in preview; ML-KEM not yet in CloudHSM hardware. ACVP certificates required for new algorithm implementations.',
+      'PQC delivered via AWS-LC SDK, not HSM firmware change — hardware FIPS boundary unchanged. Customers update SDK dependency only. No downtime required. ML-DSA (all 3 variants) in preview; ML-KEM not yet in CloudHSM hardware. CAVP validations required for new algorithm implementations.',
   },
   {
     vendorId: 'azure-dhsm',

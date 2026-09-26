@@ -29,6 +29,12 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.123.1] - 2026-09-26
+
+### Fixed
+
+- **The HSM learning module no longer calls an algorithm validation an "ACVP certificate".** [view:/learn] [persona:developer] [persona:ops] [persona:grc] NIST's CAVP issues the validation; ACVP is the protocol used to submit it, so there is no such thing as an "ACVP certificate". Five vendor notes and one exercise now say CAVP, matching the wording the product catalogue moved to in 4.123.0. The FIPS Validation Tracker still refers to NIST ACVP where it means the protocol itself, which is correct.
+
 ## [4.123.0] - 2026-09-25
 
 Every product in the migration catalogue was re-checked against its own evidence document, and anything a document does not actually say has been corrected or removed — including versions, dates and post-quantum claims.
