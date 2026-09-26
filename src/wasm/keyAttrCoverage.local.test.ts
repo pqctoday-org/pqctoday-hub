@@ -37,7 +37,7 @@ const loadCppEngineInNode = async (): Promise<SoftHSMModule> => {
 describe.each([
   ['rust', () => S.getSoftHSMRustModule()],
   ['cpp', () => loadCppEngineInNode()],
-])('WS-3 attribute coverage (%s engine)', (name, getModule) => {
+])('WS-3 attribute coverage (%s engine)', (_engineName, getModule) => {
   const setup = async () => {
     const M = (await getModule()) as SoftHSMModule
     S.hsm_initialize(M)
@@ -119,41 +119,59 @@ describe.each([
     S.hsm_finalize(M, hSession)
   }, 30000)
 
-  if (name === 'rust') {
-    it('Rust engine: CKA_PUBLIC_KEY_INFO is genuinely absent on EC/RSA private keys (§1.2)', async () => {
-      const { M, hSession } = await setup()
-      const { privHandle: ecPriv } = S.hsm_generateECKeyPair(M, hSession, 'P-256')
-      const { privHandle: rsaPriv } = S.hsm_generateRSAKeyPair(M, hSession, 2048)
+  // RE-PINNED 2026-09-25. This used to be two divergent cases: the C++ engine
+  // returned CKA_PUBLIC_KEY_INFO on EC/RSA private keys and the Rust engine did
+  // not, and the Rust half asserted `null` + `unavailable === 'absent'` as the
+  // honest classification of a spec-legal difference (PKCS#11 v3.2 §4.10 makes
+  // it SHOULD, not MUST, on a private key).
+  //
+  // The divergence is gone, and it closed on purpose. pqctoday-hsm
+  // db810542 (2026-09-07), "fix(rust): ... mirror SPKI to private keys (P1)",
+  // implements §4.10's SHOULD ("private keys of any type SHOULD store
+  // sufficient information to retrieve the public key information", restated for
+  // RSA in §6.1.3) in the Rust engine; it reached the hub in the vendored-bundle
+  // rebuilds from 2026-09-13 onward. The old expectation went red then and has
+  // been red since.
+  //
+  // Evidence the new behaviour is correct rather than a regression that happens
+  // to be non-null — probed against this worktree's bundles on 2026-09-25:
+  //   EC P-256 private CKA_PUBLIC_KEY_INFO = 3059 3013 06072a8648ce3d0201
+  //     06082a8648ce3d030107 034200 04... — a well-formed ecPublicKey/prime256v1
+  //     SubjectPublicKeyInfo, 91 bytes, BYTE-IDENTICAL to the public half's.
+  //   RSA-2048 private CKA_PUBLIC_KEY_INFO = 294 bytes, rsaEncryption SPKI,
+  //     again byte-identical to the public half's.
+  // So the attribute carries the key's real public half, which is the only thing
+  // §4.10 asks for. Asserting equality with the public half is what this pins
+  // now — a stronger statement than "not null", and one a garbage value fails.
+  it('CKA_PUBLIC_KEY_INFO on an EC/RSA PRIVATE key is the public half, byte-for-byte (§4.10)', async () => {
+    const { M, hSession } = await setup()
+    const ec = S.hsm_generateECKeyPair(M, hSession, 'P-256')
+    const rsa = S.hsm_generateRSAKeyPair(M, hSession, 2048)
 
-      const ecAttrs = S.hsm_getKeyAttributes(M, hSession, ecPriv)
-      const rsaAttrs = S.hsm_getKeyAttributes(M, hSession, rsaPriv)
+    const ecPub = S.hsm_getKeyAttributes(M, hSession, ec.pubHandle)
+    const ecPriv = S.hsm_getKeyAttributes(M, hSession, ec.privHandle)
+    const rsaPub = S.hsm_getKeyAttributes(M, hSession, rsa.pubHandle)
+    const rsaPriv = S.hsm_getKeyAttributes(M, hSession, rsa.privHandle)
 
-      // This is the real, spec-legal divergence tri-state exists for (G-5):
-      // Rust doesn't materialize SPKI on EC/RSA private keys; the spec makes
-      // it SHOULD/MAY there, not MUST — 'absent' is the honest classification,
-      // not a bug to paper over.
-      expect(ecAttrs.ckPublicKeyInfo).toBeNull()
-      expect(ecAttrs.unavailable.ckPublicKeyInfo).toBe('absent')
-      expect(rsaAttrs.ckPublicKeyInfo).toBeNull()
-      expect(rsaAttrs.unavailable.ckPublicKeyInfo).toBe('absent')
+    const hex = (b: Uint8Array | null | undefined) =>
+      b == null ? null : Buffer.from(b).toString('hex')
 
-      S.hsm_finalize(M, hSession)
-    }, 30000)
-  }
+    expect(ecPriv.ckPublicKeyInfo).not.toBeNull()
+    expect(hex(ecPriv.ckPublicKeyInfo)).toBe(hex(ecPub.ckPublicKeyInfo))
+    // ecPublicKey + prime256v1 AlgorithmIdentifier, then an uncompressed point.
+    expect(hex(ecPriv.ckPublicKeyInfo)).toMatch(
+      /^3059301306072a8648ce3d020106082a8648ce3d0301070342000[45]/
+    )
 
-  if (name === 'cpp') {
-    it('C++ engine: CKA_PUBLIC_KEY_INFO IS present on EC/RSA private keys (§1.2)', async () => {
-      const { M, hSession } = await setup()
-      const { privHandle: ecPriv } = S.hsm_generateECKeyPair(M, hSession, 'P-256')
-      const { privHandle: rsaPriv } = S.hsm_generateRSAKeyPair(M, hSession, 2048)
+    expect(rsaPriv.ckPublicKeyInfo).not.toBeNull()
+    expect(hex(rsaPriv.ckPublicKeyInfo)).toBe(hex(rsaPub.ckPublicKeyInfo))
+    // rsaEncryption AlgorithmIdentifier with the NULL parameters field.
+    expect(hex(rsaPriv.ckPublicKeyInfo)).toMatch(/^3082012230[0-9a-f]{2}06092a864886f70d0101010500/)
 
-      const ecAttrs = S.hsm_getKeyAttributes(M, hSession, ecPriv)
-      const rsaAttrs = S.hsm_getKeyAttributes(M, hSession, rsaPriv)
+    // Present means present: the tri-state must not also be reporting it away.
+    expect(ecPriv.unavailable.ckPublicKeyInfo).toBeUndefined()
+    expect(rsaPriv.unavailable.ckPublicKeyInfo).toBeUndefined()
 
-      expect(ecAttrs.ckPublicKeyInfo).not.toBeNull()
-      expect(rsaAttrs.ckPublicKeyInfo).not.toBeNull()
-
-      S.hsm_finalize(M, hSession)
-    }, 30000)
-  }
+    S.hsm_finalize(M, hSession)
+  }, 30000)
 })
