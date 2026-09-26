@@ -41,6 +41,7 @@ import {
 } from '../src/data/validation/coverageModel'
 import { renderCoverageHtml, renderCoverageMarkdown } from '../src/data/validation/coverageExport'
 import { TEST_REGISTRY } from '../src/data/validation/testRegistry'
+import { VALIDATION_DISCLAIMER } from '../src/data/validationDisclaimer'
 import {
   effectiveCase,
   type ValidationCaseManifest,
@@ -155,10 +156,35 @@ export function loadInputs(opts: LoadOptions = {}): MatrixInputs {
   }
 }
 
+/**
+ * Insert the §2.2 disclaimer as a top-level `$disclaimer` key, immediately
+ * after the generated-file `$comment`. A string edit rather than a model field:
+ * `CoverageMatrixFile` is `CoverageMatrix` minus its row arrays, so a new field
+ * there would ripple through the whole coverage model for a constant that is
+ * not data.
+ */
+export function withMatrixDisclaimer(json: string): string {
+  if (json.includes(VALIDATION_DISCLAIMER)) return json
+  const marker = '\n  "schema":'
+  const i = json.indexOf(marker)
+  if (i < 0) throw new Error('coverage matrix JSON has no "schema" key to anchor $disclaimer to')
+  return (
+    json.slice(0, i) +
+    `\n  "$disclaimer": ${JSON.stringify(VALIDATION_DISCLAIMER)},` +
+    json.slice(i)
+  )
+}
+
 /** Outputs are written in a stable, diff-friendly form and listed in .prettierignore. */
 export function renderOutputs(inputs: MatrixInputs) {
   const { matrix, gate } = buildCoverageMatrix(inputs)
-  const json = serializeMatrixFile(compactMatrix(matrix))
+  // The machine-readable export carries the §2.2 disclaimer too. Until
+  // 2026-09-26 only the .md and .html did — release-evidence check #4 iterated
+  // ['md','html'] — so the one export a consumer is most likely to ingest
+  // programmatically carried no disclaimer of any kind. Injected as a top-level
+  // `$disclaimer` next to `$comment` so the row/case serialization (and its
+  // byte-for-byte --check contract) is untouched.
+  const json = withMatrixDisclaimer(serializeMatrixFile(compactMatrix(matrix)))
   const md = renderCoverageMarkdown(matrix)
   const html = renderCoverageHtml(matrix) + '\n'
   const files: Record<string, string> = {

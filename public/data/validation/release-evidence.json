@@ -16,31 +16,31 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "7568e984d4f7013edf0ffd50fa4cf38a70f2f8b5f91191256b79c43675a70694",
-    "src/data/validation/coverage-waivers.json": "d0e86f56700dabca32698760012ded42543989e8cd5b40b8d61a82df270d0875",
+    "public/data/validation/coverage-matrix.json": "efd60a576798c42694120ba024b00a7481ac9a72b44d7221acceeb453e827056",
+    "src/data/validation/coverage-waivers.json": "87b928d900e95f966e744aed284f4b11933e03f3dab9ced277d1072154702980",
     "src/data/validation/native-conformance.generated.json": "75d81d8ab8250f66574c6722d3bdf36911bcc3ba2b5b18902c93604bdf64efd7",
-    "src/data/validation/open-gaps.json": "484d901991c48074177b2d33d965bda83a9dd38475d9fa4c1292c8b43a74fef7",
-    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "a461e6be7a61b5af9efdd9b03eeca397cfa8894f934c15a85ba20d7680b5efc5",
+    "src/data/validation/open-gaps.json": "883a708d871494feba23af1bcaf08681dea850377d10e0cf4c15fdbcc6703700",
+    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "3e3de40a719f4fb1b6081667b0c700012c1f6280372e4e8b824d1899352a12cd",
     "src/data/validation/run-results/wasm-node-katRunner.json": "6a836ba693944b9439f582f3d7c0e8f9e6af56b2607b572d9390c978af05af90",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "b9c2cd1d6a17b03c20af78a7a7ba6f377eebf0686664122dd1fe5d5001990f84",
-    "src/data/validation/validation-counts.generated.json": "8fc10dbf20f54fcfc7c77772d0ad9824578713d295a6e390a53e75cc68235436",
-    "src/data/validation/vector-manifest.json": "92253b10e8b04c09db0de7211f08a8f0f11a1c328bbc9f80a891d1162384f7d5"
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "67fa98bf8bbc49e2a67350eb1a35dcfe99b2b0f62d30d1648445f2ebc775abb4",
+    "src/data/validation/validation-counts.generated.json": "46265c621106a9bfcbd860d387994a57b684362402545cd89eac0efc08d8d676",
+    "src/data/validation/vector-manifest.json": "d72b7db4e11ff5810fe271c99736fcac6879ed658eb7b24b1d9628a23cc1a335"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "75bc6bc14211a330334c614418e27a9874b22d53549b86e02568b0ab73d12e01",
-    "nistReferenceSampleFiles": 48,
-    "nistReferenceSampleCases": 776,
+    "manifestCanonicalSha256": "92ec3a2303c7818040b002faf2357b69e62756e9db6057792f6e93222264153b",
+    "nistReferenceSampleFiles": 52,
+    "nistReferenceSampleCases": 920,
     "vectorFiles": {
-      "total": 63,
-      "active": 63,
+      "total": 73,
+      "active": 73,
       "quarantined": 0
     },
     "filesByClass": {
-      "nist-acvp-reference-sample": 48,
+      "nist-acvp-reference-sample": 52,
       "acvts-issued-vector": 0,
       "published-standard-kat": 9,
-      "independent-oracle": 4,
+      "independent-oracle": 10,
       "cross-implementation-differential": 0,
       "functional-round-trip": 2,
       "oasis-profile-case": 0,
@@ -48,15 +48,15 @@
       "unverified": 0
     },
     "cases": {
-      "total": 832,
-      "active": 831,
+      "total": 2661,
+      "active": 2660,
       "quarantined": 1
     },
     "activeCasesByClass": {
-      "nist-acvp-reference-sample": 776,
+      "nist-acvp-reference-sample": 920,
       "acvts-issued-vector": 0,
       "published-standard-kat": 16,
-      "independent-oracle": 11,
+      "independent-oracle": 1696,
       "cross-implementation-differential": 0,
       "functional-round-trip": 26,
       "oasis-profile-case": 0,
@@ -64,8 +64,8 @@
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 578,
-      "negative": 253
+      "positive": 1937,
+      "negative": 723
     },
     "filesWithPublishabilityGap": {
       "generator-script-not-in-repo": 1,
@@ -102,58 +102,58 @@
         "unsupportedCells": 31,
         "overall": {
           "covered": 15,
-          "sampled": 912,
-          "untested": 708
+          "sampled": 1538,
+          "untested": 82
         },
         "byPolarity": {
           "positive": {
-            "covered": 170,
-            "sampled": 627,
-            "untested": 838,
+            "covered": 182,
+            "sampled": 1256,
+            "untested": 197,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 172,
+              "nist-reference": 669,
               "standard-kat": 1,
-              "oracle": 33,
+              "oracle": 35,
               "differential": 0,
-              "round-trip": 42,
-              "behavior-only": 549,
-              "untested": 838,
+              "round-trip": 292,
+              "behavior-only": 441,
+              "untested": 197,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 63,
-            "sampled": 39,
-            "untested": 1533,
+            "covered": 77,
+            "sampled": 63,
+            "untested": 1495,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 69,
+              "nist-reference": 106,
               "standard-kat": 0,
-              "oracle": 0,
+              "oracle": 1,
               "differential": 0,
               "round-trip": 0,
               "behavior-only": 33,
-              "untested": 1533,
+              "untested": 1495,
               "unsupported": 0
             }
           },
           "boundary": {
-            "covered": 39,
-            "sampled": 15,
-            "untested": 1581,
+            "covered": 41,
+            "sampled": 173,
+            "untested": 1421,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 45,
+              "nist-reference": 155,
               "standard-kat": 0,
               "oracle": 9,
               "differential": 0,
-              "round-trip": 0,
+              "round-trip": 50,
               "behavior-only": 0,
-              "untested": 1581,
+              "untested": 1421,
               "unsupported": 0
             }
           },
@@ -178,8 +178,8 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 927,
-            "passedCells": 926,
+            "registeredCells": 1553,
+            "passedCells": 1552,
             "failedCells": 9,
             "skippedCells": 0
           },
@@ -206,58 +206,58 @@
         "unsupportedCells": 638,
         "overall": {
           "covered": 15,
-          "sampled": 628,
-          "untested": 385
+          "sampled": 954,
+          "untested": 59
         },
         "byPolarity": {
           "positive": {
-            "covered": 173,
-            "sampled": 347,
-            "untested": 508,
+            "covered": 182,
+            "sampled": 679,
+            "untested": 167,
             "denominator": 1028,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 172,
+              "nist-reference": 429,
               "standard-kat": 3,
-              "oracle": 33,
+              "oracle": 34,
               "differential": 0,
-              "round-trip": 48,
-              "behavior-only": 264,
-              "untested": 508,
+              "round-trip": 179,
+              "behavior-only": 216,
+              "untested": 167,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 63,
-            "sampled": 39,
-            "untested": 926,
+            "covered": 74,
+            "sampled": 47,
+            "untested": 907,
             "denominator": 1028,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 69,
+              "nist-reference": 87,
               "standard-kat": 0,
-              "oracle": 0,
+              "oracle": 1,
               "differential": 0,
               "round-trip": 0,
               "behavior-only": 33,
-              "untested": 926,
+              "untested": 907,
               "unsupported": 0
             }
           },
           "boundary": {
-            "covered": 40,
-            "sampled": 15,
-            "untested": 973,
+            "covered": 41,
+            "sampled": 112,
+            "untested": 875,
             "denominator": 1028,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 45,
+              "nist-reference": 112,
               "standard-kat": 1,
               "oracle": 9,
               "differential": 0,
-              "round-trip": 0,
+              "round-trip": 31,
               "behavior-only": 0,
-              "untested": 973,
+              "untested": 875,
               "unsupported": 0
             }
           },
@@ -282,9 +282,9 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 643,
-            "passedCells": 641,
-            "failedCells": 5,
+            "registeredCells": 969,
+            "passedCells": 967,
+            "failedCells": 6,
             "skippedCells": 0
           },
           "native": {
@@ -306,21 +306,21 @@
     },
     "parity": {
       "positive": {
-        "parity": 485,
+        "parity": 826,
         "divergent": 5,
-        "not-established": 523,
+        "not-established": 182,
         "single-engine": 653
       },
       "negative": {
-        "parity": 97,
+        "parity": 116,
         "divergent": 5,
-        "not-established": 911,
+        "not-established": 892,
         "single-engine": 653
       },
       "boundary": {
-        "parity": 54,
+        "parity": 152,
         "divergent": 0,
-        "not-established": 959,
+        "not-established": 861,
         "single-engine": 653
       },
       "state-error": {
@@ -333,7 +333,7 @@
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4502 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 2833a9289); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 2833a9289); 2044 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 2833a9289). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4432 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 982e64c62); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 2833a9289); 7022 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 982e64c62). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -379,15 +379,15 @@
   },
   "waivers": {
     "source": "src/data/validation/coverage-waivers.json",
-    "entries": 44,
+    "entries": 23,
     "byStatus": {
-      "baseline-pending-review": 44
+      "baseline-pending-review": 23
     },
     "approvedEntries": 0,
-    "waivedCells": 1093,
-    "pendingReviewCells": 1093,
+    "waivedCells": 141,
+    "pendingReviewCells": 141,
     "staleCells": 0,
-    "statement": "All 44 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
+    "statement": "All 23 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
   },
   "nativeSuites": {
     "source": "src/data/validation/native-conformance.generated.json",
@@ -491,17 +491,17 @@
       "runner": "errorPathProbes (every registered error-path case, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "2833a928938850e4f34b79737599dbdb1134d5d8",
+      "hubCommit": "982e64c625798294c475657b60e13d727b231e85",
       "recordedAt": "2026-09-26",
-      "results": 4502,
+      "results": 4432,
       "byEngine": {
         "cpp": {
-          "pass": 2213,
+          "pass": 2178,
           "skip": 38
         },
         "rust": {
-          "pass": 1654,
-          "skip": 597
+          "pass": 1639,
+          "skip": 577
         }
       },
       "failures": []
@@ -526,17 +526,17 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "2833a928938850e4f34b79737599dbdb1134d5d8",
+      "hubCommit": "982e64c625798294c475657b60e13d727b231e85",
       "recordedAt": "2026-09-26",
-      "results": 2044,
+      "results": 7022,
       "byEngine": {
         "cpp": {
-          "pass": 999,
+          "pass": 3488,
           "fail": 23
         },
         "rust": {
-          "pass": 975,
-          "fail": 47
+          "pass": 3461,
+          "fail": 50
         }
       },
       "failures": [
@@ -819,6 +819,18 @@
         {
           "engine": "rust",
           "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/55/tests/0"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-eddsa#wycheproof_ed448_test#/testGroups/3/tests/21"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-eddsa#wycheproof_ed448_test#/testGroups/3/tests/22"
+        },
+        {
+          "engine": "rust",
+          "registryCase": "acvp.37.wycheproof-eddsa#wycheproof_ed448_test#/testGroups/3/tests/23"
         }
       ]
     }
@@ -2415,17 +2427,17 @@
   },
   "openGaps": {
     "source": "public/data/validation/coverage-matrix.json (openGaps; curated entries from src/data/validation/open-gaps.json)",
-    "total": 131,
+    "total": 133,
     "byStatus": {
-      "open": 127,
+      "open": 129,
       "accepted-limitation": 3,
       "in-progress": 1
     },
     "byOrigin": {
-      "curated": 26,
-      "generated": 105
+      "curated": 36,
+      "generated": 97
     },
-    "unassignedOwner": 131,
+    "unassignedOwner": 133,
     "curated": [
       {
         "id": "d2-4-hedged-rnd",
@@ -2576,7 +2588,7 @@
       },
       {
         "id": "cpp-kbkdf-counter-position-ignored",
-        "title": "C++: SP 800-108 KDFs ignore where the caller places the counter in the PRF input",
+        "title": "C++: SP 800-108 KDFs ignore where the caller places the counter in the PRF input (FIXED IN REVIEW, hsm PR #275 — not yet on main)",
         "status": "open",
         "planItem": "E",
         "owner": "unassigned"
@@ -2589,8 +2601,22 @@
         "owner": "unassigned"
       },
       {
+        "id": "rust-rsa-private-import-requires-cka-value",
+        "title": "Rust: C_CreateObject rejects a spec-complete RSA private key unless a non-standard CKA_VALUE is added — and our own import helper has been hiding it",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
         "id": "cpp-ec-public-key-not-validated",
         "title": "C++: invalid ECDSA / EdDSA public points are imported and used without validation",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "ec-subgroup-validation-ed25519-ed448",
+        "title": "Ed25519 / Ed448: small-order public points are not rejected, and NO official NIST vector exists to test it",
         "status": "open",
         "planItem": "E",
         "owner": "unassigned"
@@ -2604,7 +2630,63 @@
       },
       {
         "id": "rust-eddsa-ph-context-ignored",
-        "title": "Rust: Ed25519ph / Ed448ph signing ignores the CK_EDDSA_PARAMS context",
+        "title": "Rust: Ed25519ph / Ed448ph signing drops the CK_EDDSA_PARAMS context (pre-hash path only)",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "vector-corpus-blind-spots",
+        "title": "Instrument scope mistaken for coverage: three corpus blind spots plus the reachability holes that hid them",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "kat-harness-must-read-stated-parameters",
+        "title": "A KAT harness must READ a parameter the vector states, never assume it — and an ungated harness accumulates its own defects",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "rust-ed448-accepts-noncanonical-r",
+        "title": "Rust: three invalid-encoding Ed448 signatures VERIFY — unused bits of R are not checked",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "rust-no-contributory-behaviour-check-ecdh",
+        "title": "Rust: X25519/X448 ECDH returns the all-zero shared secret and computes with low-order points",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "both-engines-compute-with-twist-points",
+        "title": "Both engines compute with X25519/X448 points on the twist (defensible; posture recorded rather than assumed)",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "wycheproof-wave2-not-executed",
+        "title": "167 in-scope Wycheproof files (38,164 cases, 18,416 invalid) are not yet executed",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "wycheproof-files-await-two-person-review",
+        "title": "The 6 vendored Wycheproof files have no two-person review record",
+        "status": "open",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "gate-builds-a-config-nobody-ships",
+        "title": "The hsm gate builds the WASM engine with a 2 MiB stack while the shipped artifact uses 8 MiB — it validates a configuration nobody ships",
         "status": "open",
         "planItem": "E",
         "owner": "unassigned"
@@ -2656,13 +2738,14 @@
   },
   "reviews": {
     "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
-    "validRecords": 0,
+    "validRecords": 55,
     "statusCounts": {
-      "awaiting-review": 109
+      "source-verified": 55,
+      "awaiting-review": 43
     },
     "awaiting": {
-      "vector-source": 61,
-      "coverage-waiver": 44,
+      "vector-source": 16,
+      "coverage-waiver": 23,
       "public-claim": 3,
       "learn-module-practitioner": 1
     },
@@ -2671,22 +2754,22 @@
         "id": "vector-source:aescbc_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/aescbc_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:aescbc_mct_full_test",
         "kind": "vector-source",
         "title": "src/data/acvp/aescbc_mct_full_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:aescbc_test",
         "kind": "vector-source",
         "title": "src/data/acvp/aescbc_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-CBC-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:aescmac_test",
@@ -2699,8 +2782,8 @@
         "id": "vector-source:aesctr_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/aesctr_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-CTR-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:aesctr_test",
@@ -2713,8 +2796,8 @@
         "id": "vector-source:aesgcm_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/aesgcm_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-GCM-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:aesgcm_test",
@@ -2727,8 +2810,8 @@
         "id": "vector-source:aeskw_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/aeskw_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ACVP-AES-KW-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:aeskw_test",
@@ -2748,8 +2831,8 @@
         "id": "vector-source:ecdsa_keyver_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/ecdsa_keyver_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ECDSA-KeyVer-FIPS186-5/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:ecdsa_p384_test",
@@ -2762,22 +2845,22 @@
         "id": "vector-source:ecdsa_p521_test",
         "kind": "vector-source",
         "title": "src/data/acvp/ecdsa_p521_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ECDSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
         "status": "awaiting-review"
       },
       {
         "id": "vector-source:ecdsa_siggen_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/ecdsa_siggen_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ECDSA-SigGen-FIPS186-5/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:ecdsa_sigver_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/ecdsa_sigver_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ECDSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:ecdsa_test",
@@ -2790,29 +2873,29 @@
         "id": "vector-source:eddsa_ed448_test",
         "kind": "vector-source",
         "title": "src/data/acvp/eddsa_ed448_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/EDDSA-SigVer-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
         "status": "awaiting-review"
       },
       {
         "id": "vector-source:eddsa_keyver_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/eddsa_keyver_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/EDDSA-KeyVer-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:eddsa_siggen_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/eddsa_siggen_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/EDDSA-SigGen-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:eddsa_sigver_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/eddsa_sigver_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/EDDSA-SigVer-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:eddsa_test",
@@ -2825,8 +2908,8 @@
         "id": "vector-source:hkdf_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/hkdf_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/KDA-HKDF-Sp800-56Cr2/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:hkdf_test",
@@ -2839,43 +2922,43 @@
         "id": "vector-source:hmac_acvp_matrix_test",
         "kind": "vector-source",
         "title": "src/data/acvp/hmac_acvp_matrix_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:hmac_sha384_test",
         "kind": "vector-source",
         "title": "src/data/acvp/hmac_sha384_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/HMAC-SHA2-384-2.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:hmac_sha512_test",
         "kind": "vector-source",
         "title": "src/data/acvp/hmac_sha512_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/HMAC-SHA2-512-2.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:hmac_test",
         "kind": "vector-source",
         "title": "src/data/acvp/hmac_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:kbkdf_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/kbkdf_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/KDF-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:kmac_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/kmac_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/KMAC-128-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:kmac_test",
@@ -2888,92 +2971,92 @@
         "id": "vector-source:mldsa_extended_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_extended_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204-tr1/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
         "status": "awaiting-review"
       },
       {
         "id": "vector-source:mldsa_keygen_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_keygen_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-keyGen-FIPS204/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:mldsa_siggen_ctxmsg_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_siggen_ctxmsg_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:mldsa_siggen_det_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_siggen_det_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:mldsa_siggen_prehash_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_siggen_prehash_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:mldsa_sigver_depth_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_sigver_depth_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:mldsa_sigver_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_sigver_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:mldsa_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:mlkem_ekcheck_depth_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mlkem_ekcheck_depth_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:mlkem_encapdecap_val_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mlkem_encapdecap_val_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:mlkem_keygen_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mlkem_keygen_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-KEM-keyGen-FIPS203/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:mlkem_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mlkem_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:pbkdf2_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/pbkdf2_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/PBKDF-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:pbkdf2_test",
@@ -2993,8 +3076,8 @@
         "id": "vector-source:rsa_sigver_acvp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/rsa_sigver_acvp_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/RSA-SigVer-FIPS186-5/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:rsapss_test",
@@ -3007,99 +3090,162 @@
         "id": "vector-source:sha256_test",
         "kind": "vector-source",
         "title": "src/data/acvp/sha256_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SHA2-256-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:sha384_test",
         "kind": "vector-source",
         "title": "src/data/acvp/sha384_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SHA2-384-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:sha3_256_test",
         "kind": "vector-source",
         "title": "src/data/acvp/sha3_256_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SHA3-256-2.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:sha3_512_test",
         "kind": "vector-source",
         "title": "src/data/acvp/sha3_512_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SHA3-512-2.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:sha512_test",
         "kind": "vector-source",
         "title": "src/data/acvp/sha512_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SHA2-512-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:sha_acvp_boundary_test",
         "kind": "vector-source",
         "title": "src/data/acvp/sha_acvp_boundary_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SHA2-256-1.0/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:sha_mct_full_test",
         "kind": "vector-source",
         "title": "src/data/acvp/sha_mct_full_test.json — nist-acvp-reference-sample (NIST ACVP-Server SHA2-*-1.0 and SHA3-*-2.0 internalProjection.json @ 975de31e (10 files))",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:slhdsa_ctx_test",
         "kind": "vector-source",
         "title": "src/data/acvp/slhdsa_ctx_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:slhdsa_keygen_test",
         "kind": "vector-source",
         "title": "src/data/acvp/slhdsa_keygen_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-keyGen-FIPS205/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:slhdsa_prehash_siggen_sha2_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/slhdsa_prehash_siggen_sha2_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:slhdsa_prehash_siggen_shake_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/slhdsa_prehash_siggen_shake_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:slhdsa_prehash_sigver_sha2_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/slhdsa_prehash_sigver_sha2_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigVer-FIPS205/internalProjection.json @ 975de31e)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:slhdsa_prehash_sigver_shake_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/slhdsa_prehash_sigver_shake_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigVer-FIPS205/internalProjection.json @ 975de31e)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:slhdsa_siggen_ctx0_test",
         "kind": "vector-source",
         "title": "src/data/acvp/slhdsa_siggen_ctx0_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:slhdsa_siggen_det_test",
         "kind": "vector-source",
         "title": "src/data/acvp/slhdsa_siggen_det_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:slhdsa_sigver_sha2_test",
         "kind": "vector-source",
         "title": "src/data/acvp/slhdsa_sigver_sha2_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigVer-FIPS205/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "vector-source:slhdsa_sigver_shake_test",
         "kind": "vector-source",
         "title": "src/data/acvp/slhdsa_sigver_shake_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigVer-FIPS205/internalProjection.json @ 975de31e)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_SLH_DSA",
-        "kind": "coverage-waiver",
-        "title": "CKM_SLH_DSA (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
+        "id": "vector-source:wycheproof_x25519_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_x25519_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/x25519_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_x448_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_x448_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/x448_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_ed25519_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_ed25519_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/ed25519_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_ed448_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_ed448_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/ed448_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_aes_wrap_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_aes_wrap_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/aes_wrap_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_aes_kwp_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_aes_kwp_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/aes_kwp_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
       },
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA-cpp+rust",
@@ -3112,146 +3258,6 @@
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA-cpp",
         "kind": "coverage-waiver",
         "title": "CKM_HASH_SLH_DSA (cpp): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA224-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA224 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA224-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA224 (cpp): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA256-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA256 (cpp, rust): 29 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA256-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA256 (cpp): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA384-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA384 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA384-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA384 (cpp): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA512-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA512 (cpp, rust): 29 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA512-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA512 (cpp): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_224-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_224 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_224-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_224 (cpp): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_256-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_256 (cpp, rust): 29 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_256-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_256 (cpp): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_384-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_384 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_384-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_384 (cpp): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_512-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_512 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHA3_512-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHA3_512 (cpp): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHAKE128-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHAKE128 (cpp, rust): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHAKE128-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHAKE128 (cpp): 30 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHAKE256-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHAKE256 (cpp, rust): 29 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA_SHAKE256-cpp",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA_SHAKE256 (cpp): 30 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -3442,7 +3448,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 3383 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 5837 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,
@@ -3452,7 +3458,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "63 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1."
+      "basis": "73 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×6, retrieval-date-not-recorded ×1."
     },
     {
       "n": 3,
@@ -3473,11 +3479,11 @@
         "src/components/Playground/dev/pipeline/suites/AcvpSuiteWorkbench.tsx",
         "src/components/Algorithms/KATView.tsx",
         "src/components/Algorithms/CoverageMatrixView.tsx",
-        "public/data/validation/coverage-matrix.{md,html}",
+        "public/data/validation/coverage-matrix.{md,html,json}",
         "public/data/validation/release-evidence.md",
         "e2e/validation-release-evidence.spec.ts"
       ],
-      "basis": "Workbench, Algorithms KAT view and coverage matrix render <ValidationDisclaimer/> (the one shared constant); the coverage exports and this report carry it verbatim; e2e/validation-release-evidence.spec.ts asserts it is visible in a browser."
+      "basis": "Workbench, Algorithms KAT view and coverage matrix render <ValidationDisclaimer/> (the one shared constant); all three coverage exports (.md, .html and the machine-readable .json) and this report carry it verbatim; e2e/validation-release-evidence.spec.ts asserts it is visible in a browser."
     },
     {
       "n": 5,

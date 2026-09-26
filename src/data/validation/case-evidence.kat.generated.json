@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "75bc6bc14211a330334c614418e27a9874b22d53549b86e02568b0ab73d12e01",
-    "registrySha256": "a1ddc4ea799601bc77d9b6068e1c7350457a41f28af220d014cf9cd199bf388b"
+    "manifestSha256": "92ec3a2303c7818040b002faf2357b69e62756e9db6057792f6e93222264153b",
+    "registrySha256": "3ab25d41e22f10b0039259da32905dbac8edc4fce7f645a7ab05d47680522b2b"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
@@ -3480,9 +3480,19 @@
     "acvp/sha512_test.json": "nist-acvp-reference-sample",
     "acvp/slhdsa_ctx_test.json": "nist-acvp-reference-sample",
     "acvp/slhdsa_keygen_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_prehash_siggen_sha2_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_prehash_siggen_shake_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_prehash_sigver_sha2_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_prehash_sigver_shake_test.json": "nist-acvp-reference-sample",
     "acvp/slhdsa_siggen_ctx0_test.json": "nist-acvp-reference-sample",
     "acvp/slhdsa_siggen_det_test.json": "nist-acvp-reference-sample",
     "acvp/slhdsa_sigver_sha2_test.json": "nist-acvp-reference-sample",
-    "acvp/slhdsa_sigver_shake_test.json": "nist-acvp-reference-sample"
+    "acvp/slhdsa_sigver_shake_test.json": "nist-acvp-reference-sample",
+    "acvp/wycheproof_aes_kwp_test.json": "independent-oracle",
+    "acvp/wycheproof_aes_wrap_test.json": "independent-oracle",
+    "acvp/wycheproof_ed25519_test.json": "independent-oracle",
+    "acvp/wycheproof_ed448_test.json": "independent-oracle",
+    "acvp/wycheproof_x25519_test.json": "independent-oracle",
+    "acvp/wycheproof_x448_test.json": "independent-oracle"
   }
 }
