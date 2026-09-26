@@ -184,6 +184,52 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
     expect(cells.size).toBe(6)
   })
 
+  // FIPS 205 §11 Table 2 signature sizes — the length a case must carry unless
+  // its own upstream reason says otherwise.
+  const SIG_BYTES: Record<string, number> = {
+    '128s': 7856,
+    '128f': 17088,
+    '192s': 16224,
+    '192f': 35664,
+    '256s': 29792,
+    '256f': 49856,
+  }
+
+  it('carries a signature whose LENGTH matches each case label (a length negative must really be the wrong length)', () => {
+    // The bug this pins (2026-09-25): a row labelled "invalid signature - too
+    // small" whose signature is the full FIPS 205 length grades a well-formed
+    // signature against CKR_SIGNATURE_LEN_RANGE and tests nothing. The vectors
+    // are a script-produced subset, so the label is not evidence — the length
+    // is. sections/slhdsaAcvp.ts fails such a row loudly (vectorLengthDefect);
+    // this asserts the shipped vectors are self-consistent in the first place.
+    const seen = { small: 0, large: 0, full: 0 }
+    for (const t of nistSigVer() as unknown as {
+      parameterSet: string
+      tcId: number
+      reason: string
+      signature: string
+    }[]) {
+      const want = SIG_BYTES[t.parameterSet.replace(/^SLH-DSA-(SHA2|SHAKE)-/, '')]
+      expect(want, `no FIPS 205 size for ${t.parameterSet}`).toBeDefined()
+      const got = t.signature.length / 2
+      const where = `${t.parameterSet} tc${t.tcId} (${t.reason})`
+      if (/too small/.test(t.reason)) {
+        expect(got, `${where}: must be SHORTER than ${want}B`).toBeLessThan(want)
+        seen.small++
+      } else if (/too large/.test(t.reason)) {
+        expect(got, `${where}: must be LONGER than ${want}B`).toBeGreaterThan(want)
+        seen.large++
+      } else {
+        expect(got, `${where}: must be exactly ${want}B`).toBe(want)
+        seen.full++
+      }
+    }
+    // Both length reasons are actually exercised — not vacuously satisfied.
+    expect(seen.small).toBeGreaterThan(0)
+    expect(seen.large).toBeGreaterThan(0)
+    expect(seen.full).toBeGreaterThan(0)
+  })
+
   it('C++ HashSLH-DSA pre-hash signatures now verify/byte-match (E1 fixed: no more double message-wrap)', () => {
     // Was 'FINDING: C++ rejects every valid NIST HashSLH-DSA signature and
     // mis-signs HashSLH-DSA deterministically' until 2026-09-25 (P3 combined
@@ -297,6 +343,48 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
       expect(r.caseMeta).toMatchObject({ upstreamOperation: 'sigGen', localOperation: 'sigVer' })
     }
   })
+})
+
+// ── Sabotage: a length negative that is no longer short must turn red ──────
+describe('SLH-DSA reference samples — a no-op length mutation fails loudly', () => {
+  it('a "too small" case whose signature is restored to the full FIPS 205 length turns that row red on both engines', async () => {
+    // Regression guard for 2026-09-25: the negative that tests nothing must not
+    // be able to pass. Restoring the full length on a COPY of the vectors (the
+    // exact shape a subset-extraction bug would produce) must fail the row with
+    // a vector-integrity verdict, never grade the engine's answer.
+    const sv = readVectors('slhdsa_sigver_shake_test.json')
+    const group = sv.testGroups.find((g: { tests: { reason: string }[] }) =>
+      g.tests.some((t) => /too small/.test(t.reason))
+    )
+    const neg = group.tests.find((t: { reason: string }) => /too small/.test(t.reason))
+    const short = neg.signature.length / 2
+    neg.signature = neg.signature + '00' // 7855B → 7856B = full SLH-DSA-*-128s length
+    expect(neg.signature.length / 2).toBe(short + 1)
+
+    vi.resetModules()
+    vi.doMock('@/data/acvp/slhdsa_sigver_shake_test.json', () => ({ default: sv }))
+    try {
+      const results = await runSlh()
+      for (const engine of ['C++', 'Rust']) {
+        const r = results.find(
+          (x) =>
+            x.id ===
+            `slhdsa-sigver-nist-${group.parameterSet}-tg${group.tgId}-tc${neg.tcId}-${engine}`
+        )
+        expect(r, `${engine} tc${neg.tcId}`).toBeDefined()
+        expect(r!.status, r!.details).toBe('fail')
+        expect(r!.details).toMatch(
+          /vector integrity: upstream reason "invalid signature - too small"/
+        )
+        expect(r!.details).toMatch(/not shorter than the 7856B FIPS 205 length/)
+        expect(r!.details).toMatch(/cannot test what it claims/)
+      }
+      // Nothing else turned red — only the sabotaged case, on both engines.
+      expect(results.filter((r) => r.status === 'fail')).toHaveLength(2)
+    } finally {
+      vi.doUnmock('@/data/acvp/slhdsa_sigver_shake_test.json')
+    }
+  }, 300_000)
 })
 
 // ── Sabotage: expected values changed on a COPY must turn rows red ─────────

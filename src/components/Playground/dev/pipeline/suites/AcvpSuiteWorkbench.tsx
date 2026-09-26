@@ -57,6 +57,13 @@ import { createAcvpBridge, runSuiteScript } from './suiteBridges'
 const AcvpResultRow = memo(({ res }: { res: TestResult }) => (
   <tr
     data-testid="acvp-result-row"
+    // The stable per-case id, so a test can address ONE row instead of
+    // text-filtering it. Text filters are ambiguous here: the evidence badge
+    // renders each record's limitations, and those quote the vector file's
+    // subset policy, which itself names every upstream negative reason — so
+    // filtering rows by e.g. 'invalid signature - too small' also matches the
+    // POSITIVE case of the same parameter set (found 2026-09-25).
+    data-row-id={res.id}
     data-category={res.category}
     data-status={res.status}
     className="hover:bg-muted/30 transition-colors"

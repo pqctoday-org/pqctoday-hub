@@ -65,6 +65,7 @@ import {
   CKP_SLH_DSA_SHAKE_192F,
   CKP_SLH_DSA_SHAKE_256S,
   CKP_SLH_DSA_SHAKE_256F,
+  SLH_DSA_SIG_BYTES,
 } from '@/wasm/softhsm/constants'
 import {
   verifyRv,
@@ -224,6 +225,32 @@ const expectedRvFor = (t: SigVerCase) =>
       ? CKR_SIGNATURE_LEN_RANGE
       : CKR_SIGNATURE_INVALID
 
+/**
+ * Vector-integrity guard for the dedicated SigVer cases (added 2026-09-25).
+ *
+ * A `too small` / `too large` upstream case only tests CKR_SIGNATURE_LEN_RANGE
+ * if the signature it carries really is the wrong length, and every other case
+ * only tests what it claims if the signature is the full FIPS 205 §11 Table 2
+ * length. The vectors here are a size-budgeted SUBSET produced by a script, so
+ * a subset bug (or a hand edit) could hand a full-length signature to a row
+ * labelled "too small" — the row would then verify a well-formed signature,
+ * still be graded against CKR_SIGNATURE_LEN_RANGE, and silently test nothing.
+ * Rather than trust the label, compare the length and fail the row loudly.
+ *
+ * Returns null when the case is self-consistent, otherwise the reason to fail.
+ */
+const vectorLengthDefect = (t: SigVerCase, ps: string): string | null => {
+  const want = SLH_DSA_SIG_BYTES[SLH_CKP[ps]]
+  if (want === undefined) return null
+  const got = nBytes(t.signature)
+  const tag = `vector integrity: upstream reason "${t.reason}" but the signature is ${got}B`
+  if (/too small/.test(t.reason))
+    return got < want ? null : `${tag}, not shorter than the ${want}B FIPS 205 length`
+  if (/too large/.test(t.reason))
+    return got > want ? null : `${tag}, not longer than the ${want}B FIPS 205 length`
+  return got === want ? null : `${tag}, not the expected full ${want}B FIPS 205 length`
+}
+
 const mechFor = (preHash: string, hashAlg: string) =>
   preHash === 'preHash' ? ACVP_HASH_TO_SLH_MECH[hashAlg] : CKM_SLH_DSA
 const modeLabel = (preHash: string, hashAlg: string) =>
@@ -297,6 +324,22 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
         const why = unsupportedReason(mechs, mech, g.preHash === 'preHash' ? mode : 'CKM_SLH_DSA')
         if (why) {
           await pushSkip(id, algorithm, testCase, meta, why)
+          continue
+        }
+        // The case must carry a signature whose LENGTH matches its own label
+        // before the engine's answer means anything (see vectorLengthDefect).
+        const defect = vectorLengthDefect(t, ps)
+        if (defect) {
+          await pushResult({
+            id,
+            algorithm,
+            testCase,
+            referenceUrl,
+            status: 'fail',
+            details: `${defect} — the case cannot test what it claims · ${srcTag(f._provenance)}`,
+            caseMeta: { ...meta, observed: defect },
+          })
+          addLog(`[DISCREPANCY] [${eName}] [id:${id}] ${ps} ${testCase}: ${defect}`)
           continue
         }
         let pub = 0
