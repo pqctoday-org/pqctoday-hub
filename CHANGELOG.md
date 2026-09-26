@@ -29,6 +29,16 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.123.3] - 2026-09-26
+
+### Fixed
+
+- **Searching for a product's old name now finds the product again.** [view:/migrate] [persona:ops] [persona:grc] When a duplicate entry is retired, its name is kept on the surviving entry so the old name still works. That worked on the catalogue page but not in site search, which had no record of the old names at all — so searching "Akamai PQC Edge" or "Zscaler ZTE" returned nothing rather than the product they were merged into. Site search now includes them.
+
+### Changed
+
+- **Correction to the 4.123.2 note below.** [persona:ops] That entry said searching a retired name still finds the surviving product. That was true of the catalogue page but not of site search until this release. The sentence was accurate about one surface and wrong about the other.
+
 ## [4.123.2] - 2026-09-26
 
 ### Fixed
