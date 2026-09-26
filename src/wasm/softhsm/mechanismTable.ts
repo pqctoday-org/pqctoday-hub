@@ -856,6 +856,19 @@ export const MECH_TABLE: Record<number, MechEntry> = {
     description: 'ECDH derive for Montgomery-curve (X25519) keys (vendor alias)',
     family: 'kdf',
   },
+  // E19 (ACVP gap-closure, hsm PR #260, 2026-09-25): Rust now advertises what
+  // it already dispatched — advertise == dispatch. RFC 9180 HPKE (all 4
+  // modes) plus draft-ietf-hpke-pq PQ/T hybrid KEMs.
+  0x80000013: {
+    name: 'CKM_HPKE_KEM_KEY_PAIR_GEN',
+    description: 'HPKE KEM key-pair generation (RFC 9180 / draft-ietf-hpke-pq, vendor)',
+    family: 'kdf',
+  },
+  0x80000014: {
+    name: 'CKM_HPKE',
+    description: 'HPKE seal/open via C_EncapsulateKey/C_DecapsulateKey (RFC 9180, vendor)',
+    family: 'kdf',
+  },
   0x80001057: {
     name: 'CKM_EDDSA_PH',
     description: 'Ed25519ph prehashed EdDSA (RFC 8032; pkcs11t.h vendor codepoint)',

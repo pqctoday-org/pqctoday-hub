@@ -1181,6 +1181,18 @@
       "revision": "PKCS #11 v3.2",
       "section": "§6.8.3"
     },
+    "CKM_HPKE_KEM_KEY_PAIR_GEN": {
+      "algorithm": "HPKE KEM key-pair generation",
+      "revision": "RFC 9180 / draft-ietf-hpke-pq",
+      "section": null,
+      "vendorDefined": true
+    },
+    "CKM_HPKE": {
+      "algorithm": "HPKE seal/open (RFC 9180, all 4 modes; draft-ietf-hpke-pq PQ/T hybrid KEMs)",
+      "revision": "RFC 9180 / draft-ietf-hpke-pq",
+      "section": null,
+      "vendorDefined": true
+    },
     "CKM_CONCATENATE_BASE_AND_KEY": {
       "algorithm": "Concatenate base key and key",
       "revision": "PKCS #11 v3.2",
