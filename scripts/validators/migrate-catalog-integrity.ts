@@ -36,9 +36,13 @@
  *       search could not tell a claim from its denial, and a free-text column
  *       would drift straight back to that.
  *
+ * MC-6  A pqc_certified=yes row whose own note places PQC outside the approved
+ *       boundary ("non-FIPS operating mode", "non-Approved mode"). The one
+ *       false positive of 87 when the column was populated.
+ *
  * Severity: MC-1, MC-4 and MC-5 ERROR (identity / controlled vocabulary).
- * MC-2 and MC-3 WARNING: legacy rows are reported, and the row-level fix
- * goes through review.
+ * MC-2, MC-3 and MC-6 WARNING: legacy rows and prose heuristics are reported,
+ * and the row-level fix goes through review.
  */
 
 import fs from 'fs'
@@ -240,6 +244,40 @@ export function checkCertificationVerdicts(rows: CsvRow[], file: string): Findin
   return findings
 }
 
+/**
+ * MC-6 — a full PQC certification claim whose own note places PQC OUTSIDE the
+ * approved boundary.
+ *
+ * `Marvell LiquidSecurity 2` read "Yes (ML-KEM, ML-DSA in non-FIPS operating
+ * mode; field-upgradable per CMVP #4703)" and was derived as
+ * `pqc_certified=yes` purely because the note opens "Yes" and mentions CMVP —
+ * 1 false positive in 87 when the column was first populated (2026-09-26). Its
+ * sibling row `LS2 HSM Family`, describing the same hardware, was already
+ * `partial`. Certificate #4703 correctly reports no PQC, because the PQC is
+ * outside its boundary.
+ *
+ * WARNING rather than ERROR: this is a prose heuristic, and a legitimate note
+ * could mention a non-approved mode in passing while still claiming approved
+ * PQC elsewhere. It asks a question; it does not assert a defect.
+ */
+export function checkApprovedBoundaryClaims(rows: CsvRow[], file: string): Finding[] {
+  const OUTSIDE = /non-?FIPS|non-?Approved|non-compliant service/i
+  const findings: Finding[] = []
+  rows.forEach((row, i) => {
+    if (!isActive(row)) return
+    if ((row.pqc_certified || '').trim().toLowerCase() !== 'yes') return
+    if (!OUTSIDE.test(row.pqc_support || '')) return
+    findings.push({
+      csv: file,
+      row: i + 2,
+      field: 'pqc_certified',
+      value: 'yes',
+      message: `${row.product_id}: pqc_certified=yes but the note places PQC outside the approved boundary — should this be partial?`,
+    })
+  })
+  return findings
+}
+
 /** The generation before the latest pqc_product_catalog file, by date then _rN. */
 function previousCatalog(): CsvRow[] {
   const prefix = 'pqc_product_catalog_'
@@ -300,6 +338,13 @@ export function runMigrateCatalogIntegrity(
       'ERROR',
       file,
       checkCertificationVerdicts(rows, file)
+    ),
+    result(
+      'MC-6',
+      'No pqc_certified=yes row places its PQC outside the approved boundary',
+      'WARNING',
+      file,
+      checkApprovedBoundaryClaims(rows, file)
     ),
   ]
 }
