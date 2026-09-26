@@ -813,6 +813,13 @@ src/.!*!.DS_Store
 !scripts/generate-release-evidence.test.ts
 !scripts/release-freeze.ts
 !scripts/release-freeze.test.ts
+# Education / not-for-production status gate (audit:education-notice, in
+# gate:data:audits) + its sabotage test. Same "every new scripts/ file needs
+# its own re-include line, on the same commit" rule as the rest of this
+# section — checked with `git check-ignore -v` before committing
+# (education-notice remediation 2026-09-26).
+!scripts/audit-education-notice.ts
+!scripts/audit-education-notice.test.ts
 # NIST SP 800-90B estimator tool -> WebAssembly (entropy workshop W0/W1/D4,
 # 2026-09-24). Reproducible build (Dockerfile.wasm + build/stage scripts), the
 # glibc ldbl-128 shim, the D4 synthetic-dataset generator and the W1 parity
@@ -822,3 +829,15 @@ src/.!*!.DS_Store
 !scripts/entropy-90b/
 # A bare `build-wasm.sh` pattern above ignores every file of that name.
 !scripts/entropy-90b/build-wasm.sh
+# The scripts that MAKE src/data/validation/vector-manifest.json's verification
+# claims runnable (scripts/acvp/README.md explains the mapping): the byte-copying
+# subset reproducer the manifest's source.verification.method cites, and the four
+# independent Python cross-checks the HKDF / KBKDF / SHA-MCT / AES-CBC-MCT vector
+# files cite in _provenance.construction_note. They are referenced by committed
+# package.json scripts (acvp:subset-reproduce, acvp:crosschecks), so they have the
+# same `scripts/*` trap as every entry above: without this negation `git add
+# scripts/acvp/...` is a SILENT no-op and the provenance record goes back to being
+# an unreproducible self-assertion. Verified with `git check-ignore -v` on each file.
+!scripts/acvp/
+# ...but not the interpreter's byte-cache, which the negation above would let in.
+scripts/acvp/__pycache__/

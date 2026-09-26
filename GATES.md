@@ -44,7 +44,9 @@ run on this exact commit is not paid twice):
 - `import:native-conformance:check` — `src/data/validation/native-conformance.generated.json` (the hsm engines' own PKCS#11 conformance reports, shown in the Playground conformance workbench) still equals a fresh import at the pinned hsm commit, and hsm main has committed no newer report than that pin. Reads the sibling `../pqctoday-hsm` by commit (`git show`); skips cleanly when the checkout or the pinned commit is absent, which is why it is not in GitHub CI (CI clones only the hub). Refresh: move `PINNED_HSM_COMMIT` in `scripts/import-native-conformance.ts`, then `npm run import:native-conformance`. It imports reports; regenerating them means re-running the suites in pqctoday-hsm.
 - `gen:landing-counts:check` — landing hero counts match the CSVs.
 - `audit:csv-copy-forward` — no silent row loss between two generations of a dated CSV.
+- `audit:test-reachability` — every test-shaped file in the repo is actually run by some enforced gate (~2.5 min: it asks `vitest list` and `playwright --list` which files each gate resolves, rather than re-implementing their glob/filter semantics). Added 2026-09-26 after three misses in one day from files that existed, ran and FAILED while no gate ran them; its first run named 87 such files. Deliberately here rather than only as a manual command — a check for ungated checks that is itself ungated is the joke it exists to prevent. Anything intentionally left out goes in the script's own `ALLOWLIST` with a reason, and a rotted allowlist entry fails too.
 - `test` — the full vitest suite (also in GitHub, sharded; the local run is the fast path on an M-series machine).
+- `test:local` — the `*.local.test.{ts,tsx}` tier, UNSCOPED (80 files, 1,017 tests). Added 2026-09-26: 69 of those files were run by no gate at all (the only enforced invocation of `vitest.local.config.ts` was `test:local:cacp`'s two kmip paths). See the sabotage table below — many of the sabotage proofs live in this tier, so before this they were proofs nothing checked. **Cost: ~19 min measured** (1,159 s, M-series, 2026-09-26), dominated by a few real-WASM/vector suites rather than by breadth — much slower than `test`, and the main thing to weigh if pre-push starts feeling too heavy. Moving it to a receipt-only or nightly venue is a real option; running it nowhere is what created the hole. **Update, same day:** it later grew to 28.6 min, 26.3 of which was one file, the SLH-DSA NIST-vector suite; that file moved to the nightly venue below (`*.nightly.test.ts`), and everything else stays here.
 
 then `npm run gate:cacp` (see GitHub `gate-cacp`; here it runs against the real sibling `../pqctoday-hsm`, where the full drift guards work), then the receipt is written.
 
@@ -98,12 +100,43 @@ The full Playwright suite, 2 shards. Not a required check. The `notify` job
 opens/updates one issue, **"Nightly E2E is red"**, with the run URL and the
 failing test names, and closes it on the next green run.
 
+## GitHub — nightly vector suites (`.github/workflows/validation-nightly.yml`, 05:00 UTC)
+
+`npm run test:nightly` — the `*.nightly.test.{ts,tsx}` tier, unscoped, via
+`vitest.nightly.config.ts`. Both `vite.config.ts` and `vitest.local.config.ts`
+exclude that tier, so it runs here and nowhere else. It is for suites that must
+run but are too slow for pre-push. Today it has one file:
+`useAcvpSuite.slhdsaAcvp.nightly.test.ts`, which took 26.3 of `test:local`'s
+28.6 min on an M-series Mac, because it runs the whole slh_stateful category on
+both engines three times (baseline plus two sabotage proofs). Moved here by
+maintainer decision, 2026-09-26.
+
+Not a required check, so a regression here can sit on `main` for up to a day.
+The `notify` job opens or updates ONE issue, **"Nightly validation vectors are
+red"**, with the failing test names, and closes it on the next green run. The
+per-step time budget comes from `SLHDSA_BUDGET_MS` (60 min on the runner; the
+file's own default is tuned to a Mac). Runner timing has not been measured yet.
+Before a release, run it on demand (`workflow_dispatch`) or locally with
+`npm run test:nightly`. `audit:test-reachability` lists this gate and fails if
+the workflow stops invoking it.
+
 ## Before a release — `npm run gate:release`
 
 `gate:local` + `gate:e2e` (`build` + the full Playwright suite against the
 production build — the round-9 lesson: 15 browser regressions shipped through
-13 green releases while only the smoke tier ran per PR) + `gate:cacp`, then
-the receipt `.gate-ok-<sha>` so the pre-push hook does not repeat it.
+13 green releases while only the smoke tier ran per PR) +
+`test:e2e:local-tier` (`E2E_SERVER=dev playwright test --project=local` — the 18
+`*.local.spec.ts` specs, which both CI projects exclude and which no gate ran
+before 2026-09-26) + `gate:cacp`, then the receipt `.gate-ok-<sha>` so the
+pre-push hook does not repeat it.
+
+`E2E_SERVER=dev`, matching every other local-tier script here
+(`test:e2e:cacp-visual`, `test:e2e:cacp-local`): several of these specs
+`page.evaluate`-import source modules, which resolves under the dev server and
+not against a `vite preview` bundle. So this step does not itself need the build
+— it sits on `gate:release` rather than pre-push for time, not for the build:
+`--project=local` is 18 specs of WASM/crypto/WebGL work, which is minutes, and
+pre-push already carries the full unit suite plus `test:local`.
 
 ## Conference/release freeze — `npm run release:freeze` (plan J-4)
 

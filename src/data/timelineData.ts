@@ -215,8 +215,34 @@ export function computeTimelineConfidence(
 const MIN_SANE_YEAR = 1990
 const MAX_SANE_YEAR = 2100
 
+// An ABSENT year is a different thing from a MALFORMED one, and conflating the
+// two was itself a defect (2026-09-26):
+//   • malformed ("Q1 2030", "20300", "1200") means the cell was filled in wrong.
+//     That is a bug in whoever wrote it, and it stays a console.error.
+//   • empty ("") means a `Phase` row whose boundary is genuinely open-ended and
+//     was never sourced. Three such rows exist and are identical on origin/main
+//     (verified against src/data/timeline_09252026_r9.csv, not just this
+//     worktree's copy): Canada "Remaining Systems Migration" (StartYear),
+//     France "Phase 1 - Pre-Quantum Security" (EndYear) and Singapore
+//     "Financial Sector Planning" (EndYear). Reporting those as console.errors
+//     on every page load said "the code is broken" about a DATA gap, and it made
+//     e2e/wasm-refresh-smoke.local.spec.ts (which asserts a clean console on an
+//     unrelated page) permanently red for a reason nothing on that page caused.
+// Both cases still withhold the row from the Gantt — a bar needs two ends, and
+// inventing one would fabricate geometry the source does not support. The
+// difference is only in how loudly, and how honestly, it is announced: an empty
+// boundary is a console.warn naming it as a data gap, so it is still visible to
+// anyone looking at the console but is not misreported as malformed input.
 function parseSaneYear(raw: string | undefined, context: string): number | null {
   const trimmed = (raw ?? '').trim()
+  if (trimmed === '') {
+    console.warn(
+      `[timelineData] Missing year for ${context} — open-ended/unsourced boundary (DATA GAP, ` +
+        `not malformed input). Withheld from the Gantt: a bar needs two ends and guessing one ` +
+        `would fabricate chart geometry the cited source does not support.`
+    )
+    return null
+  }
   const year = /^\d{4}$/.test(trimmed) ? parseInt(trimmed, 10) : NaN
   if (!Number.isFinite(year) || year < MIN_SANE_YEAR || year > MAX_SANE_YEAR) {
     console.error(

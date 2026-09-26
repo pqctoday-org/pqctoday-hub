@@ -526,9 +526,30 @@ export default defineConfig({
     // a real signal worth chasing rather than raising again.
     testTimeout: 30_000,
     hookTimeout: 30_000,
+    // ZERO-MATCH FILTER TRAP (pinned 2026-09-26, do not flip to true).
+    //
+    // Several npm scripts pass POSITIONAL path filters to vitest
+    // (`gate:pkcs11` -> `npm run test -- <paths>`, `test:local:cacp`, …).
+    // A filter that resolves to no files must be a HARD FAILURE, never a
+    // silent success: on 2026-09-26 two separate "0 failures" readings were
+    // reported by commands that structurally could not execute the file being
+    // asked about (a plain `*.test.ts` path handed to `test:local`, whose
+    // include is `**/*.local.test.{ts,tsx}` only). vitest's default for this
+    // option is already false — it is written down here so that default can
+    // never be inherited away, and so grepping for the guarantee finds it.
+    // Proven in both directions by scripts/ci/zero-match-filter.test.ts.
+    passWithNoTests: false,
     // `*.local.test.*` are local-gate-only suites (directive 2026-07-01: new
     // test suites run locally, not in CI) — excluded here, run via `test:local`.
-    exclude: [...configDefaults.exclude, 'e2e/**', '.claude/**', '**/*.local.test.{ts,tsx}'],
+    // `*.nightly.test.*` are scheduled-only suites, run by `test:nightly` from
+    // .github/workflows/validation-nightly.yml — excluded here for the same reason.
+    exclude: [
+      ...configDefaults.exclude,
+      'e2e/**',
+      '.claude/**',
+      '**/*.local.test.{ts,tsx}',
+      '**/*.nightly.test.{ts,tsx}',
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

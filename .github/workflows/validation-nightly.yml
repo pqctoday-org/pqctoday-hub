@@ -1,0 +1,178 @@
+name: Validation (nightly vector suites)
+
+# The `*.nightly.test.*` Vitest suites: NIST-vector suites too slow for the
+# pre-push gate that must still run somewhere (maintainer decision 2026-09-26).
+# Today that is useAcvpSuite.slhdsaAcvp.nightly.test.ts — 26.3 of the 28.6 min
+# `test:local` took on an M-series Mac, because it runs the whole slh_stateful
+# category on both engines three times (baseline plus two sabotage proofs).
+#
+# Like e2e-nightly.yml this is NOT a required/branch-protected check, so a
+# regression here can sit on `main` for up to 24h. The `notify` job keeps that
+# visible: it opens ONE issue, "Nightly validation vectors are red", and closes it
+# on the next green run. Run on demand with workflow_dispatch before a release.
+on:
+  schedule:
+    - cron: '0 5 * * *' # 05:00 UTC daily, clear of e2e-nightly at 07:00
+  workflow_dispatch: {}
+
+concurrency:
+  group: validation-nightly
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  vectors:
+    runs-on: ubuntu-latest
+    # Unmeasured on a runner. Locally the three steps took 508-561 s each; the
+    # per-step budget below allows ~6.5x that, and this cap sits above all three.
+    timeout-minutes: 200
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        env:
+          ONNXRUNTIME_NODE_INSTALL: skip # see ci.yml `checks`
+        run: npm ci
+
+      - name: Nightly vector suites
+        env:
+          SLHDSA_BUDGET_MS: '3600000' # 60 min per step; the file's default is tuned to a Mac
+        run: >-
+          npm run test:nightly -- --reporter=default --reporter=json
+          --outputFile.json=vitest-nightly-results.json
+
+      - name: Upload JSON results (for the notify job)
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: vitest-nightly-json
+          path: vitest-nightly-results.json
+          retention-days: 14
+          if-no-files-found: ignore
+
+  notify:
+    # ONE issue titled "Nightly validation vectors are red": opened (or updated
+    # with a fresh comment) when the run fails, closed when it is green again.
+    # `if: always()` because a run that timed out or was cancelled is also red.
+    needs: vectors
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+      actions: read
+    steps:
+      - name: Download JSON results
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: vitest-nightly-json
+          path: results
+        continue-on-error: true # a run killed at its timeout never writes the file
+
+      - name: Open, update or close the "Nightly validation vectors are red" issue
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          RESULT: ${{ needs.vectors.result }}
+        with:
+          script: |
+            const fs = require('fs');
+            const TITLE = 'Nightly validation vectors are red';
+            const result = process.env.RESULT; // success | failure | cancelled | skipped
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const today = new Date().toISOString().slice(0, 10);
+
+            // Vitest JSON: testResults[] { name (file), assertionResults[] { fullName, status } }
+            const failing = [];
+            let haveJson = false;
+            const file = 'results/vitest-nightly-results.json';
+            if (fs.existsSync(file)) {
+              try {
+                const report = JSON.parse(fs.readFileSync(file, 'utf8'));
+                haveJson = true;
+                for (const tr of report.testResults ?? []) {
+                  for (const a of tr.assertionResults ?? []) {
+                    if (a.status === 'failed') failing.push(`${tr.name} › ${a.fullName}`);
+                  }
+                }
+              } catch (e) {
+                core.warning(`could not parse ${file}: ${e.message}`);
+              }
+            }
+            failing.sort();
+
+            const open = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const issue = open.find((i) => !i.pull_request && i.title === TITLE);
+
+            if (result === 'success') {
+              if (issue) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: `Green again on ${today}: ${runUrl}\n\nClosing.`,
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  state: 'closed',
+                  state_reason: 'completed',
+                });
+                core.info(`closed #${issue.number}`);
+              } else {
+                core.info('nightly green, no open issue — nothing to do');
+              }
+              return;
+            }
+
+            const lines = [`**Run:** ${runUrl} — result \`${result}\` (${today})`, ''];
+            if (!haveJson) {
+              lines.push('_No JSON report (the run was killed, timed out, or failed before tests ran) — open the run._');
+            } else if (failing.length) {
+              lines.push(`**Failing tests (${failing.length}):**`);
+              for (const n of failing) lines.push(`- ${n}`);
+            } else {
+              lines.push('_No failing test in the JSON report — the run failed outside a test (install, timeout). Open the run._');
+            }
+            lines.push('');
+            lines.push('Reproduce locally: `npm run test:nightly` (see GATES.md).');
+            const section = lines.join('\n');
+            const body = `The nightly vector suites (.github/workflows/validation-nightly.yml) are failing. This issue is kept up to date by the workflow's \`notify\` job and closed automatically on the next green run.\n\n### Latest red run\n\n${section}`;
+
+            if (issue) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body,
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `Still red on ${today}.\n\n${section}`,
+              });
+              core.info(`updated #${issue.number}`);
+            } else {
+              const created = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: TITLE,
+                body,
+              });
+              core.info(`opened #${created.data.number}`);
+            }
