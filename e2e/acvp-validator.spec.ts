@@ -144,66 +144,30 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // the CKR error and a tracking link, not by re-narrowing the filter
     // above to a subset of algorithms.
     //
-    // 2026-09-24 (WS-D D1-2): the Rust engine performs no FIPS 203 §7.2
-    // (encapsulation-key modulus) or §7.3 (decapsulation-key hash) input
-    // check — it accepts all six NIST ML-KEM VAL keys marked invalid
-    // (C_CreateObject and the KEM operation both return CKR_OK). Engine
-    // finding, reported for pqctoday-hsm; not a harness defect. Matched by
-    // exact row identity, and asserted to STILL be red below so the entry is
-    // removed when the engine is fixed.
+    // 2026-09-24 (WS-D D1-2) through 2026-09-25 (gap-closure P1): this list
+    // used to carry 7 entries (83 Rust-engine fails total) for documented
+    // engine findings — no FIPS 203 §7.2/§7.3 ML-KEM key check, AES-GCM IVs
+    // other than 96 bits, ECDSA P-224 unsupported, RSA exponent > 2^33-1, a
+    // wrong-length CBC IV answered with the unlisted CKR_ARGUMENTS_BAD,
+    // PBKDF2 PRF limited to HMAC-SHA-256/384/512, and KMAC C_Verify ignoring
+    // ulOutputLen.
     //
-    // 2026-09-25 (gap-closure P1): WS-E (merged in P0) added NIST ACVP-Server
-    // samples that the Rust engine fails. Each is a documented engine finding
-    // with a curated open gap in src/data/validation/open-gaps.json, recorded
-    // identically (83 Rust fails = the sum of the counts below) in
-    // run-results/wasm-node-useAcvpSuite.json on the same wasm bytes
-    // (softhsmrustv3_bg.wasm a4582ff0, hsm ac8b40fd0). Each entry matches the
-    // row identity AND its observed failure mode, and must stay red exactly
-    // `count` times — a change in either count or failure mode fails the spec.
-    const KNOWN_RED_ROWS: { match: RegExp; why: string; count: number }[] = [
-      {
-        match:
-          /ML-KEM-(512|768|1024) \(Rust\) (Decapsulation-key check \(FIPS 203 §7\.3\)|Encapsulation-key check \(FIPS 203 §7\.2\)) · NIST VAL tg\d+\/tc\d+ · (modified H|noisy linear system values too large) · expect rejected/,
-        why: 'Rust engine: no FIPS 203 §7.2/§7.3 key check (open gap rust-mlkem-no-key-input-checks)',
-        count: 6,
-      },
-      {
-        match:
-          /^Symmetric \/ AEAD AES-128-GCM \(Rust\) (Encrypt|Decrypt) · NIST AES-GCM tg(2|4)\/tc\d+ · IV 120b · .*CKR_MECHANISM_PARAM_INVALID/,
-        why: 'Rust engine: AES-GCM IVs other than 96 bits refused (open gap rust-gcm-iv-96-only)',
-        count: 30,
-      },
-      {
-        match:
-          /^Classical Asymmetric ECDSA P-224 \(Rust\) SigVer · NIST ECDSA sigVer tg\d+\/tc\d+ · P-224 · .*C_Verify → CKR_SIGNATURE_LEN_RANGE/,
-        why: 'Rust engine: cannot verify P-224 ECDSA (open gap rust-ecdsa-p224-unsupported)',
-        count: 28,
-      },
-      {
-        match:
-          /^Classical Asymmetric RSA-(4096 PKCS#1 v1\.5|2048 PSS) \(Rust\) SigVer · NIST RSA sigVer tg(13|25)\/tc\d+ · .*C_Verify → CKR_KEY_TYPE_INCONSISTENT/,
-        why: 'Rust engine: public exponent > 2^33 - 1 (open gap rust-rsa-public-exponent-limit)',
-        count: 12,
-      },
-      {
-        match:
-          /^Symmetric \/ AEAD AES-128-CBC \(Rust\) Invalid IV · product-authored probe · C_EncryptInit\(CKM_AES_CBC\) with a 15-byte IV .*observed CKR_ARGUMENTS_BAD/,
-        why: 'Rust engine: wrong-length CBC IV answered with CKR_ARGUMENTS_BAD (open gap rust-cbc-iv-length-arguments-bad)',
-        count: 1,
-      },
-      {
-        match:
-          /^KDF PBKDF2-HMAC-SHA2-224 \(Rust\) Derive · NIST PBKDF tg1\/tc\d+ · .*C_DeriveKey → CKR_ARGUMENTS_BAD/,
-        why: 'Rust engine: PBKDF2 PRF limited to HMAC-SHA-256/384/512 (open gap rust-pbkdf2-prf-limited)',
-        count: 5,
-      },
-      {
-        match:
-          /^Hashing & MAC KMAC-128 \(Rust\) MAC verify · NIST KMAC-128 MVT tg8\/tc799 · .*C_Verify → CKR_SIGNATURE_LEN_RANGE/,
-        why: 'KMAC C_Verify ignores ulOutputLen (open gap kmac-verify-ignores-output-length)',
-        count: 1,
-      },
-    ]
+    // ALL SEVEN ARE FIXED as of the P3 combined rebuild (2026-09-25, hsm
+    // a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb — merge of the 6 ACVP
+    // gap-closure engine-fix PRs #255/#257/#258/#259/#260, #256 superseded by
+    // #262): E2 (ML-KEM key checks), E12 (AES-GCM IV), E13 (ECDSA P-224), E14
+    // (RSA exponent), E18 (CBC IV code), E15 (PBKDF2 PRF), E16 (KMAC output
+    // length). Confirmed against the rebuilt engine at the unit level — every
+    // corresponding case flipped fail→pass in
+    // src/data/validation/run-results/wasm-node-useAcvpSuite.json and the
+    // dedicated *.local.test.ts suites (useAcvpSuite.classicalAcvp,
+    // .mlkemAcvp, .pqcCoverage) were updated and re-verified the same way.
+    // Per this file's own rule ("if one drops, the engine was fixed: narrow
+    // or delete its KNOWN_RED_ROWS entry"), the list is now empty. If a
+    // regression reintroduces a known-red row, re-add it here BY NAME with
+    // the CKR error and a tracking link, not by re-narrowing the filter
+    // above to a subset of algorithms.
+    const KNOWN_RED_ROWS: { match: RegExp; why: string; count: number }[] = []
     const knownRedSeen = KNOWN_RED_ROWS.map(() => 0)
 
     const resultRows = page.locator('table tbody tr')

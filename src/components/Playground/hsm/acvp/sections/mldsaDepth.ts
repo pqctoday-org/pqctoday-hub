@@ -49,16 +49,21 @@ import {
 } from './mldsaAcvp'
 import { createObjectRv, pinnedVerdict, sha256Tag, signRv, type PinnedRv } from './pkcs11Raw'
 
-/** 256-byte context (FIPS 204 caps ctx at 255 bytes). */
+/**
+ * 256-byte context (FIPS 204 caps ctx at 255 bytes).
+ * cpp updated 2026-09-25 (P3 combined rebuild, hsm a22e6ca0, E9/D6): C++ now
+ * returns CKR_MECHANISM_PARAM_INVALID like Rust, closing the disagreement —
+ * confirmed against the rebuilt engine, not guessed.
+ */
 export const MLDSA_CTX256_PINS: Record<'sign' | 'verify', PinnedRv> = {
   sign: {
-    cpp: 'CKR_ARGUMENTS_BAD',
+    cpp: 'CKR_MECHANISM_PARAM_INVALID',
     rust: 'CKR_MECHANISM_PARAM_INVALID',
     listed: ['CKR_ARGUMENTS_BAD', 'CKR_MECHANISM_PARAM_INVALID'],
     section: '§5.13.1 (C_SignInit)',
   },
   verify: {
-    cpp: 'CKR_ARGUMENTS_BAD',
+    cpp: 'CKR_MECHANISM_PARAM_INVALID',
     rust: 'CKR_MECHANISM_PARAM_INVALID',
     listed: ['CKR_ARGUMENTS_BAD', 'CKR_MECHANISM_PARAM_INVALID'],
     section: '§5.15.1 (C_VerifyInit)',
