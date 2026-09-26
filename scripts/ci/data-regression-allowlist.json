@@ -1,7 +1,5 @@
 {
-  "vendorAlgoEmptyOk": [
-    "VND-027"
-  ],
+  "vendorAlgoEmptyOk": ["VND-027"],
   "patentsEmptiedOk": {
     "performance_claims": {
       "expectedEmptied": 41,
