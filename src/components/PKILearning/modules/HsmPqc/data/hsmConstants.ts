@@ -24,7 +24,7 @@ export interface FipsValidationEntry {
   status: 'Active' | 'Pending' | 'Planned' | 'Historical'
   date: string
   level?: string
-  /** Direct link to NIST CMVP or ACVP certificate page */
+  /** Direct link to the NIST CMVP or CAVP validation page */
   certLink?: string
   /** Contextual note shown in the UI */
   note?: string
@@ -880,7 +880,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     upgradeComplexity: 'low',
     estimatedDowntime: 'Zero — SDK update only',
     notes:
-      'PQC delivered via AWS-LC SDK, not HSM firmware change — hardware FIPS boundary unchanged. Customers update SDK dependency only. No downtime required. ML-DSA (all 3 variants) in preview; ML-KEM not yet in CloudHSM hardware. ACVP certificates required for new algorithm implementations.',
+      'PQC delivered via AWS-LC SDK, not HSM firmware change — hardware FIPS boundary unchanged. Customers update SDK dependency only. No downtime required. ML-DSA (all 3 variants) in preview; ML-KEM not yet in CloudHSM hardware. CAVP validations required for new algorithm implementations.',
   },
   {
     vendorId: 'azure-dhsm',

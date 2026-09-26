@@ -73,7 +73,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Deployment',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'Cloud HSM PQC support is uneven rather than absent: our own migrate catalogue records ACVP ML-KEM and ML-DSA validations for AWS CloudHSM and Securosys CloudHSM, while Azure Managed HSM and Azure Key Vault record none. Read those as ALGORITHM-level validations — an ACVP certificate does not by itself tell you the ML-KEM encapsulation call is exposed through the provider PKCS#11 interface, which is the thing your integration actually needs, so confirm the API surface with the vendor before designing around it. On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) remain the safer assumption for ML-KEM key exchange today.',
+        'Cloud HSM PQC support is uneven rather than absent: our own migrate catalogue records CAVP ML-KEM and ML-DSA validations for AWS CloudHSM and Securosys CloudHSM, while Azure Managed HSM and Azure Key Vault record none. Read those as ALGORITHM-level validations — an CAVP validation does not by itself tell you the ML-KEM encapsulation call is exposed through the provider PKCS#11 interface, which is the thing your integration actually needs, so confirm the API surface with the vendor before designing around it. On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) remain the safer assumption for ML-KEM key exchange today.',
       config: { step: 1 },
     },
     {
