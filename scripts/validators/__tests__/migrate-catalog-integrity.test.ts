@@ -134,6 +134,24 @@ describe('MC-5 certification verdicts', () => {
   it('ignores deprecated rows', () => {
     expect(checkCertificationVerdicts([row('yes', 'no', 'deprecated')], 'c')).toHaveLength(0)
   })
+
+  it('accepts the FIPS 140-3 track stages', () => {
+    for (const [pc, hc] of [
+      ['cavp', 'cavp'], // algorithms validated, no certificate
+      ['cavp', 'yes'], // certified module, PQC only CAVP-validated (the K7 case)
+      ['none', 'in_progress'], // NIST lists the module as in process
+    ]) {
+      expect(checkCertificationVerdicts([row(pc, hc)], 'c'), `${pc}/${hc}`).toHaveLength(0)
+    }
+  })
+
+  it('rejects a PQC-certification claim resting on a stage, not a certificate', () => {
+    for (const hc of ['cavp', 'in_progress']) {
+      const f = checkCertificationVerdicts([row('yes', hc)], 'c')
+      expect(f, hc).toHaveLength(1)
+      expect(f[0].message).toMatch(/not a certificate/)
+    }
+  })
 })
 
 describe('MC-6 approved-boundary claims', () => {

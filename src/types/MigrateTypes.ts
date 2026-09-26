@@ -96,7 +96,7 @@ export interface SoftwareItem {
    * Optional so test mocks and older data may omit it; the loader always sets
    * it, defaulting to `none` — the same convention as `pqcStatusCanonical`.
    */
-  pqcCertified?: 'yes' | 'partial' | 'no' | 'none'
+  pqcCertified?: 'yes' | 'partial' | 'no' | 'none' | 'cavp' | 'in_progress'
   /**
    * Does the product hold ANY certificate, PQC or not? The pairing that
    * matters is `hasCertification: 'yes'` with `pqcCertified: 'no'` — 11 active
@@ -111,10 +111,15 @@ export interface SoftwareItem {
    * Distinct from `yes` (that would claim a validation the product does not
    * have) and from `unknown` (that would hide a known fact).
    *
+   * FIPS 140-3 track stages, for this column and {@link pqcCertified}: `cavp`
+   * — the algorithms are CAVP-validated, the prerequisite, NOT a certificate;
+   * `in_progress` — NIST lists the module as Modules In Process / IUT (never
+   * inferred from CAVP); `yes` — a certificate is held.
+   *
    * Optional for the same reason as {@link pqcCertified}; the loader always
    * sets it, defaulting to `unknown`.
    */
-  hasCertification?: 'yes' | 'no' | 'unknown' | 'component'
+  hasCertification?: 'yes' | 'no' | 'unknown' | 'component' | 'cavp' | 'in_progress'
   /** Normalized PQC status from the catalog: available | partial | roadmap |
    *  none | unknown (the single source of truth for product PQC status).
    *  Optional so test mocks / older data may omit it; the loader always sets it. */

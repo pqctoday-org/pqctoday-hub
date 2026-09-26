@@ -187,8 +187,15 @@ export function checkRenamesKeepFormerNames(
   return findings
 }
 
-const PQC_CERTIFIED_VALUES = new Set(['yes', 'partial', 'no', 'none'])
-const HAS_CERTIFICATION_VALUES = new Set(['yes', 'no', 'unknown', 'component'])
+const PQC_CERTIFIED_VALUES = new Set(['yes', 'partial', 'no', 'none', 'cavp', 'in_progress'])
+const HAS_CERTIFICATION_VALUES = new Set([
+  'yes',
+  'no',
+  'unknown',
+  'component',
+  'cavp',
+  'in_progress',
+])
 
 /**
  * MC-5 — the two certification verdicts stay inside their vocabularies, and
@@ -206,6 +213,13 @@ const HAS_CERTIFICATION_VALUES = new Set(['yes', 'no', 'unknown', 'component'])
  * pairing is legitimate, including the one these columns were added to
  * express — hasCertification=yes with pqcCertified=no, a product FIPS-validated
  * for classical algorithms only (11 active rows).
+ *
+ * FIPS 140-3 track stages (added 2026-09-26, user decision): `cavp` = the
+ * algorithms are CAVP-validated — the PREREQUISITE, not a certificate;
+ * `in_progress` = NIST lists the module as Modules In Process / IUT (never
+ * inferred from CAVP); `yes` = a certificate is held. Neither stage is a
+ * certification, so a PQC-certification claim (pqc_certified yes/partial)
+ * beside either is the same contradiction as beside `no`.
  *
  * `component` (added 2026-09-26, WS-D) means the product relies on a validated
  * module it embeds but holds no certificate itself — a cloud KMS whose HSM is
@@ -238,7 +252,10 @@ export function checkCertificationVerdicts(rows: CsvRow[], file: string): Findin
         message: `${row.product_id}: has_certification must be one of ${[...HAS_CERTIFICATION_VALUES].join('|')}`,
       })
     }
-    if ((pc === 'yes' || pc === 'partial') && (hc === 'no' || hc === 'component')) {
+    if (
+      (pc === 'yes' || pc === 'partial') &&
+      (hc === 'no' || hc === 'component' || hc === 'cavp' || hc === 'in_progress')
+    ) {
       findings.push({
         csv: file,
         row: i + 2,
@@ -247,7 +264,9 @@ export function checkCertificationVerdicts(rows: CsvRow[], file: string): Findin
         message:
           hc === 'component'
             ? `${row.product_id}: claims PQC certification (${pc}) but has_certification says only an embedded module is validated`
-            : `${row.product_id}: claims PQC certification (${pc}) while has_certification says no certificate exists`,
+            : hc === 'cavp' || hc === 'in_progress'
+              ? `${row.product_id}: claims PQC certification (${pc}) but has_certification is only the ${hc} stage of FIPS 140-3 — not a certificate`
+              : `${row.product_id}: claims PQC certification (${pc}) while has_certification says no certificate exists`,
       })
     }
   })

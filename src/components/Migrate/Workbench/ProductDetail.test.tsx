@@ -276,4 +276,46 @@ describe('ProductDetail', () => {
       expect(screen.queryByTestId('component-only-note')).not.toBeInTheDocument()
     })
   })
+
+  /**
+   * FIPS 140-3 track stages. CAVP algorithm validation is the prerequisite,
+   * not a certificate; "in progress" only when NIST lists the module.
+   */
+  describe('FIPS 140-3 track stage notes', () => {
+    const renderWith = (over: Partial<SoftwareItem>) =>
+      render(
+        <MemoryRouter>
+          <ProductDetail product={makeItem(over)} />
+        </MemoryRouter>
+      )
+
+    it('says CAVP is the prerequisite, never a certificate', () => {
+      renderWith({ hasCertification: 'cavp', pqcCertified: 'cavp' })
+      expect(screen.getByTestId('cavp-only-note')).toHaveTextContent(
+        /prerequisite for FIPS 140-3, not a certificate/
+      )
+      expect(screen.queryByTestId('fips-in-progress-note')).not.toBeInTheDocument()
+    })
+
+    it('says "in progress" only for the in_progress stage', () => {
+      renderWith({ hasCertification: 'in_progress', pqcCertified: 'none' })
+      expect(screen.getByTestId('fips-in-progress-note')).toHaveTextContent(/in progress/)
+      expect(screen.queryByTestId('cavp-only-note')).not.toBeInTheDocument()
+    })
+
+    it('flags a certified module whose PQC is only CAVP-validated (the K7 case)', () => {
+      renderWith({ hasCertification: 'yes', pqcCertified: 'cavp' })
+      expect(screen.getByTestId('pqc-cavp-only-note')).toHaveTextContent(
+        /CAVP-validated only — not yet covered by a FIPS 140-3 certificate/
+      )
+      expect(screen.queryByTestId('classical-only-note')).not.toBeInTheDocument()
+    })
+
+    it('shows no stage note for a product whose certificate covers PQC', () => {
+      renderWith({ hasCertification: 'yes', pqcCertified: 'yes' })
+      for (const id of ['cavp-only-note', 'fips-in-progress-note', 'pqc-cavp-only-note']) {
+        expect(screen.queryByTestId(id)).not.toBeInTheDocument()
+      }
+    })
+  })
 })

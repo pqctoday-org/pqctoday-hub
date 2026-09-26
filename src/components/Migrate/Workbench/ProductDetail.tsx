@@ -84,6 +84,20 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
   // the certification learning module exists to teach.
   const componentOnly = product.hasCertification === 'component'
 
+  // FIPS 140-3 track stages (2026-09-26). CAVP algorithm validation is the
+  // PREREQUISITE for a FIPS 140-3 certificate, not the certificate — NIST: a
+  // product "does not meet the FIPS 140 module validation requirements by
+  // simply ... acquiring validations for each of the implemented algorithms".
+  // "In progress" only when NIST lists the module as Modules In Process / IUT.
+  const cavpOnly = product.hasCertification === 'cavp'
+  const fipsInProgress = product.hasCertification === 'in_progress'
+  // Certified, but the PQC algorithms are only CAVP-validated and not in the
+  // module certificate — the Thales Luna K7 case (A7358).
+  const pqcCavpOnly =
+    (product.hasCertification === 'yes' || product.hasCertification === 'component') &&
+    product.pqcCertified === 'cavp'
+  const hasStageNote = cavpOnly || fipsInProgress || pqcCavpOnly
+
   const verification = productVerificationBadge(product)
   // Other rows of the same product line (family_id) — releases, editions or
   // certified configurations — so five rows of one product read as one line.
@@ -177,7 +191,7 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
         </div>
       )}
 
-      {(certs.length > 0 || classicalOnly || componentOnly) && (
+      {(certs.length > 0 || classicalOnly || componentOnly || hasStageNote) && (
         <div>
           <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
             Certifications
@@ -208,6 +222,33 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
             >
               <Info size={12} aria-hidden />
               Uses a validated module inside — the product itself holds no certificate
+            </p>
+          )}
+          {cavpOnly && (
+            <p
+              data-testid="cavp-only-note"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info px-2 py-1 text-xs text-status-info"
+            >
+              <Info size={12} aria-hidden />
+              Algorithms validated (CAVP) — the prerequisite for FIPS 140-3, not a certificate
+            </p>
+          )}
+          {fipsInProgress && (
+            <p
+              data-testid="fips-in-progress-note"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info px-2 py-1 text-xs text-status-info"
+            >
+              <Info size={12} aria-hidden />
+              FIPS 140-3 in progress — listed by NIST as a module in process
+            </p>
+          )}
+          {pqcCavpOnly && (
+            <p
+              data-testid="pqc-cavp-only-note"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-warning/10 px-2 py-1 text-xs text-status-warning"
+            >
+              <AlertTriangle size={12} aria-hidden />
+              PQC algorithms are CAVP-validated only — not yet covered by a FIPS 140-3 certificate
             </p>
           )}
         </div>
