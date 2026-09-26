@@ -108,6 +108,12 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // deterministic SLH-DSA signing for all 12 parameter sets (192s/256s take
     // 2.5-3.6 s each on the Rust engine) — the Rust-only suite measured 52.5 s
     // in Node. Widened to 180 s so shared CI runners keep real headroom.
+    // 2026-09-25: this wait is no longer the thing under pressure — the
+    // 62-group suite CRASHED the renderer here (see the fix in
+    // sections/mctFullAcvp.ts and hsm/acvp/useAcvpSuite.ts). With that fixed,
+    // the full Rust-engine run measured 76.1 s in Chromium against the
+    // production build (1085 rows), down from 173.8 s before the streamed
+    // table stopped re-rendering every row on every result. 180 s stays.
     const logSection = page
       .locator('div', { hasText: 'Cryptographic Validation Workbench run completed' })
       .last()
@@ -167,7 +173,53 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // regression reintroduces a known-red row, re-add it here BY NAME with
     // the CKR error and a tracking link, not by re-narrowing the filter
     // above to a subset of algorithms.
-    const KNOWN_RED_ROWS: { match: RegExp; why: string; count: number }[] = []
+    //
+    // 2026-09-25 (browser-crash fix): the list is NOT empty again, and that is
+    // not a regression in this spec — it is the first time this assertion has
+    // ever actually been evaluated in a browser. The full run used to kill the
+    // renderer (OOM at >3 GB inside the 100-iteration SHA MCT) long before
+    // reaching line 197, so the three Rust-engine findings below — all three
+    // already measured, triaged and recorded in src/data/validation/
+    // open-gaps.json by the same session that added the cases — were invisible
+    // here. Each entry's count is the count that gap file states verbatim, so
+    // this list is a pin, not a waiver: if the engine is fixed the count drops
+    // and the "KNOWN_RED_ROWS entry is stale" assertion below fails; if a
+    // NEW row goes red it is not matched here and fails as an unexpected row.
+    // The engine defects themselves are open and unpatched — nothing here
+    // claims otherwise, and no case was removed, skipped or narrowed.
+    const KNOWN_RED_ROWS: { match: RegExp; why: string; count: number }[] = [
+      {
+        // open-gaps.json `rust-kbkdf-iteration-variable-rejected`: PKCS#11 v3.2
+        // §6.42.4/§6.42.5 make CK_SP800_108_ITERATION_VARIABLE mandatory in
+        // feedback and double-pipeline mode; the Rust engine answers
+        // CKR_MECHANISM_PARAM_INVALID for every such layout, so "all 38
+        // feedback / double-pipeline NIST KDF 1.0 rows fail".
+        match: /KBKDF (?:feedback|double pipeline iteration).*CKR_MECHANISM_PARAM_INVALID/,
+        why: 'rust-kbkdf-iteration-variable-rejected (Rust rejects the mandatory ITERATION_VARIABLE data parameter)',
+        count: 38,
+      },
+      {
+        // open-gaps.json `rust-eddsa-ph-context-ignored`: C_Sign(CKM_EDDSA,
+        // phFlag = true, non-empty context) signs for an EMPTY context, so
+        // "all 8 preHash NIST EDDSA-SigGen-1.0 cases (contexts 96–248 bytes)
+        // differ from NIST". Pure Ed25519/Ed448 with contexts byte-match, and
+        // the C++ engine matches all 16 — so this must stay narrow to the
+        // 'ph' variants and to a NIST mismatch.
+        match: /Ed(?:25519|448)ph \(Rust\).*differs from NIST expected.*phFlag true/,
+        why: 'rust-eddsa-ph-context-ignored (Rust Ed25519ph/Ed448ph ignores CK_EDDSA_PARAMS context)',
+        count: 8,
+      },
+      {
+        // open-gaps.json `pbkdf2-min-iterations-divergence`: the Rust engine
+        // refuses iteration counts below 1000. sections/kdfMacAcvp.ts keeps
+        // the iterationCount-1 case in the suite deliberately ("so that Rust
+        // row stays red") rather than dropping it, so the divergence stays
+        // visible instead of silently disappearing from the vector subset.
+        match: /PBKDF2-HMAC-SHA2-224 \(Rust\).*CKR_MECHANISM_PARAM_INVALID.*iterations < 1000/,
+        why: 'pbkdf2-min-iterations-divergence (Rust refuses fewer than 1000 iterations; row deliberately kept red)',
+        count: 1,
+      },
+    ]
     const knownRedSeen = KNOWN_RED_ROWS.map(() => 0)
 
     const resultRows = page.locator('table tbody tr')
