@@ -28,9 +28,9 @@ describe('cpeXrefData', () => {
     }
   })
 
-  it('cpeByProduct map keys match softwareNames', () => {
+  it('cpeByProduct is keyed by productId and by softwareName', () => {
     for (const [key, xref] of cpeByProduct) {
-      expect(key).toBe(xref.softwareName)
+      expect([xref.productId, xref.softwareName]).toContain(key)
     }
   })
 })

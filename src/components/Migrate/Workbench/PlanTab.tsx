@@ -4,7 +4,7 @@ import { FileText, AlertTriangle, RotateCcw, X, ChevronDown } from 'lucide-react
 import { WAVES_FALLBACK } from './waves'
 import { DECISIONS, type DomainId } from '@/data/migrationAssets'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
-import { softwareData } from '@/data/migrateData'
+import { softwareData, softwareMetadata } from '@/data/migrateData'
 import { Button } from '../../ui/button'
 import { InlineTooltip } from '../../ui/InlineTooltip'
 import { Pill, DECISION_ICON, TONE_DOT, ConfirmButton } from './workbenchUi'
@@ -325,7 +325,13 @@ export function PlanTab({ posture, onGoToReplace }: PlanTabProps) {
           variant="gradient"
           size="sm"
           onClick={() =>
-            downloadPlanCbom({ planIds: plan, choice, timestamp: new Date().toISOString() })
+            downloadPlanCbom({
+              planIds: plan,
+              choice,
+              timestamp: new Date().toISOString(),
+              products: softwareData,
+              catalogSnapshot: softwareMetadata?.filename,
+            })
           }
         >
           <FileText size={14} /> Export plan + CBOM

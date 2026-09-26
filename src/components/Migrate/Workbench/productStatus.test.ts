@@ -74,8 +74,30 @@ describe('productVerificationBadge', () => {
     expect(badge.label).toBe('Verified')
   })
 
-  it('reports "Never verified" when lastVerifiedDate is blank', () => {
+  it('reports "Evidence never fetched" when lastVerifiedDate is blank', () => {
     const badge = productVerificationBadge(item({ verificationStatus: 'Verified' }))
-    expect(badge.title).toBe('Never verified')
+    expect(badge.title).toBe('Evidence never fetched')
+  })
+
+  it('renders every status deriveVerificationStatus can produce with its own label', () => {
+    const cases: Array<[string, string]> = [
+      ['Verified', 'Verified'],
+      ['Verified (No PQC)', 'Verified (No PQC)'],
+      ['Partially Verified', 'Partially Verified'],
+      ['Pending Verification', 'Pending Verification'],
+      ['Needs Review', 'Needs Review'],
+      ['Needs Verification', 'Needs Verification'],
+    ]
+    for (const [status, label] of cases) {
+      expect(productVerificationBadge(item({ verificationStatus: status })).label).toBe(label)
+    }
+  })
+
+  it('never shows a withheld row with a success tone', () => {
+    const badge = productVerificationBadge(
+      item({ verificationStatus: 'Needs Review', lastVerifiedDate: daysAgo(1) })
+    )
+    expect(badge.tone).toBe('warning')
+    expect(badge.title).toContain('contradicted')
   })
 })

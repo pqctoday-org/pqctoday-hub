@@ -29,6 +29,30 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.123.0] - 2026-09-25
+
+Every product in the migration catalogue was re-checked against its own evidence document, and anything a document does not actually say has been corrected or removed — including versions, dates and post-quantum claims.
+
+### Fixed
+
+- **47 products were described using the wrong company's document, and now cite their own.** [view:/migrate] [persona:ops] [persona:grc] [persona:architect] Some entries had been built from a page about a different product entirely — VMware Horizon from a VMware Cloud Foundation post, WhatsApp from Signal's announcement, Prometheus from Go's release notes, Thunderbird from an IETF draft that never mentions it. Each of these now points at a document about the product itself, and its description says only what that document states.
+- **81 products had a post-quantum status their evidence didn't support.** [view:/migrate] [view:/assess] [persona:ops] [persona:grc] Where a page never mentions post-quantum cryptography, the entry now says so plainly instead of implying support: 15 moved from "none" to "not documented", 16 from "available" to "partial". Where support comes only from an underlying library the vendor never documents (OpenSSL in Horizon, Go in Prometheus), that is now stated as inherited rather than presented as the vendor's own feature.
+- **27 products no longer carry a "Verified" badge they hadn't earned.** [view:/migrate] [persona:grc] [persona:ops] The badge now means a person checked the claim against the cited document. Where that check could not be completed, the entry says "Pending Verification" rather than showing a green badge.
+- **Version numbers that no document states are gone, and 64 were wrong.** [view:/migrate] [persona:ops] [persona:developer] 218 entries showed a "latest version" that appeared in no source — placeholders like "Current", "Rolling" or a bare year, which read as real version numbers on the page. Those are now blank. Where a document did give a version, the catalogue shows that one: OpenSSH 10.3p1 rather than 10.5p1, Apache Tomcat 11.0.22 rather than 11.0.24.
+- **Dates on 640 entries were unsupported or wrong.** [view:/migrate] [persona:ops] [persona:grc] 339 release dates and 201 publication dates could not be found in any cited document and are now blank; 115 release dates and 184 publication dates were corrected. A common error: a certificate's "first validated" date shown as the product's release date, and a page's "last updated" date shown as its publication date. Where only a month or year is supported, the entry shows the year.
+- **16 entries that were not products have been retired.** [view:/migrate] [persona:grc] A policy white paper, a 2022 feasibility study, a research division, duplicates of entries that already existed, and one product filed under the wrong company (SigningHub is Ascertia's, not DigiCert's). Nothing is deleted — retired entries are kept and marked.
+
+### Changed
+
+- **7 products now use the name their vendor actually uses.** [view:/migrate] [persona:ops] Including SecureCRT (there is no 10.x release), HPE Zerto Software, and CryptPad. Searching for the old name still finds the entry.
+- **Quantum key distribution and quantum random number generators are described for what they are.** [view:/migrate] [persona:researcher] [persona:grc] These are quantum-safe technologies but not NIST post-quantum algorithms, and two entries were network simulators rather than products that encrypt anything. Each now says which it is. The products remain in the catalogue.
+- **Algorithm validations are labelled "CAVP" rather than "ACVP" on 91 products.** [view:/migrate] [persona:developer] [persona:researcher] ACVP is the test protocol; NIST's CAVP issues the validation. The catalogue now matches the wording used on the certification pages.
+
+### Added
+
+- **Each product now says what kind of thing it is.** [view:/migrate] [persona:ops] [persona:architect] Library, appliance, cloud service, hardware module, firmware, tool, and so on. This is what decides how often an entry is re-checked — hardware every 90 days, software every 30.
+- **The catalogue says plainly that it is curated, not exhaustive.** [view:/migrate] [persona:executive] [persona:grc] The page states how many products are tracked for post-quantum support and how many are tracked as migration baselines, so the totals can't be mistaken for the whole market.
+
 ## [4.122.0] - 2026-09-25
 
 The Timeline's review backlog is cleared: 19 rows that were already fully sourced but sitting unpublished are now live, taking the public Timeline from 163 events to 182, and the four still held back are held for a stated reason rather than by neglect.

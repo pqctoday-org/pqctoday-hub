@@ -37,6 +37,7 @@ import { RoadmapsTab } from './RoadmapsTab'
 import { SupplyChainRiskMatrix } from '../../PKILearning/modules/VendorRisk/components/SupplyChainRiskMatrix'
 import { VendorConcentrationRiskPanel } from './VendorConcentrationRiskPanel'
 import { WhoHasMovedPanel } from './WhoHasMovedPanel'
+import { CatalogScopeNote } from './CatalogScopeNote'
 import { VendorCommitmentPanel, ClaimsAndEvidencePanel } from './VendorCommitmentPanel'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileMigrateView } from '@/components/Mobile/screens/MobileMigrateView'
@@ -289,6 +290,8 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
       )}
 
       {!embedded && <PersonaPageNote route="/migrate" className="mb-4" />}
+
+      {!embedded && <CatalogScopeNote items={softwareData} />}
 
       {/* B+ remediation 4.6 (2026-08-10): a newcomer meets an unfiltered vendor
           catalog they have no basis to evaluate. Their question is not "which

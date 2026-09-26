@@ -91,6 +91,42 @@ export function filterProducts(
   )
 }
 
+/** Facet filters on the product list (migrate remediation r2 J2). 'all' = no filter. */
+export interface ProductFacets {
+  population: 'all' | 'pqc_relevant' | 'migration_baseline'
+  pqc: 'all' | 'available' | 'partial' | 'planned' | 'none' | 'unknown'
+  certified: 'all' | 'linked' | 'none'
+}
+
+export const NO_FACETS: ProductFacets = { population: 'all', pqc: 'all', certified: 'all' }
+
+/**
+ * Narrow a product list by population, canonical PQC status and whether the
+ * product has any certification link. `hasCert` is injected so this stays a
+ * pure function (the certification xref loader is a separate module).
+ */
+export function applyProductFacets(
+  items: SoftwareItem[],
+  facets: ProductFacets,
+  hasCert: (item: SoftwareItem) => boolean
+): SoftwareItem[] {
+  return items.filter((p) => {
+    if (facets.population !== 'all' && p.cataloguePopulation !== facets.population) return false
+    if (facets.pqc !== 'all') {
+      const s = (p.pqcStatusCanonical || '').toLowerCase()
+      const bucket =
+        s === 'available' || s === 'partial' || s === 'none'
+          ? s
+          : s === 'roadmap' || s === 'planned'
+            ? 'planned'
+            : 'unknown'
+      if (bucket !== facets.pqc) return false
+    }
+    if (facets.certified !== 'all' && hasCert(p) !== (facets.certified === 'linked')) return false
+    return true
+  })
+}
+
 export interface ProductSearchHit {
   domain: DomainId
   product: SoftwareItem

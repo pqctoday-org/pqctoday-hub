@@ -56,6 +56,7 @@ import {
 } from './validators/self-containment-checks.js'
 import { runThreatsProofRule } from './validators/threats-proof-rule.js'
 import { runMigrateProofRule } from './validators/migrate-proof-rule.js'
+import { runMigrateCatalogIntegrity } from './validators/migrate-catalog-integrity.js'
 import { runLineageChecks } from './validators/lineage-checks.js'
 import { runTimelinePublicationChecks } from './validators/timeline-publication-checks.js'
 import { buildReport, printReport } from './validators/report-builder.js'
@@ -188,6 +189,8 @@ try {
   // scripts/validators/self-containment-checks.ts docblock for the story.
   allResults.push(...runSupersededByChecks())
   allResults.push(...runSupersededByCandidateChecks())
+  // 7f.6. Migrate catalogue row integrity (MC-1..MC-3) — migrate remediation r2, M0
+  allResults.push(...runMigrateCatalogIntegrity())
   // 7g. Threats validated-proof rule (TP-1 + TP-2) — added 2026-05-21 to
   // block any future re-introduction of an active threat without a
   // downloadable, ≥5 KB on-disk proof. See:

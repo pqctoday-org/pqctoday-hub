@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { filterProducts, searchProducts } from './workbenchCatalog'
+import {
+  applyProductFacets,
+  filterProducts,
+  NO_FACETS,
+  searchProducts,
+  type ProductFacets,
+} from './workbenchCatalog'
 import type { SoftwareItem } from '../../../types/MigrateTypes'
 
 function item(overrides: Partial<SoftwareItem>): SoftwareItem {
@@ -113,5 +119,29 @@ describe('searchProducts — catalog-wide product/vendor search (AssetList top s
     // 'a' matches a huge fraction of the ~1000-product catalog by name or
     // vendor — the cap is what keeps the sidebar a quick jump-to.
     expect(searchProducts('a', 3)).toHaveLength(3)
+  })
+})
+
+describe('applyProductFacets', () => {
+  const items = [
+    { productId: 'a', pqcStatusCanonical: 'available', cataloguePopulation: 'pqc_relevant' },
+    { productId: 'b', pqcStatusCanonical: 'roadmap', cataloguePopulation: 'pqc_relevant' },
+    { productId: 'c', pqcStatusCanonical: 'none', cataloguePopulation: 'migration_baseline' },
+    { productId: 'd', pqcStatusCanonical: 'pending', cataloguePopulation: 'migration_baseline' },
+  ] as SoftwareItem[]
+  const certified = new Set(['a', 'c'])
+  const ids = (xs: SoftwareItem[]) => xs.map((x) => x.productId)
+  const run = (f: Partial<ProductFacets>) =>
+    ids(applyProductFacets(items, { ...NO_FACETS, ...f }, (p) => certified.has(p.productId)))
+
+  it('returns everything with no facet set', () => {
+    expect(run({})).toEqual(['a', 'b', 'c', 'd'])
+  })
+  it('filters by population, folded PQC status and certification link', () => {
+    expect(run({ population: 'migration_baseline' })).toEqual(['c', 'd'])
+    expect(run({ pqc: 'planned' })).toEqual(['b'])
+    expect(run({ pqc: 'unknown' })).toEqual(['d'])
+    expect(run({ certified: 'none' })).toEqual(['b', 'd'])
+    expect(run({ population: 'pqc_relevant', certified: 'linked' })).toEqual(['a'])
   })
 })
