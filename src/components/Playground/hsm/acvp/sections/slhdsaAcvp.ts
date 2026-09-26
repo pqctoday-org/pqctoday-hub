@@ -114,9 +114,14 @@ export const ACVP_HASH_TO_SLH_MECH: Readonly<Record<string, number>> = {
   'SHAKE-256': CKM_HASH_SLH_DSA_SHAKE256,
 }
 
-/** C_SignInit with a 256-byte context (FIPS 205 caps it at 255). */
+/**
+ * C_SignInit with a 256-byte context (FIPS 205 caps it at 255).
+ * cpp updated 2026-09-25 (P3 combined rebuild, hsm a22e6ca0, E9/D6): C++ now
+ * returns CKR_MECHANISM_PARAM_INVALID like Rust, closing the disagreement —
+ * confirmed against the rebuilt engine, not guessed.
+ */
 export const SLH_CTX256_PIN: PinnedRv = {
-  cpp: 'CKR_ARGUMENTS_BAD',
+  cpp: 'CKR_MECHANISM_PARAM_INVALID',
   rust: 'CKR_MECHANISM_PARAM_INVALID',
   listed: ['CKR_ARGUMENTS_BAD', 'CKR_MECHANISM_PARAM_INVALID'],
   section: '§5.13.1 (C_SignInit)',

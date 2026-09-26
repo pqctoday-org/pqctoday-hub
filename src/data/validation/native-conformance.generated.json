@@ -4,9 +4,9 @@
   "generator": "scripts/import-native-conformance.ts",
   "hsm": {
     "repo": "pqctoday-org/pqctoday-hsm",
-    "pinnedCommit": "7643d5c05bf0bbf453aa63d799d290a10826b61b",
+    "pinnedCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
     "pinnedCommitDate": "2026-09-25",
-    "pinnedCommitPublished": false
+    "pinnedCommitPublished": true
   },
   "wasmProvenanceFile": "public/wasm/wasm-provenance.json",
   "suites": [
@@ -17,13 +17,13 @@
       "sourceFile": "p11_v32_compliance_test.cpp",
       "reportFiles": ["cpp_compliance_report.json", "cpp_compliance_report.md"],
       "report": {
-        "reportCommit": "7643d5c05bf0bbf453aa63d799d290a10826b61b",
+        "reportCommit": "d6e55d86759df4f4ff9cebe150f62aed9e12a2c2",
         "reportCommitDate": "2026-09-25",
-        "reportDate": "2026-09-25 12:21:28 UTC",
-        "engineCommit": "ac8b40fd01844be0c40d4aa02e951c05cfba73b4",
-        "engineCommitAsStated": "ac8b40fd01844be0c40d4aa02e951c05cfba73b4",
-        "engineCommitDate": "2026-09-24",
-        "engineAsStated": "./build-container/src/lib/libsofthsmv3.so",
+        "reportDate": "2026-09-25 15:52:44 UTC",
+        "engineCommit": "2a8e174d837754a9f6b1a2560cfbb89bda593351",
+        "engineCommitAsStated": "2a8e174d837754a9f6b1a2560cfbb89bda593351",
+        "engineCommitDate": "2026-09-25",
+        "engineAsStated": "./build/src/lib/libsofthsmv3.so",
         "target": "not recorded",
         "hostPlatform": "not recorded",
         "counts": {
@@ -37,15 +37,15 @@
         "caseIdentity": "suite-assigned",
         "caseIdScheme": "<category>/<test> from cpp_compliance_report.json",
         "staleness": {
-          "commitsFromEngineToPinnedMain": 0,
+          "commitsFromEngineToPinnedMain": 46,
           "engineCommitOnPinnedMainHistory": true
         },
         "wasm": {
           "bundle": "softhsm-cpp-engine",
-          "bundleHsmCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+          "bundleHsmCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
           "engineCommitEqualsBundleCommit": false,
-          "commitsFromEngineToBundle": 0,
-          "commitsFromBundleToEngine": 5
+          "commitsFromEngineToBundle": 50,
+          "commitsFromBundleToEngine": 0
         },
         "cases": [
           ["AES-CTR/EncryptInit", "pass"],
@@ -993,9 +993,9 @@
         ]
       },
       "openGaps": [
-        "The pinned hsm commit holding this report is an unpushed local commit (on no pqctoday-hsm remote branch): nobody else can fetch or verify it until it is pushed.",
         "The report does not record the host OS or CPU architecture it ran on.",
         "The report does not record the build target (platform/ABI) of the engine under test.",
+        "The report was produced at an engine commit 46 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
         "The engine commit differs from the commit this Hub’s C++ WASM bundle was built from, so these results are not results for the engine running in this browser."
       ]
     },
@@ -1006,34 +1006,34 @@
       "sourceFile": "rust/test_p11_conformance.js",
       "reportFiles": ["rust/RUST_P11_V32_CONFORMANCE_REPORT.md"],
       "report": {
-        "reportCommit": "7643d5c05bf0bbf453aa63d799d290a10826b61b",
+        "reportCommit": "37ca1f749733d2720ca8f80b3bfef87e26b146a9",
         "reportCommitDate": "2026-09-25",
-        "reportDate": "2026-09-25T12:22:38.785Z",
-        "engineCommit": "ac8b40fd01844be0c40d4aa02e951c05cfba73b4",
-        "engineCommitAsStated": "ac8b40fd0184",
-        "engineCommitDate": "2026-09-24",
+        "reportDate": "2026-09-25T16:23:27.751Z",
+        "engineCommit": "ede1a0ada54fd266517bc9a7fa879468a65bbde1",
+        "engineCommitAsStated": "ede1a0ada54f",
+        "engineCommitDate": "2026-09-25",
         "engineAsStated": "softhsmrustv3 (Rust), wasm32 build with `--features acvp`",
         "target": "wasm32 build with `--features acvp`",
         "hostPlatform": "not recorded",
         "counts": {
-          "pass": 1087,
+          "pass": 1092,
           "fail": 0,
           "skip": null,
           "xfail": null,
-          "total": 1087
+          "total": 1092
         },
         "groups": 52,
         "caseIdentity": "derived-from-transcript",
         "caseIdScheme": "<section> › <check label>[ #n] from the report’s \"Full transcript\" (harness assigns no ids)",
         "staleness": {
-          "commitsFromEngineToPinnedMain": 0,
+          "commitsFromEngineToPinnedMain": 40,
           "engineCommitOnPinnedMainHistory": true
         },
         "wasm": {
           "bundle": "softhsmrustv3-engine",
-          "bundleHsmCommit": "ac8b40fd01844be0c40d4aa02e951c05cfba73b4",
-          "engineCommitEqualsBundleCommit": true,
-          "commitsFromEngineToBundle": 0,
+          "bundleHsmCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
+          "engineCommitEqualsBundleCommit": false,
+          "commitsFromEngineToBundle": 44,
           "commitsFromBundleToEngine": 0
         },
         "cases": [
@@ -1097,6 +1097,10 @@
           ],
           [
             "R2.4 — key-handle vs permission codes (§5.12.4) › C_SignInit on AES key without CKA_SIGN → KEY_FUNCTION_NOT_PERMITTED",
+            "pass"
+          ],
+          [
+            "R2.4 — key-handle vs permission codes (§5.12.4) › C_SignInit(CKM_SHA256_HMAC) on an AES key → KEY_TYPE_INCONSISTENT (§5.1.6 priority, E5/E6)",
             "pass"
           ],
           [
@@ -1338,7 +1342,7 @@
             "pass"
           ],
           [
-            "F1 — mechanism table reconciliation (R6.2) › all 172 advertised mechanisms answerable → 0 missing",
+            "F1 — mechanism table reconciliation (R6.2) › all 174 advertised mechanisms answerable → 0 missing",
             "pass"
           ],
           [
@@ -1456,7 +1460,19 @@
             "pass"
           ],
           [
+            "E2 — RSA-PSS params validated (§6.4.5) › fixture: RSA-1024 public key via C_CreateObject → OK",
+            "pass"
+          ],
+          [
             "E2 — RSA-PSS params validated (§6.4.5) › PSS params with bad MGF → MECHANISM_PARAM_INVALID",
+            "pass"
+          ],
+          [
+            "E2 — RSA-PSS params validated (§6.4.5) › PSS params 1 byte long → MECHANISM_PARAM_INVALID (E9)",
+            "pass"
+          ],
+          [
+            "E2 — RSA-PSS params validated (§6.4.5) › PSS params absent → MECHANISM_PARAM_INVALID (E9, §6.1.11 \"It has a parameter\")",
             "pass"
           ],
           [
@@ -4101,7 +4117,7 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › fixture: live advertised mechanism count → 172",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › fixture: live advertised mechanism count → 174",
             "pass"
           ],
           [
@@ -4109,187 +4125,187 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x9 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x9 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x9 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x9 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x9 WrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x9 WrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x115",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x9 UnwrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x9 UnwrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0xf2",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x40 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x40 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x40 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x40 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x41 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x41 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x41 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x41 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x42 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x42 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x42 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x42 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x43 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x43 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x43 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x43 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x44 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x44 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x44 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x44 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x45 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x45 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x45 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x45 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 WrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 WrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x115",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 UnwrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1 UnwrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0xf2",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0xd SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0xd SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0xd VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0xd VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x61 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x61 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x61 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x61 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x46 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x46 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x46 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x46 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x47 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x47 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x47 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x47 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x66 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x66 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x66 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x66 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x67 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x67 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x67 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x67 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x60 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x60 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x60 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x60 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x63 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x63 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x63 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x63 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x62 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x62 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x62 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x62 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x65 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x65 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x65 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x65 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1043 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1043 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1043 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1043 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x64 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x64 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x64 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x64 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -4309,107 +4325,107 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1d SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1d SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1d VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1d VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1f SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1f SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1f VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1f VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x23 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x23 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x23 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x23 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x24 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x24 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x24 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x24 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x25 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x25 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x25 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x25 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x26 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x26 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x26 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x26 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x27 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x27 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x27 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x27 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x28 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x28 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x28 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x28 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x29 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x29 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x29 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x29 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2a SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2a SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2a VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2a VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2b SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2b SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2b VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2b VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2c SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2c SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2c VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2c VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x403c SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x403c SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x403c VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x403c VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -4421,99 +4437,99 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2e SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2e SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2e VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2e VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x34 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x34 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x34 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x34 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x36 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x36 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x36 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x36 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x37 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x37 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x37 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x37 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x38 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x38 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x38 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x38 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x39 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x39 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x39 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x39 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3a SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3a SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3a VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3a VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3b SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3b SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3b VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3b VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3c SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3c SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3c VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3c VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3d SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3d SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3d VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3d VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3e SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3e SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3e VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3e VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3f SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3f SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3f VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x3f VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -4681,11 +4697,11 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x108a SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x108a SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x108a VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x108a VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -4693,19 +4709,19 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1054 WrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1054 WrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x115",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1054 UnwrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1054 UnwrapKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0xf2",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1104 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1104 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1105 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1105 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -4729,11 +4745,11 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x5 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x5 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x5 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x5 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -4757,27 +4773,27 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x6 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x6 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x6 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x6 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0xe SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0xe SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0xe VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0xe VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1042 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1042 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1042 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1042 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -4865,75 +4881,75 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1041 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1041 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1041 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1041 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1044 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1044 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1044 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1044 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1045 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1045 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1045 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1045 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1046 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1046 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1046 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1046 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1047 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1047 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1047 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1047 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1048 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1048 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1048 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1048 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1049 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1049 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1049 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1049 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x104a SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x104a SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x104a VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x104a VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1050 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1050 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1051 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1051 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -4945,31 +4961,31 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80000011 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80000011 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80001058 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80001058 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80001059 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80001059 DeriveKey: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1057 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1057 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1057 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1057 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80001057 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80001057 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80001057 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80001057 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -4985,11 +5001,11 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1082 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1082 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1082 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1082 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
@@ -5001,11 +5017,11 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1085 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1085 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1085 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1085 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
@@ -5025,67 +5041,67 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1087 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1087 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1087 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1087 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1088 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1088 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1088 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1088 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x108e SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x108e SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x108e VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x108e VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2104 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2104 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2104 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2104 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2106 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2106 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2106 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2106 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2107 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2107 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2107 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2107 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2108 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2108 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2108 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x2108 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x71",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1071 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1071 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1071 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1071 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -5117,11 +5133,11 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1226 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1226 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1226 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x1226 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -5129,11 +5145,11 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4021 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4021 EncryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4021 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x7",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4021 DecryptInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -5217,11 +5233,11 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4033 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4033 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4033 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4033 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -5229,11 +5245,11 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4036 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4036 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4036 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4036 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -5241,11 +5257,11 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4037 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4037 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4037 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x0",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x4037 VerifyInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
             "pass"
           ],
           [
@@ -5253,14 +5269,19 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › G9: probed at least one real operation for every flag-bearing advertised mechanism (287 probes total)",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80000013 GenerateKeyPair: dispatch reached (not CKR_MECHANISM_INVALID) → got 0xd0",
+            "pass"
+          ],
+          [
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › G9: probed at least one real operation for every flag-bearing advertised mechanism (288 probes total)",
             "pass"
           ]
         ]
       },
       "openGaps": [
-        "The pinned hsm commit holding this report is an unpushed local commit (on no pqctoday-hsm remote branch): nobody else can fetch or verify it until it is pushed.",
         "The report does not record the host OS or CPU architecture it ran on.",
+        "The report was produced at an engine commit 40 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+        "The engine commit differs from the commit this Hub’s Rust WASM bundle was built from, so these results are not results for the engine running in this browser.",
         "The harness assigns no case ids: ids are derived from section heading + check label (ordinal-suffixed where a label repeats), and change if the harness rewords a label.",
         "The harness has no skip status: an unsupported case can only pass or fail."
       ]

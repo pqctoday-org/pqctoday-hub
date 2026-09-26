@@ -57,29 +57,26 @@ describe('generate-coverage-matrix (committed inputs)', () => {
     expect(files[`${PUBLIC_DIR_REL}/coverage-matrix.html`]).not.toMatch(/<script/i)
   })
 
-  it('the ECDSA P-521 NIST sample passes on both engines since the hub DER fix (was a recorded C++ fail)', () => {
+  it('the ECDSA P-521 NIST sample passes on both engines since the hub DER fix (was a recorded C++ fail); the key-type-inconsistent probe now passes on both too (E5/E6 fixed)', () => {
     const r = matrix.rows.find((x) => x.key === 'CKM_ECDSA_SHA512|verify|P-521|*')!
     // C++: the §33 workbench case + the 7 WS-E NIST SigVer cases (§4b, P-521 / SHA2-512)
     // = 8 passes, plus the P5 SigGen verify-back independent-oracle case
     // (acvp.04e.ecdsa-siggen P-521-SHA2-512-oracle) = 9, plus the 5 G-8 error-path
-    // verify probes for CKM_ECDSA_SHA512 (4 pass; key-type-inconsistent fails — open
-    // gap g8-cpp-init-accepts-wrong-key-type).
-    expect(r.engines.cpp.run).toEqual({ pass: 13, fail: 1 })
-    // Rust: the same 9 plus the Algorithms (katRunner) case, plus the same 5 probes
-    // (key-type-inconsistent fails — open gap g8-rust-init-accepts-wrong-key-type).
-    expect(r.engines.rust.run).toEqual({ pass: 14, fail: 1 })
-    // The row's only recorded fail is that API error-path probe: every NIST SigVer
-    // sample on it passes on both engines.
+    // verify probes for CKM_ECDSA_SHA512. All 5 now pass (2026-09-25, P3 combined
+    // rebuild, hsm a22e6ca0, E5/E6: both engines now return CKR_KEY_TYPE_INCONSISTENT
+    // for a wrong-type key ahead of the usage check — closes gap
+    // g8-cpp-init-accepts-wrong-key-type / g8-rust-init-accepts-wrong-key-type).
+    expect(r.engines.cpp.run).toEqual({ pass: 14, fail: 0 })
+    // Rust: the same 9 plus the Algorithms (katRunner) case, plus the same 5 probes.
+    expect(r.engines.rust.run).toEqual({ pass: 15, fail: 0 })
+    // Every G-8 error-path probe on this row now passes on both engines.
     const rowFails = (inputs.runResults ?? []).filter(
       (x) =>
         x.status === 'fail' &&
         x.registryCase.startsWith('errpath.verify.') &&
         x.registryCase.endsWith('/CKM_ECDSA_SHA512')
     )
-    expect(rowFails.map((x) => `${x.engine}:${x.registryCase.split('#')[0]}`).sort()).toEqual([
-      'cpp:errpath.verify.key-type-inconsistent',
-      'rust:errpath.verify.key-type-inconsistent',
-    ])
+    expect(rowFails).toEqual([])
     expect(r.parity.positive).toBe('parity')
     expect(matrix.openGaps.some((g) => g.id.startsWith('recorded-fail:acvp.33#'))).toBe(false)
   })

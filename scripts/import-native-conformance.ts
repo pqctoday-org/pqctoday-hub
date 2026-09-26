@@ -42,16 +42,20 @@ import {
 } from '../src/data/validation/nativeConformance'
 
 /**
- * The pqctoday-hsm commit every report is read at: 7643d5c0 on hsm branch
- * chore/p11-reports-refresh-0925 (2026-09-25), "chore(reports): regenerate
- * PKCS#11 v3.2 conformance reports at ac8b40fd" — both suites re-run at engine
- * commit ac8b40f (hsm `origin/main`, #253), the commit the Hub's WASM bundles
- * are being rebuilt from. That commit is NOT pushed yet; the generated file
- * records this (hsm.pinnedCommitPublished) and says so in every suite's gaps.
+ * The pqctoday-hsm commit every report is read at: a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb
+ * on hsm `origin/main` (2026-09-25), the merge of PR #258 (the last of the 6
+ * ACVP gap-closure engine-fix PRs to land: #255/#257/#258/#259/#260 merged,
+ * #256 superseded/closed by the root-cause fix #262, OpenMLS hbs-lms breakage
+ * separately fixed by #261). Both suites' committed reports at this commit
+ * (cpp_compliance_report.json/.md from d6e55d86, RUST_P11_V32_CONFORMANCE_REPORT.md
+ * from 37ca1f74) were regenerated AFTER the E1-E19 fixes, at engine commits that
+ * are ancestors of this pin — this is the P3 combined rebuild's re-pin, replacing
+ * the prior chore/p11-reports-refresh-0925 branch pin (7643d5c0, unpushed local
+ * commit) now that hsm main itself carries current, PUBLISHED reports.
  * Move the pin — and re-run the importer — when hsm commits regenerated
  * reports; --check says when that has happened on hsm main.
  */
-export const PINNED_HSM_COMMIT = '7643d5c05bf0bbf453aa63d799d290a10826b61b'
+export const PINNED_HSM_COMMIT = 'a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb'
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '..', '..')
 export const NATIVE_CONFORMANCE_OUT = join(

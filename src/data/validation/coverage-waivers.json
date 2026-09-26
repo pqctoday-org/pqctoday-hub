@@ -1135,6 +1135,26 @@
       "owner": "unassigned",
       "date": "2026-09-24",
       "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_HPKE_KEM_KEY_PAIR_GEN",
+      "mechanism": "CKM_HPKE_KEM_KEY_PAIR_GEN",
+      "engines": ["rust"],
+      "cells": ["generate-key-pair|*|*"],
+      "reason": "NEW as of the P3 combined rebuild (2026-09-25, hsm a22e6ca0, E19): the mechanism was dispatched but not advertised before this rebuild, so it fell outside every denominator and needed no waiver; E19 fixed advertise==dispatch, so it is now a visible, advertised, untested capability. hpkeCkmHpke.test.ts already carries 58 passing KAT-based tests for this mechanism family but is not yet wired into testRegistry.ts — registering it as real coverage (closing this waiver without a waiver) is the recommended next step, not a waiver approval. This entry only lets the gate keep functioning; per plan D3, waiver approval/registration is the user's call, flagged in the P3 report, not decided here.",
+      "owner": "unassigned",
+      "date": "2026-09-25",
+      "status": "baseline-pending-review"
+    },
+    {
+      "id": "baseline-CKM_HPKE",
+      "mechanism": "CKM_HPKE",
+      "engines": ["rust"],
+      "cells": ["encapsulate|*|*", "decapsulate|*|*"],
+      "reason": "NEW as of the P3 combined rebuild (2026-09-25, hsm a22e6ca0, E19): the mechanism was dispatched but not advertised before this rebuild, so it fell outside every denominator and needed no waiver; E19 fixed advertise==dispatch, so it is now a visible, advertised, untested capability. hpkeCkmHpke.test.ts already carries 58 passing KAT-based tests for this mechanism family but is not yet wired into testRegistry.ts — registering it as real coverage (closing this waiver without a waiver) is the recommended next step, not a waiver approval. This entry only lets the gate keep functioning; per plan D3, waiver approval/registration is the user's call, flagged in the P3 report, not decided here.",
+      "owner": "unassigned",
+      "date": "2026-09-25",
+      "status": "baseline-pending-review"
     }
   ]
 }

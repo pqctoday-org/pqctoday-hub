@@ -16,13 +16,13 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "f7a8fd4a9964575fac12a5d8252b7419516c892ca98df7108910d8bd9ac0a470",
-    "src/data/validation/coverage-waivers.json": "f9a0cbbed5b0108a11578cb972ccc24828e079b93bcf1e5ad9619fe6c4aa2f9d",
-    "src/data/validation/native-conformance.generated.json": "50d7f3cfe0229e8b684efff94103586b32f1d7c2589a6180a62e0e9fc1ffa6de",
-    "src/data/validation/open-gaps.json": "e9602f2e4cc66b3b5b3d2bfb652b590006c200c77a14132e96b979a1e3f2970c",
-    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "a464b811e63f065d11705dc14f15ab8bb1c0ff83eddfa5bf20c6f97014708b0c",
-    "src/data/validation/run-results/wasm-node-katRunner.json": "394c68bff288e2aa66c2046a139ea1849f07401a994f4b1ab792e7177183b62f",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "29197c01cbff8db91adcc385dc22da1b3748ab3f6db3340d5c921f6b12239265",
+    "public/data/validation/coverage-matrix.json": "97179b554ebaffab2ab4da9ad1f06b03cbbc659ec8509d34bec692da5e03ee5a",
+    "src/data/validation/coverage-waivers.json": "d0e86f56700dabca32698760012ded42543989e8cd5b40b8d61a82df270d0875",
+    "src/data/validation/native-conformance.generated.json": "75d81d8ab8250f66574c6722d3bdf36911bcc3ba2b5b18902c93604bdf64efd7",
+    "src/data/validation/open-gaps.json": "934d5c87719ce32f24422ec1fa38bcca57c8e224bba34b84d36b844fb24280e4",
+    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "a461e6be7a61b5af9efdd9b03eeca397cfa8894f934c15a85ba20d7680b5efc5",
+    "src/data/validation/run-results/wasm-node-katRunner.json": "6a836ba693944b9439f582f3d7c0e8f9e6af56b2607b572d9390c978af05af90",
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "b9c2cd1d6a17b03c20af78a7a7ba6f377eebf0686664122dd1fe5d5001990f84",
     "src/data/validation/validation-counts.generated.json": "8fc10dbf20f54fcfc7c77772d0ad9824578713d295a6e390a53e75cc68235436",
     "src/data/validation/vector-manifest.json": "92253b10e8b04c09db0de7211f08a8f0f11a1c328bbc9f80a891d1162384f7d5"
   },
@@ -93,13 +93,13 @@
       "unsupported"
     ],
     "polarities": ["positive", "negative", "boundary", "state-error"],
-    "matrixRows": 1663,
+    "matrixRows": 1666,
     "byEngine": {
       "cpp": {
         "label": "C++",
         "mechanismCount": 165,
         "advertisedCells": 1635,
-        "unsupportedCells": 28,
+        "unsupportedCells": 31,
         "overall": {
           "covered": 15,
           "sampled": 912,
@@ -179,8 +179,8 @@
           "wasm": {
             "status": "registered",
             "registeredCells": 927,
-            "passedCells": 923,
-            "failedCells": 441,
+            "passedCells": 926,
+            "failedCells": 9,
             "skippedCells": 0
           },
           "native": {
@@ -201,20 +201,20 @@
       },
       "rust": {
         "label": "Rust",
-        "mechanismCount": 172,
-        "advertisedCells": 1025,
+        "mechanismCount": 174,
+        "advertisedCells": 1028,
         "unsupportedCells": 638,
         "overall": {
           "covered": 15,
           "sampled": 628,
-          "untested": 382
+          "untested": 385
         },
         "byPolarity": {
           "positive": {
             "covered": 173,
             "sampled": 347,
-            "untested": 505,
-            "denominator": 1025,
+            "untested": 508,
+            "denominator": 1028,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 172,
@@ -223,15 +223,15 @@
               "differential": 0,
               "round-trip": 48,
               "behavior-only": 264,
-              "untested": 505,
+              "untested": 508,
               "unsupported": 0
             }
           },
           "negative": {
             "covered": 63,
             "sampled": 39,
-            "untested": 923,
-            "denominator": 1025,
+            "untested": 926,
+            "denominator": 1028,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 69,
@@ -240,15 +240,15 @@
               "differential": 0,
               "round-trip": 0,
               "behavior-only": 33,
-              "untested": 923,
+              "untested": 926,
               "unsupported": 0
             }
           },
           "boundary": {
             "covered": 40,
             "sampled": 15,
-            "untested": 970,
-            "denominator": 1025,
+            "untested": 973,
+            "denominator": 1028,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 45,
@@ -257,15 +257,15 @@
               "differential": 0,
               "round-trip": 0,
               "behavior-only": 0,
-              "untested": 970,
+              "untested": 973,
               "unsupported": 0
             }
           },
           "state-error": {
             "covered": 586,
             "sampled": 0,
-            "untested": 439,
-            "denominator": 1025,
+            "untested": 442,
+            "denominator": 1028,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 0,
@@ -274,7 +274,7 @@
               "differential": 0,
               "round-trip": 0,
               "behavior-only": 586,
-              "untested": 439,
+              "untested": 442,
               "unsupported": 0
             }
           }
@@ -284,7 +284,7 @@
             "status": "registered",
             "registeredCells": 643,
             "passedCells": 641,
-            "failedCells": 556,
+            "failedCells": 5,
             "skippedCells": 0
           },
           "native": {
@@ -306,34 +306,34 @@
     },
     "parity": {
       "positive": {
-        "parity": 449,
-        "divergent": 41,
+        "parity": 485,
+        "divergent": 5,
         "not-established": 523,
-        "single-engine": 650
+        "single-engine": 653
       },
       "negative": {
-        "parity": 88,
-        "divergent": 14,
+        "parity": 97,
+        "divergent": 5,
         "not-established": 911,
-        "single-engine": 650
+        "single-engine": 653
       },
       "boundary": {
-        "parity": 52,
-        "divergent": 2,
+        "parity": 54,
+        "divergent": 0,
         "not-established": 959,
-        "single-engine": 650
+        "single-engine": 653
       },
       "state-error": {
-        "parity": 140,
-        "divergent": 440,
+        "parity": 580,
+        "divergent": 0,
         "not-established": 433,
-        "single-engine": 650
+        "single-engine": 653
       }
     },
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4502 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 6fdcd961b); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 6fdcd961b); 2044 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-25, hub 6fdcd961b). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4502 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 2833a9289); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 2833a9289); 2044 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 2833a9289). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -347,12 +347,12 @@
     "engines": {
       "cpp": {
         "label": "C++",
-        "sourceCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
-        "inventorySha256": "ab9cba43388488a6fedf1042d0482c5b055b22f0de70834e414cb21f084957bb",
+        "sourceCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
+        "inventorySha256": "ab37207c3f6e0422335b40e8d1c4fa0a9da88d0db7ef0c49137f36a1ee3177ff",
         "artifacts": [
           {
             "path": "public/wasm/softhsm.wasm",
-            "sha256": "2187f9a80878b34c3b81868da1c345fd741319eda2c7e64697814e561fa3c7be"
+            "sha256": "045eb1ac28f0c61e9c2c3313ee59cb3e1ddf60622346b69ee1bdadcf8d4374f7"
           },
           {
             "path": "public/wasm/softhsm.js",
@@ -362,12 +362,12 @@
       },
       "rust": {
         "label": "Rust",
-        "sourceCommit": "ac8b40fd01844be0c40d4aa02e951c05cfba73b4",
-        "inventorySha256": "20d836989eebfdc542d36ad0276ef21bf396c58e887c480e041c8095fc8a1932",
+        "sourceCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
+        "inventorySha256": "05d32d8b25193269edf03f62a5090890bb55c371b67402e7065802b83f3bd475",
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "a4582ff0102e0d145ea1a5d26784fa9b29725ae1609ab6ae142792c461b95961"
+            "sha256": "da70e554367bf58c4e83d9e30a3f96c79d818123dc7cdaf77acd1e4457356408"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
@@ -379,23 +379,23 @@
   },
   "waivers": {
     "source": "src/data/validation/coverage-waivers.json",
-    "entries": 42,
+    "entries": 44,
     "byStatus": {
-      "baseline-pending-review": 42
+      "baseline-pending-review": 44
     },
     "approvedEntries": 0,
-    "waivedCells": 1090,
-    "pendingReviewCells": 1090,
+    "waivedCells": 1093,
+    "pendingReviewCells": 1093,
     "staleCells": 0,
-    "statement": "All 42 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
+    "statement": "All 44 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
   },
   "nativeSuites": {
     "source": "src/data/validation/native-conformance.generated.json",
     "executedByHub": false,
     "note": "Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser.",
-    "hsmPinnedCommit": "7643d5c05bf0bbf453aa63d799d290a10826b61b",
+    "hsmPinnedCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
     "hsmPinnedCommitDate": "2026-09-25",
-    "hsmPinnedCommitPublished": false,
+    "hsmPinnedCommitPublished": true,
     "suites": [
       {
         "id": "cpp-p11-v32-compliance",
@@ -404,9 +404,9 @@
         "sourceFile": "p11_v32_compliance_test.cpp",
         "reportFiles": ["cpp_compliance_report.json", "cpp_compliance_report.md"],
         "openGaps": [
-          "The pinned hsm commit holding this report is an unpushed local commit (on no pqctoday-hsm remote branch): nobody else can fetch or verify it until it is pushed.",
           "The report does not record the host OS or CPU architecture it ran on.",
           "The report does not record the build target (platform/ABI) of the engine under test.",
+          "The report was produced at an engine commit 46 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
           "The engine commit differs from the commit this Hub’s C++ WASM bundle was built from, so these results are not results for the engine running in this browser."
         ],
         "report": {
@@ -419,19 +419,19 @@
           },
           "groups": 65,
           "caseIdentity": "suite-assigned",
-          "engineCommit": "ac8b40fd01844be0c40d4aa02e951c05cfba73b4",
-          "engineCommitDate": "2026-09-24",
-          "reportCommit": "7643d5c05bf0bbf453aa63d799d290a10826b61b",
-          "reportDate": "2026-09-25 12:21:28 UTC",
+          "engineCommit": "2a8e174d837754a9f6b1a2560cfbb89bda593351",
+          "engineCommitDate": "2026-09-25",
+          "reportCommit": "d6e55d86759df4f4ff9cebe150f62aed9e12a2c2",
+          "reportDate": "2026-09-25 15:52:44 UTC",
           "target": "not recorded",
           "hostPlatform": "not recorded",
-          "commitsBehindPinnedHsmMain": 0,
+          "commitsBehindPinnedHsmMain": 46,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsm-cpp-engine",
-          "wasmBundleHsmCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+          "wasmBundleHsmCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 0,
-          "commitsFromWasmBundleToEngine": 5
+          "commitsFromEngineToWasmBundle": 50,
+          "commitsFromWasmBundleToEngine": 0
         }
       },
       {
@@ -441,33 +441,34 @@
         "sourceFile": "rust/test_p11_conformance.js",
         "reportFiles": ["rust/RUST_P11_V32_CONFORMANCE_REPORT.md"],
         "openGaps": [
-          "The pinned hsm commit holding this report is an unpushed local commit (on no pqctoday-hsm remote branch): nobody else can fetch or verify it until it is pushed.",
           "The report does not record the host OS or CPU architecture it ran on.",
+          "The report was produced at an engine commit 40 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+          "The engine commit differs from the commit this Hub’s Rust WASM bundle was built from, so these results are not results for the engine running in this browser.",
           "The harness assigns no case ids: ids are derived from section heading + check label (ordinal-suffixed where a label repeats), and change if the harness rewords a label.",
           "The harness has no skip status: an unsupported case can only pass or fail."
         ],
         "report": {
           "counts": {
-            "pass": 1087,
+            "pass": 1092,
             "fail": 0,
             "skip": null,
             "xfail": null,
-            "total": 1087
+            "total": 1092
           },
           "groups": 52,
           "caseIdentity": "derived-from-transcript",
-          "engineCommit": "ac8b40fd01844be0c40d4aa02e951c05cfba73b4",
-          "engineCommitDate": "2026-09-24",
-          "reportCommit": "7643d5c05bf0bbf453aa63d799d290a10826b61b",
-          "reportDate": "2026-09-25T12:22:38.785Z",
+          "engineCommit": "ede1a0ada54fd266517bc9a7fa879468a65bbde1",
+          "engineCommitDate": "2026-09-25",
+          "reportCommit": "37ca1f749733d2720ca8f80b3bfef87e26b146a9",
+          "reportDate": "2026-09-25T16:23:27.751Z",
           "target": "wasm32 build with `--features acvp`",
           "hostPlatform": "not recorded",
-          "commitsBehindPinnedHsmMain": 0,
+          "commitsBehindPinnedHsmMain": 40,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsmrustv3-engine",
-          "wasmBundleHsmCommit": "ac8b40fd01844be0c40d4aa02e951c05cfba73b4",
-          "engineCommitEqualsWasmBundleCommit": true,
-          "commitsFromEngineToWasmBundle": 0,
+          "wasmBundleHsmCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
+          "engineCommitEqualsWasmBundleCommit": false,
+          "commitsFromEngineToWasmBundle": 44,
           "commitsFromWasmBundleToEngine": 0
         }
       },
@@ -490,2247 +491,28 @@
       "runner": "errorPathProbes (every registered error-path case, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "6fdcd961b31e38b53e58db18acba62b7346d0a37",
-      "recordedAt": "2026-09-25",
+      "hubCommit": "2833a928938850e4f34b79737599dbdb1134d5d8",
+      "recordedAt": "2026-09-26",
       "results": 4502,
       "byEngine": {
         "cpp": {
-          "pass": 1983,
-          "fail": 230,
+          "pass": 2213,
           "skip": 38
         },
         "rust": {
-          "pass": 1330,
-          "fail": 324,
+          "pass": 1654,
           "skip": 597
         }
       },
-      "failures": [
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decapsulate.read-only-session#local:errpath.decapsulate.read-only-session/CKM_ECDH1_DERIVE"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decapsulate.read-only-session#local:errpath.decapsulate.read-only-session/CKM_ML_KEM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.buffer-too-small#local:errpath.decrypt.buffer-too-small/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CBC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CFB1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CFB128"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CFB8"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_CTR"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_ECB"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_OFB"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_AES_XTS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_CHACHA20"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_CHACHA20_POLY1305"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.key-type-inconsistent#local:errpath.decrypt.key-type-inconsistent/CKM_RSA_PKCS_OAEP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CBC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CFB1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CFB128"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CFB8"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_CTR"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_OFB"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_AES_XTS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_CHACHA20"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.mechanism-param-invalid#local:errpath.decrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.null-mechanism-terminates#local:errpath.decrypt.null-mechanism-terminates/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.decrypt.terminated-after-final#local:errpath.decrypt.terminated-after-final/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-handle-invalid#local:errpath.derive.key-handle-invalid/CKM_ECDH1_COFACTOR_DERIVE"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-handle-invalid#local:errpath.derive.key-handle-invalid/CKM_ECDH1_DERIVE"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-handle-invalid#local:errpath.derive.key-handle-invalid/CKM_HKDF_DERIVE"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_AES_CBC_ENCRYPT_DATA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_AES_ECB_ENCRYPT_DATA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_CONCATENATE_BASE_AND_DATA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_CONCATENATE_BASE_AND_KEY"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_CONCATENATE_DATA_AND_BASE"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_ECDH1_COFACTOR_DERIVE"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_ECDH1_DERIVE"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_HKDF_DERIVE"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_HKDF_DERIVE"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA256_KEY_DERIVATION"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA3_256_KEY_DERIVATION"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA3_384_KEY_DERIVATION"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA3_512_KEY_DERIVATION"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA384_KEY_DERIVATION"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA512_224_KEY_DERIVATION"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA512_256_KEY_DERIVATION"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHA512_KEY_DERIVATION"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.derive.key-type-inconsistent#local:errpath.derive.key-type-inconsistent/CKM_SHAKE_256_KEY_DERIVATION"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.derive.mechanism-param-invalid#local:errpath.derive.mechanism-param-invalid/CKM_HKDF_DERIVE"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ECDH1_DERIVE"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ECDH1_DERIVE"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ML_KEM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encapsulate.key-type-inconsistent#local:errpath.encapsulate.key-type-inconsistent/CKM_ML_KEM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encapsulate.read-only-session#local:errpath.encapsulate.read-only-session/CKM_ECDH1_DERIVE"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encapsulate.read-only-session#local:errpath.encapsulate.read-only-session/CKM_ML_KEM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.buffer-too-small#local:errpath.encrypt.buffer-too-small/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CBC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CFB1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CFB128"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CFB8"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_CTR"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_ECB"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_OFB"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_AES_XTS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_CHACHA20"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_CHACHA20_POLY1305"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.key-type-inconsistent#local:errpath.encrypt.key-type-inconsistent/CKM_RSA_PKCS_OAEP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CBC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CFB1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CFB128"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CFB8"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_CTR"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_OFB"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_AES_XTS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_CHACHA20"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_CHACHA20_POLY1305"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.mechanism-param-invalid#local:errpath.encrypt.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.encrypt.terminated-after-final#local:errpath.encrypt.terminated-after-final/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.generate-key-pair.executes#local:errpath.generate-key-pair.executes/CKM_EC_KEY_PAIR_GEN_W_EXTRA_BITS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.generate-key-pair.template-inconsistent#local:errpath.generate-key-pair.template-inconsistent/CKM_EC_EDWARDS_KEY_PAIR_GEN"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.generate-key-pair.template-inconsistent#local:errpath.generate-key-pair.template-inconsistent/CKM_EC_MONTGOMERY_KEY_PAIR_GEN"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-decrypt.buffer-too-small#local:errpath.message-decrypt.buffer-too-small/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-decrypt.executes#local:errpath.message-decrypt.executes/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-decrypt.key-type-inconsistent#local:errpath.message-decrypt.key-type-inconsistent/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-decrypt.operation-active#local:errpath.message-decrypt.operation-active/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-decrypt.terminated-after-final#local:errpath.message-decrypt.terminated-after-final/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-encrypt.buffer-too-small#local:errpath.message-encrypt.buffer-too-small/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-encrypt.executes#local:errpath.message-encrypt.executes/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-encrypt.key-type-inconsistent#local:errpath.message-encrypt.key-type-inconsistent/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-encrypt.operation-active#local:errpath.message-encrypt.operation-active/CKM_AES_GCM"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-encrypt.terminated-after-final#local:errpath.message-encrypt.terminated-after-final/CKM_AES_GCM"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA3_512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ECDSA_SHA512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA3_512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHA512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHAKE128"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_ML_DSA_SHAKE256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA3_512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHA512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHAKE128"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_HASH_SLH_DSA_SHAKE256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_MD5_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_ML_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA1_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA1_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA224_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA256_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_224_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_256_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_384_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_512_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA3_512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA384_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA512_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SHA512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.buffer-too-small#local:errpath.message-sign.buffer-too-small/CKM_SLH_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA3_512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ECDSA_SHA512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_MD5_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_ML_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-sign.key-type-inconsistent#local:errpath.message-sign.key-type-inconsistent/CKM_SLH_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA3_512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ECDSA_SHA512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_MD5_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_ML_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SLH_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_X_509"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign-recover.key-type-inconsistent#local:errpath.sign-recover.key-type-inconsistent/CKM_RSA_X_509"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.buffer-too-small#local:errpath.sign.buffer-too-small/CKM_ECDSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.buffer-too-small#local:errpath.sign.buffer-too-small/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.buffer-too-small#local:errpath.sign.buffer-too-small/CKM_ECDSA_SHA224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.executes#local:errpath.sign.executes/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_AES_CMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_AES_GMAC"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA3_512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ECDSA_SHA512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_EDDSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_EDDSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHA512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE128"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE128"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_MD5_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ML_DSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_ML_DSA_EXTERNAL_MU"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RIPEMD160_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RIPEMD160_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_RSA_X_509"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA_1_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA_1_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_224_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_224_HMAC_GENERAL"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_256_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_256_HMAC_GENERAL"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.key-type-inconsistent#local:errpath.sign.key-type-inconsistent/CKM_SLH_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_HASH_ML_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_HASH_SLH_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.mechanism-param-invalid#local:errpath.sign.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.terminated-after-final#local:errpath.sign.terminated-after-final/CKM_ECDSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.terminated-after-final#local:errpath.sign.terminated-after-final/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.sign.terminated-after-final#local:errpath.sign.terminated-after-final/CKM_ECDSA_SHA224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_KEY_WRAP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_KEY_WRAP_KWP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_AES_KEY_WRAP_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.unwrap.key-type-inconsistent#local:errpath.unwrap.key-type-inconsistent/CKM_RSA_PKCS_OAEP"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_AES_CBC"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.unwrap.mechanism-param-invalid#local:errpath.unwrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_X_509"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify-recover.key-type-inconsistent#local:errpath.verify-recover.key-type-inconsistent/CKM_RSA_X_509"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.executes#local:errpath.verify.executes/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_AES_CMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_AES_GMAC"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_224"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_256"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA3_512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA384"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ECDSA_SHA512"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_EDDSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_EDDSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA3_512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHA512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE128"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_ML_DSA_SHAKE256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA3_512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA384"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHA512"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE128"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_HASH_SLH_DSA_SHAKE256"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_MD5_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ML_DSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_ML_DSA_EXTERNAL_MU"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RIPEMD160_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RIPEMD160_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_RSA_X_509"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA_1_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA_1_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA1_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA3_512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_224_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_224_HMAC_GENERAL"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_256_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_256_HMAC_GENERAL"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_HMAC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_HMAC_GENERAL"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.key-type-inconsistent#local:errpath.verify.key-type-inconsistent/CKM_SLH_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_HASH_ML_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_HASH_SLH_DSA"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA1_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_224_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_256_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA3_512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA384_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.mechanism-param-invalid#local:errpath.verify.mechanism-param-invalid/CKM_SHA512_RSA_PKCS_PSS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.null-mechanism-terminates#local:errpath.verify.null-mechanism-terminates/CKM_ECDSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.null-mechanism-terminates#local:errpath.verify.null-mechanism-terminates/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.null-mechanism-terminates#local:errpath.verify.null-mechanism-terminates/CKM_ECDSA_SHA224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.terminated-after-final#local:errpath.verify.terminated-after-final/CKM_ECDSA"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.terminated-after-final#local:errpath.verify.terminated-after-final/CKM_ECDSA_SHA1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.verify.terminated-after-final#local:errpath.verify.terminated-after-final/CKM_ECDSA_SHA224"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_CBC"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_KEY_WRAP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_KEY_WRAP_KWP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_AES_KEY_WRAP_PAD"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_RSA_PKCS"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.wrap.key-type-inconsistent#local:errpath.wrap.key-type-inconsistent/CKM_RSA_PKCS_OAEP"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_AES_CBC"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_AES_CBC_PAD"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "errpath.wrap.mechanism-param-invalid#local:errpath.wrap.mechanism-param-invalid/CKM_RSA_PKCS_OAEP"
-        }
-      ]
+      "failures": []
     },
     {
       "file": "src/data/validation/run-results/wasm-node-katRunner.json",
       "runner": "katRunner (every registered KatKind)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "6fdcd961b31e38b53e58db18acba62b7346d0a37",
-      "recordedAt": "2026-09-25",
+      "hubCommit": "2833a928938850e4f34b79737599dbdb1134d5d8",
+      "recordedAt": "2026-09-26",
       "results": 94,
       "byEngine": {
         "rust": {
@@ -2744,324 +526,20 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "6fdcd961b31e38b53e58db18acba62b7346d0a37",
-      "recordedAt": "2026-09-25",
+      "hubCommit": "2833a928938850e4f34b79737599dbdb1134d5d8",
+      "recordedAt": "2026-09-26",
       "results": 2044,
       "byEngine": {
         "cpp": {
-          "pass": 992,
-          "fail": 30
+          "pass": 999,
+          "fail": 23
         },
         "rust": {
-          "pass": 875,
-          "fail": 147
+          "pass": 975,
+          "fail": 47
         }
       },
       "failures": [
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/10"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/11"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/12"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/13"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/14"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/2"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/3"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/4"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/5"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/6"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/7"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/8"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/1/tests/9"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/10"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/11"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/12"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/13"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/14"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/2"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/3"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/4"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/5"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/6"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/7"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/8"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.01b#aesgcm_acvp_test#/testGroups/3/tests/9"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/2"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/3"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/4"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/5"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/6"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/2"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/3"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/4"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/5"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/1/tests/6"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/2"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/3"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/4"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/5"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/2/tests/6"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/2"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/3"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/4"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/5"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/3/tests/6"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/2"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/3"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/4"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/2/tests/5"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/2"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/3"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/4"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04d#rsa_sigver_acvp_test#/testGroups/3/tests/5"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/0/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/16/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/8/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-224-oracle"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-224-oracle"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-224-oracle"
-        },
         {
           "engine": "rust",
           "registryCase": "acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/1/tests/0"
@@ -3135,128 +613,12 @@
           "registryCase": "acvp.04e.keyver#eddsa_keyver_acvp_test#/testGroups/1/tests/3"
         },
         {
-          "engine": "rust",
-          "registryCase": "acvp.07b.keycheck#mlkem_encapdecap_val_test#/testGroups/3/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07b.keycheck#mlkem_encapdecap_val_test#/testGroups/4/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07b.keycheck#mlkem_encapdecap_val_test#/testGroups/5/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07b.keycheck#mlkem_encapdecap_val_test#/testGroups/6/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07b.keycheck#mlkem_encapdecap_val_test#/testGroups/7/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07b.keycheck#mlkem_encapdecap_val_test#/testGroups/8/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/0/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/0/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/0/tests/2"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/0/tests/3"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/1/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/1/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/1/tests/2"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/1/tests/3"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/2/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/2/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/2/tests/2"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.07c.ekcheck-depth#mlkem_ekcheck_depth_test#/testGroups/2/tests/3"
-        },
-        {
           "engine": "cpp",
-          "registryCase": "acvp.09c.siggen-det#slhdsa_siggen_det_test#/testGroups/1/tests/0"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "acvp.09c.siggen-det#slhdsa_siggen_det_test#/testGroups/3/tests/0"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/1/tests/0"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/3/tests/0"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/5/tests/0"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/1/tests/0"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/5/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.12b.probes#local:acvp.12b.probes/iv15"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/0"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/2"
-        },
-        {
-          "engine": "rust",
           "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3"
         },
         {
           "engine": "rust",
-          "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/4"
+          "registryCase": "acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3"
         },
         {
           "engine": "cpp",
@@ -3457,14 +819,6 @@
         {
           "engine": "rust",
           "registryCase": "acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/55/tests/0"
-        },
-        {
-          "engine": "cpp",
-          "registryCase": "acvp.35b#kmac_acvp_test#/testGroups/0/tests/1"
-        },
-        {
-          "engine": "rust",
-          "registryCase": "acvp.35b#kmac_acvp_test#/testGroups/0/tests/1"
         }
       ]
     }
@@ -5061,17 +2415,17 @@
   },
   "openGaps": {
     "source": "public/data/validation/coverage-matrix.json (openGaps; curated entries from src/data/validation/open-gaps.json)",
-    "total": 815,
+    "total": 131,
     "byStatus": {
-      "open": 811,
+      "open": 127,
       "accepted-limitation": 3,
       "in-progress": 1
     },
     "byOrigin": {
-      "curated": 51,
-      "generated": 764
+      "curated": 26,
+      "generated": 105
     },
-    "unassignedOwner": 815,
+    "unassignedOwner": 131,
     "curated": [
       {
         "id": "d2-4-hedged-rnd",
@@ -5110,14 +2464,14 @@
       },
       {
         "id": "rust-only-mechanisms",
-        "title": "7 mechanisms advertised by Rust only",
+        "title": "9 mechanisms advertised by Rust only",
         "status": "open",
         "planItem": "G-9",
         "owner": "unassigned"
       },
       {
-        "id": "rust-hpke-dispatched-not-advertised",
-        "title": "Rust dispatches CKM_HPKE / CKM_HPKE_KEM_KEY_PAIR_GEN without advertising them",
+        "id": "rust-bip32-legacy-dispatched-not-advertised",
+        "title": "Rust dispatches CKM_BIP32_*_LEGACY without advertising them; C++ still dispatches RIPEMD160* only under its own non-advertised build flag",
         "status": "open",
         "planItem": "G-7",
         "owner": "unassigned"
@@ -5179,34 +2533,6 @@
         "owner": "unassigned"
       },
       {
-        "id": "rust-mlkem-no-key-input-checks",
-        "title": "Rust engine accepts every invalid NIST ML-KEM encapsulation/decapsulation key (18 of 18)",
-        "status": "open",
-        "planItem": "D1-5",
-        "owner": "unassigned"
-      },
-      {
-        "id": "cpp-hashslhdsa-double-wrap",
-        "title": "C++ HashSLH-DSA wraps M′ twice — valid NIST pre-hash signatures rejected",
-        "status": "open",
-        "planItem": "D3-3",
-        "owner": "unassigned"
-      },
-      {
-        "id": "mlkem-wrong-length-return-codes",
-        "title": "ML-KEM wrong-length inputs: return codes differ from PKCS #11 v3.2 and between engines",
-        "status": "open",
-        "planItem": "D1-5 / G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "pbkdf2-min-iterations-divergence",
-        "title": "PBKDF2 iteration floor differs between engines (Rust refuses c < 1000)",
-        "status": "open",
-        "planItem": "G-9",
-        "owner": "unassigned"
-      },
-      {
         "id": "ecdsa-p521-cpp-ec-point-der",
         "title": "ECDSA P-521 NIST sample failed on C++ — hub CKA_EC_POINT encoding (fixed hub-side)",
         "status": "in-progress",
@@ -5221,104 +2547,6 @@
         "owner": "unassigned"
       },
       {
-        "id": "g8-cpp-init-accepts-wrong-key-type",
-        "title": "C++: sign/verify inits accept a key of the wrong type (CKR_OK instead of CKR_KEY_TYPE_INCONSISTENT)",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-cpp-function-not-permitted-before-type",
-        "title": "C++: CKR_KEY_FUNCTION_NOT_PERMITTED returned where CKR_KEY_TYPE_INCONSISTENT has priority",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-cpp-unwrap-wrapping-code",
-        "title": "C++: C_UnwrapKey returns CKR_WRAPPING_KEY_TYPE_INCONSISTENT for a wrong unwrapping key",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-cpp-signmessage-buffer-too-small-terminates",
-        "title": "C++: C_SignMessage ends the message-signing process on CKR_BUFFER_TOO_SMALL",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-cpp-bad-mechanism-param-arguments-bad",
-        "title": "C++: a malformed mechanism parameter returns CKR_ARGUMENTS_BAD, not CKR_MECHANISM_PARAM_INVALID",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-rust-init-accepts-wrong-key-type",
-        "title": "Rust: operation inits and C_DeriveKey accept a key of the wrong type (CKR_OK instead of CKR_KEY_TYPE_INCONSISTENT)",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-rust-function-not-permitted-before-type",
-        "title": "Rust: CKR_KEY_FUNCTION_NOT_PERMITTED returned where CKR_KEY_TYPE_INCONSISTENT has priority",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-rust-wrap-unwrap-type-code",
-        "title": "Rust: RSA C_WrapKey / C_UnwrapKey return CKR_KEY_TYPE_INCONSISTENT instead of the (UN)WRAPPING_KEY codes",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-rust-malformed-param-accepted",
-        "title": "Rust: a 1-byte mechanism parameter is accepted (CKR_OK) for RSA-PSS and RSA-OAEP",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-rust-bad-param-or-handle-arguments-bad",
-        "title": "Rust: malformed parameter / key handle 0 return CKR_ARGUMENTS_BAD",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-rust-ro-session-token-object",
-        "title": "Rust: C_EncapsulateKey / C_DecapsulateKey create a token object in a read-only session",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-rust-message-init-not-exclusive",
-        "title": "Rust: a second C_MessageEncryptInit / C_MessageDecryptInit while one is active returns CKR_OK",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-rust-keygen-template-inconsistent",
-        "title": "Rust: Edwards / Montgomery key-pair generation accepts an inconsistent CKA_KEY_TYPE",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
-        "id": "g8-rust-advertised-cells-do-not-execute",
-        "title": "Rust: advertised cells whose operation does not execute",
-        "status": "open",
-        "planItem": "G-8",
-        "owner": "unassigned"
-      },
-      {
         "id": "g8-spec-decapsulate-return-codes",
         "title": "PKCS #11 v3.2 gives no single key-handle / key-type code for C_DecapsulateKey — not probed",
         "status": "open",
@@ -5326,59 +2554,10 @@
         "owner": "unassigned"
       },
       {
-        "id": "rust-gcm-iv-96-only",
-        "title": "Rust engine refuses AES-GCM IVs other than 96 bits",
-        "status": "open",
-        "planItem": "E (AES-GCM) / G-9",
-        "owner": "unassigned"
-      },
-      {
-        "id": "rust-ecdsa-p224-unsupported",
-        "title": "Rust engine accepts P-224 keys but cannot verify P-224 ECDSA signatures",
-        "status": "open",
-        "planItem": "E (ECDSA) / G-7 / G-9",
-        "owner": "unassigned"
-      },
-      {
-        "id": "hmac-min-key-size-advertisement",
-        "title": "HMAC keys below the advertised ulMinKeySize are accepted by both engines",
-        "status": "open",
-        "planItem": "G-1 / G-7",
-        "owner": "unassigned"
-      },
-      {
         "id": "wse-nist-sample-scope",
         "title": "Classical NIST reference samples cover only what the pinned upstream samples register",
         "status": "open",
         "planItem": "E",
-        "owner": "unassigned"
-      },
-      {
-        "id": "rust-cbc-iv-length-arguments-bad",
-        "title": "Rust engine answers a wrong-length AES-CBC IV with CKR_ARGUMENTS_BAD",
-        "status": "open",
-        "planItem": "G-8 / G-9",
-        "owner": "unassigned"
-      },
-      {
-        "id": "rust-rsa-public-exponent-limit",
-        "title": "Rust engine cannot verify RSA signatures whose public exponent exceeds 2^33 - 1",
-        "status": "open",
-        "planItem": "E (RSA) / G-9",
-        "owner": "unassigned"
-      },
-      {
-        "id": "rust-pbkdf2-prf-limited",
-        "title": "Rust engine's CKM_PKCS5_PBKD2 implements only the HMAC-SHA-256/384/512 PRFs",
-        "status": "open",
-        "planItem": "E (PBKDF2) / G-7 / G-9",
-        "owner": "unassigned"
-      },
-      {
-        "id": "kmac-verify-ignores-output-length",
-        "title": "KMAC C_Verify accepts only the default MAC length, whatever ulOutputLen says",
-        "status": "open",
-        "planItem": "E (KMAC) / G-9",
         "owner": "unassigned"
       },
       {
@@ -5479,11 +2658,11 @@
     "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
     "validRecords": 0,
     "statusCounts": {
-      "awaiting-review": 107
+      "awaiting-review": 109
     },
     "awaiting": {
       "vector-source": 61,
-      "coverage-waiver": 42,
+      "coverage-waiver": 44,
       "public-claim": 3,
       "learn-module-practitioner": 1
     },
@@ -6206,6 +3385,20 @@
         "id": "coverage-waiver:baseline-CKM_BIP32_CHILD_DERIVE",
         "kind": "coverage-waiver",
         "title": "CKM_BIP32_CHILD_DERIVE (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
+        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "coverage-waiver:baseline-CKM_HPKE_KEM_KEY_PAIR_GEN",
+        "kind": "coverage-waiver",
+        "title": "CKM_HPKE_KEM_KEY_PAIR_GEN (rust): 1 cell pattern(s), status baseline-pending-review",
+        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
+        "status": "awaiting-review"
+      },
+      {
+        "id": "coverage-waiver:baseline-CKM_HPKE",
+        "kind": "coverage-waiver",
+        "title": "CKM_HPKE (rust): 2 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },

@@ -36,7 +36,14 @@ const classesOf = (rowId: string) =>
 
 const require_ = createRequire(import.meta.url)
 const loadCppEngineInNode = async (): Promise<SoftHSMModule> => {
-  const gluePath = require_.resolve('@pqctoday/softhsm-wasm/wasm/softhsm.js')
+  // process.cwd()-relative, NOT require.resolve('@pqctoday/softhsm-wasm/...'):
+  // that file: package resolves through node_modules, and in a worktree whose
+  // node_modules is itself symlinked to a SIBLING worktree (a real, supported
+  // setup), a relative symlink one level inside that shared node_modules
+  // resolves relative to where IT lives, silently landing on the sibling
+  // worktree's src/vendor/softhsm-wasm instead of this one's -- probing the
+  // wrong C++ binary with no error (found 2026-09-25, P3 combined rebuild).
+  const gluePath = path.resolve(process.cwd(), 'src/vendor/softhsm-wasm/wasm/softhsm.js')
   const wasmPath = path.join(path.dirname(gluePath), 'softhsm.wasm')
   const create = require_(gluePath) as (arg?: Record<string, unknown>) => Promise<SoftHSMModule>
   return create({ locateFile: (p: string) => (p.endsWith('.wasm') ? wasmPath : p) })
@@ -177,27 +184,25 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
     expect(cells.size).toBe(6)
   })
 
-  it('FINDING: C++ rejects every valid NIST HashSLH-DSA signature and mis-signs HashSLH-DSA deterministically', () => {
+  it('C++ HashSLH-DSA pre-hash signatures now verify/byte-match (E1 fixed: no more double message-wrap)', () => {
+    // Was 'FINDING: C++ rejects every valid NIST HashSLH-DSA signature and
+    // mis-signs HashSLH-DSA deterministically' until 2026-09-25 (P3 combined
+    // rebuild, hsm a22e6ca0): E1 (fix(cpp): HashSLH-DSA signs/verifies M'
+    // once, not wrapped twice) closes exactly the 7 cases this test used to
+    // pin as failing — confirmed against the rebuilt engine, not guessed.
     const cppPreHash = section().filter(
       (r) =>
         engineOf(r) === 'C++' &&
         r.caseMeta?.mode === 'preHash' &&
         r.caseMeta?.origin === 'nist-acvp-server'
     )
-    const failed = cppPreHash
-      .filter((r) => r.status === 'fail')
-      .map(caseKey)
-      .sort()
-    const expectedFail = cppPreHash
-      .filter((r) => r.caseMeta?.expected === 'valid' || r.caseMeta?.expected === 'byte-match')
-      .map(caseKey)
-      .sort()
-    expect(failed).toEqual(expectedFail)
-    expect(failed).toHaveLength(7) // 5 sigVer positives + 2 deterministic sigGen
-    for (const r of cppPreHash.filter((x) => x.status === 'fail'))
-      expect(r.details).toMatch(/REJECTED a valid NIST signature|signature mismatch/)
-    // The same cases pass on Rust, so the vectors and the harness are not the cause.
-    for (const k of failed) expect(results.find((r) => r.id === `${k}-Rust`)?.status).toBe('pass')
+    const failed = cppPreHash.filter((r) => r.status === 'fail').map(caseKey)
+    expect(failed).toEqual([])
+    for (const r of cppPreHash) {
+      expect(r.status, `${r.testCase}: ${r.details}`).toBe('pass')
+      // Rust agrees — the same cases already passed there.
+      expect(results.find((x) => x.id === `${caseKey(r)}-Rust`)?.status).toBe('pass')
+    }
   })
 
   it('byte-matches deterministic SigGen for all 12 parameter sets (pure) on both engines', () => {
@@ -267,12 +272,17 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
       expect(pair, key).toHaveLength(2)
       if (pair[0].caseMeta?.observed !== pair[1].caseMeta?.observed) disagree.push(key)
     }
+    // Was cppFindings + ctx256 + hedged-randomized until 2026-09-25 (P3
+    // combined rebuild): E1 closed the cppFindings set (now empty) and E9/D6
+    // aligned ctx256 to the same CKR_MECHANISM_PARAM_INVALID on both engines
+    // (see SLH_CTX256_PIN) — confirmed against the rebuilt engine. Only the
+    // inherently-randomized hedged-signature probe still legitimately
+    // disagrees byte-for-byte between engines.
     const cppFindings = section()
       .filter((r) => engineOf(r) === 'C++' && r.status === 'fail')
       .map(caseKey)
-    expect(disagree.sort()).toEqual(
-      [...cppFindings, 'slhdsa-probe-ctx256', 'slhdsa-probe-hedged-randomized'].sort()
-    )
+    expect(cppFindings).toEqual([])
+    expect(disagree.sort()).toEqual(['slhdsa-probe-hedged-randomized'])
   })
 
   it('labels the pre-existing sigGen-derived verification rows with their transformation (D3-1)', () => {
@@ -335,8 +345,10 @@ describe('SLH-DSA reference samples — sabotaged expectations fail', () => {
         )
         expect(c?.status).toBe('fail')
       }
-      // Exactly the sabotaged rows failed (3 × 2 engines) plus the 7 C++ HashSLH-DSA findings.
-      expect(results.filter((r) => r.status === 'fail')).toHaveLength(6 + 7)
+      // Exactly the sabotaged rows failed (3 × 2 engines). The 7 C++
+      // HashSLH-DSA findings this used to add (E1) are fixed as of the P3
+      // combined rebuild (2026-09-25, hsm a22e6ca0).
+      expect(results.filter((r) => r.status === 'fail')).toHaveLength(6)
     } finally {
       vi.doUnmock('@/data/acvp/slhdsa_sigver_sha2_test.json')
       vi.doUnmock('@/data/acvp/slhdsa_siggen_det_test.json')

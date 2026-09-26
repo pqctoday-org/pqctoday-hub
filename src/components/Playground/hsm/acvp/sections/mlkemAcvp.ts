@@ -211,21 +211,29 @@ const DECAP_LISTED = [
 export const MLKEM_BOUNDARY_PINS: Record<string, PinnedRv> = {
   // Wrong-length ciphertexts. §5.18.9 lists WRAPPED_KEY_LEN_RANGE/INVALID, not
   // the ENCRYPTED_DATA_* family (whose definitions are for decryption).
+  // Rust pins updated 2026-09-25 (P3 combined rebuild, hsm a22e6ca0): E4
+  // (fix(rust): vendor-KEM and native decapsulate return CKR_WRAPPED_KEY_LEN_RANGE
+  // for a wrong-length ciphertext) replaced the old, unlisted CKR_ENCRYPTED_DATA_INVALID
+  // with a §5.18.9-listed code on all three wrong-length ciphertext probes —
+  // confirmed against the rebuilt engine, not guessed.
   'decap-ct-short': {
     cpp: 'CKR_WRAPPED_KEY_LEN_RANGE',
-    rust: 'CKR_ENCRYPTED_DATA_INVALID',
+    rust: 'CKR_WRAPPED_KEY_LEN_RANGE',
     listed: DECAP_LISTED,
     section: '§5.18.9',
   },
   'decap-ct-long': {
     cpp: 'CKR_WRAPPED_KEY_LEN_RANGE',
-    rust: 'CKR_ENCRYPTED_DATA_INVALID',
+    rust: 'CKR_WRAPPED_KEY_LEN_RANGE',
     listed: DECAP_LISTED,
     section: '§5.18.9',
   },
   'decap-ct-other-set': {
-    cpp: 'CKR_WRAPPED_KEY_INVALID',
-    rust: 'CKR_ENCRYPTED_DATA_INVALID',
+    // cpp updated 2026-09-25 (P3 combined rebuild, E3): now also returns
+    // CKR_WRAPPED_KEY_LEN_RANGE, matching Rust — confirmed against the
+    // rebuilt engine, not guessed.
+    cpp: 'CKR_WRAPPED_KEY_LEN_RANGE',
+    rust: 'CKR_WRAPPED_KEY_LEN_RANGE',
     listed: DECAP_LISTED,
     section: '§5.18.9',
   },
@@ -237,19 +245,30 @@ export const MLKEM_BOUNDARY_PINS: Record<string, PinnedRv> = {
     section: '§5.18.8',
   },
   // Malformed key objects. §4.1.1 rule 2: an invalid attribute value fails
-  // object creation with CKR_ATTRIBUTE_VALUE_INVALID. The C++ engine accepts
-  // a 1-byte-short dk and fails later at C_DecapsulateKey; the Rust engine
-  // rejects it at C_CreateObject. Both accept a 1-byte-short ek and fail at
-  // C_EncapsulateKey with a code §5.18.8 does not list.
+  // object creation with CKR_ATTRIBUTE_VALUE_INVALID. As of the P3 combined
+  // rebuild (2026-09-25, hsm a22e6ca0, E3: FIPS 203 §7.2/§7.3 key input
+  // checks at C_CreateObject) both engines now reject a 1-byte-short dk AND a
+  // 1-byte-short ek at C_CreateObject — confirmed against the rebuilt engine,
+  // not guessed. Before E3, the C++ engine accepted both and failed later
+  // (at C_DecapsulateKey / C_EncapsulateKey, with codes §4.1.1/§5.18.8 don't
+  // list for object creation).
   'import-dk-short': {
-    cpp: 'CKR_OK → C_DecapsulateKey CKR_WRAPPED_KEY_INVALID',
+    // cpp updated 2026-09-25 (P3 combined rebuild, E3): now rejects the short
+    // dk at C_CreateObject like Rust does, instead of accepting it and
+    // failing later at C_DecapsulateKey — confirmed against the rebuilt
+    // engine, not guessed.
+    cpp: 'CKR_ATTRIBUTE_VALUE_INVALID',
     rust: 'CKR_ATTRIBUTE_VALUE_INVALID',
     listed: ['CKR_ATTRIBUTE_VALUE_INVALID'],
     section: '§4.1.1 (object creation)',
   },
   'import-ek-short': {
-    cpp: 'CKR_OK → C_EncapsulateKey CKR_GENERAL_ERROR',
-    rust: 'CKR_OK → C_EncapsulateKey CKR_KEY_TYPE_INCONSISTENT',
+    // cpp updated 2026-09-25 (P3 combined rebuild, E3): now rejects the short
+    // ek at C_CreateObject like Rust does, instead of accepting it and
+    // failing later at C_EncapsulateKey — confirmed against the rebuilt
+    // engine, not guessed.
+    cpp: 'CKR_ATTRIBUTE_VALUE_INVALID',
+    rust: 'CKR_ATTRIBUTE_VALUE_INVALID',
     listed: ['CKR_ATTRIBUTE_VALUE_INVALID'],
     section: '§4.1.1 (object creation)',
   },
