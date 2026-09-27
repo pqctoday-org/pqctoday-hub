@@ -29,6 +29,12 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.124.2] - 2026-09-27
+
+### Fixed
+
+- **36 products showed the placeholder "pqc_support" instead of their post-quantum support.** [view:/migrate] [persona:ops] [persona:grc] [persona:developer] Release 4.124.1 corrected product listings that named algorithms their sources don't mention, but a fault in how the corrections were read in wrote the column's own name into 36 of them — AWS KMS, Microsoft Edge, Apache HTTP Server, several Red Hat Enterprise Linux releases and others. Each now shows the corrected value it should have had, for example "Yes (ML-DSA)" for AWS KMS. No other product was affected.
+
 ## [4.124.1] - 2026-09-26
 
 A full check of every migration-catalogue product against its own cited document: where a product listed specific post-quantum algorithms its source never mentions, the listing now says only what the source actually supports.
