@@ -16,8 +16,8 @@ import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
 import { CopyButton } from '@/components/ui/CopyButton'
 import { OptionTile } from '@/components/common/OptionTile'
-import type { CertWorkshopStepProps } from '../data/types'
-import { ANCHOR_SCENARIO, type AnchorComponentId } from '../data/anchorScenario'
+import type { CertWorkshopStepProps } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
+import { ANCHOR_SCENARIO, type AnchorComponentId } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import {
   BOUNDARY_NOTES,
   EVIDENCE_OPTIONS,

@@ -15,7 +15,7 @@ import { CheckCircle2, ExternalLink, FileSearch, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
 import { CopyButton } from '@/components/ui/CopyButton'
-import type { CertWorkshopStepProps } from '../data/types'
+import type { CertWorkshopStepProps } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
 import {
   ASSURANCE_COMPONENTS,
   AVA_VAN_ATTACK_POTENTIAL,

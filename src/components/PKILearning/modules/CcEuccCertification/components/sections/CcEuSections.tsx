@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 import { getStandard } from '@/data/standardsRegistry'
 import { PathScopedContent } from '@/components/PKILearning/common/LearnPathPicker'
-import { ANCHOR_SCENARIO } from '../../data/anchorScenario'
+import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import { ASSURANCE_COMPONENTS, CC_EU_AS_OF } from '../../data/ccEuData'
 
 // ── Shared presentational helpers (also used by the CC/EU workshop steps) ───

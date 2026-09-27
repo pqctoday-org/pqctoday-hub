@@ -1222,8 +1222,8 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
 
   // ── crypto-product-certification (PCI author, 2026-09-24) — keep identical to
-  //    modules/CryptoProductCertification/data/pciData.ts `stepExercises` ──
-  'crypto-product-certification/pci-evidence-review': {
+  //    modules/FipsPciCertification/data/pciData.ts `stepExercises` ──
+  'fips-pci-certification/pci-evidence-review': {
     prompt:
       'A payment HSM’s PTS listing carries the Post Quantum Cryptography (PQC) notation. What does that notation establish?',
     options: [
@@ -1237,7 +1237,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
 
   // ── crypto-product-certification — FIPS author (2026-09-24) ──
-  'crypto-product-certification/fips-level-planner': {
+  'fips-pci-certification/fips-level-planner': {
     prompt:
       'A customer’s PQC deadline is close, so Orrin N7 adds ML-KEM and ML-DSA to its already-validated HSM firmware. Which CMVP route does the planner accept?',
     options: [
@@ -1251,7 +1251,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
 
   // ── crypto-product-certification: CC/EU author (2026-09-24; cc-claim-decoder, eidas-trace) ──
-  'crypto-product-certification/cc-claim-decoder': {
+  'cc-eucc-certification/cc-claim-decoder': {
     prompt:
       'Two HSM listings both read “EAL4+”: TrustWay Proteccio (ADV_IMP.2, ALC_CMC.5, ALC_DVS.2, ALC_FLR.3, AVA_VAN.5) and nShield5s (ALC_FLR.2, AVA_VAN.5). What can you conclude from the shared headline?',
     options: [
@@ -1262,7 +1262,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 1,
     why: 'Augmentation adds or substitutes named components; “EAL4+” without the list does not say which. Here both reach AVA_VAN.5 but differ in development, configuration-management and flaw-remediation components, and an augmented EAL4 is not a higher EAL.',
   },
-  'crypto-product-certification/eidas-trace': {
+  'cc-eucc-certification/eidas-trace': {
     prompt:
       'In the remote-signing trace, where does the duty to use a certified signing device come from, and where do its security requirements come from?',
     options: [

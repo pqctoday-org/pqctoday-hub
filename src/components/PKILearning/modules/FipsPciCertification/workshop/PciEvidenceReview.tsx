@@ -29,8 +29,8 @@ import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
 import { CopyButton } from '@/components/ui/CopyButton'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import type { CertWorkshopStepProps } from '../data/types'
-import { ANCHOR_SCENARIO } from '../data/anchorScenario'
+import type { CertWorkshopStepProps } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
+import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import { PCI_LISTING_COLUMNS, pciListingFixture } from '../data/pciListingFixture'
 import {
   EVIDENCE_DOCS,
