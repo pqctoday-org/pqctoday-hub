@@ -5,6 +5,13 @@ import '@testing-library/jest-dom'
 import { PqcCertificationTrendChart } from './PqcCertificationTrendChart'
 import type { ComplianceRecord } from './types'
 
+// The products view imports the migrate catalogue and the certification
+// cross-reference dynamically. Unmocked, that import (CSV parsing) can outlive
+// the test file and crash the worker with EnvironmentTeardownError (main CI
+// "test (2)", 2026-09-27). Mocked, it resolves from these factories at once.
+vi.mock('@/data/migrateData', () => ({ softwareData: [] }))
+vi.mock('@/data/certificationXrefData', () => ({ certsByProduct: new Map() }))
+
 const records = [
   { id: 'A1', type: 'ACVP', date: '2026-03-02', pqcCoverage: 'ML-KEM' },
   { id: '5450', type: 'FIPS 140-3', date: '2026-04-02', pqcCoverage: 'ML-KEM, ML-DSA' },

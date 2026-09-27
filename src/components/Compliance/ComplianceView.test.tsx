@@ -74,6 +74,14 @@ vi.mock('./services', () => ({
 }))
 
 // Mock the ComplianceTable and MobileComplianceView to avoid testing complex internals here
+// The FIPS stage chart loads the whole migrate catalogue with a dynamic import
+// when it mounts. This suite never asserts on the chart, and an import still in
+// flight when the file ends crashes the worker (EnvironmentTeardownError — main
+// CI "test (2)", 2026-09-27). The chart has its own suite.
+vi.mock('./PqcCertificationTrendChart', () => ({
+  PqcCertificationTrendChart: () => <div data-testid="pqc-trend-chart-stub" />,
+}))
+
 vi.mock('./ComplianceTable', () => ({
   ComplianceTable: ({
     data,
