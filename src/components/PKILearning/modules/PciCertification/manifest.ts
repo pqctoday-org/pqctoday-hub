@@ -18,7 +18,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'pci-certification',
-  contentVersion: 1,
+  contentVersion: 2,
   lm_id: 'LM-071',
   title: 'PCI Certification',
   description:

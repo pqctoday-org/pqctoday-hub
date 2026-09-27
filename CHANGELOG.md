@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.127.0] - 2026-09-27
+
+FIPS 140-3 and PCI now each have their own certification module.
+
+### Changed
+
+- **FIPS 140-3 and PCI are now two separate modules** [view:/learn/fips-140-3-certification] [view:/learn/pci-certification] [persona:grc] [persona:ops]: the FIPS 140-3 & PCI deep dive is split in two. _FIPS 140-3 Certification_ covers the CMVP, security levels, the validation queue and what adding PQC means for a validated module. _PCI Certification_ covers PTS HSM device approval, what PTS HSM v5.0 changed and the payment operating stack (PIN, P2PE, KMO). Each has its own workshop, exercises, quiz questions, references and poster. The certification fundamentals module now points to three deep dives.
+- **Old links and saved progress still work** [view:/learn] [persona:curious]: the old address opens the FIPS 140-3 module, or the PCI module if the link asked for the PCI path. Progress you saved in the combined module moves to the FIPS 140-3 module.
+
+### Fixed
+
+- **The FIPS module now says plainly that P2PE v3.1 is superseded** [view:/learn/fips-140-3-certification] [persona:grc]: the note on which PCI standards accept FIPS Level 3 HSMs now states that P2PE v3.2 replaced v3.1 in June 2025.
+
 ## [4.126.1] - 2026-09-27
 
 Hundreds of product versions and dates are filled in from their own sources, and a batch of outdated or wrong values is fixed.
