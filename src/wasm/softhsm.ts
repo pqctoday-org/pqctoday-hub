@@ -4915,26 +4915,17 @@ export const hsm_importRSAPublicKey = (
   }
 }
 
-const toBase64Url = (bytes: Uint8Array): string => {
-  let binary = ''
-  for (const b of bytes) binary += String.fromCharCode(b)
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-}
-
 /**
  * Import an RSA private key from its full CRT component set (PKCS#11 v3.2
  * Table 39: MODULUS, PUBLIC_EXPONENT, PRIVATE_EXPONENT, PRIME_1/2,
  * EXPONENT_1/2, COEFFICIENT). Returns CKO_PRIVATE_KEY handle.
  *
- * Async: builds a PKCS#8 DER blob via the browser's native SubtleCrypto
- * (JWK import → PKCS#8 export) for the Rust engine, which reads CKA_VALUE as
- * PKCS#8 on RSA private-key import (rsa::RsaPrivateKey::from_pkcs8_der) —
- * state.rs's CreateObject validity check requires CKA_VALUE on any private
- * key that isn't RSA/EC *public* (the only two exceptions). Deliberately not
- * a hand-rolled ASN.1/DER encoder: @peculiar/asn1-rsa's decorator-registered
- * schema doesn't survive this project's bundler (see the comment on
- * parseRsaPublicKey in compositeVerifier.ts for the same finding), so this
- * uses the platform's own PKCS#8 encoder instead of re-deriving one.
+ * The template is exactly the standard's, on both engines. It used to add a
+ * WebCrypto-built PKCS#8 blob as CKA_VALUE (retrying without it on
+ * CKR_ATTRIBUTE_TYPE_INVALID) because the Rust engine refused a standard
+ * template; that accommodation hid the engine defect, and hsm #278 fixed the
+ * engine, so the blob is gone (maintainer decision 2026-09-26). Kept async so
+ * its callers are unchanged.
  */
 export const hsm_importRSAPrivateKey = async (
   M: SoftHSMModule,
@@ -4951,31 +4942,11 @@ export const hsm_importRSAPrivateKey = async (
   },
   decrypt = true
 ): Promise<number> => {
-  const cryptoKey = await crypto.subtle.importKey(
-    'jwk',
-    {
-      kty: 'RSA',
-      n: toBase64Url(parts.n),
-      e: toBase64Url(parts.e),
-      d: toBase64Url(parts.d),
-      p: toBase64Url(parts.p),
-      q: toBase64Url(parts.q),
-      dp: toBase64Url(parts.dp),
-      dq: toBase64Url(parts.dq),
-      qi: toBase64Url(parts.qi),
-    },
-    { name: 'RSA-OAEP', hash: 'SHA-256' },
-    true,
-    ['decrypt']
-  )
-  const pkcs8 = new Uint8Array(await crypto.subtle.exportKey('pkcs8', cryptoKey))
-
   const ptrs = Object.fromEntries(
     Object.entries(parts).map(([k, v]) => [k, writeBytes(M, v)])
   ) as Record<keyof typeof parts, number>
-  const valPtr = writeBytes(M, pkcs8)
 
-  const baseAttrs: AttrDef[] = [
+  const attrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
     { type: CKA_TOKEN, boolVal: false },
@@ -4993,32 +4964,16 @@ export const hsm_importRSAPrivateKey = async (
     { type: CKA_COEFFICIENT, bytesPtr: ptrs.qi, bytesLen: parts.qi.length },
   ]
   const hKeyPtr = allocUlong(M)
+  const tpl = buildTemplate(M, attrs)
   try {
-    // Try with CKA_VALUE (Rust engine needs it); fall back without it
-    // (C++ reconstructs from the CRT components alone and rejects an
-    // unrecognized CKA_VALUE on this class) — same shape as
-    // hsm_importRSAPublicKey above.
-    const tplFull = buildTemplate(M, [
-      ...baseAttrs,
-      { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: pkcs8.length },
-    ])
-    const rv = M._C_CreateObject(hSession, tplFull.ptr, baseAttrs.length + 1, hKeyPtr) >>> 0
-    freeTemplate(M, tplFull, baseAttrs.length + 1)
-    if (rv === 0x12) {
-      // CKR_ATTRIBUTE_TYPE_INVALID — retry without CKA_VALUE
-      const tplStd = buildTemplate(M, baseAttrs)
-      checkRV(
-        M._C_CreateObject(hSession, tplStd.ptr, baseAttrs.length, hKeyPtr),
-        'C_CreateObject(Import RSA PrivKey)'
-      )
-      freeTemplate(M, tplStd, baseAttrs.length)
-    } else {
-      checkRV(rv, 'C_CreateObject(Import RSA PrivKey)')
-    }
+    checkRV(
+      M._C_CreateObject(hSession, tpl.ptr, attrs.length, hKeyPtr),
+      'C_CreateObject(Import RSA PrivKey)'
+    )
     return readUlong(M, hKeyPtr)
   } finally {
+    freeTemplate(M, tpl, attrs.length)
     M._free(hKeyPtr)
-    M._free(valPtr)
     Object.values(ptrs).forEach((p) => M._free(p))
   }
 }

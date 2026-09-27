@@ -5,6 +5,10 @@
 // 20 cases (scripts/acvp/build_kts_oaep_subset.py). Each case's ciphertext must
 // decrypt to NIST's plaintext.
 //
+// hsm_importRSAPrivateKey sends exactly the PKCS#11 v3.2 Table 39 template (no
+// CKA_VALUE blob, no retry), so every import here is the standard template on
+// both engines: this is the test that the Rust engine accepts it (hsm #278).
+//
 // It also PINS a known engine difference (maintainer decision 2026-09-26: the
 // Rust limit stays, and the hub shows it). 18 of the 20 keys have public
 // exponents of 34-56 bits: OpenSSL (C++) accepts them, while the Rust engine
