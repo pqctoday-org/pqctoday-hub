@@ -2205,6 +2205,10 @@
         "label": "Algorithm validation is not the certificate"
       },
       {
+        "id": "fips-automation",
+        "label": "Automating validation: algorithms, entropy, then the module"
+      },
+      {
         "id": "fips-landscape",
         "label": "Today’s landscape and the 2026 horizon"
       },

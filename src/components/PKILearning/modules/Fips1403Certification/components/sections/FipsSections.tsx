@@ -1041,11 +1041,12 @@ const AUTOMATION_LAYERS: readonly {
     ),
     status: (
       <>
-        <strong>Demonstration, in progress.</strong> AMVP runs on a demonstration server (message
-        versions 0.1–0.3). <Cite std={SP_1800_40B}>SP 1800-40B</Cite>, still an Initial Public
-        Draft, demonstrated a server and client that accept module submissions in a laboratory
-        environment, and says the capabilities are “actively being integrated into the production
-        CMVP environment in 2026”. It gives no date.
+        <strong>Demonstration, in progress.</strong> AMVP runs on a demonstration server and is
+        still pre-1.0: its messages carry protocol version 0.1, and its submission schemas are at
+        0.4. <Cite std={SP_1800_40B}>SP 1800-40B</Cite>, still an Initial Public Draft, demonstrated
+        a server and client that accept module submissions in a laboratory environment, and says the
+        capabilities are “actively being integrated into the production CMVP environment in 2026”.
+        It gives no date.
       </>
     ),
   },
@@ -1055,14 +1056,16 @@ const AUTOMATION_LAYERS: readonly {
 export const FipsAutomation = () => (
   <Body>
     <p>
-      Crypto agility is the ability to change algorithms quickly. A validated module stays validated
-      only if each change goes back through validation, so the speed of that loop limits how agile a
-      certified product can be. That framing is ours; NIST’s own statement of the problem is that
-      “the period required for third-party testing and government validation of cryptographic
+      Crypto agility is the ability to change algorithms quickly. But a change to a validated
+      module, such as a patch or a new algorithm, can invalidate the previously validated
+      configuration (<Cite std={NCCOE_CMVP}>NCCoE</Cite>), so how fast validation runs limits how
+      agile a certified product can be. That framing is ours; NIST’s own statement of the problem is
+      that “the period required for third-party testing and government validation of cryptographic
       modules is often incompatible with industry requirements” (<Cite std={NCCOE_CMVP}>NCCoE</Cite>
-      ). <Cite std={EO_14412}>Executive Order 14412</Cite> §6(b) now directs NIST, within 180 days
-      of 22 June 2026, to “revise the processes used by the Cryptographic Module Validation Program
-      to accelerate validations”.
+      ). <Cite std={EO_14412}>Executive Order 14412</Cite> §6(b) directs the Secretary of Commerce,
+      through the Director of NIST, within 180 days of 22 June 2026 and “to the extent appropriate
+      and consistent with applicable law”, to “revise the processes used by the Cryptographic Module
+      Validation Program to accelerate validations of cryptographic modules”.
     </p>
     <p>
       NIST has been moving the process to electronic exchange one layer at a time. The three layers
@@ -1117,8 +1120,8 @@ export const FipsAutomation = () => (
         security tests are out of the project’s scope.
       </p>
       <p>
-        Web Cryptik is being updated to build the evidence payloads; no source says it is being
-        replaced.
+        SP 1800-40B says “updates to WebCryptik are necessary to help build the evidence payloads
+        required for ACMVP”; no source says Web Cryptik is being replaced.
       </p>
       <p>
         No official source gives a date when automated module submissions will be accepted in
