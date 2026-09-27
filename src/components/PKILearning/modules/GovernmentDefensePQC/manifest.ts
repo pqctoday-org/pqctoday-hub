@@ -4,7 +4,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 const manifest: ModuleManifest = {
   id: 'government-defense-pqc',
   contentVersion: 5,
-  lm_id: 'LM-062',
+  lm_id: 'LM-069',
   title: 'Government & Defense PQC',
   description:
     'The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.',
