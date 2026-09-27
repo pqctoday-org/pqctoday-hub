@@ -37,6 +37,8 @@ The FIPS 140-3 module now explains how NIST is automating validation — algorit
 
 - **How FIPS validation is being automated** [view:/learn/fips-140-3-certification] [persona:grc] [persona:developer] [persona:ops]: a new section in FIPS 140-3 Certification covers the three layers NIST has been moving to electronic exchange. Algorithm testing (ACVP) is in production and the only route to algorithm certificates; entropy source validation (ESV) has been in production since April 2022 and is now required for new submissions; for the module itself, the structured submission file exists today and the automated protocol (AMVP) is still a demonstration, with no production date announced. Every statement cites the NIST or NCCoE page it comes from.
 
+- **The certification fundamentals module now links to all three deep dives** [view:/learn/crypto-product-certification] [persona:grc] [persona:curious]: its opening section ends with links to FIPS 140-3, Common Criteria / EUCC & eIDAS, and PCI Certification; before, only FIPS 140-3 was one click away.
+
 ### Data
 
 - **Five official sources added to the library** [view:/library] [persona:researcher]: the NIST ESV program page and its rollout announcement, the CMVP page describing the structured submission file, the ACMVP protocol documentation and the NCCoE project page.
