@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
+import Papa from 'papaparse'
 import {
   timelineData,
   computeTimelineConfidence,
@@ -237,6 +238,49 @@ describe('parseTimelineCSV — malformed year hardening', () => {
     expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('Malformed year value'))
     expect(errorSpy).toHaveBeenCalledTimes(1)
   })
+
+  // Three real rows in the live CSV have one empty year boundary, and each is a
+  // DELIBERATE record of what its source does and does not say — not an oversight.
+  // Updated 2026-09-26 (timeline r11): the membership of this set changed wholesale.
+  //   • france-anssi-phase-2-hybridization-required — EndYear BLANKED in r11.
+  //     ANSSI says "This phase should last until at least 2030", a minimum; the
+  //     previous EndYear=2030 inverted that floor into a terminus.
+  //   • france-anssi-phase-3-standalone-pqc-optional — EndYear BLANKED in r11.
+  //     "2035" appears nowhere in any ANSSI source; the only Phase 3 bound is the
+  //     floor "probably not earlier than 2030".
+  //   • singapore-csa-mas-financial-sector-planning — EndYear genuinely open-ended.
+  // Left this set in r11: france-anssi-phase-1-pre-quantum-security gained
+  // EndYear=2025 (the roadmap figure's "≈ 2025" boundary), and
+  // canada-cccs-remaining-systems-migration (blank StartYear) was merged away
+  // into canada-cccs-high-priority-migration-phase's Transition Phase row.
+  it('the live CSV has exactly the three deliberate empty-year-boundary rows', async () => {
+    const { DATA_FILENAMES } = await import('./generated/dataFilenames.generated')
+    const name = DATA_FILENAMES.timeline
+    if (!name) throw new Error('DATA_FILENAMES.timeline is not set — run generate:data-filenames')
+    const modules = import.meta.glob('./timeline_*.csv', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    }) as Record<string, string>
+    const raw = modules[`./${name}`]
+    expect(raw, `${name} not found in src/data/`).toBeTruthy()
+
+    const { data: rows } = Papa.parse<Record<string, string>>(raw.trim(), {
+      header: true,
+      skipEmptyLines: true,
+    })
+    const blanks = rows
+      .filter((r) => (r['status'] ?? 'active').trim().toLowerCase() !== 'deprecated')
+      .filter((r) => !(r['StartYear'] ?? '').trim() || !(r['EndYear'] ?? '').trim())
+      .map((r) => r['event_id'])
+      .sort()
+
+    expect(blanks).toEqual([
+      'france-anssi-phase-2-hybridization-required',
+      'france-anssi-phase-3-standalone-pqc-optional',
+      'singapore-csa-mas-financial-sector-planning',
+    ])
+  })
 })
 
 describe('getCountryLastVerified (Phase 8.4 — per-country freshness stamp)', () => {
@@ -340,5 +384,57 @@ describe('timeline joins keyed the way their data is (timeline remediation r2 W-
     const ev = timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events)).find((e) => e.eventId)
     expect(conceptIdForTimelineEvent({ eventId: ev?.eventId })).toBeTruthy()
     expect(conceptIdForTimelineEvent({})).toBeUndefined()
+  })
+})
+
+describe('parseTimelineCSV — open-ended phases (D22, 2026-09-27)', () => {
+  // Same column order as the malformed-year block above.
+  const header =
+    'Country,FlagCode,OrgName,OrgFullName,OrgLogoUrl,Type,Category,StartYear,EndYear,Title,Description,SourceUrl,SourceDate,Status,trusted_source_id,local_file,peer_reviewed,vetting_body,source_url_quality,trusted_source_id_status,data_quality_notes,confidence_score,status,deprecated_at,deprecated_reason,related_standards,entity_type,is_sim_deadline,sim_milestone,mandate_type'
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  const parse = (rows: string[]) => {
+    const parsed = parseTimelineCSV([header, ...rows].join('\n'))
+    return { events: parsed.flatMap((c) => c.bodies.flatMap((b) => b.events)) }
+  }
+
+  it('keeps a row whose source states no end, flags it open-ended, and logs no error', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const { events } = parse([
+      'Testland,TL,Agency,Agency Full,,Phase,Migration,2030,,Open Row,desc,,,,,,,,,,,,,,,,,,',
+    ])
+    expect(events).toHaveLength(1)
+    expect(events[0].openEnded).toBe(true)
+    // endYear = startYear, so no consumer ever computes with an invented end year
+    expect(events[0].endYear).toBe(2030)
+    expect(errorSpy).not.toHaveBeenCalled()
+  })
+
+  it('still excludes a blank StartYear loudly (only a blank END is a deliberate record)', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const { events } = parse([
+      'Testland,TL,Agency,Agency Full,,Phase,Migration,,2035,No Start,desc,,,,,,,,,,,,,,,,,,',
+    ])
+    expect(events).toEqual([])
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('Malformed year value'))
+  })
+
+  it('a row with a stated end is not open-ended', () => {
+    const { events } = parse([
+      'Testland,TL,Agency,Agency Full,,Phase,Migration,2026,2031,Closed Row,desc,,,,,,,,,,,,,,,,,,',
+    ])
+    expect(events[0].openEnded).toBeUndefined()
+  })
+})
+
+describe('periodLabel', () => {
+  it('never prints an invented end for an open-ended phase', async () => {
+    const { periodLabel } = await import('../utils/timelinePeriod')
+    expect(periodLabel(2030, 2030, true)).toBe('2030 onward (no end date stated by source)')
+    expect(periodLabel(2026, 2031)).toBe('2026–2031')
+    expect(periodLabel(2028, 2028)).toBe('2028')
   })
 })

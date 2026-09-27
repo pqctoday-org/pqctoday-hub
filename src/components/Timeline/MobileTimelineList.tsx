@@ -219,7 +219,9 @@ export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimeli
                       </div>
                       <span className="flex flex-shrink-0 flex-col items-end gap-0.5">
                         <span className="text-[10px] text-muted-foreground font-mono">
-                          {phase.startYear}–{phase.endYear === 2035 ? '2035+' : phase.endYear}
+                          {phase.openEnded
+                            ? `${phase.startYear} onward`
+                            : `${phase.startYear}–${phase.endYear === 2035 ? '2035+' : phase.endYear}`}
                         </span>
                         <span
                           className={`text-[9px] font-semibold uppercase tracking-wide ${
@@ -353,8 +355,9 @@ export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimeli
                             <StatusBadge status={currentPhase.status} size="sm" />
                           </div>
                           <span className="text-[10px] sm:text-xs text-muted-foreground font-mono">
-                            {currentPhase.startYear} -{' '}
-                            {currentPhase.endYear === 2035 ? '2035+' : currentPhase.endYear}
+                            {currentPhase.openEnded
+                              ? `${currentPhase.startYear} onward`
+                              : `${currentPhase.startYear} - ${currentPhase.endYear === 2035 ? '2035+' : currentPhase.endYear}`}
                           </span>
                         </div>
                       </div>
