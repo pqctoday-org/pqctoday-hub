@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.127.0] - 2026-09-27
+
+Certificates that cover no post-quantum algorithm are now labelled "Classical only", and 40 products have a researched certification verdict.
+
+### Changed
+
+- **"Classical only" certificates are labelled, and never counted as post-quantum progress** [view:/migrate] [view:/compliance] [persona:grc] [persona:architect] [persona:ops]: a product can hold a real FIPS 140-3 or Common Criteria certificate that covers no post-quantum algorithm. Those certificates are now shown with a "Classical only" label, so you can see the product is certified without mistaking it for a post-quantum certification. The FIPS 140-3 progress chart on the Compliance page never counts them.
+
+### Data
+
+- **Certification verdicts researched for 40 products** [view:/migrate] [persona:grc] [persona:ops] [persona:researcher]: 32 products that showed "unknown" now say whether they hold a certificate of their own (5), rely on a certified module they embed (6), have their algorithms validated as the first step towards FIPS 140-3 (2), are in NIST's queue for review (1), or hold none (18). Each verdict rests on the NIST listing or the vendor's own documentation, and the contested ones were checked by a second reviewer. A product that only says it "uses a FIPS-validated HSM" without naming one is marked as holding no certificate.
+- **"Partial" is retired** [view:/migrate] [view:/compliance] [persona:grc]: every product now sits on one of the clear FIPS 140-3 stages: none, algorithms validated, in NIST's queue, or certified. The Go standard library's ML-KEM, the ST33KTPM, the KIOXIA and Nuvoton modules move to certified; Marvell LiquidSecurity 2, the Utimaco u.trust HSM, IBM z16 Crypto Express 8S and Quantum Xchange PhioTX show their validated post-quantum algorithms; and the LS2 HSM family, whose module lists its post-quantum algorithms as not approved, moves to none.
+- **More certificates linked to the right product** [view:/migrate] [persona:grc] [persona:architect]: 23 classical-only certificates are now linked to 19 products, and a Windows 11 certificate is no longer shown on Azure services.
+- **Duplicate entries merged** [view:/migrate] [persona:curious]: CryptoNext's library, ST's X-CUBE-PQC, Red Hat Enterprise Linux 9.8 and the ST33KTPM family each appeared twice; the duplicate is retired in favour of the main entry.
+
 ## [4.126.1] - 2026-09-27
 
 Hundreds of product versions and dates are filled in from their own sources, and a batch of outdated or wrong values is fixed.
