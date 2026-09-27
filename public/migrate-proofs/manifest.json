@@ -11368,7 +11368,7 @@
       "bytes": 427086,
       "tier": "curl_cffi:chrome124",
       "refId": "anchorage-digital",
-      "sha256": "bcd926ef00cd52e2bf000aeb26ff6fb624f9781298f1e5b8aeb0e29f3a2a6bd9",
+      "sha256": "119a848e03ab69b438211109af4a7025f874cee3586d00df686e7817573683bd",
       "sizeBytes": 379015,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
@@ -11376,7 +11376,10 @@
       "unified": "current",
       "admittedAt": "2026-09-18T03:18:25.822964+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-18T03:53:06.293193+00:00"
+      "stampedAt": "2026-09-27T15:18:44.637838+00:00",
+      "previousSha256": "bcd926ef00cd52e2bf000aeb26ff6fb624f9781298f1e5b8aeb0e29f3a2a6bd9",
+      "hashCorrectedAt": "2026-09-27T15:18:44.637838+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "product_id": "copper-co",
@@ -13781,19 +13784,22 @@
       "content_type": "text/html; charset=UTF-8",
       "tier": "first-party-correction-07092026",
       "refId": "strongswan",
-      "sha256": "57726c3aee46730bcd2b70155704a35c43c11f61588731f0844a95aaee1a84bb",
-      "sizeBytes": 19233,
+      "sha256": "1990ded083ea879e56c41ca6030c1808a9e05d50f0577efc88cec4df4c9f22c7",
+      "sizeBytes": 19446,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-17T13:08:33.663925+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "superseded_file": "_superseded-09172026/migrate-proofs/strongswan-4daba946.html",
       "supersededAt": "2026-09-17T14:06:19.736472+00:00",
       "supersededBy": "replace_evidence.py",
       "superseded_reason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document — replaced by strongswan-988c0aa7.html",
-      "stampedAt": "2026-09-17T13:08:33.663925+00:00"
+      "stampedAt": "2026-09-27T15:18:44.216334+00:00",
+      "previousSha256": "57726c3aee46730bcd2b70155704a35c43c11f61588731f0844a95aaee1a84bb",
+      "hashCorrectedAt": "2026-09-27T15:18:44.216334+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "product_id": "sql-server-tde-always-encrypted",
@@ -15022,7 +15028,7 @@
       "bytes": 427086,
       "tier": "curl_cffi:chrome124",
       "refId": "anchorage-digital",
-      "sha256": "bcd926ef00cd52e2bf000aeb26ff6fb624f9781298f1e5b8aeb0e29f3a2a6bd9",
+      "sha256": "119a848e03ab69b438211109af4a7025f874cee3586d00df686e7817573683bd",
       "sizeBytes": 379015,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
@@ -15030,7 +15036,10 @@
       "unified": "current",
       "admittedAt": "2026-09-18T03:18:25.822964+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-18T03:53:06.293193+00:00"
+      "stampedAt": "2026-09-27T15:18:44.637838+00:00",
+      "previousSha256": "bcd926ef00cd52e2bf000aeb26ff6fb624f9781298f1e5b8aeb0e29f3a2a6bd9",
+      "hashCorrectedAt": "2026-09-27T15:18:44.637838+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "product_id": "copper-co",
@@ -20298,8 +20307,8 @@
       "product_id": "nginx",
       "file": "nginx-9cb0ba7f.html",
       "url": "https://blog.nginx.org/blog/pqc-nginx",
-      "sha256": "102b18d7d74f8dc88523d67b97b495171979564139a1fc0c1559a2888f4032ff",
-      "sizeBytes": 112591,
+      "sha256": "adb59865adc6b1e44b4e283a75679ac346f239941cbd745836a58ba8cc807bdb",
+      "sizeBytes": 112567,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
       "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
@@ -20307,7 +20316,7 @@
       "note": "additional document for a row that already has one",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "converted",
+      "unified": "current",
       "admittedAt": "2026-09-17T14:07:52.265242+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "replacedAt": "2026-09-17T14:07:52.326665+00:00",
@@ -20318,7 +20327,10 @@
       "supersededAt": "2026-09-17T14:17:04.872460+00:00",
       "supersededBy": "replace_evidence.py",
       "superseded_reason": "the capture failed the door's check (artefact EMPTY) on 2026-09-17 and was replaced by a fresh fetch of the row's URL; the first lane run moved it aside and crashed before recording it here",
-      "stampedAt": "2026-09-18T03:45:50.039428+00:00"
+      "stampedAt": "2026-09-27T15:18:44.356475+00:00",
+      "previousSha256": "102b18d7d74f8dc88523d67b97b495171979564139a1fc0c1559a2888f4032ff",
+      "hashCorrectedAt": "2026-09-27T15:18:44.356475+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "product_id": "apache-http-server",
@@ -21877,8 +21889,8 @@
       "product_id": "nginx",
       "file": "nginx-9cb0ba7f.html",
       "url": "https://blog.nginx.org/blog/pqc-nginx",
-      "sha256": "102b18d7d74f8dc88523d67b97b495171979564139a1fc0c1559a2888f4032ff",
-      "sizeBytes": 112591,
+      "sha256": "adb59865adc6b1e44b4e283a75679ac346f239941cbd745836a58ba8cc807bdb",
+      "sizeBytes": 112567,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
       "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
@@ -21889,15 +21901,15 @@
       "supersededAt": "2026-09-17T14:18:22.508101+00:00",
       "supersededBy": "replace_evidence.py",
       "superseded_reason": "the capture failed the door's check on 2026-09-17 and was replaced by a fresh fetch of the row's URL",
-      "previousSha256": "c38195e213ae2c7b7956df23aec58a300e1b819e2bdfc546f6e687dd2d50dc99",
-      "hashCorrectedAt": "2026-09-18T03:45:50.039428+00:00",
+      "previousSha256": "102b18d7d74f8dc88523d67b97b495171979564139a1fc0c1559a2888f4032ff",
+      "hashCorrectedAt": "2026-09-27T15:18:44.356475+00:00",
       "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's",
       "artefact": "SOURCE",
-      "unified": "converted",
+      "unified": "current",
       "admittedAt": "2026-09-17T14:07:52.265242+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
-      "stampedAt": "2026-09-18T03:45:50.039428+00:00"
+      "stampedAt": "2026-09-27T15:18:44.356475+00:00"
     },
     {
       "product_id": "trezor-safe-7-pqc",
@@ -23064,6 +23076,25 @@
       "replacedAt": "2026-09-25T17:04:02.632798+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "migrate r2 evidence re-sourcing 2026-09-25: previous capture was another product's page, a wrong page or missing; official document reviewed by Claude + Codex"
+    },
+    {
+      "product_id": "hawk-reference-implementation",
+      "refId": "hawk-reference-implementation",
+      "file": "migrate-proofs/hawk-reference-implementation-5300e036.html",
+      "filename": "hawk-reference-implementation-5300e036.html",
+      "url": "https://hawk-sign.info/",
+      "status": "downloaded",
+      "sizeBytes": 17016,
+      "contentType": "text/html",
+      "sha256": "fbae7405efbecb95f4e20050efa316c8c0ed498d7278f26f92447a19da8607a3",
+      "addedAt": "2026-09-27T15:18:44.672688+00:00",
+      "addedBy": "admit.py --stamp-existing --add-missing-entries",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "stampedAt": "2026-09-27T15:18:44.714629+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH",
+      "admittedAt": "2026-09-27T15:18:44.672688+00:00"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
