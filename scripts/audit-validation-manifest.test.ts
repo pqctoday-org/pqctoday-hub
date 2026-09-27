@@ -51,11 +51,13 @@ beforeEach(() => {
   tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'validation-manifest-'))
   copyTree('src/data/acvp')
   copyTree('src/data/validation')
-  // Declared copies live all over the repo; the fixture tree only carries the
-  // vectors, so drop the declarations and test the copy checks with planted files.
-  const m = readManifest()
-  for (const f of m.files) f.copies = []
-  writeManifest(m)
+  // Declared copies live all over the repo: carry each copy target into the
+  // fixture rather than dropping the declarations. Dropping them would change
+  // every such entry, and review / source-check records are bound to the exact
+  // entry, so the fixture would report CONTRIB_REVIEW for files the real tree
+  // has reviewed.
+  for (const f of readManifest().files)
+    for (const c of f.copies ?? []) if (fs.existsSync(path.join(REPO, c.path))) copyTree(c.path)
 })
 afterEach(() => fs.rmSync(tmp, { recursive: true, force: true }))
 
@@ -99,15 +101,17 @@ describe('audit-validation-manifest — sabotage (temp copy only)', () => {
 
   it('fails when a file is relabelled to a class its source evidence does not support', () => {
     const m = readManifest()
-    m.files.find((f) => f.id === 'aesgcm_test')!.evidenceClass = 'published-standard-kat'
+    // pbkdf2_test is the one remaining Node/OpenSSL-oracle file (aesgcm_test,
+    // the original example, now comes from NIST CAVP).
+    m.files.find((f) => f.id === 'pbkdf2_test')!.evidenceClass = 'published-standard-kat'
     m.files.find((f) => f.id === 'hkdf_test')!.source.verification = undefined
     writeManifest(m)
     const found = auditManifest({ root: tmp, scanRoots: [] }).findings.filter(
       (f) => f.code === 'CLASS_SOURCE_MISMATCH'
     )
     expect(found.map((f) => f.file).sort()).toEqual([
-      'src/data/acvp/aesgcm_test.json',
       'src/data/acvp/hkdf_test.json',
+      'src/data/acvp/pbkdf2_test.json',
     ])
   })
 
@@ -150,9 +154,12 @@ describe('audit-validation-manifest — sabotage (temp copy only)', () => {
   })
 
   it('fails when an in-file producer conflict is not declared', () => {
-    const m = readManifest()
-    delete m.files.find((f) => f.id === 'aesgcm_test')!.inFileProvenanceConflict
-    writeManifest(m)
+    // No committed file declares a conflict any more, so plant one: an oracle
+    // file whose own _provenance claims a NIST producer.
+    expect(codes()).not.toContain('IN_FILE_CLASS_CONFLICT')
+    rewriteVector('pbkdf2_test.json', (d) => {
+      ;(d._provenance as Record<string, string>).producer = 'NIST ACVP-Server (planted)'
+    })
     expect(codes()).toContain('IN_FILE_CLASS_CONFLICT')
   })
 
@@ -257,7 +264,14 @@ describe('audit-validation-manifest — contributor flow (WS-I, temp copy only)'
   })
 
   it('an approved two-person review of the exact record passes; one reviewer, or a stale record, does not', () => {
-    const e = plantContribution()
+    // A published-document source (hkdf_test's RFC 5869), so the two-person
+    // rule applies: the 2026-09-26 single-reviewer relaxation covers
+    // nist-acvp-server sources only.
+    const rfc = readManifest().files.find((f) => f.id === 'hkdf_test')!
+    const e = plantContribution((x) => {
+      x.evidenceClass = rfc.evidenceClass
+      x.source = structuredClone(rfc.source)
+    })
     const dir = path.join(tmp, 'src/data/validation/reviews')
     const record = (over: Record<string, unknown> = {}) => ({
       schema: 'pqctoday.validation-review/v1',
@@ -281,6 +295,24 @@ describe('audit-validation-manifest — contributor flow (WS-I, temp copy only)'
     expect(contribCodes()).toEqual(['CONTRIB_REVIEW'])
     write(record({ subjectSha256: 'a'.repeat(64) }))
     expect(contribCodes()).toEqual(['CONTRIB_REVIEW'])
+  })
+
+  it('a NIST-sourced contribution may name one reviewer in both roles (2026-09-26)', () => {
+    const e = plantContribution()
+    const same = { reviewer: 'Grace Verifier', date: '2026-09-24', decision: 'approved' }
+    fs.writeFileSync(
+      path.join(tmp, 'src/data/validation/reviews/contrib_test.review.json'),
+      JSON.stringify({
+        schema: 'pqctoday.validation-review/v1',
+        item: 'vector-source:contrib_test',
+        subjectSha256: sha256(canonical(e)),
+        author: 'Ada Contributor',
+        sourceVerification: same,
+        claimReview: same,
+        decision: 'approved',
+      })
+    )
+    expect(contribCodes()).toEqual([])
   })
 })
 
