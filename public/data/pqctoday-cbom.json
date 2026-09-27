@@ -298,8 +298,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a717ae263169aaa3",
+      "bom-ref": "f0be5e44975c63b5",
       "name": "SandboxAQ AQtive Guard",
+      "version": "26.09.1",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -1320,8 +1321,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7ed870b7de694fd5",
+      "bom-ref": "3ea6297a554df043",
       "name": "pqm4",
+      "version": "SignatureRound1",
       "purl": "pkg:github/mupq/pqm4",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
@@ -1416,9 +1418,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a7881bcf20491829",
+      "bom-ref": "c0a8df4c0f730ae3",
       "name": "citadel_pqcrypto",
-      "version": "0.13.0",
+      "version": "0.14.0",
       "purl": "pkg:github/citadel-protocol/citadel_pqcrypto",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -1467,9 +1469,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "199f00cd60fa5b6d",
+      "bom-ref": "1a40a4acaf077571",
       "name": "Microsoft SymCrypt",
-      "version": "v103.11.0",
+      "version": "v103.13.0",
       "purl": "pkg:github/microsoft/SymCrypt",
       "cpe": "cpe:2.3:a:microsoft:symcrypt:103.11.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -1579,8 +1581,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a9d1dda7b96ea43c",
+      "bom-ref": "fd1129997966acd6",
       "name": "Nvidia cuPQC",
+      "version": "0.6.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2041,9 +2044,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "327317ed37c42af0",
+      "bom-ref": "e3ceb443c567aaa7",
       "name": "Keyfactor EJBCA",
-      "version": "Enterprise 9.6.1",
+      "version": "9.6.2",
       "purl": "pkg:github/Keyfactor/ejbca-ce",
       "cpe": "cpe:2.3:a:keyfactor:ejbca:8.0.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -2191,8 +2194,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "eec2f1cc8e513b9e",
+      "bom-ref": "557af93cc91f37e2",
       "name": "BoringSSL",
+      "version": "0.20260813.0",
       "purl": "pkg:github/google/boringssl",
       "cpe": "cpe:2.3:a:google:chrome:0.2.149.29:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -2506,9 +2510,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "bb4e93d0e96dd454",
+      "bom-ref": "344a4833728b3a84",
       "name": "strongSwan",
-      "version": "6.0.6",
+      "version": "6.1.0",
       "purl": "pkg:github/strongswan/strongswan",
       "cpe": "cpe:2.3:a:strongswan:strongswan:2.1.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -3476,8 +3480,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "404c5121fd0b8c32",
+      "bom-ref": "06147ec01dc77e65",
       "name": "ExpressVPN Lightway",
+      "version": "v1.17.17",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -3522,8 +3527,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "8fcefd620e9683c1",
+      "bom-ref": "9c23372686d370a1",
       "name": "Tuta Mail",
+      "version": "360.260922.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -4060,8 +4066,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "33573cbce0c956be",
+      "bom-ref": "e2799093e6dead8e",
       "name": "PQClean",
+      "version": "round3",
       "purl": "pkg:github/PQClean/PQClean",
       "cpe": "cpe:2.3:a:pqclean_project:pqclean:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -4962,9 +4969,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ca2894bbe4dedd3c",
+      "bom-ref": "11698f33358c590f",
       "name": "Node.js",
-      "version": "v26.3.0",
+      "version": "v26.10.0",
       "purl": "pkg:github/nodejs/node",
       "cpe": "cpe:2.3:a:nodejs:node.js:0.10.18:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -5062,9 +5069,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "79a0a29d6b61cfbf",
+      "bom-ref": "97ce20846a7470c5",
       "name": "HAProxy",
-      "version": "3.4 (LTS, 2026-06-03) / 3.3.10 (stable)",
+      "version": "3.4.5",
       "purl": "pkg:github/haproxy/haproxy",
       "cpe": "cpe:2.3:a:haproxy:haproxy:1.4.20:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -5882,9 +5889,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "635d984c45c2f7f0",
+      "bom-ref": "2bd341be11be6bfc",
       "name": "Ciena WaveLogic 6 Extreme",
-      "version": "WaveLogic 6 Extreme (2026)",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -5924,9 +5930,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "84ba40f4438638e6",
-      "name": "EJBCA",
-      "version": "9.3",
+      "bom-ref": "52477fec992ec390",
+      "name": "EJBCA Community Edition",
+      "version": "9.6.3",
       "purl": "pkg:github/Keyfactor/ejbca-ce",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -6061,8 +6067,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "3d203bcddb7be8dc",
+      "bom-ref": "4c8321269a4019a2",
       "name": "Google Chrome",
+      "version": "154.0.8037.57",
       "cpe": "cpe:2.3:a:google:chrome:0.2.149.29:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -6107,8 +6114,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "266afd2211386bc5",
+      "bom-ref": "8e3845b353ae835b",
       "name": "Microsoft Edge",
+      "version": "154.0.4258.37",
       "cpe": "cpe:2.3:a:microsoft:edge:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -6154,8 +6162,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a35110713de7f7b5",
+      "bom-ref": "970c8c810f1c119d",
       "name": "Mozilla Firefox",
+      "version": "156.0.1",
       "cpe": "cpe:2.3:a:mozilla:firefox:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -6422,9 +6431,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f0f09b8423f4b3e9",
+      "bom-ref": "715ffdc516a49ea8",
       "name": "RPM Signing (rpm-sign)",
-      "version": "RPM 6.0",
+      "version": "RPM 6.1.0",
       "purl": "pkg:github/rpm-software-management/rpm",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -6572,9 +6581,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1b3275d8c7f411a7",
+      "bom-ref": "b5bb4ba9933e8e75",
       "name": "Mbed TLS",
-      "version": "4.0",
+      "version": "4.2.0",
       "purl": "pkg:github/Mbed-TLS/mbedtls",
       "cpe": "cpe:2.3:a:mbed:mbedtls:1.3.10:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -6624,8 +6633,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "aa6a5f4e70dbdc8b",
+      "bom-ref": "d8562902c5f194ab",
       "name": "NSS (Mozilla)",
+      "version": "3.130",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -6904,8 +6914,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "90914987c0035612",
+      "bom-ref": "7472f945ecd18801",
       "name": "Windows 11",
+      "version": "25H2 (OS build 26200.9550)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -7051,8 +7062,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "eaecaa59a09c04a6",
+      "bom-ref": "23ae08c824526bcc",
       "name": "Debian 13 (Trixie)",
+      "version": "13.7",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -7417,9 +7429,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a18a83fbfdb478e9",
+      "bom-ref": "c05366f3bbaada95",
       "name": "Procivis One",
-      "version": "v1.83.4 (released 2026-08-11)",
+      "version": "v1.85.2",
       "purl": "pkg:github/procivis/one-open-core",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -8029,8 +8041,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a674d25174d57f60",
+      "bom-ref": "6282f34c11374868",
       "name": "Google OpenTitan",
+      "version": "Earlgrey-PROD.M6",
       "purl": "pkg:github/lowRISC/opentitan",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -8332,9 +8345,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f5856f675180b748",
+      "bom-ref": "d8f8a72da971f39b",
       "name": "ChromeOS",
-      "version": "151",
+      "version": "152",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -8382,9 +8395,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "688ef4cda47a68c1",
+      "bom-ref": "c20f190c0b8d9f4a",
       "name": "NixOS",
-      "version": "23.11",
+      "version": "26.05",
       "purl": "pkg:github/NixOS/nixpkgs",
       "cpe": "cpe:2.3:o:nixos:nix:0.5:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -8477,8 +8490,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ad93a2ff9c2421d3",
+      "bom-ref": "26bd40f47bddc08f",
       "name": "Arch Linux",
+      "version": "2026.09.01",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -9129,9 +9143,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "376fac23de15e296",
+      "bom-ref": "6a4866f0be8ce6f7",
       "name": "Cisco Meraki MX (Cloud-Managed Firewall)",
-      "version": "MX 26.1.X",
+      "version": "MX 26.2.3",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -9459,9 +9473,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "5c7b9eaf51632c3d",
+      "bom-ref": "0f6b3d093e63a53d",
       "name": "Istio Service Mesh",
-      "version": "1.30",
+      "version": "1.31.1",
       "purl": "pkg:github/istio/istio",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
@@ -9606,9 +9620,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "311718e95d791678",
+      "bom-ref": "093877e8c1cf8c6f",
       "name": "Cisco Secure Client (AnyConnect)",
-      "version": "5.1.x",
+      "version": "5.1.20.333",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -9652,9 +9666,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b88861862fcf51a6",
+      "bom-ref": "97379ab6c66ed570",
       "name": "Apache Traffic Server",
-      "version": "10.1.4",
+      "version": "10.2.0",
       "purl": "pkg:github/apache/trafficserver",
       "cpe": "cpe:2.3:a:apache:traffic_server:2.0.0:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -9993,9 +10007,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a30e60be5eb44e22",
+      "bom-ref": "5793ca7e015938eb",
       "name": "MySQL Community Server",
-      "version": "9.7.0",
+      "version": "26.7.0",
       "purl": "pkg:github/mysql/mysql-server",
       "cpe": "cpe:2.3:a:mysql:mysql_community_server:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -10320,9 +10334,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1a142c6d18ea8d3a",
+      "bom-ref": "52f97b3d88e8226c",
       "name": "Bitcoin Core",
-      "version": "29.0",
+      "version": "31.1",
       "purl": "pkg:github/bitcoin/bitcoin",
       "cpe": "cpe:2.3:a:bitcoincore:bitcoin_core:0.16.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -10430,7 +10444,7 @@
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/solana-labs/solana"
+          "url": "https://github.com/anza-xyz/agave"
         },
         {
           "type": "website",
@@ -10570,9 +10584,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1f8c96a69e415796",
+      "bom-ref": "468c1fdad1fac8a8",
       "name": "Algorand",
-      "version": "5.0.0 (go-algorand, tag v5.0.0-stable, released 2026-08-12)",
+      "version": "5.0.2",
       "purl": "pkg:github/algorand/go-algorand",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -10621,8 +10635,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "2d5742cb3b8e122b",
+      "bom-ref": "ddbcefc5f5c0cb77",
       "name": "Cardano",
+      "version": "11.1.2",
       "purl": "pkg:github/IntersectMBO/cardano-node",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -10671,9 +10686,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "776bf94f53bf10b4",
-      "name": "IOTA",
-      "version": "v1.9.12-beta.1 (beta; released 2026-07-20)",
+      "bom-ref": "a1d6dd4162eacb05",
+      "name": "IOTA Identity",
+      "version": "v1.9.13-beta.1",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -10721,8 +10736,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "5818de16433e7793",
+      "bom-ref": "b8080a75fb9fd906",
       "name": "Polkadot/Substrate",
+      "version": "polkadot-stable2606-2",
       "purl": "pkg:github/nicola-mazzocca/BPQS-node",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -10735,7 +10751,7 @@
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/nicola-mazzocca/BPQS-node"
+          "url": "https://github.com/paritytech/polkadot-sdk"
         },
         {
           "type": "website",
@@ -10874,8 +10890,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "458b0a9b4c89e463",
+      "bom-ref": "3afdee2fe92470e4",
       "name": "Avalanche",
+      "version": "v1.15.0",
       "purl": "pkg:github/ava-labs/avalanchego",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -10924,9 +10941,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "3786ffd678c8636b",
+      "bom-ref": "3943d5bb0975ee47",
       "name": "Sui",
-      "version": "mainnet-v1.77.2",
+      "version": "mainnet-v1.80.1",
       "purl": "pkg:github/MystenLabs/sui",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -12362,8 +12379,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "8c2e01cec50dfb28",
+      "bom-ref": "f1f2d69f22477e3b",
       "name": "IBM MQ",
+      "version": "10.0.0.5",
       "cpe": "cpe:2.3:a:ibm:websphere_mq:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -12765,8 +12783,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "9553114bcd84ae06",
+      "bom-ref": "806c6e81880787ce",
       "name": "STMicroelectronics ST33KTPM",
+      "version": "9.512",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -13461,8 +13480,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0ebb03aab1152655",
+      "bom-ref": "434ed55080ff2b0f",
       "name": "Citrix ADC (NetScaler)",
+      "version": "14.1-73.33",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -13898,8 +13918,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "dee646b221b21975",
-      "name": "HPE Zerto Software",
+      "bom-ref": "0fad3ea28c435753",
+      "name": "Zerto",
+      "version": "10.9.10",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -15223,8 +15244,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "167188e93d74d889",
-      "name": "CZERTAINLY",
+      "bom-ref": "38f17b7306c14ede",
+      "name": "OmniTrust ILM",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -15236,7 +15257,7 @@
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/CZERTAINLY"
+          "url": "https://github.com/OmniTrustILM"
         },
         {
           "type": "website",
@@ -15405,9 +15426,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "bb0e9092fe1efb1e",
+      "bom-ref": "91f45933c8b81912",
       "name": "MTG AG CARA",
-      "version": "3.5.0 (MTG CARA)",
+      "version": "3.6.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -15451,9 +15472,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "2ee0c5c19d579d38",
+      "bom-ref": "6de046963ec9b90f",
       "name": "MTG AG CLM",
-      "version": "6.11.0 (Certificate Lifecycle Manager), 3.15.0 (Key Management System)",
+      "version": "6.15.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -15493,9 +15514,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a74c5ceb8841ebb8",
+      "bom-ref": "06855cc750d59e2f",
       "name": "MTG AG KMS",
-      "version": "3.15.0",
+      "version": "3.19.1",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -15539,9 +15560,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1ca8be270f8b4613",
+      "bom-ref": "f499a5bda00b8708",
       "name": "Nexus Group Certificate Manager",
-      "version": "8.13",
+      "version": "8.15.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -16646,9 +16667,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ca2b568268dbe9c0",
+      "bom-ref": "c58f45467b3bf634",
       "name": "noble-post-quantum",
-      "version": "0.6.1",
+      "version": "0.7.1",
       "purl": "pkg:github/paulmillr/noble-post-quantum",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -16964,8 +16985,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c2ff7afd082151b0",
+      "bom-ref": "fbf4a7c35f251b2f",
       "name": "Keeper Security",
+      "version": "18.6.2",
       "cpe": "cpe:2.3:a:keepersecurity:keeper:16.10.2:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -17406,9 +17428,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "5626817dda397a78",
+      "bom-ref": "57d9aa72c39c3a7d",
       "name": "wolfTPM PQC",
-      "version": "1.85",
+      "version": "4.2.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -17418,6 +17440,10 @@
       },
       "description": "TPM 2.0 Library v1.85 with PQC capabilities: ML-DSA signing/verification, ML-KEM encapsulation/decapsulation.",
       "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/wolfSSL/wolfTPM"
+        },
         {
           "type": "website",
           "url": "https://www.wolfssl.com/"
@@ -17621,8 +17647,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "cdadd072f8ce795c",
+      "bom-ref": "69bdfd209737ec39",
       "name": "Cisco Catalyst 9500 PQC",
+      "version": "IOS XE 26.1.2",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -19149,8 +19176,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ff5e02b9b18d27af",
+      "bom-ref": "395e06c289be2765",
       "name": "Tailscale PQC",
+      "version": "v1.102.4",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -19497,8 +19525,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d8fa9cacf7a62e56",
+      "bom-ref": "d0521f5578d6441d",
       "name": "ASUSTOR ADM 5.1 PQC",
+      "version": "5.1.4.RL21",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -19721,9 +19750,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "abd1cabe9c77a404",
+      "bom-ref": "9587371830fb7b67",
       "name": "CIQ Rocky Linux CAVP PQC",
-      "version": "Rocky Linux from CIQ (RLC) 9.6 was the version cited in CIQ's Feb 2026 NSS 3.112 ML-KEM/ML-DSA announcement, but is stale as a 'current' version claim — CIQ's product line and upstream Rocky Linux have since progressed through RLC 9.7 (Dec 2025) and Rocky Linux 9.8 / 10.2 (May 2026); CIQ's own roadmap already references 'Rocky Linux from CIQ 10.2' for a separate OpenSSL PQC validation targeted Q3 2026.",
+      "version": "RLC 9.6 (NSS module)",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -20863,8 +20892,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c64c5b5678dc961a",
+      "bom-ref": "5e349adf5050986d",
       "name": "STMicroelectronics X-CUBE-PQC",
+      "version": "1.1.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -21092,8 +21122,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "2d4966424276ab41",
+      "bom-ref": "a71cd2254ec7b3a3",
       "name": "curl PQC",
+      "version": "8.22.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -22748,8 +22779,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "55383663d27f2be4",
+      "bom-ref": "608eca89c4b70ede",
       "name": "Kiteworks File Sharing and Collaboration",
+      "version": "9.5.1",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -22789,9 +22821,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "9143bfb6ccc9ea7c",
+      "bom-ref": "c3e4828220301cc4",
       "name": "CryptPad",
-      "version": "2026.2.1",
+      "version": "2026.5.1",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -27529,9 +27561,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "11130b3c732545eb",
+      "bom-ref": "4569b26ec084f054",
       "name": "libcrux",
-      "version": "0.0.9 (libcrux-ml-kem / libcrux-ml-dsa)",
+      "version": "0.0.10",
       "purl": "pkg:github/cryspen/libcrux",
       "manufacturer": {
         "name": "Cryspen"
@@ -27868,8 +27900,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "11b3fc0a870ce8cf",
+      "bom-ref": "8287091d6fa4bf97",
       "name": "OpenPGP.js",
+      "version": "v6.3.2",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -27967,8 +28000,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "ecb9079a6d1e1432",
+      "bom-ref": "c8739db30b80f5b2",
       "name": "mls-rs (AWS)",
+      "version": "0.56.0",
       "manufacturer": {
         "name": "Amazon Web Services"
       },
@@ -28020,9 +28054,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "02eab1da04d587ae",
+      "bom-ref": "0a945e6b9dab8049",
       "name": "mlspp",
-      "version": "2025-09",
       "manufacturer": {
         "name": "Cisco"
       },
@@ -28546,9 +28579,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "4c9d8c0fbd76395a",
+      "bom-ref": "c11ca2a362168e5f",
       "name": "CBOMkit",
-      "version": "2.2.0",
+      "version": "2.3.0",
       "manufacturer": {
         "name": "IBM Research"
       },
@@ -28599,9 +28632,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "aae87a45268c4ccc",
+      "bom-ref": "d110dc431bc415ff",
       "name": "Open Policy Agent (OPA)",
-      "version": "1.17.0",
+      "version": "1.21.0",
       "cpe": "cpe:2.3:a:openpolicyagent:open_policy_agent:0.9.2:*:*:*:*:*:*:*",
       "manufacturer": {
         "name": "Styra / CNCF"
@@ -29087,8 +29120,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "3d9eeef6124433ac",
+      "bom-ref": "6debf3e343a55ee7",
       "name": "Classic McEliece Reference",
+      "version": "libmceliece-20260622",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -29140,8 +29174,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0faa4cd713a58e20",
+      "bom-ref": "d490f37a8822d8ec",
       "name": "Falcon Reference Implementation",
+      "version": "Falcon-impl-20211101",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -29246,8 +29281,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7452ae72c1aa9e57",
+      "bom-ref": "7478a5c5f4f2af89",
       "name": "HQC Reference Implementation",
+      "version": "v5.0.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -29459,8 +29495,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7749a10d994dbfe0",
+      "bom-ref": "dbc7c0df2c8467d2",
       "name": "Angela CryptoModule Cryptographic Algorithm Library",
+      "version": "1.0.0",
       "manufacturer": {
         "name": "ANGELATEK LTD."
       },
@@ -29507,8 +29544,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "53b3a1b1e8edbcb1",
+      "bom-ref": "29c474e4ad3ff62b",
       "name": "ASUS Post-Quantum Cryptography Module",
+      "version": "1.0",
       "manufacturer": {
         "name": "ASUSTeK Computer Inc."
       },
@@ -29555,8 +29593,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "54ee672d8a65d058",
+      "bom-ref": "d2eac7e9c1d3c2c8",
       "name": "ASUSTOR Post-Quantum Cryptography Module",
+      "version": "1.0",
       "manufacturer": {
         "name": "ASUSTOR Inc."
       },
@@ -29653,8 +29692,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c448efa7bac52edc",
+      "bom-ref": "5b255d486fa07a76",
       "name": "BlackBerry Certicom Security Builder FIPS Module",
+      "version": "5.1",
       "manufacturer": {
         "name": "Blackberry Limited"
       },
@@ -30959,8 +30999,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "4aa9bca72e789f96",
+      "bom-ref": "a1f599bd75478c01",
       "name": "X-CUBE-PQC (STM32 Post-Quantum Cryptographic Library)",
+      "version": "1.1.0",
       "manufacturer": {
         "name": "STMicroelectronics"
       },
@@ -31055,9 +31096,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "cea44cc0c9c00913",
+      "bom-ref": "393db9e07fff94be",
       "name": "ST33KTPM2X (STSAFE-TPM)",
-      "version": "TPM Firmware 9.512",
+      "version": "9.512",
       "manufacturer": {
         "name": "STMicroelectronics"
       },
@@ -31201,9 +31242,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d8aa4977817500f2",
+      "bom-ref": "b9b4a2c8b7e3d8ec",
       "name": "TQ42 Cryptography",
-      "version": "0.2.2",
+      "version": "0.4.0",
       "manufacturer": {
         "name": "Terra Quantum AG"
       },
@@ -31783,9 +31824,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "13a142c8ec71b010",
+      "bom-ref": "99a835dd707d036e",
       "name": "pqctoday-kmip",
-      "version": "main (verified 2026-08-09)",
+      "version": "v0.29.0",
       "manufacturer": {
         "name": "pqctoday (self)"
       },
@@ -32067,9 +32108,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1ee230b4cc487be4",
+      "bom-ref": "eba38976f504b37d",
       "name": "Cryptsoft KMIP & PKCS#11 SDK",
-      "version": "SDK (2026)",
       "manufacturer": {
         "name": "Cryptsoft Pty Ltd"
       },
@@ -32213,8 +32253,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "c0b8cbd23ee5bce7",
+      "bom-ref": "7a390ad5c900c8e4",
       "name": "Python ssl module (CPython stdlib)",
+      "version": "3.14.7",
       "manufacturer": {
         "name": "Python Software Foundation (CPython)"
       },
@@ -32261,8 +32302,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a420f3bd00c5c315",
+      "bom-ref": "672efda7f843e047",
       "name": "Prometheus",
+      "version": "3.15.0",
       "cpe": "cpe:2.3:a:prometheus:prometheus:0.2.0:*:*:*:*:*:*:*",
       "manufacturer": {
         "name": "Prometheus Authors (CNCF)"
@@ -33131,9 +33173,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "b5d02fa29134de46",
+      "bom-ref": "ec2abcb4f53dd377",
       "name": "DINAMO Hardware Security Module Cryptographic Library",
-      "version": "6.7.0.0",
+      "version": "6.9.0.0",
       "manufacturer": {
         "name": "DINAMO Cyber Security Company"
       },
@@ -34990,8 +35032,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "372f6162a917a19d",
+      "bom-ref": "c2eb25cc378dab0a",
       "name": "ASI-HSM AHX5 KNET Cryptographic Module",
+      "version": "Hardware Version 1.1.0",
       "manufacturer": {
         "name": "Kryptus Segurança da Informação S.A."
       },
@@ -35076,9 +35119,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "cc38413dc6010073",
+      "bom-ref": "b47b38325efd138e",
       "name": "CryptoScan",
-      "version": "v1.3",
+      "version": "v1.4.0",
       "manufacturer": {
         "name": "CryptoScan Project"
       },
@@ -35120,8 +35163,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f6bbb5bbe0958b7d",
+      "bom-ref": "efca2707b4bc8885",
       "name": "QPKI",
+      "version": "v1.0.3",
       "manufacturer": {
         "name": "QPKI Project"
       },
@@ -35163,8 +35207,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "bfb81fb08f4133d7",
+      "bom-ref": "72d811e786cb39cf",
       "name": "libbitcoinpqc",
+      "version": "0.1.0",
       "manufacturer": {
         "name": "libbitcoinpqc Project"
       },
@@ -35176,7 +35221,12 @@
         }
       },
       "description": "Implements two NIST-standardized PQC signature algorithms: ML-DSA-44 (FIPS 204, lattice-based) and SLH-DSA-SHA2-128s (FIPS 205, stateless hash-based). Also supports BIP 340 Schnorr (secp256k1). The implementations are based on reference code from the NIST PQC standardization process and are explicitly stated as \"not production-hardened.\" It provides key generation, signing, and verification functions with a unified C API.",
-      "externalReferences": [],
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/cryptoquick/libbitcoinpqc"
+        }
+      ],
       "properties": [
         {
           "name": "pqctoday:product_id",
@@ -35642,8 +35692,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1fe6359d083d7cd9",
+      "bom-ref": "8089480123649312",
       "name": "aws-lc-rs",
+      "version": "1.18.1",
       "manufacturer": {
         "name": "Amazon Web Services Inc."
       },
@@ -35816,8 +35867,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "4715d449da3b0a73",
+      "bom-ref": "9f73f8235c98d643",
       "name": "Cryptography (std.crypto) - Zig",
+      "version": "0.16.0",
       "manufacturer": {
         "name": "Zig Software Foundation"
       },
@@ -35943,8 +35995,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "0e6bd83e3294de0e",
+      "bom-ref": "315a73d7cadede8e",
       "name": "Dilithium – Software",
+      "version": "v3.1",
       "manufacturer": {
         "name": "NIST PQC Project"
       },
@@ -35987,8 +36040,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "23c58e09766e7bdc",
+      "bom-ref": "a33475f9c0a24f06",
       "name": "Kyber – Software",
+      "version": "v3.0",
       "manufacturer": {
         "name": "NIST PQC Project"
       },

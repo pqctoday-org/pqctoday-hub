@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.126.1] - 2026-09-27
+
+Hundreds of product versions and dates are filled in from their own sources, and a batch of outdated or wrong values is fixed.
+
+### Data
+
+- **Versions and dates researched for 707 products** [view:/migrate] [persona:ops] [persona:architect] [persona:grc]: 129 versions, 163 release dates and 214 document dates are now filled in or corrected. Every new value comes from the vendor's or project's own release notes, repository or registry, with a quote, and every value that needed a judgement call was checked by a second reviewer. Where no public source exists, the field stays empty on purpose.
+- **Outdated versions updated** [view:/migrate] [persona:ops]: 39 products now show their current release, for example strongSwan 6.1.0, NixOS 26.05, HAProxy 3.4.5 and Bitcoin Core 31.1.
+- **Wrong values fixed** [view:/migrate] [persona:ops] [persona:architect]: SonicWall and Sophos no longer show another vendor's version number, wolfTPM shows its real release (4.2.0) rather than a TPM spec number, and HAETAE is no longer listed as ML-DSA (it is its own lattice-based signature scheme).
+- **Renamed products** [view:/migrate] [persona:curious] [persona:ops]: CZERTAINLY is now **OmniTrust ILM**, the ACA-Py entry follows its move to the OpenWallet Foundation, the IOTA entry is now **IOTA Identity** (the part with post-quantum signatures), and the open-source EJBCA entry is now **EJBCA Community Edition**. Old names still find them.
+- **Three entries retired** [view:/migrate] [persona:grc]: a "SOC 2 quantum trust criteria" entry for which no AICPA document exists, an age plugin that does not exist, and an Entrust "Cryptographic Platform" name that no Entrust product uses.
+- **Stronger evidence** [view:/migrate] [persona:grc] [persona:researcher]: Secure-IC Securyzr now cites its NIST algorithm validation (A6046), HAETAE cites its NIST specification, and the ST33KTPM entries cite their NIST module certificate.
+
 ## [4.126.0] - 2026-09-27
 
 Fifteen more product claims now say only what their own documents support, and six catalogue entries that were really web-page titles are fixed.
