@@ -3,10 +3,12 @@ import { describe, expect, it } from 'vitest'
 import {
   checkApprovedBoundaryClaims,
   checkCertificationVerdicts,
+  checkColumnNameCells,
   checkNoPqcConsistency,
   checkProductIdUniqueness,
   checkReleaseDates,
   checkRenamesKeepFormerNames,
+  checkNameShape,
 } from '../migrate-catalog-integrity'
 
 describe('MC-1 product_id uniqueness', () => {
@@ -190,5 +192,48 @@ describe('MC-6 approved-boundary claims', () => {
         'c'
       )
     ).toHaveLength(0)
+  })
+})
+
+describe('MC-7 column-name cells', () => {
+  it('flags a cell holding its own column name (the 4.124.1 R3-16 parser defect)', () => {
+    const f = checkColumnNameCells(
+      [
+        { product_id: 'aws-kms', pqc_support: 'pqc_support', status: 'active' },
+        { product_id: 'boringssl', pqc_support: 'Yes (ML-KEM)', status: 'active' },
+      ],
+      'c'
+    )
+    expect(f).toHaveLength(1)
+    expect(f[0]).toMatchObject({ field: 'pqc_support', row: 2 })
+  })
+
+  it('leaves a column name mentioned inside a real value alone', () => {
+    expect(
+      checkColumnNameCells(
+        [{ product_id: 'a', pqc_support: 'Yes (see pqc_support note)', status: 'active' }],
+        'c'
+      )
+    ).toHaveLength(0)
+  })
+})
+
+describe('MC-8 name shape', () => {
+  it('flags scraped page titles', () => {
+    const rows = [
+      { product_id: 'a', software_name: 'Dashboard - PQProbe' },
+      { product_id: 'b', software_name: 'PQConnect: Intro' },
+      { product_id: 'c', software_name: 'SMAUG-T & HAETAE - HAETAE' },
+      { product_id: 'd', software_name: 'Lean Consensus Roadmap' },
+    ]
+    expect(checkNameShape(rows, 'c')).toHaveLength(4)
+  })
+  it('passes product names and skips retired rows', () => {
+    const rows = [
+      { product_id: 'a', software_name: 'PQProbe' },
+      { product_id: 'b', software_name: 'Alibaba Cloud ESA (Edge Security Acceleration)' },
+      { product_id: 'c', software_name: 'What is PQC', status: 'deprecated' },
+    ]
+    expect(checkNameShape(rows, 'c')).toHaveLength(0)
   })
 })

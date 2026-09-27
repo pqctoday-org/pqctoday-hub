@@ -371,7 +371,11 @@
       "file": "rustcrypto-slh-dsa-908f30a9.html",
       "bytes": 33318,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "rustcrypto-slh-dsa",
+      "sha256": "75333243fbdbb237564b73af323b49ce35ebb916ae642e97299a6d19cd67f790",
+      "sizeBytes": 33318,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "pqcrypto",
@@ -741,7 +745,11 @@
       "file": "oracle-key-vault-3c592629.pdf",
       "bytes": 325955,
       "content_type": "application/pdf",
-      "tier": "update"
+      "tier": "update",
+      "refId": "oracle-key-vault",
+      "sha256": "25c2677ccc79c53d66d58487293698eef5a471793dc82f6ad700ac2113d872f6",
+      "sizeBytes": 325955,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "utimaco-eskm",
@@ -826,7 +834,11 @@
       "file": "boringssl-92e53026.html",
       "bytes": 306785,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "boringssl",
+      "sha256": "c530650f6135cb40b751926f72e63f0f41a958d62144c3178952e7ed5d29b0d6",
+      "sizeBytes": 306785,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "gnutls",
@@ -835,7 +847,11 @@
       "file": "gnutls-54d91398.html",
       "bytes": 10096,
       "content_type": "text/html",
-      "tier": "update"
+      "tier": "update",
+      "refId": "gnutls",
+      "sha256": "de3c8a210973eb9cf9351e5de7514d89aa4240f0b16d163ba6de15ef3317c2ad",
+      "sizeBytes": 10096,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "libressl",
@@ -1432,7 +1448,11 @@
       "file": "google-cloud-hsm-60d0789e.html",
       "bytes": 281301,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "google-cloud-hsm",
+      "sha256": "c314b1cbaad4b9aff83f80c856afc6f88f80d5d57ef8e5c9925e7e369492ccca",
+      "sizeBytes": 281301,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "microsoft-ad-cs",
@@ -1460,7 +1480,11 @@
       "file": "smallstep-certificate-authority-40e7bcb9.html",
       "bytes": 651037,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "smallstep-certificate-authority",
+      "sha256": "00baad4be7bccb8dcf453fc9240ea7bc5575a1ce762b998f37e4b44d74e42873",
+      "sizeBytes": 651037,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "pqclean",
@@ -1507,7 +1531,11 @@
       "file": "ibm-quantum-safe-toolkit-51283607.pdf",
       "bytes": 119865,
       "content_type": "application/pdf",
-      "tier": "current"
+      "tier": "current",
+      "refId": "ibm-quantum-safe-toolkit",
+      "sha256": "1c00ee5e467803a95dc4080bd53726cc1a09d61efcdc4da135eedc24fec9b362",
+      "sizeBytes": 119865,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "jose4j",
@@ -1856,7 +1884,11 @@
       "unified": "current",
       "admittedAt": "2026-06-06T06:01:17.634991+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:10:42.270304+00:00"
+      "stampedAt": "2026-09-17T13:10:42.270304+00:00",
+      "refId": "globalsign-digital-signing-service",
+      "sha256": "fe446c3f5432b53db8466740684a715c6dde07311aa673132c8ff2142b414ba0",
+      "sizeBytes": 139115,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "sigstore-cosign",
@@ -1865,7 +1897,11 @@
       "file": "sigstore-cosign-11ab28fc.html",
       "bytes": 573773,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "sigstore-cosign",
+      "sha256": "ce0f1f94785cf44e5fe6c7a987af2ff2999e8fdc0af4fdd919e1a07f2108f4da",
+      "sizeBytes": 573773,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "microsoft-signtool",
@@ -2026,7 +2062,11 @@
       "file": "thales-ciphertrust-manager-9a5bc66a.html",
       "bytes": 163845,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "thales-ciphertrust-manager",
+      "sha256": "481914941cde8f0f09043978ddf9595a2ace6ba529ded0bc97f7173291e4e9d9",
+      "sizeBytes": 163845,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "nginx",
@@ -2035,7 +2075,11 @@
       "file": "nginx-8f5ab138.html",
       "bytes": 9707,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "nginx",
+      "sha256": "bb9979ec233d94e233125ab519e3d4f1aa880a5bf3c72bf6ea99b45d444bdc25",
+      "sizeBytes": 9707,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "apache-http-server",
@@ -2044,7 +2088,11 @@
       "file": "apache-http-server-3db7ea05.html",
       "bytes": 3879,
       "content_type": "text/html",
-      "tier": "update"
+      "tier": "update",
+      "refId": "apache-http-server",
+      "sha256": "082449aac6d4c0d0fcb2d3dc45c714636d6fd24847f3146ec9d657887bfa9cab",
+      "sizeBytes": 3879,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "envoy-proxy",
@@ -2262,7 +2310,11 @@
       "file": "keycloak-7018351f.html",
       "bytes": 443880,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "keycloak",
+      "sha256": "299d6c1b253fd9c7522844cf49b2da72d85a51d61d0ae3052f325f70a3357bea",
+      "sizeBytes": 443880,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "ping-identity-pingfederate",
@@ -2309,7 +2361,11 @@
       "file": "virtru-data-protection-b1ed9195.html",
       "bytes": 146915,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "virtru-data-protection",
+      "sha256": "ae51bd900992b3bb5bc2ee8cef011ab169518d78baca8c5fa15b43b75c4cfddb",
+      "sizeBytes": 146915,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "amd-sev-snp-secure-encrypted-virtualization",
@@ -2470,7 +2526,11 @@
       "file": "id-quantique-cerberis-xgr-qkd-5f682eb2.html",
       "bytes": 377341,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "id-quantique-cerberis-xgr-qkd",
+      "sha256": "8cd5475d0ca6bdb5a0dce8f1243a16eb1beafd0f3d10fdb964d2811e326bb9d5",
+      "sizeBytes": 377341,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "toshiba-qkd-system",
@@ -3281,7 +3341,11 @@
       "file": "ibm-cloud-hsm-utimaco-e09331bc.html",
       "bytes": 267352,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "ibm-cloud-hsm-utimaco",
+      "sha256": "72b4e6286568142af4fe63778ac3a90787590639d8855de3283f55cc2de1b82f",
+      "sizeBytes": 267352,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "infineon-optiga-tpm-slb-9672",
@@ -3404,7 +3468,11 @@
       "file": "alpine-linux-2ab1d0c1.html",
       "bytes": 212114,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "alpine-linux",
+      "sha256": "4c4abd90f1ed28dade5bca24e875fdf7dd7b8c948935acecbff7098a05d8710f",
+      "sizeBytes": 212114,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "freebsd",
@@ -3419,7 +3487,11 @@
       "unified": "current",
       "admittedAt": "2026-06-06T06:01:24.452127+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:10:58.209817+00:00"
+      "stampedAt": "2026-09-17T13:10:58.209817+00:00",
+      "refId": "freebsd",
+      "sha256": "f73c6507bdd51adc7ec63b6ea4e8fc8736e1fb8e2bf87ad472193f31cd14773d",
+      "sizeBytes": 74691,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "opensuse-leap",
@@ -3428,7 +3500,11 @@
       "file": "opensuse-leap-8b4d1891.html",
       "bytes": 35407,
       "content_type": "text/html",
-      "tier": "update"
+      "tier": "update",
+      "refId": "opensuse-leap",
+      "sha256": "27ac6713ca9eda761f965d9799b5d2ab89461e8bcd45caf58a270a394fa514bd",
+      "sizeBytes": 35407,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "rocky-linux",
@@ -3795,7 +3871,11 @@
       "file": "vmware-horizon-97007274.html",
       "bytes": 3317577,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "vmware-horizon",
+      "sha256": "0c31be90654ae58a1be97c00659928162f6cfeb935b80cb5287d7d787759eccf",
+      "sizeBytes": 3317577,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "apache-guacamole",
@@ -3899,7 +3979,11 @@
       "file": "cisco-meraki-mx-cloud-managed-firewall-157008fd.html",
       "bytes": 131326,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "cisco-meraki-mx-cloud-managed-firewall",
+      "sha256": "be573b08f5d36737549bf012ef85eeef3e684ecff83170c186c5d6a6d3dca9cb",
+      "sizeBytes": 131326,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "fortinet-fortigate-fortios",
@@ -4079,7 +4163,11 @@
       "file": "nec-5g-core-aa22782d.html",
       "bytes": 100611,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "nec-5g-core",
+      "sha256": "c6fa1915d7ab6bafdcdb6ac781c340006ffa6d057a93078ea6f77c43cfd65ba2",
+      "sizeBytes": 100611,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "rakuten-symphony-symworld",
@@ -4183,7 +4271,11 @@
       "file": "eclipse-jetty-299db353.html",
       "bytes": 528268,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "eclipse-jetty",
+      "sha256": "68708fe2482bd17e062c156a2e3ed5a45bf44dd3b1f418a9e2f27c0675a0776b",
+      "sizeBytes": 528268,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "wildfly-jboss",
@@ -4268,7 +4360,11 @@
       "file": "postgresql-1b833525.html",
       "bytes": 25311,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "postgresql",
+      "sha256": "d0d4d644b3d11d5837b8eac1eff414c480d4fd40ad26cc22f673100d9749abf8",
+      "sizeBytes": 25311,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "redis",
@@ -4283,7 +4379,11 @@
       "unified": "current",
       "admittedAt": "2026-06-06T06:01:28.641279+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:11:07.736246+00:00"
+      "stampedAt": "2026-09-17T13:11:07.736246+00:00",
+      "refId": "redis",
+      "sha256": "e5103c576b94627c4b3e8acc7e3ea57f3a53e6452d73e3b165da77af28ed0636",
+      "sizeBytes": 145017,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "mariadb-server",
@@ -4292,7 +4392,11 @@
       "file": "mariadb-server-dc48fa55.html",
       "bytes": 1922980,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "mariadb-server",
+      "sha256": "d2bc8c466dc3e15c49f297eb257a8fc2a4c5f91cab38dfe7f090717f6affaa08",
+      "sizeBytes": 1922980,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "fireblocks",
@@ -4396,7 +4500,11 @@
       "file": "bitcoin-core-39b01db4.html",
       "bytes": 384130,
       "content_type": "text/html",
-      "tier": "update"
+      "tier": "update",
+      "refId": "bitcoin-core",
+      "sha256": "6159fdd80372852595d480c9e5051c81cfda540011bc251d554be44eb6608e85",
+      "sizeBytes": 384130,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "ethereum-geth",
@@ -4538,7 +4646,11 @@
       "file": "cosmos-tendermint-f4ae6ce3.html",
       "bytes": 295687,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "cosmos-tendermint",
+      "sha256": "7f63961bc14c9e097598011e936cf3077169f4bf3aa93ff8c264d88f51cc6c5e",
+      "sizeBytes": 295687,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "aptos",
@@ -4652,7 +4764,8 @@
       "identity": "MATCH",
       "replacedAt": "2026-09-25T16:32:42.340360+00:00",
       "replacedBy": "replace_evidence.py",
-      "replaceReason": "migrate r2 evidence re-sourcing 2026-09-25: previous capture was another product's page, a wrong page or missing; official document reviewed by Claude + Codex"
+      "replaceReason": "migrate r2 evidence re-sourcing 2026-09-25: previous capture was another product's page, a wrong page or missing; official document reviewed by Claude + Codex",
+      "refId": "nozomi-networks-guardian"
     },
     {
       "product_id": "evolutionq-basejumpqdn",
@@ -5111,7 +5224,11 @@
       "file": "cisco-ios-xr-395a0fb3.html",
       "bytes": 162302,
       "content_type": "text/html;charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "cisco-ios-xr",
+      "sha256": "f9b891552870855457a23775c6bd375d36d65478f6b05a6e1e37e652d0eaf951",
+      "sizeBytes": 162302,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "red-hat-openshift",
@@ -5329,7 +5446,11 @@
       "file": "pqshield-core-35d66142.html",
       "bytes": 60943,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "pqshield-core",
+      "sha256": "946b7034e4922173cb2374089768c234239bb76e98d60c2512e358617dab7db5",
+      "sizeBytes": 60943,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "ibm-guardium-safe",
@@ -5338,7 +5459,11 @@
       "file": "ibm-guardium-safe-2a7e15f6.html",
       "bytes": 104031,
       "content_type": "text/html;charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "ibm-guardium-safe",
+      "sha256": "b7cf10e3e17f00949a6d03f49bb3d2a69f4c5ffc3f705abaa0cb27cc41fe23ed",
+      "sizeBytes": 104031,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "ubuntu-26-04-lts",
@@ -5404,7 +5529,11 @@
       "file": "adva-fsp-3000-s-flex-7a0eefc8.html",
       "bytes": 316159,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "adva-fsp-3000-s-flex",
+      "sha256": "a9d5ed450d98131a2e35f962127ee14c5eebbd50e9fd60ab41211c2cdd352b6f",
+      "sizeBytes": 316159,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "cryptonext-compass-probe",
@@ -5413,7 +5542,11 @@
       "file": "cryptonext-compass-probe-5028461e.html",
       "bytes": 133186,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "cryptonext-compass-probe",
+      "sha256": "cceff78e8768e68ddd71956e2efc666e0b5718169ad2357e2ece15821db82f0f",
+      "sizeBytes": 133186,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "citrix-cvad",
@@ -5422,7 +5555,11 @@
       "file": "citrix-cvad-36c56e50.html",
       "bytes": 81453,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "citrix-cvad",
+      "sha256": "14e66df94d5824b434fc068e2f4552e1c88011a6b88a0aee8d547df173164079",
+      "sizeBytes": 81453,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "zscaler-zte",
@@ -5431,7 +5568,11 @@
       "file": "zscaler-zte-1da2f075.html",
       "bytes": 250473,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "zscaler-zte",
+      "sha256": "966e4657e71c8e9fd3c65b735ce742844c868c011489dd9675fa0d10cf64d183",
+      "sizeBytes": 250473,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "jetbrains-teamcity-2026-1",
@@ -5459,7 +5600,11 @@
       "file": "keyfactor-2026-trends-ba4e6b75.html",
       "bytes": 139716,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "keyfactor-2026-trends",
+      "sha256": "179575fd0691a531f2da9576bc9d530099c4ba5f2a4d7bb7c9d9c7b5c18f382b",
+      "sizeBytes": 139716,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "appviewx-spring-2026",
@@ -5468,7 +5613,11 @@
       "file": "appviewx-spring-2026-e59b3865.html",
       "bytes": 110573,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "appviewx-spring-2026",
+      "sha256": "9baacd6a1f8edf4f819a7a4ee657e0388034a5040106c2765df298628fcafa67",
+      "sizeBytes": 110573,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "sectigo-2026-predictions",
@@ -5483,7 +5632,11 @@
       "unified": "converted",
       "admittedAt": "2026-06-06T06:01:33.318053+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:11:25.113584+00:00"
+      "stampedAt": "2026-09-17T13:11:25.113584+00:00",
+      "refId": "sectigo-2026-predictions",
+      "sha256": "a9848234dd73620a397e541544aa6b396575138bfe1ba43a6ad735016c6cf9db",
+      "sizeBytes": 570733,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "venafi-tls-pqc-continuity",
@@ -5492,7 +5645,11 @@
       "file": "venafi-tls-pqc-continuity-ccf9dffb.html",
       "bytes": 231660,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "venafi-tls-pqc-continuity",
+      "sha256": "3539ac75eae67c1034b1194320e0914b657b39a2ed2be39b590274c198c12cd7",
+      "sizeBytes": 231660,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "sectigo-cert-manager-2026",
@@ -5672,7 +5829,11 @@
       "file": "veritas-netbackup-10-5-9a07b2a1.html",
       "bytes": 164118,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "veritas-netbackup-10-5",
+      "sha256": "7dea7edfb69940dd3a47c69dc0f4626ad10b7534c80c73dacf04d0aa1f1364e7",
+      "sizeBytes": 164118,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "cohesity-datacloud",
@@ -5738,7 +5899,11 @@
       "file": "amazon-web-services-aws-0b9aa78b.html",
       "bytes": 1058919,
       "content_type": "text/html;charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "amazon-web-services-aws",
+      "sha256": "d5508182dc2e5d7e660361f35af25c744c6c2d2dec48688f4de1cd111eb2b453",
+      "sizeBytes": 1058919,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "microsoft-azure",
@@ -5779,7 +5944,11 @@
       "file": "docker-engine-28-0-4a9eab11.html",
       "bytes": 614433,
       "content_type": "text/html",
-      "tier": "update"
+      "tier": "update",
+      "refId": "docker-engine-28-0",
+      "sha256": "08706b5a565a54d5458a68eacbb0f5eab101e55e2a7f34e3b6a54c9a3943d612",
+      "sizeBytes": 614433,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "amazon-eks",
@@ -5851,7 +6020,11 @@
       "unified": "converted",
       "admittedAt": "2026-06-06T06:01:34.925568+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:29.145526+00:00"
+      "stampedAt": "2026-09-17T13:12:29.145526+00:00",
+      "refId": "amazon-cloudfront",
+      "sha256": "393d8abfaeb48aa0290885ba3a3c5d010831bf7d6a68ef439e65bfb5fac334ff",
+      "sizeBytes": 183399,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "google-cloud-cdn",
@@ -5917,7 +6090,11 @@
       "file": "broadcom-symantec-ses-a539af75.html",
       "bytes": 301380,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "broadcom-symantec-ses",
+      "sha256": "530ca60f796481a9793fc23def72bbc7f0bcf1a03f348431d1d455fd41bdf8d9",
+      "sizeBytes": 301380,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "windscribe",
@@ -6138,7 +6315,11 @@
       "file": "utimaco-securityserver-e09331bc.html",
       "bytes": 267352,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "utimaco-securityserver",
+      "sha256": "72b4e6286568142af4fe63778ac3a90787590639d8855de3283f55cc2de1b82f",
+      "sizeBytes": 267352,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "ascertia-adss-pki-server",
@@ -6147,7 +6328,11 @@
       "file": "ascertia-adss-pki-server-44307dbe.html",
       "bytes": 523164,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "ascertia-adss-pki-server",
+      "sha256": "2ec17b76099ad508a4648fff870a1f37818b3a25d21f34f7d1f9d32dd389c329",
+      "sizeBytes": 523164,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "codegic-khatim-pki-server",
@@ -6232,7 +6417,11 @@
       "file": "mtg-ag-cara-04bb87e7.html",
       "bytes": 53713,
       "content_type": "text/html",
-      "tier": "update"
+      "tier": "update",
+      "refId": "mtg-ag-cara",
+      "sha256": "d8f9b029aafe753ecc801a20d17045f19daccceba952251a8f260ab980ca5ef9",
+      "sizeBytes": 53713,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "mtg-ag-clm",
@@ -6317,7 +6506,11 @@
       "file": "i4p-trident-hsm-c9ba9783.html",
       "bytes": 209610,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "i4p-trident-hsm",
+      "sha256": "90fb2731d7d065ce2f7a90637a77b3a87818d154fc852a968de78aba4dbb754d",
+      "sizeBytes": 209610,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "utimaco-utrust-hsm",
@@ -6611,7 +6804,11 @@
       "file": "exequantum-f480bf40.html",
       "bytes": 60215,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "exequantum",
+      "sha256": "5f6993477917b705381cb7b88a42df94b6396744d4553ce8c663ba39da8eb635",
+      "sizeBytes": 60215,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "essendi-xc",
@@ -6715,7 +6912,11 @@
       "file": "caddy-server-1d895f39.html",
       "bytes": 253909,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "caddy-server",
+      "sha256": "8e4fea833b8966e9526c93dc9b7347d63cb45351e92d792e30a2c293c4866c28",
+      "sizeBytes": 253909,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "adguard-dns",
@@ -6971,7 +7172,11 @@
       "file": "utimaco-quantum-protect-suite-e09331bc.html",
       "bytes": 267352,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "utimaco-quantum-protect-suite",
+      "sha256": "72b4e6286568142af4fe63778ac3a90787590639d8855de3283f55cc2de1b82f",
+      "sizeBytes": 267352,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "xiphera-xqlave",
@@ -7208,7 +7413,11 @@
       "file": "mastercard-quantum-resistant-contactless-fb4ca274.html",
       "bytes": 26352,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "mastercard-quantum-resistant-contactless",
+      "sha256": "1021b04583190e69f28087662fe6cd99e05dd3871fb2226a7873873485345357",
+      "sizeBytes": 26352,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "swift-quantum-safe-messaging",
@@ -7376,7 +7585,11 @@
       "file": "ovhcloud-qrng-ssl-fe942092.html",
       "bytes": 136322,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "ovhcloud-qrng-ssl",
+      "sha256": "696e131bcde308e3381d6fc1da2a204f007dfb5b356531fdf31c2a314ca855fd",
+      "sizeBytes": 136322,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "threema-pqc",
@@ -7398,7 +7611,11 @@
       "file": "simplex-chat-pqc-98a0dd33.html",
       "bytes": 640650,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "simplex-chat-pqc",
+      "sha256": "f9335027cc356a3443a57905c80d41c78e770f49be4ee44a620815b658d72c7e",
+      "sizeBytes": 640650,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "session-protocol-v2-pqc",
@@ -7426,7 +7643,11 @@
       "file": "nist-sp-800-227-pqc-guidance-8bd97d61.html",
       "bytes": 43800,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "nist-sp-800-227-pqc-guidance",
+      "sha256": "f2c79107d8c30c379b488a6c09493bf3e5994a6ea8e03c3587e63dc5bd260563",
+      "sizeBytes": 43800,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "cisa-pqc-migration-framework",
@@ -7435,7 +7656,11 @@
       "file": "cisa-pqc-migration-framework-86f97563.html",
       "bytes": 385820,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "cisa-pqc-migration-framework",
+      "sha256": "ba3d228db9f947d691d6a11c3e78618bde8482956758b9d78af0bf60cf21afc2",
+      "sizeBytes": 385820,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "java-24-pqc-runtime",
@@ -7482,7 +7707,11 @@
       "file": "opera-browser-pqc-77752918.html",
       "bytes": 83440,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "opera-browser-pqc",
+      "sha256": "f64a89c64c41da9e22e44e9743d8f3e34d4522ab3881ddf6da9fc4451b7a1652",
+      "sizeBytes": 83440,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "internxt-drive-pqc",
@@ -8620,7 +8849,11 @@
       "file": "etsi-ts-104-105-hybrid-pqc-standard-e850fb3f.html",
       "bytes": 136897,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "etsi-ts-104-105-hybrid-pqc-standard",
+      "sha256": "c2202b9e01f62d16553a10a316cb52c70344c56d9d1fb548165d7999c92bf3bd",
+      "sizeBytes": 136897,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "anssi-pqc-migration-guidance",
@@ -8629,7 +8862,11 @@
       "file": "anssi-pqc-migration-guidance-19867164.html",
       "bytes": 7663,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "anssi-pqc-migration-guidance",
+      "sha256": "de7a4ac48e64829331d91587d3cae08cf12a33b63e392de640514045aee6c346",
+      "sizeBytes": 7663,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "bsi-pqc-recommendations",
@@ -8638,7 +8875,11 @@
       "file": "bsi-pqc-recommendations-83eb7f30.html",
       "bytes": 60969,
       "content_type": "text/html;charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "bsi-pqc-recommendations",
+      "sha256": "6b5f73be8c622b57d326f623dd3d0762c8500214b8955f8899688cca2ec8fc76",
+      "sizeBytes": 60969,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "ncsc-uk-pqc-migration-timelines",
@@ -8647,7 +8888,11 @@
       "file": "ncsc-uk-pqc-migration-timelines-28994c99.html",
       "bytes": 172099,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "ncsc-uk-pqc-migration-timelines",
+      "sha256": "b5454731e9f69ec5ec8cc8ff02edc97d5a0a92c17fc825603aa170005dbe87e4",
+      "sizeBytes": 172099,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "kpqc-korean-pqc-standards",
@@ -8656,7 +8901,11 @@
       "file": "kpqc-korean-pqc-standards-2719938e.html",
       "bytes": 140570,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "kpqc-korean-pqc-standards",
+      "sha256": "cc292c032b8ac1d1c5172ecf9028a4d456e9ee87f61cd6e050947cdbb75b2d02",
+      "sizeBytes": 140570,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "india-national-pqc-roadmap",
@@ -8665,7 +8914,11 @@
       "file": "india-national-pqc-roadmap-00264e5f.html",
       "bytes": 279884,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "india-national-pqc-roadmap",
+      "sha256": "bf72f48c453ac8ccb277d00410df3f39e813a35b95bd4cef6ca863d94ad2f92b",
+      "sizeBytes": 279884,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "pqcee-cng-provider",
@@ -8738,7 +8991,11 @@
       "file": "quantum-emotion-sentry-q-21702ea2.html",
       "bytes": 142298,
       "content_type": "text/html; charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "quantum-emotion-sentry-q",
+      "sha256": "01878b5e9954b2eef343de008ce084b7b64f7e2e74eb304ffe4f5d9b3cba756d",
+      "sizeBytes": 142298,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "infineon-tegrion-sli22-automotive",
@@ -8817,7 +9074,11 @@
       "file": "bis-project-leap-pqc-fb4ca274.html",
       "bytes": 26352,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "bis-project-leap-pqc",
+      "sha256": "1021b04583190e69f28087662fe6cd99e05dd3871fb2226a7873873485345357",
+      "sizeBytes": 26352,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "securosys-primus-cybervault-pqc",
@@ -9029,7 +9290,11 @@
       "file": "chile-national-quantum-strategy-f358533e.html",
       "bytes": 272122,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "chile-national-quantum-strategy",
+      "sha256": "dc0dd7f6f82ecc1f20fc4552db39a07e7255039e678db6147291aa5b86b147b7",
+      "sizeBytes": 272122,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "telefonica-quantum-centre",
@@ -9038,7 +9303,11 @@
       "file": "telefonica-quantum-centre-2815d120.html",
       "bytes": 272693,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "telefonica-quantum-centre",
+      "sha256": "a0421e23e43ec72e354e64475a07e7944a4125377d7876d48d63607dcc03d132",
+      "sizeBytes": 272693,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "stc-quantum-safe-framework",
@@ -9047,7 +9316,11 @@
       "file": "stc-quantum-safe-framework-dca9373c.html",
       "bytes": 42687,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "stc-quantum-safe-framework",
+      "sha256": "e8b3f583fa72baa8c6de4a3323173ca02ba254f609962ae1cd2a0144537d5432",
+      "sizeBytes": 42687,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "e-nokia-quantum-safe-network",
@@ -9151,7 +9424,11 @@
       "file": "china-pqc-national-standards-iccs-784e4eba.html",
       "bytes": 268508,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "china-pqc-national-standards-iccs",
+      "sha256": "67c438448d5c178217ce5788aa549f29b625c5f9bf4021beeaffb5cd2958148c",
+      "sizeBytes": 268508,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "toppan-pqc-card",
@@ -9179,7 +9456,11 @@
       "file": "nedo-pqshield-japan-pqc-program-f969835d.html",
       "bytes": 72299,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "nedo-pqshield-japan-pqc-program",
+      "sha256": "048b0788becc040cbada6b74c8928d4d793958b765af7bf187f397311d98b42b",
+      "sizeBytes": 72299,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "chelpis-quantum-pqc-taiwan",
@@ -9226,7 +9507,11 @@
       "file": "taiwan-qsmc-migration-center-5c9686d3.html",
       "bytes": 1111467,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "taiwan-qsmc-migration-center",
+      "sha256": "c94d29e116c70b3b6da4f2d6267149df2a4b852c8dcb05566bdbd17daa2eae96",
+      "sizeBytes": 1111467,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "malaysia-nacsa-pqc-roadmap",
@@ -9235,7 +9520,11 @@
       "file": "malaysia-nacsa-pqc-roadmap-940dd9f5.html",
       "bytes": 68481,
       "content_type": "text/html",
-      "tier": "current"
+      "tier": "current",
+      "refId": "malaysia-nacsa-pqc-roadmap",
+      "sha256": "f58038061e5a4bb2df6bc063876f2b83316345c6a7350b86ed986c94e11aec40",
+      "sizeBytes": 68481,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "cybernetica-pqc-estonia",
@@ -9244,7 +9533,11 @@
       "file": "cybernetica-pqc-estonia-1f1e76ef.html",
       "bytes": 79879,
       "content_type": "text/html",
-      "tier": "current"
+      "tier": "current",
+      "refId": "cybernetica-pqc-estonia",
+      "sha256": "b92c9ffaeb63804d522a53363366a1b866e504912516a717b889bf1e670ad47a",
+      "sizeBytes": 79879,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "czqci-czech-quantum-infrastructure",
@@ -9253,7 +9546,11 @@
       "file": "czqci-czech-quantum-infrastructure-9e249fb6.html",
       "bytes": 17812,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "czqci-czech-quantum-infrastructure",
+      "sha256": "d9b16499dd9785be0f3e93d29f763373238d4ae5401b2fd49c07875a73c13cf6",
+      "sizeBytes": 17812,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "pionier-q-poland-qci",
@@ -9262,7 +9559,11 @@
       "file": "pionier-q-poland-qci-fb9d560d.html",
       "bytes": 245279,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "pionier-q-poland-qci",
+      "sha256": "1b9501c1a623cc46b75b366e8b2fe9893c6c4afb8698eb7336c546355ef14abd",
+      "sizeBytes": 245279,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "spain-quantum-strategy-eur-808m",
@@ -9271,7 +9572,11 @@
       "file": "spain-quantum-strategy-eur-808m-4100cc03.html",
       "bytes": 425912,
       "content_type": "text/html;charset=utf-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "spain-quantum-strategy-eur-808m",
+      "sha256": "c21633e92429c0057fdd26a91fdf6b0fea05683a62ed58dd39aa5f17b3851630",
+      "sizeBytes": 425912,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "madquantum-cm-spain",
@@ -9337,7 +9642,11 @@
       "file": "eu-pqc-implementation-roadmap-a707c263.html",
       "bytes": 50527,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "current"
+      "tier": "current",
+      "refId": "eu-pqc-implementation-roadmap",
+      "sha256": "0f1bd0b1ee61e433d3f6bc310bd7f0264b308ec53c28d244ec8ef58d91c5adc3",
+      "sizeBytes": 50527,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "cyberzero-quantanaut",
@@ -9536,7 +9845,11 @@
       "file": "rustcrypto-ml-dsa-2-98b0debc.html",
       "bytes": 37208,
       "content_type": "application/json",
-      "tier": "update"
+      "tier": "update",
+      "refId": "rustcrypto-ml-dsa-2",
+      "sha256": "869ca888aa3857f9d37b9047dad695f81955b72df8ef7f938b1738deb460ff9f",
+      "sizeBytes": 37208,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "rustcrypto-slh-dsa-2",
@@ -9779,7 +10092,11 @@
       "unified": "current",
       "admittedAt": "2026-06-06T06:01:55.002715+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:15.264092+00:00"
+      "stampedAt": "2026-09-17T13:12:15.264092+00:00",
+      "refId": "ivpn",
+      "sha256": "f295956d89dcf2df8ec9b609373c779d853b6170b68340ffd6a27058788b2406",
+      "sizeBytes": 38263,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "cryspen-libcrux",
@@ -9976,7 +10293,11 @@
       "file": "openbao-0e9159b2.html",
       "bytes": 809519,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "openbao",
+      "sha256": "b1ea3abdb2dcb20fa0242aed9ed9d6a8882e07fc91c7ee8fa788ebdbfeab974d",
+      "sizeBytes": 809519,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "wireguard-go",
@@ -9991,7 +10312,11 @@
       "unified": "converted",
       "admittedAt": "2026-06-06T06:01:56.178531+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:16.082300+00:00"
+      "stampedAt": "2026-09-17T13:12:16.082300+00:00",
+      "refId": "wireguard-go",
+      "sha256": "55b02db5f4f53105ffdce6b6f772791b9977fb0d3f40cc03fd7604ea2bfa1cbc",
+      "sizeBytes": 24336,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "easyrsa-openvpn",
@@ -10019,7 +10344,11 @@
       "file": "microsoft-playwright-cf57641a.html",
       "bytes": 870056,
       "content_type": "text/html; charset=utf-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "microsoft-playwright",
+      "sha256": "d475aad510f4232d7c26ebb89cbef0faf60b9e89c8ccda0d20edc8d68380b821",
+      "sizeBytes": 870056,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "ns3-network-simulator",
@@ -10028,7 +10357,11 @@
       "file": "ns3-network-simulator-6bb7a921.html",
       "bytes": 14613,
       "content_type": "text/html; charset=UTF-8",
-      "tier": "update"
+      "tier": "update",
+      "refId": "ns3-network-simulator",
+      "sha256": "7415bb7f5b3dbdda5b9817ffc438c307bbf86e3ab0fd7bacfc9554d32081e1a9",
+      "sizeBytes": 14613,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "qkdnetsim-module",
@@ -10434,7 +10767,11 @@
       "file": "rustls-5ce9ea3a.html",
       "bytes": 38974,
       "tier": "curl_cffi:chrome",
-      "recovered": true
+      "recovered": true,
+      "refId": "rustls",
+      "sha256": "ba585e4261a7b0157c072d3c651cb4c42bf44f382a8e3776dad30f3fc380d36d",
+      "sizeBytes": 38982,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "entrust-pki",
@@ -10442,7 +10779,11 @@
       "file": "entrust-pki-b51d51cd.html",
       "bytes": 104753,
       "tier": "curl_cffi:chrome120",
-      "recovered": true
+      "recovered": true,
+      "refId": "entrust-pki",
+      "sha256": "409c455f8dc37f86ad58a89c5ea4aa9abe466ff537203d896c40bbe6913d0081",
+      "sizeBytes": 104813,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "mysql-enterprise-encryption",
@@ -10450,7 +10791,11 @@
       "file": "mysql-enterprise-encryption-0ff4c7f9.html",
       "bytes": 91326,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
+      "recovered": true,
+      "refId": "mysql-enterprise-encryption",
+      "sha256": "3d9176c08fcde519098af153c9c1b49384700dc9847a3cf0f84993ff0f0610ff",
+      "sizeBytes": 91327,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "hashicorp-vault-transit",
@@ -10494,7 +10839,11 @@
       "file": "arista-eos-extensible-operating-system-5edfa903.html",
       "bytes": 544411,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
+      "recovered": true,
+      "refId": "arista-eos-extensible-operating-system",
+      "sha256": "020ee1f2a8f88c41396faf0ffc6f54315a99e77c2930139d9c9de6118658c9e7",
+      "sizeBytes": 545681,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "mysql-community-server",
@@ -10502,7 +10851,11 @@
       "file": "mysql-community-server-09c0063f.html",
       "bytes": 62653,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
+      "recovered": true,
+      "refId": "mysql-community-server",
+      "sha256": "4d2df944ccfea30d2773fa9937ee093c24ed95cc909c5a29bee488a5e3457023",
+      "sizeBytes": 62653,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "fortinet-fortigate-rugged",
@@ -10510,7 +10863,11 @@
       "file": "fortinet-fortigate-rugged-bd79ac6e.html",
       "bytes": 154696,
       "tier": "playwright-stealth",
-      "recovered": true
+      "recovered": true,
+      "refId": "fortinet-fortigate-rugged",
+      "sha256": "a86884806a3c61a8f8156c5a1cabb68970ba503ba65f369680bf403445a6f81b",
+      "sizeBytes": 154828,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "keysight-inspector",
@@ -10518,7 +10875,11 @@
       "file": "keysight-inspector-636a0f23.html",
       "bytes": 567377,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
+      "recovered": true,
+      "refId": "keysight-inspector",
+      "sha256": "172b597efaaad98f3ef88a19de121f6e0d0d22cf881b0ddf9c9f4f187a48de57",
+      "sizeBytes": 567473,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "microchip-polarfire",
@@ -10562,7 +10923,11 @@
       "file": "lattice-machxo5-nx-0f07a319.html",
       "bytes": 104615,
       "tier": "playwright-stealth",
-      "recovered": true
+      "recovered": true,
+      "refId": "lattice-machxo5-nx",
+      "sha256": "8f4b6cd20912bb91f6f44e34f16e6ca08b7e05163eaa6cb24cc3983fa31694fa",
+      "sizeBytes": 104747,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "zoom-compliance-2026",
@@ -10570,7 +10935,11 @@
       "file": "zoom-compliance-2026-08405e35.html",
       "bytes": 237131,
       "tier": "curl_cffi:chrome",
-      "recovered": true
+      "recovered": true,
+      "refId": "zoom-compliance-2026",
+      "sha256": "19a23c445db1e6e6f423379f508337fb9a15d73286f66e3ad328f73dbb43f951",
+      "sizeBytes": 237200,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "sectigo-certificate-manager",
@@ -10578,7 +10947,11 @@
       "file": "sectigo-certificate-manager-ca006692.html",
       "bytes": 389632,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
+      "recovered": true,
+      "refId": "sectigo-certificate-manager",
+      "sha256": "aa0c52df162ae20b908a1625e08bbb3bbf36bf8e4f53c3d9b5a96372133296b6",
+      "sizeBytes": 389743,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "akamai-connected-cloud",
@@ -10658,7 +11031,11 @@
       "file": "nxp-i-mx-94-pqc-processor-c40d54d8.html",
       "bytes": 34398,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
+      "recovered": true,
+      "refId": "nxp-i-mx-94-pqc-processor",
+      "sha256": "8a2563948af6567a6f1fb1d5f3ba1180fccc9220daf6d1c876c0ab698b49b2da",
+      "sizeBytes": 34476,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "akamai-pqc-edge",
@@ -10702,7 +11079,11 @@
       "file": "infineon-aurix-tc49-pqc-b74608df.html",
       "bytes": 180392,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
+      "recovered": true,
+      "refId": "infineon-aurix-tc49-pqc",
+      "sha256": "0992aaf4b4f11be9c64d09ade0160c04e9c777fa0e2778b1221cc2226c0aad35",
+      "sizeBytes": 180407,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "sa-quti-quantum-communications",
@@ -10710,7 +11091,11 @@
       "file": "sa-quti-quantum-communications-ac03784b.html",
       "bytes": 72684,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
+      "recovered": true,
+      "refId": "sa-quti-quantum-communications",
+      "sha256": "d3ca02158c9df0e9ae35813b949c5e9d81fd8bbfe63fc88b12a912b793c62c4e",
+      "sizeBytes": 72775,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "asd-australia-pqc-transition",
@@ -10718,7 +11103,11 @@
       "file": "asd-australia-pqc-transition-6c15f3f1.html",
       "bytes": 327953,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
+      "recovered": true,
+      "refId": "asd-australia-pqc-transition",
+      "sha256": "e0b98e5394d0e9c85e93ace701fe4f4edd6822a49a5565ef4f6ef9fab2fce8b8",
+      "sizeBytes": 328005,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "blackberry-qnx-hypervisor-8",
@@ -10726,7 +11115,11 @@
       "file": "blackberry-qnx-hypervisor-8-6e0ba47c.html",
       "bytes": 146760,
       "tier": "playwright-stealth",
-      "recovered": true
+      "recovered": true,
+      "refId": "blackberry-qnx-hypervisor-8",
+      "sha256": "0cd1de5e6d009899701f6c7e234432736fd0cd98250d439928c7825588713c11",
+      "sizeBytes": 146968,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "hawk-reference-implementation",
@@ -10734,7 +11127,11 @@
       "file": "hawk-reference-implementation-d49fe312.html",
       "bytes": 45311,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
+      "recovered": true,
+      "refId": "hawk-reference-implementation",
+      "sha256": "34dc00b13a2e21a7523e7c44b1a733cb93bf54e6caad0f3bf5b0970b4bacc518",
+      "sizeBytes": 45334,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "sap-cryptographic-library",
@@ -11294,14 +11691,22 @@
       "admittedAt": "2026-06-06T19:10:54.815499+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
-      "stampedAt": "2026-09-18T03:45:48.879705+00:00"
+      "stampedAt": "2026-09-18T03:45:48.879705+00:00",
+      "refId": "pfsense-community-edition",
+      "sha256": "57726c3aee46730bcd2b70155704a35c43c11f61588731f0844a95aaee1a84bb",
+      "sizeBytes": 19233,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "opnsense",
       "url": "https://docs.opnsense.org/releases/CE_25.1.html",
       "file": "opnsense-41bae963.html",
       "bytes": 96159,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "opnsense",
+      "sha256": "684021dc1be8007ecf24821ed6951a36d97a513889a216c75e1052481bebaf45",
+      "sizeBytes": 96714,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "wireguard",
@@ -11325,7 +11730,11 @@
       "url": "https://github.com/apache/trafficserver/issues/12441",
       "file": "apache-traffic-server-abda4b2f.html",
       "bytes": 247782,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "apache-traffic-server",
+      "sha256": "c10b4dce64f6c640313ea756676c8fead4fd536e2df06e01d5242e0b98669e0d",
+      "sizeBytes": 248001,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "azure-devops",
@@ -11368,7 +11777,7 @@
       "bytes": 427086,
       "tier": "curl_cffi:chrome124",
       "refId": "anchorage-digital",
-      "sha256": "bcd926ef00cd52e2bf000aeb26ff6fb624f9781298f1e5b8aeb0e29f3a2a6bd9",
+      "sha256": "119a848e03ab69b438211109af4a7025f874cee3586d00df686e7817573683bd",
       "sizeBytes": 379015,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
@@ -11376,7 +11785,10 @@
       "unified": "current",
       "admittedAt": "2026-09-18T03:18:25.822964+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-18T03:53:06.293193+00:00"
+      "stampedAt": "2026-09-27T15:18:44.637838+00:00",
+      "previousSha256": "bcd926ef00cd52e2bf000aeb26ff6fb624f9781298f1e5b8aeb0e29f3a2a6bd9",
+      "hashCorrectedAt": "2026-09-27T15:18:44.637838+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "product_id": "copper-co",
@@ -11434,7 +11846,11 @@
       "url": "https://eprint.iacr.org/2024/1206",
       "file": "hyperledger-besu-a7ea9867.html",
       "bytes": 19795,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "hyperledger-besu",
+      "sha256": "1e563686ce3e4d500379397fdb038610f8b4098259757be95ea1699407047dad",
+      "sizeBytes": 19727,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "r3-corda",
@@ -11812,7 +12228,11 @@
       "url": "https://www.hyland.com/en/platform/product-suite/onbase",
       "file": "hyland-onbase-26fa29ef.html",
       "bytes": 307860,
-      "tier": "playwright-stealth"
+      "tier": "playwright-stealth",
+      "refId": "hyland-onbase",
+      "sha256": "42af2bd2a39f8e3d47b222f6a4ee971dc582b0cbb89f44047da18e27d0148e57",
+      "sizeBytes": 150934,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "forcepoint-dlp",
@@ -12072,7 +12492,11 @@
       "url": "https://www.czertainly.com/transition-to-pqc-with-czertainly/",
       "file": "czertainly-df6a9139.html",
       "bytes": 124820,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "czertainly",
+      "sha256": "d0c344eddd08339950c5120ed4ab58d57ffd40dabdc010960162d301fe20df36",
+      "sizeBytes": 124635,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "eviden-trustway-proteccio-nethsm",
@@ -12265,7 +12689,11 @@
       "url": "https://www.veridify.com/press-release/veridify-security-partners-with-renesas-on-semiconductor-and-stmicroelectronics-at-the-consumer-electronics-show/",
       "file": "renesas-veridify-pqc-for-ra-mcus-c85cee72.html",
       "bytes": 142671,
-      "tier": "playwright-stealth"
+      "tier": "playwright-stealth",
+      "refId": "renesas-veridify-pqc-for-ra-mcus",
+      "sha256": "3444883fdfaa4893a82e919e30780dd7a2bf4e21685b0ff1c788c8cb517e18c9",
+      "sizeBytes": 142627,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "veritas-netbackup-11-pqc",
@@ -12323,7 +12751,11 @@
       "url": "https://pqshield.com/products/",
       "file": "pqshield-pqe2e-messaging-sdk-d11c494d.html",
       "bytes": 76525,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "pqshield-pqe2e-messaging-sdk",
+      "sha256": "2d9a487cfbe2a7a4f5e9c668c4782a9aeb04d7b480d7c1c3ea98a8e43cf70c5a",
+      "sizeBytes": 76095,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "kiteworks-pqc-file-sharing",
@@ -12347,14 +12779,22 @@
       "url": "https://www.gsma.com/newsroom/post-quantum-government-initiatives-by-country-and-region/",
       "file": "gsma-pq-telco-task-force-c0594248.html",
       "bytes": 147285,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "gsma-pq-telco-task-force",
+      "sha256": "fa1ced25da2a304521c5a4a932e79d68b4907008e96f0c60954e46ab752e3b4b",
+      "sizeBytes": 139025,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "vox-messenger-pqc",
       "url": "https://vox-messenger.app/encryption/",
       "file": "vox-messenger-pqc-896024ab.html",
       "bytes": 39536,
-      "tier": "playwright-stealth"
+      "tier": "playwright-stealth",
+      "refId": "vox-messenger-pqc",
+      "sha256": "79dc5f85e34032776d69b66eba41167f34059e74aef6bbe7e1572f92dee25ad7",
+      "sizeBytes": 39536,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "kryptus-knet-hsm-pqc",
@@ -12414,7 +12854,11 @@
       "file": "rustcrypto-ml-kem-2-0f23a042.html",
       "bytes": 3914,
       "content_type": "text/plain; charset=utf-8",
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "rustcrypto-ml-kem-2",
+      "sha256": "30b6106a25cd80450c0131e0ed5f5ed913c8e0a99e9081dad34216e061116cc1",
+      "sizeBytes": 3928,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "ssh-com-tectia",
@@ -12472,14 +12916,22 @@
       "url": "https://www.cisco.com/c/dam/en_us/about/doing_business/trust-center/docs/cisco-cryptography-in-a-post-quantum-world-overview.pdf",
       "file": "mlspp-891a252e.pdf",
       "bytes": 3714081,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "mlspp",
+      "sha256": "f7891226b3583ddc8d66174447668b04b6efb1add6ab69f6024ef68f81247618",
+      "sizeBytes": 3714081,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "openqkdnetwork-qkd-net",
       "url": "https://github.com/Open-QKD-Network/qkd-net",
       "file": "openqkdnetwork-qkd-net-ef32a27b.html",
       "bytes": 396133,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "openqkdnetwork-qkd-net",
+      "sha256": "5e5523ee13927cd95a5e40fb5b9b54c4ef265294df817440c430162489f97d72",
+      "sizeBytes": 395883,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "neslib-cryptographic-library-incl-neslib-pqml",
@@ -12554,14 +13006,22 @@
       "url": "https://www.marvell.com/products/security-solutions/liquidsecurity2.html",
       "file": "azure-dedicated-hsm-marvell-liquidsecurity-5916c168.html",
       "bytes": 160945,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "azure-dedicated-hsm-marvell-liquidsecurity",
+      "sha256": "e2e2c8cf44dfb212cd7c16d2bcb19ae92f4f576d77d64cbdbd6710038339c032",
+      "sizeBytes": 160652,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "gitlab-ci-cd",
       "url": "https://gitlab.com/gitlab-org/gitlab/-/issues/568265",
       "file": "gitlab-ci-cd-d8297ecd.html",
       "bytes": 45410,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "gitlab-ci-cd",
+      "sha256": "281cc296c84b1ad7ce88a623abbaf70e8f311dcf4084797bf9334ccb73a7e615",
+      "sizeBytes": 32081,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "circleci",
@@ -13044,7 +13504,11 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20431",
       "file": "libpqsecure-2401bdaf.html",
       "bytes": 57599,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "libpqsecure",
+      "sha256": "c82f108b8d3a5e21fbc07ceafd4db65a0d621c015075ab9aaa33982d169a753d",
+      "sizeBytes": 57840,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "pqperform-lattice",
@@ -13340,7 +13804,11 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20182",
       "file": "utimaco-quantum-protect-stateful-hash-based-signature-module-08c716fd.html",
       "bytes": 43544,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "utimaco-quantum-protect-stateful-hash-based-signature-module",
+      "sha256": "f1bfea36b773c56b9c9223e698ee527ddc0feacce2cb072126fb7b61538dcace",
+      "sizeBytes": 43785,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "wisecure-crystal-library-ml-kem-and-ml-dsa",
@@ -13781,19 +14249,22 @@
       "content_type": "text/html; charset=UTF-8",
       "tier": "first-party-correction-07092026",
       "refId": "strongswan",
-      "sha256": "57726c3aee46730bcd2b70155704a35c43c11f61588731f0844a95aaee1a84bb",
-      "sizeBytes": 19233,
+      "sha256": "1990ded083ea879e56c41ca6030c1808a9e05d50f0577efc88cec4df4c9f22c7",
+      "sizeBytes": 19446,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
+      "unified": "converted",
       "admittedAt": "2026-09-17T13:08:33.663925+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "superseded_file": "_superseded-09172026/migrate-proofs/strongswan-4daba946.html",
       "supersededAt": "2026-09-17T14:06:19.736472+00:00",
       "supersededBy": "replace_evidence.py",
       "superseded_reason": "the capture on disk failed the door's check (artefact LANDING) on 2026-09-17; the URL now serves the document — replaced by strongswan-988c0aa7.html",
-      "stampedAt": "2026-09-17T13:08:33.663925+00:00"
+      "stampedAt": "2026-09-27T15:18:44.216334+00:00",
+      "previousSha256": "57726c3aee46730bcd2b70155704a35c43c11f61588731f0844a95aaee1a84bb",
+      "hashCorrectedAt": "2026-09-27T15:18:44.216334+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "product_id": "sql-server-tde-always-encrypted",
@@ -14775,7 +15246,11 @@
       "url": "https://www.marvell.com/products/security-solutions/liquidsecurity2.html",
       "file": "azure-dedicated-hsm-marvell-liquidsecurity-5916c168.html",
       "bytes": 160945,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "azure-dedicated-hsm-marvell-liquidsecurity",
+      "sha256": "e2e2c8cf44dfb212cd7c16d2bcb19ae92f4f576d77d64cbdbd6710038339c032",
+      "sizeBytes": 160652,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "arm-trustzone",
@@ -14924,14 +15399,22 @@
       "admittedAt": "2026-06-06T19:10:54.815499+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
-      "stampedAt": "2026-09-18T03:45:48.879705+00:00"
+      "stampedAt": "2026-09-18T03:45:48.879705+00:00",
+      "refId": "pfsense-community-edition",
+      "sha256": "57726c3aee46730bcd2b70155704a35c43c11f61588731f0844a95aaee1a84bb",
+      "sizeBytes": 19233,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "opnsense",
       "url": "https://docs.opnsense.org/releases/CE_25.1.html",
       "file": "opnsense-41bae963.html",
       "bytes": 96159,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "opnsense",
+      "sha256": "684021dc1be8007ecf24821ed6951a36d97a513889a216c75e1052481bebaf45",
+      "sizeBytes": 96714,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "wireguard",
@@ -14955,14 +15438,22 @@
       "url": "https://github.com/apache/trafficserver/issues/12441",
       "file": "apache-traffic-server-abda4b2f.html",
       "bytes": 247782,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "apache-traffic-server",
+      "sha256": "c10b4dce64f6c640313ea756676c8fead4fd536e2df06e01d5242e0b98669e0d",
+      "sizeBytes": 248001,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "gitlab-ci-cd",
       "url": "https://gitlab.com/gitlab-org/gitlab/-/issues/568265",
       "file": "gitlab-ci-cd-d8297ecd.html",
       "bytes": 45410,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "gitlab-ci-cd",
+      "sha256": "281cc296c84b1ad7ce88a623abbaf70e8f311dcf4084797bf9334ccb73a7e615",
+      "sizeBytes": 32081,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "azure-devops",
@@ -15022,7 +15513,7 @@
       "bytes": 427086,
       "tier": "curl_cffi:chrome124",
       "refId": "anchorage-digital",
-      "sha256": "bcd926ef00cd52e2bf000aeb26ff6fb624f9781298f1e5b8aeb0e29f3a2a6bd9",
+      "sha256": "119a848e03ab69b438211109af4a7025f874cee3586d00df686e7817573683bd",
       "sizeBytes": 379015,
       "hashedAt": "2026-09-06",
       "artefact": "SOURCE",
@@ -15030,7 +15521,10 @@
       "unified": "current",
       "admittedAt": "2026-09-18T03:18:25.822964+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-18T03:53:06.293193+00:00"
+      "stampedAt": "2026-09-27T15:18:44.637838+00:00",
+      "previousSha256": "bcd926ef00cd52e2bf000aeb26ff6fb624f9781298f1e5b8aeb0e29f3a2a6bd9",
+      "hashCorrectedAt": "2026-09-27T15:18:44.637838+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "product_id": "copper-co",
@@ -15088,7 +15582,11 @@
       "url": "https://eprint.iacr.org/2024/1206",
       "file": "hyperledger-besu-a7ea9867.html",
       "bytes": 19795,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "hyperledger-besu",
+      "sha256": "1e563686ce3e4d500379397fdb038610f8b4098259757be95ea1699407047dad",
+      "sizeBytes": 19727,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "r3-corda",
@@ -15483,7 +15981,11 @@
       "url": "https://www.hyland.com/en/platform/product-suite/onbase",
       "file": "hyland-onbase-26fa29ef.html",
       "bytes": 307860,
-      "tier": "playwright-stealth"
+      "tier": "playwright-stealth",
+      "refId": "hyland-onbase",
+      "sha256": "42af2bd2a39f8e3d47b222f6a4ee971dc582b0cbb89f44047da18e27d0148e57",
+      "sizeBytes": 150934,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "forcepoint-dlp",
@@ -15743,7 +16245,11 @@
       "url": "https://www.czertainly.com/transition-to-pqc-with-czertainly/",
       "file": "czertainly-df6a9139.html",
       "bytes": 124820,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "czertainly",
+      "sha256": "d0c344eddd08339950c5120ed4ab58d57ffd40dabdc010960162d301fe20df36",
+      "sizeBytes": 124635,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "eviden-trustway-proteccio-nethsm",
@@ -15953,7 +16459,11 @@
       "url": "https://www.veridify.com/press-release/veridify-security-partners-with-renesas-on-semiconductor-and-stmicroelectronics-at-the-consumer-electronics-show/",
       "file": "renesas-veridify-pqc-for-ra-mcus-c85cee72.html",
       "bytes": 142671,
-      "tier": "playwright-stealth"
+      "tier": "playwright-stealth",
+      "refId": "renesas-veridify-pqc-for-ra-mcus",
+      "sha256": "3444883fdfaa4893a82e919e30780dd7a2bf4e21685b0ff1c788c8cb517e18c9",
+      "sizeBytes": 142627,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "veritas-netbackup-11-pqc",
@@ -16011,7 +16521,11 @@
       "url": "https://pqshield.com/products/",
       "file": "pqshield-pqe2e-messaging-sdk-d11c494d.html",
       "bytes": 76525,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "pqshield-pqe2e-messaging-sdk",
+      "sha256": "2d9a487cfbe2a7a4f5e9c668c4782a9aeb04d7b480d7c1c3ea98a8e43cf70c5a",
+      "sizeBytes": 76095,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "kiteworks-pqc-file-sharing",
@@ -16035,14 +16549,22 @@
       "url": "https://www.gsma.com/newsroom/post-quantum-government-initiatives-by-country-and-region/",
       "file": "gsma-pq-telco-task-force-c0594248.html",
       "bytes": 147285,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "gsma-pq-telco-task-force",
+      "sha256": "fa1ced25da2a304521c5a4a932e79d68b4907008e96f0c60954e46ab752e3b4b",
+      "sizeBytes": 139025,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "vox-messenger-pqc",
       "url": "https://vox-messenger.app/encryption/",
       "file": "vox-messenger-pqc-896024ab.html",
       "bytes": 39536,
-      "tier": "playwright-stealth"
+      "tier": "playwright-stealth",
+      "refId": "vox-messenger-pqc",
+      "sha256": "79dc5f85e34032776d69b66eba41167f34059e74aef6bbe7e1572f92dee25ad7",
+      "sizeBytes": 39536,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "kryptus-knet-hsm-pqc",
@@ -16100,7 +16622,11 @@
       "url": "https://raw.githubusercontent.com/RustCrypto/KEMs/master/ml-kem/README.md",
       "file": "rustcrypto-ml-kem-2-0f23a042.html",
       "bytes": 3914,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "rustcrypto-ml-kem-2",
+      "sha256": "30b6106a25cd80450c0131e0ed5f5ed913c8e0a99e9081dad34216e061116cc1",
+      "sizeBytes": 3928,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "ssh-com-tectia",
@@ -16158,14 +16684,22 @@
       "url": "https://www.cisco.com/c/dam/en_us/about/doing_business/trust-center/docs/cisco-cryptography-in-a-post-quantum-world-overview.pdf",
       "file": "mlspp-891a252e.pdf",
       "bytes": 3714081,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "mlspp",
+      "sha256": "f7891226b3583ddc8d66174447668b04b6efb1add6ab69f6024ef68f81247618",
+      "sizeBytes": 3714081,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "openqkdnetwork-qkd-net",
       "url": "https://github.com/Open-QKD-Network/qkd-net",
       "file": "openqkdnetwork-qkd-net-ef32a27b.html",
       "bytes": 396133,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "openqkdnetwork-qkd-net",
+      "sha256": "5e5523ee13927cd95a5e40fb5b9b54c4ef265294df817440c430162489f97d72",
+      "sizeBytes": 395883,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "angela-cryptomodule-cryptographic-algorithm-library",
@@ -16614,7 +17148,11 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20431",
       "file": "libpqsecure-2401bdaf.html",
       "bytes": 57599,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "libpqsecure",
+      "sha256": "c82f108b8d3a5e21fbc07ceafd4db65a0d621c015075ab9aaa33982d169a753d",
+      "sizeBytes": 57840,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "pqperform-lattice",
@@ -16978,7 +17516,11 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20182",
       "file": "utimaco-quantum-protect-stateful-hash-based-signature-module-08c716fd.html",
       "bytes": 43544,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "utimaco-quantum-protect-stateful-hash-based-signature-module",
+      "sha256": "f1bfea36b773c56b9c9223e698ee527ddc0feacce2cb072126fb7b61538dcace",
+      "sizeBytes": 43785,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "wisecure-crystal-library-ml-kem-and-ml-dsa",
@@ -17150,7 +17692,11 @@
       "url": "https://www.scality.com/ring/",
       "file": "scality-ring9-37280587.html",
       "bytes": 351785,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "scality-ring9",
+      "sha256": "2bc8f63b45419a9f854bf131f1ee8b1b98fd5a880b48c9a28cb294e902ae6525",
+      "sizeBytes": 351850,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "mimecast-cloud-integrated",
@@ -17678,7 +18224,11 @@
       "file": "azure-dedicated-hsm-marvell-liquidsecurity-1e6d8d10.html",
       "bytes": 119617,
       "tier": "curl_cffi:chrome124",
-      "recovered": true
+      "recovered": true,
+      "refId": "azure-dedicated-hsm-marvell-liquidsecurity",
+      "sha256": "f54e3e82b46ed1fedf4ad0c0cb947998408ad86941542fd6ebb1efa121e11aeb",
+      "sizeBytes": 119739,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "debian-13-trixie",
@@ -17708,7 +18258,11 @@
       "unified": "converted",
       "admittedAt": "2026-07-15T01:59:11.662472+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:11:50.919575+00:00"
+      "stampedAt": "2026-09-17T13:11:50.919575+00:00",
+      "refId": "noble-post-quantum-Auditable-minimal-JS",
+      "sha256": "e954e96a075e267e31b938003cbedbd0681715b98fee80cdc4e9510f01ab821c",
+      "sizeBytes": 415532,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "ML-DSA-OSH-open-source-hardware-implemen",
@@ -17766,21 +18320,33 @@
       "url": "https://thequantuminsider.com/2026/01/23/arqit-encryption-intelligence-pqc-migration/",
       "file": "Arqit-Encryption-Intelligence-a600539a.html",
       "bytes": 267325,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "Arqit-Encryption-Intelligence",
+      "sha256": "4795410f6d2597516665ed9a3d4de8999f513f6500366d9e1c8b9311d6f04100",
+      "sizeBytes": 267359,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "CipherPlus-Cryptographic-Module",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20785",
       "file": "CipherPlus-Cryptographic-Module-9159b9dc.html",
       "bytes": 48482,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "CipherPlus-Cryptographic-Module",
+      "sha256": "8aeda221a1d9319d9e1cd508dd087e68c7314783e7a2d8e7da7252054eff5412",
+      "sizeBytes": 48496,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Citrix-FIPS-Cryptographic-Module",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20273",
       "file": "Citrix-FIPS-Cryptographic-Module-94a7d652.html",
       "bytes": 2630256,
-      "tier": "curl_cffi:chrome120"
+      "tier": "curl_cffi:chrome120",
+      "refId": "Citrix-FIPS-Cryptographic-Module",
+      "sha256": "9aff79567bc0c36fa071aecafe4b677b4be21f988f03d09d16d98b005f7a0fbd",
+      "sizeBytes": 2630270,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "QASM-Cryptographic-Module",
@@ -17804,14 +18370,22 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19528",
       "file": "EigenQ-Quantum-Encryption-Module-6e17ad9e.html",
       "bytes": 48223,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "EigenQ-Quantum-Encryption-Module",
+      "sha256": "8aa939fcae4ae61cb726c0eb96702690b04700457bd694120d8faba23e1ffa1d",
+      "sizeBytes": 48237,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "FortiPQC-software-library",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20849",
       "file": "FortiPQC-software-library-9a1e8fe6.html",
       "bytes": 48380,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "FortiPQC-software-library",
+      "sha256": "a0e0731e6b17e7a6dc465f22ea1eee3ede56b333d3953098652f1c581c3bcf63",
+      "sizeBytes": 48394,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Alibaba-Cloud-Crypto",
@@ -18653,28 +19227,44 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20308",
       "file": "Alibaba-Cloud-Crypto-Alibaba-Cloud-Crypt-14a6c5cf.html",
       "bytes": 248722,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "Alibaba-Cloud-Crypto-Alibaba-Cloud-Crypt",
+      "sha256": "6d0c3e975d3fd21f5046cd2e72b2f7b8d6a460ccd7a5c22da5ee641fa691d313",
+      "sizeBytes": 248736,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "TASS-Crypto-Engine-PQC-2",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19709",
       "file": "TASS-Crypto-Engine-PQC-2-941de72e.html",
       "bytes": 49153,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "TASS-Crypto-Engine-PQC-2",
+      "sha256": "479a4515eb9d5bf9cef0a4884a7a984d79ddfe90b3a7068ffceae7df0fbfad15",
+      "sizeBytes": 49167,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "CipherPlus-Cryptographic-Module-2",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20785",
       "file": "CipherPlus-Cryptographic-Module-2-9159b9dc.html",
       "bytes": 48356,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "CipherPlus-Cryptographic-Module-2",
+      "sha256": "a9660902de87f5357d57f637d3ffe9e719197b1ab986d3b9d0d77c79b7eb1ee0",
+      "sizeBytes": 48370,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Citrix-FIPS-Cryptographic-Module-2",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20273",
       "file": "Citrix-FIPS-Cryptographic-Module-2-94a7d652.html",
       "bytes": 2630130,
-      "tier": "curl_cffi:chrome120"
+      "tier": "curl_cffi:chrome120",
+      "refId": "Citrix-FIPS-Cryptographic-Module-2",
+      "sha256": "ec717c8df55c6eecb143bd41e6dba8ffe2010a9a0cb7b0b0c590d8021f3d6526",
+      "sizeBytes": 2630144,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "QASM-Cryptographic-Module-2",
@@ -18687,7 +19277,11 @@
       "unified": "converted",
       "admittedAt": "2026-07-29T00:54:00.746519+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:29.362457+00:00"
+      "stampedAt": "2026-09-17T13:12:29.362457+00:00",
+      "refId": "QASM-Cryptographic-Module-2",
+      "sha256": "50fd115e4a65dac00687fb9201b8267707401ef655b1293a39d4ce1ec5abee88",
+      "sizeBytes": 123052,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "DINAMO-Hardware-Security-Module-Cryptogr-2",
@@ -18700,49 +19294,77 @@
       "unified": "converted",
       "admittedAt": "2026-07-29T00:54:01.252069+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:29.766445+00:00"
+      "stampedAt": "2026-09-17T13:12:29.766445+00:00",
+      "refId": "DINAMO-Hardware-Security-Module-Cryptogr-2",
+      "sha256": "003467a2118f6447c855f92dfbc2956c071c0d66c2a57a989495907d59d11e9f",
+      "sizeBytes": 93802,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "EigenQ-Quantum-Encryption-Module-2",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19528",
       "file": "EigenQ-Quantum-Encryption-Module-2-6e17ad9e.html",
       "bytes": 48097,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "EigenQ-Quantum-Encryption-Module-2",
+      "sha256": "670e2515e6aa1cab725538acbecc1563df215c210597d8f6219b2e874f681b78",
+      "sizeBytes": 48111,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "FortiPQC-software-library-2",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20849",
       "file": "FortiPQC-software-library-2-9a1e8fe6.html",
       "bytes": 48254,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "FortiPQC-software-library-2",
+      "sha256": "d00b50fd9924d9004aaeac64d2585979513c2ab04f43d7d874956dc11a015660",
+      "sizeBytes": 48268,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "BoringCrypto",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20079",
       "file": "BoringCrypto-0b955ddf.html",
       "bytes": 341221,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "BoringCrypto",
+      "sha256": "5a458187a090d59472e1712624cb5c60bc2b0ea1d61487e9d6b447db9b671114",
+      "sizeBytes": 341235,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Hikvision-FIPS-Provider-2",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20788",
       "file": "Hikvision-FIPS-Provider-2-8ff12dbe.html",
       "bytes": 189398,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "Hikvision-FIPS-Provider-2",
+      "sha256": "5c45c9ac193f20ae3f20cb5f204b5103924580cc6e4a17b86da003d42dbafc40",
+      "sizeBytes": 189412,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "HPE-Cryptographic-Module-2",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20448",
       "file": "HPE-Cryptographic-Module-2-6f485505.html",
       "bytes": 165238,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "HPE-Cryptographic-Module-2",
+      "sha256": "f712f5d4f47572b59bf2b9bb6f9586828a14002a56f7beb522a5436de4c7706d",
+      "sizeBytes": 165252,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Blocare-PQC-Module",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20500",
       "file": "Blocare-PQC-Module-c203d471.html",
       "bytes": 41271,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "Blocare-PQC-Module",
+      "sha256": "d85496d7ee29e11807bb0f501e0338c5576dd88f860843baac003a112afff2ca",
+      "sizeBytes": 41285,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "IDEMIA-Sphere-Cryptographic-Library-2",
@@ -18755,21 +19377,33 @@
       "unified": "converted",
       "admittedAt": "2026-07-29T00:54:01.380147+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:30.191418+00:00"
+      "stampedAt": "2026-09-17T13:12:30.191418+00:00",
+      "refId": "IDEMIA-Sphere-Cryptographic-Library-2",
+      "sha256": "8db3e6592d901f84b5c1508131954271e8f50cbd36cc41ade612508770478df6",
+      "sizeBytes": 173038,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "PUF-Embedded-Quantum-Safe-PQCryptoEngine",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20059",
       "file": "PUF-Embedded-Quantum-Safe-PQCryptoEngine-09afa789.html",
       "bytes": 56086,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "PUF-Embedded-Quantum-Safe-PQCryptoEngine",
+      "sha256": "b2ade759168cb8e644f25364f1f6d887c3782fca52a36224a75c7de2774e235a",
+      "sizeBytes": 56100,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "OSR-PQC-Solutions",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21135",
       "file": "OSR-PQC-Solutions-bbfa4553.html",
       "bytes": 57361,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "OSR-PQC-Solutions",
+      "sha256": "25cec37afb2a63c627c5932910ad134691f321339e45b792e88c59c2af1c5403",
+      "sizeBytes": 57385,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Oracle-OpenSSL-FIPS-Provider-2",
@@ -18782,14 +19416,22 @@
       "unified": "converted",
       "admittedAt": "2026-07-29T00:54:07.793146+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:30.910790+00:00"
+      "stampedAt": "2026-09-17T13:12:30.910790+00:00",
+      "refId": "Oracle-OpenSSL-FIPS-Provider-2",
+      "sha256": "7f439de80efaf99fc12c5dc5627e1569fe39ef04f0af7a992d31042c80dab268",
+      "sizeBytes": 1407849,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "libpqsecure-2",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19682",
       "file": "libpqsecure-2-ca08440d.html",
       "bytes": 57419,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "libpqsecure-2",
+      "sha256": "7b182a55c955cc17ac9c67b004c556626bece47847da0b4c6ae13871f5f03f58",
+      "sizeBytes": 57433,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Libpqsecure-rs",
@@ -18813,21 +19455,33 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21214",
       "file": "PQSecure-Agility-2-1c087a3e.html",
       "bytes": 56246,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "PQSecure-Agility-2",
+      "sha256": "ad31dde967027f6075c38734fd5ab3b6354365648a2b7020fd4773265ead614a",
+      "sizeBytes": 56260,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "PQPerform-Lattice",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19632",
       "file": "PQPerform-Lattice-50c9f79f.html",
       "bytes": 44381,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "PQPerform-Lattice",
+      "sha256": "7a940e7309eabc1b17426665a834081812885482338313e37ea038b9fe568848",
+      "sizeBytes": 44397,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "PhioTX",
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18783",
       "file": "PhioTX-e74f542f.html",
       "bytes": 41353,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "PhioTX",
+      "sha256": "4db816bb2657d8b68955e82816f6a903085518c0e5520f552d0baed3b2d119ad",
+      "sizeBytes": 41367,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Secure-IC-PQC-Solutions",
@@ -18868,7 +19522,11 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20543",
       "file": "Silvus-Crypto-Module-cf6f2bd0.html",
       "bytes": 101108,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "Silvus-Crypto-Module",
+      "sha256": "ef84d5f32797d122638294308bcbad712c968d48a3662fb39cbb9250262d57ea",
+      "sizeBytes": 101122,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "OpenSSL-FIPS-Provider",
@@ -18881,7 +19539,11 @@
       "unified": "converted",
       "admittedAt": "2026-07-29T00:54:12.171410+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:32.365801+00:00"
+      "stampedAt": "2026-09-17T13:12:32.365801+00:00",
+      "refId": "OpenSSL-FIPS-Provider",
+      "sha256": "07d2ff97993205b3cfd0a8c5d105715f1be419a522e31f793620a100d24b6f8d",
+      "sizeBytes": 1728502,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Xiphera-XIP6220B-2",
@@ -18894,7 +19556,11 @@
       "unified": "current",
       "admittedAt": "2026-07-29T00:54:03.375345+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:55:46.683051+00:00"
+      "stampedAt": "2026-09-17T13:55:46.683051+00:00",
+      "refId": "Xiphera-XIP6220B-2",
+      "sha256": "eb01fb1b13d1abad016f66a404733abb00e29e01a2179b578f58ffcf8ef57249",
+      "sizeBytes": 41307,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "TASS-Crypto-Engine-LMS",
@@ -18918,7 +19584,11 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20406",
       "file": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-9-509e1620.html",
       "bytes": 86698,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-9",
+      "sha256": "6216723c7dcc200d607a9509f558e76affbf299d5a64882e79c6b18adae2fb18",
+      "sizeBytes": 86712,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-10",
@@ -18931,7 +19601,11 @@
       "unified": "converted",
       "admittedAt": "2026-07-29T00:54:03.673038+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:32.618718+00:00"
+      "stampedAt": "2026-09-17T13:12:32.618718+00:00",
+      "refId": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-10",
+      "sha256": "87cd896e87bac06e78133eeb4678f4dcd8c16ec79b44b1c7108f50dfce89e335",
+      "sizeBytes": 86584,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-11",
@@ -18944,7 +19618,11 @@
       "unified": "converted",
       "admittedAt": "2026-07-29T00:54:03.954250+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:32.693458+00:00"
+      "stampedAt": "2026-09-17T13:12:32.693458+00:00",
+      "refId": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-11",
+      "sha256": "e4c01b7e5e0bd716200ad0a0d840cb24235cc7c35bafa824f730097038c15858",
+      "sizeBytes": 86716,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "IFX-CCI-00007Ah-8Fh-A11-R11-M11-with-opt",
@@ -18957,7 +19635,11 @@
       "unified": "current",
       "admittedAt": "2026-07-29T00:54:03.880397+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:12:32.714934+00:00"
+      "stampedAt": "2026-09-17T13:12:32.714934+00:00",
+      "refId": "IFX-CCI-00007Ah-8Fh-A11-R11-M11-with-opt",
+      "sha256": "c4272515859664f3bf97dc20240550f5b2fe4f9e975d8edb7e03c607ed47e30e",
+      "sizeBytes": 81910,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "10-512",
@@ -19022,7 +19704,8 @@
       "unified": "current",
       "admittedAt": "2026-07-29T00:54:04.386667+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:50.213104+00:00"
+      "stampedAt": "2026-09-17T13:09:50.213104+00:00",
+      "refId": "Cryptographic-Library-NesLib-6-11-3-on-S"
     },
     {
       "product_id": "Cryptographic-library-NesLib-6-11-6-on-S",
@@ -19097,28 +19780,44 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5251",
       "file": "archTIS-Cryptographic-Library-ffd1164b.html",
       "bytes": 75964,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "archTIS-Cryptographic-Library",
+      "sha256": "3bd23c5bb170735088bb01c1eb8a359c9cb5db6a57ecccd8cd3d7cb367353033",
+      "sizeBytes": 75978,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Saviynt-Cryptographic-Module",
       "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5128",
       "file": "Saviynt-Cryptographic-Module-2c150cb0.html",
       "bytes": 76352,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "Saviynt-Cryptographic-Module",
+      "sha256": "3b423b69b82b3e4afb46e289809ac4257df16873468f2882434060a2bd8aad17",
+      "sizeBytes": 76366,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "HID-Global-Cryptographic-Module",
       "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5123",
       "file": "HID-Global-Cryptographic-Module-644c8772.html",
       "bytes": 76514,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "HID-Global-Cryptographic-Module",
+      "sha256": "b96dcaae2cc5d13f87ce4273f305e3556e5017b50bf97a3e5ef7ab8c930e2e11",
+      "sizeBytes": 76530,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Nuvoton-Cryptographic-Library-3-0-2",
       "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5098",
       "file": "Nuvoton-Cryptographic-Library-3-0-2-46680320.html",
       "bytes": 42115,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "Nuvoton-Cryptographic-Library-3-0-2",
+      "sha256": "1976ff4b95a190d407d06bd710f8d2ab14ab72a2776a28182af51cefbfc08530",
+      "sizeBytes": 42129,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "CipherLinq",
@@ -19416,7 +20115,11 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18783",
       "file": "PhioTX-e74f542f.html",
       "bytes": 41353,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "PhioTX",
+      "sha256": "4db816bb2657d8b68955e82816f6a903085518c0e5520f552d0baed3b2d119ad",
+      "sizeBytes": 41367,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Secure-IC-PQC-Solutions",
@@ -19697,7 +20400,11 @@
       "url": "https://crates.io/crates/libcrux",
       "file": "libcrux-crates-io-Rust-Package-Registry-ac790dc9.html",
       "bytes": 32943,
-      "tier": "playwright-stealth"
+      "tier": "playwright-stealth",
+      "refId": "libcrux-crates-io-Rust-Package-Registry",
+      "sha256": "a27ddc4c9fa567bb66d2de04c56ef7d0fcad1f63206b791a0ce74f91cdaba57f",
+      "sizeBytes": 32949,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "GitHub-aws-aws-lc-rs",
@@ -19713,7 +20420,8 @@
       "unified": "current",
       "admittedAt": "2026-09-07T17:18:01.109193+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:49.046480+00:00"
+      "stampedAt": "2026-09-17T13:09:49.046480+00:00",
+      "refId": "GitHub-aws-aws-lc-rs"
     },
     {
       "product_id": "Dashboard-PQProbe",
@@ -19729,7 +20437,8 @@
       "unified": "current",
       "admittedAt": "2026-09-07T17:18:06.560606+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:49.057357+00:00"
+      "stampedAt": "2026-09-17T13:09:49.057357+00:00",
+      "refId": "Dashboard-PQProbe"
     },
     {
       "product_id": "PQ-SORT-Post-Quantum-Signatures-On-Ramp",
@@ -19745,7 +20454,8 @@
       "unified": "current",
       "admittedAt": "2026-09-07T17:18:01.476868+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:49.068215+00:00"
+      "stampedAt": "2026-09-17T13:09:49.068215+00:00",
+      "refId": "PQ-SORT-Post-Quantum-Signatures-On-Ramp"
     },
     {
       "product_id": "PQConnect-Intro",
@@ -19760,7 +20470,8 @@
       "identity": "MATCH",
       "unified": "converted",
       "admittedAt": "2026-09-18T03:39:01.723945+00:00",
-      "admittedBy": "admit.py"
+      "admittedBy": "admit.py",
+      "refId": "PQConnect-Intro"
     },
     {
       "product_id": "Cryptography-std-crypto-Zig",
@@ -19776,7 +20487,8 @@
       "unified": "current",
       "admittedAt": "2026-09-07T17:18:01.209662+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:49.159595+00:00"
+      "stampedAt": "2026-09-17T13:09:49.159595+00:00",
+      "refId": "Cryptography-std-crypto-Zig"
     },
     {
       "product_id": "What-is-Post-Quantum-Encryption-And-How",
@@ -19792,7 +20504,8 @@
       "unified": "current",
       "admittedAt": "2026-09-07T17:18:02.178232+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:49.180552+00:00"
+      "stampedAt": "2026-09-17T13:09:49.180552+00:00",
+      "refId": "What-is-Post-Quantum-Encryption-And-How"
     },
     {
       "product_id": "SMAUG-T-HAETAE-HAETAE",
@@ -19808,7 +20521,8 @@
       "unified": "current",
       "admittedAt": "2026-09-07T17:18:01.319752+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:49.203915+00:00"
+      "stampedAt": "2026-09-17T13:09:49.203915+00:00",
+      "refId": "SMAUG-T-HAETAE-HAETAE"
     },
     {
       "product_id": "Dilithium-Software",
@@ -19824,7 +20538,8 @@
       "unified": "current",
       "admittedAt": "2026-09-07T17:18:01.062123+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:49.214190+00:00"
+      "stampedAt": "2026-09-17T13:09:49.214190+00:00",
+      "refId": "Dilithium-Software"
     },
     {
       "product_id": "Kyber-Software",
@@ -19840,7 +20555,8 @@
       "unified": "current",
       "admittedAt": "2026-09-07T17:18:01.069463+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:49.224253+00:00"
+      "stampedAt": "2026-09-17T13:09:49.224253+00:00",
+      "refId": "Kyber-Software"
     },
     {
       "product_id": "SPHINCS-Software",
@@ -19856,7 +20572,8 @@
       "unified": "current",
       "admittedAt": "2026-09-07T17:18:00.741709+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:49.233876+00:00"
+      "stampedAt": "2026-09-17T13:09:49.233876+00:00",
+      "refId": "SPHINCS-Software"
     },
     {
       "product_id": "PQC-InfoHub-Tencent-Post-Quantum-Cryptog",
@@ -19871,7 +20588,8 @@
       "identity": "MATCH",
       "unified": "converted",
       "admittedAt": "2026-09-18T03:43:08.441763+00:00",
-      "admittedBy": "admit.py"
+      "admittedBy": "admit.py",
+      "refId": "PQC-InfoHub-Tencent-Post-Quantum-Cryptog"
     },
     {
       "product_id": "Lean-Consensus-Roadmap",
@@ -19887,7 +20605,8 @@
       "unified": "current",
       "admittedAt": "2026-09-07T17:18:01.040799+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:49.281626+00:00"
+      "stampedAt": "2026-09-17T13:09:49.281626+00:00",
+      "refId": "Lean-Consensus-Roadmap"
     },
     {
       "product_id": "samsung-networks-5g-core",
@@ -20298,8 +21017,8 @@
       "product_id": "nginx",
       "file": "nginx-9cb0ba7f.html",
       "url": "https://blog.nginx.org/blog/pqc-nginx",
-      "sha256": "102b18d7d74f8dc88523d67b97b495171979564139a1fc0c1559a2888f4032ff",
-      "sizeBytes": 112591,
+      "sha256": "adb59865adc6b1e44b4e283a75679ac346f239941cbd745836a58ba8cc807bdb",
+      "sizeBytes": 112567,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
       "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
@@ -20307,7 +21026,7 @@
       "note": "additional document for a row that already has one",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "converted",
+      "unified": "current",
       "admittedAt": "2026-09-17T14:07:52.265242+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "replacedAt": "2026-09-17T14:07:52.326665+00:00",
@@ -20318,7 +21037,10 @@
       "supersededAt": "2026-09-17T14:17:04.872460+00:00",
       "supersededBy": "replace_evidence.py",
       "superseded_reason": "the capture failed the door's check (artefact EMPTY) on 2026-09-17 and was replaced by a fresh fetch of the row's URL; the first lane run moved it aside and crashed before recording it here",
-      "stampedAt": "2026-09-18T03:45:50.039428+00:00"
+      "stampedAt": "2026-09-27T15:18:44.356475+00:00",
+      "previousSha256": "102b18d7d74f8dc88523d67b97b495171979564139a1fc0c1559a2888f4032ff",
+      "hashCorrectedAt": "2026-09-27T15:18:44.356475+00:00",
+      "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's"
     },
     {
       "product_id": "apache-http-server",
@@ -21571,7 +22293,11 @@
       "url": "https://messervices.cyber.gouv.fr/visas/EUCC-3090-2026-25-certificat.pdf",
       "file": "Cryptographic-Library-NesLib-6-11-3-on-S-9d92cce0.pdf",
       "bytes": 403819,
-      "tier": "curl_cffi:chrome124"
+      "tier": "curl_cffi:chrome124",
+      "refId": "Cryptographic-Library-NesLib-6-11-3-on-S",
+      "sha256": "beb996a8e4d02d19f6a70a00a2ef092bf3ddc9517be097b4b170d1e047d232f9",
+      "sizeBytes": 403819,
+      "hashedAt": "2026-09-27"
     },
     {
       "product_id": "Cryptographic-library-NESLIB-6-11-3-on-S-3",
@@ -21585,7 +22311,8 @@
       "unified": "current",
       "admittedAt": "2026-09-12T23:30:34.609335+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:51.155218+00:00"
+      "stampedAt": "2026-09-17T13:09:51.155218+00:00",
+      "refId": "Cryptographic-library-NESLIB-6-11-3-on-S-3"
     },
     {
       "product_id": "Cryptographic-library-NESLIB-6-11-3-on-S-4",
@@ -21599,7 +22326,8 @@
       "unified": "current",
       "admittedAt": "2026-09-12T23:30:34.621826+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:52.096634+00:00"
+      "stampedAt": "2026-09-17T13:09:52.096634+00:00",
+      "refId": "Cryptographic-library-NESLIB-6-11-3-on-S-4"
     },
     {
       "product_id": "Post-Quantum-Cryptography-In-The-Ledger",
@@ -21613,7 +22341,8 @@
       "unified": "current",
       "admittedAt": "2026-09-12T23:37:52.205327+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:52.146696+00:00"
+      "stampedAt": "2026-09-17T13:09:52.146696+00:00",
+      "refId": "Post-Quantum-Cryptography-In-The-Ledger"
     },
     {
       "product_id": "Qinsight-Atlas-Cryptographic-Discovery-P",
@@ -21627,7 +22356,8 @@
       "unified": "current",
       "admittedAt": "2026-09-12T23:37:52.051628+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:09:52.162892+00:00"
+      "stampedAt": "2026-09-17T13:09:52.162892+00:00",
+      "refId": "Qinsight-Atlas-Cryptographic-Discovery-P"
     },
     {
       "product_id": "trezor-safe-7-pqc",
@@ -21877,8 +22607,8 @@
       "product_id": "nginx",
       "file": "nginx-9cb0ba7f.html",
       "url": "https://blog.nginx.org/blog/pqc-nginx",
-      "sha256": "102b18d7d74f8dc88523d67b97b495171979564139a1fc0c1559a2888f4032ff",
-      "sizeBytes": 112591,
+      "sha256": "adb59865adc6b1e44b4e283a75679ac346f239941cbd745836a58ba8cc807bdb",
+      "sizeBytes": 112567,
       "content_type": "text/html",
       "backfilledAt": "2026-09-12T14:09:52.978504+00:00",
       "backfilledBy": "backfill_manifest.py — WS1.2, file was in use with no record",
@@ -21889,15 +22619,15 @@
       "supersededAt": "2026-09-17T14:18:22.508101+00:00",
       "supersededBy": "replace_evidence.py",
       "superseded_reason": "the capture failed the door's check on 2026-09-17 and was replaced by a fresh fetch of the row's URL",
-      "previousSha256": "c38195e213ae2c7b7956df23aec58a300e1b819e2bdfc546f6e687dd2d50dc99",
-      "hashCorrectedAt": "2026-09-18T03:45:50.039428+00:00",
+      "previousSha256": "102b18d7d74f8dc88523d67b97b495171979564139a1fc0c1559a2888f4032ff",
+      "hashCorrectedAt": "2026-09-27T15:18:44.356475+00:00",
       "hashCorrectionReason": "recomputed from the file at stamping; the previous value was another file's",
       "artefact": "SOURCE",
-      "unified": "converted",
+      "unified": "current",
       "admittedAt": "2026-09-17T14:07:52.265242+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "identity": "MATCH",
-      "stampedAt": "2026-09-18T03:45:50.039428+00:00"
+      "stampedAt": "2026-09-27T15:18:44.356475+00:00"
     },
     {
       "product_id": "trezor-safe-7-pqc",
@@ -21948,7 +22678,8 @@
       "sha256": "5a1d27582165dfff863ebb0e45417bc0f066b67df651c65fa40557f0709a103f",
       "ok": false,
       "superseded_file": "_superseded-09162026/migrate-proofs/zerto-11-0-c2d907e1-2.html",
-      "superseded_reason": "2026-09-16: download-product-evidence.py saved Zerto's consent wall (artefact CONSENT-WALL); no public document"
+      "superseded_reason": "2026-09-16: download-product-evidence.py saved Zerto's consent wall (artefact CONSENT-WALL); no public document",
+      "refId": "zerto-11-0"
     },
     {
       "product_id": "general-dynamics-mission",
@@ -21959,7 +22690,8 @@
       "sha256": "017821dd0c4a8c0a021b6f857fad37d9596c7d709d8ed7e063a7b4b043b4d848",
       "ok": false,
       "superseded_file": "_superseded-09162026/migrate-proofs/general-dynamics-mission-2f5544f2.html",
-      "superseded_reason": "2026-09-16: download-product-evidence.py saved the KIV-80 datasheet's PDF bytes under a .html name (artefact FORMAT-MISMATCH); the row's proof is general-dynamics-mission-2f5544f2.pdf"
+      "superseded_reason": "2026-09-16: download-product-evidence.py saved the KIV-80 datasheet's PDF bytes under a .html name (artefact FORMAT-MISMATCH); the row's proof is general-dynamics-mission-2f5544f2.pdf",
+      "refId": "general-dynamics-mission"
     },
     {
       "product_id": "hpe-alletra-mp",
@@ -21973,7 +22705,8 @@
       "unified": "converted",
       "admittedAt": "2026-09-17T14:20:01.861662+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-18T03:45:54.545531+00:00"
+      "stampedAt": "2026-09-18T03:45:54.545531+00:00",
+      "refId": "hpe-alletra-mp"
     },
     {
       "product_id": "general-dynamics-mission",
@@ -22009,7 +22742,8 @@
       "admittedAt": "2026-06-06T06:01:49.571795+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "superseded_file": "_superseded-09172026/migrate-proofs/pqcee-cng-provider-92c2fc75.html",
-      "stampedAt": "2026-09-18T03:45:58.045862+00:00"
+      "stampedAt": "2026-09-18T03:45:58.045862+00:00",
+      "refId": "pqcee-cng-provider"
     },
     {
       "product_id": "singtel-quantum-safe-network",
@@ -22039,7 +22773,8 @@
       "identity": "RELEVANT",
       "unified": "converted",
       "admittedAt": "2026-09-17T15:02:33.145533+00:00",
-      "admittedBy": "admit.py"
+      "admittedBy": "admit.py",
+      "refId": "nxp-orangebox-2-0-pqc"
     },
     {
       "product_id": "surfshark",
@@ -23064,7 +23799,145 @@
       "replacedAt": "2026-09-25T17:04:02.632798+00:00",
       "replacedBy": "replace_evidence.py",
       "replaceReason": "migrate r2 evidence re-sourcing 2026-09-25: previous capture was another product's page, a wrong page or missing; official document reviewed by Claude + Codex"
+    },
+    {
+      "product_id": "hawk-reference-implementation",
+      "refId": "hawk-reference-implementation",
+      "file": "migrate-proofs/hawk-reference-implementation-5300e036.html",
+      "filename": "hawk-reference-implementation-5300e036.html",
+      "url": "https://hawk-sign.info/",
+      "status": "downloaded",
+      "sizeBytes": 17016,
+      "contentType": "text/html",
+      "sha256": "fbae7405efbecb95f4e20050efa316c8c0ed498d7278f26f92447a19da8607a3",
+      "addedAt": "2026-09-27T15:18:44.672688+00:00",
+      "addedBy": "admit.py --stamp-existing --add-missing-entries",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "stampedAt": "2026-09-27T15:18:44.714629+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH",
+      "admittedAt": "2026-09-27T15:18:44.672688+00:00"
+    },
+    {
+      "product_id": "sophos-xgs",
+      "refId": "sophos-xgs",
+      "file": "sophos-xgs-81213d70.html",
+      "sizeBytes": 154080,
+      "content_type": "text/html",
+      "url": "https://docs.sophos.com/releasenotes/output/en-us/nsg/sf_220_rn.html",
+      "sha256": "8e81036f0b60a763534641154439b95770f7e6208cfc1ba5c5dd6df3ce6ab5a6",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-27T16:09:47.845361+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "replacedAt": "2026-09-27T16:09:47.500216+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "migrate follow-up 2026-09-27: proof re-pointed to a gate-passing source (reviewed by Claude + Codex)"
+    },
+    {
+      "product_id": "hyperledger-aries-aca-py",
+      "refId": "hyperledger-aries-aca-py",
+      "file": "hyperledger-aries-aca-py-59ab6abf.html",
+      "sizeBytes": 84877,
+      "content_type": "text/html",
+      "url": "https://aca-py.org/",
+      "sha256": "d2ef928cd0e8e3a640133a9fb6608dfa529b8dcd251c421a739d7eeaeba7e794",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-27T16:10:26.593152+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "replacedAt": "2026-09-27T16:10:26.084613+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "migrate follow-up 2026-09-27: proof re-pointed to a gate-passing source (reviewed by Claude + Codex)"
+    },
+    {
+      "product_id": "stmicroelectronics-st33ktpm",
+      "refId": "stmicroelectronics-st33ktpm",
+      "file": "stmicroelectronics-st33ktpm-fbfc4d40.html",
+      "sizeBytes": 56612,
+      "content_type": "text/html",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5109",
+      "sha256": "7c3d281b553517f9a6e3f88c706d733cacf8eb7ebccd7b0759a7d8769b14108c",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-27T16:10:27.917511+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED",
+      "replacedAt": "2026-09-27T16:10:27.626436+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "migrate follow-up 2026-09-27: proof re-pointed to a gate-passing source (reviewed by Claude + Codex)"
+    },
+    {
+      "product_id": "czertainly",
+      "refId": "czertainly",
+      "file": "czertainly-f56ca508.html",
+      "sizeBytes": 144836,
+      "content_type": "text/html",
+      "url": "https://omnitrust.com/press/omnitrust-formerly-iss-now-offers-identity-lifecycle-management-ilm-through-the-addition-of-3key-czertainly-to-its-trust-lifecycle-management-platform/",
+      "sha256": "2f90ded6efd71cdb10e886942b121d8b120acf065df21716187ecacdb312af4e",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-27T16:11:10.385418+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "replacedAt": "2026-09-27T16:11:10.114106+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "migrate follow-up 2026-09-27: proof re-pointed to a gate-passing source (reviewed by Claude + Codex)"
+    },
+    {
+      "product_id": "secure-ic-securyzr",
+      "refId": "secure-ic-securyzr",
+      "file": "secure-ic-securyzr-a177df8e.html",
+      "sizeBytes": 63899,
+      "content_type": "text/html",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18755",
+      "sha256": "6149f5573a193e3bee4819d9e2f049a034deaf43bb30297be7a6159e457c4082",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-27T16:11:11.300155+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "replacedAt": "2026-09-27T16:11:11.097900+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "migrate follow-up 2026-09-27: proof re-pointed to a gate-passing source (reviewed by Claude + Codex)"
+    },
+    {
+      "product_id": "haetae-reference-implementation",
+      "refId": "haetae-reference-implementation",
+      "file": "haetae-reference-implementation-a6fdcad2.pdf",
+      "sizeBytes": 619171,
+      "content_type": "application/pdf",
+      "url": "https://csrc.nist.gov/csrc/media/Projects/pqc-dig-sig/documents/round-1/spec-files/haetae-spec-web.pdf",
+      "sha256": "9863d9986c46f0f5b05a2f92cd7fbb3777a0633087ef25a33e1ee1d4988fe28b",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-27T16:11:54.708858+00:00",
+      "admittedBy": "admit.py",
+      "identity": "MATCH",
+      "replacedAt": "2026-09-27T16:11:52.844012+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "migrate follow-up 2026-09-27: proof re-pointed to a gate-passing source (reviewed by Claude + Codex)"
+    },
+    {
+      "product_id": "st33ktpm2x-stsafe-tpm",
+      "refId": "st33ktpm2x-stsafe-tpm",
+      "file": "st33ktpm2x-stsafe-tpm-fbfc4d40.html",
+      "sizeBytes": 56612,
+      "content_type": "text/html",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5109",
+      "sha256": "7c3d281b553517f9a6e3f88c706d733cacf8eb7ebccd7b0759a7d8769b14108c",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-09-27T16:12:39.597037+00:00",
+      "admittedBy": "admit.py",
+      "identity": "UNCONFIRMED",
+      "replacedAt": "2026-09-27T16:12:39.365421+00:00",
+      "replacedBy": "replace_evidence.py",
+      "replaceReason": "migrate follow-up 2026-09-27: proof re-pointed to a gate-passing source (reviewed by Claude + Codex)"
     }
   ],
-  "hashBackfillNote": "sha256 and sizeBytes added for 0 entr(ies) on 2026-09-06 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
+  "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
 }

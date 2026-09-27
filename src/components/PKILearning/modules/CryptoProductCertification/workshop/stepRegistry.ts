@@ -9,10 +9,6 @@ import type { FC } from 'react'
 import type { CertWorkshopStepProps } from '../data/types'
 import { SchemeSelector } from './SchemeSelector'
 import { BoundaryDrawer } from './BoundaryDrawer'
-import { FipsLevelPlanner } from './FipsLevelPlanner'
-import { CcClaimDecoder } from './CcClaimDecoder'
-import { EidasTrace } from './EidasTrace'
-import { PciEvidenceReview } from './PciEvidenceReview'
 import { Capstone } from './Capstone'
 import { ChangeAnalyzer } from './ChangeAnalyzer'
 import { EvidenceExchange } from './EvidenceExchange'
@@ -23,10 +19,6 @@ export const STEP_COMPONENTS: ReadonlyMap<string, FC<CertWorkshopStepProps>> = n
 >([
   ['scheme-selector', SchemeSelector],
   ['boundary-drawer', BoundaryDrawer],
-  ['fips-level-planner', FipsLevelPlanner],
-  ['cc-claim-decoder', CcClaimDecoder],
-  ['eidas-trace', EidasTrace],
-  ['pci-evidence-review', PciEvidenceReview],
   ['capstone', Capstone],
   ['change-analyzer', ChangeAnalyzer],
   ['evidence-exchange', EvidenceExchange],

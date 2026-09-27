@@ -14,7 +14,7 @@
  * stay labelled as open questions in the UI.
  */
 import type { StepExercise } from '@/data/stepExercises'
-import type { ExerciseItem } from './types'
+import type { ExerciseItem } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
 
 /** Date every fact in this file was last checked against its source. */
 export const CC_EU_AS_OF = '2026-09-24'
@@ -1104,7 +1104,7 @@ export const exercises: ExerciseItem[] = [
 // ── Workshop-step questions (append the SAME entries to src/data/stepExercises.ts) ──
 
 export const stepExercises: Record<string, StepExercise> = {
-  'crypto-product-certification/cc-claim-decoder': {
+  'cc-eucc-certification/cc-claim-decoder': {
     prompt:
       'Two HSM listings both read “EAL4+”: TrustWay Proteccio (ADV_IMP.2, ALC_CMC.5, ALC_DVS.2, ALC_FLR.3, AVA_VAN.5) and nShield5s (ALC_FLR.2, AVA_VAN.5). What can you conclude from the shared headline?',
     options: [
@@ -1115,7 +1115,7 @@ export const stepExercises: Record<string, StepExercise> = {
     answer: 1,
     why: 'Augmentation adds or substitutes named components; “EAL4+” without the list does not say which. Here both reach AVA_VAN.5 but differ in development, configuration-management and flaw-remediation components, and an augmented EAL4 is not a higher EAL.',
   },
-  'crypto-product-certification/eidas-trace': {
+  'cc-eucc-certification/eidas-trace': {
     prompt:
       'In the remote-signing trace, where does the duty to use a certified signing device come from, and where do its security requirements come from?',
     options: [

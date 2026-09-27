@@ -248,9 +248,21 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
       icon: 'HardDrive',
     },
     'crypto-product-certification': {
-      label: 'Cryptographic Product Certification',
+      label: 'Product Certification: Fundamentals',
       description:
-        'FIPS 140-3 and the CMVP, Common Criteria, EUCC and eIDAS, PCI PTS HSM, and adding PQC to a certified product.',
+        'What each certification scheme proves, scope before level, and what adding PQC changes in a certified product.',
+      icon: 'Award',
+    },
+    'fips-pci-certification': {
+      label: 'FIPS 140-3 & PCI Certification',
+      description:
+        'FIPS 140-3 and the CMVP, algorithm validation vs module certificates, PCI PTS HSM and the payment operating stack.',
+      icon: 'Award',
+    },
+    'cc-eucc-certification': {
+      label: 'Common Criteria, EUCC & eIDAS',
+      description:
+        'Common Criteria EALs and augmentations, CC:2022, EUCC, eIDAS qualified devices and their Protection Profiles.',
       icon: 'Award',
     },
     'entropy-randomness': {

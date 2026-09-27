@@ -181,7 +181,9 @@ const MODULE_NAMES: Record<string, string> = {
   'pki-workshop': 'PKI Workshop',
   'kms-pqc': 'KMS & PQC Key Management',
   'hsm-pqc': 'HSM & PQC Operations',
-  'crypto-product-certification': 'Cryptographic Product Certification',
+  'crypto-product-certification': 'Cryptographic Product Certification: Fundamentals',
+  'fips-pci-certification': 'FIPS 140-3 & PCI Certification',
+  'cc-eucc-certification': 'Common Criteria, EUCC & eIDAS Certification',
   'stateful-signatures': 'Stateful Signatures',
   'digital-assets': 'Digital Assets',
   '5g-security': '5G Security',
@@ -271,9 +273,19 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'How does HSM firmware migration work for PQC?',
   ],
   'crypto-product-certification': [
+    'What does each certification scheme actually prove about a product?',
+    'Why does the certification scope matter more than the level?',
+    'Does adding PQC to a certified product mean recertifying it?',
+  ],
+  'fips-pci-certification': [
     'What is the difference between ACVP algorithm validation and a FIPS 140-3 certificate?',
-    'Why does "EAL4+" mean nothing without its augmentations?',
+    'How do I read a FIPS 140-3 Security Policy for PQC algorithms?',
     'Does a PQC flag on a PCI PTS HSM listing approve a specific algorithm?',
+  ],
+  'cc-eucc-certification': [
+    'Why does "EAL4+" mean nothing without its augmentations?',
+    'How does EUCC relate to Common Criteria and eIDAS?',
+    'Which Protection Profile applies to a qualified signature HSM?',
   ],
   'stateful-signatures': [
     'Compare LMS and XMSS stateful signature schemes',

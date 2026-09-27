@@ -40,7 +40,9 @@
  *       boundary ("non-FIPS operating mode", "non-Approved mode"). The one
  *       false positive of 87 when the column was populated.
  *
- * Severity: MC-1, MC-4 and MC-5 ERROR (identity / controlled vocabulary).
+ * MC-7  No cell holds its own column name (36 pqc_support cells in 4.124.1).
+ *
+ * Severity: MC-1, MC-4, MC-5 and MC-7 ERROR (identity / controlled vocabulary).
  * MC-2, MC-3 and MC-6 WARNING: legacy rows and prose heuristics are reported,
  * and the row-level fix goes through review.
  */
@@ -307,6 +309,33 @@ export function checkApprovedBoundaryClaims(rows: CsvRow[], file: string): Findi
   return findings
 }
 
+/**
+ * MC-7 — no cell holds its own column name.
+ *
+ * Release 4.124.1 (2026-09-26) shipped 36 active rows whose pqc_support read
+ * literally "pqc_support": the R3-16 review parser took the first backticked
+ * token of "Corrected `pqc_support`: `Yes (…)`" — the column name — instead of
+ * the value after the colon. Every other check passed, because "pqc_support"
+ * is a non-empty string. A header value in a data cell is never data.
+ */
+export function checkColumnNameCells(rows: CsvRow[], file: string): Finding[] {
+  const findings: Finding[] = []
+  rows.forEach((row, i) => {
+    for (const [col, value] of Object.entries(row)) {
+      if (col && (value || '').trim() === col) {
+        findings.push({
+          csv: file,
+          row: i + 2,
+          field: col,
+          value,
+          message: `${row.product_id}: ${col} holds its own column name — a writer put the header where the value belongs`,
+        })
+      }
+    }
+  })
+  return findings
+}
+
 /** The generation before the latest pqc_product_catalog file, by date then _rN. */
 function previousCatalog(): CsvRow[] {
   const prefix = 'pqc_product_catalog_'
@@ -326,6 +355,44 @@ function previousCatalog(): CsvRow[] {
     .sort((a, b) => a.key.localeCompare(b.key))
   const prev = gens.at(-2)
   return prev ? readCSV(path.join(dir, prev.f)) : []
+}
+
+/**
+ * MC-8 — a product name should not be the title of a web page (R3-9/R3-11).
+ * M5 asked "is this row a duplicate?", never "is this row a product?", so a
+ * uniquely wrong row — one scraped page title, no twin — passed. Warning, not
+ * error: some real products have awkward names, and an error would need an
+ * allowlist of its own. The patterns found all 6 cases in _r23 and 0 false
+ * positives in _r5; tune them as false positives appear.
+ */
+const PAGE_TITLE_PATTERNS: [RegExp, string][] = [
+  [/^(What is|How to|Why)\b/, 'article phrasing'],
+  [/ - And /, 'article phrasing'],
+  [/^Dashboard\b/, 'page section'],
+  [/:\s*(Intro|Introduction|Overview|Getting Started)\b/, 'page section'],
+  [/Info ?Hub/, 'hub/portal page'],
+  [/Roadmap$/, 'roadmap page'],
+  [/ & .* - /, 'mangled dual name'],
+  [/\b(Blog|Press Release|White ?[Pp]aper)\b/, 'publication word'],
+]
+
+export function checkNameShape(rows: CsvRow[], file: string): Finding[] {
+  const findings: Finding[] = []
+  rows.forEach((row, i) => {
+    if (!isActive(row)) return
+    const name = (row.software_name || '').trim()
+    const hit = PAGE_TITLE_PATTERNS.find(([re]) => re.test(name))
+    if (hit) {
+      findings.push({
+        csv: file,
+        row: i + 2,
+        field: 'software_name',
+        value: name,
+        message: `${row.product_id}: software_name looks like a page title (${hit[1]}) — is this row a product?`,
+      })
+    }
+  })
+  return findings
 }
 
 export function runMigrateCatalogIntegrity(
@@ -374,6 +441,20 @@ export function runMigrateCatalogIntegrity(
       'WARNING',
       file,
       checkApprovedBoundaryClaims(rows, file)
+    ),
+    result(
+      'MC-7',
+      'No migrate catalogue cell holds its own column name',
+      'ERROR',
+      file,
+      checkColumnNameCells(rows, file)
+    ),
+    result(
+      'MC-8',
+      'An active migrate software_name is a product name, not a scraped page title',
+      'WARNING',
+      file,
+      checkNameShape(rows, file)
     ),
   ]
 }

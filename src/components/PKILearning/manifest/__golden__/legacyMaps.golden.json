@@ -18,6 +18,16 @@
       "difficulty": "intermediate",
       "frameworkPhase": "p5"
     },
+    "acvp-lab-workflow": {
+      "id": "acvp-lab-workflow",
+      "lm_id": "LM-066",
+      "title": "ACVP Lab Workflow: From Vector Set to Evidence",
+      "description": "How algorithm validation testing actually runs: CAVP versus CMVP, capability registration and vector sets, the prompt → response → disposition → validation lifecycle, ACVP test types, deterministic versus randomized algorithms, the limits of a PKCS#11 test adapter, negative testing, and how to state a result at exactly the evidence level it reached. Draft — awaiting validation-lab practitioner review.",
+      "duration": "90 min",
+      "difficulty": "advanced",
+      "workInProgress": true,
+      "frameworkPhase": "p6"
+    },
     "aerospace-pqc": {
       "id": "aerospace-pqc",
       "lm_id": "LM-040",
@@ -53,6 +63,15 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p2"
+    },
+    "cc-eucc-certification": {
+      "id": "cc-eucc-certification",
+      "lm_id": "LM-068",
+      "title": "Common Criteria, EUCC & eIDAS Certification",
+      "description": "Common Criteria and the CC:2022 transition, EUCC as the EU scheme, eIDAS qualified devices and the Protection Profiles that connect them: what each claim proves and what adding PQC means for a certified product.",
+      "duration": "60 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p7"
     },
     "code-signing": {
       "id": "code-signing",
@@ -111,9 +130,9 @@
     "crypto-product-certification": {
       "id": "crypto-product-certification",
       "lm_id": "LM-065",
-      "title": "Cryptographic Product Certification",
-      "description": "FIPS 140-3, Common Criteria, EUCC and PCI: what each certificate proves, how to read one, and how to add PQC without losing certification.",
-      "duration": "120 min",
+      "title": "Cryptographic Product Certification: Fundamentals",
+      "description": "What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3 & PCI) and LM-068 (Common Criteria, EUCC & eIDAS).",
+      "duration": "60 min",
       "difficulty": "advanced",
       "frameworkPhase": "p7"
     },
@@ -225,6 +244,15 @@
       "difficulty": "beginner",
       "frameworkPhase": "p0"
     },
+    "fips-pci-certification": {
+      "id": "fips-pci-certification",
+      "lm_id": "LM-067",
+      "title": "FIPS 140-3 & PCI Certification",
+      "description": "FIPS 140-3 and the CMVP, and PCI PTS HSM with the payment operating stack (PIN, P2PE, KMO): what each certificate proves, how to read one, and what adding PQC means for each.",
+      "duration": "60 min",
+      "difficulty": "advanced",
+      "frameworkPhase": "p7"
+    },
     "5g-security": {
       "id": "5g-security",
       "lm_id": "LM-046",
@@ -237,7 +265,7 @@
     },
     "government-defense-pqc": {
       "id": "government-defense-pqc",
-      "lm_id": "LM-062",
+      "lm_id": "LM-069",
       "title": "Government & Defense PQC",
       "description": "The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.",
       "duration": "60 min",
@@ -559,7 +587,7 @@
     },
     "trust-services-pqc": {
       "id": "trust-services-pqc",
-      "lm_id": "LM-063",
+      "lm_id": "LM-070",
       "title": "Trust Services & Long-Term Signatures",
       "description": "Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.",
       "duration": "60 min",
@@ -601,32 +629,24 @@
       "duration": "60 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p6"
-    },
-    "acvp-lab-workflow": {
-      "id": "acvp-lab-workflow",
-      "lm_id": "LM-066",
-      "title": "ACVP Lab Workflow: From Vector Set to Evidence",
-      "description": "How algorithm validation testing actually runs: CAVP versus CMVP, capability registration and vector sets, the prompt → response → disposition → validation lifecycle, ACVP test types, deterministic versus randomized algorithms, the limits of a PKCS#11 test adapter, negative testing, and how to state a result at exactly the evidence level it reached. Draft — awaiting validation-lab practitioner review.",
-      "duration": "90 min",
-      "difficulty": "advanced",
-      "workInProgress": true,
-      "frameworkPhase": "p6"
     }
   },
   "MODULE_STEP_COUNTS": {
     "ai-security-pqc": 7,
     "api-security-jwt": 6,
+    "acvp-lab-workflow": 3,
     "aerospace-pqc": 6,
     "arch-quantum-impact": 5,
     "automotive-pqc": 6,
     "cbom": 4,
+    "cc-eucc-certification": 2,
     "code-signing": 5,
     "compliance-strategy": 4,
     "confidential-computing": 5,
     "crypto-agility": 4,
     "crypto-dev-apis": 8,
     "crypto-mgmt-modernization": 9,
-    "crypto-product-certification": 9,
+    "crypto-product-certification": 5,
     "crypto-registry": 2,
     "dnssec-pqc": 3,
     "data-asset-sensitivity": 5,
@@ -639,6 +659,7 @@
     "energy-utilities-pqc": 6,
     "entropy-randomness": 6,
     "exec-quantum-impact": 4,
+    "fips-pci-certification": 2,
     "5g-security": 3,
     "government-defense-pqc": 3,
     "healthcare-pqc": 5,
@@ -681,8 +702,7 @@
     "vendor-risk": 4,
     "verification-closure": 3,
     "web-gateway-pqc": 5,
-    "assess": 1,
-    "acvp-lab-workflow": 3
+    "assess": 1
   },
   "LEARN_SECTIONS": {
     "ai-security-pqc": [
@@ -727,6 +747,48 @@
       {
         "id": "oauth",
         "label": "OAuth 2.0 PQC Migration"
+      }
+    ],
+    "acvp-lab-workflow": [
+      {
+        "id": "algorithm-vs-module",
+        "label": "Algorithm vs Module Validation"
+      },
+      {
+        "id": "capability-registration",
+        "label": "Capability Registration & Vector Sets"
+      },
+      {
+        "id": "prompt-response-lifecycle",
+        "label": "Prompt → Response → Validation"
+      },
+      {
+        "id": "test-types",
+        "label": "AFT, VAL, MCT & Test Types"
+      },
+      {
+        "id": "deterministic-randomized",
+        "label": "Deterministic vs Randomized"
+      },
+      {
+        "id": "pkcs11-adapter-boundaries",
+        "label": "PKCS#11 Adapter Boundaries"
+      },
+      {
+        "id": "negative-testing",
+        "label": "Negative & Failure Testing"
+      },
+      {
+        "id": "evidence-provenance",
+        "label": "Evidence Provenance"
+      },
+      {
+        "id": "cross-implementation-limits",
+        "label": "Cross-Implementation Limits"
+      },
+      {
+        "id": "contributing-tests",
+        "label": "Contributing a Source-Backed Test"
       }
     ],
     "aerospace-pqc": [
@@ -835,6 +897,46 @@
       {
         "id": "cbom-verify",
         "label": "Machine-Verifiable CBOM"
+      }
+    ],
+    "cc-eucc-certification": [
+      {
+        "id": "cc-model",
+        "label": "The Common Criteria model"
+      },
+      {
+        "id": "cc-eal-decoding",
+        "label": "EALs and \"EAL4+\""
+      },
+      {
+        "id": "cc-lifecycle",
+        "label": "Certification lifecycle and CC:2022 transition"
+      },
+      {
+        "id": "cc-continuity",
+        "label": "Assurance continuity (CCDB-014)",
+        "optional": true
+      },
+      {
+        "id": "eucc-scheme",
+        "label": "EUCC is a scheme, not a PP"
+      },
+      {
+        "id": "eidas-chain",
+        "label": "From eIDAS to a certified device"
+      },
+      {
+        "id": "pp-en419221-5",
+        "label": "PP case: EN 419221-5 HSM"
+      },
+      {
+        "id": "pp-security-ic",
+        "label": "PP case: Security IC Platform",
+        "optional": true
+      },
+      {
+        "id": "eucc-pqc-today",
+        "label": "PQC under EUCC today (ACM v2)"
       }
     ],
     "code-signing": [
@@ -985,104 +1087,6 @@
       {
         "id": "scope-before-level",
         "label": "Scope before level"
-      },
-      {
-        "id": "fips-what-it-is",
-        "label": "FIPS 140-3 and the CMVP"
-      },
-      {
-        "id": "fips-requirement-areas",
-        "label": "The eleven requirement areas"
-      },
-      {
-        "id": "fips-levels",
-        "label": "Security Levels 1–4"
-      },
-      {
-        "id": "fips-lifecycle",
-        "label": "Validation lifecycle and the MIP queue"
-      },
-      {
-        "id": "fips-acvp-bridge",
-        "label": "Algorithm validation is not the certificate"
-      },
-      {
-        "id": "fips-landscape",
-        "label": "Today’s landscape and the 2026 horizon"
-      },
-      {
-        "id": "fips-route-table",
-        "label": "CMVP submission routes (Manual v2.7)",
-        "optional": true
-      },
-      {
-        "id": "cc-model",
-        "label": "The Common Criteria model"
-      },
-      {
-        "id": "cc-eal-decoding",
-        "label": "EALs and \"EAL4+\""
-      },
-      {
-        "id": "cc-lifecycle",
-        "label": "Certification lifecycle and CC:2022 transition"
-      },
-      {
-        "id": "cc-continuity",
-        "label": "Assurance continuity (CCDB-014)",
-        "optional": true
-      },
-      {
-        "id": "eucc-scheme",
-        "label": "EUCC is a scheme, not a PP"
-      },
-      {
-        "id": "eidas-chain",
-        "label": "From eIDAS to a certified device"
-      },
-      {
-        "id": "pp-en419221-5",
-        "label": "PP case: EN 419221-5 HSM"
-      },
-      {
-        "id": "pp-security-ic",
-        "label": "PP case: Security IC Platform",
-        "optional": true
-      },
-      {
-        "id": "eucc-pqc-today",
-        "label": "PQC under EUCC today (ACM v2)"
-      },
-      {
-        "id": "pci-pts-approval",
-        "label": "PTS HSM device approval"
-      },
-      {
-        "id": "pci-v5-changes",
-        "label": "What PTS HSM v5.0 changed"
-      },
-      {
-        "id": "pci-pqc-truth",
-        "label": "PQC and PCI: what is and isn’t required"
-      },
-      {
-        "id": "pci-operating-stack",
-        "label": "PIN, P2PE, KMO and key-injection: the boundary"
-      },
-      {
-        "id": "pci-pin-security",
-        "label": "PCI PIN Security v3.1",
-        "optional": true
-      },
-      {
-        "id": "pci-p2pe-kif",
-        "label": "P2PE and key-injection facilities",
-        "optional": true
-      },
-      {
-        "id": "pci-kmo",
-        "label": "PCI KMO v1.0",
-        "optional": true
       },
       {
         "id": "pqc-impact",
@@ -1373,6 +1377,68 @@
       {
         "id": "how-to-act",
         "label": "How to Act"
+      }
+    ],
+    "fips-pci-certification": [
+      {
+        "id": "fips-what-it-is",
+        "label": "FIPS 140-3 and the CMVP"
+      },
+      {
+        "id": "fips-requirement-areas",
+        "label": "The eleven requirement areas"
+      },
+      {
+        "id": "fips-levels",
+        "label": "Security Levels 1–4"
+      },
+      {
+        "id": "fips-lifecycle",
+        "label": "Validation lifecycle and the MIP queue"
+      },
+      {
+        "id": "fips-acvp-bridge",
+        "label": "Algorithm validation is not the certificate"
+      },
+      {
+        "id": "fips-landscape",
+        "label": "Today’s landscape and the 2026 horizon"
+      },
+      {
+        "id": "fips-route-table",
+        "label": "CMVP submission routes (Manual v2.7)",
+        "optional": true
+      },
+      {
+        "id": "pci-pts-approval",
+        "label": "PTS HSM device approval"
+      },
+      {
+        "id": "pci-v5-changes",
+        "label": "What PTS HSM v5.0 changed"
+      },
+      {
+        "id": "pci-pqc-truth",
+        "label": "PQC and PCI: what is and isn’t required"
+      },
+      {
+        "id": "pci-operating-stack",
+        "label": "PIN, P2PE, KMO and key-injection: the boundary"
+      },
+      {
+        "id": "pci-pin-security",
+        "label": "PCI PIN Security v3.1",
+        "optional": true
+      },
+      {
+        "id": "pci-p2pe-kif",
+        "label": "P2PE and key-injection facilities",
+        "optional": true
+      },
+      {
+        "id": "pci-kmo",
+        "label": "PCI KMO v1.0",
+        "optional": true
       }
     ],
     "5g-security": [
@@ -2168,48 +2234,6 @@
         "id": "vendor-paths",
         "label": "Vendor Migration Paths"
       }
-    ],
-    "acvp-lab-workflow": [
-      {
-        "id": "algorithm-vs-module",
-        "label": "Algorithm vs Module Validation"
-      },
-      {
-        "id": "capability-registration",
-        "label": "Capability Registration & Vector Sets"
-      },
-      {
-        "id": "prompt-response-lifecycle",
-        "label": "Prompt → Response → Validation"
-      },
-      {
-        "id": "test-types",
-        "label": "AFT, VAL, MCT & Test Types"
-      },
-      {
-        "id": "deterministic-randomized",
-        "label": "Deterministic vs Randomized"
-      },
-      {
-        "id": "pkcs11-adapter-boundaries",
-        "label": "PKCS#11 Adapter Boundaries"
-      },
-      {
-        "id": "negative-testing",
-        "label": "Negative & Failure Testing"
-      },
-      {
-        "id": "evidence-provenance",
-        "label": "Evidence Provenance"
-      },
-      {
-        "id": "cross-implementation-limits",
-        "label": "Cross-Implementation Limits"
-      },
-      {
-        "id": "contributing-tests",
-        "label": "Contributing a Source-Backed Test"
-      }
     ]
   },
   "WORKSHOP_STEPS": {
@@ -2267,6 +2291,20 @@
       {
         "id": "matrix-audit",
         "label": "Matrix Audit"
+      }
+    ],
+    "acvp-lab-workflow": [
+      {
+        "id": "evidence-classifier",
+        "label": "Evidence Classifier"
+      },
+      {
+        "id": "vector-set-anatomy",
+        "label": "Vector Set Anatomy"
+      },
+      {
+        "id": "response-artifact-lab",
+        "label": "Response Artifact Lab"
       }
     ],
     "aerospace-pqc": [
@@ -2359,6 +2397,18 @@
       {
         "id": "key-correlator",
         "label": "Key Correlator"
+      }
+    ],
+    "cc-eucc-certification": [
+      {
+        "id": "cc-claim-decoder",
+        "label": "Decode the certificate claim",
+        "paths": ["cc"]
+      },
+      {
+        "id": "eidas-trace",
+        "label": "Regulation-to-certificate trace",
+        "paths": ["eucc-eidas"]
       }
     ],
     "code-signing": [
@@ -2521,26 +2571,6 @@
       {
         "id": "boundary-drawer",
         "label": "Draw the certification boundary"
-      },
-      {
-        "id": "fips-level-planner",
-        "label": "Level and boundary planner",
-        "paths": ["fips"]
-      },
-      {
-        "id": "cc-claim-decoder",
-        "label": "Decode the certificate claim",
-        "paths": ["cc"]
-      },
-      {
-        "id": "eidas-trace",
-        "label": "Regulation-to-certificate trace",
-        "paths": ["eucc-eidas"]
-      },
-      {
-        "id": "pci-evidence-review",
-        "label": "Payment HSM evidence review",
-        "paths": ["pci"]
       },
       {
         "id": "capstone",
@@ -2811,6 +2841,18 @@
       {
         "id": "self-assessment",
         "label": "Org Risk Self-Assessment"
+      }
+    ],
+    "fips-pci-certification": [
+      {
+        "id": "fips-level-planner",
+        "label": "Level and boundary planner",
+        "paths": ["fips"]
+      },
+      {
+        "id": "pci-evidence-review",
+        "label": "Payment HSM evidence review",
+        "paths": ["pci"]
       }
     ],
     "5g-security": [
@@ -3642,20 +3684,6 @@
         "id": "vendor-readiness",
         "label": "Vendor Readiness Matrix"
       }
-    ],
-    "acvp-lab-workflow": [
-      {
-        "id": "evidence-classifier",
-        "label": "Evidence Classifier"
-      },
-      {
-        "id": "vector-set-anatomy",
-        "label": "Vector Set Anatomy"
-      },
-      {
-        "id": "response-artifact-lab",
-        "label": "Response Artifact Lab"
-      }
     ]
   },
   "MODULE_TRACKS": [
@@ -3974,9 +4002,27 @@
         {
           "id": "crypto-product-certification",
           "lm_id": "LM-065",
-          "title": "Cryptographic Product Certification",
-          "description": "FIPS 140-3, Common Criteria, EUCC and PCI: what each certificate proves, how to read one, and how to add PQC without losing certification.",
-          "duration": "120 min",
+          "title": "Cryptographic Product Certification: Fundamentals",
+          "description": "What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3 & PCI) and LM-068 (Common Criteria, EUCC & eIDAS).",
+          "duration": "60 min",
+          "difficulty": "advanced",
+          "frameworkPhase": "p7"
+        },
+        {
+          "id": "fips-pci-certification",
+          "lm_id": "LM-067",
+          "title": "FIPS 140-3 & PCI Certification",
+          "description": "FIPS 140-3 and the CMVP, and PCI PTS HSM with the payment operating stack (PIN, P2PE, KMO): what each certificate proves, how to read one, and what adding PQC means for each.",
+          "duration": "60 min",
+          "difficulty": "advanced",
+          "frameworkPhase": "p7"
+        },
+        {
+          "id": "cc-eucc-certification",
+          "lm_id": "LM-068",
+          "title": "Common Criteria, EUCC & eIDAS Certification",
+          "description": "Common Criteria and the CC:2022 transition, EUCC as the EU scheme, eIDAS qualified devices and the Protection Profiles that connect them: what each claim proves and what adding PQC means for a certified product.",
+          "duration": "60 min",
           "difficulty": "advanced",
           "frameworkPhase": "p7"
         }
@@ -4291,7 +4337,7 @@
         },
         {
           "id": "government-defense-pqc",
-          "lm_id": "LM-062",
+          "lm_id": "LM-069",
           "title": "Government & Defense PQC",
           "description": "The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.",
           "duration": "60 min",
@@ -4300,7 +4346,7 @@
         },
         {
           "id": "trust-services-pqc",
-          "lm_id": "LM-063",
+          "lm_id": "LM-070",
           "title": "Trust Services & Long-Term Signatures",
           "description": "Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.",
           "duration": "60 min",
@@ -4338,6 +4384,10 @@
       "algorithms": ["ML-DSA", "SLH-DSA"],
       "standards": ["JOSE", "RFC 9421"]
     },
+    "acvp-lab-workflow": {
+      "algorithms": ["ML-KEM", "ML-DSA", "SLH-DSA"],
+      "standards": ["FIPS 203", "FIPS 204", "FIPS 205", "FIPS 140-3", "PKCS#11"]
+    },
     "aerospace-pqc": {
       "algorithms": ["Falcon", "ML-DSA", "ML-KEM"],
       "standards": ["FIPS 203", "FIPS 204", "FIPS 205"]
@@ -4352,6 +4402,9 @@
     },
     "cbom": {
       "standards": ["CycloneDX / ECMA-424", "SPDX / ISO 5962", "NIST SP 1800-38"]
+    },
+    "cc-eucc-certification": {
+      "algorithms": ["ML-KEM", "ML-DSA"]
     },
     "code-signing": {
       "algorithms": ["ML-DSA", "LMS/XMSS"],
@@ -4432,6 +4485,10 @@
     },
     "exec-quantum-impact": {
       "standards": ["EO 14306", "NSM-10", "NSA CNSA 2.0", "NIST IR 8547"]
+    },
+    "fips-pci-certification": {
+      "algorithms": ["ML-KEM", "ML-DSA"],
+      "standards": ["FIPS 140-3"]
     },
     "5g-security": {
       "algorithms": ["ML-KEM", "ML-DSA"],
@@ -4629,10 +4686,6 @@
     "hybrid-certs": {
       "algorithms": ["ML-DSA", "ECDSA"],
       "standards": ["X.509", "RFC 9794"]
-    },
-    "acvp-lab-workflow": {
-      "algorithms": ["ML-KEM", "ML-DSA", "SLH-DSA"],
-      "standards": ["FIPS 203", "FIPS 204", "FIPS 205", "FIPS 140-3", "PKCS#11"]
     }
   }
 }

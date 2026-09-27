@@ -24,8 +24,8 @@
  * resolve them through getStandard() (throws on an unknown id).
  */
 import type { StepExercise } from '@/data/stepExercises'
-import type { ExerciseItem } from './types'
-import { ANCHOR_SCENARIO } from './anchorScenario'
+import type { ExerciseItem } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
+import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 
 /** Date every version-sensitive PCI claim was verified (contentFreshness.ts). */
 export const PCI_AS_OF = '2026-09-24'
@@ -454,7 +454,7 @@ export const EVIDENCE_DOCS: EvidenceDoc[] = [
     id: 'fips-certificate',
     title: 'FIPS 140-3 certificate (fictional)',
     fields: [
-      ['Certificate', 'FICT-0007 (not a real CMVP number)'],
+      ['Certificate', 'FICT-0008 (not a real CMVP number)'],
       ['Module', 'Orrin N7 Cryptographic Module'],
       ['Firmware', '3.1.0'],
       ['Overall Security Level', '3'],
@@ -855,7 +855,7 @@ export const exercises: ExerciseItem[] = [
 // ── One step question (append the SAME entry to src/data/stepExercises.ts) ──
 
 export const stepExercises: Record<string, StepExercise> = {
-  'crypto-product-certification/pci-evidence-review': {
+  'fips-pci-certification/pci-evidence-review': {
     prompt:
       'A payment HSM’s PTS listing carries the Post Quantum Cryptography (PQC) notation. What does that notation establish?',
     options: [
