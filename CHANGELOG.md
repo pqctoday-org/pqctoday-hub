@@ -42,6 +42,7 @@ Product certifications now show where each product stands on the road to a FIPS 
 
 - **27 product certification verdicts corrected against NIST's own records** [view:/migrate] [persona:grc] [persona:ops] [persona:developer]: products that claimed a post-quantum certification were each checked against NIST's certificate and algorithm-validation listings. Dell BSAFE Crypto-J keeps its certification (FIPS 140-3 #5361). AWS KMS, iOS 26 / macOS 26, Quantum Xchange, CryptoNext and X-CUBE-PQC are at the algorithm-validation stage. s2n-tls, Securosys CloudHSM, Google Cloud KMS and Crypto4A QxHSM / QxEDGE now show that they rely on a validated module inside rather than holding their own certificate. Eleven products with no post-quantum certificate or algorithm validation no longer claim one.
 - **Certificates behind each verdict are now shown** [view:/migrate] [persona:grc] [persona:developer]: 20 certificate links that products' verdicts rely on were missing from their product pages — among them AWS KMS, AWS-LC, BoringSSL, Securosys Primus HSM and Dell BSAFE Crypto-J — and now appear, each backed by the NIST listing.
+
 ## [4.125.0] - 2026-09-27
 
 The certification Learn module is now three shorter modules: a fundamentals module every learner starts with, and two deep dives you take only for the schemes you need.
