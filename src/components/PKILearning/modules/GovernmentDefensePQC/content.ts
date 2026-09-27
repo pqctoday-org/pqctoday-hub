@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'government-defense-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-09-27',
 
   standards: [
     getStandard('NSA CNSA 2.0'),
