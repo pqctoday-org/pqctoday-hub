@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.125.2] - 2026-09-27
+
+France's post-quantum migration phases are now confirmed from ANSSI's own guidance, and the assistant can quote the source text for a few more references.
+
+### Fixed
+
+- **France's Phase 2 and Phase 3 are confirmed from ANSSI's own text** [view:/timeline] [persona:grc] [persona:executive]: the two later phases of ANSSI's post-quantum transition plan were re-checked against ANSSI's published guidance and are now marked as validated. ANSSI gives no end year for either phase, so the timeline draws them as open-ended rather than inventing a finish date.
+- **The PCI exercise uses distinct example certificate numbers** [view:/learn/fips-pci-certification] [persona:grc] [persona:ops]: the example CMVP certificate and the example PCI PTS approval in the FIPS 140-3 and PCI deep dive had the same made-up number, which could read as one document. They now have separate numbers, both still clearly labelled as fictional.
+- **Two learning modules no longer share an ID with another module** [view:/learn] [persona:curious]: Government and Defense PQC and Trust Services PQC each carried a catalogue number already used by a different module, which could mix up their progress tracking. Each now has its own number, and a check stops this from happening again.
+
+### Data
+
+- **The assistant can quote the source for more references** [view:/] [persona:researcher] [persona:grc]: the assistant's search index was rebuilt with an updated set of source passages, so 1,156 reference entries now carry short quotes from the original document (up from 1,150).
+
 ## [4.125.1] - 2026-09-27
 
 Product certifications now show where each product stands on the road to a FIPS 140-3 certificate — algorithms validated, in progress at NIST, or certified — and 27 product verdicts were re-checked against the official NIST records.
