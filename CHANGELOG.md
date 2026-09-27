@@ -29,6 +29,16 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.124.3] - 2026-09-27
+
+Timeline dates checked against their sources: phases whose source gives no end date are now shown as open-ended instead of being hidden, and several milestones move to the years their sources actually state.
+
+### Fixed
+
+- **Timeline phases with no stated end date are shown, not hidden.** [view:/timeline] [persona:grc] [persona:executive] Three phases have a start but no end in any source: France ANSSI's hybridization and standalone-PQC phases (the agency gives only "at least 2030" / "not earlier than 2030") and Singapore MAS's financial-sector planning. The chart used to drop them and log an error; they now run to the chart's edge with a fading end, labelled "no end date stated by source". Tables, cards and exports say "onward" instead of inventing an end year.
+- **Canada, France and Singapore timeline years corrected from their sources.** [view:/timeline] [persona:grc] [persona:executive] Canada's two migration phases, which no source describes separately, are now the single Transition Phase (2028–2035) that the Government of Canada's policy notice defines; France's first phase ends around 2025, as ANSSI's own roadmap shows; Singapore's MAS quantum advisory is dated to when it was issued (2024), not to a 2028 deadline it never set; and Japan's CRYPTREC guideline carries its published title.
+- **Three standards cross-references pointed at the wrong document.** [view:/library] [persona:researcher] [persona:grc] Two links to ISO/IEC 19790 were labelled as a NIST practice guide, and one NCCoE link pointed at ISO 19790 instead of the interoperability-and-performance volume (SP 1800-38C) its own quote describes. All three now match their evidence.
+
 ## [4.124.2] - 2026-09-27
 
 ### Fixed
