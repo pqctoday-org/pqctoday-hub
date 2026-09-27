@@ -2,7 +2,7 @@
   "generated": "2026-09-25",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "timeline",
-  "csv": "timeline_09252026_r9.csv",
+  "csv": "timeline_09262026.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -111,7 +111,13 @@
       "sizeBytes": 36522,
       "contentType": "text/html",
       "sha256": "028a71c8dafb7a1ec0d431ebd10256810e1c0f27a72873c53df1c0115d47582a",
-      "verifiedAt": "2026-09-25"
+      "verifiedAt": "2026-09-25",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "stampedAt": "2026-09-26T22:00:32.480915+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH",
+      "admittedAt": "2026-09-25"
     },
     {
       "refId": "canada-cccs-departmental-planning-phase",
@@ -139,31 +145,25 @@
     },
     {
       "refId": "canada-cccs-high-priority-migration-phase",
-      "label": "High Priority Migration Phase",
-      "url": "https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001",
+      "label": "Transition Phase",
+      "url": "https://www.canada.ca/en/government/system/digital-government/policies-standards/spin/migrating-government-canada-post-quantum-cryptography.html",
       "status": "downloaded",
-      "file": "timeline/Canada_CCCS_CCCS_PQC_Migration_Roadmap_Published.html",
-      "filename": "Canada_CCCS_CCCS_PQC_Migration_Roadmap_Published.html",
-      "sizeBytes": 145788,
+      "file": "timeline/Canada_TBS_SPIN_Notice_Published.html",
+      "filename": "Canada_TBS_SPIN_Notice_Published.html",
+      "sizeBytes": 36522,
       "contentType": "text/html",
-      "sha256": "900a6dc1a3af6df3c7504ecdfd5357a9ebf11a62f858866e04c70c4ecb1cafb9",
-      "verifiedAt": "2026-09-25"
+      "sha256": "028a71c8dafb7a1ec0d431ebd10256810e1c0f27a72873c53df1c0115d47582a",
+      "verifiedAt": "2026-09-26",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "stampedAt": "2026-09-26T22:00:32.480915+00:00",
+      "admittedBy": "admit.py --stamp-existing",
+      "identity": "MATCH",
+      "admittedAt": "2026-09-26"
     },
     {
       "refId": "canada-cccs-high-priority-systems-complete",
       "label": "High Priority Systems Complete",
-      "url": "https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001",
-      "status": "downloaded",
-      "file": "timeline/Canada_CCCS_CCCS_PQC_Migration_Roadmap_Published.html",
-      "filename": "Canada_CCCS_CCCS_PQC_Migration_Roadmap_Published.html",
-      "sizeBytes": 145788,
-      "contentType": "text/html",
-      "sha256": "900a6dc1a3af6df3c7504ecdfd5357a9ebf11a62f858866e04c70c4ecb1cafb9",
-      "verifiedAt": "2026-09-25"
-    },
-    {
-      "refId": "canada-cccs-remaining-systems-migration",
-      "label": "Remaining Systems Migration",
       "url": "https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001",
       "status": "downloaded",
       "file": "timeline/Canada_CCCS_CCCS_PQC_Migration_Roadmap_Published.html",
@@ -2538,7 +2538,20 @@
       "verifiedAt": "2026-09-25"
     }
   ],
-  "archivedEntries": [],
+  "archivedEntries": [
+    {
+      "refId": "canada-cccs-remaining-systems-migration",
+      "label": "Remaining Systems Migration",
+      "url": "https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001",
+      "status": "downloaded",
+      "file": "timeline/Canada_CCCS_CCCS_PQC_Migration_Roadmap_Published.html",
+      "filename": "Canada_CCCS_CCCS_PQC_Migration_Roadmap_Published.html",
+      "sizeBytes": 145788,
+      "contentType": "text/html",
+      "sha256": "900a6dc1a3af6df3c7504ecdfd5357a9ebf11a62f858866e04c70c4ecb1cafb9",
+      "verifiedAt": "2026-09-25"
+    }
+  ],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
   "rebuiltAt": "2026-09-25T12:23:08.860149+00:00"
 }

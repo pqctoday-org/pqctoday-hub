@@ -20,6 +20,7 @@ import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
+import { periodLabel } from '@/utils/timelinePeriod'
 
 interface TimelineDocumentCardProps {
   row: TimelineDocumentRow
@@ -43,8 +44,9 @@ export const TimelineDocumentCard = ({
   const enrichment = getTimelineEnrichment(row.eventId, row.countryName, row.org, row.title)
   const isEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
 
-  const period =
-    row.startYear < 2025
+  const period = row.openEnded
+    ? `${row.startYear < 2025 ? '< 2024' : row.startYear} onward`
+    : row.startYear < 2025
       ? `< 2024${row.startYear !== row.endYear ? ` – ${row.endYear}` : ''}`
       : row.startYear === row.endYear
         ? String(row.startYear)
@@ -195,7 +197,7 @@ export const TimelineDocumentCard = ({
                 `**Organization:** ${row.org}`,
                 `**Phase:** ${row.phase}`,
                 `**Title:** ${row.title}`,
-                `**Period:** ${row.startYear}–${row.endYear}`,
+                `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
               ].join('\n'),
               pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
             })}
@@ -213,7 +215,7 @@ export const TimelineDocumentCard = ({
                 `**Organization:** ${row.org}`,
                 `**Phase:** ${row.phase}`,
                 `**Title:** ${row.title}`,
-                `**Period:** ${row.startYear}–${row.endYear}`,
+                `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
               ].join('\n'),
               pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
             })}

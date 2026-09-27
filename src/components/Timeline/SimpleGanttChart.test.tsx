@@ -144,6 +144,35 @@ describe('SimpleGanttChart', () => {
     global.innerHeight = 768
   })
 
+  it('draws an open-ended phase to the chart edge and says no end is stated (D22)', () => {
+    const openData: GanttCountryData[] = [
+      {
+        ...mockData[1],
+        phases: [
+          {
+            phase: 'Testing',
+            type: 'Phase',
+            title: 'Open Phase',
+            startYear: 2026,
+            endYear: 2026,
+            openEnded: true,
+            description: 'No end stated',
+            events: [],
+          },
+        ],
+      },
+    ]
+    const { container } = renderG(
+      <SimpleGanttChart {...defaultProps} data={openData} countryItems={mockCountryItems} />
+    )
+    const cells = container.querySelectorAll('td[data-open-ended="true"]')
+    // endYear equals startYear, yet the bar spans past it to the chart's edge
+    expect(cells.length).toBeGreaterThan(1)
+    expect(
+      screen.getAllByRole('button', { name: /Open Phase \(no end date stated by source\)/ }).length
+    ).toBeGreaterThan(0)
+  })
+
   it('renders the table structure', () => {
     renderG(<SimpleGanttChart {...defaultProps} />)
     const table = screen.getByRole('table')

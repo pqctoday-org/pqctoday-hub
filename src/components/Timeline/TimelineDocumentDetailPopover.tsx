@@ -22,6 +22,7 @@ import { phaseColors } from '../../data/timelineData'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
+import { periodLabel } from '@/utils/timelinePeriod'
 
 export interface TimelineDocumentRow {
   countryName: string
@@ -33,6 +34,8 @@ export interface TimelineDocumentRow {
   eventId?: string
   startYear: number
   endYear: number
+  /** Source states no end year (see TimelineEvent.openEnded). */
+  openEnded?: boolean
   description: string
   sourceUrl?: string
   sourceDate?: string
@@ -91,8 +94,9 @@ export const TimelineDocumentDetailPopover = ({
     glow: 'hsl(var(--ring))',
   }
 
-  const period =
-    row.startYear < 2025
+  const period = row.openEnded
+    ? `${row.startYear < 2025 ? '< 2024' : row.startYear} onward`
+    : row.startYear < 2025
       ? `< 2024${row.startYear !== row.endYear ? ` – ${row.endYear}` : ''}`
       : row.startYear === row.endYear
         ? String(row.startYear)
@@ -161,7 +165,7 @@ export const TimelineDocumentDetailPopover = ({
                       `**Organization:** ${row.org}`,
                       `**Phase:** ${row.phase}`,
                       `**Title:** ${row.title}`,
-                      `**Period:** ${row.startYear}–${row.endYear}`,
+                      `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
                     ].join('\n'),
                     pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
                   })}
@@ -179,7 +183,7 @@ export const TimelineDocumentDetailPopover = ({
                       `**Organization:** ${row.org}`,
                       `**Phase:** ${row.phase}`,
                       `**Title:** ${row.title}`,
-                      `**Period:** ${row.startYear}–${row.endYear}`,
+                      `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
                     ].join('\n'),
                     pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
                   })}
