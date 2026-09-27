@@ -250,6 +250,14 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           vectors, standards tests, conformance cases and probes, and its results are never an ACVTS
           verdict or a CAVP/CMVP certificate (see the notice at the top of this page).
         </p>
+        <p>
+          The module side (security levels, the Modules In Process queue, and the CMVP routes for
+          adding ML-KEM or ML-DSA to an already-validated module) is taught in{' '}
+          <Link to="/learn/fips-140-3-certification" className="text-primary hover:underline">
+            FIPS 140-3 Certification
+          </Link>
+          .
+        </p>
       </Section>
 
       {/* 2 ─────────────────────────────────────────────────────────────── */}

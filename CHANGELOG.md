@@ -38,6 +38,8 @@ FIPS 140-3 and PCI now each have their own certification module.
 - **FIPS 140-3 and PCI are now two separate modules** [view:/learn/fips-140-3-certification] [view:/learn/pci-certification] [persona:grc] [persona:ops]: the FIPS 140-3 & PCI deep dive is split in two. _FIPS 140-3 Certification_ covers the CMVP, security levels, the validation queue and what adding PQC means for a validated module. _PCI Certification_ covers PTS HSM device approval, what PTS HSM v5.0 changed and the payment operating stack (PIN, P2PE, KMO). Each has its own workshop, exercises, quiz questions, references and poster. The certification fundamentals module now points to three deep dives.
 - **Old links and saved progress still work** [view:/learn] [persona:curious]: the old address opens the FIPS 140-3 module, or the PCI module if the link asked for the PCI path. Progress you saved in the combined module moves to the FIPS 140-3 module.
 
+- **The FIPS 140-3 and ACVP Lab Workflow modules now link to each other** [view:/learn/fips-140-3-certification] [view:/learn/acvp-lab-workflow] [persona:grc] [persona:developer]: the FIPS module's "algorithm validation is not the certificate" section points to the ACVP lab module for how algorithm tests are actually run, and the ACVP module points back for the module certificate side.
+
 ### Fixed
 
 - **The FIPS module now says plainly that P2PE v3.1 is superseded** [view:/learn/fips-140-3-certification] [persona:grc]: the note on which PCI standards accept FIPS Level 3 HSMs now states that P2PE v3.2 replaced v3.1 in June 2025.

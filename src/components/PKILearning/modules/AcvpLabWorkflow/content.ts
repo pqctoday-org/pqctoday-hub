@@ -20,7 +20,7 @@ export const content: ModuleContent = {
   // No lastReviewed: this is a DRAFT awaiting review by a validation-lab
   // practitioner (plan WS-I). record_module_review.py sets it when that review
   // is recorded — never by hand.
-  lastEdited: '2026-09-25',
+  lastEdited: '2026-09-27',
 
   standards: [
     getStandard('NIST-ACVP'),

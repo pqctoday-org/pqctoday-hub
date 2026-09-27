@@ -19,7 +19,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'fips-140-3-certification',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-067',
   title: 'FIPS 140-3 Certification',
   description:
