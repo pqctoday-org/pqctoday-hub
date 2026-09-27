@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "publicationId": "92718bbfa3a83965084dfac1210c0adeb2ed1f31fdceda7811fdfb80773d9b81",
-  "generatedAt": "2026-09-25T12:52:56+00:00",
+  "publicationId": "a509a40471e33dac399e4e5a9d3ece11391a2070892883b31304a072e20767eb",
+  "generatedAt": "2026-09-27T22:37:32+00:00",
   "scope": {
     "fips": "FIPS 140-3 only (NIST CMVP)",
     "cavp": "NIST CAVP validations for ML-KEM, ML-DSA, SLH-DSA, LMS",
@@ -12,20 +12,20 @@
     "fips": {
       "label": "NIST CMVP \u2014 FIPS 140-3",
       "sourceUrl": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search/all?searchMode=Advanced&Standard=FIPS+140-3&ValidationStatus=Active",
-      "retrievedAt": "2026-09-25T02:42:00+00:00",
+      "retrievedAt": "2026-09-27T21:24:53+00:00",
       "count": 783
     },
     "cavp": {
       "label": "NIST CAVP \u2014 ML-KEM, ML-DSA, SLH-DSA, LMS",
       "sourceUrl": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/validation-search",
-      "retrievedAt": "2026-09-25T03:14:18+00:00",
-      "count": 268
+      "retrievedAt": "2026-09-27T22:37:37+00:00",
+      "count": 309
     },
     "cc": {
       "label": "Common Criteria Portal",
       "sourceUrl": "https://www.commoncriteriaportal.org/products/",
-      "retrievedAt": "2026-09-25T02:44:12+00:00",
-      "count": 833
+      "retrievedAt": "2026-09-27T22:07:20+00:00",
+      "count": 867
     },
     "anssi": {
       "label": "ANSSI (CC and CSPN)",
@@ -41,29 +41,7 @@
     }
   },
   "exclusions": {
-    "byReason": {
-      "fips-140-2-out-of-scope": 562,
-      "not-in-nist-cavp-search": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3090-2026-0000000012-00000": 2,
-      "not-on-enisa-certificate-list": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3090-2025-0000000001-00001": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3110-2026-2500076-01-00000": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3110-2025-2500098-01-00000": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3110-2025-2500051-01-00000": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3110-2025-0002500093-00001": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3110-2025-0002500053-00001": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3110-2025-0002500052-00001": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3095-2025-0000000001-00000": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3087-2026-04-0004": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3096-2026-001-00000": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3089-2026-001-00000": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3087-2026-0010-00000": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3087-2026-0011-00000": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3087-2026-0000000006-00000": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3110-2026-2500078-01": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3095-2026-0000000005-00000": 1,
-      "duplicate-of-enisa-eucc-eucc-eucc-3135-2026-0000000001-00000": 1
-    }
+    "byReason": {}
   },
   "fieldSources": {
     "fips": {
