@@ -237,7 +237,7 @@
     },
     "government-defense-pqc": {
       "id": "government-defense-pqc",
-      "lm_id": "LM-062",
+      "lm_id": "LM-069",
       "title": "Government & Defense PQC",
       "description": "The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.",
       "duration": "60 min",
@@ -559,7 +559,7 @@
     },
     "trust-services-pqc": {
       "id": "trust-services-pqc",
-      "lm_id": "LM-063",
+      "lm_id": "LM-070",
       "title": "Trust Services & Long-Term Signatures",
       "description": "Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.",
       "duration": "60 min",
@@ -4260,7 +4260,7 @@
         },
         {
           "id": "government-defense-pqc",
-          "lm_id": "LM-062",
+          "lm_id": "LM-069",
           "title": "Government & Defense PQC",
           "description": "The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.",
           "duration": "60 min",
@@ -4269,7 +4269,7 @@
         },
         {
           "id": "trust-services-pqc",
-          "lm_id": "LM-063",
+          "lm_id": "LM-070",
           "title": "Trust Services & Long-Term Signatures",
           "description": "Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.",
           "duration": "60 min",

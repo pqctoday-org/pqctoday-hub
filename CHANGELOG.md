@@ -29,6 +29,48 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.126.1] - 2026-09-27
+
+Hundreds of product versions and dates are filled in from their own sources, and a batch of outdated or wrong values is fixed.
+
+### Data
+
+- **Versions and dates researched for 707 products** [view:/migrate] [persona:ops] [persona:architect] [persona:grc]: 129 versions, 163 release dates and 214 document dates are now filled in or corrected. Every new value comes from the vendor's or project's own release notes, repository or registry, with a quote, and every value that needed a judgement call was checked by a second reviewer. Where no public source exists, the field stays empty on purpose.
+- **Outdated versions updated** [view:/migrate] [persona:ops]: 39 products now show their current release, for example strongSwan 6.1.0, NixOS 26.05, HAProxy 3.4.5 and Bitcoin Core 31.1.
+- **Wrong values fixed** [view:/migrate] [persona:ops] [persona:architect]: SonicWall and Sophos no longer show another vendor's version number, wolfTPM shows its real release (4.2.0) rather than a TPM spec number, and HAETAE is no longer listed as ML-DSA (it is its own lattice-based signature scheme).
+- **Renamed products** [view:/migrate] [persona:curious] [persona:ops]: CZERTAINLY is now **OmniTrust ILM**, the ACA-Py entry follows its move to the OpenWallet Foundation, the IOTA entry is now **IOTA Identity** (the part with post-quantum signatures), and the open-source EJBCA entry is now **EJBCA Community Edition**. Old names still find them.
+- **Three entries retired** [view:/migrate] [persona:grc]: a "SOC 2 quantum trust criteria" entry for which no AICPA document exists, an age plugin that does not exist, and an Entrust "Cryptographic Platform" name that no Entrust product uses.
+- **Stronger evidence** [view:/migrate] [persona:grc] [persona:researcher]: Secure-IC Securyzr now cites its NIST algorithm validation (A6046), HAETAE cites its NIST specification, and the ST33KTPM entries cite their NIST module certificate.
+
+## [4.126.0] - 2026-09-27
+
+Fifteen more product claims now say only what their own documents support, and six catalogue entries that were really web-page titles are fixed.
+
+### Data
+
+- **15 product claims corrected after a full read of their documents** [view:/migrate] [persona:architect] [persona:ops] [persona:grc]: Earlier checks read only excerpts of these long documents. On a full read, each document supported less than the catalogue said, so the claim now matches the document. For example, Google Tink now lists ML-DSA only, and SUPERCOP is shown as a benchmark suite, not a PQC product.
+- **Six entries named after a web page, not a product, are fixed** [view:/migrate] [persona:architect] [persona:ops] [persona:curious]: "Dashboard - PQProbe" is now **PQProbe**, and "PQConnect: Intro" is now **PQConnect**. An Alibaba Cloud blog post is now listed as the product it describes, **Alibaba Cloud ESA (Edge Security Acceleration)**, which turns on hybrid ML-KEM key exchange by default. Three entries are retired: a duplicate HAETAE entry (merged into the HAETAE Reference Implementation), Tencent's PQC information portal and the Lean Consensus roadmap page, none of which is a product. Old names still find the renamed products.
+- **Migration phases** [view:/migrate] [persona:ops] [persona:architect]: now set for three STMicroelectronics NESLIB library entries, and one entry's phase uses the standard name.
+- **Evidence records for 10 products** [view:/migrate] [persona:grc] [persona:researcher]: now match the documents actually on file.
+
+### Changed
+
+- **New catalogue check** [persona:developer]: a warning when a product's name looks like a scraped web-page title, so this kind of entry can't slip back in.
+
+## [4.125.2] - 2026-09-27
+
+France's post-quantum migration phases are now confirmed from ANSSI's own guidance, and the assistant can quote the source text for a few more references.
+
+### Fixed
+
+- **France's Phase 2 and Phase 3 are confirmed from ANSSI's own text** [view:/timeline] [persona:grc] [persona:executive]: the two later phases of ANSSI's post-quantum transition plan were re-checked against ANSSI's published guidance and are now marked as validated. ANSSI gives no end year for either phase, so the timeline draws them as open-ended rather than inventing a finish date.
+- **The PCI exercise uses distinct example certificate numbers** [view:/learn/fips-pci-certification] [persona:grc] [persona:ops]: the example CMVP certificate and the example PCI PTS approval in the FIPS 140-3 and PCI deep dive had the same made-up number, which could read as one document. They now have separate numbers, both still clearly labelled as fictional.
+- **Two learning modules no longer share an ID with another module** [view:/learn] [persona:curious]: Government and Defense PQC and Trust Services PQC each carried a catalogue number already used by a different module, which could mix up their progress tracking. Each now has its own number, and a check stops this from happening again.
+
+### Data
+
+- **The assistant can quote the source for more references** [view:/] [persona:researcher] [persona:grc]: the assistant's search index was rebuilt with an updated set of source passages, so 1,156 reference entries now carry short quotes from the original document (up from 1,150).
+
 ## [4.125.1] - 2026-09-27
 
 Product certifications now show where each product stands on the road to a FIPS 140-3 certificate — algorithms validated, in progress at NIST, or certified — and 27 product verdicts were re-checked against the official NIST records.

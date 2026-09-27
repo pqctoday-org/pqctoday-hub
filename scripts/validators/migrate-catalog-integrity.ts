@@ -357,6 +357,44 @@ function previousCatalog(): CsvRow[] {
   return prev ? readCSV(path.join(dir, prev.f)) : []
 }
 
+/**
+ * MC-8 — a product name should not be the title of a web page (R3-9/R3-11).
+ * M5 asked "is this row a duplicate?", never "is this row a product?", so a
+ * uniquely wrong row — one scraped page title, no twin — passed. Warning, not
+ * error: some real products have awkward names, and an error would need an
+ * allowlist of its own. The patterns found all 6 cases in _r23 and 0 false
+ * positives in _r5; tune them as false positives appear.
+ */
+const PAGE_TITLE_PATTERNS: [RegExp, string][] = [
+  [/^(What is|How to|Why)\b/, 'article phrasing'],
+  [/ - And /, 'article phrasing'],
+  [/^Dashboard\b/, 'page section'],
+  [/:\s*(Intro|Introduction|Overview|Getting Started)\b/, 'page section'],
+  [/Info ?Hub/, 'hub/portal page'],
+  [/Roadmap$/, 'roadmap page'],
+  [/ & .* - /, 'mangled dual name'],
+  [/\b(Blog|Press Release|White ?[Pp]aper)\b/, 'publication word'],
+]
+
+export function checkNameShape(rows: CsvRow[], file: string): Finding[] {
+  const findings: Finding[] = []
+  rows.forEach((row, i) => {
+    if (!isActive(row)) return
+    const name = (row.software_name || '').trim()
+    const hit = PAGE_TITLE_PATTERNS.find(([re]) => re.test(name))
+    if (hit) {
+      findings.push({
+        csv: file,
+        row: i + 2,
+        field: 'software_name',
+        value: name,
+        message: `${row.product_id}: software_name looks like a page title (${hit[1]}) — is this row a product?`,
+      })
+    }
+  })
+  return findings
+}
+
 export function runMigrateCatalogIntegrity(
   today: string = new Date().toISOString().slice(0, 10)
 ): CheckResult[] {
@@ -410,6 +448,13 @@ export function runMigrateCatalogIntegrity(
       'ERROR',
       file,
       checkColumnNameCells(rows, file)
+    ),
+    result(
+      'MC-8',
+      'An active migrate software_name is a product name, not a scraped page title',
+      'WARNING',
+      file,
+      checkNameShape(rows, file)
     ),
   ]
 }

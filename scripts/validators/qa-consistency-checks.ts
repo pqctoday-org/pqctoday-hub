@@ -314,7 +314,13 @@ export function runQAConsistencyChecks(): CheckResult[] {
     ...algorithms.rows.map((r) => r.algorithm).filter(Boolean),
     ...algorithms.rows.map((r) => r.algorithm_family).filter(Boolean),
   ])
-  const migrateNames = new Set(migrate.rows.map((r) => r.software_name).filter(Boolean))
+  // A renamed product keeps its old name in former_names (MC-4) precisely so
+  // references written against the old name keep resolving; honour that here.
+  const migrateNames = new Set(
+    migrate.rows
+      .flatMap((r) => [r.software_name, ...(r.former_names || '').split(';').map((n) => n.trim())])
+      .filter(Boolean)
+  )
   const leaderNames = new Set(leaders.rows.map((r) => r.Name).filter(Boolean))
   const complianceIds = new Set(compliance.rows.map((r) => r.id).filter(Boolean))
 
