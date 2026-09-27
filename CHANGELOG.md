@@ -29,6 +29,17 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.127.1] - 2026-09-27
+
+French (ANSSI) certificates now carry the product name their own certification report states, and a few certification verdicts are corrected.
+
+### Fixed
+
+- **ANSSI certificates show the right product** [view:/compliance] [persona:grc] [persona:researcher]: 180 French certificates are now named after their own certification report instead of ANSSI's catalogue table. The catalogue had given certificate ANSSI-CC-2025-27 the name of its sibling 2025-26 (they are different chips: ST31R480 B01 and A01), and had turned other names into category words ("Cartes à puce et dispositifs similaires"), cut-off fragments ("configuration Version 3.0.0.52") or "Unknown Product". A check now fails if two certificates share a name their reports do not.
+- **Three Chainguard builds shown as certified** [view:/migrate] [persona:grc] [persona:ops]: the SHA_AVX, SHA_SHANI and SHA_SSSE3 builds of the Chainguard FIPS Provider sit under the same FIPS 140-3 certificate (#5523) as their six sibling builds, which names each build's own SLH-DSA algorithm validation; they now read certified, like the others.
+- **Two retired duplicate entries no longer claim more than the product they point to** [view:/migrate] [persona:grc]: both rested only on an algorithm validation, the first step of FIPS 140-3; a new check keeps a retired duplicate from ever holding a stronger verdict than the entry it was merged into.
+- **Utimaco u.trust HSM and IBM z16 Crypto Express 8S show "in NIST's queue"** [view:/migrate] [persona:grc]: NIST lists their modules as in process, which is the stage after algorithm validation.
+
 ## [4.127.0] - 2026-09-27
 
 Certificates that cover no post-quantum algorithm are now labelled "Classical only", and 40 products have a researched certification verdict.
