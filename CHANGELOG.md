@@ -42,6 +42,15 @@ FIPS 140-3 and PCI now each have their own certification module.
 
 - **The FIPS module now says plainly that P2PE v3.1 is superseded** [view:/learn/fips-140-3-certification] [persona:grc]: the note on which PCI standards accept FIPS Level 3 HSMs now states that P2PE v3.2 replaced v3.1 in June 2025.
 
+## [4.126.2] - 2026-09-27
+
+Every country on the timeline shows its flag again.
+
+### Fixed
+
+- **Missing country flags restored** [view:/timeline] [view:/leaders] [persona:curious] [persona:executive] [persona:grc]: 19 countries on the timeline (among them Saudi Arabia, Brazil, Hong Kong, Jordan, the UAE, Finland, Denmark and Norway) and Ireland on the Leaders page showed a two-letter code instead of a flag, because the flag image was missing. All 20 are added, using public-domain images from Wikimedia Commons.
+- **A check keeps it that way** [persona:developer]: a test now fails when the timeline or the Leaders page asks for a flag that isn't in the site's flag folder.
+
 ## [4.126.1] - 2026-09-27
 
 Hundreds of product versions and dates are filled in from their own sources, and a batch of outdated or wrong values is fixed.
