@@ -23,6 +23,16 @@ import { SIM_LEARN_MODULES } from '../simEmbedModules'
 const ENRICHMENT_EXEMPT = new Set(['hybrid-certs'])
 
 describe('module manifest conformance (A1)', () => {
+  it('every lm_id is unique (two pairs had collided: LM-062, LM-063; fixed 2026-09-27)', () => {
+    const byId = new Map<string, string[]>()
+    for (const m of MANIFESTS) {
+      if (!m.lm_id) continue
+      byId.set(m.lm_id, [...(byId.get(m.lm_id) ?? []), m.id])
+    }
+    const dupes = [...byId].filter(([, ids]) => ids.length > 1)
+    expect(dupes, JSON.stringify(dupes)).toEqual([])
+  })
+
   it('discovers at least the seeded manifests', () => {
     expect(MANIFESTS.length).toBeGreaterThan(0)
   })

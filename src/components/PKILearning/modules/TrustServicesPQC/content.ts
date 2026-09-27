@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'trust-services-pqc',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-20',
+  lastEdited: '2026-09-27',
 
   standards: [
     getStandard('ETSI-TS-119-312-V2-1-1-Electronic-Signatures-and-Trust-Infra'),

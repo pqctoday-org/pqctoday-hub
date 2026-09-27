@@ -3,8 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'trust-services-pqc',
-  contentVersion: 7,
-  lm_id: 'LM-063',
+  contentVersion: 8,
+  lm_id: 'LM-070',
   title: 'Trust Services & Long-Term Signatures',
   description:
     'Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.',

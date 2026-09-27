@@ -454,7 +454,7 @@ export const EVIDENCE_DOCS: EvidenceDoc[] = [
     id: 'fips-certificate',
     title: 'FIPS 140-3 certificate (fictional)',
     fields: [
-      ['Certificate', 'FICT-0007 (not a real CMVP number)'],
+      ['Certificate', 'FICT-0008 (not a real CMVP number)'],
       ['Module', 'Orrin N7 Cryptographic Module'],
       ['Firmware', '3.1.0'],
       ['Overall Security Level', '3'],
