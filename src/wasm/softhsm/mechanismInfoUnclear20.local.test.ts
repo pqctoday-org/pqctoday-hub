@@ -442,6 +442,9 @@ const EC_PAIRS = [
 
 describe('B. 8 EC flags pairs — which engine describes its own EC_PARAMS handling', () => {
   it('both engines really advertise the disputed flags (guard is not vacuous)', () => {
+    // hsm #297 (27 Sep): the C++ engine now advertises all four CKF_EC_* flags on the
+    // Edwards/Montgomery mechanisms, as Rust does. Only the Weierstrass pair still differs
+    // (C++ has no CKF_EC_CURVENAME there).
     const expectFlags: Record<string, { type: number; cpp: number[]; rust: number[] }> = {
       CKM_EC_KEY_PAIR_GEN: {
         type: CKM_EC_KEY_PAIR_GEN,
@@ -455,32 +458,32 @@ describe('B. 8 EC flags pairs — which engine describes its own EC_PARAMS handl
       },
       CKM_EC_EDWARDS_KEY_PAIR_GEN: {
         type: CKM_EC_EDWARDS_KEY_PAIR_GEN,
-        cpp: [],
+        cpp: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
         rust: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
       },
       CKM_EC_MONTGOMERY_KEY_PAIR_GEN: {
         type: CKM_EC_MONTGOMERY_KEY_PAIR_GEN,
-        cpp: [],
+        cpp: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
         rust: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
       },
       CKM_EDDSA: {
         type: CKM_EDDSA,
-        cpp: [],
+        cpp: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
         rust: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
       },
       CKM_EDDSA_PH: {
         type: CKM_EDDSA_PH,
-        cpp: [],
+        cpp: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
         rust: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
       },
       CKM_X25519: {
         type: CKM_X25519,
-        cpp: [],
+        cpp: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
         rust: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
       },
       CKM_X448: {
         type: CKM_X448,
-        cpp: [],
+        cpp: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
         rust: [CKF_EC_F_P, CKF_EC_OID, CKF_EC_UNCOMPRESS, CKF_EC_CURVENAME],
       },
     }
