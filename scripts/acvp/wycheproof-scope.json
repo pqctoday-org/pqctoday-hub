@@ -8,7 +8,7 @@
     "evidence_class": "independent-oracle",
     "scope_rule": "WYC-SCOPE-1, filters F1-F4 — see scripts/acvp/vendor_wycheproof.py",
     "generator": "python3 scripts/acvp/wycheproof_scope_census.py --clone <clone>",
-    "why_this_file_exists": "So that 'we support Wycheproof completely' is a checkable claim: every one of the 343 upstream files is accounted for here as vendored-and-executed, in-scope-runner-missing (with its case count, so the gap is a number) or out-of-scope (with the filter that excluded it)."
+    "why_this_file_exists": "So that 'we support Wycheproof completely' is a checkable claim: every one of the 343 upstream files is accounted for here as vendored-and-executed, in-scope-not-vendored (a runner exists for its schema but the file was not chosen), in-scope-runner-missing (with its case count, so the gap is a number) or out-of-scope (with the filter that excluded it)."
   },
   "totals": {
     "upstream": {
@@ -21,15 +21,20 @@
       "invalid": 18864
     },
     "vendored": {
-      "files": 6,
-      "cases": 1685,
-      "invalid": 448,
+      "files": 7,
+      "cases": 1793,
+      "invalid": 493,
       "acceptable": 502
     },
     "inScopeRunnerMissing": {
-      "files": 167,
-      "cases": 38164,
-      "invalid": 18416
+      "files": 149,
+      "cases": 35758,
+      "invalid": 17643
+    },
+    "inScopeNotVendored": {
+      "files": 17,
+      "cases": 2298,
+      "invalid": 728
     },
     "outOfScope": {
       "files": 170,
@@ -3828,8 +3833,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_2048_sha256_mgf1_0_params_test.json",
@@ -3856,8 +3861,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_2048_sha256_mgf1_32_params_test.json",
@@ -3884,8 +3889,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "vendored-and-executed",
+      "localPath": "src/data/acvp/wycheproof_rsa_pss_2048_sha256_mgf1_32_test.json"
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_2048_sha256_mgf1sha1_20_test.json",
@@ -3898,8 +3903,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_2048_sha384_mgf1_48_test.json",
@@ -3912,8 +3917,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_2048_sha512_224_mgf1_28_test.json",
@@ -3926,8 +3931,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_2048_sha512_256_mgf1_32_test.json",
@@ -3940,8 +3945,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_2048_sha512_mgf1sha256_32_params_test.json",
@@ -3968,8 +3973,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_2048_shake256_test.json",
@@ -3982,8 +3987,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_3072_sha256_mgf1_32_params_test.json",
@@ -4010,8 +4015,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_3072_shake128_test.json",
@@ -4024,8 +4029,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_3072_shake256_test.json",
@@ -4038,8 +4043,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_4096_sha256_mgf1_32_test.json",
@@ -4052,8 +4057,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_4096_sha384_mgf1_48_test.json",
@@ -4066,8 +4071,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_4096_sha512_mgf1_32_params_test.json",
@@ -4094,8 +4099,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_4096_sha512_mgf1_64_params_test.json",
@@ -4122,8 +4127,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_4096_shake256_test.json",
@@ -4136,8 +4141,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_pss_misc_params_test.json",
@@ -4164,8 +4169,8 @@
         "acceptable": 0
       },
       "bucket": "RSA-PSS",
-      "state": "in-scope-runner-missing",
-      "reason": "F4: no runner in this tree executes Wycheproof schema rsassa_pss_verify_schema_v1.json; vendoring it would create an orphaned vector file (check-vector-reachability.ts fails those)"
+      "state": "in-scope-not-vendored",
+      "reason": "a runner for schema rsassa_pss_verify_schema_v1.json exists, but this file is not vendored: scope is chosen per file (2026-09-26 maintainer ruling vendored only rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
     },
     {
       "upstreamPath": "testvectors_v1/rsa_signature_2048_sha224_test.json",

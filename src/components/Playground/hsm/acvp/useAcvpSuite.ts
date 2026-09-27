@@ -7,7 +7,6 @@ import aesGcmTestVectors from '@/data/acvp/aesgcm_test.json'
 import hmacTestVectors from '@/data/acvp/hmac_test.json'
 import kmacTestVectors from '@/data/acvp/kmac_test.json'
 import rsaOaepTestVectors from '@/data/acvp/rsa_oaep_test.json'
-import rsaPssTestVectors from '@/data/acvp/rsapss_test.json'
 import ecdsaTestVectors from '@/data/acvp/ecdsa_test.json'
 import sha256TestVectors from '@/data/acvp/sha256_test.json'
 import aesCbcTestVectors from '@/data/acvp/aescbc_test.json'
@@ -38,11 +37,8 @@ import {
   hsm_importHMACKey,
   hsm_hmacVerifyGeneral,
   hsm_kmacVerify,
-  hsm_importRSAPublicKey,
   hsm_importRSAPrivateKey,
-  hsm_rsaVerify,
   hsm_rsaDecrypt,
-  CKM_SHA256_RSA_PKCS_PSS,
   hsm_importECPublicKey,
   hsm_ecdsaSign,
   hsm_ecdsaVerify,
@@ -157,6 +153,7 @@ import { runAesKwAcvpSection } from './sections/aesKwAcvp'
 import {
   runWycheproofEddsaSection,
   runWycheproofKeywrapSection,
+  runWycheproofRsaPssSection,
   runWycheproofXdhSection,
 } from './sections/wycheproofNegative'
 import { runAesCbcCtrAcvpSection } from './sections/aesCbcCtrAcvp'
@@ -772,78 +769,24 @@ export function useAcvpSuite() {
           })
         }
 
-        // ── 3. RSA-PSS-2048 SigVer KAT (FIPS 186-5) ────────────────────
+        // ── 3. RSA-PSS-2048 SHA-256 SigVer — Project Wycheproof ────────
+        // 108 cases (63 valid, 45 invalid) from Wycheproof
+        // rsa_pss_2048_sha256_mgf1_32_test.json, replacing the single
+        // Node/OpenSSL-generated case (maintainer ruling 2026-09-26). The NIST
+        // RSA SigVer sample has no SHA2-256 PSS group. independent-oracle
+        // evidence: "agrees with Wycheproof <commit>", never conformance.
         if (activeCategories.has('classical')) {
           currentCategory = 'classical'
-          if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA256_RSA_PKCS_PSS)) {
-            await pushSkip(
-              `rsa-skip-${eName}`,
-              `RSA-PSS-2048 (${eName})`,
-              'SigVer KAT',
-              REF.rsapss,
-              'RSA-PSS-2048: mechanism not supported'
-            )
-          } else {
-            const tv = rsaPssTestVectors.testGroups[0].tests[0]
-            const id3 = `rsa-acvp-${eName}`
-            addLog(`[${eName}] Testing RSA-PSS-2048 SigVer KAT (FIPS 186-5)...`)
-            addLog(`  Oracle vector Modulus: ${tv.n.slice(0, 32)}… | Exp: ${tv.e}`)
-            addLog(
-              `  Oracle vector Signature: ${tv.signature.slice(0, 32)}… | Msg: "${tv.msg.slice(0, 40)}"`
-            )
-            try {
-              const modBytes = hexToBytes(tv.n)
-              const expBytes = hexToBytes(tv.e)
-              const sigBytes = hexToBytes(tv.signature)
-
-              // Import known RSA public key — verify only (PKCS#11 v3.2 least privilege)
-              const rsaPubHandle = hsm_importRSAPublicKey(M, hSession, modBytes, expBytes, false)
-              regKey({
-                handle: rsaPubHandle,
-                family: 'rsa',
-                role: 'public',
-                label: `Oracle RSA-2048 Public (${eName})`,
-                variant: '2048',
-                engine: engineId,
-              })
-
-              // Verify known signature
-              const isValid = hsm_rsaVerify(
-                M,
-                hSession,
-                rsaPubHandle,
-                tv.msg,
-                sigBytes,
-                CKM_SHA256_RSA_PKCS_PSS
-              )
-
-              const rsaSigHex = toHex(sigBytes, 16)
-              await pushResult({
-                id: id3,
-                algorithm: `RSA-PSS-2048 (${eName})`,
-                testCase: 'SigVer KAT',
-                referenceUrl: REF.rsapss,
-                status: isValid ? 'pass' : 'fail',
-                details: isValid
-                  ? `Verified sig[${sigBytes.length}B]: ${rsaSigHex}…`
-                  : 'Signature verification failed against FIPS 186-5 vector',
-              })
-              addLog(
-                `[${eName}] [id:${id3}] RSA-PSS SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${rsaSigHex}…`
-              )
-            } catch (e: unknown) {
-              const errMessage = e instanceof Error ? e.message : String(e)
-              await pushResult({
-                id: `rsa-err-${eName}`,
-                algorithm: `RSA-PSS-2048 (${eName})`,
-                testCase: 'SigVer KAT',
-                referenceUrl: REF.rsapss,
-                status: 'fail',
-                details: errMessage,
-              })
-              addLog(`[DISCREPANCY] [${eName}] [id:${id3}] RSA-PSS-2048: ${errMessage}`)
-            }
-          }
+          await runWycheproofRsaPssSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.wycheproof,
+            pushResult,
+            addLog,
+          })
 
           // ── 4. ECDSA P-256 SigVer KAT (FIPS 186-5) ─────────────────────
           if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA256)) {

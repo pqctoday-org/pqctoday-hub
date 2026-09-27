@@ -16,19 +16,19 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "7b5baeb91f8627efeaab4366809a2451fef50ec33a1892090270c583103c920d",
+    "public/data/validation/coverage-matrix.json": "bb5e27b5aadd44c0ddea02ceb4c6ca81c84d1ce039702c84ed4fe77327c6b496",
     "src/data/validation/coverage-waivers.json": "87b928d900e95f966e744aed284f4b11933e03f3dab9ced277d1072154702980",
-    "src/data/validation/native-conformance.generated.json": "75d81d8ab8250f66574c6722d3bdf36911bcc3ba2b5b18902c93604bdf64efd7",
-    "src/data/validation/open-gaps.json": "4c97f71fc7b244584f7282c0abafe9dd11a43235b591c385e13a67aa633590b0",
+    "src/data/validation/native-conformance.generated.json": "f28a026649addce7e9bd55ecc531e8b9a5117c10a31382d3443213c9b2828b26",
+    "src/data/validation/open-gaps.json": "8c156eeb4b032d276ec4d77d7989c8f5919367835727967bb853796810723aef",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "3e3de40a719f4fb1b6081667b0c700012c1f6280372e4e8b824d1899352a12cd",
     "src/data/validation/run-results/wasm-node-katRunner.json": "b1f085d0e3a6d863a84d5e16f401ca0a1c74ac5841ef52a8a229a717c418fef4",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "67fa98bf8bbc49e2a67350eb1a35dcfe99b2b0f62d30d1648445f2ebc775abb4",
-    "src/data/validation/validation-counts.generated.json": "5dd9c4925ed6c0d23a668e05dc718c540fa68a9cb8961b8e67671bb40daccdcb",
-    "src/data/validation/vector-manifest.json": "21435a30b3d53294b9bc1af573a07aed6537938a12eff3afe655ca5519f1be58"
+    "src/data/validation/validation-counts.generated.json": "583a7e37128e44fa0c5bccd68083ef036231b0ede4cda8c8adebfaa61e63ed46",
+    "src/data/validation/vector-manifest.json": "096beb7523fe57c9738f607d8f78ab118ecea5ce814ae8737f74da3e1dbadac2"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "8b208ccc9fbca8072b1d237be819fb0d88e3f402ffd382ec5e367a375db5025b",
+    "manifestCanonicalSha256": "66bb3b737ad64906e416058eeeb87f3beaa6a241acd6d3b4959c0e6702458d83",
     "nistReferenceSampleFiles": 53,
     "nistReferenceSampleCases": 940,
     "vectorFiles": {
@@ -48,15 +48,15 @@
       "unverified": 0
     },
     "cases": {
-      "total": 2679,
-      "active": 2678,
+      "total": 2785,
+      "active": 2784,
       "quarantined": 1
     },
     "activeCasesByClass": {
       "nist-acvp-reference-sample": 940,
       "acvts-issued-vector": 0,
       "published-standard-kat": 21,
-      "independent-oracle": 1689,
+      "independent-oracle": 1795,
       "cross-implementation-differential": 0,
       "functional-round-trip": 26,
       "oasis-profile-case": 0,
@@ -64,12 +64,12 @@
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 1955,
-      "negative": 723
+      "positive": 2016,
+      "negative": 768
     },
     "filesWithPublishabilityGap": {
       "generator-script-not-in-repo": 1,
-      "oracle-version-not-recorded": 4
+      "oracle-version-not-recorded": 3
     }
   },
   "coverage": {
@@ -106,8 +106,8 @@
         },
         "byPolarity": {
           "positive": {
-            "covered": 183,
-            "sampled": 1255,
+            "covered": 184,
+            "sampled": 1254,
             "untested": 197,
             "denominator": 1635,
             "byStatus": {
@@ -123,19 +123,19 @@
             }
           },
           "negative": {
-            "covered": 77,
+            "covered": 78,
             "sampled": 63,
-            "untested": 1495,
+            "untested": 1494,
             "denominator": 1635,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 106,
               "standard-kat": 0,
-              "oracle": 1,
+              "oracle": 2,
               "differential": 0,
               "round-trip": 0,
               "behavior-only": 33,
-              "untested": 1495,
+              "untested": 1494,
               "unsupported": 0
             }
           },
@@ -227,19 +227,19 @@
             }
           },
           "negative": {
-            "covered": 74,
+            "covered": 75,
             "sampled": 47,
-            "untested": 907,
+            "untested": 906,
             "denominator": 1028,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 87,
               "standard-kat": 0,
-              "oracle": 1,
+              "oracle": 2,
               "differential": 0,
               "round-trip": 0,
               "behavior-only": 33,
-              "untested": 907,
+              "untested": 906,
               "unsupported": 0
             }
           },
@@ -305,9 +305,9 @@
     },
     "parity": {
       "positive": {
-        "parity": 826,
+        "parity": 825,
         "divergent": 5,
-        "not-established": 182,
+        "not-established": 183,
         "single-engine": 653
       },
       "negative": {
@@ -427,9 +427,9 @@
           "commitsBehindPinnedHsmMain": 46,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsm-cpp-engine",
-          "wasmBundleHsmCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
+          "wasmBundleHsmCommit": "d1f74a52e9396d2577e12def81d88c6654df8473",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 50,
+          "commitsFromEngineToWasmBundle": 91,
           "commitsFromWasmBundleToEngine": 0
         }
       },
@@ -465,9 +465,9 @@
           "commitsBehindPinnedHsmMain": 40,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsmrustv3-engine",
-          "wasmBundleHsmCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
+          "wasmBundleHsmCommit": "d1f74a52e9396d2577e12def81d88c6654df8473",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 44,
+          "commitsFromEngineToWasmBundle": 85,
           "commitsFromWasmBundleToEngine": 0
         }
       },
@@ -2671,7 +2671,7 @@
       },
       {
         "id": "wycheproof-wave2-not-executed",
-        "title": "167 in-scope Wycheproof files (38,164 cases, 18,416 invalid) are not yet executed",
+        "title": "166 in-scope Wycheproof files (38,056 cases, 18,371 invalid) are not yet executed",
         "status": "open",
         "planItem": "E",
         "owner": "unassigned"
@@ -2737,13 +2737,13 @@
   },
   "reviews": {
     "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
-    "validRecords": 61,
+    "validRecords": 69,
     "statusCounts": {
-      "source-verified": 61,
-      "awaiting-review": 38
+      "source-verified": 69,
+      "awaiting-review": 30
     },
     "awaiting": {
-      "vector-source": 11,
+      "vector-source": 3,
       "coverage-waiver": 23,
       "public-claim": 3,
       "learn-module-practitioner": 1
@@ -2775,7 +2775,7 @@
         "kind": "vector-source",
         "title": "src/data/acvp/aescmac_test.json — published-standard-kat (NIST CSRC Cryptographic Standards and Guidelines examples: AES_CMAC.pdf, CMAC-AES256 Examples #1, #2, #4 (the example set NIST SP 800-38B Appendix D points to))",
         "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
-        "status": "awaiting-review"
+        "status": "source-verified"
       },
       {
         "id": "vector-source:aesctr_acvp_test",
@@ -2789,7 +2789,7 @@
         "kind": "vector-source",
         "title": "src/data/acvp/aesctr_test.json — published-standard-kat (NIST SP 800-38A Appendix F.5.6 (CTR-AES256.Decrypt))",
         "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
-        "status": "awaiting-review"
+        "status": "source-verified"
       },
       {
         "id": "vector-source:aesgcm_acvp_test",
@@ -2817,7 +2817,7 @@
         "kind": "vector-source",
         "title": "src/data/acvp/aeskw_test.json — published-standard-kat (RFC 3394 Section 4.6 (256-bit key data with a 256-bit KEK))",
         "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
-        "status": "awaiting-review"
+        "status": "source-verified"
       },
       {
         "id": "vector-source:cose-dilithium-11-jose-kat",
@@ -2838,7 +2838,7 @@
         "kind": "vector-source",
         "title": "src/data/acvp/ecdsa_p384_test.json — published-standard-kat (RFC 6979 Appendix A.2.6 (P-384))",
         "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
-        "status": "awaiting-review"
+        "status": "source-verified"
       },
       {
         "id": "vector-source:ecdsa_p521_test",
@@ -2866,7 +2866,7 @@
         "kind": "vector-source",
         "title": "src/data/acvp/ecdsa_test.json — published-standard-kat (RFC 6979 Appendix A.2.5 (P-256))",
         "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
-        "status": "awaiting-review"
+        "status": "source-verified"
       },
       {
         "id": "vector-source:eddsa_ed448_test",
@@ -2901,7 +2901,7 @@
         "kind": "vector-source",
         "title": "src/data/acvp/eddsa_test.json — published-standard-kat (RFC 8032 Section 7.1 (Ed25519 TEST 1, TEST 2))",
         "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
-        "status": "awaiting-review"
+        "status": "source-verified"
       },
       {
         "id": "vector-source:hkdf_acvp_test",
@@ -2915,7 +2915,7 @@
         "kind": "vector-source",
         "title": "src/data/acvp/hkdf_test.json — published-standard-kat (RFC 5869 Appendix A.1-A.3 (HKDF-SHA256 test cases 1-3))",
         "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
-        "status": "awaiting-review"
+        "status": "source-verified"
       },
       {
         "id": "vector-source:hmac_acvp_matrix_test",
@@ -3086,13 +3086,6 @@
         "status": "source-verified"
       },
       {
-        "id": "vector-source:rsapss_test",
-        "kind": "vector-source",
-        "title": "src/data/acvp/rsapss_test.json — independent-oracle (Generated via Node.js crypto (OpenSSL backend), RSA-PSS with SHA-256)",
-        "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "vector-source:sha256_test",
         "kind": "vector-source",
         "title": "src/data/acvp/sha256_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SHA2-256-1.0/internalProjection.json @ 975de31e)",
@@ -3250,6 +3243,13 @@
         "id": "vector-source:wycheproof_aes_kwp_test",
         "kind": "vector-source",
         "title": "src/data/acvp/wycheproof_aes_kwp_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/aes_kwp_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:wycheproof_rsa_pss_2048_sha256_mgf1_32_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/wycheproof_rsa_pss_2048_sha256_mgf1_32_test.json — independent-oracle (Project Wycheproof, maintained by Google / C2SP — testvectors_v1/rsa_pss_2048_sha256_mgf1_32_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0)",
         "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
         "status": "source-verified"
       },
@@ -3454,7 +3454,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 5856 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 5963 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,
@@ -3464,7 +3464,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "74 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×4."
+      "basis": "74 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×3."
     },
     {
       "n": 3,

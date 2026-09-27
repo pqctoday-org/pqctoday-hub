@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "8b208ccc9fbca8072b1d237be819fb0d88e3f402ffd382ec5e367a375db5025b",
-    "registrySha256": "1f3aec765fc3736a88fa0dc872b4e0a58debcd387196678010703e47092b18d8"
+    "manifestSha256": "66bb3b737ad64906e416058eeeb87f3beaa6a241acd6d3b4959c0e6702458d83",
+    "registrySha256": "fc1e1ceb444804185fe86de6d5e5a2b01f5f48a86ef6faffeda68aad1a3411dc"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
@@ -1641,38 +1641,46 @@
         "Only the 2048- and 3072-bit variants are instantiated by a product surface (grep of KatKind uses)."
       ]
     },
-    "kat.rsapss-sigver#rsapss_test#/testGroups/0/tests/0": {
-      "id": "kat.rsapss-sigver#rsapss_test#/testGroups/0/tests/0",
+    "kat.rsapss-sigver#wycheproof_rsa_pss_2048_sha256_mgf1_32_test#/testGroups/0/tests/0": {
+      "id": "kat.rsapss-sigver#wycheproof_rsa_pss_2048_sha256_mgf1_32_test#/testGroups/0/tests/0",
       "test": "kat.rsapss-sigver",
-      "title": "RSA-PSS SHA-256 verify (testIndex 0)",
+      "title": "RSA-PSS SHA-256 verify (Wycheproof tc1)",
       "runner": "katRunner",
       "engines": [
         "rust"
       ],
-      "caseId": "rsapss_test#/testGroups/0/tests/0",
+      "caseId": "wycheproof_rsa_pss_2048_sha256_mgf1_32_test#/testGroups/0/tests/0",
       "evidenceClass": "independent-oracle",
       "polarity": "positive",
-      "algorithm": "RSA-PSS",
+      "algorithm": "RSASSA-PSS",
       "operation": "sigVer",
-      "testType": "oracle-generated",
+      "testType": "RsassaPssVerify",
       "parameters": {
+        "flags": "Normal",
         "hashAlg": "SHA-256",
-        "messageBytes": 31,
-        "modLen": 2048,
+        "mgf": "MGF1-SHA-256",
+        "modulo": 2048,
+        "msgBytes": 0,
         "saltLen": 32,
-        "sigType": "pss"
+        "wycheproofResult": "valid"
+      },
+      "upstream": {
+        "tgId": 1,
+        "tcId": 1,
+        "label": "valid signature"
       },
       "source": {
-        "citation": "Generated via Node.js crypto (OpenSSL backend), RSA-PSS with SHA-256"
+        "citation": "Project Wycheproof, maintained by Google / C2SP — testvectors_v1/rsa_pss_2048_sha256_mgf1_32_test.json @ 3fa63dd0 (https://github.com/C2SP/wycheproof), Apache-2.0",
+        "url": "https://raw.githubusercontent.com/C2SP/wycheproof/3fa63dd0344abb611f1fb1d77e119938603ea230/testvectors_v1/rsa_pss_2048_sha256_mgf1_32_test.json",
+        "revision": "3fa63dd0344abb611f1fb1d77e119938603ea230"
       },
       "exercises": [
         "CKM_SHA256_RSA_PKCS_PSS verify"
       ],
       "limitations": [
-        "Upstream: none (no NIST ACVP or published vector used; see file _provenance.note) → executed here: sigVer",
-        "locally-generated: Computed with self-generated, oracle=OpenSSL (Node crypto) (file _provenance).",
-        "The oracle version that produced the expected value is not recorded.",
-        "Oracle: Node.js crypto (OpenSSL backend) (version not recorded)"
+        "Upstream: RsassaPssVerify (publicKey.modulus/publicExponent, msg, sig -> result) → executed here: C_CreateObject(CKO_PUBLIC_KEY, CKK_RSA, CKA_MODULUS = modulus without the ASN.1 sign byte, CKA_PUBLIC_EXPONENT) then C_VerifyInit/C_Verify(CKM_SHA256_RSA_PKCS_PSS, hashAlg/MGF/sLen from the group) over msg with sig.",
+        "field-add: ONE top-level `_provenance` key added (attribution, pinned commit, upstream path + sha256, Apache-2.0 licence, evidence class and result policy). Everything else is the pinned upstream file byte-for-byte: no case dropped, no tcId renumbered, no value re-derived or normalized.",
+        "Oracle: Project Wycheproof, maintained by Google / C2SP — adversarial test-vector corpus 3fa63dd0344abb611f1fb1d77e119938603ea230"
       ]
     },
     "kat.sha256-hash#sha256_test#/testGroups/0/tests/0": {
@@ -3291,7 +3299,7 @@
       "kat.rsa-functional#local:kat.rsa-functional/3072"
     ],
     "rsapss-sigver": [
-      "kat.rsapss-sigver#rsapss_test#/testGroups/0/tests/0"
+      "kat.rsapss-sigver#wycheproof_rsa_pss_2048_sha256_mgf1_32_test#/testGroups/0/tests/0"
     ],
     "sha256-hash": [
       "kat.sha256-hash#sha256_test#/testGroups/0/tests/0"
@@ -3477,7 +3485,6 @@
     "acvp/pbkdf2_test.json": "independent-oracle",
     "acvp/rsa_oaep_test.json": "nist-acvp-reference-sample",
     "acvp/rsa_sigver_acvp_test.json": "nist-acvp-reference-sample",
-    "acvp/rsapss_test.json": "independent-oracle",
     "acvp/sha_acvp_boundary_test.json": "nist-acvp-reference-sample",
     "acvp/sha_mct_full_test.json": "nist-acvp-reference-sample",
     "acvp/sha256_test.json": "nist-acvp-reference-sample",
@@ -3499,6 +3506,7 @@
     "acvp/wycheproof_aes_wrap_test.json": "independent-oracle",
     "acvp/wycheproof_ed25519_test.json": "independent-oracle",
     "acvp/wycheproof_ed448_test.json": "independent-oracle",
+    "acvp/wycheproof_rsa_pss_2048_sha256_mgf1_32_test.json": "independent-oracle",
     "acvp/wycheproof_x25519_test.json": "independent-oracle",
     "acvp/wycheproof_x448_test.json": "independent-oracle"
   }

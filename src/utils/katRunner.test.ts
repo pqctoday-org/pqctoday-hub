@@ -45,6 +45,7 @@ vi.mock('../wasm/softhsm', () => ({
   // RSA
   hsm_importRSAPublicKey: vi.fn(),
   hsm_rsaVerify: vi.fn(),
+  hsm_rsaVerifyBytes: vi.fn(),
   hsm_generateRSAKeyPair: vi.fn(),
   hsm_rsaSign: vi.fn(),
   // SLH-DSA CKP constants
@@ -227,22 +228,19 @@ vi.mock('../data/acvp/eddsa_test.json', () => ({
   },
 }))
 
-vi.mock('../data/acvp/rsapss_test.json', () => ({
+vi.mock('../data/acvp/wycheproof_rsa_pss_2048_sha256_mgf1_32_test.json', () => ({
   default: {
     testGroups: [
       {
-        modLen: 2048,
-        hashAlg: 'SHA-256',
-        sigType: 'pss',
-        saltLen: 32,
+        keySize: 2048,
+        sha: 'SHA-256',
+        mgf: 'MGF1',
+        mgfSha: 'SHA-256',
+        sLen: 32,
+        publicKey: { modulus: '00aabb', publicExponent: '010001' },
         tests: [
-          {
-            n: 'aabb',
-            e: 'cc',
-            msg: 'ACVP RSA-PSS SigVer test vector',
-            signature: 'dd',
-            testPassed: true,
-          },
+          { tcId: 1, comment: 'valid signature', msg: '', sig: 'dd', result: 'valid' },
+          { tcId: 2, comment: 'modified signature', msg: '00', sig: 'ee', result: 'invalid' },
         ],
       },
     ],
@@ -1028,18 +1026,43 @@ describe('runKAT', () => {
   // ── rsapss-sigver ───────────────────────────────────────────────────────────
 
   describe('rsapss-sigver', () => {
-    it('returns pass when RSA-PSS signature verifies', async () => {
-      vi.mocked(softhsm.hsm_rsaVerify).mockReturnValue(true)
+    it('returns pass when the Wycheproof valid case verifies', async () => {
+      vi.mocked(softhsm.hsm_rsaVerifyBytes).mockReturnValue(true)
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'rsapss-sigver' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain("verified the oracle's RSA-PSS signature")
+      expect(result.details).toContain('verified the Wycheproof rsa_pss_2048_sha256_mgf1_32 tc1')
     })
 
-    it('returns fail when RSA-PSS signature verification fails', async () => {
-      vi.mocked(softhsm.hsm_rsaVerify).mockReturnValue(false)
+    it('returns fail when the Wycheproof valid case does not verify', async () => {
+      vi.mocked(softhsm.hsm_rsaVerifyBytes).mockReturnValue(false)
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'rsapss-sigver' }))
       expect(result.status).toBe('fail')
       expect(result.details).toContain('verification failed')
+    })
+
+    it('passes an invalid case only when verification refuses it', async () => {
+      vi.mocked(softhsm.hsm_rsaVerifyBytes).mockReturnValue(false)
+      const refused = await runKAT(
+        FAKE_MODULE,
+        FAKE_SESSION,
+        spec({ type: 'rsapss-sigver', testIndex: 1 })
+      )
+      expect(refused.status).toBe('pass')
+      vi.mocked(softhsm.hsm_rsaVerifyBytes).mockReturnValue(true)
+      const accepted = await runKAT(
+        FAKE_MODULE,
+        FAKE_SESSION,
+        spec({ type: 'rsapss-sigver', testIndex: 1 })
+      )
+      expect(accepted.status).toBe('fail')
+      expect(accepted.details).toContain('VERIFIED a signature Wycheproof marks invalid')
+    })
+
+    it('drops the ASN.1 sign byte from the Wycheproof modulus', async () => {
+      vi.mocked(softhsm.hsm_rsaVerifyBytes).mockReturnValue(true)
+      await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'rsapss-sigver' }))
+      const n = vi.mocked(softhsm.hsm_importRSAPublicKey).mock.calls.at(-1)![2] as Uint8Array
+      expect(n.length).toBe(2) // '00aabb' -> 'aabb'
     })
 
     it('returns error when hsm_importRSAPublicKey throws', async () => {

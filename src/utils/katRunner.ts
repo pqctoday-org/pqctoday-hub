@@ -33,7 +33,7 @@ import ecdsaP384TestVectors from '../data/acvp/ecdsa_p384_test.json'
 import ecdsaP521TestVectors from '../data/acvp/ecdsa_p521_test.json'
 import eddsaTestVectors from '../data/acvp/eddsa_test.json'
 import eddsaEd448TestVectors from '../data/acvp/eddsa_ed448_test.json'
-import rsapssTestVectors from '../data/acvp/rsapss_test.json'
+import wycRsaPss from '../data/acvp/wycheproof_rsa_pss_2048_sha256_mgf1_32_test.json'
 import sha256TestVectors from '../data/acvp/sha256_test.json'
 // Phase 2 gap-fill vectors — wiring in progress
 
@@ -106,6 +106,7 @@ import {
   hsm_generateRSAKeyPair,
   hsm_rsaSign,
   hsm_rsaVerify,
+  hsm_rsaVerifyBytes,
   // Gap-fill HSM functions
   hsm_aesCmac,
   hsm_hmacGeneral,
@@ -209,7 +210,7 @@ export type KatKind =
   // HMAC / Hash (FIPS 180-4, FIPS 198-1)
   | { type: 'hmac-verify'; hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'; testIndex?: number }
   | { type: 'sha256-hash'; testIndex?: number }
-  // Classical signatures — vector verification (RFC 6979 / RFC 8032 examples, OpenSSL-oracle RSA-PSS)
+  // Classical signatures — vector verification (RFC 6979 / RFC 8032 examples, Wycheproof RSA-PSS)
   /** P-256/P-384: RFC 6979 examples; P-521: NIST ACVP-Server sigVer sample (workbench §33). */
   | { type: 'ecdsa-sigver'; curve: 'P-256' | 'P-384' | 'P-521'; testIndex?: number }
   /** Ed25519: RFC 8032 example; Ed448: NIST ACVP-Server sigVer sample (workbench §16b). */
@@ -842,36 +843,50 @@ async function runEdDSASigVerKAT(
 }
 
 /**
- * RSA-PSS SigVer KAT — imports an OpenSSL-oracle-generated public key (n,e), verifies its signature.
+ * RSA-PSS SHA-256 SigVer — one case of Project Wycheproof (Google / C2SP)
+ * rsa_pss_2048_sha256_mgf1_32_test.json (MGF1-SHA-256, sLen 32, matching
+ * CKM_SHA256_RSA_PKCS_PSS's parameters here). `testIndex` indexes the file's one
+ * group; a `valid` case must verify and an `invalid` one must not.
+ * independent-oracle evidence: agreement with Wycheproof, never conformance.
  */
 async function runRSAPSSSigVerKAT(
   M: SoftHSMModule,
   hSession: number,
   testIndex = 0
 ): Promise<{ status: 'pass' | 'fail'; details: string }> {
-  const test =
-    rsapssTestVectors.testGroups[0].tests[testIndex] ?? rsapssTestVectors.testGroups[0].tests[0]
-  const nBytes = hexToBytes(test.n)
-  const eBytes = hexToBytes(test.e)
-  const sigBytes = hexToBytes(test.signature)
-  // RSA msg in these vector files is plain text
-  const message =
-    typeof test.msg === 'string' && !/^[0-9a-fA-F]+$/.test(test.msg)
-      ? test.msg
-      : new TextDecoder().decode(hexToBytes(test.msg))
-
-  const pubHandle = hsm_importRSAPublicKey(M, hSession, nBytes, eBytes)
-  const isValid = hsm_rsaVerify(M, hSession, pubHandle, message, sigBytes, CKM_SHA256_RSA_PKCS_PSS)
-
-  if (isValid) {
+  const g = wycRsaPss.testGroups[0]
+  const test = g.tests[testIndex] ?? g.tests[0]
+  // Wycheproof's modulus is an ASN.1 INTEGER; CKA_MODULUS is unsigned.
+  const unsigned = (hex: string) => hex.replace(/^(00)+(?=[0-9a-fA-F]{2})/, '')
+  const pubHandle = hsm_importRSAPublicKey(
+    M,
+    hSession,
+    hexToBytes(unsigned(g.publicKey.modulus)),
+    hexToBytes(unsigned(g.publicKey.publicExponent))
+  )
+  const verified = hsm_rsaVerifyBytes(
+    M,
+    hSession,
+    pubHandle,
+    hexToBytes(test.msg),
+    hexToBytes(test.sig),
+    CKM_SHA256_RSA_PKCS_PSS
+  )
+  const want = test.result === 'valid'
+  const where = `Wycheproof rsa_pss_2048_sha256_mgf1_32 tc${test.tcId} (${test.result})`
+  if (verified === want) {
     return {
       status: 'pass',
-      details: `Imported OpenSSL-oracle public key → verified the oracle's RSA-PSS signature`,
+      details: want
+        ? `Imported the Wycheproof public key → verified the ${where} signature`
+        : `Imported the Wycheproof public key → refused the ${where} signature`,
     }
   }
   return {
     status: 'fail',
-    details: 'RSA-PSS verification failed against the OpenSSL-oracle vector',
+    details: want
+      ? `RSA-PSS verification failed for ${where}`
+      : `RSA-PSS VERIFIED a signature Wycheproof marks invalid: ${where}`,
   }
 }
 

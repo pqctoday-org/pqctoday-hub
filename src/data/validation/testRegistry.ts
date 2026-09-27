@@ -408,15 +408,21 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       ]
     })
   ),
-  acvp('03', '§3', 'RSA-PSS-2048 SHA-256 verify', [
-    mc(
-      'rsapss_test#/testGroups/0/tests/0',
-      ORACLE,
-      'positive',
-      [x('CKM_SHA256_RSA_PKCS_PSS', 'verify')],
-      'rsa-acvp-{engine}'
+  acvp(
+    '03',
+    '§3 (sections/wycheproofNegative.ts)',
+    'RSA-PSS-2048 SHA-256 verify — Project Wycheproof (Google / C2SP): modified signatures, wrong primitive, special-case hashes',
+    casesOf('wycheproof_rsa_pss_2048_sha256_mgf1_32_test').map((c) =>
+      mc(
+        c.caseId,
+        ORACLE,
+        c.expectation,
+        [x('CKM_SHA256_RSA_PKCS_PSS', 'verify')],
+        `wyc-rsapss-${upstreamIds(c)}-{engine}`
+      )
     ),
-  ]),
+    'Source: https://github.com/C2SP/wycheproof @ 3fa63dd0, Apache-2.0 (replaces a Node/OpenSSL-generated case; the NIST RSA SigVer sample has no SHA2-256 PSS group). A Wycheproof `invalid` case passes only when C_Verify does NOT return CKR_OK.'
+  ),
   acvp('04', '§4', 'ECDSA P-256 SHA-256 verify', [
     mc(
       'ecdsa_test#/testGroups/0/tests/0',
@@ -2295,9 +2301,9 @@ const KAT_RUNNER: RegisteredTest[] = [
       { type: 'eddsa-sigver', curve: 'Ed448' }
     ),
   ]),
-  kat('rsapss-sigver', 'RSA-PSS SHA-256 verify (testIndex 0)', [
+  kat('rsapss-sigver', 'RSA-PSS SHA-256 verify (Wycheproof tc1)', [
     k(
-      mc('rsapss_test#/testGroups/0/tests/0', ORACLE, 'positive', [
+      mc('wycheproof_rsa_pss_2048_sha256_mgf1_32_test#/testGroups/0/tests/0', ORACLE, 'positive', [
         x('CKM_SHA256_RSA_PKCS_PSS', 'verify'),
       ]),
       { type: 'rsapss-sigver' }

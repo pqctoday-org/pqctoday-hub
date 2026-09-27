@@ -8,7 +8,7 @@
 // sLen = the upstream saltLen). Valid cases must return CKR_OK; invalid ones
 // CKR_SIGNATURE_INVALID from C_Verify (the signature always has the modulus
 // length). SHAKE-hash / SHAKE-mask PSS groups are skip rows. The older
-// rsapss_test.json (section 3) keeps its independent-oracle label.
+// SHA2-256 PSS (section 3) runs Project Wycheproof cases (sections/wycheproofNegative.ts).
 import { hexToBytes } from '@/utils/dataInputUtils'
 import { rvName, hsm_importRSAPublicKey, Pkcs11Error } from '@/wasm/softhsm'
 import {

@@ -113,6 +113,7 @@ PINNED_SHA256 = {
     "ed448_test.json": "3b3c7995853deb2fbbb49fba0fd292f314dc081f9154bd33252f294ca211289a",
     "aes_kwp_test.json": "e89624734deeba8bb937acba5381a5cb137c7050bf8bfd0bd70bd8438170b436",
     "aes_wrap_test.json": "2fdb3661fd8823d1ec50e03886b24066415018975677dff83d83e77f5a51562d",
+    "rsa_pss_2048_sha256_mgf1_32_test.json": "7f6efafc160f4816b96cbf1c12188a31051d7e3f001e27505d9edb5f2a0e325c",
 }
 
 # The files that pass F1-F4. `mechanisms` is the PKCS#11 mechanism list the
@@ -152,6 +153,18 @@ VENDORED: dict[str, dict[str, str]] = {
         "mechanisms": "CKM_AES_KEY_WRAP",
         "upstream_operation": "KeywrapTest (key, msg, ct -> result)",
         "local": "as aes_kwp_test.json with CKM_AES_KEY_WRAP (RFC 3394, no padding).",
+    },
+    # Maintainer ruling 2026-09-26: replaces the Node/OpenSSL-generated
+    # rsapss_test.json. Source priority NIST ACVP > Wycheproof > published
+    # standard > custom; the NIST RSA-SigVer-FIPS186-5 sample has PSS only with
+    # SHA3-256 / SHAKE hashes (already run), none with SHA2-256, so this file is
+    # the highest-priority source for SHA-256 PSS.
+    "rsa_pss_2048_sha256_mgf1_32_test.json": {
+        "mechanisms": "CKM_SHA256_RSA_PKCS_PSS (CK_RSA_PKCS_PSS_PARAMS: CKM_SHA256, CKG_MGF1_SHA256, sLen 32)",
+        "upstream_operation": "RsassaPssVerify (publicKey.modulus/publicExponent, msg, sig -> result)",
+        "local": "C_CreateObject(CKO_PUBLIC_KEY, CKK_RSA, CKA_MODULUS = modulus without the ASN.1 "
+        "sign byte, CKA_PUBLIC_EXPONENT) then C_VerifyInit/C_Verify(CKM_SHA256_RSA_PKCS_PSS, "
+        "hashAlg/MGF/sLen from the group) over msg with sig.",
     },
 }
 

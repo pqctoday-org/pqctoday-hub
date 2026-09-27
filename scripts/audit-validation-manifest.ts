@@ -133,7 +133,6 @@ export const PRE_CONTRIBUTOR_FLOW_FILES: ReadonlySet<string> = new Set([
   'mlkem_test',
   'pbkdf2_test',
   'rsa_oaep_test',
-  'rsapss_test',
   'sha256_test',
   'sha384_test',
   'sha3_256_test',

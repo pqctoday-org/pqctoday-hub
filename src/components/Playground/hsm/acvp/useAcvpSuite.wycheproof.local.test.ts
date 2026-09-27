@@ -85,7 +85,7 @@ const run = async (cats: CategoryId[]): Promise<TestResult[]> => {
   return out
 }
 
-/** The six vendored files, their row-id key and their upstream name. */
+/** The seven vendored files, their row-id key and their upstream name. */
 const FILES = [
   { key: 'x25519', file: 'wycheproof_x25519_test.json' },
   { key: 'x448', file: 'wycheproof_x448_test.json' },
@@ -93,6 +93,7 @@ const FILES = [
   { key: 'ed448', file: 'wycheproof_ed448_test.json' },
   { key: 'aeskw', file: 'wycheproof_aes_wrap_test.json' },
   { key: 'aeskwp', file: 'wycheproof_aes_kwp_test.json' },
+  { key: 'rsapss', file: 'wycheproof_rsa_pss_2048_sha256_mgf1_32_test.json' },
 ] as const
 
 type WycResult = 'valid' | 'invalid' | 'acceptable'
@@ -234,6 +235,19 @@ describe('Project Wycheproof (Google / C2SP) adversarial vectors, both engines',
     // for X25519/X448 by design — the twist is secure).
     expect(behaviour('Twist', 'C++')).toEqual({ n: 455, refused: 9, accepted: 446 })
     expect(behaviour('Twist', 'Rust')).toEqual({ n: 455, refused: 3, accepted: 452 })
+  })
+
+  it('pins RSA-PSS SHA-256 (rsa_pss_2048_sha256_mgf1_32): both engines pass all 108 cases', () => {
+    // 63 valid must verify, 45 invalid must be refused. Measured 2026-09-26 on
+    // the bundles built from hsm d1f74a52: no divergence on either engine.
+    for (const engine of ['C++', 'Rust']) {
+      const got = of('rsapss', engine)
+      expect(got.length).toBe(108)
+      expect(got.filter((r) => r.status !== 'pass').map((r) => r.id)).toEqual([])
+      const invalid = got.filter((r) => r.caseMeta?.parameters?.wycheproofResult === 'invalid')
+      expect(invalid.length).toBe(45)
+      expect(invalid.every((r) => !/→ CKR_OK$/.test(r.caseMeta?.observed ?? ''))).toBe(true)
+    }
   })
 
   it('pins that both engines reject every AES-KWP modified-padding case', () => {

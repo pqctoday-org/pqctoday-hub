@@ -50,6 +50,7 @@ IMPLEMENTED_SCHEMAS = {
     "xdh_comp_schema_v1.json",
     "eddsa_verify_schema_v1.json",
     "keywrap_test_schema_v1.json",
+    "rsassa_pss_verify_schema_v1.json",
 }
 
 SYMMETRIC_IN_SCOPE = {
@@ -135,6 +136,7 @@ def build(clone: pathlib.Path) -> dict:
         "inScope": {"files": 0, "cases": 0, "invalid": 0},
         "vendored": {"files": 0, "cases": 0, "invalid": 0, "acceptable": 0},
         "inScopeRunnerMissing": {"files": 0, "cases": 0, "invalid": 0},
+        "inScopeNotVendored": {"files": 0, "cases": 0, "invalid": 0},
         "outOfScope": {"files": 0, "cases": 0},
     }
     for p in sorted((clone / "testvectors_v1").glob("*.json")):
@@ -146,7 +148,12 @@ def build(clone: pathlib.Path) -> dict:
         n = sum(counts.values())
         bucket, reason = classify(p.name, doc)
         schema = doc.get("schema")
-        executed = bucket is not None and schema in IMPLEMENTED_SCHEMAS
+        # A runner is per schema, but vendoring is per file: executed only when
+        # the runner exists AND this file is vendored. A schema-level test would
+        # count every sibling file (other hashes, key sizes) as executed.
+        runner = bucket is not None and schema in IMPLEMENTED_SCHEMAS
+        vendored = (ROOT / "src" / "data" / "acvp" / f"wycheproof_{p.name}").exists()
+        executed = runner and vendored
         rec = {
             "upstreamPath": f"testvectors_v1/{p.name}",
             "algorithm": doc.get("algorithm"),
@@ -156,9 +163,19 @@ def build(clone: pathlib.Path) -> dict:
             "bucket": bucket,
             "state": "vendored-and-executed"
             if executed
-            else ("in-scope-runner-missing" if bucket else "out-of-scope"),
+            else (
+                "in-scope-not-vendored"
+                if runner
+                else ("in-scope-runner-missing" if bucket else "out-of-scope")
+            ),
         }
-        if bucket and not executed:
+        if runner and not executed:
+            rec["reason"] = (
+                f"a runner for schema {schema} exists, but this file is not vendored: scope is "
+                "chosen per file (2026-09-26 maintainer ruling vendored only "
+                "rsa_pss_2048_sha256_mgf1_32 for RSA-PSS). Not executed, not claimed."
+            )
+        elif bucket and not executed:
             rec["reason"] = (
                 f"F4: no runner in this tree executes Wycheproof schema {schema}; vendoring it "
                 "would create an orphaned vector file (check-vector-reachability.ts fails those)"
@@ -174,7 +191,7 @@ def build(clone: pathlib.Path) -> dict:
             totals["inScope"]["files"] += 1
             totals["inScope"]["cases"] += n
             totals["inScope"]["invalid"] += counts["invalid"]
-            k = "vendored" if executed else "inScopeRunnerMissing"
+            k = "vendored" if executed else ("inScopeNotVendored" if runner else "inScopeRunnerMissing")
             totals[k]["files"] += 1
             totals[k]["cases"] += n
             totals[k]["invalid"] += counts["invalid"]
@@ -196,6 +213,7 @@ def build(clone: pathlib.Path) -> dict:
             "generator": "python3 scripts/acvp/wycheproof_scope_census.py --clone <clone>",
             "why_this_file_exists": "So that 'we support Wycheproof completely' is a checkable claim: "
             "every one of the 343 upstream files is accounted for here as vendored-and-executed, "
+            "in-scope-not-vendored (a runner exists for its schema but the file was not chosen), "
             "in-scope-runner-missing (with its case count, so the gap is a number) or out-of-scope "
             "(with the filter that excluded it).",
         },

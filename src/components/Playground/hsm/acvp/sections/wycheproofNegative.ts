@@ -28,7 +28,7 @@
 //                 different plaintext) is a real defect and fails. No case is
 //                 skipped and no assertion is weakened to get green.
 import { hexToBytes } from '@/utils/dataInputUtils'
-import { buildECDH1DeriveParams, rvName } from '@/wasm/softhsm'
+import { buildECDH1DeriveParams, hsm_importRSAPublicKey, Pkcs11Error, rvName } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import {
   CKA_CLASS,
@@ -58,11 +58,13 @@ import {
   eqHex,
   hexUp,
   importSecretRv,
+  pPss,
   rawMech,
   runRow,
   skipRow,
   unwrapRv,
   valueOf,
+  verifyRaw,
   type ClassicalSectionCtx,
   type RowOutcome,
 } from './classicalRaw'
@@ -546,6 +548,153 @@ export async function runWycheproofKeywrapSection(ctx: ClassicalSectionCtx): Pro
           },
         })
       }
+    }
+  }
+}
+
+// ── RSASSA-PSS verify (rsa_pss_2048_sha256_mgf1_32) ──────────────────────────
+//
+// Replaces the single Node/OpenSSL-generated case of rsapss_test.json
+// (maintainer ruling 2026-09-26; source priority NIST ACVP > Wycheproof >
+// published standard > custom). The NIST RSA-SigVer-FIPS186-5 sample has no
+// SHA2-256 PSS group (sections/rsaSigVerAcvp.ts runs its SHA3-256 ones), so
+// Wycheproof is the highest-priority source for SHA-256 PSS.
+
+interface PssTest {
+  tcId: number
+  comment: string
+  flags?: string[]
+  msg: string
+  sig: string
+  result: WycResult
+}
+interface PssGroup {
+  keySize: number
+  sha: string
+  mgf: string
+  mgfSha: string
+  sLen: number
+  publicKey: { modulus: string; publicExponent: string }
+  tests: PssTest[]
+}
+
+/** Group hash → PKCS#11 mechanism, CK_RSA_PKCS_PSS_PARAMS hashAlg and MGF. Only
+ *  what a vendored file needs; any other group becomes a skip row, not a guess. */
+const PSS_HASH: Record<string, { mech: number; mechName: string; hashAlg: number; mgf: number }> = {
+  'SHA-256': {
+    mech: WSE_MECH.CKM_SHA256_RSA_PKCS_PSS,
+    mechName: 'CKM_SHA256_RSA_PKCS_PSS',
+    hashAlg: WSE_MECH.CKM_SHA256,
+    mgf: 0x2 /* CKG_MGF1_SHA256 */,
+  },
+}
+
+/** Wycheproof's modulus is an ASN.1 INTEGER (leading 00 when the top bit is
+ *  set); CKA_MODULUS is an unsigned big integer, so the sign byte is dropped. */
+const unsignedHex = (hex: string): string => hex.replace(/^(00)+(?=[0-9a-fA-F]{2})/, '')
+
+export async function runWycheproofRsaPssSection(ctx: ClassicalSectionCtx): Promise<void> {
+  const { M, hSession: h, eName, mechs } = ctx
+  const file = (await import('@/data/acvp/wycheproof_rsa_pss_2048_sha256_mgf1_32_test.json'))
+    .default as unknown as WycFile<PssGroup>
+  const P = file._provenance
+  for (let gi = 0; gi < file.testGroups.length; gi++) {
+    // eslint-disable-next-line security/detect-object-injection
+    const g = file.testGroups[gi]
+    const hs = g.mgf === 'MGF1' && g.mgfSha === g.sha ? PSS_HASH[g.sha] : undefined
+    const why = hs
+      ? unsupportedReason(mechs, hs.mech, hs.mechName)
+      : `no PKCS#11 PSS mechanism wired for ${g.sha} with ${g.mgf}-${g.mgfSha}`
+    for (const t of g.tests) {
+      const id = `wyc-rsapss-tg${gi + 1}-tc${t.tcId}-${eName}`
+      const algorithm = `RSA-${g.keySize} PSS ${g.sha} — Wycheproof (${eName})`
+      const testCase =
+        `Verify · Wycheproof rsa_pss_2048_sha256_mgf1_32_test tg${gi + 1}/tc${t.tcId} · ` +
+        `${g.keySize}-bit · ${g.sha} · ${g.mgf}-${g.mgfSha} · sLen ${g.sLen} · msg ${t.msg.length / 2}B · ` +
+        `flags ${flagsOf(t)} · ${t.comment || 'no comment'} · expect ` +
+        (t.result === 'valid'
+          ? 'CKR_OK'
+          : t.result === 'invalid'
+            ? 'C_Verify refused (signature must not verify)'
+            : "refusal OR CKR_OK ('acceptable')")
+      const meta: AcvpCaseMeta = {
+        origin: 'third-party-oracle',
+        upstreamOperation: 'sigVer',
+        localOperation: 'sigVer',
+        parameterSet: `RSA-${g.keySize}`,
+        hashAlg: g.sha,
+        messageBytes: t.msg.length / 2,
+        parameters: {
+          modulo: g.keySize,
+          mgf: `${g.mgf}-${g.mgfSha}`,
+          saltLen: g.sLen,
+          wycheproofResult: t.result,
+          flags: flagsOf(t),
+        },
+        expected: expectedFor(t.result),
+        expectedReason: t.comment || flagsOf(t),
+        tgId: gi + 1,
+        tcId: t.tcId,
+        source: srcOf(P),
+      }
+      if (why || !hs) {
+        await skipRow(ctx, { id, algorithm, testCase, meta, why: why ?? 'unsupported' })
+        continue
+      }
+      await runRow(ctx, {
+        id,
+        algorithm,
+        testCase,
+        meta,
+        source: wycTag(P),
+        exec: (): RowOutcome => {
+          let pub = 0
+          try {
+            pub = hsm_importRSAPublicKey(
+              M,
+              h,
+              hexToBytes(unsignedHex(g.publicKey.modulus)),
+              hexToBytes(unsignedHex(g.publicKey.publicExponent)),
+              false
+            )
+          } catch (e: unknown) {
+            const o =
+              e instanceof Pkcs11Error
+                ? `C_CreateObject(pk) → ${rvName(e.rv)}`
+                : e instanceof Error
+                  ? e.message
+                  : String(e)
+            return { ok: false, observed: o, details: `${o} — REFUSED the Wycheproof public key` }
+          }
+          const m = rawMech(M, hs.mech, pPss(M, hs.hashAlg, hs.mgf, g.sLen))
+          try {
+            const r = verifyRaw(M, h, m, pub, hexToBytes(t.msg), hexToBytes(t.sig))
+            const at = r.initRv !== CKR_OK ? 'C_VerifyInit' : 'C_Verify'
+            const o = `${at} → ${rvName(r.rv)}`
+            if (r.rv === CKR_OK)
+              return t.result === 'invalid'
+                ? {
+                    ok: false,
+                    observed: o,
+                    details: `${o} — VERIFIED a signature Wycheproof marks invalid (${t.comment || flagsOf(t)})`,
+                  }
+                : { ok: true, observed: o, details: `${o}; upstream result=${t.result}` }
+            if (r.initRv !== CKR_OK || t.result === 'valid')
+              return {
+                ok: false,
+                observed: o,
+                details:
+                  r.initRv !== CKR_OK
+                    ? `${o} — the mechanism with these PSS parameters was refused before the signature was checked`
+                    : `${o} — failed a signature Wycheproof marks valid`,
+              }
+            return { ok: true, observed: o, details: `${o} (refused); upstream result=${t.result}` }
+          } finally {
+            m.free()
+            destroy(M, h, pub)
+          }
+        },
+      })
     }
   }
 }

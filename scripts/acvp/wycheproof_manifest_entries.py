@@ -23,6 +23,7 @@ partially registered file would silently claim less coverage than it executes.
 Usage:
   python3 scripts/acvp/wycheproof_manifest_entries.py            # write
   python3 scripts/acvp/wycheproof_manifest_entries.py --print    # stdout only
+  python3 scripts/acvp/wycheproof_manifest_entries.py --only <stem>  # append one file's entry
 """
 
 from __future__ import annotations
@@ -67,6 +68,12 @@ FILES = {
     "wycheproof_ed448_test": ("ed448_test.json", "sigVer", "sigVer", "EDDSA (Ed448)"),
     "wycheproof_aes_wrap_test": ("aes_wrap_test.json", "decrypt", "unwrap", "AES-WRAP"),
     "wycheproof_aes_kwp_test": ("aes_kwp_test.json", "decrypt", "unwrap", "AES-KWP"),
+    "wycheproof_rsa_pss_2048_sha256_mgf1_32_test": (
+        "rsa_pss_2048_sha256_mgf1_32_test.json",
+        "sigVer",
+        "sigVer",
+        "RSASSA-PSS",
+    ),
 }
 
 # The caseRecord schema has no free-text field, so the `acceptable` policy is
@@ -99,6 +106,12 @@ def params_for(stem: str, group: dict, test: dict) -> dict:
         p["curve"] = "X25519" if "x25519" in stem else "X448"
     elif stem.startswith("wycheproof_ed"):
         p["curve"] = "Ed25519" if "ed25519" in stem else "Ed448"
+        p["msgBytes"] = len(test.get("msg", "")) // 2
+    elif stem.startswith("wycheproof_rsa_pss"):
+        p["modulo"] = group["keySize"]
+        p["hashAlg"] = group["sha"]
+        p["mgf"] = f'{group["mgf"]}-{group["mgfSha"]}'
+        p["saltLen"] = group["sLen"]
         p["msgBytes"] = len(test.get("msg", "")) // 2
     else:
         p["mode"] = "KWP" if "kwp" in stem else "KW"
@@ -219,7 +232,12 @@ def entry(stem: str) -> dict:
 
 
 def main() -> int:
-    entries = [entry(s) for s in FILES]
+    only = sys.argv[sys.argv.index("--only") + 1] if "--only" in sys.argv else None
+    stems = [only] if only else list(FILES)
+    if only and only not in FILES:
+        print(f"{only} is not in FILES", file=sys.stderr)
+        return 1
+    entries = [entry(s) for s in stems]
     if "--print" in sys.argv:
         print(json.dumps(entries, indent=2))
         return 0
@@ -230,7 +248,7 @@ def main() -> int:
     # `npx prettier --write` on the result.
     text = MANIFEST.read_text(encoding="utf-8")
     assert text.endswith("\n  ]\n}\n"), "manifest tail is not the expected `files` array close"
-    if any(f'"id": "{s}"' in text for s in FILES):
+    if any(f'"id": "{s}"' in text for s in stems):
         print("Wycheproof entries are already present; remove them first", file=sys.stderr)
         return 1
     body = text[: -len("\n  ]\n}\n")]
