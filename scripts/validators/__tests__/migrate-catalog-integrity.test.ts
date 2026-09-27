@@ -8,6 +8,7 @@ import {
   checkProductIdUniqueness,
   checkReleaseDates,
   checkRenamesKeepFormerNames,
+  checkNameShape,
 } from '../migrate-catalog-integrity'
 
 describe('MC-1 product_id uniqueness', () => {
@@ -214,5 +215,25 @@ describe('MC-7 column-name cells', () => {
         'c'
       )
     ).toHaveLength(0)
+  })
+})
+
+describe('MC-8 name shape', () => {
+  it('flags scraped page titles', () => {
+    const rows = [
+      { product_id: 'a', software_name: 'Dashboard - PQProbe' },
+      { product_id: 'b', software_name: 'PQConnect: Intro' },
+      { product_id: 'c', software_name: 'SMAUG-T & HAETAE - HAETAE' },
+      { product_id: 'd', software_name: 'Lean Consensus Roadmap' },
+    ]
+    expect(checkNameShape(rows, 'c')).toHaveLength(4)
+  })
+  it('passes product names and skips retired rows', () => {
+    const rows = [
+      { product_id: 'a', software_name: 'PQProbe' },
+      { product_id: 'b', software_name: 'Alibaba Cloud ESA (Edge Security Acceleration)' },
+      { product_id: 'c', software_name: 'What is PQC', status: 'deprecated' },
+    ]
+    expect(checkNameShape(rows, 'c')).toHaveLength(0)
   })
 })
