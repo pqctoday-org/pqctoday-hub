@@ -69,6 +69,7 @@ const DOCUMENT_CHECKERS: Record<string, string> = {
   ecdsa_p384_test: 'scripts/acvp/check_rfc6979_ecdsa.py --id ecdsa_p384_test',
   eddsa_test: 'scripts/acvp/check_rfc8032_ed25519.py',
   hkdf_test: 'scripts/acvp/check_rfc5869_hkdf.py',
+  kmac_test: 'scripts/acvp/build_kmac_samples.py',
 }
 
 const sha256 = (b: Buffer | string) => createHash('sha256').update(b).digest('hex')

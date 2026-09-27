@@ -132,7 +132,10 @@ describe('audit-validation-manifest — sabotage (temp copy only)', () => {
 
   it('fails when an unverified case is left active', () => {
     const m = readManifest()
+    // No committed case is unverified any more (kmac_test's KMAC256 case was
+    // rebuilt from NIST 2026-09-27), so plant one.
     const c = m.files.find((f) => f.id === 'kmac_test')!.cases[0]
+    c.evidenceClass = 'unverified'
     c.status = 'active'
     writeManifest(m)
     expect(codes()).toContain('UNVERIFIED_ACTIVE')

@@ -19287,7 +19287,7 @@
     {
       "id": "kmac_test",
       "path": "src/data/acvp/kmac_test.json",
-      "sha256": "a6fe1b1abb483368678b7a9d9766f8145eaba69dab4078aef6d84104c9519de4",
+      "sha256": "1a16b5e6101315180e1fabfac081490f2e4b6a80b5a41597426b7fd7f511d907",
       "status": "active",
       "evidenceClass": "published-standard-kat",
       "source": {
@@ -19297,15 +19297,15 @@
         "url": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/KMAC_samples.pdf",
         "revision": null,
         "verification": {
-          "date": "2026-09-24",
-          "method": "Byte comparison of key, data, customization and output against the NIST KMAC samples PDF.",
-          "result": "partial",
+          "date": "2026-09-27",
+          "method": "Built by scripts/acvp/build_kmac_samples.py from KMAC_samples.pdf, whose SHA-256 must equal the pinned value; key, data, customization (S) and output of Samples #4 and #1 are read from the pdftotext rendering (not typed) and each is recomputed with pycryptodome KMAC256/KMAC128 before writing (2/2 reproduce NIST's Outval). --check rebuilds from the pinned PDF and compares.",
+          "result": "match",
           "evidence": [
             {
               "title": "NIST CSRC KMAC_samples.pdf",
               "url": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/KMAC_samples.pdf",
               "sha256": "445ee87689670da2bee611e88b765f22a43b4155295fd7f1cddea0ac671b24e1",
-              "retrieved": "2026-09-24"
+              "retrieved": "2026-09-27"
             },
             {
               "title": "NIST SP 800-185",
@@ -19349,9 +19349,7 @@
           "upstream": {
             "label": "KMAC_samples.pdf Sample #4 (KMAC256)"
           },
-          "evidenceClass": "unverified",
-          "status": "quarantined",
-          "statusReason": "Expected mac does not match the cited NIST KMAC Sample #4: it is 63 bytes (126 hex) although macLen is 512 bits, and only the first 57 bytes equal the NIST output (file tail ...71145F460000, NIST tail ...24D9C27773A8DD). No runner reads this group today."
+          "lineage": ["kmac-test-2"]
         },
         {
           "caseId": "kmac_test#/testGroups/1/tests/0",
@@ -19386,11 +19384,23 @@
               "detail": "Published MAC-generation sample used as a positive verification tuple."
             }
           ]
+        },
+        {
+          "id": "kmac-test-2",
+          "appliesTo": ["kmac_test#/testGroups/0/tests/0"],
+          "upstreamOperation": "KMAC256 MAC generation (published sample, customization S = \"My Tagged Application\")",
+          "localOperation": "none: not executed. The hub's KMAC wrapper (hsm_kmac / hsm_kmacVerify) has no customization-string parameter, so a C_Verify with CKM_KMAC_256 and S cannot be issued yet",
+          "transformations": [
+            {
+              "type": "operation-change",
+              "detail": "Published MAC-generation sample used as a positive verification tuple."
+            }
+          ]
         }
       ],
       "copies": [],
       "publishabilityGaps": [],
-      "notes": "KMAC128 case matches NIST Sample #1. KMAC256 case is quarantined (see statusReason)."
+      "notes": "Rebuilt 2026-09-27 by scripts/acvp/build_kmac_samples.py from KMAC_samples.pdf: both cases match NIST (Sample #4 KMAC256, Sample #1 KMAC128). The KMAC256 case was quarantined until then: its mac was 63 bytes and diverged from Sample #4 after ...3F4F2487; it now carries the document's 64-byte Outval. It is source-verified but NOT executed: no runner issues KMAC256 with a customization string (only the KMAC128 case runs, workbench §35), so it claims nothing about either engine."
     },
     {
       "id": "mldsa_extended_test",

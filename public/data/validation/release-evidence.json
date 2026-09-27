@@ -16,19 +16,19 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "bb5e27b5aadd44c0ddea02ceb4c6ca81c84d1ce039702c84ed4fe77327c6b496",
+    "public/data/validation/coverage-matrix.json": "2560cad0b5bdb71023e0576bae214dc0075e649f48c4b289911834021522d40d",
     "src/data/validation/coverage-waivers.json": "87b928d900e95f966e744aed284f4b11933e03f3dab9ced277d1072154702980",
     "src/data/validation/native-conformance.generated.json": "f28a026649addce7e9bd55ecc531e8b9a5117c10a31382d3443213c9b2828b26",
-    "src/data/validation/open-gaps.json": "8c156eeb4b032d276ec4d77d7989c8f5919367835727967bb853796810723aef",
+    "src/data/validation/open-gaps.json": "01ee96809f8b963d85678d2b39308515a5c38df37e6ee982cf022bcec15a153c",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "3e3de40a719f4fb1b6081667b0c700012c1f6280372e4e8b824d1899352a12cd",
     "src/data/validation/run-results/wasm-node-katRunner.json": "b1f085d0e3a6d863a84d5e16f401ca0a1c74ac5841ef52a8a229a717c418fef4",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "67fa98bf8bbc49e2a67350eb1a35dcfe99b2b0f62d30d1648445f2ebc775abb4",
-    "src/data/validation/validation-counts.generated.json": "583a7e37128e44fa0c5bccd68083ef036231b0ede4cda8c8adebfaa61e63ed46",
-    "src/data/validation/vector-manifest.json": "096beb7523fe57c9738f607d8f78ab118ecea5ce814ae8737f74da3e1dbadac2"
+    "src/data/validation/validation-counts.generated.json": "0124f70fd5631427e0cd2a1a2e705f6213342f601b1b0d10853f6fa9b5812766",
+    "src/data/validation/vector-manifest.json": "cd6039c8567ce51c85788b7d4194bd5c4176569c477e74bbec50ed302faecc6c"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "66bb3b737ad64906e416058eeeb87f3beaa6a241acd6d3b4959c0e6702458d83",
+    "manifestCanonicalSha256": "854195b3e656b81024b4166802d1525c8707cd9e4047d8b09228367869eb020d",
     "nistReferenceSampleFiles": 53,
     "nistReferenceSampleCases": 940,
     "vectorFiles": {
@@ -49,13 +49,13 @@
     },
     "cases": {
       "total": 2785,
-      "active": 2784,
-      "quarantined": 1
+      "active": 2785,
+      "quarantined": 0
     },
     "activeCasesByClass": {
       "nist-acvp-reference-sample": 940,
       "acvts-issued-vector": 0,
-      "published-standard-kat": 21,
+      "published-standard-kat": 22,
       "independent-oracle": 1795,
       "cross-implementation-differential": 0,
       "functional-round-trip": 26,
@@ -64,7 +64,7 @@
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 2016,
+      "positive": 2017,
       "negative": 768
     },
     "filesWithPublishabilityGap": {
@@ -2737,13 +2737,13 @@
   },
   "reviews": {
     "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
-    "validRecords": 69,
+    "validRecords": 70,
     "statusCounts": {
-      "source-verified": 69,
-      "awaiting-review": 30
+      "source-verified": 70,
+      "awaiting-review": 29
     },
     "awaiting": {
-      "vector-source": 3,
+      "vector-source": 2,
       "coverage-waiver": 23,
       "public-claim": 3,
       "learn-module-practitioner": 1
@@ -2964,7 +2964,7 @@
         "kind": "vector-source",
         "title": "src/data/acvp/kmac_test.json — published-standard-kat (NIST CSRC Cryptographic Standards and Guidelines examples: KMAC_samples.pdf Sample #1 (KMAC128) and Sample #4 (KMAC256) — the SP 800-185 example set; SP 800-185 itself prints no KMAC outputs)",
         "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
-        "status": "awaiting-review"
+        "status": "source-verified"
       },
       {
         "id": "vector-source:mldsa_extended_test",
@@ -3464,7 +3464,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "74 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×3."
+      "basis": "74 active vector files, 0 without provenance; 0 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×3."
     },
     {
       "n": 3,
