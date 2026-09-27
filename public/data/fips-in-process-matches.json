@@ -101,6 +101,69 @@
       "firstSeen": "2026-09-26"
     },
     {
+      "product_id": "aws-kms",
+      "list": "MIP",
+      "module": "AWS Key Management Service HSM",
+      "vendor": "Amazon Web Services, Inc",
+      "nistStage": "Pending Review",
+      "date": "2026-09-24",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM",
+      "vendor": "Amazon Web Services, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2024-11-08",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM (2.2.0, h3.0)",
+      "vendor": "Amazon Web Services, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-15",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM (2.3.0, h3.0)",
+      "vendor": "Amazon Web Services, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-15",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM (2.3.0, h4.0)",
+      "vendor": "Amazon Web Services, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-04-15",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM (2.4.0, h3.0)",
+      "vendor": "Amazon Web Services, Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-05-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "aws-kms",
+      "list": "IUT",
+      "module": "AWS Key Management Service HSM (2.4.0, h4.0)",
+      "vendor": "Amazon Web Services, Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-05-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
       "product_id": "blackberry-certicom-security-builder-fips-module",
       "list": "MIP",
       "module": "Security Builder FIPS Module",
@@ -245,6 +308,15 @@
       "firstSeen": "2026-09-26"
     },
     {
+      "product_id": "dell-bsafe-crypto-j",
+      "list": "IUT",
+      "module": "Dell BSAFE Crypto Module for Java 8.0",
+      "vendor": "Dell Australia Pty Limited, BSAFE Product Team",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-10",
+      "firstSeen": "2026-09-26"
+    },
+    {
       "product_id": "dell-bsafe-crypto-module-for-c",
       "list": "MIP",
       "module": "Dell BSAFE Crypto Module for C 3.1",
@@ -317,6 +389,42 @@
       "firstSeen": "2026-09-26"
     },
     {
+      "product_id": "ios-26-macos-26",
+      "list": "MIP",
+      "module": "Apple corecrypto Module OS 26 [Apple Silicon, Secure Key Store, Hardware, SL2/PHY3]",
+      "vendor": "Apple Inc.",
+      "nistStage": "Pending Review",
+      "date": "2026-09-15",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ios-26-macos-26",
+      "list": "MIP",
+      "module": "Apple corecrypto Module OS 26 [Apple Silicon, Secure Key Store, Hardware, SL2/PHY3]",
+      "vendor": "Apple Inc.",
+      "nistStage": "Pending Review",
+      "date": "2026-09-17",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ios-26-macos-26",
+      "list": "MIP",
+      "module": "Apple corecrypto Module OS 26 [Apple silicon, Kernel, Software, SL1]",
+      "vendor": "Apple Inc.",
+      "nistStage": "Review",
+      "date": "2026-07-31",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ios-26-macos-26",
+      "list": "MIP",
+      "module": "Apple corecrypto Module OS 26 [Apple silicon, User, Software, SL1]",
+      "vendor": "Apple Inc.",
+      "nistStage": "Review",
+      "date": "2026-07-30",
+      "firstSeen": "2026-09-26"
+    },
+    {
       "product_id": "openssl",
       "list": "MIP",
       "module": "OpenSSL FIPS Provider",
@@ -332,6 +440,15 @@
       "vendor": "PQShield Ltd.",
       "nistStage": "Comment Resolution - Lab",
       "date": "2026-08-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "quantum-xchange-platform",
+      "list": "IUT",
+      "module": "PhioTX - D",
+      "vendor": "Quantum Xchange, Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2024-09-24",
       "firstSeen": "2026-09-26"
     },
     {
