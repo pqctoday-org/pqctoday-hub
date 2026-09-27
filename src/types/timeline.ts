@@ -22,6 +22,14 @@ export type EntityType = 'government' | 'standards' | 'vendor'
 export interface TimelineEvent {
   startYear: number
   endYear: number
+  /**
+   * The source states a start but NO end for this phase (2026-09-27, user
+   * decision D22). The CSV keeps EndYear blank on purpose; the loader sets
+   * endYear = startYear so no consumer ever computes with an invented end year,
+   * and the Gantt draws the bar to the chart's edge, fading, labelled
+   * "no end date stated by source". Format a range with periodLabel().
+   */
+  openEnded?: boolean
   phase: Phase
   type: EventType
   title: string
@@ -91,6 +99,8 @@ export interface TimelineEvent {
 export interface TimelinePhase {
   startYear: number
   endYear: number
+  /** True when any event in this phase is open-ended (see TimelineEvent.openEnded). */
+  openEnded?: boolean
   phase: string
   type: EventType
   title: string

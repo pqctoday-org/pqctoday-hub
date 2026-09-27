@@ -270,7 +270,16 @@ export function parseTimelineCSV(
     if (!row.Country) continue
 
     const startYear = parseSaneYear(row.StartYear, `${row.Country} / "${row.Title}" (StartYear)`)
-    const endYear = parseSaneYear(row.EndYear, `${row.Country} / "${row.Title}" (EndYear)`)
+    // A BLANK EndYear beside a valid StartYear is a deliberate record that the
+    // source states no end (2026-09-27, D22 — e.g. ANSSI's "at least 2030" is a
+    // floor, not an end). It is not malformed: keep the row, flag it open-ended,
+    // and set endYear = startYear so no consumer computes with an invented end.
+    // Anything else malformed (a blank StartYear, "Q1 2030", 20030) still fails
+    // loudly and is excluded, exactly as before.
+    const openEnded = startYear !== null && (row.EndYear ?? '').trim() === ''
+    const endYear = openEnded
+      ? startYear
+      : parseSaneYear(row.EndYear, `${row.Country} / "${row.Title}" (EndYear)`)
     if (startYear === null || endYear === null) continue
 
     const countryName = row.Country
@@ -311,6 +320,7 @@ export function parseTimelineCSV(
     const event: TimelineEvent = {
       startYear,
       endYear,
+      ...(openEnded ? { openEnded: true } : {}),
       phase: row.Category as Phase,
       type: (row.Type as EventType) || 'Phase',
       title: row.Title || '',
@@ -458,6 +468,7 @@ try {
             description: e.description,
             startYear: e.startYear,
             endYear: e.endYear,
+            openEnded: e.openEnded ?? false,
             phase: e.phase,
             type: e.type,
             sourceUrl: e.sourceUrl,
@@ -605,6 +616,7 @@ export function transformToGanttData(countries: CountryData[]): GanttCountryData
       phases.push({
         startYear,
         endYear,
+        ...(events.some((e) => e.openEnded) ? { openEnded: true } : {}),
         phase: phaseName,
         type: rowType,
         title: firstEvent.title,
