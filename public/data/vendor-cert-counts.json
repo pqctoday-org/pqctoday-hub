@@ -59,8 +59,8 @@
     "vendor": "THALES DIS",
     "fips": 0,
     "acvp": 0,
-    "cc": 41,
-    "total": 41
+    "cc": 42,
+    "total": 42
   },
   {
     "vendor": "NXP Semiconductors Germany GmbH",
@@ -133,18 +133,18 @@
     "total": 14
   },
   {
+    "vendor": "IDEMIA",
+    "fips": 3,
+    "acvp": 1,
+    "cc": 10,
+    "total": 14
+  },
+  {
     "vendor": "F5, Inc.",
     "fips": 11,
     "acvp": 0,
     "cc": 3,
     "total": 14
-  },
-  {
-    "vendor": "IDEMIA",
-    "fips": 3,
-    "acvp": 1,
-    "cc": 9,
-    "total": 13
   },
   {
     "vendor": "SUSE LLC",
@@ -589,13 +589,6 @@
   },
   {
     "vendor": "NUVOTON",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Unknown Vendor",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
@@ -2045,6 +2038,20 @@
   },
   {
     "vendor": "THALES DIS PEGASUS",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 1,
+    "total": 1
+  },
+  {
+    "vendor": "THALES DIS FRANCE",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 1,
+    "total": 1
+  },
+  {
+    "vendor": "THALES DIS France SAS",
     "fips": 0,
     "acvp": 0,
     "cc": 1,
