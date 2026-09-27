@@ -530,11 +530,35 @@ export const ROUTE_META: Record<string, RouteMeta> = {
 
   '/learn/crypto-product-certification': {
     title:
-      'Cryptographic Product Certification — FIPS 140-3, Common Criteria, EUCC & PCI | PQC Today',
+      'Cryptographic Product Certification: Fundamentals — FIPS 140-3, CC, EUCC & PCI | PQC Today',
     description:
-      'What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, how to read one, and how to add post-quantum cryptography to a certified product without losing certification.',
+      'What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding post-quantum cryptography changes in each scheme.',
     canonical: `${BASE_URL}/learn/crypto-product-certification`,
-    structuredData: buildModuleSchema('Cryptographic Product Certification', 'PT120M', 'Advanced'),
+    structuredData: buildModuleSchema(
+      'Cryptographic Product Certification: Fundamentals',
+      'PT60M',
+      'Advanced'
+    ),
+  },
+
+  '/learn/fips-pci-certification': {
+    title: 'FIPS 140-3 & PCI Certification — CMVP, PTS HSM, PIN & P2PE | PQC Today',
+    description:
+      'FIPS 140-3 and the CMVP, and PCI PTS HSM with the payment operating stack: what each certificate proves, how to read one, and what adding PQC means for each.',
+    canonical: `${BASE_URL}/learn/fips-pci-certification`,
+    structuredData: buildModuleSchema('FIPS 140-3 & PCI Certification', 'PT60M', 'Advanced'),
+  },
+
+  '/learn/cc-eucc-certification': {
+    title: 'Common Criteria, EUCC & eIDAS Certification — EALs, PPs & PQC | PQC Today',
+    description:
+      'Common Criteria and CC:2022, EUCC as the EU scheme, eIDAS qualified devices and their Protection Profiles: what each claim proves and what adding PQC means for a certified product.',
+    canonical: `${BASE_URL}/learn/cc-eucc-certification`,
+    structuredData: buildModuleSchema(
+      'Common Criteria, EUCC & eIDAS Certification',
+      'PT60M',
+      'Advanced'
+    ),
   },
 
   '/learn/stateful-signatures': {

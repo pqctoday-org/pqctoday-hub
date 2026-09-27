@@ -11,24 +11,30 @@ import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { useLearnPathFilter } from '@/components/PKILearning/common/useLearnPath'
 import { OptionalReferenceBadge } from '@/components/PKILearning/common/LearnPathPicker'
-import { ALL_EXERCISES } from '../data/allExercises'
+import type { ExerciseItem } from '../data/types'
 import { EmptyState } from '@/components/ui/empty-state'
 
 interface CertExercisesProps {
+  /** This module's exercises, in display order. */
+  exercises: readonly ExerciseItem[]
+  /** True when the module declares learn paths, so the path-picker hint applies. */
+  hasPaths: boolean
   onOpenStep: (stepId: string, config?: Record<string, unknown>) => void
 }
 
-export const CertExercises = ({ onOpenStep }: CertExercisesProps) => {
+export const CertExercises = ({ exercises, hasPaths, onOpenStep }: CertExercisesProps) => {
   const navigate = useNavigate()
-  const visible = useLearnPathFilter(ALL_EXERCISES)
+  const visible = useLearnPathFilter(exercises)
 
   return (
     <div className="w-full space-y-6">
       <div className="glass-panel p-6">
         <h2 className="mb-2 text-xl font-bold text-gradient">Guided Exercises</h2>
         <p className="text-sm text-muted-foreground">
-          Each exercise opens a workshop step. Only the exercises for your learning path are shown;
-          pick &quot;All sections&quot; in the path picker to see every path.
+          Each exercise opens a workshop step.
+          {hasPaths
+            ? ' Only the exercises for your learning path are shown; pick “All sections” in the path picker to see every path.'
+            : null}
         </p>
       </div>
 

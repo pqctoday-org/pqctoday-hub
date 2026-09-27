@@ -14,8 +14,8 @@ import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
 import { CopyButton } from '@/components/ui/CopyButton'
 import { getStandard } from '@/data/standardsRegistry'
-import type { CertWorkshopStepProps } from '../data/types'
-import { ANCHOR_SCENARIO } from '../data/anchorScenario'
+import type { CertWorkshopStepProps } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
+import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import {
   CC_EU_AS_OF,
   EIDAS_TRACE_SCENARIOS,

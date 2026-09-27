@@ -714,8 +714,15 @@ export const ChangeRoutesDetail = () => (
     <H3>FIPS 140-3 / CMVP — the routes that matter for PQC</H3>
     <p>
       The Management Manual v2.7 (<SourceLink source={SHARED_SOURCES.cmvpManual} />, 9 April 2026,
-      §7.1) defines the submission scenarios; learners on the FIPS path have the full table in{' '}
-      <em>CMVP submission routes</em>. For a PQC addition, five are decisive:
+      §7.1) defines the submission scenarios; the full table is in <em>CMVP submission routes</em>{' '}
+      in the{' '}
+      <Link
+        to="/learn/fips-pci-certification?path=fips"
+        className="text-primary underline-offset-2 hover:underline"
+      >
+        FIPS 140-3 &amp; PCI Certification
+      </Link>{' '}
+      module. For a PQC addition, five are decisive:
     </p>
     <ul className="list-disc space-y-1 pl-5">
       <li>

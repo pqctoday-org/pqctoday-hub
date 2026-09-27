@@ -1722,7 +1722,7 @@ export function capstoneMarkdown(s: CapstoneState, generatedAt: string): string 
     '',
     `> Practitioner orientation — not laboratory training. Not yet reviewed by an accredited lab or certification body. Product and versions are fictional. Generated ${generatedAt}; module facts as of ${AS_OF_ISO}.`,
     '',
-    `**Chosen path:** ${PATH_LABEL[s.path]}`,
+    `**Chosen scheme:** ${PATH_LABEL[s.path]}`,
     '',
     '## Artifact 1 — Module / TOE / device boundaries',
     '',
