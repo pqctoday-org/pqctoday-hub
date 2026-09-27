@@ -33,7 +33,7 @@ import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { TestResult } from './useAcvpSuite'
 import { SLH_CTX256_PIN } from './sections/slhdsaAcvp'
-import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence.static'
 
 /** Manifest evidence classes of a row (generated per-case records; [] = no record). */
 const classesOf = (rowId: string) =>

@@ -29,7 +29,7 @@ import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { CategoryId, TestResult } from './useAcvpSuite'
 import { SLH_F_SETS } from './sections/slhdsaCoverage'
-import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence.static'
 
 /** Manifest evidence classes of a row (generated per-case records; [] = no record). */
 const classesOf = (rowId: string) =>

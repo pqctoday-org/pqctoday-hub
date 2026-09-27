@@ -21,7 +21,7 @@ import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { TestResult } from './useAcvpSuite'
 import type { ClassicalSectionCtx } from './sections/classicalRaw'
-import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence.static'
 
 const classesOf = (rowId: string) =>
   [...new Set(evidenceForRowId(rowId).map((e) => e.evidenceClass))].sort()

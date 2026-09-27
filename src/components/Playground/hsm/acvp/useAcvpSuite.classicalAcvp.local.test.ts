@@ -62,7 +62,7 @@ import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { TestResult } from './useAcvpSuite'
 import { WSE_MECH } from './sections/classicalRaw'
 import inventory from '@/data/validation/mechanism-inventory.generated.json'
-import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence.static'
 
 /** Manifest evidence classes of a row (generated per-case records; [] = no record). */
 const classesOf = (rowId: string) =>

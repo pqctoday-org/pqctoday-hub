@@ -20,7 +20,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { CategoryId, TestResult } from './useAcvpSuite'
-import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence.static'
 
 const classesOf = (rowId: string) =>
   [...new Set(evidenceForRowId(rowId).map((e) => e.evidenceClass))].sort()

@@ -11,7 +11,7 @@
 // bridge. Execution is the untouched hsm/acvp/useAcvpSuite.ts runner —
 // e2e/acvp-validator.spec.ts's testids and its `e2e:trigger_acvp` window
 // event are preserved.
-import { memo, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import {
   Play,
   CheckCircle,
@@ -35,7 +35,7 @@ import {
 } from '../../../hsm/acvp/useAcvpSuite'
 import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
 import { CaseEvidenceBadge, coverageMatrixUrl } from '@/components/shared/CaseEvidenceBadge'
-import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+import { evidenceForRowId, loadAcvpRowEvidence } from '@/data/validation/acvpRowEvidence'
 import { EVIDENCE_CLASSES, EVIDENCE_CLASS_SHORT } from '@/data/validation/evidenceClasses'
 import { VALIDATION_DISCLAIMER_TEXT } from '@/data/validationDisclaimer'
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
@@ -54,7 +54,9 @@ import { createAcvpBridge, runSuiteScript } from './suiteBridges'
  * from this memo). `res` objects are created once by pushResult and never
  * mutated, so reference equality is a sound bail-out.
  */
-const AcvpResultRow = memo(({ res }: { res: TestResult }) => (
+// `evidenceReady` is part of the memo key: the evidence file loads on demand,
+// so a row rendered before it resolved must re-render once it has.
+const AcvpResultRow = memo(({ res }: { res: TestResult; evidenceReady: boolean }) => (
   <tr
     data-testid="acvp-result-row"
     // The stable per-case id, so a test can address ONE row instead of
@@ -119,6 +121,17 @@ export const AcvpSuiteWorkbench = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
   const { engineMode } = useHsmContext()
   const suite = useAcvpSuite()
+  // The per-case evidence file (10.8 MB) loads on demand, not with the app.
+  const [evidenceReady, setEvidenceReady] = useState(false)
+  useEffect(() => {
+    let live = true
+    loadAcvpRowEvidence()
+      .then(() => live && setEvidenceReady(true))
+      .catch((e: unknown) => console.error('[AcvpSuiteWorkbench] evidence load failed', e))
+    return () => {
+      live = false
+    }
+  }, [])
   const {
     results,
     loading,
@@ -363,7 +376,9 @@ export const AcvpSuiteWorkbench = () => {
                   </td>
                 </tr>
               ) : (
-                results.map((res) => <AcvpResultRow key={res.id} res={res} />)
+                results.map((res) => (
+                  <AcvpResultRow key={res.id} res={res} evidenceReady={evidenceReady} />
+                ))
               )}
             </tbody>
           </table>

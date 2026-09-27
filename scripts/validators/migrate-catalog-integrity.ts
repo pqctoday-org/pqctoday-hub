@@ -42,7 +42,11 @@
  *
  * MC-7  No cell holds its own column name (36 pqc_support cells in 4.124.1).
  *
- * Severity: MC-1, MC-4, MC-5 and MC-7 ERROR (identity / controlled vocabulary).
+ * MC-9  A row retired as `duplicate of X` names an active X and holds no
+ *       stronger certification verdict than X — retiring it must not hide the
+ *       stronger claim (2 rows in _r9: both stale, both CAVP-only).
+ *
+ * Severity: MC-1, MC-4, MC-5, MC-7 and MC-9 ERROR (identity / controlled vocabulary).
  * MC-2, MC-3 and MC-6 WARNING: legacy rows and prose heuristics are reported,
  * and the row-level fix goes through review.
  */
@@ -336,6 +340,73 @@ export function checkColumnNameCells(rows: CsvRow[], file: string): Finding[] {
   return findings
 }
 
+/**
+ * MC-9 — a retired duplicate never out-ranks its survivor.
+ *
+ * Retiring a row as `duplicate of X` moves every reader onto X. If the retired
+ * row held the stronger certification verdict, that claim silently vanishes
+ * (the SAP case, plan §0.0) — or, if the stronger verdict was wrong, it sits
+ * uncorrected where no validator looks. Both happened in _r9: two retired rows
+ * still carried verdicts from before the FIPS 140-3 stage vocabulary that
+ * out-ranked their survivors. The priv retirement step refuses such a
+ * retirement going forward; this check covers every row already retired.
+ * A reason that names no catalogue row (e.g. "duplicate of existing row") is
+ * not checked.
+ */
+const RANK_HC: Record<string, number> = {
+  yes: 5,
+  in_progress: 4,
+  cavp: 3,
+  component: 2,
+  no: 1,
+  unknown: 0,
+  '': 0,
+}
+const RANK_PC: Record<string, number> = {
+  yes: 5,
+  partial: 4,
+  in_progress: 3,
+  cavp: 2,
+  no: 1,
+  none: 0,
+  '': 0,
+}
+
+export function checkRetiredDuplicateVerdicts(rows: CsvRow[], file: string): Finding[] {
+  const byId = new Map(rows.map((r) => [r.product_id, r]))
+  const findings: Finding[] = []
+  rows.forEach((row, i) => {
+    if ((row.status || '').trim().toLowerCase() !== 'deprecated') return
+    const m = /^\s*duplicate of\s+([^\s:;,()]+)/i.exec(row.deprecated_reason || '')
+    if (!m) return
+    const keep = byId.get(m[1])
+    if (!keep) return
+    const at = { csv: file, row: i + 2 }
+    if (!isActive(keep)) {
+      findings.push({
+        ...at,
+        field: 'deprecated_reason',
+        value: m[1],
+        message: `${row.product_id}: retired as a duplicate of ${m[1]}, which is not active`,
+      })
+      return
+    }
+    const rh = (row.has_certification || '').trim().toLowerCase()
+    const kh = (keep.has_certification || '').trim().toLowerCase()
+    const rp = (row.pqc_certified || '').trim().toLowerCase()
+    const kp = (keep.pqc_certified || '').trim().toLowerCase()
+    if ((RANK_HC[rh] ?? 0) > (RANK_HC[kh] ?? 0) || (RANK_PC[rp] ?? 0) > (RANK_PC[kp] ?? 0)) {
+      findings.push({
+        ...at,
+        field: 'has_certification',
+        value: `${rh} / ${rp} > ${kh} / ${kp}`,
+        message: `${row.product_id}: retired as a duplicate of ${m[1]} but holds a stronger certification verdict (${rh}/${rp}) than it (${kh}/${kp})`,
+      })
+    }
+  })
+  return findings
+}
+
 /** The generation before the latest pqc_product_catalog file, by date then _rN. */
 function previousCatalog(): CsvRow[] {
   const prefix = 'pqc_product_catalog_'
@@ -448,6 +519,13 @@ export function runMigrateCatalogIntegrity(
       'ERROR',
       file,
       checkColumnNameCells(rows, file)
+    ),
+    result(
+      'MC-9',
+      'A retired duplicate names an active survivor and holds no stronger certification verdict',
+      'ERROR',
+      file,
+      checkRetiredDuplicateVerdicts(rows, file)
     ),
     result(
       'MC-8',
