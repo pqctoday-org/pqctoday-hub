@@ -40,7 +40,7 @@ run on this exact commit is not paid twice):
   - `audit:module-infographics` — every Learn module has its poster PNG.
   - `audit:tokens` — no hard-coded colours.
   - `validate:workshop` — every workshop cue resolves to a real route/slug/fixture.
-- `sync:wasm:check` — the vendored wasm bundles are built from the pqctoday-hsm commit they claim (needs the sibling checkout — only meaningful here).
+- `sync:wasm:check` — the vendored wasm bundles are built from the pqctoday-hsm commit they claim (needs the sibling checkout — only meaningful here). Since 2026-09-26 a Rust bundle's inputs come from its Cargo build graph (`cargoManifest` in `public/wasm/wasm-provenance.json`, derived by `scripts/ci/wasm-build-inputs.ts`) rather than a hand-written `sourceDirs` list. That hand-written list had missed a linked crate: cacp-kmip never saw a Rust engine change. It had also flagged changes that cannot alter the binary (reports, committed wasm output, the bench crate). `scripts/ci/wasm-build-inputs.local.test.ts` replays both kinds of error against real hsm commits. On CI's blobless clone the derivation reads each Rust source once, lazily: measured at ~96 s for cacp-kmip.
 - `gen:landing-counts:check` — landing hero counts match the CSVs.
 - `audit:csv-copy-forward` — no silent row loss between two generations of a dated CSV.
 - `test` — the full vitest suite (also in GitHub, sharded; the local run is the fast path on an M-series machine).
