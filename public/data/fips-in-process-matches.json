@@ -454,6 +454,15 @@
     {
       "product_id": "red-hat-enterprise-linux-10-2",
       "list": "IUT",
+      "module": "Red Hat Enterprise Linux 10 Kernel Cryptographic API",
+      "vendor": "Red Hat, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-21",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "red-hat-enterprise-linux-10-2",
+      "list": "IUT",
       "module": "Red Hat Enterprise Linux 10 gnutls",
       "vendor": "Red Hat, Inc.",
       "nistStage": "Implementation Under Test",
@@ -464,6 +473,15 @@
       "product_id": "red-hat-enterprise-linux-10-2",
       "list": "IUT",
       "module": "Red Hat Enterprise Linux FIPS Provider",
+      "vendor": "Red Hat, Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-10-21",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "red-hat-enterprise-linux-10-pqc",
+      "list": "IUT",
+      "module": "Red Hat Enterprise Linux 10 Kernel Cryptographic API",
       "vendor": "Red Hat, Inc.",
       "nistStage": "Implementation Under Test",
       "date": "2025-10-21",
