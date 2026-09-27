@@ -56,11 +56,19 @@ const SUFFIX = '.source-check.json'
  * Each re-reads every expected value from its hash-pinned document (fetched into
  * the gitignored tmp/acvp-upstream-cache/docs) and exits 0, printing "OK", only on
  * an exact match. An eligible document-sourced file with no entry here is reported
- * as not yet automated and gets no record.
+ * as not yet automated and gets no record. A value may carry arguments after the
+ * script path (one checker serving several files); `--check` is appended.
  */
 const DOCUMENT_CHECKERS: Record<string, string> = {
   aesgcm_test: 'scripts/acvp/build_gcm_cavp_kat.py',
   pbkdf2_rfc7914_test: 'scripts/acvp/build_rfc7914_pbkdf2.py',
+  aescmac_test: 'scripts/acvp/check_cmac_aes256_examples.py',
+  aesctr_test: 'scripts/acvp/check_sp800_38a_ctr.py',
+  aeskw_test: 'scripts/acvp/check_rfc3394_kw.py',
+  ecdsa_test: 'scripts/acvp/check_rfc6979_ecdsa.py --id ecdsa_test',
+  ecdsa_p384_test: 'scripts/acvp/check_rfc6979_ecdsa.py --id ecdsa_p384_test',
+  eddsa_test: 'scripts/acvp/check_rfc8032_ed25519.py',
+  hkdf_test: 'scripts/acvp/check_rfc5869_hkdf.py',
 }
 
 const sha256 = (b: Buffer | string) => createHash('sha256').update(b).digest('hex')
@@ -169,7 +177,8 @@ function main(): number {
         notYet.push(e.id)
         continue
       }
-      const r = run('python3', [checker, '--check'])
+      const checkerArgv = checker.split(' ')
+      const r = run('python3', [...checkerArgv, '--check'])
       if (r.status !== 0 || !/^OK\s/m.test(r.text)) {
         failed.push(
           `${e.id}: ${checker} --check did not match (${r.text.trim().split('\n').pop()})`
@@ -187,7 +196,7 @@ function main(): number {
         subjectSha256: sha256(canonical(e)),
         fileSha256: sha256(fs.readFileSync(path.join(ROOT, e.path))),
         result: 'match',
-        tool: checker,
+        tool: checkerArgv[0],
         command: `python3 ${checker} --check`,
         upstream: {
           repository: e.source.url,

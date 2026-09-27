@@ -1,0 +1,27 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:aescmac_test",
+  "subjectSha256": "7dd06fb6f0b4d048a0a6f47d43f8fb50076dc0eb5cc2a0c0d23fc51618aeabe9",
+  "fileSha256": "56ac5221c3db4ebdc565a81e26ea829a38919e8729e52a48991addc4f2bb34bb",
+  "result": "match",
+  "tool": "scripts/acvp/check_cmac_aes256_examples.py",
+  "command": "python3 scripts/acvp/check_cmac_aes256_examples.py --check",
+  "upstream": {
+    "repository": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/AES_CMAC.pdf",
+    "revision": "0019ce0469d13ba9fb18f4149e419fc389d068d68cf038a540dd6a7840ac9e64",
+    "files": [
+      {
+        "path": "NIST CSRC AES_CMAC.pdf (examples with intermediate values)",
+        "sha256": "0019ce0469d13ba9fb18f4149e419fc389d068d68cf038a540dd6a7840ac9e64"
+      },
+      {
+        "path": "NIST SP 800-38B (includes updates as of 2016-10-06)",
+        "sha256": "da9dc0f1e1f08af917caf4a831a7497cf18997b8046353af89570a812f1ec5a2"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 3
+  },
+  "checkedAt": "2026-09-27"
+}
