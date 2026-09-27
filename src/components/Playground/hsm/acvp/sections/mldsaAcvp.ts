@@ -147,6 +147,9 @@ export interface AcvpCaseMeta {
     | 'sigGen-verify-back'
     // hsm #281: ECDSA with NIST's own k (CKM_PQCTODAY_ECDSA_EXPLICIT_K) → byte-match r || s
     | 'sigGen-explicit-k'
+    // multi-part message signing round-trip (sections/multiMessageSign.ts)
+    | 'message-sign-multipart'
+    | 'message-verify-multipart'
     | 'none'
   /** Algorithm parameter set, curve, key length or digest the case runs with. */
   parameterSet: string

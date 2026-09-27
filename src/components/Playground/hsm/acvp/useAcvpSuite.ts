@@ -156,6 +156,8 @@ import {
   runWycheproofRsaPssSection,
   runWycheproofXdhSection,
 } from './sections/wycheproofNegative'
+import { runMultiMessageSignSection } from './sections/multiMessageSign'
+import type { MultiPartFamily } from '@/data/validation/multipartTargets'
 import { runAesCbcCtrAcvpSection } from './sections/aesCbcCtrAcvp'
 import { runHmacAcvpSection } from './sections/hmacAcvp'
 import { runShaAcvpSection } from './sections/shaAcvp'
@@ -201,11 +203,11 @@ export type CategoryId =
 
 export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'symmetric', label: 'Symmetric / AEAD', groups: 10 },
-  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 9 },
+  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 10 },
   { id: 'kdf', label: 'KDF', groups: 8 },
-  { id: 'classical', label: 'Classical Asymmetric', groups: 16 },
-  { id: 'ml_dsa', label: 'ML-DSA', groups: 8 },
-  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 7 },
+  { id: 'classical', label: 'Classical Asymmetric', groups: 17 },
+  { id: 'ml_dsa', label: 'ML-DSA', groups: 9 },
+  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 8 },
   { id: 'ml_kem', label: 'ML-KEM', groups: 4 },
 ]
 
@@ -425,6 +427,8 @@ export function useAcvpSuite() {
       // to Google, add a link to this source). Apache-2.0; independent-oracle
       // evidence, never a conformance claim.
       wycheproof: 'https://github.com/C2SP/wycheproof',
+      pkcs11MessageSign:
+        'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html',
       aeskw: 'https://www.rfc-editor.org/rfc/rfc3394',
       aeskwp: 'https://www.rfc-editor.org/rfc/rfc5649',
       slhdsa: 'https://csrc.nist.gov/pubs/fips/205/final',
@@ -2933,6 +2937,36 @@ export function useAcvpSuite() {
           })
         }
 
+        // ── 38. Multi-part message signing round-trip (sections/multiMessageSign.ts) ──
+        // Both engines advertise CKF_MULTI_MESSAGE on every signing mechanism
+        // since hsm d4345f88: C_SignMessageBegin/Next signs 5+11+16 bytes, the
+        // single-part C_Verify must accept it (MACs byte-equal), and multi-part
+        // verify must accept it and refuse a changed message. Functional
+        // round-trip evidence only (fresh keys, no external expected value).
+        {
+          const mmCtx = {
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.pkcs11MessageSign,
+            pushResult,
+            addLog,
+          }
+          const MM_GROUPS: [CategoryId, MultiPartFamily[]][] = [
+            ['hashing_mac', ['hmac']],
+            ['classical', ['rsa', 'ecdsa']],
+            ['ml_dsa', ['mldsa']],
+            ['slh_stateful', ['slhdsa']],
+          ]
+          for (const [cat, fams] of MM_GROUPS) {
+            if (!activeCategories.has(cat)) continue
+            currentCategory = cat
+            await runMultiMessageSignSection(mmCtx, fams)
+          }
+        }
+
         // ── 21. SLH-DSA Context Binding (FIPS 205 §9.2) ───────────────────
         if (activeCategories.has('slh_stateful')) {
           currentCategory = 'slh_stateful'
@@ -4211,11 +4245,11 @@ export function useAcvpSuite() {
           // kat-harness-must-read-stated-parameters).
           //
           // Known difference: the C++ engine (OpenSSL) decrypts all 20; the Rust
-          // engine decrypts none. 18 keys have public exponents of 34-56 bits,
-          // which Rust refuses by design (>= 2^33), and the other 2 are SHA-1
-          // OAEP, which Rust's OAEP does not support (SHA-256/384/512 only). See
-          // open gap rust-rsa-private-import-requires-cka-value. Those Rust rows
-          // are recorded as failures with their reason, so the matrix shows the
+          // engine decrypts 2. 18 keys have public exponents of 34-56 bits, which
+          // Rust refuses by design (>= 2^33); the other 2 are SHA-1 OAEP, which
+          // Rust supports since hsm #284 (d4345f88). See open gap
+          // rust-rsa-private-import-requires-cka-value. The 18 Rust rows are
+          // recorded as failures with their reason, so the matrix shows the
           // engines differ instead of implying parity.
           const OAEP_HASH: Record<string, 'sha1' | 'sha512'> = {
             'SHA-1': 'sha1',
@@ -4287,9 +4321,7 @@ export function useAcvpSuite() {
                       ? ''
                       : eBits > 33
                         ? ` — documented Rust limitation: public exponents >= 2^33 are refused (open gap rust-rsa-private-import-requires-cka-value); the C++ engine accepts this key`
-                        : hash === 'sha1'
-                          ? ` — documented Rust limitation: its OAEP supports SHA-256/384/512 only, not SHA-1 (rust/src/ffi.rs oaep_padding); the C++ engine accepts it`
-                          : ''
+                        : ''
                   await pushResult({
                     id: id36,
                     algorithm: `RSA-OAEP (${eName})`,

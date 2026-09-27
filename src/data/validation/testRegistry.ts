@@ -40,6 +40,7 @@ import sha384V from '../acvp/sha384_test.json'
 import sha512V from '../acvp/sha512_test.json'
 import sha3_256V from '../acvp/sha3_256_test.json'
 import sha3_512V from '../acvp/sha3_512_test.json'
+import { MULTIPART_TARGETS, multipartRowStem } from './multipartTargets'
 import type { EvidenceClassId } from './evidenceClasses'
 import type { CaseRecord, ValidationCaseManifest } from './validationCaseManifest'
 import type {
@@ -508,47 +509,61 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     '04e.ecdsa-siggen',
     '§4e.2 (sections/ecKeyVerSigGenAcvp.ts)',
     'ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)',
-    casesOf('ecdsa_siggen_acvp_test').flatMap((c) => {
-      const curve = param(c, 'curve')
-      const hashAlg = param(c, 'hashAlg')
-      const mech = ECDSA_SIGGEN_MECH[hashAlg]
-      if (!mech) throw new Error(`testRegistry: no CKM_ECDSA_<hash> for ${hashAlg}`)
-      const base = `ecdsa-siggen-${curve}-${hashAlg.toLowerCase()}-${upstreamIds(c)}`
-      return [
-        mc(
-          c.caseId,
-          NIST,
-          'positive',
-          [x('CKM_PQCTODAY_ECDSA_EXPLICIT_K', 'sign', curve)],
-          `${base}-kat-{engine}`
-        ),
+    casesOf('ecdsa_siggen_acvp_test')
+      .flatMap((c) => {
+        const curve = param(c, 'curve')
+        const hashAlg = param(c, 'hashAlg')
+        const mech = ECDSA_SIGGEN_MECH[hashAlg]
+        if (!mech) throw new Error(`testRegistry: no CKM_ECDSA_<hash> for ${hashAlg}`)
+        const base = `ecdsa-siggen-${curve}-${hashAlg.toLowerCase()}-${upstreamIds(c)}`
+        return [
+          mc(
+            c.caseId,
+            NIST,
+            'positive',
+            [x('CKM_PQCTODAY_ECDSA_EXPLICIT_K', 'sign', curve)],
+            `${base}-kat-{engine}`
+          ),
+          lc(
+            'acvp.04e.ecdsa-siggen',
+            `${curve}-${hashAlg}-rt`,
+            RT,
+            'positive',
+            [x(mech, 'sign', curve), x(mech, 'verify', curve)],
+            {
+              rowId: `${base}-rt-{engine}`,
+              parameters: { messageBytes: Number(param(c, 'messageBytes')) },
+              note: `CKM_ECDSA_<hash> with the engine's own nonce over ${c.caseId} (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.`,
+            }
+          ),
+          lc(
+            'acvp.04e.ecdsa-siggen',
+            `${curve}-${hashAlg}-oracle`,
+            ORACLE,
+            'positive',
+            [x(mech, 'sign', curve)],
+            {
+              rowId: `${base}-oracle-{engine}`,
+              parameters: { messageBytes: Number(param(c, 'messageBytes')) },
+              source: NOBLE_CURVES,
+              note: `The engine signature over ${c.caseId} (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.`,
+            }
+          ),
+        ]
+      })
+      .concat([
         lc(
           'acvp.04e.ecdsa-siggen',
-          `${curve}-${hashAlg}-rt`,
-          RT,
-          'positive',
-          [x(mech, 'sign', curve), x(mech, 'verify', curve)],
+          'explicit-k-secp256k1-refused',
+          PROBE,
+          'negative',
+          [x('CKM_PQCTODAY_ECDSA_EXPLICIT_K', 'sign', 'secp256k1')],
           {
-            rowId: `${base}-rt-{engine}`,
-            parameters: { messageBytes: Number(param(c, 'messageBytes')) },
-            note: `CKM_ECDSA_<hash> with the engine's own nonce over ${c.caseId} (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.`,
+            rowId: 'ecdsa-explicit-k-secp256k1-refused-{engine}',
+            note: 'The mechanism is defined for P-256/384/521 only (hsm #281); C_SignInit with a secp256k1 key must return CKR_KEY_TYPE_INCONSISTENT.',
           }
         ),
-        lc(
-          'acvp.04e.ecdsa-siggen',
-          `${curve}-${hashAlg}-oracle`,
-          ORACLE,
-          'positive',
-          [x(mech, 'sign', curve)],
-          {
-            rowId: `${base}-oracle-{engine}`,
-            parameters: { messageBytes: Number(param(c, 'messageBytes')) },
-            source: NOBLE_CURVES,
-            note: `The engine signature over ${c.caseId} (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.`,
-          }
-        ),
-      ]
-    }),
+      ]),
     'Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message.'
   ),
   acvp(
@@ -1602,7 +1617,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
         `kbkdf-nist-${mode.split(' ')[0]}-${param(c, 'macMode').toLowerCase().replace('/', '-')}-${upstreamIds(c)}-{engine}`
       )
     }),
-    'The CK_PRF_DATA_PARAM layout follows PKCS#11 v3.2 §6.42.3–6.42.5 (ITERATION_VARIABLE is mandatory in every mode). Open gaps cpp-kbkdf-counter-position-ignored and rust-kbkdf-iteration-variable-rejected record the engine rows that fail.'
+    'The CK_PRF_DATA_PARAM layout follows PKCS#11 v3.2 §6.42.3–6.42.5 (ITERATION_VARIABLE is mandatory in every mode). Open gap rust-kbkdf-iteration-variable-rejected records the Rust rows that fail (the 4 "before iterator" groups); the C++ placement defect was fixed by hsm #275 (2026-09-27 re-measurement).'
   ),
   acvp(
     '18c.skips',
@@ -1980,6 +1995,60 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       ),
     ],
     'Source: https://github.com/C2SP/wycheproof @ 3fa63dd0, Apache-2.0. A Wycheproof `invalid` case passes when C_UnwrapKey refuses; unwrapping it successfully is a discrepancy row.'
+  ),
+  // ── Multi-part message signing round-trip — sections/multiMessageSign.ts ──
+  // Both engines advertise CKF_MULTI_MESSAGE on every signing mechanism since
+  // hsm d4345f88. Functional round-trip only: a fresh key signs 5+11+16 bytes
+  // via C_SignMessageBegin/Next; single-part C_Verify must accept it (MACs
+  // byte-equal), and multi-part verify must accept it and refuse a change.
+  acvp(
+    '38.msgmp',
+    '§38 (sections/multiMessageSign.ts)',
+    'Multi-part message signing (C_SignMessageBegin/Next, C_VerifyMessageBegin/Next) round-trip on every advertised signing mechanism',
+    MULTIPART_TARGETS.flatMap((t) =>
+      t.paramSets.flatMap((ps) => {
+        const set = ps === '*' ? undefined : ps
+        const stem = multipartRowStem(t.mechanism, ps)
+        // Generic CKM_HASH_SLH_DSA: single-part message sign/verify rows too.
+        const single =
+          t.mechanism === 'CKM_HASH_SLH_DSA'
+            ? (['hedged', 'deterministic'] as const).map((v) =>
+                lc(
+                  'acvp.38.msgmp',
+                  `${t.mechanism}-${ps}-msg-${v}`,
+                  RT,
+                  'positive',
+                  [
+                    x(t.mechanism, 'message-sign', set, v),
+                    x(t.mechanism, 'message-verify', set),
+                    x(t.mechanism, 'verify', set),
+                  ],
+                  { rowId: `${stem}-msg-${v}-{engine}` }
+                )
+              )
+            : []
+        return [
+          ...single,
+          lc(
+            'acvp.38.msgmp',
+            `${t.mechanism}-${ps}-sign`,
+            RT,
+            'positive',
+            [x(t.mechanism, 'message-sign-multipart', set)],
+            { rowId: `${stem}-sign-{engine}` }
+          ),
+          lc(
+            'acvp.38.msgmp',
+            `${t.mechanism}-${ps}-verify`,
+            RT,
+            'positive',
+            [x(t.mechanism, 'message-verify-multipart', set)],
+            { rowId: `${stem}-verify-{engine}` }
+          ),
+        ]
+      })
+    ),
+    'Evidence: functional round-trip (fresh keys; no external expected value). The verify row also asserts a refusal when the last message part is changed.'
   ),
 ]
 
