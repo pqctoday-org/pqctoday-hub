@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // OWNER: Scaffold
 /**
- * Structured content for the Cryptographic Product Certification module — Fundamentals (LM-065).
+ * Structured content for the Cryptographic Product Certification module — Common Criteria, EUCC & eIDAS deep dive (LM-068).
  *
  * SPLIT 2026-09-27: this module lists exactly the references its own files
  * cite (plus any that were listed for its scheme but cited nowhere). The
@@ -24,7 +24,7 @@ import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
-  moduleId: 'crypto-product-certification',
+  moduleId: 'cc-eucc-certification',
   version: '0.1.0',
   // No lastReviewed: nobody has reviewed this module's claims via
   // record_module_review.py yet (moduleReviewHonesty.test.ts). v1 ships as
@@ -33,31 +33,17 @@ export const content: ModuleContent = {
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──
-    getStandard('FIPS-140-3-STANDARD'),
-    getStandard('CMVP-MGMT-MANUAL'),
-    getStandard('NIST-FIPS140-3-IG-PQC'),
-    getStandard('NIST-CMVP-MIP-List'),
-    getStandard('NIST-CMVP-Validated-Modules'),
-    getStandard('NIST-CMVP-140-2-to-140-3-Transition-Timeline'),
-    getStandard('EO-2026-06-22-Securing-the-Nation'), // EO 14412 §6(b)
-    getStandard('NIST-SP-800-140B'),
-    getStandard('NIST-ACVP'),
-    getStandard('NIST-CMVP-ESV'),
-    getStandard('NIST-SP-1800-40B-IPD'),
-    getStandard('NIST-SP-1800-40A-PD'),
-    getStandard('NIST-CSWP-37A'),
-    getStandard('NIST IR 8547'),
     // Algorithm standards the shared PQC section cites (sharedData.ts SHARED_SOURCES)
-    getStandard('FIPS 203'),
-    getStandard('FIPS 204'),
-    getStandard('FIPS 205'),
-
     // ── Common Criteria / CCRA (Path B) ──
     getStandard('CCMC-2023-04-001-CC2022-Transition-Policy'),
     getStandard('CCDB-014-Assurance-Continuity-v3-1'),
+    getStandard('CCMC-011-CCRA-EUCC-Coexistence'),
     getStandard('COMMON-CRITERIA'),
     getStandard('CC-2022-PART2'),
     getStandard('CC-2022-PART3'),
+    getStandard('CC-2022-PART4'),
+    getStandard('CC-2022-PART5'),
+    getStandard('CC-2022-CEM'),
 
     // ── EUCC, eIDAS and Protection Profiles (Path C) ──
     getStandard('CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme'),
@@ -67,19 +53,18 @@ export const content: ModuleContent = {
     getStandard('ENISA-Hybridization-Standardisation-Status'),
     getStandard('EU-NIS-CG-Roadmap-v1.1'),
     getStandard('eIDAS-2-Regulation'),
+    getStandard('CIR-EU-2025-1567-Remote-QSCD-Management'),
+    getStandard('CIR-EU-2025-1570-QSCD-Certification-Notification'),
+    getStandard('CID-EU-2016-650-QSCD-Security-Assessment'),
     getStandard('ANSSI-CC-PP-2016-05-EN-419221-5'),
+    getStandard('ANSSI-CC-PP-2016-05-M01'),
+    getStandard('ANSSI-CC-PP-2018-02-EN-419241-2'),
     getStandard('BSI-CC-PP-0084-V2-2026'),
+    getStandard('ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation'),
+    getStandard('ENISA-EUCC-Assurance-Continuity-Change-Scenarios'),
+    getStandard('ENISA-EUCC-Product-Series-Methodology'),
 
     // ── PCI (Path D; public documents only, plan r2 D4) ──
-    getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),
-    getStandard('PCI-SSC-Bulletin-PTS-HSM-v4-Extension'),
-    getStandard('PCI-PTS-Program-Guide-v1-9'),
-    getStandard('PCI-PTS-Listing-Field-Definitions'),
-    getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
-    getStandard('PCI-P2PE-Security-Requirements-v3-1'), // superseded by v3.2 (June 2025)
-    getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
-    getStandard('PCI-SSC-Blog-Authentication-Cryptography-Guidance'),
-    getStandard('PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures'),
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The

@@ -3,19 +3,17 @@
 import type { FC } from 'react'
 import {
   ArrowRightLeft,
-  ClipboardCheck,
-  FileSearch,
   Frame,
   GitCompareArrows,
   Globe,
-  Layers,
   ListChecks,
-  Scale,
 } from 'lucide-react'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import { CertIntroduction } from './components/CertIntroduction'
 import { CertExercises } from './components/CertExercises'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
+import { SECTION_COMPONENTS } from './components/sectionRegistry'
+import { ALL_EXERCISES } from './data/allExercises'
 import manifest from './manifest'
 
 /**
@@ -37,34 +35,6 @@ const PARTS: WorkshopPart[] = [
     description:
       'Decide what a certificate covers on the fictional Orrin N7 network HSM: client SDK, network service, appliance, firmware, crypto library and tenant partition.',
     icon: Frame,
-  },
-  {
-    id: 'fips-level-planner',
-    title: 'Level and boundary planner',
-    description:
-      'Plan the FIPS 140-3 security level and module boundary for the appliance and cloud-partition variants of the anchor HSM.',
-    icon: Layers,
-  },
-  {
-    id: 'cc-claim-decoder',
-    title: 'Decode the certificate claim',
-    description:
-      'Decode a Common Criteria claim: the EAL, each named augmentation, and what the claim does and does not cover.',
-    icon: FileSearch,
-  },
-  {
-    id: 'eidas-trace',
-    title: 'Regulation-to-certificate trace',
-    description:
-      'Trace an eIDAS requirement through EUCC and a Protection Profile to a certified device.',
-    icon: Scale,
-  },
-  {
-    id: 'pci-evidence-review',
-    title: 'Payment HSM evidence review',
-    description:
-      'Review a payment HSM’s evidence: PTS listing, Security Policy, FIPS certificate and KMO/PIN assessment scope.',
-    icon: ClipboardCheck,
   },
   {
     id: 'capstone',
@@ -94,9 +64,17 @@ export const CryptoProductCertificationModule: FC = () => (
   <ModuleShell
     manifest={manifest}
     description="What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, how to read one, and how to add post-quantum cryptography to a certified product without losing certification."
-    learn={(api) => <CertIntroduction onNavigateToWorkshop={() => api.goToWorkshop()} />}
+    learn={(api) => (
+      <CertIntroduction
+        manifest={manifest}
+        sections={SECTION_COMPONENTS}
+        onNavigateToWorkshop={() => api.goToWorkshop()}
+      />
+    )}
     exercises={(api) => (
       <CertExercises
+        exercises={ALL_EXERCISES}
+        hasPaths={Boolean(manifest.learnPaths?.length)}
         onOpenStep={(stepId, config) => {
           const index = stepIndex(stepId)
           if (index >= 0) api.openWorkshopStep(index, config)
