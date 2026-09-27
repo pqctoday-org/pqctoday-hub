@@ -54,6 +54,13 @@ export const content: ModuleContent = {
     getStandard('NIST-SP-1800-40A-PD'),
     getStandard('NIST-CSWP-37A'),
     getStandard('NIST-CSWP-37B-IPD'),
+    // Validation automation (fips-automation section, 2026-09-27)
+    getStandard('NIST-Cryptographic-Algorithm-Validation-Program-CAVP'),
+    getStandard('NIST-CMVP-ESV-Program'),
+    getStandard('NIST-CMVP-ESV-Announcements'),
+    getStandard('NIST-CMVP-MIS-SP800-140B'),
+    getStandard('NIST-ACMVP-Protocol-Workstream'),
+    getStandard('NCCoE-Automation-of-the-CMVP'),
     // Algorithm standards the shared PQC section cites (sharedData.ts SHARED_SOURCES)
 
     // PCI documents the FIPS Level 3 callout cites (FipsSections.tsx): PIN v3.1

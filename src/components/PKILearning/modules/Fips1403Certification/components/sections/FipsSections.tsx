@@ -63,6 +63,13 @@ const ESV = getStandard('NIST-CMVP-ESV')
 const SP_1800_40B = getStandard('NIST-SP-1800-40B-IPD')
 const SP_1800_40A = getStandard('NIST-SP-1800-40A-PD')
 const CSWP_37A = getStandard('NIST-CSWP-37A')
+const CSWP_37B = getStandard('NIST-CSWP-37B-IPD')
+const CAVP = getStandard('NIST-Cryptographic-Algorithm-Validation-Program-CAVP')
+const ESV_PROGRAM = getStandard('NIST-CMVP-ESV-Program')
+const ESV_ANNOUNCEMENTS = getStandard('NIST-CMVP-ESV-Announcements')
+const MIS = getStandard('NIST-CMVP-MIS-SP800-140B')
+const AMVP = getStandard('NIST-ACMVP-Protocol-Workstream')
+const NCCOE_CMVP = getStandard('NCCoE-Automation-of-the-CMVP')
 const PCI_PIN = getStandard('PCI-PIN-v3-1-ROC-Reporting-Template')
 const PCI_P2PE = getStandard('PCI-P2PE-Security-Requirements-v3-1')
 
@@ -975,6 +982,152 @@ const VerifiedCertTable = () => {
 }
 
 /** Learn section `fips-landscape` */
+// ── fips-automation ─────────────────────────────────────────────────────────
+// Every claim is from the verified register (priv nextfeature
+// fips-automation-facts-09272026.md; antigravity-88 + Codex gpt-5.6-terra,
+// each row re-checked against its source). Deliberately NOT stated, because
+// no official source states them: a CAVS retirement date, and any date for
+// accepting automated (AMVP) module submissions in production.
+
+const AUTOMATION_LAYERS: readonly {
+  layer: string
+  exchange: ReactNode
+  status: ReactNode
+}[] = [
+  {
+    layer: 'Algorithms (CAVP)',
+    exchange: (
+      <>
+        ACVP: the lab declares the implementation’s capabilities, ACVTS generates matching test
+        cases, the implementation returns its outputs and ACVTS returns a verdict. The testing is
+        black-box (<Cite std={CAVP}>CAVP</Cite>, <Cite std={ACVP}>ACVP</Cite>).
+      </>
+    ),
+    status: (
+      <>
+        <strong>In production.</strong> Production ACVTS is “the only way to create algorithm
+        validation certificates”, and only NVLAP-accredited labs can use it. The older CAVS tool is
+        “deprecated by ACVTS” (<Cite std={CAVP}>CAVP</Cite>).
+      </>
+    ),
+  },
+  {
+    layer: 'Entropy (ESV)',
+    exchange: (
+      <>
+        The Entropy Validation Server’s web API. Its protocol “is based on ACVP” (
+        <Cite std={ESV_PROGRAM}>ESV</Cite>, <Cite std={ESV}>ESV server</Cite>).
+      </>
+    ),
+    status: (
+      <>
+        <strong>In production since 13 April 2022</strong> (
+        <Cite std={ESV_ANNOUNCEMENTS}>announcement</Cite>), for labs accredited to the 17ESV scope.
+        Production ESVTS is now “the only mechanism” for a new submission that needs an entropy
+        source or RBG construction validated: the module cites an existing certificate, which the
+        same vendor can reuse in another module if the entropy source is portable (
+        <Cite std={MGMT_MANUAL}>Management Manual</Cite>).
+      </>
+    ),
+  },
+  {
+    layer: 'The module (CMVP)',
+    exchange: (
+      <>
+        Today: the Module Information Structure, a JSON file the CMVP uses “to facilitate automated
+        verification and processing” (<Cite std={MIS}>MIS</Cite>). Next: AMVP, a protocol “to submit
+        registration, test evidence and validation requests” (<Cite std={AMVP}>AMVP</Cite>).
+      </>
+    ),
+    status: (
+      <>
+        <strong>Demonstration, in progress.</strong> AMVP runs on a demonstration server (message
+        versions 0.1–0.3). <Cite std={SP_1800_40B}>SP 1800-40B</Cite>, still an Initial Public
+        Draft, demonstrated a server and client that accept module submissions in a laboratory
+        environment, and says the capabilities are “actively being integrated into the production
+        CMVP environment in 2026”. It gives no date.
+      </>
+    ),
+  },
+]
+
+/** Learn section `fips-automation` */
+export const FipsAutomation = () => (
+  <Body>
+    <p>
+      Crypto agility is the ability to change algorithms quickly. A validated module stays validated
+      only if each change goes back through validation, so the speed of that loop limits how agile a
+      certified product can be. That framing is ours; NIST’s own statement of the problem is that
+      “the period required for third-party testing and government validation of cryptographic
+      modules is often incompatible with industry requirements” (<Cite std={NCCOE_CMVP}>NCCoE</Cite>
+      ). <Cite std={EO_14412}>Executive Order 14412</Cite> §6(b) now directs NIST, within 180 days
+      of 22 June 2026, to “revise the processes used by the Cryptographic Module Validation Program
+      to accelerate validations”.
+    </p>
+    <p>
+      NIST has been moving the process to electronic exchange one layer at a time. The three layers
+      are at different stages:
+    </p>
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[560px] text-left text-xs">
+        <caption className="sr-only">Electronic exchange by validation layer</caption>
+        <thead>
+          <tr className="border-b border-border text-muted-foreground">
+            <th scope="col" className="py-2 pr-3 font-semibold">
+              Layer
+            </th>
+            <th scope="col" className="py-2 pr-3 font-semibold">
+              What is exchanged electronically
+            </th>
+            <th scope="col" className="py-2 font-semibold">
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {AUTOMATION_LAYERS.map((l) => (
+            <tr key={l.layer} className="border-b border-border/50 align-top">
+              <th scope="row" className="py-2 pr-3 font-medium text-foreground">
+                {l.layer}
+              </th>
+              <td className="py-2 pr-3">{l.exchange}</td>
+              <td className="py-2">{l.status}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <SubHeading>How the pieces fit</SubHeading>
+    <p>
+      The project documentation sets out the sequence (<Cite std={AMVP}>AMVP</Cite>): AMVP registers
+      the lab, vendor, module and operating environment; ACVP tests the algorithms on that
+      environment; ESV tests the entropy source on it; AMVP then submits the module-level test
+      evidence and the request for FIPS 140-3 validation. The project’s status reports are{' '}
+      <Cite std={CSWP_37A}>CSWP 37A</Cite> (final, 16 March 2026) and{' '}
+      <Cite std={CSWP_37B}>CSWP 37B</Cite> (Initial Public Draft, 10 September 2025).
+    </p>
+    <Callout tone="warning" title="What automation does not change">
+      <p>
+        The accredited lab still tests and submits. The SP 1800-40B demonstration is lab
+        submissions, not vendor self-certification.
+      </p>
+      <p>
+        SP 1800-40B covers first (full) submissions. Submissions that only address CVEs, or that add
+        operating environments to an existing validation, are left to “future phases”, and physical
+        security tests are out of the project’s scope.
+      </p>
+      <p>
+        Web Cryptik is being updated to build the evidence payloads; no source says it is being
+        replaced.
+      </p>
+      <p>
+        No official source gives a date when automated module submissions will be accepted in
+        production, so treat any dated claim about an “automated CMVP” as unsupported.
+      </p>
+    </Callout>
+  </Body>
+)
+
 export const FipsLandscape = () => (
   <Body>
     <p>
