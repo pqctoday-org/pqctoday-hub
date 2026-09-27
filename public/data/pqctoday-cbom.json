@@ -35695,8 +35695,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d8723cbed8b154b4",
-      "name": "Dashboard - PQProbe",
+      "bom-ref": "258e99d2e9ce649c",
+      "name": "PQProbe",
       "manufacturer": {
         "name": "Ottenheimer GmbH"
       },
@@ -35776,8 +35776,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "9ce0006705a9c1ef",
-      "name": "PQConnect: Intro",
+      "bom-ref": "6b1a12a22846fc3a",
+      "name": "PQConnect",
       "version": "1.2.3",
       "manufacturer": {
         "name": "PQConnect Project"
@@ -35859,8 +35859,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d3baf724dd8f0646",
-      "name": "What is Post-Quantum Encryption - And How to Enable It on ESA - Alibaba Cloud Community",
+      "bom-ref": "0f393f4917203228",
+      "name": "Alibaba Cloud ESA (Edge Security Acceleration)",
       "manufacturer": {
         "name": "Alibaba Cloud"
       },
