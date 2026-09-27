@@ -37,6 +37,21 @@ The certification Learn module is now three shorter modules: a fundamentals modu
 
 - **Cryptographic Product Certification is now three modules instead of one long one.** [view:/learn/crypto-product-certification] [view:/learn/fips-pci-certification] [view:/learn/cc-eucc-certification] [persona:grc] The original module had four two-hour paths in one place. It is now _Cryptographic Product Certification: Fundamentals_ (about an hour: what each certificate proves, why you read a certificate's scope before its level, what adding post-quantum cryptography changes, and the "one product, four markets" capstone), plus two deep dives of about an hour each: _FIPS 140-3 & PCI Certification_ and _Common Criteria, EUCC & eIDAS Certification_. Each deep dive keeps its own learn paths, exercises and references, and the fundamentals link to them. All content carries over unchanged; progress on sections that moved to a deep dive starts fresh there.
 - **The certification quiz questions now belong to the module that teaches them.** [view:/learn/quiz] [persona:grc] FIPS 140-3 and PCI questions move to the FIPS & PCI deep dive, Common Criteria and EUCC questions to the CC & EUCC deep dive, and the fundamentals gain a new question on reading a certificate's scope before its level.
+## [4.124.3] - 2026-09-27
+
+Timeline dates checked against their sources: phases whose source gives no end date are now shown as open-ended instead of being hidden, and several milestones move to the years their sources actually state.
+
+### Fixed
+
+- **Timeline phases with no stated end date are shown, not hidden.** [view:/timeline] [persona:grc] [persona:executive] Three phases have a start but no end in any source: France ANSSI's hybridization and standalone-PQC phases (the agency gives only "at least 2030" / "not earlier than 2030") and Singapore MAS's financial-sector planning. The chart used to drop them and log an error; they now run to the chart's edge with a fading end, labelled "no end date stated by source". Tables, cards and exports say "onward" instead of inventing an end year.
+- **Canada, France and Singapore timeline years corrected from their sources.** [view:/timeline] [persona:grc] [persona:executive] Canada's two migration phases, which no source describes separately, are now the single Transition Phase (2028–2035) that the Government of Canada's policy notice defines; France's first phase ends around 2025, as ANSSI's own roadmap shows; Singapore's MAS quantum advisory is dated to when it was issued (2024), not to a 2028 deadline it never set; and Japan's CRYPTREC guideline carries its published title.
+- **Three standards cross-references pointed at the wrong document.** [view:/library] [persona:researcher] [persona:grc] Two links to ISO/IEC 19790 were labelled as a NIST practice guide, and one NCCoE link pointed at ISO 19790 instead of the interoperability-and-performance volume (SP 1800-38C) its own quote describes. All three now match their evidence.
+
+## [4.124.2] - 2026-09-27
+
+### Fixed
+
+- **36 products showed the placeholder "pqc_support" instead of their post-quantum support.** [view:/migrate] [persona:ops] [persona:grc] [persona:developer] Release 4.124.1 corrected product listings that named algorithms their sources don't mention, but a fault in how the corrections were read in wrote the column's own name into 36 of them — AWS KMS, Microsoft Edge, Apache HTTP Server, several Red Hat Enterprise Linux releases and others. Each now shows the corrected value it should have had, for example "Yes (ML-DSA)" for AWS KMS. No other product was affected.
 
 ## [4.124.1] - 2026-09-26
 

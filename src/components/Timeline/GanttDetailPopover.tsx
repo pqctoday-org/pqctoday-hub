@@ -25,6 +25,7 @@ import { DocumentAnalysis } from '../common/DocumentAnalysis'
 import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
+import { periodLabel } from '@/utils/timelinePeriod'
 
 interface GanttDetailPopoverProps {
   isOpen: boolean
@@ -206,7 +207,9 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                     <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
                       End
                     </span>
-                    <span className="font-mono text-foreground">{phase.endYear}</span>
+                    <span className="font-mono text-foreground">
+                      {phase.openEnded ? 'Not stated by source' : phase.endYear}
+                    </span>
                   </div>
                   {/* Source/Date cells are dropped entirely rather than shown as
                       "-" placeholders when absent — a row that says nothing costs
@@ -277,7 +280,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                       `**Country:** ${primaryEvent?.countryName ?? 'Unknown'}`,
                       `**Phase:** ${phase.phase}`,
                       `**Title:** ${phase.title}`,
-                      `**Period:** ${phase.startYear}–${phase.endYear}`,
+                      `**Period:** ${periodLabel(phase.startYear, phase.endYear, phase.openEnded)}`,
                       phase.description ? `**Description:** ${phase.description}` : '',
                     ]
                       .filter(Boolean)
@@ -299,7 +302,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                       `**Country:** ${primaryEvent?.countryName ?? 'Unknown'}`,
                       `**Phase:** ${phase.phase}`,
                       `**Title:** ${phase.title}`,
-                      `**Period:** ${phase.startYear}–${phase.endYear}`,
+                      `**Period:** ${periodLabel(phase.startYear, phase.endYear, phase.openEnded)}`,
                       phase.description ? `**Description:** ${phase.description}` : '',
                     ]
                       .filter(Boolean)
@@ -314,7 +317,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                 <AskAssistantButton
                   variant="text"
                   label="Ask about this"
-                  question={`How did the "${phase.title}" ${phase.phase} phase (${phase.startYear}–${phase.endYear}) advance PQC adoption?${phase.description ? ` Context: ${phase.description}` : ''}`}
+                  question={`How did the "${phase.title}" ${phase.phase} phase (${periodLabel(phase.startYear, phase.endYear, phase.openEnded)}) advance PQC adoption?${phase.description ? ` Context: ${phase.description}` : ''}`}
                 />
               </div>
             </div>

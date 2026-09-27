@@ -23,6 +23,7 @@ import {
   type TimelineDocumentRow,
 } from './TimelineDocumentDetailPopover'
 import { Button } from '@/components/ui/button'
+import { periodLabel } from '@/utils/timelinePeriod'
 
 interface DocumentTableProps {
   data: GanttCountryData[]
@@ -60,6 +61,7 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
         eventId: ev?.eventId,
         startYear: phase.startYear,
         endYear: phase.endYear,
+        openEnded: phase.openEnded,
         description: phase.description,
         sourceUrl: ev?.sourceUrl,
         sourceDate: ev?.sourceDate,
@@ -102,11 +104,13 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
   })
 
   const formatPeriod = (row: TimelineDocumentRow) =>
-    row.startYear < 2025
-      ? `< 2024${row.startYear !== row.endYear ? ` – ${row.endYear}` : ''}`
-      : row.startYear === row.endYear
-        ? String(row.startYear)
-        : `${row.startYear} – ${row.endYear}`
+    row.openEnded
+      ? `${row.startYear < 2025 ? '< 2024' : row.startYear} onward`
+      : row.startYear < 2025
+        ? `< 2024${row.startYear !== row.endYear ? ` – ${row.endYear}` : ''}`
+        : row.startYear === row.endYear
+          ? String(row.startYear)
+          : `${row.startYear} – ${row.endYear}`
 
   return (
     <div className="glass-panel p-4 space-y-4">
@@ -298,7 +302,7 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
                                 `**Organization:** ${row.org}`,
                                 `**Phase:** ${row.phase}`,
                                 `**Title:** ${row.title}`,
-                                `**Period:** ${row.startYear}–${row.endYear}`,
+                                `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
                               ].join('\n'),
                               pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
                             })}
@@ -316,7 +320,7 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
                                 `**Organization:** ${row.org}`,
                                 `**Phase:** ${row.phase}`,
                                 `**Title:** ${row.title}`,
-                                `**Period:** ${row.startYear}–${row.endYear}`,
+                                `**Period:** ${periodLabel(row.startYear, row.endYear, row.openEnded)}`,
                               ].join('\n'),
                               pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
                             })}
