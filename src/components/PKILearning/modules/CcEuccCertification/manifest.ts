@@ -35,10 +35,10 @@ const manifest: ModuleManifest = {
     { id: 'cc-eal-decoding', label: 'EALs and "EAL4+"' },
     { id: 'cc-lifecycle', label: 'Certification lifecycle and CC:2022 transition' },
     { id: 'cc-continuity', label: 'Assurance continuity (CCDB-014)', optional: true },
-    { id: 'pp-security-ic', label: 'PP case: Security IC Platform', optional: true },
     { id: 'eucc-scheme', label: 'EUCC is a scheme, not a PP' },
     { id: 'eidas-chain', label: 'From eIDAS to a certified device' },
     { id: 'pp-en419221-5', label: 'PP case: EN 419221-5 HSM' },
+    { id: 'pp-security-ic', label: 'PP case: Security IC Platform', optional: true },
     { id: 'eucc-pqc-today', label: 'PQC under EUCC today (ACM v2)' },
   ],
   learnPaths: [
