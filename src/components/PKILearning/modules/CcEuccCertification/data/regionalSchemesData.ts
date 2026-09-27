@@ -8,7 +8,7 @@
  * portal, EUR-Lex/ENISA or a national agency, and each one was checked a
  * second time against an independent tier-1 source by Codex (gpt-5.6-terra;
  * lineage log cx-20260927T205301Z-032749f1 Europe, cx-20260927T205504Z-3b2a6304
- * outside the CCRA, and the Americas/Asia-Pacific pass). Where no official
+ * outside the CCRA, and cx-20260927T205837Z-253b5389 Americas/Asia-Pacific). Where no official
  * source states a post-quantum position, the row says so — nothing is
  * inferred. `libraryId` citations resolve through getStandard(); the rest link
  * the official page.
