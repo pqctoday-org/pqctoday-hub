@@ -14,6 +14,8 @@ import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { certificationXrefs, isClassicalOnlyCert } from './certificationXrefData'
 import { isPqcCertificate } from '../components/Compliance/products/productsModel'
+import { buildProductStageTimeline } from '../components/Compliance/fipsStageProgressModel'
+import type { SoftwareItem } from '../types/MigrateTypes'
 import type { CertificationXref } from '../types/MigrateTypes'
 
 describe('isClassicalOnlyCert', () => {
@@ -73,6 +75,8 @@ describe('the Windows 11 Common Criteria certificate is never linked to an Azure
  * isPqcCertificate / isConfirmedPqcAlgorithm) or any certificate at all.
  */
 const READERS: Record<string, 'pqc-progress' | 'any-certificate' | 'display'> = {
+  'src/components/Compliance/PqcCertificationTrendChart.tsx': 'display',
+  'src/components/Compliance/fipsStageProgressModel.ts': 'pqc-progress',
   'src/components/Compliance/products/ProductsTab.tsx': 'display',
   'src/components/Compliance/products/productsModel.ts': 'pqc-progress',
   'src/components/Migrate/Workbench/ProductDetail.tsx': 'display',
@@ -111,5 +115,38 @@ describe('every reader of the cross-reference is declared', () => {
       const src = fs.readFileSync(path.join(root, f), 'utf8')
       expect(/isPqcCertificate|isConfirmedPqcAlgorithm|classicalOnly/.test(src), f).toBe(true)
     }
+  })
+})
+
+describe('the FIPS stage chart never counts a classical-only certificate', () => {
+  it('a product whose only linked certificate is classical stays at "none"', () => {
+    const product = {
+      productId: 'p',
+      softwareName: 'P',
+      pqcCertified: 'yes',
+      pqcSupport: 'Yes (ML-KEM)',
+    } as unknown as SoftwareItem
+    const cert: CertificationXref = {
+      productId: 'p',
+      softwareName: 'P',
+      certType: 'FIPS 140-3',
+      certId: '1',
+      certVendor: 'V',
+      certProduct: 'M',
+      pqcAlgorithms: 'ML-KEM', // even if the text were to say PQC …
+      certificationLevel: '',
+      status: 'Active',
+      certDate: '2025-01-01',
+      certLink: '',
+      classicalOnly: true, // … the flag wins
+    }
+    const t = buildProductStageTimeline(
+      [product],
+      new Map([['p', [cert]]]),
+      [],
+      new Date('2026-09-27')
+    )
+    const last = t.points[t.points.length - 1]
+    expect(last.certified).toBe(0)
   })
 })
