@@ -766,6 +766,11 @@ function MobileProductDetailSheet({
                                 {c.pqcAlgorithms}
                               </span>
                             )}
+                            {c.classicalOnly && (
+                              <span className="mt-0.5 block text-[11px] text-status-warning">
+                                Classical only — covers no PQC algorithm
+                              </span>
+                            )}
                           </span>
                           <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-muted-foreground">
                             {c.certDate}

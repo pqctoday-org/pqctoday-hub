@@ -212,6 +212,11 @@ export interface CertificationXref {
   status: string
   certDate: string
   certLink: string
+  /**
+   * The certificate covers no post-quantum algorithm. Shown labelled "classical
+   * only" and never counted as PQC progress (user ruling 7a, 2026-09-27).
+   */
+  classicalOnly: boolean
 }
 
 export interface SoftwareCategoryGap {

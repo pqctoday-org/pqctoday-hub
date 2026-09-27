@@ -214,6 +214,14 @@ const CertTypePopover: React.FC<{
                   PQC: {cert.pqcAlgorithms}
                 </span>
               )}
+              {cert.classicalOnly && (
+                <span
+                  data-testid="cert-classical-only"
+                  className="truncate text-[10px] text-status-warning"
+                >
+                  Classical only — covers no PQC algorithm
+                </span>
+              )}
             </span>
             <ExternalLink size={10} className="shrink-0 opacity-60" />
           </a>
