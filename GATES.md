@@ -40,12 +40,12 @@ run on this exact commit is not paid twice):
   - `audit:module-infographics` — every Learn module has its poster PNG.
   - `audit:tokens` — no hard-coded colours.
   - `validate:workshop` — every workshop cue resolves to a real route/slug/fixture.
-- `sync:wasm:check` — the vendored wasm bundles are built from the pqctoday-hsm commit they claim (needs the sibling checkout — only meaningful here). Since 2026-09-26 a Rust bundle's inputs come from its Cargo build graph (`cargoManifest` in `public/wasm/wasm-provenance.json`, derived by `scripts/ci/wasm-build-inputs.ts`) rather than a hand-written `sourceDirs` list. That hand-written list had missed a linked crate: cacp-kmip never saw a Rust engine change. It had also flagged changes that cannot alter the binary (reports, committed wasm output, the bench crate). `scripts/ci/wasm-build-inputs.local.test.ts` replays both kinds of error against real hsm commits. On CI's blobless clone the derivation reads each Rust source once, lazily: measured at ~96 s for cacp-kmip.
+- ~~automatic~~ `sync:wasm:check` is **manual only since 2026-09-27** (owner decision — it failed every hub push whenever pqctoday-hsm moved; run it by hand during a wasm rebuild) — the vendored wasm bundles are built from the pqctoday-hsm commit they claim (needs the sibling checkout — only meaningful here). Since 2026-09-26 a Rust bundle's inputs come from its Cargo build graph (`cargoManifest` in `public/wasm/wasm-provenance.json`, derived by `scripts/ci/wasm-build-inputs.ts`) rather than a hand-written `sourceDirs` list. That hand-written list had missed a linked crate: cacp-kmip never saw a Rust engine change. It had also flagged changes that cannot alter the binary (reports, committed wasm output, the bench crate). `scripts/ci/wasm-build-inputs.local.test.ts` replays both kinds of error against real hsm commits. On CI's blobless clone the derivation reads each Rust source once, lazily: measured at ~96 s for cacp-kmip.
 - `gen:landing-counts:check` — landing hero counts match the CSVs.
 - `audit:csv-copy-forward` — no silent row loss between two generations of a dated CSV.
 - `test` — the full vitest suite (also in GitHub, sharded; the local run is the fast path on an M-series machine).
 
-then `npm run gate:cacp` (see GitHub `gate-cacp`; here it runs against the real sibling `../pqctoday-hsm`, where the full drift guards work), then the receipt is written.
+then the receipt is written. (`gate:cacp` was removed from the hook and from GitHub on 2026-09-27 by owner decision; run `npm run gate:cacp` by hand when changing the KMIP/CACP playground or rebuilding its wasm.)
 
 ## GitHub — `.github/workflows/ci.yml` (push to main, every PR)
 
@@ -71,12 +71,12 @@ then `npm run gate:cacp` (see GitHub `gate-cacp`; here it runs against the real 
 - `verify-attestations` — signatures on shipped trust artifacts.
 - `build` — clean-checkout `tsc -b` + vite + Playwright prerender + precache/TLA budgets; on main its `dist/` is uploaded for deploy.
 - `test:e2e:ci-smoke` — the 6-spec Playwright smoke tier against the build.
-- PR only: `check-tool-version-bump`, `check-module-version-bump` — content edits bump their version; `validate-offline-attestation` — committed SME attestations are well-formed and authorised.
+- ~~PR only~~ — **GitHub CI no longer runs on pull requests (owner decision D20, 2026-09-27)**: it runs on push to `main` (concurrency group `ci-main`, superseded runs cancelled) and on `workflow_dispatch`. PRs are validated only by the full local gates (`.husky/pre-push`) and merged with `gh pr merge --admin` on local green (D21). `check-tool-version-bump` / `check-module-version-bump` moved into `gate:local` (`npm run check:version-bumps`). `validate-offline-attestation` is not run anywhere now: it needs a PR number, and no `approvals/offline-*` file has ever been committed. Re-home it if SME attestations start being used.
 - `audit:deps` — high/critical advisories, with dated exceptions (`scripts/ci/audit-gate.ts`). Last on purpose: if it is the only red step, it is the known `pptxgenjs → image-size` pair.
 
 `test` (matrix ×2) ≈ 8 min each: `vitest run --shard=N/2` — the unit suite.
 
-`gate-cacp` ≈ 2 min: `gate:cacp` — KMIP/CACP tests, the `*.local.test.ts` drift guards and the cacp-kmip wasm-provenance check against a sparse clone of pqctoday-hsm. Make it a required check alongside `checks`.
+`gate-cacp` — **removed 2026-09-27** (owner decision). It gated every hub PR on pqctoday-hsm's state. `npm run gate:cacp` stays available to run by hand.
 
 ## GitHub — deploy (`.github/workflows/deploy.yml`)
 
@@ -95,7 +95,7 @@ failing test names, and closes it on the next green run.
 
 `gate:local` + `gate:e2e` (`build` + the full Playwright suite against the
 production build — the round-9 lesson: 15 browser regressions shipped through
-13 green releases while only the smoke tier ran per PR) + `gate:cacp`, then
+13 green releases while only the smoke tier ran per PR), then
 the receipt `.gate-ok-<sha>` so the pre-push hook does not repeat it.
 
 ## Not gated anywhere
