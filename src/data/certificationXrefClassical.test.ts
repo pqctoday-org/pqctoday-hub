@@ -125,6 +125,7 @@ describe('the FIPS stage chart never counts a classical-only certificate', () =>
       softwareName: 'P',
       pqcCertified: 'yes',
       pqcSupport: 'Yes (ML-KEM)',
+      pqcStatusCanonical: 'available',
     } as unknown as SoftwareItem
     const cert: CertificationXref = {
       productId: 'p',
@@ -147,6 +148,16 @@ describe('the FIPS stage chart never counts a classical-only certificate', () =>
       new Date('2026-09-27')
     )
     const last = t.points[t.points.length - 1]
+    expect(t.universe).toBe(1)
     expect(last.certified).toBe(0)
+    // control: the same certificate WITHOUT the flag does count, so the zero
+    // above is the flag's doing and not an empty universe
+    const t2 = buildProductStageTimeline(
+      [product],
+      new Map([['p', [{ ...cert, classicalOnly: false }]]]),
+      [],
+      new Date('2026-09-27')
+    )
+    expect(t2.points[t2.points.length - 1].certified).toBe(1)
   })
 })
