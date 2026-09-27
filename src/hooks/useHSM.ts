@@ -15,7 +15,7 @@
  *
  * All PKCS#11 calls use the logging proxy so every call appears in `log`.
  */
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   getSoftHSMCppModule,
   getSoftHSMRustModule,
@@ -93,6 +93,16 @@ export interface UseHSMResult {
 
 export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
   const moduleRef = useRef<SoftHSMModule | null>(null)
+  // initialize() awaits the WASM module; a component can unmount meanwhile.
+  // Setting state after that is a no-op in a browser but crashes a test worker
+  // whose environment is already torn down ("window is not defined").
+  const mountedRef = useRef(true)
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
   const hSessionRef = useRef<number>(0)
   const slotRef = useRef<number>(0)
 
@@ -223,8 +233,10 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
         USER_PIN
       )
       hSessionRef.current = hSession
+      if (!mountedRef.current) return
       setPhase('session_open')
     } catch (err) {
+      if (!mountedRef.current) return
       const msg = err instanceof Error ? err.message : String(err)
       console.error('[useHSM] initialize failed:', msg)
       setError(msg)
