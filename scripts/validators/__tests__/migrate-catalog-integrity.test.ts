@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   checkApprovedBoundaryClaims,
   checkCertificationVerdicts,
+  checkColumnNameCells,
   checkNoPqcConsistency,
   checkProductIdUniqueness,
   checkReleaseDates,
@@ -187,6 +188,29 @@ describe('MC-6 approved-boundary claims', () => {
             status: 'active',
           },
         ],
+        'c'
+      )
+    ).toHaveLength(0)
+  })
+})
+
+describe('MC-7 column-name cells', () => {
+  it('flags a cell holding its own column name (the 4.124.1 R3-16 parser defect)', () => {
+    const f = checkColumnNameCells(
+      [
+        { product_id: 'aws-kms', pqc_support: 'pqc_support', status: 'active' },
+        { product_id: 'boringssl', pqc_support: 'Yes (ML-KEM)', status: 'active' },
+      ],
+      'c'
+    )
+    expect(f).toHaveLength(1)
+    expect(f[0]).toMatchObject({ field: 'pqc_support', row: 2 })
+  })
+
+  it('leaves a column name mentioned inside a real value alone', () => {
+    expect(
+      checkColumnNameCells(
+        [{ product_id: 'a', pqc_support: 'Yes (see pqc_support note)', status: 'active' }],
         'c'
       )
     ).toHaveLength(0)
