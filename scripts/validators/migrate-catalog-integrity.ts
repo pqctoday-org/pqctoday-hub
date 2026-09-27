@@ -30,8 +30,19 @@
  *       former name to the product_id, so a correction never detaches them.
  *       (Plan r2 W-B1: no rename before the name joins are safe.)
  *
- * Severity: MC-1 and MC-4 ERROR (identity). MC-2 and MC-3 WARNING: legacy
- * rows are reported, and the row-level fix goes through review.
+ * MC-5  pqc_certified and has_certification stay inside their vocabularies and
+ *       do not contradict each other. Added 2026-09-26 with the columns: the
+ *       verdict used to be a prose prefix on pqc_support, where a substring
+ *       search could not tell a claim from its denial, and a free-text column
+ *       would drift straight back to that.
+ *
+ * MC-6  A pqc_certified=yes row whose own note places PQC outside the approved
+ *       boundary ("non-FIPS operating mode", "non-Approved mode"). The one
+ *       false positive of 87 when the column was populated.
+ *
+ * Severity: MC-1, MC-4 and MC-5 ERROR (identity / controlled vocabulary).
+ * MC-2, MC-3 and MC-6 WARNING: legacy rows and prose heuristics are reported,
+ * and the row-level fix goes through review.
  */
 
 import fs from 'fs'
@@ -176,6 +187,126 @@ export function checkRenamesKeepFormerNames(
   return findings
 }
 
+const PQC_CERTIFIED_VALUES = new Set(['yes', 'partial', 'no', 'none', 'cavp', 'in_progress'])
+const HAS_CERTIFICATION_VALUES = new Set([
+  'yes',
+  'no',
+  'unknown',
+  'component',
+  'cavp',
+  'in_progress',
+])
+
+/**
+ * MC-5 — the two certification verdicts stay inside their vocabularies, and
+ * stay consistent with each other.
+ *
+ * Added 2026-09-26 with the columns themselves. Before them the verdict lived
+ * only as a prose prefix on pqc_support, where a substring search for
+ * "CMVP"/"FIPS 140" could not distinguish a claim from its denial — a row
+ * reading `No (CMVP certificate #5038 … contains no ML-KEM)` counted as
+ * claiming a certification. A free-text column would drift back to exactly
+ * that, so the vocabulary is pinned here.
+ *
+ * The consistency rule is deliberately narrow: claiming PQC certification
+ * while asserting no certificate exists is a contradiction. Every other
+ * pairing is legitimate, including the one these columns were added to
+ * express — hasCertification=yes with pqcCertified=no, a product FIPS-validated
+ * for classical algorithms only (11 active rows).
+ *
+ * FIPS 140-3 track stages (added 2026-09-26, user decision): `cavp` = the
+ * algorithms are CAVP-validated — the PREREQUISITE, not a certificate;
+ * `in_progress` = NIST lists the module as Modules In Process / IUT (never
+ * inferred from CAVP); `yes` = a certificate is held. Neither stage is a
+ * certification, so a PQC-certification claim (pqc_certified yes/partial)
+ * beside either is the same contradiction as beside `no`.
+ *
+ * `component` (added 2026-09-26, WS-D) means the product relies on a validated
+ * module it embeds but holds no certificate itself — a cloud KMS whose HSM is
+ * validated. pqcCertified describes the PRODUCT's own certification, so
+ * claiming PQC certification alongside `component` is the same contradiction
+ * as alongside `no`: a certificate is being claimed that the row says the
+ * product does not hold.
+ */
+export function checkCertificationVerdicts(rows: CsvRow[], file: string): Finding[] {
+  const findings: Finding[] = []
+  rows.forEach((row, i) => {
+    if (!isActive(row)) return
+    const pc = (row.pqc_certified || '').trim().toLowerCase()
+    const hc = (row.has_certification || '').trim().toLowerCase()
+    if (!PQC_CERTIFIED_VALUES.has(pc)) {
+      findings.push({
+        csv: file,
+        row: i + 2,
+        field: 'pqc_certified',
+        value: row.pqc_certified || '',
+        message: `${row.product_id}: pqc_certified must be one of ${[...PQC_CERTIFIED_VALUES].join('|')}`,
+      })
+    }
+    if (!HAS_CERTIFICATION_VALUES.has(hc)) {
+      findings.push({
+        csv: file,
+        row: i + 2,
+        field: 'has_certification',
+        value: row.has_certification || '',
+        message: `${row.product_id}: has_certification must be one of ${[...HAS_CERTIFICATION_VALUES].join('|')}`,
+      })
+    }
+    if (
+      (pc === 'yes' || pc === 'partial') &&
+      (hc === 'no' || hc === 'component' || hc === 'cavp' || hc === 'in_progress')
+    ) {
+      findings.push({
+        csv: file,
+        row: i + 2,
+        field: 'pqc_certified',
+        value: `${pc} / ${hc}`,
+        message:
+          hc === 'component'
+            ? `${row.product_id}: claims PQC certification (${pc}) but has_certification says only an embedded module is validated`
+            : hc === 'cavp' || hc === 'in_progress'
+              ? `${row.product_id}: claims PQC certification (${pc}) but has_certification is only the ${hc} stage of FIPS 140-3 — not a certificate`
+              : `${row.product_id}: claims PQC certification (${pc}) while has_certification says no certificate exists`,
+      })
+    }
+  })
+  return findings
+}
+
+/**
+ * MC-6 — a full PQC certification claim whose own note places PQC OUTSIDE the
+ * approved boundary.
+ *
+ * `Marvell LiquidSecurity 2` read "Yes (ML-KEM, ML-DSA in non-FIPS operating
+ * mode; field-upgradable per CMVP #4703)" and was derived as
+ * `pqc_certified=yes` purely because the note opens "Yes" and mentions CMVP —
+ * 1 false positive in 87 when the column was first populated (2026-09-26). Its
+ * sibling row `LS2 HSM Family`, describing the same hardware, was already
+ * `partial`. Certificate #4703 correctly reports no PQC, because the PQC is
+ * outside its boundary.
+ *
+ * WARNING rather than ERROR: this is a prose heuristic, and a legitimate note
+ * could mention a non-approved mode in passing while still claiming approved
+ * PQC elsewhere. It asks a question; it does not assert a defect.
+ */
+export function checkApprovedBoundaryClaims(rows: CsvRow[], file: string): Finding[] {
+  const OUTSIDE = /non-?FIPS|non-?Approved|non-compliant service/i
+  const findings: Finding[] = []
+  rows.forEach((row, i) => {
+    if (!isActive(row)) return
+    if ((row.pqc_certified || '').trim().toLowerCase() !== 'yes') return
+    if (!OUTSIDE.test(row.pqc_support || '')) return
+    findings.push({
+      csv: file,
+      row: i + 2,
+      field: 'pqc_certified',
+      value: 'yes',
+      message: `${row.product_id}: pqc_certified=yes but the note places PQC outside the approved boundary — should this be partial?`,
+    })
+  })
+  return findings
+}
+
 /** The generation before the latest pqc_product_catalog file, by date then _rN. */
 function previousCatalog(): CsvRow[] {
   const prefix = 'pqc_product_catalog_'
@@ -229,6 +360,20 @@ export function runMigrateCatalogIntegrity(
       'WARNING',
       file,
       checkNoPqcConsistency(rows, file)
+    ),
+    result(
+      'MC-5',
+      'Certification verdicts use their controlled vocabulary and agree with each other',
+      'ERROR',
+      file,
+      checkCertificationVerdicts(rows, file)
+    ),
+    result(
+      'MC-6',
+      'No pqc_certified=yes row places its PQC outside the approved boundary',
+      'WARNING',
+      file,
+      checkApprovedBoundaryClaims(rows, file)
     ),
   ]
 }

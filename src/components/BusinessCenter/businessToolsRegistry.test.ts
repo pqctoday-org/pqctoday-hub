@@ -66,6 +66,7 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'accelerated-execution-profile',
   'data-at-rest-strategy',
   'sim-roadmap',
+  'certification-plan',
 ]
 
 /** Artifact types that intentionally have NO builder component. Each entry
@@ -80,6 +81,10 @@ const NO_BUILDER_ALLOWLIST: ReadonlySet<ExecutiveDocumentType> = new Set<Executi
   // standalone Skills & Team Plan tool keeps `skills-team-plan`.
   'crypto-champion-roster',
   'team-sizing-plan',
+  // Produced by the crypto-product-certification capstone (LM-065). The plan
+  // only means anything as the output of working one scheme's path end to
+  // end, so there is deliberately no standalone builder for it.
+  'certification-plan',
 ])
 
 describe('Command Center registry — drift guard', () => {

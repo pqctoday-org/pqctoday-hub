@@ -32,10 +32,12 @@ describe('matchLibrary — version-aware SBOM → catalog matching', () => {
     expect(m?.fipsStatus).toBe('historical')
   })
 
-  it('resolves openssl@3.5.0 to the active PQC-capable record', () => {
+  it('resolves openssl@3.5.0 to the PQC-capable 3.5 record', () => {
     const m = matchLibrary('openssl', '3.5.0')
     expect(m?.id).toBe('openssl-3.5')
-    expect(m?.fipsStatus).toBe('active-pqc')
+    // CMVP #4985 (checked 2026-09-24) lists no ML-KEM/ML-DSA/SLH-DSA as approved,
+    // so the record must not claim an active PQC-covering certificate.
+    expect(m?.fipsStatus).toBe('active')
   })
 
   it('aliases bc-fips package names to the Bouncy Castle FIPS catalog entry', () => {
@@ -64,7 +66,7 @@ describe('libraryToCbomInput → buildCbomDocument', () => {
     const lib = doc.components.find((c: { type: string }) => c.type === 'library')
     expect(lib.name).toBe('OpenSSL')
     expect(lib.version).toBe(openssl35.latestVersion)
-    // ML-KEM + ML-DSA from "ML-KEM, ML-DSA via FIPS 3.5 provider" → crypto-assets
+    // ML-KEM + ML-DSA + SLH-DSA named in openssl-3.5 pqcSupport → crypto-assets
     const assets = doc.components.filter((c: { type: string }) => c.type === 'cryptographic-asset')
     expect(assets.length).toBeGreaterThanOrEqual(2)
     expect(assets.every((a: { cryptoProperties?: unknown }) => a.cryptoProperties)).toBe(true)

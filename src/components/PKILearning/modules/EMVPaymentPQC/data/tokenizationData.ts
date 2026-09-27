@@ -264,9 +264,9 @@ export const MOBILE_WALLETS: MobileWallet[] = [
       'ECDSA P-256 (device attestation)',
       'AES-256 (Knox Vault storage)',
       'AES-256 (per-transaction cryptogram)',
-      'Samsung S3SSE2A secure element (Common Criteria EAL6+, hardware PQC)',
+      'Samsung S3SSE2A secure element (hardware PQC; CC certificate ANSSI-CC-2024/26-R01: EAL5 augmented incl. AVA_VAN.5, optional ML-DSA library in the TOE)',
     ],
     pqcStatus:
-      'Samsung S3SSE2A secure element is Common Criteria EAL6+ certified with hardware PQC support and won a CES Innovation Award 2026 as a hardware-PQC secure element. Samsung Pay integration not yet announced.',
+      'Samsung S3SSE2A secure element: ANSSI certificate ANSSI-CC-2024/26-R01 (1 Oct 2025) evaluates the chip at EAL5 augmented with ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_TAT.3, ASE_TSS.2, ATE_COV.3, ATE_FUN.2 and AVA_VAN.5 against the Security IC protection profile BSI-CC-PP-0084-2014 (only four sub-parts reach EAL6+ ASE_TSS.2). Its TOE includes an optional ML-DSA library on the chip\u2019s lattice coprocessor; in the original 2024 certificate the PQC engine was outside the TOE. Samsung and Thales announced ML-KEM support and a CES 2026 Innovation Award for the chip (Thales press release, 6 Jan 2026); ML-KEM is not part of the certified TOE. Samsung Pay integration not yet announced.',
   },
 ]

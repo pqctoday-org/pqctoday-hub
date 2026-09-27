@@ -418,6 +418,16 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: false,
   },
   {
+    // Added 2026-09-24 with the module. Reading and scoping FIPS 140-3 / CC /
+    // EUCC / PCI certificates is governance and risk work (GRC persona path)
+    // that rests on cryptographic literacy.
+    moduleId: 'crypto-product-certification',
+    competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
+    tier: 'practitioner',
+    workRoles: ['risk-manager', 'is-security-manager', 'security-architect'],
+    isCommonGround: false,
+  },
+  {
     moduleId: 'secrets-management-pqc',
     nfExtra: ['NF-COM-004'],
     competencyAreas: ['CA-DATASEC', 'CA-SYSARCH'],

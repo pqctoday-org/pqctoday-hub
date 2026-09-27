@@ -183,7 +183,11 @@ describe('loadFieldWatchCorpus — real CSV sanity (not the fixture-driven tests
 
   it('a browsing-time boundary would report zero — proving the reframe was the fix, not a tweak', () => {
     const corpus = loadFieldWatchCorpus()
-    const nowish = parseDateMs('2026-08-02') as number
+    // "Browsing time" = just after the newest last-update date in the corpus.
+    // A hard-coded date went stale the first time a hash-based row was legitimately
+    // revised after it (the FIPS 140-3 IG row, 2026-08-19).
+    const newest = Math.max(...corpus.rows.map((r) => r.lastUpdateDateMs ?? 0))
+    const nowish = newest + 24 * 60 * 60 * 1000
     const summary = computeResearchFieldWatch(['hash-based'], nowish, corpus.rows)
     expect(summary.fields[0].revisionCount).toBe(0)
   })

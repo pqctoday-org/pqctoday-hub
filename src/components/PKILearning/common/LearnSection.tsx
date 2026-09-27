@@ -25,6 +25,14 @@ import { useLocation } from 'react-router'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useModuleStore } from '@/store/useModuleStore'
+import { MANIFEST_BY_ID } from '../manifest/registry'
+import {
+  isLearnSectionInPath,
+  isLearnSectionOptional,
+  resolveLearnPath,
+} from '../manifest/learnPathScope'
+import { useActiveLearnPathId, useLearnModuleId } from './useLearnPath'
+import { OffPathBadge, OptionalReferenceBadge } from './LearnPathPicker'
 
 export interface LearnSectionProps {
   /** must match the manifest's `learnSections[].id` */
@@ -172,11 +180,22 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
   defaultOpen = false,
   children,
 }) => {
-  const location = useLocation()
-  const moduleId = location.pathname.replace(/^\/learn\/?/, '') || ''
+  // ModuleShell's context when present (also correct inside the simulation
+  // embed), else the `/learn/<id>` URL as before.
+  const moduleId = useLearnModuleId()
   const markLearnSectionRead = useModuleStore((s) => s.markLearnSectionRead)
   const target = useDeepLinkTarget()
   const isTarget = target === sectionId
+
+  // WS-0 learn-path scope (manifest/learnPathScope.ts). `optional` sections are
+  // reference material: labelled, never required. Sections off the active path
+  // are labelled ('mark', the default) or not rendered ('hide') — except when
+  // the URL deep-links to them, so a shared link never lands on nothing.
+  const manifest = MANIFEST_BY_ID[moduleId]
+  const activePathId = useActiveLearnPathId(moduleId)
+  const optional = isLearnSectionOptional(manifest, sectionId)
+  const offPath = !isLearnSectionInPath(manifest, sectionId, activePathId)
+  const hidden = offPath && manifest?.offPathSections === 'hide' && !isTarget
 
   // Open state is DERIVED, not synced in an effect: a deep-linked section is
   // open because the URL names it, not because something called setState after
@@ -205,7 +224,7 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
   // already expanded on arrival would otherwise be marked read on load.
   useEffect(() => {
     const el = ref.current
-    if (!el || !moduleId || !isOpen) return
+    if (!el || !moduleId || !isOpen || hidden) return
     let timer: ReturnType<typeof setTimeout> | undefined
     const observer = new IntersectionObserver(
       (entries) => {
@@ -229,12 +248,15 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
       observer.disconnect()
       if (timer) clearTimeout(timer)
     }
-  }, [moduleId, sectionId, isOpen, markLearnSectionRead])
+  }, [moduleId, sectionId, isOpen, hidden, markLearnSectionRead])
+
+  if (hidden) return null
 
   return (
     <section
       ref={ref}
       data-section-id={sectionId}
+      data-optional={optional || undefined}
       aria-labelledby={headingId}
       className="glass-panel overflow-hidden scroll-mt-24"
     >
@@ -249,6 +271,14 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
           <h2 id={headingId} className="min-w-0 text-xl font-bold text-gradient">
             {title}
           </h2>
+          {optional || offPath ? (
+            <span className="flex flex-wrap gap-1.5">
+              {optional ? <OptionalReferenceBadge /> : null}
+              {offPath ? (
+                <OffPathBadge pathLabel={resolveLearnPath(manifest, activePathId)?.label ?? ''} />
+              ) : null}
+            </span>
+          ) : null}
         </div>
         {isOpen ? (
           <ChevronUp size={20} className="text-muted-foreground shrink-0" />

@@ -17,7 +17,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     pqcSolution: [
       'ML-KEM-768 key encapsulation',
       'Hybrid RSA + ML-KEM during transition',
-      'Futurex CryptoHub already PCI HSM validated with PQC',
+      'Futurex says its PCI HSM-approved HSMs support PQC (press release, 11 Jun 2025). A PCI listing PQC flag records only that PQC support exists; algorithms are in the device PCI HSM Security Policy',
     ],
     dependencies: [],
     networkSpecific: [],
@@ -130,7 +130,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     migrationEffort: 4,
     migrationTimeline: '2026-2030',
     pqcSolution: [
-      'Complete 3DES \u2192 AES-256 DUKPT migration (already mandated by PCI PTS)',
+      'Complete 3DES \u2192 AES DUKPT migration (industry direction, not yet a PCI mandate: PCI PIN Security v3.1 still allows TDEA and AES for online PIN, and since 1 Jan 2023 disallows fixed-key TDEA PIN encryption; PTS POI v5+ devices doing online PIN and HSM v4+ devices doing PIN processing must support AES ISO PIN block format 4)',
       'AES-256 provides 128-bit post-quantum security via Grover',
       'ML-KEM-768 for BDK key transport at KIFs',
     ],

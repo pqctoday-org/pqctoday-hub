@@ -132,12 +132,15 @@ describe('recommendTransitionPathway — decision tree', () => {
     expect(sigOnly.kemPair).toMatch(/Not applicable/)
   })
 
-  it('surfaces the FIPS 140-3 validation-gap watch-out when fips-validated is required', () => {
+  it('surfaces the CMVP approved-algorithm watch-out when fips-validated is required', () => {
     const rec = recommendTransitionPathway({
       ...baseInputs,
       interoperabilityRequirement: ['fips-validated'],
     })
-    expect(rec.watchOuts.join(' ')).toMatch(/FIPS 140-3-validated PQC module/)
+    const text = rec.watchOuts.join(' ')
+    expect(text).toMatch(/CMVP module certificate whose Approved Algorithms list/)
+    // Guard against re-introducing the 2026 claim that no PQC-validated module exists.
+    expect(text).not.toMatch(/no FIPS 140-3-validated PQC module exists/)
   })
 })
 

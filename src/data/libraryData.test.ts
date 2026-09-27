@@ -89,6 +89,18 @@ describe('findLibraryItemByRef', () => {
     expect(resolved?.referenceId).toBe('NIST CSWP 39')
   })
 
+  it('resolves the legacy NIST-IR-8547 id to the real IR 8547, never the fabricated IPD2 row', () => {
+    // NIST-IR-8547-IPD2 claimed a second draft (2026-04-12) that CSRC does not
+    // list. It is deprecated with no successor, so it must neither be an alias
+    // target nor surface as a prior revision of the live IR 8547 tile.
+    expect(findLibraryItemByRef('NIST-IR-8547')?.referenceId).toBe('NIST IR 8547')
+    const ir8547 = libraryData.find((item) => item.referenceId === 'NIST IR 8547')
+    expect(ir8547).toBeDefined()
+    expect((ir8547?.priorRevisions ?? []).map((p) => p.referenceId)).not.toContain(
+      'NIST-IR-8547-IPD2'
+    )
+  })
+
   it('resolves every persona "Start here" pick to a real, live library item', () => {
     const allPicks = [...LIBRARY_EXECUTIVE_PICKS, ...LIBRARY_OPS_PICKS, ...LIBRARY_CURIOUS_PICKS]
     for (const pick of allPicks) {
