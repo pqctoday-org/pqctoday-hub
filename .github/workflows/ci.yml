@@ -9,7 +9,10 @@ name: CI
 # exactly one of the two places, never both.
 
 on:
-  # PR + main-only with concurrency-cancel. Skip the job for pure docs/non-code
+  # main-only (owner decision D20, 2026-09-27: PRs are validated by the full
+  # local gates, .husky/pre-push) with concurrency-cancel, so back-to-back merges
+  # cost about one run; the newest main run still triggers deploy.yml.
+  # Skip the job for pure docs/non-code
   # changes. NOTE: data/** is deliberately NOT ignored — data changes must
   # still run the data gate.
   #
@@ -35,26 +38,10 @@ on:
       - '.github/PULL_REQUEST_TEMPLATE.md'
       - 'LICENSE'
       - '.gitignore'
-  pull_request:
-    branches: [main]
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CONTRIBUTING.md'
-      - 'CODE_OF_CONDUCT.md'
-      - 'SECURITY.md'
-      - 'TESTING.md'
-      - 'TERMS.md'
-      - 'LICENSES.md'
-      - 'CONTENT-FRESHNESS.md'
-      - 'GATES.md'
-      - 'e2e/**/*.md'
-      - '.github/PULL_REQUEST_TEMPLATE.md'
-      - 'LICENSE'
-      - '.gitignore'
+  workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ci-main
   cancel-in-progress: true
 
 # The default GITHUB_TOKEN is read-only and nothing here writes back to the
@@ -191,8 +178,7 @@ jobs:
         # deploy.yml (workflow_run on this workflow, main only) downloads this
         # instead of rebuilding — so a red CI can no longer deploy, and the
         # 7-minute second build is gone. After the smoke test on purpose: a
-        # build the smoke tier rejects is never uploaded. PR runs skip it:
-        # nothing consumes it.
+        # build the smoke tier rejects is never uploaded.
         # Retention is short on purpose: deploy runs minutes later, and a
         # dispatch of deploy.yml rebuilds from source anyway.
         if: github.event_name == 'push'
@@ -205,31 +191,6 @@ jobs:
           # dist/ is ~0.5 GB, mostly wasm and hashed chunks that do not
           # compress; spend the minutes on the deploy, not the zip.
           compression-level: 1
-
-      - name: Check tool version bumps
-        # A Playground tool content edit must bump its version so the revision
-        # record visitors see stays honest. Cheap; diffs against origin/main.
-        if: github.event_name == 'pull_request'
-        run: npx tsx scripts/ci/check-tool-version-bump.ts
-
-      - name: Check module version bumps
-        # Same contract for Learn modules.
-        if: github.event_name == 'pull_request'
-        run: npx tsx scripts/ci/check-module-version-bump.ts
-
-      - name: Validate offline-attestation files
-        # When approvals/offline-{pr}-*.json files are committed to the PR,
-        # verify they (a) match the required schema, (b) name an active SME
-        # from reviewers.json, and (c) carry a proxy_github_handle that is a
-        # member of at least one CODEOWNERS team owning a changed file.
-        # No-ops when no attestation files are present (the common case).
-        # See trust-engine explainability doc §5.3.
-        if: github.event_name == 'pull_request'
-        env:
-          GITHUB_TOKEN: ${{ secrets.OFFLINE_ATTESTATION_TOKEN || secrets.GITHUB_TOKEN }}
-          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-        run: npx tsx scripts/ci/validate-offline-attestation.ts
 
       - name: Security Audit
         # LAST on purpose (since 2026-08-09): a failing step aborts the job, and

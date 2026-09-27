@@ -71,7 +71,7 @@ then the receipt is written. (`gate:cacp` was removed from the hook and from Git
 - `verify-attestations` — signatures on shipped trust artifacts.
 - `build` — clean-checkout `tsc -b` + vite + Playwright prerender + precache/TLA budgets; on main its `dist/` is uploaded for deploy.
 - `test:e2e:ci-smoke` — the 6-spec Playwright smoke tier against the build.
-- PR only: `check-tool-version-bump`, `check-module-version-bump` — content edits bump their version; `validate-offline-attestation` — committed SME attestations are well-formed and authorised.
+- ~~PR only~~ — **GitHub CI no longer runs on pull requests (owner decision D20, 2026-09-27)**: it runs on push to `main` (concurrency group `ci-main`, superseded runs cancelled) and on `workflow_dispatch`. PRs are validated only by the full local gates (`.husky/pre-push`) and merged with `gh pr merge --admin` on local green (D21). `check-tool-version-bump` / `check-module-version-bump` moved into `gate:local` (`npm run check:version-bumps`). `validate-offline-attestation` is not run anywhere now: it needs a PR number, and no `approvals/offline-*` file has ever been committed. Re-home it if SME attestations start being used.
 - `audit:deps` — high/critical advisories, with dated exceptions (`scripts/ci/audit-gate.ts`). Last on purpose: if it is the only red step, it is the known `pptxgenjs → image-size` pair.
 
 `test` (matrix ×2) ≈ 8 min each: `vitest run --shard=N/2` — the unit suite.
