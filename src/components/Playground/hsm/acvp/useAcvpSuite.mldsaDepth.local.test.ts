@@ -26,7 +26,7 @@ import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { TestResult } from './useAcvpSuite'
 import { MLDSA_CTX256_PINS } from './sections/mldsaDepth'
 import { acvpHashToMech } from './sections/mldsaAcvp'
-import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence.static'
 
 /** Manifest evidence classes of a row (generated per-case records; [] = no record). */
 const classesOf = (rowId: string) =>

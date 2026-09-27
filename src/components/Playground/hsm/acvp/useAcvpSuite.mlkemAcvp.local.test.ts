@@ -31,7 +31,7 @@ import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { TestResult } from './useAcvpSuite'
 import { MLKEM_BOUNDARY_PINS } from './sections/mlkemAcvp'
-import { evidenceForRowId } from '@/data/validation/acvpRowEvidence'
+import { evidenceForRowId } from '@/data/validation/acvpRowEvidence.static'
 
 /** Manifest evidence classes of a row (generated per-case records; [] = no record). */
 const classesOf = (rowId: string) =>

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { katKindKey, rowTemplateOf, formatParameters } from './caseEvidence'
-import { evidenceForRowId } from './acvpRowEvidence'
+import { evidenceForRowId } from './acvpRowEvidence.static'
 import { evidenceForKatKind } from './katCaseEvidence'
 
 describe('per-case evidence records (generated from the manifest + registry)', () => {
