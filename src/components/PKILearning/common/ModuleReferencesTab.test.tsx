@@ -7,7 +7,7 @@ import { MODULE_CITED_STANDARDS } from '@/data/moduleContentRegistry'
 import { getLibraryItemsForModule } from '@/data/libraryData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { MANIFEST_BY_ID } from '../manifest/registry'
-import manifest from '../modules/CryptoProductCertification/manifest'
+import manifest from '../modules/FipsPciCertification/manifest'
 
 /**
  * Guards the seam added 2026-08-21.
@@ -91,7 +91,9 @@ describe('ModuleReferencesTab — cited standards', () => {
  * module those use declares learnPaths at all.
  */
 describe('ModuleReferencesTab — learn-path scoping', () => {
-  const CERT = 'crypto-product-certification'
+  // LM-065's scheme paths moved to the deep dives on 2026-09-27; LM-067 now
+  // carries the fips/pci learn paths and their referencePaths.
+  const CERT = 'fips-pci-certification'
   const titleOf = (id: string) => MODULE_CITED_STANDARDS[CERT]?.find((s) => s.id === id)?.title
 
   afterEach(() => {
@@ -101,7 +103,7 @@ describe('ModuleReferencesTab — learn-path scoping', () => {
   it('shows every cited standard when no path is chosen', () => {
     useModuleStore.getState().setActiveLearnPath(CERT, '')
     renderTab(CERT)
-    for (const id of ['FIPS-140-3-STANDARD', 'CC-2022-CEM', 'eIDAS-2-Regulation']) {
+    for (const id of ['FIPS-140-3-STANDARD', 'PCI-PTS-Program-Guide-v1-9']) {
       expect(screen.getAllByRole('link', { name: titleOf(id) || id }).length).toBeGreaterThan(0)
     }
   })
@@ -114,20 +116,21 @@ describe('ModuleReferencesTab — learn-path scoping', () => {
         name: titleOf('PCI-PTS-Program-Guide-v1-9') || 'PCI-PTS-Program-Guide-v1-9',
       }).length
     ).toBeGreaterThan(0)
-    for (const id of ['FIPS-140-3-STANDARD', 'CC-2022-CEM', 'eIDAS-2-Regulation']) {
+    for (const id of ['FIPS-140-3-STANDARD', 'NIST-SP-800-140B']) {
       expect(screen.queryByRole('link', { name: titleOf(id) || id })).not.toBeInTheDocument()
     }
   })
 
-  it('keeps an unmapped reference visible on every path', () => {
-    // FIPS 203/204/205 back the shared PQC section, so they are deliberately
-    // absent from referencePaths and must survive every path.
-    useModuleStore.getState().setActiveLearnPath(CERT, 'pci')
-    renderTab(CERT)
-    expect(manifest.referencePaths?.['FIPS 203']).toBeUndefined()
-    expect(
-      screen.getAllByRole('link', { name: titleOf('FIPS 203') || 'FIPS 203' }).length
-    ).toBeGreaterThan(0)
+  it('scopes every LM-067 reference to a path (no untagged row to fall through)', () => {
+    // Since the 2026-09-27 split every document LM-067 cites belongs to one
+    // scheme, so all of them are path-tagged. The rule that an UNTAGGED
+    // reference stays visible on every path is pinned with a fixture in
+    // manifest/learnPathScope.test.ts ("path B … does see the shared one").
+    const cited = MODULE_CITED_STANDARDS[CERT] ?? []
+    expect(cited.length).toBeGreaterThan(0)
+    for (const std of cited) {
+      expect(manifest.referencePaths?.[std.id], std.id).toBeDefined()
+    }
   })
 
   it('leaves a module that declares no referencePaths unfiltered', () => {

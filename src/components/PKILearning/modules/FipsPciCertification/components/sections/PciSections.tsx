@@ -16,7 +16,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { CalendarClock, ExternalLink, HelpCircle, Lightbulb, ShieldAlert } from 'lucide-react'
 import { getStandard, type StandardRef } from '@/data/standardsRegistry'
-import { ANCHOR_SCENARIO } from '../../data/anchorScenario'
+import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import {
   PCI_AS_OF_LABEL,
   PCI_OPEN_QUESTIONS,

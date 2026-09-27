@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // OWNER: Scaffold
 /**
- * Render parity + scaffold contract (build spec §4) for the Cryptographic
- * Product Certification module. Four authors fill owner files in parallel;
+ * Render parity + scaffold contract (build spec §4) for Cryptographic Product Certification: Fundamentals. Four authors fill owner files in parallel;
  * these assertions keep their parts wired to the fixed manifest ids.
  */
 import { afterEach, describe, it, expect } from 'vitest'
@@ -15,17 +14,12 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { CryptoProductCertificationModule } from './index'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
 import manifest from './manifest'
-import { SECTION_COMPONENTS, PRACTITIONER_DISCLAIMER } from './components/sectionRegistry'
+import { PRACTITIONER_DISCLAIMER } from './components/sectionRegistry'
+import { SECTION_COMPONENTS } from './components/sectionRegistry'
 import { ALL_EXERCISES } from './data/allExercises'
 import * as CoreSections from './components/sections/CoreSections'
-import * as FipsSections from './components/sections/FipsSections'
-import * as CcEuSections from './components/sections/CcEuSections'
-import * as PciSections from './components/sections/PciSections'
 import * as SharedSections from './components/sections/SharedSections'
 import * as coreData from './data/coreData'
-import * as fipsData from './data/fipsData'
-import * as ccEuData from './data/ccEuData'
-import * as pciData from './data/pciData'
 import * as sharedData from './data/sharedData'
 
 const pascal = (id: string) =>
@@ -53,7 +47,7 @@ describe('CryptoProductCertification render parity', () => {
   it('renders the gradient header, the in-page description, and all six tabs', () => {
     renderModule()
     expect(
-      screen.getByRole('heading', { name: 'Cryptographic Product Certification' })
+      screen.getByRole('heading', { name: 'Cryptographic Product Certification: Fundamentals' })
     ).toBeInTheDocument()
     expect(screen.getByText(/What a FIPS 140-3, Common Criteria, EUCC or PCI/)).toBeInTheDocument()
     for (const name of [
@@ -81,16 +75,15 @@ describe('CryptoProductCertification render parity', () => {
     expect(screen.queryByText(/content pending/i)).not.toBeInTheDocument()
   })
 
-  it('hides the other paths’ sections on a chosen path (offPathSections: hide)', () => {
-    renderModule('?path=pci')
+  it('declares no learn paths: every section and step is part of the fundamentals', () => {
+    expect(manifest.learnPaths ?? []).toEqual([])
+    renderModule()
     const heading = (name: string) => screen.queryByRole('heading', { level: 2, name })
     expect(heading('Four schemes, four questions')).toBeInTheDocument()
-    expect(heading('PTS HSM device approval')).toBeInTheDocument()
-    expect(heading('PCI KMO v1.0')).toBeInTheDocument()
     expect(heading('What PQC changes in certification')).toBeInTheDocument()
+    // the scheme deep dives moved to LM-067 / LM-068
     expect(heading('FIPS 140-3 and the CMVP')).not.toBeInTheDocument()
     expect(heading('The Common Criteria model')).not.toBeInTheDocument()
-    expect(heading('EUCC is a scheme, not a PP')).not.toBeInTheDocument()
   })
 })
 
@@ -101,9 +94,7 @@ describe('CryptoProductCertification scaffold contract (build spec §4)', () => 
 
   it('section files export one component per section id, named in PascalCase from the id', () => {
     const exported = new Map<string, unknown>(
-      [CoreSections, FipsSections, CcEuSections, PciSections, SharedSections].flatMap((m) =>
-        Object.entries(m)
-      )
+      [CoreSections, SharedSections].flatMap((m) => Object.entries(m))
     )
     for (const id of sectionIds) {
       expect(exported.has(pascal(id)), `${id} → ${pascal(id)}`).toBe(true)
@@ -146,9 +137,6 @@ describe('CryptoProductCertification scaffold contract (build spec §4)', () => 
   it('owner stepExercises are keyed to this module’s steps and match src/data/stepExercises.ts', () => {
     const owned = {
       ...coreData.stepExercises,
-      ...fipsData.stepExercises,
-      ...ccEuData.stepExercises,
-      ...pciData.stepExercises,
       ...sharedData.stepExercises,
     }
     const shared = new Map(Object.entries(STEP_EXERCISES))

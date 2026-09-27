@@ -20,8 +20,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
-import manifest from '../manifest'
-import { PRACTITIONER_DISCLAIMER, SECTION_COMPONENTS, type SectionGroup } from './sectionRegistry'
+import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { PRACTITIONER_DISCLAIMER, type SectionEntry, type SectionGroup } from './sectionRegistry'
 
 const GROUP_ICON = new Map<SectionGroup, LucideIcon>([
   ['core', Compass],
@@ -32,10 +32,24 @@ const GROUP_ICON = new Map<SectionGroup, LucideIcon>([
 ])
 
 interface CertIntroductionProps {
+  /** The module whose learnSections are rendered, in manifest order. */
+  manifest: ModuleManifest
+  /** That module's section id → owner component registry. */
+  sections: ReadonlyMap<string, SectionEntry>
   onNavigateToWorkshop: () => void
 }
 
-export const CertIntroduction = ({ onNavigateToWorkshop }: CertIntroductionProps) => (
+/**
+ * Shared Learn-tab renderer for the three certification modules (LM-065
+ * fundamentals, LM-067 FIPS 140-3 & PCI, LM-068 CC/EUCC/eIDAS): the
+ * practitioner disclaimer once, then each manifest section from the module's
+ * own registry.
+ */
+export const CertIntroduction = ({
+  manifest,
+  sections,
+  onNavigateToWorkshop,
+}: CertIntroductionProps) => (
   <div className="w-full space-y-6">
     <div
       role="note"
@@ -47,7 +61,7 @@ export const CertIntroduction = ({ onNavigateToWorkshop }: CertIntroductionProps
     </div>
 
     {(manifest.learnSections ?? []).map((section, index) => {
-      const entry = SECTION_COMPONENTS.get(section.id)
+      const entry = sections.get(section.id)
       if (!entry) return null
       const { Component, group } = entry
       const Icon = GROUP_ICON.get(group) ?? Compass

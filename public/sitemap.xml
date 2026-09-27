@@ -74,7 +74,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -115,6 +115,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.pqctoday.com/learn/cc-eucc-certification</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.pqctoday.com/learn/code-signing</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
@@ -146,7 +152,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/crypto-product-certification</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -213,6 +219,12 @@
   <url>
     <loc>https://www.pqctoday.com/learn/exec-quantum-impact</loc>
     <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.pqctoday.com/learn/fips-pci-certification</loc>
+    <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -344,7 +356,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/quiz</loc>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -410,7 +422,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/library</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>

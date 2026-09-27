@@ -66,6 +66,8 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   KmsPqc: 'kms-pqc',
   HsmPqc: 'hsm-pqc',
   CryptoProductCertification: 'crypto-product-certification',
+  FipsPciCertification: 'fips-pci-certification',
+  CcEuccCertification: 'cc-eucc-certification',
   DataAssetSensitivity: 'data-asset-sensitivity',
   StatefulSignatures: 'stateful-signatures',
   DigitalAssets: 'digital-assets',
