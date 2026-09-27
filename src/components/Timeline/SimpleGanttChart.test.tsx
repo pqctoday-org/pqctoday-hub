@@ -162,15 +162,13 @@ describe('SimpleGanttChart', () => {
         ],
       },
     ]
-    const { container } = renderG(
-      <SimpleGanttChart {...defaultProps} data={openData} countryItems={mockCountryItems} />
-    )
-    const cells = container.querySelectorAll('td[data-open-ended="true"]')
-    // endYear equals startYear, yet the bar spans past it to the chart's edge
+    renderG(<SimpleGanttChart {...defaultProps} data={openData} countryItems={mockCountryItems} />)
+    // One button per bar cell. endYear equals startYear, yet the bar spans past
+    // that single year to the chart's edge, every cell saying no end is stated.
+    const cells = screen.getAllByRole('button', {
+      name: /Open Phase \(no end date stated by source\)/,
+    })
     expect(cells.length).toBeGreaterThan(1)
-    expect(
-      screen.getAllByRole('button', { name: /Open Phase \(no end date stated by source\)/ }).length
-    ).toBeGreaterThan(0)
   })
 
   it('renders the table structure', () => {
