@@ -9,6 +9,7 @@ import {
   checkReleaseDates,
   checkRenamesKeepFormerNames,
   checkNameShape,
+  checkRetiredDuplicateVerdicts,
 } from '../migrate-catalog-integrity'
 
 describe('MC-1 product_id uniqueness', () => {
@@ -235,5 +236,50 @@ describe('MC-8 name shape', () => {
       { product_id: 'c', software_name: 'What is PQC', status: 'deprecated' },
     ]
     expect(checkNameShape(rows, 'c')).toHaveLength(0)
+  })
+})
+
+describe('MC-9 retired duplicates never out-rank their survivor', () => {
+  const keep = {
+    product_id: 'k',
+    status: 'active',
+    has_certification: 'cavp',
+    pqc_certified: 'cavp',
+  }
+  const dup = (over: Record<string, string>) => ({
+    product_id: 'd',
+    status: 'deprecated',
+    deprecated_reason: 'duplicate of k: same crate',
+    has_certification: 'cavp',
+    pqc_certified: 'cavp',
+    ...over,
+  })
+  it('flags a stronger has_certification or pqc_certified (the two _r9 cases)', () => {
+    expect(
+      checkRetiredDuplicateVerdicts([keep, dup({ has_certification: 'yes' })], 'c')
+    ).toHaveLength(1)
+    expect(checkRetiredDuplicateVerdicts([keep, dup({ pqc_certified: 'yes' })], 'c')).toHaveLength(
+      1
+    )
+  })
+  it('passes an equal or weaker verdict', () => {
+    expect(checkRetiredDuplicateVerdicts([keep, dup({})], 'c')).toEqual([])
+    expect(
+      checkRetiredDuplicateVerdicts(
+        [keep, dup({ has_certification: 'unknown', pqc_certified: 'none' })],
+        'c'
+      )
+    ).toEqual([])
+  })
+  it('flags a survivor that is itself retired, and skips a reason that names no row', () => {
+    expect(
+      checkRetiredDuplicateVerdicts([{ ...keep, status: 'deprecated' }, dup({})], 'c')
+    ).toHaveLength(1)
+    expect(
+      checkRetiredDuplicateVerdicts(
+        [keep, dup({ deprecated_reason: 'Duplicate of existing row' })],
+        'c'
+      )
+    ).toEqual([])
   })
 })
