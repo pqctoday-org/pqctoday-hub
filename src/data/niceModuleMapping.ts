@@ -430,6 +430,16 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: false,
   },
   {
+    // Added 2026-09-27 with the module: choosing hardware and parameter sets
+    // for PQC performance is cryptographic engineering at the system-
+    // architecture level.
+    moduleId: 'pqc-hw-acceleration',
+    competencyAreas: ['CA-CRYPTO', 'CA-SYSARCH'],
+    tier: 'practitioner',
+    workRoles: ['security-architect', 'system-administrator'],
+    isCommonGround: false,
+  },
+  {
     // Added 2026-09-24 with the module. Reading and scoping FIPS 140-3 / CC /
     // EUCC / PCI certificates is governance and risk work (GRC persona path)
     // that rests on cryptographic literacy.

@@ -53,6 +53,7 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'pki-enrollment-protocols': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'kms-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   'hsm-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
+  'pqc-hw-acceleration': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   'slh-dsa': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'stateful-signatures': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'digital-assets': { phasesServed: ['p5'], legs: ['learn', 'reference'] },

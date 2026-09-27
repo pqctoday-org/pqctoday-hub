@@ -130,6 +130,12 @@ const TREE: PhaseTree = {
               moduleId: 'kms-pqc',
             },
             {
+              kind: 'learn',
+              label: 'Learn: PQC hardware acceleration (SIMD, FPGA, GPU, ASIC)',
+              to: '/learn/pqc-hw-acceleration',
+              moduleId: 'pqc-hw-acceleration',
+            },
+            {
               kind: 'workshop',
               label: 'Practice: HSM capacity calculator',
               to: '/playground/hsm-capacity',

@@ -181,6 +181,7 @@ const MODULE_NAMES: Record<string, string> = {
   'pki-workshop': 'PKI Workshop',
   'kms-pqc': 'KMS & PQC Key Management',
   'hsm-pqc': 'HSM & PQC Operations',
+  'pqc-hw-acceleration': 'PQC Hardware Acceleration',
   'crypto-product-certification': 'Cryptographic Product Certification: Fundamentals',
   'fips-140-3-certification': 'FIPS 140-3 Certification',
   'cc-eucc-certification': 'Common Criteria, EUCC & eIDAS Certification',
@@ -267,6 +268,11 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'How does ML-KEM envelope encryption differ from RSA-OAEP?',
     'Which cloud KMS providers support PQC algorithms?',
     'Best practices for PQC key rotation planning',
+  ],
+  'pqc-hw-acceleration': [
+    'Why did FPGA acceleration help SLH-DSA far more than ML-DSA?',
+    'Which Arm and Intel instructions accelerate SHA-2, SHA-3 and SHAKE?',
+    'Why is GPU acceleration efficient for big batches but not for a single signature?',
   ],
   'hsm-pqc': [
     'What PKCS#11 v3.2 mechanisms support PQC algorithms?',

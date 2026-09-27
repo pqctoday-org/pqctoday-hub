@@ -241,6 +241,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'Key lifecycle (NIST SP 800-57), envelope encryption with ML-KEM, hybrid key wrapping, multi-provider rotation planning.',
       icon: 'KeyRound',
     },
+    'pqc-hw-acceleration': {
+      label: 'PQC Hardware Acceleration',
+      description:
+        'SIMD, crypto instructions, GPU, FPGA, ASIC and NPU acceleration of ML-DSA and SLH-DSA, with measured Arm and FPGA results.',
+      icon: 'Cpu',
+    },
     'hsm-pqc': {
       label: 'HSM & PQC Operations',
       description:

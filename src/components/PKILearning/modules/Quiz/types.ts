@@ -33,6 +33,7 @@ export const QUIZ_CATEGORIES = [
   'email-signing',
   'kms-pqc',
   'hsm-pqc',
+  'pqc-hw-acceleration',
   'entropy-randomness',
   'merkle-tree-certs',
   'qkd',
