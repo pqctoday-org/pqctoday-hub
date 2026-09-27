@@ -177,6 +177,20 @@ describe('sourceCheckEligible', () => {
     ).toBe(true)
   })
 
+  it('accepts a published standard or RFC, never a draft or a research paper', () => {
+    expect(sourceCheckEligible({ kind: 'published-document', documentStatus: 'rfc' })).toBe(true)
+    expect(
+      sourceCheckEligible({ kind: 'published-document', documentStatus: 'nist-example-set' })
+    ).toBe(true)
+    expect(
+      sourceCheckEligible({ kind: 'published-document', documentStatus: 'internet-draft' })
+    ).toBe(false)
+    expect(
+      sourceCheckEligible({ kind: 'published-document', documentStatus: 'research-paper' })
+    ).toBe(false)
+    expect(sourceCheckEligible({ kind: 'published-document' })).toBe(false)
+  })
+
   it('SABOTAGE: our own oracle output, a snapshot, or an unpinned Wycheproof URL is not eligible', () => {
     expect(sourceCheckEligible({ kind: 'oracle-generated', url: 'node-crypto' })).toBe(false)
     expect(sourceCheckEligible({ kind: 'self-pinned-snapshot' })).toBe(false)

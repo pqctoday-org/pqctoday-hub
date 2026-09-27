@@ -179,9 +179,15 @@ describe('katEvidence classification (generated from the manifest + registry)', 
     expect(evidenceForKind({ type: 'mlkem-decap', variant: 512 })).toBe(
       'nist-acvp-reference-sample'
     )
-    // aesgcm_test's own producer string says "published KAT"; the WS-B manifest
-    // (tag ≠ GCM Test Case 16's published tag) says OpenSSL oracle — manifest wins.
-    expect(evidenceForKind({ type: 'aesgcm-decrypt' })).toBe('independent-oracle')
+    // aesgcm_test was Node/OpenSSL output until 2026-09-26; it is now NIST's CAVP
+    // gcmDecrypt256.rsp, a published NIST example set.
+    expect(evidenceForKind({ type: 'aesgcm-decrypt' })).toBe('published-standard-kat')
+    // PBKDF2 split 2026-09-26: SHA-256 from RFC 7914 §11; SHA-512 stays generated
+    // because no standard publishes a PBKDF2-HMAC-SHA512 vector.
+    expect(evidenceForKind({ type: 'pbkdf2-derive', prf: 'SHA-256' })).toBe(
+      'published-standard-kat'
+    )
+    expect(evidenceForKind({ type: 'pbkdf2-derive', prf: 'SHA-512' })).toBe('independent-oracle')
     expect(evidenceForKind({ type: 'aeskw-wrap' })).toBe('published-standard-kat')
     expect(evidenceForKind({ type: 'rsapss-sigver' })).toBe('independent-oracle')
     expect(evidenceForKind({ type: 'hkdf-derive' })).toBe('published-standard-kat')

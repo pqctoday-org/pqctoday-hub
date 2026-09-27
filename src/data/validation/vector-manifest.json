@@ -3481,7 +3481,7 @@
     {
       "id": "aesgcm_test",
       "path": "src/data/acvp/aesgcm_test.json",
-      "sha256": "d76ac9fc2508229b332f0ce90f15a647942ea105290177c0520c99abd46f8fa9",
+      "sha256": "65b6dae9f893569ec95bae00dca47c97c69fdf71e987271b4e202408931b8d74",
       "status": "active",
       "evidenceClass": "published-standard-kat",
       "source": {
@@ -27323,12 +27323,12 @@
     {
       "id": "pbkdf2_test",
       "path": "src/data/acvp/pbkdf2_test.json",
-      "sha256": "10523bab6749ea359906079adc9ee66111ffc545c018e7956100b71ddbb25096",
+      "sha256": "4162b9c5ffb7f4cb093c7f267f1be52714fe8f9c0761cb1107cff2867e2b6ecb",
       "status": "active",
       "evidenceClass": "independent-oracle",
       "source": {
         "kind": "oracle-generated",
-        "citation": "Generated via Node.js crypto (OpenSSL backend), PBKDF2-HMAC-SHA256 and PBKDF2-HMAC-SHA512",
+        "citation": "Generated via Node.js crypto (OpenSSL backend), PBKDF2-HMAC-SHA512",
         "url": null,
         "revision": null,
         "oracle": {
@@ -27337,7 +27337,7 @@
         },
         "verification": {
           "date": "2026-09-24",
-          "method": "All 5 derived keys also appear in OpenSSL's own PBKDF2 test data (vendored copy in pqctoday-hsm deps/openssl-src/openssl-3.6.3) \u2014 corroborates the oracle output; that file cites no published source.",
+          "method": "Both derived keys also appear in OpenSSL's own PBKDF2 test data (vendored copy in pqctoday-hsm deps/openssl-src/openssl-3.6.3), which corroborates the oracle output; that file cites no published source. The SHA-256 cases this file used to carry moved to pbkdf2_rfc7914_test (RFC 7914 section 11) on 2026-09-26.",
           "result": "match",
           "evidence": [
             {
@@ -27356,70 +27356,12 @@
         {
           "pointer": "/testGroups/0/tests",
           "kind": "array"
-        },
-        {
-          "pointer": "/testGroups/1/tests",
-          "kind": "array"
         }
       ],
       "cases": [
         {
           "caseId": "pbkdf2_test#/testGroups/0/tests/0",
           "pointer": "/testGroups/0/tests/0",
-          "algorithm": {
-            "name": "PBKDF2",
-            "revision": null
-          },
-          "operation": "derive",
-          "parameters": {
-            "keyLen": 256,
-            "prf": "HMAC-SHA256",
-            "iterations": 1,
-            "dkLen": 32
-          },
-          "testType": "oracle-generated",
-          "expectation": "positive",
-          "lineage": ["pbkdf2-test-1"]
-        },
-        {
-          "caseId": "pbkdf2_test#/testGroups/0/tests/1",
-          "pointer": "/testGroups/0/tests/1",
-          "algorithm": {
-            "name": "PBKDF2",
-            "revision": null
-          },
-          "operation": "derive",
-          "parameters": {
-            "keyLen": 256,
-            "prf": "HMAC-SHA256",
-            "iterations": 4096,
-            "dkLen": 32
-          },
-          "testType": "oracle-generated",
-          "expectation": "positive",
-          "lineage": ["pbkdf2-test-1"]
-        },
-        {
-          "caseId": "pbkdf2_test#/testGroups/0/tests/2",
-          "pointer": "/testGroups/0/tests/2",
-          "algorithm": {
-            "name": "PBKDF2",
-            "revision": null
-          },
-          "operation": "derive",
-          "parameters": {
-            "keyLen": 256,
-            "prf": "HMAC-SHA256",
-            "iterations": 4096,
-            "dkLen": 40
-          },
-          "testType": "oracle-generated",
-          "expectation": "positive",
-          "lineage": ["pbkdf2-test-1"]
-        },
-        {
-          "caseId": "pbkdf2_test#/testGroups/1/tests/0",
-          "pointer": "/testGroups/1/tests/0",
           "algorithm": {
             "name": "PBKDF2",
             "revision": null
@@ -27436,8 +27378,8 @@
           "lineage": ["pbkdf2-test-1"]
         },
         {
-          "caseId": "pbkdf2_test#/testGroups/1/tests/1",
-          "pointer": "/testGroups/1/tests/1",
+          "caseId": "pbkdf2_test#/testGroups/0/tests/1",
+          "pointer": "/testGroups/0/tests/1",
           "algorithm": {
             "name": "PBKDF2",
             "revision": null
@@ -27457,13 +27399,7 @@
       "lineage": [
         {
           "id": "pbkdf2-test-1",
-          "appliesTo": [
-            "pbkdf2_test#/testGroups/0/tests/0",
-            "pbkdf2_test#/testGroups/0/tests/1",
-            "pbkdf2_test#/testGroups/0/tests/2",
-            "pbkdf2_test#/testGroups/1/tests/0",
-            "pbkdf2_test#/testGroups/1/tests/1"
-          ],
+          "appliesTo": ["pbkdf2_test#/testGroups/0/tests/0", "pbkdf2_test#/testGroups/0/tests/1"],
           "upstreamOperation": "none (no NIST ACVP or published vector used; see file _provenance.note)",
           "localOperation": "derive",
           "transformations": [
@@ -27476,6 +27412,108 @@
       ],
       "copies": [],
       "publishabilityGaps": ["oracle-version-not-recorded"]
+    },
+    {
+      "id": "pbkdf2_rfc7914_test",
+      "path": "src/data/acvp/pbkdf2_rfc7914_test.json",
+      "sha256": "67f88f02117ae25eb8ce719ff109be2c534246b3529c2b7929a8cf75603b108e",
+      "status": "active",
+      "evidenceClass": "published-standard-kat",
+      "source": {
+        "kind": "published-document",
+        "documentStatus": "rfc",
+        "citation": "RFC 7914 section 11, Test Vectors for PBKDF2 with HMAC-SHA-256",
+        "url": "https://www.rfc-editor.org/rfc/rfc7914",
+        "revision": "RFC 7914 (August 2016)",
+        "verification": {
+          "date": "2026-09-26",
+          "method": "Built by scripts/acvp/build_rfc7914_pbkdf2.py from the RFC text, whose SHA-256 must equal the pinned value; the two vectors are read from the text (not typed) and each is recomputed with Python hashlib.pbkdf2_hmac before writing (2/2 reproduce). --check rebuilds from the pinned text and compares.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "RFC 7914 (text)",
+              "url": "https://www.rfc-editor.org/rfc/rfc7914.txt",
+              "sha256": "df55932f8b6a5d271f36a634d91a25903724e189ba6c120bf7257cd47f10b197",
+              "retrieved": "2026-09-26"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "IETF RFC text (Trust Legal Provisions); test vectors quoted for verification.",
+        "reviewed": true
+      },
+      "caseContainers": [
+        {
+          "pointer": "/testGroups/0/tests",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "pbkdf2_rfc7914_test#/testGroups/0/tests/0",
+          "pointer": "/testGroups/0/tests/0",
+          "algorithm": {
+            "name": "PBKDF2",
+            "revision": null
+          },
+          "operation": "derive",
+          "parameters": {
+            "prf": "HMAC-SHA256",
+            "iterations": 1,
+            "dkLen": 64
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "RFC 7914 section 11: P=\"passwd\", S=\"salt\", c=1, dkLen=64"
+          },
+          "lineage": ["pbkdf2-rfc7914-1"]
+        },
+        {
+          "caseId": "pbkdf2_rfc7914_test#/testGroups/0/tests/1",
+          "pointer": "/testGroups/0/tests/1",
+          "algorithm": {
+            "name": "PBKDF2",
+            "revision": null
+          },
+          "operation": "derive",
+          "parameters": {
+            "prf": "HMAC-SHA256",
+            "iterations": 80000,
+            "dkLen": 64
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "RFC 7914 section 11: P=\"Password\", S=\"NaCl\", c=80000, dkLen=64"
+          },
+          "lineage": ["pbkdf2-rfc7914-1"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "pbkdf2-rfc7914-1",
+          "appliesTo": [
+            "pbkdf2_rfc7914_test#/testGroups/0/tests/0",
+            "pbkdf2_rfc7914_test#/testGroups/0/tests/1"
+          ],
+          "upstreamOperation": "PBKDF2-HMAC-SHA-256 (published example)",
+          "localOperation": "C_DeriveKey(CKM_PKCS5_PBKD2, CKP_PKCS5_PBKD2_HMAC_SHA256), CKA_VALUE byte-compared",
+          "transformations": [
+            {
+              "type": "field-rename",
+              "detail": "P -> passwordText; S -> saltText; c -> iterations; dkLen -> dkLen"
+            },
+            {
+              "type": "field-add",
+              "detail": "local-only fields: password, salt (the ASCII strings hex-encoded), tcId"
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": []
     },
     {
       "id": "rsa_oaep_test",

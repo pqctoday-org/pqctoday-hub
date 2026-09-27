@@ -5,12 +5,12 @@
   "artifactKind": "wasm",
   "host": "Node.js via vitest local venue (not a browser)",
   "environment": {
-    "node": "v22.23.1",
+    "node": "v20.20.2",
     "platform": "darwin",
     "arch": "arm64"
   },
-  "hubCommit": "2833a928938850e4f34b79737599dbdb1134d5d8",
-  "recordedAt": "2026-09-26",
+  "hubCommit": "0f960cc9442e21f3e58bd37d1cd977a1bd9d7d5c",
+  "recordedAt": "2026-09-27",
   "results": [
     {
       "engine": "rust",
@@ -331,14 +331,14 @@
       "engine": "rust",
       "artifactKind": "wasm",
       "artifactSha256": "da70e554367bf58c4e83d9e30a3f96c79d818123dc7cdaf77acd1e4457356408",
-      "registryCase": "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1",
+      "registryCase": "kat.pbkdf2-derive#pbkdf2_rfc7914_test#/testGroups/0/tests/1",
       "status": "pass"
     },
     {
       "engine": "rust",
       "artifactKind": "wasm",
       "artifactSha256": "da70e554367bf58c4e83d9e30a3f96c79d818123dc7cdaf77acd1e4457356408",
-      "registryCase": "kat.pbkdf2-derive#pbkdf2_test#/testGroups/1/tests/1",
+      "registryCase": "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1",
       "status": "pass"
     },
     {

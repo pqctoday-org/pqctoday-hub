@@ -7,7 +7,7 @@
     "source_member": "gcmDecrypt256.rsp",
     "source_sha256": "ed318735a517d5a85c82d2846c23dcf56e57a352fb0f0a163d9e7617a7bd12ad",
     "retrieved": "2026-09-26",
-    "generator": "python3 scripts/acvp/build_gcm_cavp_kat.py --rsp <gcmDecrypt256.rsp> (re-verify with --check)",
+    "generator": "python3 scripts/acvp/build_gcm_cavp_kat.py (re-verify with --check)",
     "selection": "Sections [Keylen = 256] [IVlen = 96] [AADlen = 0] [Taglen = 128] with PTlen 128, 256 and 408: the first case in each that decrypts (not FAIL). The shape every reader consumes; plaintexts of 16, 32 and 51 bytes.",
     "field_mapping": "key <- Key; iv <- IV; pt <- PT; ct <- CT; tag <- Tag, verbatim. ptLen and count identify the source section and case.",
     "independent_check": "Every case recomputed with python-cryptography AESGCM; NIST's CT||Tag reproduces for all three.",

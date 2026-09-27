@@ -48,6 +48,7 @@ import sha3_512TestVectors from '../data/acvp/sha3_512_test.json'
 import aescmacTestVectors from '../data/acvp/aescmac_test.json'
 
 import pbkdf2TestVectors from '../data/acvp/pbkdf2_test.json'
+import pbkdf2Rfc7914Vectors from '../data/acvp/pbkdf2_rfc7914_test.json'
 
 import hkdfTestVectors from '../data/acvp/hkdf_test.json'
 import suciProfileBTestVectors from '../data/kat/gsma_suci_ts33501_annex_c.json'
@@ -1254,22 +1255,26 @@ async function runECDHDeriveKAT(
 }
 
 /**
- * PBKDF2 Key Derivation KAT — derives key from password+salt, compares with an OpenSSL-oracle value.
+ * PBKDF2 Key Derivation KAT — SHA-256 against RFC 7914 §11, SHA-512 against a self-generated
+ * OpenSSL-oracle value (no standard publishes a PBKDF2-HMAC-SHA512 vector).
  */
 async function runPBKDF2DeriveKAT(
   M: SoftHSMModule,
   hSession: number,
   prf: 'SHA-256' | 'SHA-512',
-  // Default = the group's second case (tcId 2 / tcId 5, c = 4096), the same
-  // case the workbench's §17 runs. The first case (c = 1) is an iteration count
+  // Default = each group's second case: RFC 7914's c = 80000 case for SHA-256
+  // (the one the workbench's §17 runs) and c = 4096 for SHA-512. The first case
+  // (c = 1) is an iteration count
   // the Rust engine refuses by policy (rust/src/ffi.rs:11125 at 417c47a2,
   // `iterations < 1000` → CKR_ARGUMENTS_BAD) while C++ accepts it — an engine
   // divergence tracked in open-gaps.json (pbkdf2-min-iterations-divergence),
   // not something this runner can pass by choosing its input.
   testIndex = 1
 ): Promise<{ status: 'pass' | 'fail'; details: string }> {
-  const groupIndex = prf === 'SHA-512' ? 1 : 0
-  const group = pbkdf2TestVectors.testGroups[groupIndex]
+  // SHA-256: RFC 7914 §11 (published). SHA-512: no standard publishes a
+  // PBKDF2-HMAC-SHA512 vector, so it stays the self-generated file (2026-09-26).
+  const group =
+    prf === 'SHA-512' ? pbkdf2TestVectors.testGroups[0] : pbkdf2Rfc7914Vectors.testGroups[0]
   const test = group.tests[testIndex] ?? group.tests[0]
   const password = hexToBytes(test.password)
   const salt = hexToBytes(test.salt)
@@ -1285,7 +1290,7 @@ async function runPBKDF2DeriveKAT(
   if (matches) {
     return {
       status: 'pass',
-      details: `PBKDF2-HMAC-${prf} (${test.iterations} iterations) → derived key matches the OpenSSL-oracle value (${derivedKey.length}B)`,
+      details: `PBKDF2-HMAC-${prf} (${test.iterations} iterations) → derived key matches ${prf === 'SHA-512' ? 'the OpenSSL-oracle value' : 'RFC 7914 §11'} (${derivedKey.length}B)`,
     }
   }
   return {

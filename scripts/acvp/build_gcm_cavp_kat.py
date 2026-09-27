@@ -22,8 +22,8 @@ not a whole number of blocks. Each value is copied verbatim from the file, and
 each case is recomputed with python-cryptography AESGCM; the script refuses to
 write unless NIST's CT||Tag reproduces.
 
-  python3 scripts/acvp/build_gcm_cavp_kat.py --rsp <gcmDecrypt256.rsp>          # write
-  python3 scripts/acvp/build_gcm_cavp_kat.py --rsp <gcmDecrypt256.rsp> --check  # verify
+  python3 scripts/acvp/build_gcm_cavp_kat.py           # fetch the pinned zip and write
+  python3 scripts/acvp/build_gcm_cavp_kat.py --check   # verify (what the automated review runs)
 """
 from __future__ import annotations
 
@@ -39,6 +39,8 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 OUT = ROOT / "src/data/acvp/aesgcm_test.json"
 ZIP_URL = ("https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/"
            "documents/mac/gcmtestvectors.zip")
+ZIP_SHA256 = "f9fc479e134cde2980b3bb7cddbcb567b2cd96fd753835243ed067699f26a023"
+CACHE = ROOT / "tmp/acvp-upstream-cache/docs"
 RSP_SHA256 = "ed318735a517d5a85c82d2846c23dcf56e57a352fb0f0a163d9e7617a7bd12ad"
 PT_LENS = (128, 256, 408)
 
@@ -72,6 +74,23 @@ def sections(text: str):
         yield dict(params), cases
 
 
+def fetch_rsp() -> pathlib.Path:
+    """Download the pinned zip into the gitignored cache and extract gcmDecrypt256.rsp."""
+    import io
+    import urllib.request
+    import zipfile
+    CACHE.mkdir(parents=True, exist_ok=True)
+    zpath = CACHE / "gcmtestvectors.zip"
+    if not zpath.exists() or hashlib.sha256(zpath.read_bytes()).hexdigest() != ZIP_SHA256:
+        req = urllib.request.Request(ZIP_URL, headers={"User-Agent": "Mozilla/5.0"})
+        zpath.write_bytes(urllib.request.urlopen(req, timeout=120).read())
+    if hashlib.sha256(zpath.read_bytes()).hexdigest() != ZIP_SHA256:
+        sys.exit(f"gcmtestvectors.zip sha256 != pinned {ZIP_SHA256}")
+    out = CACHE / "gcmDecrypt256.rsp"
+    out.write_bytes(zipfile.ZipFile(io.BytesIO(zpath.read_bytes())).read("gcmDecrypt256.rsp"))
+    return out
+
+
 def build(rsp: pathlib.Path) -> dict:
     raw = rsp.read_bytes()
     got = hashlib.sha256(raw).hexdigest()
@@ -101,7 +120,7 @@ def build(rsp: pathlib.Path) -> dict:
             "source_member": "gcmDecrypt256.rsp",
             "source_sha256": RSP_SHA256,
             "retrieved": "2026-09-26",
-            "generator": "python3 scripts/acvp/build_gcm_cavp_kat.py --rsp <gcmDecrypt256.rsp> (re-verify with --check)",
+            "generator": "python3 scripts/acvp/build_gcm_cavp_kat.py (re-verify with --check)",
             "selection": "Sections [Keylen = 256] [IVlen = 96] [AADlen = 0] [Taglen = 128] with PTlen 128, 256 and 408: the first case in each that decrypts (not FAIL). The shape every reader consumes; plaintexts of 16, 32 and 51 bytes.",
             "field_mapping": "key <- Key; iv <- IV; pt <- PT; ct <- CT; tag <- Tag, verbatim. ptLen and count identify the source section and case.",
             "independent_check": "Every case recomputed with python-cryptography AESGCM; NIST's CT||Tag reproduces for all three.",
@@ -113,10 +132,10 @@ def build(rsp: pathlib.Path) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--rsp", required=True, type=pathlib.Path)
+    ap.add_argument("--rsp", type=pathlib.Path, help="local gcmDecrypt256.rsp; omitted = fetch the pinned zip")
     ap.add_argument("--check", action="store_true")
     a = ap.parse_args()
-    doc = build(a.rsp)
+    doc = build(a.rsp or fetch_rsp())
     if a.check:
         if json.loads(OUT.read_text(encoding="utf-8")) != doc:
             print("FAIL aesgcm_test.json differs from NIST's CAVP values", file=sys.stderr)

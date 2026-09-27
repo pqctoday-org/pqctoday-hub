@@ -6,40 +6,10 @@
     "retrieved": "2026-08-28",
     "producer": "self-generated, oracle=OpenSSL (Node crypto)",
     "source_sha256": null,
-    "note": "No NIST ACVP reference vector exists for PBKDF2-HMAC-SHA256/SHA512 (checked 2026-08-28, WS-7: the NIST reference set at gen-val/json-files/PBKDF-1.0 only covers SHA2-224, which this engine's CKM_PKCS5_PBKD2 does not implement — only SHA256/384/512 PRFs are dispatched). Values independently computed with Node's crypto (OpenSSL) module; the same oracle reproduces RFC 6070's SHA-1 vectors exactly (RFC 6070 itself is SHA-1-only, not cross-engine-verifiable here). Self-consistency tier, not NIST ACVP or a published standard's own KAT."
+    "note": "No NIST ACVP reference vector exists for PBKDF2-HMAC-SHA256/SHA512 (checked 2026-08-28, WS-7: the NIST reference set at gen-val/json-files/PBKDF-1.0 only covers SHA2-224, which this engine's CKM_PKCS5_PBKD2 does not implement — only SHA256/384/512 PRFs are dispatched). Values independently computed with Node's crypto (OpenSSL) module; the same oracle reproduces RFC 6070's SHA-1 vectors exactly (RFC 6070 itself is SHA-1-only, not cross-engine-verifiable here). Self-consistency tier, not NIST ACVP or a published standard's own KAT. UPDATE 2026-09-26: the PBKDF2-HMAC-SHA256 cases moved to pbkdf2_rfc7914_test.json, which takes them from RFC 7914 section 11 (a published consensus RFC) instead of Node/OpenSSL output. This file now holds only the PBKDF2-HMAC-SHA512 cases, which no standard publishes, so they stay self-generated and are labelled that way."
   },
-  "source": "Generated via Node.js crypto (OpenSSL backend), PBKDF2-HMAC-SHA256 and PBKDF2-HMAC-SHA512",
+  "source": "Generated via Node.js crypto (OpenSSL backend), PBKDF2-HMAC-SHA512",
   "testGroups": [
-    {
-      "prf": "HMAC-SHA256",
-      "keyLen": 256,
-      "tests": [
-        {
-          "tcId": 1,
-          "password": "70617373776f7264",
-          "salt": "73616c74",
-          "iterations": 1,
-          "dkLen": 32,
-          "dk": "120FB6CFFCF8B32C43E7225256C4F837A86548C92CCC35480805987CB70BE17B"
-        },
-        {
-          "tcId": 2,
-          "password": "70617373776f7264",
-          "salt": "73616c74",
-          "iterations": 4096,
-          "dkLen": 32,
-          "dk": "C5E478D59288C841AA530DB6845C4C8D962893A001CE4E11A4963873AA98134A"
-        },
-        {
-          "tcId": 3,
-          "password": "70617373776f726450415353574f524470617373776f7264",
-          "salt": "73616c7453414c5473616c7453414c5473616c7453414c5473616c7453414c5473616c74",
-          "iterations": 4096,
-          "dkLen": 40,
-          "dk": "348C89DBCBD32B2F32D814B8116E84CF2B17347EBC1800181C4E2A1FB8DD53E1C635518C7DAC47E9"
-        }
-      ]
-    },
     {
       "prf": "HMAC-SHA512",
       "keyLen": 512,

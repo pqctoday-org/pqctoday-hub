@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "ec46f488440f09c6e5e98cb7803f48816c6fab7117891ee62564fec9541aacfb",
-    "registrySha256": "02a235595c275a237e82d449e5c7da7b664f943f4b2a9f7df6de0777b0e7cf69"
+    "manifestSha256": "8b208ccc9fbca8072b1d237be819fb0d88e3f402ffd382ec5e367a375db5025b",
+    "registrySha256": "1f3aec765fc3736a88fa0dc872b4e0a58debcd387196678010703e47092b18d8"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
@@ -1522,49 +1522,52 @@
         "No external expected value: the output is checked only by the same or a paired implementation."
       ]
     },
-    "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1": {
-      "id": "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1",
+    "kat.pbkdf2-derive#pbkdf2_rfc7914_test#/testGroups/0/tests/1": {
+      "id": "kat.pbkdf2-derive#pbkdf2_rfc7914_test#/testGroups/0/tests/1",
       "test": "kat.pbkdf2-derive",
-      "title": "PBKDF2 derive, c = 4096 (the OpenSSL-oracle case the workbench §17 also runs)",
+      "title": "PBKDF2 derive: SHA-256 from RFC 7914 §11 (c = 80000, the case the workbench §17 also runs); SHA-512 from the self-generated file, since no standard publishes one (c = 4096)",
       "runner": "katRunner",
       "engines": [
         "rust"
       ],
-      "caseId": "pbkdf2_test#/testGroups/0/tests/1",
-      "evidenceClass": "independent-oracle",
+      "caseId": "pbkdf2_rfc7914_test#/testGroups/0/tests/1",
+      "evidenceClass": "published-standard-kat",
       "polarity": "positive",
       "algorithm": "PBKDF2",
       "operation": "derive",
-      "testType": "oracle-generated",
+      "testType": "published-example",
       "parameters": {
-        "dkLen": 32,
-        "iterations": 4096,
-        "keyLen": 256,
+        "dkLen": 64,
+        "iterations": 80000,
         "prf": "HMAC-SHA256"
       },
+      "upstream": {
+        "label": "RFC 7914 section 11: P=\"Password\", S=\"NaCl\", c=80000, dkLen=64"
+      },
       "source": {
-        "citation": "Generated via Node.js crypto (OpenSSL backend), PBKDF2-HMAC-SHA256 and PBKDF2-HMAC-SHA512"
+        "citation": "RFC 7914 section 11, Test Vectors for PBKDF2 with HMAC-SHA-256",
+        "url": "https://www.rfc-editor.org/rfc/rfc7914",
+        "revision": "RFC 7914 (August 2016)"
       },
       "exercises": [
         "CKM_PKCS5_PBKD2 derive"
       ],
       "limitations": [
-        "Upstream: none (no NIST ACVP or published vector used; see file _provenance.note) → executed here: derive",
-        "locally-generated: Computed with self-generated, oracle=OpenSSL (Node crypto) (file _provenance).",
-        "The oracle version that produced the expected value is not recorded.",
-        "Oracle: Node.js crypto (OpenSSL backend) (version not recorded)",
+        "Upstream: PBKDF2-HMAC-SHA-256 (published example) → executed here: C_DeriveKey(CKM_PKCS5_PBKD2, CKP_PKCS5_PBKD2_HMAC_SHA256), CKA_VALUE byte-compared",
+        "field-rename: P -> passwordText; S -> saltText; c -> iterations; dkLen -> dkLen",
+        "field-add: local-only fields: password, salt (the ASCII strings hex-encoded), tcId",
         "The c = 1 cases (tests/0) are not run: the Rust engine refuses iterations < 1000 (open-gaps pbkdf2-min-iterations-divergence)."
       ]
     },
-    "kat.pbkdf2-derive#pbkdf2_test#/testGroups/1/tests/1": {
-      "id": "kat.pbkdf2-derive#pbkdf2_test#/testGroups/1/tests/1",
+    "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1": {
+      "id": "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1",
       "test": "kat.pbkdf2-derive",
-      "title": "PBKDF2 derive, c = 4096 (the OpenSSL-oracle case the workbench §17 also runs)",
+      "title": "PBKDF2 derive: SHA-256 from RFC 7914 §11 (c = 80000, the case the workbench §17 also runs); SHA-512 from the self-generated file, since no standard publishes one (c = 4096)",
       "runner": "katRunner",
       "engines": [
         "rust"
       ],
-      "caseId": "pbkdf2_test#/testGroups/1/tests/1",
+      "caseId": "pbkdf2_test#/testGroups/0/tests/1",
       "evidenceClass": "independent-oracle",
       "polarity": "positive",
       "algorithm": "PBKDF2",
@@ -1577,7 +1580,7 @@
         "prf": "HMAC-SHA512"
       },
       "source": {
-        "citation": "Generated via Node.js crypto (OpenSSL backend), PBKDF2-HMAC-SHA256 and PBKDF2-HMAC-SHA512"
+        "citation": "Generated via Node.js crypto (OpenSSL backend), PBKDF2-HMAC-SHA512"
       },
       "exercises": [
         "CKM_PKCS5_PBKD2 derive"
@@ -3276,10 +3279,10 @@
       "kat.mlkem-encap-roundtrip#local:kat.mlkem-encap-roundtrip/ML-KEM-768"
     ],
     "pbkdf2-derive;prf=SHA-256": [
-      "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1"
+      "kat.pbkdf2-derive#pbkdf2_rfc7914_test#/testGroups/0/tests/1"
     ],
     "pbkdf2-derive;prf=SHA-512": [
-      "kat.pbkdf2-derive#pbkdf2_test#/testGroups/1/tests/1"
+      "kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1"
     ],
     "rsa-functional;bits=2048": [
       "kat.rsa-functional#local:kat.rsa-functional/2048"
@@ -3470,6 +3473,7 @@
     "acvp/mlkem_keygen_test.json": "nist-acvp-reference-sample",
     "acvp/mlkem_test.json": "nist-acvp-reference-sample",
     "acvp/pbkdf2_acvp_test.json": "nist-acvp-reference-sample",
+    "acvp/pbkdf2_rfc7914_test.json": "published-standard-kat",
     "acvp/pbkdf2_test.json": "independent-oracle",
     "acvp/rsa_oaep_test.json": "nist-acvp-reference-sample",
     "acvp/rsa_sigver_acvp_test.json": "nist-acvp-reference-sample",

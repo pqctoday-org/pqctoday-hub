@@ -51,6 +51,18 @@ const MANIFEST = path.join(ROOT, 'src/data/validation/vector-manifest.json')
 const REVIEWS = path.join(ROOT, 'src/data/validation/reviews')
 const SUFFIX = '.source-check.json'
 
+/**
+ * Per-file checkers for vectors taken from a published standard or consensus RFC.
+ * Each re-reads every expected value from its hash-pinned document (fetched into
+ * the gitignored tmp/acvp-upstream-cache/docs) and exits 0, printing "OK", only on
+ * an exact match. An eligible document-sourced file with no entry here is reported
+ * as not yet automated and gets no record.
+ */
+const DOCUMENT_CHECKERS: Record<string, string> = {
+  aesgcm_test: 'scripts/acvp/build_gcm_cavp_kat.py',
+  pbkdf2_rfc7914_test: 'scripts/acvp/build_rfc7914_pbkdf2.py',
+}
+
 const sha256 = (b: Buffer | string) => createHash('sha256').update(b).digest('hex')
 
 interface Args {
@@ -145,13 +157,53 @@ function main(): number {
   const removed: string[] = []
   const failed: string[] = []
   const untouched: string[] = []
+  const notYet: string[] = []
   const want = new Set<string>()
 
   for (const e of manifest.files) {
     if (e.status !== 'active' || !sourceCheckEligible(e.source)) continue
+    const recPath = path.join(REVIEWS, `${e.id}${SUFFIX}`)
+    if (e.source?.kind === 'published-document') {
+      const checker = DOCUMENT_CHECKERS[e.id]
+      if (!checker) {
+        notYet.push(e.id)
+        continue
+      }
+      const r = run('python3', [checker, '--check'])
+      if (r.status !== 0 || !/^OK\s/m.test(r.text)) {
+        failed.push(
+          `${e.id}: ${checker} --check did not match (${r.text.trim().split('\n').pop()})`
+        )
+        continue
+      }
+      const ev = e.source?.verification?.evidence ?? []
+      if (!ev.length || !e.source?.url) {
+        failed.push(`${e.id}: manifest records no document URL/digest to cite`)
+        continue
+      }
+      const doc: SourceCheckRecord = {
+        schema: SOURCE_CHECK_SCHEMA,
+        item: `vector-source:${e.id}`,
+        subjectSha256: sha256(canonical(e)),
+        fileSha256: sha256(fs.readFileSync(path.join(ROOT, e.path))),
+        result: 'match',
+        tool: checker,
+        command: `python3 ${checker} --check`,
+        upstream: {
+          repository: e.source.url,
+          revision: ev[0].sha256!,
+          files: ev.map((d) => ({ path: d.title ?? d.url ?? '', sha256: d.sha256! })),
+        },
+        compared: { cases: e.cases.length },
+        checkedAt: today,
+      }
+      fs.writeFileSync(recPath, JSON.stringify(doc, null, 2) + '\n')
+      want.add(path.basename(recPath))
+      written.push(e.id)
+      continue
+    }
     const isNist = e.source?.kind === 'nist-acvp-server'
     const verdict = isNist ? nist.get(e.id) : wyc?.get(e.id)
-    const recPath = path.join(REVIEWS, `${e.id}${SUFFIX}`)
     if (!isNist && wyc === null) {
       if (fs.existsSync(recPath)) want.add(path.basename(recPath))
       untouched.push(e.id)
@@ -207,6 +259,10 @@ function main(): number {
   console.log(`\nrecorded ${written.length} source check(s)`)
   if (untouched.length)
     console.log(`left untouched (no --wycheproof-clone): ${untouched.join(', ')}`)
+  if (notYet.length)
+    console.log(
+      `not yet automated (published standard, no document checker yet): ${notYet.join(', ')}`
+    )
   if (removed.length)
     console.log(
       `removed ${removed.length} record(s) no longer backed by a match: ${removed.join(', ')}`

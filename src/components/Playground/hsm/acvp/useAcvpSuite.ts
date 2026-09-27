@@ -20,7 +20,7 @@ import aesKwTestVectors from '@/data/acvp/aeskw_test.json'
 import eddsaTestVectors from '@/data/acvp/eddsa_test.json'
 import eddsaEd448TestVectors from '@/data/acvp/eddsa_ed448_test.json'
 import slhdsaCtxTestVectors from '@/data/acvp/slhdsa_ctx_test.json'
-import pbkdf2TestVectors from '@/data/acvp/pbkdf2_test.json'
+import pbkdf2Rfc7914Vectors from '@/data/acvp/pbkdf2_rfc7914_test.json'
 import sha384TestVectors from '@/data/acvp/sha384_test.json'
 import sha512TestVectors from '@/data/acvp/sha512_test.json'
 import sha3_256TestVectors from '@/data/acvp/sha3_256_test.json'
@@ -2561,14 +2561,16 @@ export function useAcvpSuite() {
             )
           } else {
             const id17 = `pbkdf2-kat-${eName}`
-            // WS-7 (2026-08-28): previously hardcoded inline with pbkdf2_test.json
-            // sitting unread alongside it (dead file, G-13/H-6-style gap). Now
-            // reads from the file — same self-consistency vector (tcId 2,
-            // P="password" S="salt" c=4096 dkLen=32), see the file's own
-            // _provenance note for why no NIST ACVP vector exists for this PRF.
-            const pbkdf2Tv = pbkdf2TestVectors.testGroups[0].tests[1]
+            // RFC 7914 §11's second PBKDF2-HMAC-SHA-256 vector (P="Password",
+            // S="NaCl", c=80000, dkLen=64), built by
+            // scripts/acvp/build_rfc7914_pbkdf2.py (2026-09-26). It replaced a
+            // Node/OpenSSL-generated case: NIST's ACVP PBKDF sample has
+            // HMAC-SHA2-224 only. The RFC's c = 1 vector is not run here: the Rust
+            // engine refuses iterations < 1000 (open gap
+            // pbkdf2-min-iterations-divergence).
+            const pbkdf2Tv = pbkdf2Rfc7914Vectors.testGroups[0].tests[1]
             addLog(
-              `[${eName}] Testing PBKDF2-HMAC-SHA256 KAT (self-consistency tcId=${pbkdf2Tv.tcId}, c=${pbkdf2Tv.iterations})...`
+              `[${eName}] Testing PBKDF2-HMAC-SHA256 KAT (RFC 7914 §11, c=${pbkdf2Tv.iterations})...`
             )
             try {
               const password = hexToBytes(pbkdf2Tv.password)
@@ -2595,7 +2597,7 @@ export function useAcvpSuite() {
               await pushResult({
                 id: id17,
                 algorithm: `PBKDF2-HMAC-SHA256 (${eName})`,
-                testCase: 'KAT (c=4096)',
+                testCase: 'RFC 7914 §11 KAT (c=80000)',
                 referenceUrl: REF.pbkdf2,
                 status: matches ? 'pass' : 'fail',
                 details: matches
@@ -2610,7 +2612,7 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `pbkdf2-kat-err-${eName}`,
                 algorithm: `PBKDF2-HMAC-SHA256 (${eName})`,
-                testCase: 'KAT (c=4096)',
+                testCase: 'RFC 7914 §11 KAT (c=80000)',
                 referenceUrl: REF.pbkdf2,
                 status: 'fail',
                 details: errMessage,

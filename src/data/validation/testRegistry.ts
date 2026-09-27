@@ -1521,10 +1521,10 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       'eddsa448-sigver-{engine}'
     ),
   ]),
-  acvp('17', '§17', 'PBKDF2-HMAC-SHA256 derive', [
+  acvp('17', '§17', 'PBKDF2-HMAC-SHA256 derive: RFC 7914 §11 published example (c = 80000)', [
     mc(
-      'pbkdf2_test#/testGroups/0/tests/1',
-      ORACLE,
+      'pbkdf2_rfc7914_test#/testGroups/0/tests/1',
+      STD,
       'positive',
       [x('CKM_PKCS5_PBKD2', 'derive')],
       'pbkdf2-kat-{engine}'
@@ -2379,14 +2379,14 @@ const KAT_RUNNER: RegisteredTest[] = [
   ]),
   kat(
     'pbkdf2-derive',
-    'PBKDF2 derive, c = 4096 (the OpenSSL-oracle case the workbench §17 also runs)',
+    'PBKDF2 derive: SHA-256 from RFC 7914 §11 (c = 80000, the case the workbench §17 also runs); SHA-512 from the self-generated file, since no standard publishes one (c = 4096)',
     (
       [
-        ['SHA-256', 'pbkdf2_test#/testGroups/0/tests/1'],
-        ['SHA-512', 'pbkdf2_test#/testGroups/1/tests/1'],
+        ['SHA-256', 'pbkdf2_rfc7914_test#/testGroups/0/tests/1', STD],
+        ['SHA-512', 'pbkdf2_test#/testGroups/0/tests/1', ORACLE],
       ] as const
-    ).map(([prf, caseId]) =>
-      k(mc(caseId, ORACLE, 'positive', [x('CKM_PKCS5_PBKD2', 'derive')]), {
+    ).map(([prf, caseId, cls]) =>
+      k(mc(caseId, cls, 'positive', [x('CKM_PKCS5_PBKD2', 'derive')]), {
         type: 'pbkdf2-derive',
         prf,
       })

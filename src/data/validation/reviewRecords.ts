@@ -113,11 +113,23 @@ export const REVIEWED_STATUSES: ReadonlySet<ReviewItemStatus> = new Set([
  * trusted upstream — the only ones an automated source check may review.
  * NIST ACVP-Server: `scripts/acvp/subset_reproduce.py --strict`.
  * Project Wycheproof (Google / C2SP): `scripts/acvp/vendor_wycheproof.py --check`.
+ * A published standard or consensus RFC (maintainer decision 2026-09-26: "keep;
+ * auto-check against the document"): a per-file builder under scripts/acvp/ that
+ * re-reads every expected value from the hash-pinned document. Internet-Drafts
+ * and research papers never qualify — they are not standards.
  */
+export const DOCUMENT_STATUSES_CHECKABLE: ReadonlySet<string> = new Set([
+  'rfc',
+  'nist-final-publication',
+  'nist-example-set',
+])
+
 export function sourceCheckEligible(
-  src: { kind?: string; url?: string; revision?: string } | undefined
+  src: { kind?: string; url?: string; revision?: string; documentStatus?: string } | undefined
 ): boolean {
   if (src?.kind === 'nist-acvp-server') return true
+  if (src?.kind === 'published-document')
+    return DOCUMENT_STATUSES_CHECKABLE.has(src.documentStatus ?? '')
   return (
     src?.kind === 'oracle-generated' &&
     /^https:\/\/raw\.githubusercontent\.com\/C2SP\/wycheproof\/[0-9a-f]{40}\//.test(src.url ?? '')
@@ -145,7 +157,9 @@ export interface SourceCheckRecord {
   tool: string
   command: string
   upstream: {
+    /** The upstream repository, or for a document source the document's URL. */
     repository: string
+    /** A full 40-hex commit, or for a document source the document's SHA-256. */
     revision: string
     files: { path: string; sha256: string }[]
   }
@@ -183,10 +197,10 @@ export function validateSourceCheck(
   if (typeof r.command !== 'string' || r.command.trim().length < 10)
     out.push('command must be the exact command that re-runs the check')
   const u = r.upstream
-  if (!u || typeof u.repository !== 'string' || !/^https:\/\/github\.com\//.test(u.repository))
-    out.push('upstream.repository must be the upstream GitHub repository URL')
-  if (!u || typeof u.revision !== 'string' || !HEX40.test(u.revision))
-    out.push('upstream.revision must be a full 40-hex commit')
+  if (!u || typeof u.repository !== 'string' || !/^https:\/\//.test(u.repository))
+    out.push('upstream.repository must be the upstream repository or document URL (https)')
+  if (!u || typeof u.revision !== 'string' || !(HEX40.test(u.revision) || HEX64.test(u.revision)))
+    out.push('upstream.revision must be a full 40-hex commit or a document SHA-256')
   if (
     !u ||
     !Array.isArray(u.files) ||

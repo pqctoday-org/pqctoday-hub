@@ -5,10 +5,10 @@
   "inputs": {
     "src/data/validation/mechanism-inventory.generated.json": "1dffda6f6e559c76d467deb5e445d1bcdb1e452a05e470c5526f6c2417bfc276",
     "src/data/validation/capability-map.json": "6a2727016428d5d98be0e2d1f0d19eddbd07b744ff5b83433981b67cf3faa4a4",
-    "src/data/validation/vector-manifest.json": "fcf015cd25b9dc6a26cb2b5e3a1957724bc657ae0f3f95003393dff666113dfb",
+    "src/data/validation/vector-manifest.json": "21435a30b3d53294b9bc1af573a07aed6537938a12eff3afe655ca5519f1be58",
     "src/data/validation/coverage-waivers.json": "87b928d900e95f966e744aed284f4b11933e03f3dab9ced277d1072154702980",
     "src/data/validation/open-gaps.json": "4c97f71fc7b244584f7282c0abafe9dd11a43235b591c385e13a67aa633590b0",
-    "src/data/validation/testRegistry.ts": "5b004cbe21380562d70156e7c82ad4ea8f7835f96b21f48b6b16f5106f752d88"
+    "src/data/validation/testRegistry.ts": "3915c41cae6dca822448cd9d689832bb86ceca2a11c1ca67833d9eb708011338"
   },
   "statuses": [
     "acvts-issued",
@@ -92,7 +92,7 @@
   "artifactKinds": {
     "wasm": {
       "status": "registered; partly recorded",
-      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4432 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 982e64c62); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 2833a9289); 7022 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 982e64c62). Tests without a recorded result are never reported as passed."
+      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4432 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 982e64c62); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-27, hub 0f960cc94); 7022 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-26, hub 982e64c62). Tests without a recorded result are never reported as passed."
     },
     "native": {
       "status": "not-run",
@@ -124,12 +124,12 @@
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
       "environment": {
-        "node": "v22.23.1",
+        "node": "v20.20.2",
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "2833a928938850e4f34b79737599dbdb1134d5d8",
-      "recordedAt": "2026-09-26",
+      "hubCommit": "0f960cc9442e21f3e58bd37d1cd977a1bd9d7d5c",
+      "recordedAt": "2026-09-27",
       "results": 94
     },
     {
@@ -3634,7 +3634,7 @@
     {"id":"acvp.15#ecdsa_p384_test#/testGroups/0/tests/0","test":"acvp.15","runner":"useAcvpSuite","caseId":"ecdsa_p384_test#/testGroups/0/tests/0","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["cpp","rust"],"rowId":"ecdsa384-acvp-{engine}"},
     {"id":"acvp.16#eddsa_test#/testGroups/0/tests/0","test":"acvp.16","runner":"useAcvpSuite","caseId":"eddsa_test#/testGroups/0/tests/0","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["cpp","rust"],"rowId":"eddsa-sigver-{engine}"},
     {"id":"acvp.16b#eddsa_ed448_test#/testGroups/0/tests/0","test":"acvp.16b","runner":"useAcvpSuite","caseId":"eddsa_ed448_test#/testGroups/0/tests/0","evidenceClass":"nist-acvp-reference-sample","status":"nist-reference","polarity":"positive","engines":["cpp","rust"],"rowId":"eddsa448-sigver-{engine}"},
-    {"id":"acvp.17#pbkdf2_test#/testGroups/0/tests/1","test":"acvp.17","runner":"useAcvpSuite","caseId":"pbkdf2_test#/testGroups/0/tests/1","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["cpp","rust"],"rowId":"pbkdf2-kat-{engine}"},
+    {"id":"acvp.17#pbkdf2_rfc7914_test#/testGroups/0/tests/1","test":"acvp.17","runner":"useAcvpSuite","caseId":"pbkdf2_rfc7914_test#/testGroups/0/tests/1","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["cpp","rust"],"rowId":"pbkdf2-kat-{engine}"},
     {"id":"acvp.18#hkdf_test#/testGroups/0/tests/0","test":"acvp.18","runner":"useAcvpSuite","caseId":"hkdf_test#/testGroups/0/tests/0","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["cpp","rust"],"rowId":"hkdf-kat-{engine}"},
     {"id":"acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/0","test":"acvp.18b","runner":"useAcvpSuite","caseId":"pbkdf2_acvp_test#/testGroups/0/tests/0","evidenceClass":"nist-acvp-reference-sample","status":"nist-reference","polarity":"positive","engines":["cpp","rust"],"rowId":"pbkdf2-nist-tg1-tc4-{engine}"},
     {"id":"acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/1","test":"acvp.18b","runner":"useAcvpSuite","caseId":"pbkdf2_acvp_test#/testGroups/0/tests/1","evidenceClass":"nist-acvp-reference-sample","status":"nist-reference","polarity":"positive","engines":["cpp","rust"],"rowId":"pbkdf2-nist-tg1-tc7-{engine}"},
@@ -5572,8 +5572,8 @@
     {"id":"kat.aescmac-verify#aescmac_test#/testGroups/0/tests/0","test":"kat.aescmac-verify","runner":"katRunner","caseId":"aescmac_test#/testGroups/0/tests/0","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["rust"]},
     {"id":"kat.ecdh-derive#local:kat.ecdh-derive/P-256","test":"kat.ecdh-derive","runner":"katRunner","caseId":"local:kat.ecdh-derive/P-256","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
     {"id":"kat.ecdh-derive#local:kat.ecdh-derive/P-384","test":"kat.ecdh-derive","runner":"katRunner","caseId":"local:kat.ecdh-derive/P-384","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"kat.pbkdf2-derive#pbkdf2_rfc7914_test#/testGroups/0/tests/1","test":"kat.pbkdf2-derive","runner":"katRunner","caseId":"pbkdf2_rfc7914_test#/testGroups/0/tests/1","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["rust"]},
     {"id":"kat.pbkdf2-derive#pbkdf2_test#/testGroups/0/tests/1","test":"kat.pbkdf2-derive","runner":"katRunner","caseId":"pbkdf2_test#/testGroups/0/tests/1","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"]},
-    {"id":"kat.pbkdf2-derive#pbkdf2_test#/testGroups/1/tests/1","test":"kat.pbkdf2-derive","runner":"katRunner","caseId":"pbkdf2_test#/testGroups/1/tests/1","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"]},
     {"id":"kat.hkdf-derive#hkdf_test#/testGroups/0/tests/0","test":"kat.hkdf-derive","runner":"katRunner","caseId":"hkdf_test#/testGroups/0/tests/0","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["rust"]},
     {"id":"kat.suci-profile-b#local:kat.suci-profile-b/3-ecdh","test":"kat.suci-profile-b","runner":"katRunner","caseId":"local:kat.suci-profile-b/3-ecdh","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["rust"]},
     {"id":"kat.suci-profile-b#local:kat.suci-profile-b/4-kdf","test":"kat.suci-profile-b","runner":"katRunner","caseId":"local:kat.suci-profile-b/4-kdf","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["rust"]},
@@ -9098,7 +9098,7 @@
     {"k":"CKM_SP800_108_COUNTER_KDF|derive|*|*","c":"CKM_SP800_108_COUNTER_KDF","tt":["AFT"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[1715,1716,1717,1718,1719,1720,1721,1722,1723,1724,1725,1726,1727,1728,1729,1730,1731,1732,1812]]},"run":[15,4]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[1715,1716,1717,1718,1719,1720,1721,1722,1723,1724,1725,1726,1727,1728,1729,1730,1731,1732,1812]]},"run":[19,0]}},"par":{"positive":"divergent","negative":"not-established","boundary":"not-established","state-error":"not-established"}},
     {"k":"CKM_SP800_108_FEEDBACK_KDF|derive|*|*","c":"CKM_SP800_108_FEEDBACK_KDF","tt":["AFT"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[1733,1734,1735,1736,1737,1738,1739,1740,1741,1742,1743,1744,1745,1746,1747,1748,1749,1750,1751,1752,1816]]},"run":[17,4]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[1733,1734,1735,1736,1737,1738,1739,1740,1741,1742,1743,1744,1745,1746,1747,1748,1749,1750,1751,1752,1816]]},"run":[1,20]}},"par":{"positive":"divergent","negative":"not-established","boundary":"not-established","state-error":"not-established"}},
     {"k":"CKM_SP800_108_DOUBLE_PIPELINE_KDF|derive|*|*","c":"CKM_SP800_108_DOUBLE_PIPELINE_KDF","tt":["AFT"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[1753,1754,1755,1756,1757,1758,1759,1760,1761,1762,1763,1764,1765,1766,1767,1768,1769,1770]]},"run":[14,4]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[1753,1754,1755,1756,1757,1758,1759,1760,1761,1762,1763,1764,1765,1766,1767,1768,1769,1770]]},"run":[0,18]}},"par":{"positive":"divergent","negative":"not-established","boundary":"not-established","state-error":"not-established"}},
-    {"k":"CKM_PKCS5_PBKD2|derive|*|*","c":"CKM_PKCS5_PBKD2","tt":["AFT","oracle-generated"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[1678,1680,1681,1682,1683,1684]]},"run":[5,1]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[1678,1680,1681,1682,1683,1684,3616,3617]]},"run":[7,1]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"not-established"}},
+    {"k":"CKM_PKCS5_PBKD2|derive|*|*","c":"CKM_PKCS5_PBKD2","tt":["AFT","oracle-generated","published-example"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[1678,1680,1681,1682,1683,1684]]},"run":[4,1]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[1678,1680,1681,1682,1683,1684,3616,3617]]},"run":[6,1]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"not-established"}},
     {"k":"CKM_EC_KEY_PAIR_GEN|generate-key-pair|P-256|*","c":"CKM_EC_KEY_PAIR_GEN","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[3627,3632,3633]],"state-error":["behavior-only","covered",[3660,3668,3676,3684]]},"run":[4,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[3608,3614,3627,3632,3633]],"state-error":["behavior-only","covered",[3660,3668,3676,3684]]},"run":[6,0]}},"par":{"positive":"not-established","negative":"not-established","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_EC_KEY_PAIR_GEN|generate-key-pair|P-384|*","c":"CKM_EC_KEY_PAIR_GEN","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"state-error":["behavior-only","covered",[3660,3668,3676,3684]]},"run":[4,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[3609,3615]],"state-error":["behavior-only","covered",[3660,3668,3676,3684]]},"run":[6,0]}},"par":{"positive":"not-established","negative":"not-established","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_EC_KEY_PAIR_GEN|generate-key-pair|P-521|*","c":"CKM_EC_KEY_PAIR_GEN","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1821]],"state-error":["behavior-only","covered",[3660,3668,3676,3684]]},"run":[5,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[1821]],"state-error":["behavior-only","covered",[3660,3668,3676,3684]]},"run":[5,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"parity"}},
