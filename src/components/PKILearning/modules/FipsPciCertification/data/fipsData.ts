@@ -18,8 +18,8 @@
  */
 import type { StepExercise } from '@/data/stepExercises'
 import type { FreshnessClaim } from '@/data/contentFreshness'
-import type { AnchorComponentId } from './anchorScenario'
-import type { ExerciseItem } from './types'
+import type { AnchorComponentId } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
+import type { ExerciseItem } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
 
 /** The day every FIPS-path fact below was read against its source. */
 export const FIPS_AS_OF = '2026-09-24'
@@ -807,7 +807,7 @@ export const exercises: ExerciseItem[] = [
 // ── Step question (appended verbatim to src/data/stepExercises.ts) ─────────
 
 export const stepExercises: Record<string, StepExercise> = {
-  'crypto-product-certification/fips-level-planner': {
+  'fips-pci-certification/fips-level-planner': {
     prompt:
       'A customer’s PQC deadline is close, so Orrin N7 adds ML-KEM and ML-DSA to its already-validated HSM firmware. Which CMVP route does the planner accept?',
     options: [
@@ -824,8 +824,8 @@ export const stepExercises: Record<string, StepExercise> = {
 // ── Version-sensitive claims → src/data/contentFreshness.ts ────────────────
 
 const SECTIONS_SOURCE =
-  'src/components/PKILearning/modules/CryptoProductCertification/components/sections/FipsSections.tsx'
-const DATA_SOURCE = 'src/components/PKILearning/modules/CryptoProductCertification/data/fipsData.ts'
+  'src/components/PKILearning/modules/FipsPciCertification/components/sections/FipsSections.tsx'
+const DATA_SOURCE = 'src/components/PKILearning/modules/FipsPciCertification/data/fipsData.ts'
 
 export const FIPS_FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {

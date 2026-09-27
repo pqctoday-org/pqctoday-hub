@@ -255,11 +255,11 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
           A vendor is adding ML-KEM and ML-DSA to the {ANCHOR_SCENARIO.name}
           <FictionalBadge />, a network-attached HSM sold as an appliance and as a multi-tenant
           cloud service. Its customers: {ANCHOR_SCENARIO.customers.map((c) => c.label).join('; ')}.
-          You are the vendor’s product-assurance lead. Work your chosen path at full depth and the
+          You are the vendor’s product-assurance lead. Work your chosen scheme at full depth and the
           other three schemes at applicability level.
         </p>
         <Choice<CertPathId>
-          label="Chosen path"
+          label="Chosen scheme"
           value={s.path}
           options={PATH_IDS.map((id) => ({ id, label: PATH_LABEL[id] }))}
           onChange={(path) => update({ path })}
@@ -725,7 +725,7 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
         {showExtended ? (
           <div className="mt-4 space-y-3">
             <p className="text-xs text-muted-foreground">
-              Artifacts 3–6 for the other three paths are written at applicability depth; 7, 8, 9,
+              Artifacts 3–6 for the other three schemes are written at applicability depth; 7, 8, 9,
               11 and 13 complete the dossier. Everything you write here is included in the export.
             </p>
             {EXTENDED_ARTIFACTS.filter((a) => a.n !== pathArtifact.n).map((a) => (
