@@ -42,10 +42,10 @@
         },
         "wasm": {
           "bundle": "softhsm-cpp-engine",
-          "bundleHsmCommit": "1c5ed89362ea4b05dc5932a89563c94aeb0d4cba",
+          "bundleHsmCommit": "68278dfe69ad26eddf43ba2d23a76f8a3285528a",
           "engineCommitEqualsBundleCommit": false,
-          "commitsFromEngineToBundle": 0,
-          "commitsFromBundleToEngine": 25
+          "commitsFromEngineToBundle": 32,
+          "commitsFromBundleToEngine": 0
         },
         "cases": [
           ["2F/CKM_SHA256_KEY_DERIVATION_matches_digest_oracle", "pass"],
@@ -1050,9 +1050,9 @@
         },
         "wasm": {
           "bundle": "softhsmrustv3-engine",
-          "bundleHsmCommit": "1c5ed89362ea4b05dc5932a89563c94aeb0d4cba",
+          "bundleHsmCommit": "68278dfe69ad26eddf43ba2d23a76f8a3285528a",
           "engineCommitEqualsBundleCommit": false,
-          "commitsFromEngineToBundle": 55,
+          "commitsFromEngineToBundle": 112,
           "commitsFromBundleToEngine": 0
         },
         "cases": [

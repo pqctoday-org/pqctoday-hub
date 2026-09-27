@@ -9,14 +9,14 @@
         "artifacts": [
           {
             "path": "public/wasm/softhsm.wasm",
-            "sha256": "ae7f1d377c4155e883b76644e7c5c84eaec96f25336184fcd7e9e6c354ba32bb"
+            "sha256": "bc30345f8240c0c10579edf6f50b0fc399fb03cdfa05267dd17d81aa7cc35021"
           },
           {
             "path": "public/wasm/softhsm.js",
             "sha256": "367f93cfbcd2bab3575cd05d8e5aeb244ec7e054b69445ae7cdd018e5fbd0547"
           }
         ],
-        "sourceCommit": "1c5ed89362ea4b05dc5932a89563c94aeb0d4cba",
+        "sourceCommit": "68278dfe69ad26eddf43ba2d23a76f8a3285528a",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
         "builtAt": "2026-09-27",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
@@ -28,7 +28,7 @@
       "inventory": {
         "schema": "pqctoday.mechanism-inventory/v1",
         "mechanismCount": 166,
-        "inventorySha256": "3c0cdeb9a8d11423609d9428071d90d2623c33694e472399cdec15c8d41349f3",
+        "inventorySha256": "be8c60dc0759eba0573308bd2a445d927ea3f899af6f3ec2196f1e3ddd5f87df",
         "mechanisms": [
           {
             "type": 0,
@@ -2784,12 +2784,18 @@
             "infoRv": 0,
             "ulMinKeySize": 255,
             "ulMaxKeySize": 448,
-            "flags": 65536,
+            "flags": 93388800,
             "typeHex": "0x00001055",
             "name": "CKM_EC_EDWARDS_KEY_PAIR_GEN",
             "family": "asymmetric",
-            "flagsHex": "0x00010000",
-            "flagNames": ["CKF_GENERATE_KEY_PAIR"],
+            "flagsHex": "0x05910000",
+            "flagNames": [
+              "CKF_GENERATE_KEY_PAIR",
+              "CKF_EC_F_P",
+              "CKF_EC_OID",
+              "CKF_EC_UNCOMPRESS",
+              "CKF_EC_CURVENAME"
+            ],
             "requiredOperations": ["generate-key-pair"],
             "findings": []
           },
@@ -2798,12 +2804,18 @@
             "infoRv": 0,
             "ulMinKeySize": 255,
             "ulMaxKeySize": 448,
-            "flags": 65536,
+            "flags": 93388800,
             "typeHex": "0x00001056",
             "name": "CKM_EC_MONTGOMERY_KEY_PAIR_GEN",
             "family": "asymmetric",
-            "flagsHex": "0x00010000",
-            "flagNames": ["CKF_GENERATE_KEY_PAIR"],
+            "flagsHex": "0x05910000",
+            "flagNames": [
+              "CKF_GENERATE_KEY_PAIR",
+              "CKF_EC_F_P",
+              "CKF_EC_OID",
+              "CKF_EC_UNCOMPRESS",
+              "CKF_EC_CURVENAME"
+            ],
             "requiredOperations": ["generate-key-pair"],
             "findings": []
           },
@@ -2812,12 +2824,19 @@
             "infoRv": 0,
             "ulMinKeySize": 255,
             "ulMaxKeySize": 448,
-            "flags": 10240,
+            "flags": 93333504,
             "typeHex": "0x00001057",
             "name": "CKM_EDDSA",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
+            "flagsHex": "0x05902800",
+            "flagNames": [
+              "CKF_SIGN",
+              "CKF_VERIFY",
+              "CKF_EC_F_P",
+              "CKF_EC_OID",
+              "CKF_EC_UNCOMPRESS",
+              "CKF_EC_CURVENAME"
+            ],
             "requiredOperations": ["sign", "verify"],
             "findings": []
           },
@@ -3377,12 +3396,19 @@
             "infoRv": 0,
             "ulMinKeySize": 255,
             "ulMaxKeySize": 255,
-            "flags": 10240,
+            "flags": 93333504,
             "typeHex": "0x80001057",
             "name": "CKM_EDDSA_PH",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
+            "flagsHex": "0x05902800",
+            "flagNames": [
+              "CKF_SIGN",
+              "CKF_VERIFY",
+              "CKF_EC_F_P",
+              "CKF_EC_OID",
+              "CKF_EC_UNCOMPRESS",
+              "CKF_EC_CURVENAME"
+            ],
             "requiredOperations": ["sign", "verify"],
             "findings": []
           },
@@ -3391,12 +3417,18 @@
             "infoRv": 0,
             "ulMinKeySize": 255,
             "ulMaxKeySize": 255,
-            "flags": 524288,
+            "flags": 93847552,
             "typeHex": "0x80001058",
             "name": "CKM_X25519",
             "family": "kdf",
-            "flagsHex": "0x00080000",
-            "flagNames": ["CKF_DERIVE"],
+            "flagsHex": "0x05980000",
+            "flagNames": [
+              "CKF_DERIVE",
+              "CKF_EC_F_P",
+              "CKF_EC_OID",
+              "CKF_EC_UNCOMPRESS",
+              "CKF_EC_CURVENAME"
+            ],
             "requiredOperations": ["derive"],
             "findings": []
           },
@@ -3405,12 +3437,18 @@
             "infoRv": 0,
             "ulMinKeySize": 448,
             "ulMaxKeySize": 448,
-            "flags": 524288,
+            "flags": 93847552,
             "typeHex": "0x80001059",
             "name": "CKM_X448",
             "family": "kdf",
-            "flagsHex": "0x00080000",
-            "flagNames": ["CKF_DERIVE"],
+            "flagsHex": "0x05980000",
+            "flagNames": [
+              "CKF_DERIVE",
+              "CKF_EC_F_P",
+              "CKF_EC_OID",
+              "CKF_EC_UNCOMPRESS",
+              "CKF_EC_CURVENAME"
+            ],
             "requiredOperations": ["derive"],
             "findings": []
           },
@@ -3451,14 +3489,14 @@
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "dc5a6fc8066df236ebd91a6b4f5b07144e1364e130a76e2a16c8955bbf2c3f3c"
+            "sha256": "f1f63edb62b48d5ee3d8bbabc0e8578579088d4032a2375f798c87d33a7b0098"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
             "sha256": "8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8"
           }
         ],
-        "sourceCommit": "1c5ed89362ea4b05dc5932a89563c94aeb0d4cba",
+        "sourceCommit": "68278dfe69ad26eddf43ba2d23a76f8a3285528a",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
         "builtAt": "2026-09-27",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
@@ -8197,55 +8235,6 @@
         }
       },
       {
-        "typeHex": "0x00001055",
-        "name": "CKM_EC_EDWARDS_KEY_PAIR_GEN",
-        "cpp": {
-          "flagNames": ["CKF_GENERATE_KEY_PAIR"]
-        },
-        "rust": {
-          "flagNames": [
-            "CKF_GENERATE_KEY_PAIR",
-            "CKF_EC_F_P",
-            "CKF_EC_OID",
-            "CKF_EC_UNCOMPRESS",
-            "CKF_EC_CURVENAME"
-          ]
-        }
-      },
-      {
-        "typeHex": "0x00001056",
-        "name": "CKM_EC_MONTGOMERY_KEY_PAIR_GEN",
-        "cpp": {
-          "flagNames": ["CKF_GENERATE_KEY_PAIR"]
-        },
-        "rust": {
-          "flagNames": [
-            "CKF_GENERATE_KEY_PAIR",
-            "CKF_EC_F_P",
-            "CKF_EC_OID",
-            "CKF_EC_UNCOMPRESS",
-            "CKF_EC_CURVENAME"
-          ]
-        }
-      },
-      {
-        "typeHex": "0x00001057",
-        "name": "CKM_EDDSA",
-        "cpp": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": [
-            "CKF_SIGN",
-            "CKF_VERIFY",
-            "CKF_EC_F_P",
-            "CKF_EC_OID",
-            "CKF_EC_UNCOMPRESS",
-            "CKF_EC_CURVENAME"
-          ]
-        }
-      },
-      {
         "typeHex": "0x0000140b",
         "name": "CKM_EC_KEY_PAIR_GEN_W_EXTRA_BITS",
         "cpp": {
@@ -8305,51 +8294,10 @@
         "typeHex": "0x80001057",
         "name": "CKM_EDDSA_PH",
         "cpp": {
-          "ulMaxKeySize": 255,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 255
         },
         "rust": {
-          "ulMaxKeySize": 448,
-          "flagNames": [
-            "CKF_SIGN",
-            "CKF_VERIFY",
-            "CKF_EC_F_P",
-            "CKF_EC_OID",
-            "CKF_EC_UNCOMPRESS",
-            "CKF_EC_CURVENAME"
-          ]
-        }
-      },
-      {
-        "typeHex": "0x80001058",
-        "name": "CKM_X25519",
-        "cpp": {
-          "flagNames": ["CKF_DERIVE"]
-        },
-        "rust": {
-          "flagNames": [
-            "CKF_DERIVE",
-            "CKF_EC_F_P",
-            "CKF_EC_OID",
-            "CKF_EC_UNCOMPRESS",
-            "CKF_EC_CURVENAME"
-          ]
-        }
-      },
-      {
-        "typeHex": "0x80001059",
-        "name": "CKM_X448",
-        "cpp": {
-          "flagNames": ["CKF_DERIVE"]
-        },
-        "rust": {
-          "flagNames": [
-            "CKF_DERIVE",
-            "CKF_EC_F_P",
-            "CKF_EC_OID",
-            "CKF_EC_UNCOMPRESS",
-            "CKF_EC_CURVENAME"
-          ]
+          "ulMaxKeySize": 448
         }
       }
     ]

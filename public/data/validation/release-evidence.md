@@ -45,7 +45,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 ### C++ engine
 
-166 mechanisms · 2,215 advertised cells (denominator) · 39 unsupported cells shown separately · source commit `1c5ed89362ea4b05dc5932a89563c94aeb0d4cba`
+166 mechanisms · 2,215 advertised cells (denominator) · 39 unsupported cells shown separately · source commit `68278dfe69ad26eddf43ba2d23a76f8a3285528a`
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
@@ -63,12 +63,12 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 Artifacts:
 
-- `public/wasm/softhsm.wasm` — SHA-256 `ae7f1d377c4155e883b76644e7c5c84eaec96f25336184fcd7e9e6c354ba32bb`
+- `public/wasm/softhsm.wasm` — SHA-256 `bc30345f8240c0c10579edf6f50b0fc399fb03cdfa05267dd17d81aa7cc35021`
 - `public/wasm/softhsm.js` — SHA-256 `367f93cfbcd2bab3575cd05d8e5aeb244ec7e054b69445ae7cdd018e5fbd0547`
 
 ### Rust engine
 
-175 mechanisms · 2,231 advertised cells (denominator) · 23 unsupported cells shown separately · source commit `1c5ed89362ea4b05dc5932a89563c94aeb0d4cba`
+175 mechanisms · 2,231 advertised cells (denominator) · 23 unsupported cells shown separately · source commit `68278dfe69ad26eddf43ba2d23a76f8a3285528a`
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
@@ -86,14 +86,14 @@ Artifacts:
 
 Artifacts:
 
-- `src/wasm/softhsmrustv3_bg.wasm` — SHA-256 `dc5a6fc8066df236ebd91a6b4f5b07144e1364e130a76e2a16c8955bbf2c3f3c`
+- `src/wasm/softhsmrustv3_bg.wasm` — SHA-256 `f1f63edb62b48d5ee3d8bbabc0e8578579088d4032a2375f798c87d33a7b0098`
 - `src/wasm/softhsmrustv3_bg.js` — SHA-256 `8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8`
 
 ## Recorded runs
 
-- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-27 at hub `dcdcb6d147a8`; 4,992 results: cpp 2,436 pass, 60 skip; rust 2,471 pass, 25 skip.
-- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-27 at hub `dcdcb6d147a8`; 94 results: rust 94 pass.
-- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-27 at hub `dcdcb6d147a8`; 8,448 results: cpp 4,219 pass, 1 fail, 4 skip; rust 4,205 pass, 19 fail.
+- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-27 at hub `e26854788151`; 4,992 results: cpp 2,436 pass, 60 skip; rust 2,471 pass, 25 skip.
+- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-27 at hub `e26854788151`; 94 results: rust 94 pass.
+- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-27 at hub `bbc625f07095`; 8,448 results: cpp 4,219 pass, 1 fail, 4 skip; rust 4,205 pass, 19 fail.
   - **fail** on cpp: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/0`
@@ -119,11 +119,11 @@ Artifacts:
 
 Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser. Pinned hsm commit `632302e8f7f2` (2026-09-27).
 
-| Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                     |
-| ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | -------------------------------------------------------------------------------- |
-| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   959 |    0 |            2 |   961 | `3ae536da0201` (2026-09-27) |                                           5 | no — bundle `1c5ed89362ea`: 0 commit(s) ahead of the engine commit, 25 behind it |
-| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,093 |    0 | not reported | 1,093 | `795907f49371` (2026-09-26) |                                          76 | no — bundle `1c5ed89362ea`: 55 commit(s) ahead of the engine commit, 0 behind it |
-| Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                                |
+| Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                      |
+| ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | --------------------------------------------------------------------------------- |
+| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   959 |    0 |            2 |   961 | `3ae536da0201` (2026-09-27) |                                           5 | no — bundle `68278dfe69ad`: 32 commit(s) ahead of the engine commit, 0 behind it  |
+| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,093 |    0 | not reported | 1,093 | `795907f49371` (2026-09-26) |                                          76 | no — bundle `68278dfe69ad`: 112 commit(s) ahead of the engine commit, 0 behind it |
+| Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                                 |
 
 ## Cross-target evidence runs
 
@@ -334,12 +334,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `0760ca7785e268ff27dddde652b3978eb921297ce00e11d711f8f11e172062e6` |
+| `public/data/validation/coverage-matrix.json`                           | `0f23f618fc46a63ac255e80b864b9f89db6c1556bbe2bc39fa30e3245b5857a3` |
 | `src/data/validation/coverage-waivers.json`                             | `466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e` |
-| `src/data/validation/native-conformance.generated.json`                 | `3fb2ace2f16dac19836e865916b6909e6578fcfb69b0fd435bdab0b2062f52f3` |
+| `src/data/validation/native-conformance.generated.json`                 | `1740e7bf84df84a3aa06462bd6646dd018932bbc4af95bfd03566adfa00bafdd` |
 | `src/data/validation/open-gaps.json`                                    | `9c48aa2daa3ae5f503c9fa0c489881d81973813b86fb7d721b638ceb6c03b5a9` |
-| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `f375699c6c8d84a435b535d009580452130d2883eb9b030919d8b9a8d9fbcfa4` |
-| `src/data/validation/run-results/wasm-node-katRunner.json`              | `6c36d6f8e0c85081fab680880bd21bb528cabb6ac9579ab89bdcc21c7b0e0ca4` |
-| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `a401ba184ba9a3525bc7a2befedda999703878ba5aaec6ea7bb9c8b8572814d5` |
+| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `2224652b318108bade8fa293be0059ae4b7f8e27d1b1a06e9a0474c215626098` |
+| `src/data/validation/run-results/wasm-node-katRunner.json`              | `ba5bfe5fb83803690533d3b841eef51e1bdf873d5ff4c17c991643772796e40b` |
+| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `96bdfa1aaaeb28c56fb9c992b5f6e6626aa23ca1bb55898ca6028d0c99bfdf39` |
 | `src/data/validation/validation-counts.generated.json`                  | `2181e3bd71e91c333908adc0b1b9a8dba547342bd566eab3a34d87d60dd80b6a` |
 | `src/data/validation/vector-manifest.json`                              | `2ac136aa9e454e63ebee3a4b354f4aab6a5c5ed3d98f3507ee825fef95ab8577` |

@@ -16,13 +16,13 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "0760ca7785e268ff27dddde652b3978eb921297ce00e11d711f8f11e172062e6",
+    "public/data/validation/coverage-matrix.json": "0f23f618fc46a63ac255e80b864b9f89db6c1556bbe2bc39fa30e3245b5857a3",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
-    "src/data/validation/native-conformance.generated.json": "3fb2ace2f16dac19836e865916b6909e6578fcfb69b0fd435bdab0b2062f52f3",
+    "src/data/validation/native-conformance.generated.json": "1740e7bf84df84a3aa06462bd6646dd018932bbc4af95bfd03566adfa00bafdd",
     "src/data/validation/open-gaps.json": "9c48aa2daa3ae5f503c9fa0c489881d81973813b86fb7d721b638ceb6c03b5a9",
-    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "f375699c6c8d84a435b535d009580452130d2883eb9b030919d8b9a8d9fbcfa4",
-    "src/data/validation/run-results/wasm-node-katRunner.json": "6c36d6f8e0c85081fab680880bd21bb528cabb6ac9579ab89bdcc21c7b0e0ca4",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "a401ba184ba9a3525bc7a2befedda999703878ba5aaec6ea7bb9c8b8572814d5",
+    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "2224652b318108bade8fa293be0059ae4b7f8e27d1b1a06e9a0474c215626098",
+    "src/data/validation/run-results/wasm-node-katRunner.json": "ba5bfe5fb83803690533d3b841eef51e1bdf873d5ff4c17c991643772796e40b",
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "96bdfa1aaaeb28c56fb9c992b5f6e6626aa23ca1bb55898ca6028d0c99bfdf39",
     "src/data/validation/validation-counts.generated.json": "2181e3bd71e91c333908adc0b1b9a8dba547342bd566eab3a34d87d60dd80b6a",
     "src/data/validation/vector-manifest.json": "2ac136aa9e454e63ebee3a4b354f4aab6a5c5ed3d98f3507ee825fef95ab8577"
   },
@@ -332,7 +332,7 @@
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-27, hub dcdcb6d14); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-27, hub dcdcb6d14); 8448 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-27, hub dcdcb6d14). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-27, hub e26854788); 94 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-09-27, hub e26854788); 8448 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-09-27, hub bbc625f07). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -346,12 +346,12 @@
     "engines": {
       "cpp": {
         "label": "C++",
-        "sourceCommit": "1c5ed89362ea4b05dc5932a89563c94aeb0d4cba",
-        "inventorySha256": "3c0cdeb9a8d11423609d9428071d90d2623c33694e472399cdec15c8d41349f3",
+        "sourceCommit": "68278dfe69ad26eddf43ba2d23a76f8a3285528a",
+        "inventorySha256": "be8c60dc0759eba0573308bd2a445d927ea3f899af6f3ec2196f1e3ddd5f87df",
         "artifacts": [
           {
             "path": "public/wasm/softhsm.wasm",
-            "sha256": "ae7f1d377c4155e883b76644e7c5c84eaec96f25336184fcd7e9e6c354ba32bb"
+            "sha256": "bc30345f8240c0c10579edf6f50b0fc399fb03cdfa05267dd17d81aa7cc35021"
           },
           {
             "path": "public/wasm/softhsm.js",
@@ -361,12 +361,12 @@
       },
       "rust": {
         "label": "Rust",
-        "sourceCommit": "1c5ed89362ea4b05dc5932a89563c94aeb0d4cba",
+        "sourceCommit": "68278dfe69ad26eddf43ba2d23a76f8a3285528a",
         "inventorySha256": "6790d2efdc85ce38bd9fe4afdaef534d33ed749cf02ce116d51531e0509219da",
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "dc5a6fc8066df236ebd91a6b4f5b07144e1364e130a76e2a16c8955bbf2c3f3c"
+            "sha256": "f1f63edb62b48d5ee3d8bbabc0e8578579088d4032a2375f798c87d33a7b0098"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
@@ -427,10 +427,10 @@
           "commitsBehindPinnedHsmMain": 5,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsm-cpp-engine",
-          "wasmBundleHsmCommit": "1c5ed89362ea4b05dc5932a89563c94aeb0d4cba",
+          "wasmBundleHsmCommit": "68278dfe69ad26eddf43ba2d23a76f8a3285528a",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 0,
-          "commitsFromWasmBundleToEngine": 25
+          "commitsFromEngineToWasmBundle": 32,
+          "commitsFromWasmBundleToEngine": 0
         }
       },
       {
@@ -465,9 +465,9 @@
           "commitsBehindPinnedHsmMain": 76,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsmrustv3-engine",
-          "wasmBundleHsmCommit": "1c5ed89362ea4b05dc5932a89563c94aeb0d4cba",
+          "wasmBundleHsmCommit": "68278dfe69ad26eddf43ba2d23a76f8a3285528a",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 55,
+          "commitsFromEngineToWasmBundle": 112,
           "commitsFromWasmBundleToEngine": 0
         }
       },
@@ -490,7 +490,7 @@
       "runner": "errorPathProbes (every registered error-path case, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "dcdcb6d147a89af06eafc81041faaf6fdaf819ec",
+      "hubCommit": "e2685478815123a06e1db664af9465e56bc1570e",
       "recordedAt": "2026-09-27",
       "results": 4992,
       "byEngine": {
@@ -510,7 +510,7 @@
       "runner": "katRunner (every registered KatKind)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "dcdcb6d147a89af06eafc81041faaf6fdaf819ec",
+      "hubCommit": "e2685478815123a06e1db664af9465e56bc1570e",
       "recordedAt": "2026-09-27",
       "results": 94,
       "byEngine": {
@@ -525,7 +525,7 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "dcdcb6d147a89af06eafc81041faaf6fdaf819ec",
+      "hubCommit": "bbc625f070954d8021dbb247643863eb47dc5da1",
       "recordedAt": "2026-09-27",
       "results": 8448,
       "byEngine": {
