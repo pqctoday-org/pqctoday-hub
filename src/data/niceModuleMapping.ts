@@ -428,6 +428,24 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: false,
   },
   {
+    // Added 2026-09-27 (split out of crypto-product-certification): the FIPS
+    // 140-3 / CMVP and PCI deep dive, same governance-and-risk footing.
+    moduleId: 'fips-pci-certification',
+    competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
+    tier: 'practitioner',
+    workRoles: ['risk-manager', 'is-security-manager', 'security-architect'],
+    isCommonGround: false,
+  },
+  {
+    // Added 2026-09-27 (split out of crypto-product-certification): the Common
+    // Criteria / EUCC / eIDAS deep dive, same governance-and-risk footing.
+    moduleId: 'cc-eucc-certification',
+    competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
+    tier: 'practitioner',
+    workRoles: ['risk-manager', 'is-security-manager', 'security-architect'],
+    isCommonGround: false,
+  },
+  {
     moduleId: 'secrets-management-pqc',
     nfExtra: ['NF-COM-004'],
     competencyAreas: ['CA-DATASEC', 'CA-SYSARCH'],
