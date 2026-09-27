@@ -227,7 +227,7 @@ function CertificateRow({ cert }: { cert: CertificationXref }) {
           pqc ? 'text-status-success' : 'text-muted-foreground'
         }`}
       >
-        {pqc ? cert.pqcAlgorithms : 'No PQC mechanisms detected'}
+        {pqc ? cert.pqcAlgorithms : 'Classical only — no PQC mechanisms detected'}
       </p>
     </li>
   )

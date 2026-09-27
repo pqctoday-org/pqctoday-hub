@@ -34,7 +34,7 @@ schedule or never?"
    shadow-cert discovery via CT logs, root and intermediate CA rotation, revocation propagation.
 4. **Observability** — posture metrics, SIEM drift alerts, coverage trends.
 5. **Assurance / FIPS** — audit, attestation, CMVP validation tracking for libraries and
-   hardware, ACVP re-certification cadence, IG-update compliance deltas.
+   hardware, CAVP algorithm re-validation cadence, IG-update compliance deltas.
 
 ## Dual-loop iterative process
 

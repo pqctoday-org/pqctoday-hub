@@ -1,0 +1,60 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:sha_mct_full_test",
+  "subjectSha256": "d1983830d7d60fdc75285b34bfc804f0662ae93d40b40e8aec6519d91ef0c26f",
+  "fileSha256": "e8c6c982935f9d01db56c55878f10bd5903e5187a1c3c54a9661a7d9cf30fa05",
+  "result": "match",
+  "tool": "scripts/acvp/subset_reproduce.py",
+  "command": "python3 scripts/acvp/subset_reproduce.py --id sha_mct_full_test --strict",
+  "upstream": {
+    "repository": "https://github.com/usnistgov/ACVP-Server",
+    "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "files": [
+      {
+        "path": "gen-val/json-files/SHA2-224-1.0/internalProjection.json",
+        "sha256": "288d0a4dbec49759c63462ca9e4bd82b794e27f50605c8fca7fad0a415649ca9"
+      },
+      {
+        "path": "gen-val/json-files/SHA2-256-1.0/internalProjection.json",
+        "sha256": "a7e0bf4f5c661f1787b343bf3ae1a809b1e62f8fb2c8a627791510d03a570a6c"
+      },
+      {
+        "path": "gen-val/json-files/SHA2-384-1.0/internalProjection.json",
+        "sha256": "b22d80da99444af78feecaaae49493ee6189f1e6675e49db8764fb77bf16e847"
+      },
+      {
+        "path": "gen-val/json-files/SHA2-512-1.0/internalProjection.json",
+        "sha256": "2b514c517a2ef150d240efc52fdb2c4127925f0b4291b5a5b9153515e0ec7478"
+      },
+      {
+        "path": "gen-val/json-files/SHA2-512-224-1.0/internalProjection.json",
+        "sha256": "b596a90659713c52091ea9946e80145aae016ef730c956e5ee4850cf112709a9"
+      },
+      {
+        "path": "gen-val/json-files/SHA2-512-256-1.0/internalProjection.json",
+        "sha256": "fb813c4f42c748931978c4b5e6192d52ea156ff4e0797cbbebdf95458c816e5b"
+      },
+      {
+        "path": "gen-val/json-files/SHA3-224-2.0/internalProjection.json",
+        "sha256": "9ae4b1480d15526b29498d442125dfcfe80d74fe74c1b56fa840b1fae702ae34"
+      },
+      {
+        "path": "gen-val/json-files/SHA3-256-2.0/internalProjection.json",
+        "sha256": "dba4689436c7e440e61dc517210def3e8e09e50c0e9eff29ea66d89bdd0f2c63"
+      },
+      {
+        "path": "gen-val/json-files/SHA3-384-2.0/internalProjection.json",
+        "sha256": "e9eae46bd676dc82e911dcc3af92ef0093e0118615b62ab431086fce47574396"
+      },
+      {
+        "path": "gen-val/json-files/SHA3-512-2.0/internalProjection.json",
+        "sha256": "b0521468a178f7fd362d63319aa69b708885d08f0c71cee99ac70729f5bdf64b"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 10,
+    "values": 2060
+  },
+  "checkedAt": "2026-09-27"
+}

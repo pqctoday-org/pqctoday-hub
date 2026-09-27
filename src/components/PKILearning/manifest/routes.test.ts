@@ -20,6 +20,7 @@ const SPECIAL_PATHS = ['common-ground']
 
 const GOLDEN_ROUTE_PATHS = [
   '5g-security',
+  'acvp-lab-workflow',
   'aerospace-pqc',
   'ai-security-pqc',
   'api-security-jwt',

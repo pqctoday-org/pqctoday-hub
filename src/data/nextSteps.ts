@@ -302,6 +302,14 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     label: 'Produce the artifact: Infrastructure Modernization Planner',
     why: 'This module belongs to phase 6 (Infrastructure & Performance); Infrastructure Modernization Planner produces a deliverable of that phase in the Command Center.',
   },
+  // ── module→tool ── (hand-authored, WS-I 2026-09-24: the HSM Playground's
+  // Developer → Validation workbench hosts the same ACVP-format prototype and
+  // the evidence-labelled validation suite this module teaches)
+  '/learn/acvp-lab-workflow': {
+    to: '/playground/hsm',
+    label: 'Practice it: HSM Playground validation workbench',
+    why: 'The HSM Playground’s Developer → Validation workbench runs the evidence-labelled validation suite and the same ACVP-format import/export prototype on both PKCS#11 engines.',
+  },
   '/learn/platform-eng-pqc': {
     to: '/business/tools/management-tools-audit',
     label: 'Produce the artifact: Management Tools Audit',

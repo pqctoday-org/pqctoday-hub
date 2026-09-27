@@ -17,6 +17,7 @@
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { MECH_TABLE, type MechanismFamily } from './softhsm/mechanismTable'
+import { derOctetString } from './softhsm/helpers'
 export type { SoftHSMModule }
 
 // Injected by Vite at build time — ensures WASM URLs are cache-busted on each release
@@ -353,11 +354,16 @@ export const RV_NAMES: Record<number, string> = {
   0x00000007: 'CKR_ARGUMENTS_BAD',
   0x00000010: 'CKR_ATTRIBUTE_READ_ONLY',
   0x00000012: 'CKR_ATTRIBUTE_TYPE_INVALID',
+  0x00000013: 'CKR_ATTRIBUTE_VALUE_INVALID',
   0x00000020: 'CKR_DATA_INVALID',
+  0x00000021: 'CKR_DATA_LEN_RANGE',
   0x00000030: 'CKR_DEVICE_ERROR',
+  0x00000040: 'CKR_ENCRYPTED_DATA_INVALID',
+  0x00000041: 'CKR_ENCRYPTED_DATA_LEN_RANGE',
   0x00000042: 'CKR_AEAD_DECRYPT_FAILED',
   0x00000054: 'CKR_FUNCTION_NOT_SUPPORTED',
   0x00000060: 'CKR_KEY_HANDLE_INVALID',
+  0x00000062: 'CKR_KEY_SIZE_RANGE',
   0x00000063: 'CKR_KEY_TYPE_INCONSISTENT',
   0x00000068: 'CKR_KEY_FUNCTION_NOT_PERMITTED',
   0x00000069: 'CKR_KEY_NOT_WRAPPABLE',
@@ -386,12 +392,14 @@ export const RV_NAMES: Record<number, string> = {
   0x00000103: 'CKR_USER_TYPE_INVALID',
   0x00000104: 'CKR_USER_ANOTHER_ALREADY_LOGGED_IN',
   0x00000110: 'CKR_WRAPPED_KEY_INVALID',
+  0x00000112: 'CKR_WRAPPED_KEY_LEN_RANGE',
   0x00000113: 'CKR_WRAPPING_KEY_HANDLE_INVALID',
   0x00000130: 'CKR_DOMAIN_PARAMS_INVALID',
   0x00000140: 'CKR_CURVE_NOT_SUPPORTED',
   0x00000150: 'CKR_BUFFER_TOO_SMALL',
   0x00000190: 'CKR_CRYPTOKI_NOT_INITIALIZED',
   0x00000191: 'CKR_CRYPTOKI_ALREADY_INITIALIZED',
+  0x000001b9: 'CKR_PUBLIC_KEY_INVALID',
   0x00000200: 'CKR_FUNCTION_REJECTED',
   0x00000201: 'CKR_TOKEN_RESOURCE_EXCEEDED',
 }
@@ -1944,6 +1952,34 @@ export type MLDSAPreHash =
   | 'shake128'
   | 'shake256'
 
+/**
+ * NIST ACVP hash names (`SHA2-256`, `SHA3-224`, `SHAKE-128`, …) as the engine's
+ * pre-hash identifiers. Vector files keep NIST's exact spelling so they stay
+ * byte-identical to upstream (2026-09-26); callers translate here rather than
+ * casting, and an unknown name throws instead of reaching the engine unchecked.
+ */
+export function mldsaPreHashFromAcvp(name: string): MLDSAPreHash {
+  const n = name.toUpperCase()
+  const map: Record<string, MLDSAPreHash> = {
+    'SHA2-224': 'sha224',
+    'SHA2-256': 'sha256',
+    'SHA2-384': 'sha384',
+    'SHA2-512': 'sha512',
+    'SHA3-224': 'sha3-224',
+    'SHA3-256': 'sha3-256',
+    'SHA3-384': 'sha3-384',
+    'SHA3-512': 'sha3-512',
+    'SHAKE-128': 'shake128',
+    'SHAKE-256': 'shake256',
+  }
+  // A name already in the engine's own form (a file whose lineage declares that
+  // normalization, e.g. mldsa_extended_test's ML-DSA-87 'sha224') passes through.
+  const native = Object.values(map).find((m) => m === name)
+  const v = map[n] ?? native
+  if (!v) throw new Error(`unknown ACVP hash name for ML-DSA pre-hash: ${name}`)
+  return v
+}
+
 export interface MLDSASignOptions {
   hedging?: 'preferred' | 'required' | 'deterministic'
   context?: Uint8Array // 0-255 bytes (FIPS 204 max context length)
@@ -2723,6 +2759,7 @@ export const SLH_DSA_PARAM_SETS: Array<{ value: number; label: string; sigBytes:
 // ── Internal crypto constants ─────────────────────────────────────────────────
 
 // MGF types (RSA-OAEP / PSS)
+const CKG_MGF1_SHA1 = 0x00000001
 const CKG_MGF1_SHA256_NEW = 0x00000002
 const CKG_MGF1_SHA384_NEW = 0x00000003
 const CKG_MGF1_SHA512_NEW = 0x00000004
@@ -2789,16 +2826,26 @@ export const writeBytes = (M: SoftHSMModule, bytes: Uint8Array): number => {
 /** Build CK_RSA_PKCS_OAEP_PARAMS (20 bytes) in WASM heap. */
 const buildOAEPParams = (
   M: SoftHSMModule,
-  hashAlgo: 'sha256' | 'sha384' | 'sha512'
+  // 'sha1' exists for the NIST KTS-IFC OAEP samples (tgId 3), which use SHA-1
+  // for both the OAEP hash and MGF1; SP 800-56B rev 2 still permits it there.
+  hashAlgo: 'sha1' | 'sha256' | 'sha384' | 'sha512'
 ): { ptr: number; len: number } => {
   const hashMech =
-    hashAlgo === 'sha512' ? CKM_SHA512 : hashAlgo === 'sha384' ? CKM_SHA384 : CKM_SHA256
+    hashAlgo === 'sha512'
+      ? CKM_SHA512
+      : hashAlgo === 'sha384'
+        ? CKM_SHA384
+        : hashAlgo === 'sha1'
+          ? CKM_SHA_1
+          : CKM_SHA256
   const mgf =
     hashAlgo === 'sha512'
       ? CKG_MGF1_SHA512_NEW
       : hashAlgo === 'sha384'
         ? CKG_MGF1_SHA384_NEW
-        : CKG_MGF1_SHA256_NEW
+        : hashAlgo === 'sha1'
+          ? CKG_MGF1_SHA1
+          : CKG_MGF1_SHA256_NEW
   const ptr = M._malloc(20)
   M.setValue(ptr, hashMech, 'i32') // hashAlg
   M.setValue(ptr + 4, mgf, 'i32') // mgf
@@ -3191,7 +3238,7 @@ export const hsm_rsaDecrypt = (
   hSession: number,
   privHandle: number,
   ciphertext: Uint8Array,
-  hashAlgo: 'sha256' | 'sha384' | 'sha512' = 'sha256'
+  hashAlgo: 'sha1' | 'sha256' | 'sha384' | 'sha512' = 'sha256'
 ): Uint8Array => {
   const oaepParams = buildOAEPParams(M, hashAlgo)
   const mech = buildMech(M, CKM_RSA_PKCS_OAEP, oaepParams.ptr, oaepParams.len)
@@ -4869,26 +4916,17 @@ export const hsm_importRSAPublicKey = (
   }
 }
 
-const toBase64Url = (bytes: Uint8Array): string => {
-  let binary = ''
-  for (const b of bytes) binary += String.fromCharCode(b)
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-}
-
 /**
  * Import an RSA private key from its full CRT component set (PKCS#11 v3.2
  * Table 39: MODULUS, PUBLIC_EXPONENT, PRIVATE_EXPONENT, PRIME_1/2,
  * EXPONENT_1/2, COEFFICIENT). Returns CKO_PRIVATE_KEY handle.
  *
- * Async: builds a PKCS#8 DER blob via the browser's native SubtleCrypto
- * (JWK import → PKCS#8 export) for the Rust engine, which reads CKA_VALUE as
- * PKCS#8 on RSA private-key import (rsa::RsaPrivateKey::from_pkcs8_der) —
- * state.rs's CreateObject validity check requires CKA_VALUE on any private
- * key that isn't RSA/EC *public* (the only two exceptions). Deliberately not
- * a hand-rolled ASN.1/DER encoder: @peculiar/asn1-rsa's decorator-registered
- * schema doesn't survive this project's bundler (see the comment on
- * parseRsaPublicKey in compositeVerifier.ts for the same finding), so this
- * uses the platform's own PKCS#8 encoder instead of re-deriving one.
+ * The template is exactly the standard's, on both engines. It used to add a
+ * WebCrypto-built PKCS#8 blob as CKA_VALUE (retrying without it on
+ * CKR_ATTRIBUTE_TYPE_INVALID) because the Rust engine refused a standard
+ * template; that accommodation hid the engine defect, and hsm #278 fixed the
+ * engine, so the blob is gone (maintainer decision 2026-09-26). Kept async so
+ * its callers are unchanged.
  */
 export const hsm_importRSAPrivateKey = async (
   M: SoftHSMModule,
@@ -4905,31 +4943,11 @@ export const hsm_importRSAPrivateKey = async (
   },
   decrypt = true
 ): Promise<number> => {
-  const cryptoKey = await crypto.subtle.importKey(
-    'jwk',
-    {
-      kty: 'RSA',
-      n: toBase64Url(parts.n),
-      e: toBase64Url(parts.e),
-      d: toBase64Url(parts.d),
-      p: toBase64Url(parts.p),
-      q: toBase64Url(parts.q),
-      dp: toBase64Url(parts.dp),
-      dq: toBase64Url(parts.dq),
-      qi: toBase64Url(parts.qi),
-    },
-    { name: 'RSA-OAEP', hash: 'SHA-256' },
-    true,
-    ['decrypt']
-  )
-  const pkcs8 = new Uint8Array(await crypto.subtle.exportKey('pkcs8', cryptoKey))
-
   const ptrs = Object.fromEntries(
     Object.entries(parts).map(([k, v]) => [k, writeBytes(M, v)])
   ) as Record<keyof typeof parts, number>
-  const valPtr = writeBytes(M, pkcs8)
 
-  const baseAttrs: AttrDef[] = [
+  const attrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
     { type: CKA_TOKEN, boolVal: false },
@@ -4947,32 +4965,16 @@ export const hsm_importRSAPrivateKey = async (
     { type: CKA_COEFFICIENT, bytesPtr: ptrs.qi, bytesLen: parts.qi.length },
   ]
   const hKeyPtr = allocUlong(M)
+  const tpl = buildTemplate(M, attrs)
   try {
-    // Try with CKA_VALUE (Rust engine needs it); fall back without it
-    // (C++ reconstructs from the CRT components alone and rejects an
-    // unrecognized CKA_VALUE on this class) — same shape as
-    // hsm_importRSAPublicKey above.
-    const tplFull = buildTemplate(M, [
-      ...baseAttrs,
-      { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: pkcs8.length },
-    ])
-    const rv = M._C_CreateObject(hSession, tplFull.ptr, baseAttrs.length + 1, hKeyPtr) >>> 0
-    freeTemplate(M, tplFull, baseAttrs.length + 1)
-    if (rv === 0x12) {
-      // CKR_ATTRIBUTE_TYPE_INVALID — retry without CKA_VALUE
-      const tplStd = buildTemplate(M, baseAttrs)
-      checkRV(
-        M._C_CreateObject(hSession, tplStd.ptr, baseAttrs.length, hKeyPtr),
-        'C_CreateObject(Import RSA PrivKey)'
-      )
-      freeTemplate(M, tplStd, baseAttrs.length)
-    } else {
-      checkRV(rv, 'C_CreateObject(Import RSA PrivKey)')
-    }
+    checkRV(
+      M._C_CreateObject(hSession, tpl.ptr, attrs.length, hKeyPtr),
+      'C_CreateObject(Import RSA PrivKey)'
+    )
     return readUlong(M, hKeyPtr)
   } finally {
+    freeTemplate(M, tpl, attrs.length)
     M._free(hKeyPtr)
-    M._free(valPtr)
     Object.values(ptrs).forEach((p) => M._free(p))
   }
 }
@@ -4991,22 +4993,17 @@ export const hsm_importECPublicKey = (
   const oid = weierstrassCurveOID(curve)
   const oidPtr = writeBytes(M, oid)
 
-  // Build DER-encoded uncompressed EC point: OCTET STRING { 04 || x || y }
-  const pointLen = 1 + qx.length + qy.length // 04 prefix + coordinates
-  const derPoint = new Uint8Array(2 + pointLen)
-  derPoint[0] = 0x04 // OCTET STRING tag
-  derPoint[1] = pointLen
-  derPoint[2] = 0x04 // uncompressed point prefix
-  derPoint.set(qx, 3)
-  derPoint.set(qy, 3 + qx.length)
-  const pointPtr = writeBytes(M, derPoint)
-
-  // Build CKA_VALUE as raw SEC1 uncompressed point for Rust engine: 04 || x || y
+  // Raw SEC 1 uncompressed point 04 || x || y — CKA_VALUE for the Rust engine
   const sec1Point = new Uint8Array(1 + qx.length + qy.length)
   sec1Point[0] = 0x04
   sec1Point.set(qx, 1)
   sec1Point.set(qy, 1 + qx.length)
   const valPtr = writeBytes(M, sec1Point)
+
+  // CKA_EC_POINT: DER OCTET STRING { 04 || x || y }. P-521's 133-byte point
+  // needs the long-form length (0x81 0x85); the old one-byte length broke it.
+  const derPoint = derOctetString(sec1Point)
+  const pointPtr = writeBytes(M, derPoint)
 
   const baseAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
@@ -5664,6 +5661,44 @@ export const hsm_hmacVerify = (
     M._free(mech)
     M._free(dataPtr)
     M._free(macPtr)
+  }
+}
+
+/**
+ * Compute a truncated HMAC via CKM_*_HMAC_GENERAL (PKCS#11 v3.2 §6.31 —
+ * CK_MAC_GENERAL_PARAMS gives the output length in bytes). The generation
+ * counterpart of hsm_hmacVerifyGeneral: NIST's ACVP-HMAC samples carry a
+ * truncated macLen, which the non-GENERAL mechanism (full-length output) can
+ * never reproduce. `mechType` must be the `_GENERAL` variant.
+ */
+export const hsm_hmacGeneral = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  data: Uint8Array,
+  macLenBytes: number,
+  mechType: number
+): Uint8Array => {
+  const paramPtr = allocUlong(M)
+  writeUlong(M, paramPtr, macLenBytes)
+  const mech = buildMech(M, mechType, paramPtr, 4)
+  const dataPtr = writeBytes(M, data)
+  const macLenPtr = allocUlong(M)
+  let macPtr = 0
+  try {
+    checkRV(M._C_SignInit(hSession, mech, keyHandle), 'C_SignInit(HMAC_GENERAL)')
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, 0, macLenPtr), 'C_Sign(HMAC_GENERAL,len)')
+    const macLen = readUlong(M, macLenPtr)
+    macPtr = M._malloc(macLen)
+    writeUlong(M, macLenPtr, macLen)
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, macPtr, macLenPtr), 'C_Sign(HMAC_GENERAL)')
+    return M.HEAPU8.slice(macPtr, macPtr + readUlong(M, macLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(macLenPtr)
+    M._free(paramPtr)
+    if (macPtr) M._free(macPtr)
   }
 }
 

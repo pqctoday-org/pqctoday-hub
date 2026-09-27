@@ -116,7 +116,7 @@ const KMS_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'kms-kek-wrap',
     useCase: 'KEK key wrapping (AES-256-KW)',
-    standard: 'RFC 3394 ACVP',
+    standard: 'RFC 3394',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc3394',
     kind: { type: 'aeskw-wrap' },
   },

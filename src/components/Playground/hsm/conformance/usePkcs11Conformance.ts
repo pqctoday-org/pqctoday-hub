@@ -33,6 +33,7 @@ import {
   type TestCaseExecutionResult,
 } from '@/wasm/pkcs11ConformanceRunner/xmlTestCaseExecutor'
 import {
+  profileConditionProbeCounts,
   runProfileConditionProbes,
   type ProfileClaim,
 } from '@/wasm/pkcs11ConformanceRunner/profileConditions'
@@ -40,7 +41,26 @@ import {
   provisionAuthFixture,
   provisionCertFixture,
 } from '@/wasm/pkcs11ConformanceRunner/profileFixtures'
-import { runMechanismCoverageProbes } from '@/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
+import {
+  mechanismProbes,
+  runMechanismCoverageProbes,
+} from '@/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
+import {
+  captureProbeInventory,
+  runErrorPathProbes,
+} from '@/wasm/pkcs11ConformanceRunner/errorPathProbes'
+import {
+  ERROR_PATH_OPS,
+  OP_SPECS,
+  PROBE_KINDS,
+  expandErrorPathCases,
+} from '@/wasm/pkcs11ConformanceRunner/errorPathCatalog'
+import {
+  captureMechanismInventory,
+  compareToGenerated,
+  type EngineArtifactFile,
+  type GeneratedMechanismInventoryFile,
+} from '@/wasm/softhsm/mechanismInventory'
 import blM132Xml from '@/data/pkcs11-profiles/test-cases/BL-M-1-32.xml?raw'
 import extM132Xml from '@/data/pkcs11-profiles/test-cases/EXT-M-1-32.xml?raw'
 import authM132Xml from '@/data/pkcs11-profiles/test-cases/AUTH-M-1-32.xml?raw'
@@ -51,11 +71,90 @@ export type RowStatus = 'pass' | 'fail' | 'not-claimed'
 export interface RunnerRow {
   id: string
   engine: string
-  tier: 'A' | 'B' | 'Coverage'
+  tier: 'A' | 'B' | 'Coverage' | 'ErrorPath'
   name: string
   citation: string
   status: RowStatus
   detail: string
+  /** SHA-256 of the engine's advertised mechanism inventory captured at the
+   *  start of this run (WS-G G-1) — the build-specific denominator this row
+   *  was produced against. Absent when the capture failed. */
+  inventorySha256?: string
+}
+
+/**
+ * What an engine advertised (C_GetMechanismList + C_GetMechanismInfo) when a
+ * conformance run started, and whether that matches the committed build
+ * record in src/data/validation/mechanism-inventory.generated.json. Artifact
+ * identity is only reported when it does match — otherwise the running engine
+ * is not the recorded build and its artifact is unknown.
+ */
+export interface EngineInventorySummary {
+  engine: string
+  mechanismCount: number | null
+  inventorySha256: string | null
+  buildRecord:
+    'matches-generated' | 'differs-from-generated' | 'no-generated-record' | 'capture-failed'
+  artifacts: EngineArtifactFile[] | null
+  sourceCommit: string | null
+  error?: string
+}
+
+const loadGeneratedInventory = async (): Promise<GeneratedMechanismInventoryFile | null> => {
+  try {
+    const mod = await import('@/data/validation/mechanism-inventory.generated.json')
+    return mod.default as unknown as GeneratedMechanismInventoryFile
+  } catch {
+    return null
+  }
+}
+
+/** Capture one engine's inventory; never throws (a failure is recorded). */
+const summarizeInventory = async (
+  M: SoftHSMModule,
+  slotId: number,
+  engineName: string,
+  generated: GeneratedMechanismInventoryFile | null
+): Promise<EngineInventorySummary> => {
+  try {
+    const inv = await captureMechanismInventory(M, slotId)
+    const record = generated?.engines[engineName === 'C++' ? 'cpp' : 'rust']
+    const buildRecord = compareToGenerated(inv, record)
+    const matches = buildRecord === 'matches-generated'
+    return {
+      engine: engineName,
+      mechanismCount: inv.mechanismCount,
+      inventorySha256: inv.inventorySha256,
+      buildRecord,
+      artifacts: matches ? (record?.identity.artifacts ?? null) : null,
+      sourceCommit: matches ? (record?.identity.sourceCommit ?? null) : null,
+    }
+  } catch (e) {
+    return {
+      engine: engineName,
+      mechanismCount: null,
+      inventorySha256: null,
+      buildRecord: 'capture-failed',
+      artifacts: null,
+      sourceCommit: null,
+      error: e instanceof Error ? e.message : String(e),
+    }
+  }
+}
+
+const describeInventory = (s: EngineInventorySummary): string => {
+  if (s.buildRecord === 'capture-failed') {
+    return `Mechanism inventory (${s.engine}): capture failed — ${s.error ?? 'unknown error'}`
+  }
+  const head = `Mechanism inventory (${s.engine}): ${s.mechanismCount} advertised, sha256 ${s.inventorySha256}`
+  if (s.buildRecord === 'matches-generated') {
+    const files = (s.artifacts ?? []).map((a) => `${a.path} sha256 ${a.sha256}`).join('; ')
+    return `${head} — matches the recorded build (${files}; hsm ${s.sourceCommit ?? 'unrecorded'})`
+  }
+  if (s.buildRecord === 'differs-from-generated') {
+    return `${head} — DIFFERS from the recorded build; artifact identity unknown`
+  }
+  return `${head} — no recorded build to compare against`
 }
 
 export interface TierACase {
@@ -110,20 +209,90 @@ export const TIER_A_CASES: TierACase[] = [
 
 export const TIER_A_IDS: string[] = TIER_A_CASES.map((c) => c.id)
 
-/** Tier B probe groups per profile — counts from profileConditions.ts,
- *  shown in the palette; gating stays discovery-driven at run time. */
-export const TIER_B_GROUPS: { id: ProfileClaim; label: string; probes: number }[] = [
-  { id: 'baseline', label: 'Baseline', probes: 17 },
-  { id: 'extended', label: 'Extended', probes: 6 },
-  { id: 'authentication', label: 'Auth Token', probes: 8 },
-  { id: 'certificates', label: 'Cert Token', probes: 5 },
-  { id: 'hkdf_tls', label: 'HKDF TLS', probes: 6 },
-]
+/** Tier B probe groups per profile — counted from profileConditions.ts's own
+ *  probe definitions (never hand-written), shown in the palette; gating stays
+ *  discovery-driven at run time. A function: see profileConditionProbeCounts. */
+export const tierBGroups = (): { id: ProfileClaim; label: string; probes: number }[] => {
+  const n = profileConditionProbeCounts()
+  return [
+    { id: 'baseline', label: 'Baseline', probes: n.baseline },
+    { id: 'extended', label: 'Extended', probes: n.extended },
+    { id: 'authentication', label: 'Auth Token', probes: n.authentication },
+    { id: 'certificates', label: 'Cert Token', probes: n.certificates },
+    { id: 'hkdf_tls', label: 'HKDF TLS', probes: n.hkdf_tls },
+  ]
+}
+
+/** Product mechanism probes defined in mechanismCoverageProbes.ts (counted, not written). */
+export const mechanismProbeCount = (): number => mechanismProbes().length
+
+/** Error-path probe table size (kinds × operation families) — counted, not written. */
+export const errorPathProbeSummary = () => ({
+  kinds: PROBE_KINDS.length,
+  families: new Set(ERROR_PATH_OPS.map((op) => OP_SPECS[op].family)).size, // eslint-disable-line security/detect-object-injection
+})
+
+/**
+ * WS-G G-4: what each tier's rows ARE, so no view or report summarizes the
+ * three together as "OASIS test cases". Only Tier A replays test cases OASIS
+ * published; Tier B probes are generated here from the numbered conditions of
+ * the OASIS Profiles text; Mechanism Coverage probes are product-authored.
+ * `evidenceClass` uses the plan's §2.1 vocabulary.
+ */
+export const CONFORMANCE_TIER_LABELS: Record<
+  RunnerRow['tier'],
+  { label: string; short: string; source: string; evidenceClass: string }
+> = {
+  A: {
+    label: 'OASIS published test case',
+    short: 'OASIS case',
+    source: 'OASIS PKCS#11 Profiles v3.2 mandatory XML test case, replayed verbatim',
+    evidenceClass: 'oasis-profile-case',
+  },
+  B: {
+    label: 'Generated profile-condition probe',
+    short: 'Generated probe',
+    source:
+      'PQC Today-authored probe of one numbered OASIS Profiles v3.2 condition — not an OASIS-published test case',
+    evidenceClass: 'product-mechanism-probe',
+  },
+  Coverage: {
+    label: 'Product mechanism probe',
+    short: 'Product probe',
+    source: 'PQC Today-authored PKCS#11 v3.2 mechanism probe — not an OASIS test case',
+    evidenceClass: 'product-mechanism-probe',
+  },
+  ErrorPath: {
+    label: 'Error-path probe',
+    short: 'Error-path probe',
+    source:
+      'PQC Today-authored PKCS#11 v3.2 error-path / required-operation probe (WS-G G-8/G-2): asserts the exact CK_RV the cited specification section requires — behaviour only, not an OASIS test case',
+    evidenceClass: 'product-mechanism-probe',
+  },
+}
+
+const TIER_ORDER: RunnerRow['tier'][] = ['A', 'B', 'Coverage', 'ErrorPath']
+
+/** Per-tier pass/fail/not-claimed tallies — the only way results are summarized. */
+export const tallyByTier = (rows: RunnerRow[]) =>
+  TIER_ORDER.map((tier) => {
+    const t = rows.filter((r) => r.tier === tier)
+    return {
+      tier,
+      ...CONFORMANCE_TIER_LABELS[tier],
+      rows: t.length,
+      pass: t.filter((r) => r.status === 'pass').length,
+      fail: t.filter((r) => r.status === 'fail').length,
+      notClaimed: t.filter((r) => r.status === 'not-claimed').length,
+    }
+  }).filter((t) => t.rows > 0)
 
 export interface ConformanceSelection {
   tierA: Set<string>
   tierB: boolean
   coverage: boolean
+  /** Error-path probes (G-8/G-2): ~2,300 per engine, opt-in — they take about a minute. */
+  errorPaths?: boolean
 }
 
 export const FULL_SELECTION = (): ConformanceSelection => ({
@@ -159,6 +328,7 @@ export function usePkcs11Conformance() {
   const [ran, setRan] = useState(false)
   const [selection, setSelection] = useState<ConformanceSelection>(FULL_SELECTION)
   const [claims, setClaims] = useState<Record<string, ProfileClaim[]>>({})
+  const [inventories, setInventories] = useState<EngineInventorySummary[]>([])
   const loadingRef = useRef(false)
 
   const toggleCase = useCallback((id: string) => {
@@ -175,6 +345,10 @@ export function usePkcs11Conformance() {
   )
   const setCoverage = useCallback(
     (on: boolean) => setSelection((prev) => ({ ...prev, coverage: on })),
+    []
+  )
+  const setErrorPaths = useCallback(
+    (on: boolean) => setSelection((prev) => ({ ...prev, errorPaths: on })),
     []
   )
 
@@ -225,6 +399,8 @@ export function usePkcs11Conformance() {
 
       const newRows: RunnerRow[] = []
       const newClaims: Record<string, ProfileClaim[]> = {}
+      const newInventories: EngineInventorySummary[] = []
+      const generatedInventory = await loadGeneratedInventory()
 
       for (const engine of engines) {
         const { M, name: eName } = engine
@@ -236,6 +412,10 @@ export function usePkcs11Conformance() {
           }
           hsm_initialize(M)
           const slot0 = hsm_getFirstSlot(M)
+          // WS-G G-1: the build-specific denominator for every row below.
+          const inventory = await summarizeInventory(M, slot0, eName, generatedInventory)
+          newInventories.push(inventory)
+          const rowsBefore = newRows.length
           const initSlot = hsm_initToken(M, slot0, '12345678', 'SoftHSM3')
           const hSession = hsm_openUserSession(M, initSlot, '12345678', 'user1234')
 
@@ -355,6 +535,42 @@ export function usePkcs11Conformance() {
             hsm_finalize(M, mechCovSession)
           }
 
+          if (use.errorPaths) {
+            // Error-path / required-operation probes (WS-G G-8/G-2), expanded
+            // from THIS engine's advertised inventory; run in batches so the
+            // page stays responsive.
+            hsm_initialize(M)
+            const epSlot0 = hsm_getFirstSlot(M)
+            const epSlot = hsm_initToken(M, epSlot0, '12345678', 'SoftHSM3')
+            const epSession = hsm_openUserSession(M, epSlot, '12345678', 'user1234')
+            const cases = expandErrorPathCases([captureProbeInventory(M, epSlot)])
+            for (let i = 0; i < cases.length; i += 40) {
+              const batch = runErrorPathProbes(M, epSession, epSlot, {
+                cases: cases.slice(i, i + 40),
+              })
+              for (const p of batch) {
+                newRows.push({
+                  id: `${p.caseId}-${eName}`,
+                  engine: eName,
+                  tier: 'ErrorPath',
+                  name: `${p.mechanism} · ${p.op} · ${p.kind}`,
+                  citation: p.citation,
+                  status: p.status,
+                  detail: `${p.title} — ${p.detail}`,
+                })
+              }
+              setRows(newRows.slice())
+              await new Promise((r) => setTimeout(r, 0))
+            }
+            hsm_finalize(M, epSession)
+          }
+
+          if (inventory.inventorySha256) {
+            for (let i = rowsBefore; i < newRows.length; i++) {
+              newRows[i] = { ...newRows[i], inventorySha256: inventory.inventorySha256 }
+            }
+          }
+
           // Restore context state so the Operate panels (which read
           // hSessionRef/slotRef directly) keep working after a run.
           hsm_initialize(M)
@@ -376,6 +592,7 @@ export function usePkcs11Conformance() {
       }
 
       setClaims(newClaims)
+      setInventories(newInventories)
       setRows(newRows)
       setLoading(false)
       loadingRef.current = false
@@ -392,12 +609,18 @@ export function usePkcs11Conformance() {
 
   const reportText = () => {
     const lines = rows.map(
-      (r) => `[${r.status.toUpperCase()}] ${r.engine} ${r.name} (${r.citation}): ${r.detail}`
+      (r) =>
+        `[${r.status.toUpperCase()}] ${r.engine} ${CONFORMANCE_TIER_LABELS[r.tier].short}: ${r.name} (${r.citation}): ${r.detail}`
     )
     lines.push(
       '',
-      `Result: ${pass} pass, ${fail} fail, ${notClaimed} not-claimed (of ${rows.length} rows)`
+      `Result: ${pass} pass, ${fail} fail, ${notClaimed} not-claimed (of ${rows.length} rows)`,
+      ...tallyByTier(rows).map(
+        (t) =>
+          `  ${t.label}s: ${t.pass} pass, ${t.fail} fail, ${t.notClaimed} not-claimed (of ${t.rows}) — ${t.source}`
+      )
     )
+    if (inventories.length > 0) lines.push('', ...inventories.map(describeInventory))
     return lines.join('\n')
   }
 
@@ -410,7 +633,9 @@ export function usePkcs11Conformance() {
     toggleCase,
     setTierB,
     setCoverage,
+    setErrorPaths,
     claims,
+    inventories,
     run,
     runAll,
     pass,

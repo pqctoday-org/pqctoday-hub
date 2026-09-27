@@ -177,7 +177,9 @@ function provisionUserPin(M: SoftHSMModule, slot: number): void {
 let cachedSlot: number | null = null
 
 /** Idempotent: returns the Developer tab's slot id, creating + provisioning
- *  it on first call this page session and reusing the cached id afterward. */
+ *  it on first call this /playground visit and reusing the cached id
+ *  afterward. Reset by `resetDevSlotCache()` when the route (and with it the
+ *  WASM module this slot id is only meaningful inside) is torn down. */
 export function ensureDevSlot(M: SoftHSMModule): number {
   if (cachedSlot !== null) return cachedSlot
   let slot = findLabeledSlot(M)
@@ -224,11 +226,15 @@ export function reloginDevSlotSession(M: SoftHSMModule, hSession: number): void 
  * for the provisioning case). Meant to be opened once and kept open for
  * as long as the tab needs it (generated keys are token=True — see
  * pipelineCodegen.ts — specifically so this session can still find them
- * after the script's own session has closed). Caller owns its lifecycle:
- * close with `M._C_CloseSession(hSession)` on unmount, and must call
- * `reloginDevSlotSession` again before EVERY use after this — see that
- * function's own doc comment for why a kept-open session doesn't stay
- * authenticated on its own.
+ * after the script's own session has closed).
+ *
+ * Prefer `ensureDevSlotSession` below: it owns the one kept-open session at
+ * MODULE scope (the WASM module's own lifetime), which is what a caller
+ * mounted and unmounted by a tab switch actually needs. This lower-level
+ * form stays exported for callers that genuinely want a throwaway session of
+ * their own; they must close it themselves and must call
+ * `reloginDevSlotSession` again before EVERY use — see that function's own
+ * doc comment for why a kept-open session doesn't stay authenticated.
  */
 export function openDevSlotSession(M: SoftHSMModule, slot: number): number {
   const sessPtr = M._malloc(4)
@@ -241,4 +247,94 @@ export function openDevSlotSession(M: SoftHSMModule, slot: number): number {
   }
   reloginDevSlotSession(M, hSession)
   return hSession
+}
+
+// ── The ONE kept-open Developer-slot session ────────────────────────────────
+//
+// WHY THIS LIVES HERE AND NOT IN A COMPONENT REF (real user-facing defect,
+// fixed 2026-09-26):
+// PkcsDevWorkbench used to hold this session in a `useRef` and tear it down in
+// an unmount cleanup — close the session, then `forgetSession(handle)` (=
+// `clearHsmKeys({ sessionHandle })`) to drop the keys registered on it. That
+// was correct while the key inventory lived INSIDE the Build tab: the table and
+// the session had the same mount lifetime, so "the panel unmounted" really did
+// mean "nobody can see these keys again". The 2026-09-02 redesign
+// (design_handoff_kmip_pkcs11_playground D3c) moved the inventory onto its own
+// Inspect › Keys tab, and HsmPlayground's tabs unmount the Build panel when you
+// switch — so the cleanup fired on a plain tab switch and deleted the user's
+// keys on the way to the very table meant to show them ("3 keys — Inspect" →
+// "No HSM keys generated yet.").
+//
+// The right scope is the one the rest of the playground already uses: a
+// PKCS#11 resource lives as long as the WASM module it belongs to, and the WASM
+// module is owned by the /playground route (PlaygroundProvider's
+// `clearSoftHSMCache()` — see VpnSimulationPanel's identical note on why its
+// own teardown deliberately stops short of C_Finalize). So the session is
+// module-scoped state here, exactly like `cachedSlot` above already was, and
+// PlaygroundProvider calls `resetDevSlotCache()` on route unmount.
+//
+// The key purge the old cleanup performed is not needed at that scope and is
+// not reintroduced: the registry it purged is React state inside `HsmProvider`,
+// which is a child of `PlaygroundProvider` — it is discarded by the same
+// unmount that closes this session, so there is no window in which a key can
+// linger pointing at a closed session. A purge is only ever right when the
+// session closes while the registry outlives it, i.e. an explicit user reset —
+// which is precisely where the other panels put theirs (VpnSimulationPanel's
+// Reset / mode / KEM-size handlers), and never in an unmount path.
+let cachedSession: { M: SoftHSMModule; hSession: number } | null = null
+
+/**
+ * The one kept-open Developer-slot session, opened on first call and reused
+ * afterward for as long as the WASM module lives. Always re-authenticates
+ * (`reloginDevSlotSession`) before handing the handle back, because the last
+ * line of every generated script is a TOKEN-WIDE `s.logout()` — see that
+ * function's doc comment.
+ *
+ * A call with a different module instance than the cached session was opened
+ * on (only reachable if the module is ever swapped without a route unmount)
+ * drops the stale entry rather than closing a handle on the wrong module, and
+ * opens a fresh session on the module actually passed in.
+ */
+export function ensureDevSlotSession(M: SoftHSMModule, slot: number): number {
+  if (cachedSession && cachedSession.M === M) {
+    reloginDevSlotSession(M, cachedSession.hSession)
+    return cachedSession.hSession
+  }
+  cachedSession = { M, hSession: openDevSlotSession(M, slot) }
+  return cachedSession.hSession
+}
+
+/**
+ * The kept-open session, if one is open — for code that wants to scan the
+ * Developer token but must not create a session of its own (HsmKeyTable's
+ * "Discover Objects", which is a read, not a provisioning step). Returns the
+ * module the handle is valid in alongside it: a session handle is meaningless
+ * in any other module instance.
+ */
+export function getDevSlotSession(): { M: SoftHSMModule; hSession: number } | null {
+  return cachedSession
+}
+
+/**
+ * Route-teardown hook — closes the kept-open session and forgets the cached
+ * slot id. Called ONLY from PlaygroundProvider's cleanup, next to
+ * `clearSoftHSMCache()`, because that is where this hub puts whole-module
+ * teardown; never from a panel unmount (see this section's header comment).
+ *
+ * Clearing `cachedSlot` matters as much as closing the session: after
+ * `clearSoftHSMCache()` the next /playground visit in the same SPA session
+ * builds a brand-new WASM module whose slots have never been through
+ * `C_InitToken`, so a slot id remembered from the previous module would be
+ * handed out unprovisioned.
+ */
+export function resetDevSlotCache(): void {
+  if (cachedSession) {
+    try {
+      cachedSession.M._C_CloseSession(cachedSession.hSession)
+    } catch {
+      // The module may already be gone — nothing left to report this to.
+    }
+    cachedSession = null
+  }
+  cachedSlot = null
 }

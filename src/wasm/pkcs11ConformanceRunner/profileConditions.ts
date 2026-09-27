@@ -1089,6 +1089,65 @@ const hkdfTlsProbes = (): Omit<ConditionProbe, 'profile'>[] => [
   },
 ]
 
+/**
+ * Baseline lifecycle — §5.1 conditions 5.d (C_Initialize) / 5.e (C_Finalize).
+ * Real functional probes, deliberately run dead last by
+ * runProfileConditionProbes (they tear down the module every other probe
+ * depends on), so they live outside baselineProbes().
+ */
+const baselineLifecycleProbes = (): Omit<ConditionProbe, 'profile'>[] => [
+  {
+    id: 'bl-fn-finalize',
+    category: 'function',
+    name: 'C_Finalize',
+    citation: 'Profiles v3.2 §5.1 condition 5.e',
+    run: ({ M, hSession }) => {
+      checkRV(M._C_Finalize(0), 'C_Finalize')
+      // Prove it had a real effect, not just a vacuous CKR_OK: the
+      // session this whole probe run has been using must now be dead.
+      const rv = M._C_CloseSession(hSession) >>> 0
+      if (rv === 0)
+        throw new Error(
+          'C_CloseSession on the pre-finalize session handle still returned CKR_OK — C_Finalize did not actually tear the module down'
+        )
+      return `C_Finalize → OK; the prior session (rv=0x${rv.toString(16)} on re-close) is genuinely gone`
+    },
+  },
+  {
+    id: 'bl-fn-initialize',
+    category: 'function',
+    name: 'C_Initialize',
+    citation: 'Profiles v3.2 §5.1 condition 5.d',
+    run: ({ M }) => {
+      checkRV(M._C_Initialize(0), 'C_Initialize')
+      // Prove the module is genuinely alive again, not just that the RV
+      // happened to be OK — same requireOutputWritten discipline every
+      // other function probe in this file uses.
+      return requireOutputWritten(M, 'C_GetInfo', (ptr) => M._C_GetInfo(ptr), 80)
+    },
+  },
+]
+
+/**
+ * Live condition probes per profile group, counted from the probe definitions
+ * themselves — what the conformance UI shows, so no count is hand-written.
+ * Complete Provider has no live probe: its one row is derived from the
+ * others' results (see runProfileConditionProbes). A function, not a
+ * top-level constant, for the same top-level-await reason as
+ * mechanismCoverageProbes.ts's mechanismProbes(): the probe literals must
+ * not be built while this module's softhsm import is still unresolved.
+ */
+export const profileConditionProbeCounts = (): Record<
+  Exclude<ProfileClaim, 'complete'>,
+  number
+> => ({
+  baseline: baselineProbes().length + baselineLifecycleProbes().length,
+  extended: extendedProbes().length,
+  authentication: authProbes().length,
+  certificates: certProbes().length,
+  hkdf_tls: hkdfTlsProbes().length,
+})
+
 // ── Orchestrator ─────────────────────────────────────────────────────────
 
 /**
@@ -1175,42 +1234,7 @@ export const runProfileConditionProbes = (
   // idempotent-safe to call again on top of that.
   let lifecycleProbed = false
   if (claims.has('baseline')) {
-    run(
-      {
-        id: 'bl-fn-finalize',
-        category: 'function',
-        name: 'C_Finalize',
-        citation: 'Profiles v3.2 §5.1 condition 5.e',
-        run: () => {
-          checkRV(M._C_Finalize(0), 'C_Finalize')
-          // Prove it had a real effect, not just a vacuous CKR_OK: the
-          // session this whole probe run has been using must now be dead.
-          const rv = M._C_CloseSession(hSession) >>> 0
-          if (rv === 0)
-            throw new Error(
-              'C_CloseSession on the pre-finalize session handle still returned CKR_OK — C_Finalize did not actually tear the module down'
-            )
-          return `C_Finalize → OK; the prior session (rv=0x${rv.toString(16)} on re-close) is genuinely gone`
-        },
-      },
-      'baseline'
-    )
-    run(
-      {
-        id: 'bl-fn-initialize',
-        category: 'function',
-        name: 'C_Initialize',
-        citation: 'Profiles v3.2 §5.1 condition 5.d',
-        run: () => {
-          checkRV(M._C_Initialize(0), 'C_Initialize')
-          // Prove the module is genuinely alive again, not just that the RV
-          // happened to be OK — same requireOutputWritten discipline every
-          // other function probe in this file uses.
-          return requireOutputWritten(M, 'C_GetInfo', (ptr) => M._C_GetInfo(ptr), 80)
-        },
-      },
-      'baseline'
-    )
+    for (const p of baselineLifecycleProbes()) run(p, 'baseline')
     lifecycleProbed = true
   }
 

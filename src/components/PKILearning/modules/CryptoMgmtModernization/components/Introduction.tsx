@@ -493,8 +493,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-status-warning mb-1">5. Assurance (FIPS)</div>
               <p className="text-[11px] text-muted-foreground">
-                Audit, attestation, CMVP validation tracking for libraries &amp; HSMs, ACVP
-                re-certification, IG-delta compliance.
+                Audit, attestation, CMVP validation tracking for libraries &amp; HSMs, CAVP
+                algorithm re-validation, IG-delta compliance.
               </p>
             </div>
           </div>
@@ -723,7 +723,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <p className="text-xs text-muted-foreground">
               <strong>CLM quarterly review:</strong> shadow-cert count trend, % certs auto-renewed,
               root-CA rotation readiness, 47-day-cadence simulation. <br />
-              <strong>FIPS monthly monitor:</strong> CMVP validation status diff, ACVP re-cert
+              <strong>FIPS monthly monitor:</strong> CMVP validation status diff, CAVP re-validation
               backlog, IG-update applicability check, MIP-queue tracking.
             </p>
           </div>
@@ -998,9 +998,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                     (separate from the OS package manager&apos;s OpenSSL).
                   </li>
                   <li>
-                    <strong>ACVP client + NIST demo server</strong> — run NIST&apos;s ACVP demo
-                    endpoint for algorithm self-test before and after any library or HSM firmware
-                    change. Produces evidence artifacts for the Assurance pillar.
+                    <strong>ACVP client + NIST ACVTS Demo</strong> — with Demo access from NIST, run
+                    the library&apos;s ACVP client against the ACVTS Demo sandbox before and after
+                    any library or HSM firmware change. Demo results are test evidence for the
+                    Assurance pillar, not a CAVP validation: only ACVTS Prod, used by accredited
+                    labs, creates algorithm certificates.
                   </li>
                   <li>
                     <strong>Certificate scanner</strong> — Keyfactor Discovery, Venafi TLC scanner,

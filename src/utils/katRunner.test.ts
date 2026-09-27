@@ -29,6 +29,8 @@ vi.mock('../wasm/softhsm', () => ({
   // HMAC / Hash
   hsm_importHMACKey: vi.fn(),
   hsm_hmacVerify: vi.fn(),
+  hsm_hmacVerifyGeneral: vi.fn(),
+  hsm_hmacGeneral: vi.fn(),
   hsm_digest: vi.fn(),
   // ECDSA
   hsm_importECPublicKey: vi.fn(),
@@ -43,6 +45,7 @@ vi.mock('../wasm/softhsm', () => ({
   // RSA
   hsm_importRSAPublicKey: vi.fn(),
   hsm_rsaVerify: vi.fn(),
+  hsm_rsaVerifyBytes: vi.fn(),
   hsm_generateRSAKeyPair: vi.fn(),
   hsm_rsaSign: vi.fn(),
   // SLH-DSA CKP constants
@@ -63,6 +66,9 @@ vi.mock('../wasm/softhsm', () => ({
   CKM_SHA256_HMAC: 0x251,
   CKM_SHA384_HMAC: 0x261,
   CKM_SHA512_HMAC: 0x271,
+  CKM_SHA256_HMAC_GENERAL: 0x252,
+  CKM_SHA384_HMAC_GENERAL: 0x262,
+  CKM_SHA512_HMAC_GENERAL: 0x272,
   CKM_ECDSA_SHA256: 0x1044,
   CKM_ECDSA_SHA384: 0x1045,
   CKM_SHA256_RSA_PKCS_PSS: 0x43,
@@ -222,22 +228,19 @@ vi.mock('../data/acvp/eddsa_test.json', () => ({
   },
 }))
 
-vi.mock('../data/acvp/rsapss_test.json', () => ({
+vi.mock('../data/acvp/wycheproof_rsa_pss_2048_sha256_mgf1_32_test.json', () => ({
   default: {
     testGroups: [
       {
-        modLen: 2048,
-        hashAlg: 'SHA-256',
-        sigType: 'pss',
-        saltLen: 32,
+        keySize: 2048,
+        sha: 'SHA-256',
+        mgf: 'MGF1',
+        mgfSha: 'SHA-256',
+        sLen: 32,
+        publicKey: { modulus: '00aabb', publicExponent: '010001' },
         tests: [
-          {
-            n: 'aabb',
-            e: 'cc',
-            msg: 'ACVP RSA-PSS SigVer test vector',
-            signature: 'dd',
-            testPassed: true,
-          },
+          { tcId: 1, comment: 'valid signature', msg: '', sig: 'dd', result: 'valid' },
+          { tcId: 2, comment: 'modified signature', msg: '00', sig: 'ee', result: 'invalid' },
         ],
       },
     ],
@@ -251,7 +254,7 @@ vi.mock('./dataInputUtils', () => ({
 
 // ── Module under test (imported after mocks) ──────────────────────────────────
 
-import { runKAT } from './katRunner'
+import { runKAT, requiredMechanisms, summarizeKatResults } from './katRunner'
 import type { KatTestSpec } from './katRunner'
 import * as softhsm from '../wasm/softhsm'
 
@@ -320,6 +323,7 @@ describe('runKAT', () => {
     // HMAC / Hash
     vi.mocked(softhsm.hsm_importHMACKey).mockReturnValue(12)
     vi.mocked(softhsm.hsm_hmacVerify).mockReturnValue(true)
+    vi.mocked(softhsm.hsm_hmacVerifyGeneral).mockReturnValue(true)
     vi.mocked(softhsm.hsm_digest).mockReturnValue(new Uint8Array(1)) // matches hexToBytes('00')
 
     // ECDSA
@@ -620,12 +624,12 @@ describe('runKAT', () => {
   // ── aesgcm-decrypt ──────────────────────────────────────────────────────────
 
   describe('aesgcm-decrypt', () => {
-    it('returns pass when decrypted plaintext matches ACVP vector', async () => {
+    it('returns pass when decrypted plaintext matches the published GCM example', async () => {
       // hexToBytes('00') → Uint8Array(1) = [0]; aesDecrypt returns Uint8Array(1) = [0] → match
       vi.mocked(softhsm.hsm_aesDecrypt).mockReturnValue(new Uint8Array(1))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aesgcm-decrypt' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('plaintext matches expected value')
+      expect(result.details).toContain("plaintext matches NIST's expected value")
     })
 
     it('returns fail when decrypted plaintext does not match', async () => {
@@ -676,6 +680,14 @@ describe('runKAT', () => {
       expect(result.details).toContain('AES-CBC decrypt crash')
     })
 
+    // 2026-09-24: the NIST ACVP-AES-CBC sample is unpadded; 'cbc' (CKM_AES_CBC_PAD)
+    // made both engines reject it. The runner must ask for raw CKM_AES_CBC.
+    it("decrypts with raw CKM_AES_CBC ('cbc-raw'), not CBC_PAD", async () => {
+      vi.mocked(softhsm.hsm_aesDecrypt).mockReturnValue(new Uint8Array(1))
+      await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aescbc-decrypt' }))
+      expect(vi.mocked(softhsm.hsm_aesDecrypt).mock.lastCall?.[5]).toBe('cbc-raw')
+    })
+
     it('sets algorithm to AES-256-CBC', async () => {
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aescbc-decrypt' }))
       expect(result.algorithm).toBe('AES-256-CBC')
@@ -692,7 +704,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_aesCtrDecrypt).mockReturnValue(new Uint8Array(1))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aesctr-roundtrip' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('plaintext matches original')
+      expect(result.details).toContain('decrypted back to the original')
     })
 
     it('returns fail when ciphertext does not match expected', async () => {
@@ -729,12 +741,12 @@ describe('runKAT', () => {
   // ── aeskw-wrap ──────────────────────────────────────────────────────────────
 
   describe('aeskw-wrap', () => {
-    it('returns pass when wrapped output matches ACVP vector', async () => {
+    it('returns pass when wrapped output matches the RFC 3394 example', async () => {
       // hexToBytes('0000') → Uint8Array(2) = [0,0]; aesWrapKey returns Uint8Array(2) = [0,0] → match
       vi.mocked(softhsm.hsm_aesWrapKey).mockReturnValue(new Uint8Array(2))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aeskw-wrap' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('ciphertext matches ACVP expected value')
+      expect(result.details).toContain("output matches the RFC's expected value")
     })
 
     it('returns fail when wrapped output does not match', async () => {
@@ -813,25 +825,39 @@ describe('runKAT', () => {
 
   describe('hmac-verify', () => {
     it('returns pass when HMAC-SHA-256 verifies', async () => {
-      vi.mocked(softhsm.hsm_hmacVerify).mockReturnValue(true)
+      vi.mocked(softhsm.hsm_hmacVerifyGeneral).mockReturnValue(true)
       const result = await runKAT(
         FAKE_MODULE,
         FAKE_SESSION,
         spec({ type: 'hmac-verify', hashAlg: 'SHA-256' })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('matches ACVP expected value')
+      expect(result.details).toContain("accepts the ACVP sample's truncated MAC")
+    })
+
+    // 2026-09-24: the NIST ACVP-HMAC samples carry a truncated MAC, which only
+    // the _GENERAL mechanism can verify. The plain CKM_SHA*_HMAC path failed on
+    // both engines; this pins the mechanism the runner hands to the engine.
+    it.each([
+      ['SHA-256', 0x252],
+      ['SHA-384', 0x262],
+      ['SHA-512', 0x272],
+    ] as const)('verifies %s with the truncating _GENERAL mechanism', async (hashAlg, mech) => {
+      vi.mocked(softhsm.hsm_hmacVerifyGeneral).mockReturnValue(true)
+      await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'hmac-verify', hashAlg }))
+      expect(vi.mocked(softhsm.hsm_hmacVerifyGeneral).mock.lastCall?.[5]).toBe(mech)
+      expect(softhsm.hsm_hmacVerify).not.toHaveBeenCalled()
     })
 
     it('returns fail when HMAC verification fails', async () => {
-      vi.mocked(softhsm.hsm_hmacVerify).mockReturnValue(false)
+      vi.mocked(softhsm.hsm_hmacVerifyGeneral).mockReturnValue(false)
       const result = await runKAT(
         FAKE_MODULE,
         FAKE_SESSION,
         spec({ type: 'hmac-verify', hashAlg: 'SHA-256' })
       )
       expect(result.status).toBe('fail')
-      expect(result.details).toContain('verification failed')
+      expect(result.details).toContain('verification rejected')
     })
 
     it('returns error when hsm_importHMACKey throws', async () => {
@@ -919,7 +945,7 @@ describe('runKAT', () => {
         spec({ type: 'ecdsa-sigver', curve: 'P-256' })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('verified ACVP reference signature')
+      expect(result.details).toContain('verified its published signature')
     })
 
     it('returns fail when P-256 signature verification fails', async () => {
@@ -972,7 +998,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_eddsaVerify).mockReturnValue(true)
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'eddsa-sigver' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('verified ACVP reference Ed25519 signature')
+      expect(result.details).toContain('verified its published Ed25519 signature')
     })
 
     it('returns fail when Ed25519 signature verification fails', async () => {
@@ -1000,18 +1026,43 @@ describe('runKAT', () => {
   // ── rsapss-sigver ───────────────────────────────────────────────────────────
 
   describe('rsapss-sigver', () => {
-    it('returns pass when RSA-PSS signature verifies', async () => {
-      vi.mocked(softhsm.hsm_rsaVerify).mockReturnValue(true)
+    it('returns pass when the Wycheproof valid case verifies', async () => {
+      vi.mocked(softhsm.hsm_rsaVerifyBytes).mockReturnValue(true)
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'rsapss-sigver' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('verified ACVP reference RSA-PSS signature')
+      expect(result.details).toContain('verified the Wycheproof rsa_pss_2048_sha256_mgf1_32 tc1')
     })
 
-    it('returns fail when RSA-PSS signature verification fails', async () => {
-      vi.mocked(softhsm.hsm_rsaVerify).mockReturnValue(false)
+    it('returns fail when the Wycheproof valid case does not verify', async () => {
+      vi.mocked(softhsm.hsm_rsaVerifyBytes).mockReturnValue(false)
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'rsapss-sigver' }))
       expect(result.status).toBe('fail')
       expect(result.details).toContain('verification failed')
+    })
+
+    it('passes an invalid case only when verification refuses it', async () => {
+      vi.mocked(softhsm.hsm_rsaVerifyBytes).mockReturnValue(false)
+      const refused = await runKAT(
+        FAKE_MODULE,
+        FAKE_SESSION,
+        spec({ type: 'rsapss-sigver', testIndex: 1 })
+      )
+      expect(refused.status).toBe('pass')
+      vi.mocked(softhsm.hsm_rsaVerifyBytes).mockReturnValue(true)
+      const accepted = await runKAT(
+        FAKE_MODULE,
+        FAKE_SESSION,
+        spec({ type: 'rsapss-sigver', testIndex: 1 })
+      )
+      expect(accepted.status).toBe('fail')
+      expect(accepted.details).toContain('VERIFIED a signature Wycheproof marks invalid')
+    })
+
+    it('drops the ASN.1 sign byte from the Wycheproof modulus', async () => {
+      vi.mocked(softhsm.hsm_rsaVerifyBytes).mockReturnValue(true)
+      await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'rsapss-sigver' }))
+      const n = vi.mocked(softhsm.hsm_importRSAPublicKey).mock.calls.at(-1)![2] as Uint8Array
+      expect(n.length).toBe(2) // '00aabb' -> 'aabb'
     })
 
     it('returns error when hsm_importRSAPublicKey throws', async () => {
@@ -1237,5 +1288,50 @@ describe('runKAT', () => {
       expect(result.id).toBe('err-id')
       expect(result.useCase).toBe('Err case')
     })
+  })
+})
+
+// ── not-tested (skip) status ──────────────────────────────────────────────────
+
+describe("runKAT 'skip' — not tested when the engine does not advertise a needed mechanism", () => {
+  it('skips a kind whose registered case needs a mechanism missing from C_GetMechanismList', async () => {
+    // aes-kwp-wrap drives CKM_AES_KEY_WRAP_KWP (0x210b); advertise something else only.
+    const r = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aes-kwp-wrap' }), {
+      advertised: new Set([0x250]),
+    })
+    expect(r.status).toBe('skip')
+    expect(r.details).toMatch(/^Not tested — this engine does not advertise CKM_AES_KEY_WRAP_KWP/)
+  })
+
+  it('runs normally when every needed mechanism is advertised, or when no list is given', async () => {
+    const needed = requiredMechanisms({ type: 'hmac-verify', hashAlg: 'SHA-256' })
+    expect(needed).toEqual([0x252]) // CKM_SHA256_HMAC_GENERAL
+    vi.mocked(softhsm.hsm_hmacVerifyGeneral).mockReturnValue(true)
+    const withList = await runKAT(
+      FAKE_MODULE,
+      FAKE_SESSION,
+      spec({ type: 'hmac-verify', hashAlg: 'SHA-256' }),
+      { advertised: new Set(needed) }
+    )
+    expect(withList.status).toBe('pass')
+    const emptyList = await runKAT(
+      FAKE_MODULE,
+      FAKE_SESSION,
+      spec({ type: 'hmac-verify', hashAlg: 'SHA-256' }),
+      { advertised: new Set() }
+    )
+    expect(emptyList.status).toBe('pass') // empty = probe failed → no pre-skip
+  })
+
+  it('summarizeKatResults keeps skip as its own bucket', () => {
+    expect(
+      summarizeKatResults([
+        { status: 'pass' },
+        { status: 'skip' },
+        { status: 'fail' },
+        { status: 'error' },
+        { status: 'skip' },
+      ])
+    ).toEqual({ pass: 1, fail: 1, error: 1, skip: 2, total: 5 })
   })
 })

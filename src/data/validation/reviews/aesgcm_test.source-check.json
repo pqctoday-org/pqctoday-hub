@@ -1,0 +1,27 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:aesgcm_test",
+  "subjectSha256": "f20c03402cb7fd5c1bb89a3f27d76f5271c6c0c59bbc91754f4619203e983c74",
+  "fileSha256": "65b6dae9f893569ec95bae00dca47c97c69fdf71e987271b4e202408931b8d74",
+  "result": "match",
+  "tool": "scripts/acvp/build_gcm_cavp_kat.py",
+  "command": "python3 scripts/acvp/build_gcm_cavp_kat.py --check",
+  "upstream": {
+    "repository": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/mac/gcmtestvectors.zip",
+    "revision": "f9fc479e134cde2980b3bb7cddbcb567b2cd96fd753835243ed067699f26a023",
+    "files": [
+      {
+        "path": "NIST CAVP gcmtestvectors.zip",
+        "sha256": "f9fc479e134cde2980b3bb7cddbcb567b2cd96fd753835243ed067699f26a023"
+      },
+      {
+        "path": "gcmDecrypt256.rsp (member of gcmtestvectors.zip)",
+        "sha256": "ed318735a517d5a85c82d2846c23dcf56e57a352fb0f0a163d9e7617a7bd12ad"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 3
+  },
+  "checkedAt": "2026-09-27"
+}

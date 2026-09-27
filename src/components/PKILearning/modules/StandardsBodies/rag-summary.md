@@ -51,7 +51,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 ### Certification Bodies
 
-**CMVP** — Joint NIST/CSE (Canada) program. Validates cryptographic module implementations against FIPS 140-3. Required for US federal procurement under FISMA. Validation time varies by module and queue (the public Modules in Process list shows each submission's status; a queue position is not evidence of the outcome). CAVP, tested through ACVP, handles individual algorithm testing (FIPS 203/204/205 test vectors); an algorithm certificate is not a module certificate.
+**CMVP** — Joint NIST/CSE (Canada) program. Validates cryptographic module implementations against FIPS 140-3. Required for US federal procurement under FISMA. Validation time varies by module and queue (the public Modules in Process list shows each submission's status; a queue position is not evidence of the outcome). The CAVP validates the individual algorithm implementations (FIPS 203/204/205); that testing runs through NIST's ACVTS over the ACVP protocol. An algorithm certificate is not a module certificate.
 
 **ENISA** — EU Agency for Cybersecurity. Manages EUCC (EU Cybersecurity Certification Scheme — the EU adaptation of Common Criteria). Issues certificates valid across all EU member states. Maintains the Agreed Cryptographic Mechanisms (ACM) list specifying approved PQC algorithms.
 
@@ -67,7 +67,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 **EU Government IT Procurement Chain**: ISO/IEC 14888-4:2024 (ISO/IEC JTC 1/SC 27) → CC evaluation (CCRA/BSI/ANSSI) → NIS2 compliance (European Commission)
 
-**US Cloud Services Chain**: NIST IR 8547 (NIST) → ACVP algorithm validation (NIST CAVP) → FedRAMP PQC requirement (GSA/CISA)
+**US Cloud Services Chain**: NIST IR 8547 (NIST) → CAVP algorithm validation (tested via ACVP) → FedRAMP PQC requirement (GSA/CISA)
 
 ---
 
@@ -76,7 +76,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 | Region       | Standards                 | Certification              | Compliance                          | Regulatory                   |
 | ------------ | ------------------------- | -------------------------- | ----------------------------------- | ---------------------------- |
 | Global       | ISO/IEC JTC 1/SC 27, IETF | CCRA (31 nations)          | No global binding framework         | ITU-T (recommendations only) |
-| US           | NIST                      | CMVP, ACVP, NIAP           | FIPS 140-3, CNSA 2.0, FedRAMP, CMMC | NSA, CISA                    |
+| US           | NIST                      | CMVP, CAVP, NIAP           | FIPS 140-3, CNSA 2.0, FedRAMP, CMMC | NSA, CISA                    |
 | EU           | ETSI TC CYBER             | ENISA (EUCC), national CAs | NIS2, eIDAS 2.0, DORA, CRA          | EC, ENISA                    |
 | UK           | BSI (British Standards)   | NCSC (CAPS)                | UK PQC Roadmap (3 phases)           | NCSC, DSIT                   |
 | Asia-Pacific | KISA/KpqC, AIST, CAS      | OSCCA/NGCC, NISC           | KpqC adoption (2029), SM mandate    | KISA, OSCCA, NISC, MAS       |
@@ -108,7 +108,7 @@ Each framework's `enforcement_body` column maps to organizations in this module:
 
 ### Procurement Pipeline
 
-NIST FIPS 203 → ACVP test vectors → CMVP module certificate → CNSA 2.0 mandate → federal procurement. Note: the CMVP backlog is a critical-path dependency; a module certificate states one overall security level and lists its approved algorithms — it does not assign a level to each algorithm.
+NIST FIPS 203 → CAVP algorithm validation (via ACVP) → CMVP module certificate → CNSA 2.0 mandate → federal procurement. Note: the CMVP backlog is a critical-path dependency; a module certificate states one overall security level and lists its approved algorithms — it does not assign a level to each algorithm.
 
 ---
 

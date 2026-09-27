@@ -70,6 +70,10 @@ describe('KeyDetails Component', () => {
 
     fireEvent.click(rawCopyBtn)
 
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('01020304')
+    // The status notice travels with copied key material (2026-09-26): once
+    // these bytes are on a clipboard they look exactly like a real key.
+    const copied = vi.mocked(navigator.clipboard.writeText).mock.calls[0][0]
+    expect(copied).toContain('01020304')
+    expect(copied).toContain('# PQC Today is an educational and demonstration platform')
   })
 })

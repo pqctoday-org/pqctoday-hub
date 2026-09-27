@@ -15,10 +15,10 @@
  * That is a user-visible hole the gate is specifically supposed to catch.
  */
 import { describe, expect, it } from 'vitest'
-import { mkdtempSync, readdirSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { audit } from './audit-migration-phases'
+import { audit, findLatestCatalogCsv } from './audit-migration-phases'
 
 const HEADER = 'product_id,software_name,migration_phases,status\n'
 const ALL_STEPS = 'assess,plan,preparation,test,migrate,launch,rampup'
@@ -90,12 +90,34 @@ describe('audit-migration-phases: deprecated rows are not users', () => {
 })
 
 describe('audit-migration-phases: live catalog', () => {
-  it('is clean — 0 active products untagged as of 2026-07-29', () => {
-    const dataDir = join(import.meta.dirname, '..', 'src', 'data')
-    const latest = readdirSync(dataDir)
-      .filter((n) => /^pqc_product_catalog_\d{8}(?:_r\d+)?\.csv$/.test(n))
-      .sort()
-      .pop()!
-    expect(audit(join(dataDir, latest))).toEqual([])
+  // FIXED 2026-09-25. This asserted `audit(latest)` returned NO findings at all
+  // — warnings included. That contradicts the audit's own documented severity
+  // contract: `main()` exits 0 on warnings, and EMPTY_RATIO_BASELINE is
+  // deliberately 2% rather than 0 precisely because add_row.py cannot classify
+  // migration_phases for a new product, so "newly-added rows legitimately
+  // arrive untagged and would turn every catalog addition into a CI failure".
+  // A test that fails on a warning re-imposes the 0% the script rejected: it
+  // went red the moment the catalog grew (18/922 untagged, 2.0% — at, not past,
+  // the baseline) and has been red ever since, which is how it stopped being
+  // read.
+  //
+  // What the gate is for is the 2026-07-29 defect class, and both of its rules
+  // are `severity: 'error'`: empty-ratio PAST baseline, and a step counted
+  // reachable via a deprecated product alone. Asserting zero ERRORS pins
+  // exactly that, matches the script's exit code, and still fails on real rot.
+  // The two live warnings are named below so they cannot hide.
+  const findings = audit(findLatestCatalogCsv(join(import.meta.dirname, '..', 'src', 'data')))
+
+  it('has no error-severity findings', () => {
+    expect(findings.filter((f) => f.severity === 'error')).toEqual([])
+  })
+
+  it('the untagged-product ratio is still inside the recorded baseline', () => {
+    // An empty-ratio finding downgraded to `warn` IS the statement that the
+    // ratio is at or under EMPTY_RATIO_BASELINE — the error branch fires above
+    // it. Asserting the severity therefore pins the number without pinning a
+    // count that every catalog addition moves.
+    const empty = findings.filter((f) => f.rule === 'empty-ratio')
+    expect(empty.every((f) => f.severity === 'warn')).toBe(true)
   })
 })

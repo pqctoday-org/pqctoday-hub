@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pqctoday.com/schemas/validation/execution-environment.v1.schema.json",
+  "title": "PQC Today ExecutionEnvironment record (execution-environment.json)",
+  "$comment": "Plan WS-H H-1. One record per (target, engine artifact, fixture bundle) run. Hash-addressed: envId is the SHA-256 of the canonical JSON (keys sorted, no whitespace, non-ASCII \\uXXXX-escaped == Python json.dumps(o, sort_keys=True, separators=(',', ':'))) of the record WITHOUT the envId key. The schema only fixes the SHAPE: identity fields are nullable so a runner can always write an honest record. Whether a run is PUBLISHABLE is decided by validateExecutionEnvironment() in executionEnvironment.ts (IDENTITY_REQUIREMENTS): any required identity field that is null/unknown makes the run non-publishable. Kept inside the src/services/acvp/schemaValidator.ts keyword subset (CSP-safe, no ajv at runtime).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "envVersion",
+    "envId",
+    "recordedAt",
+    "target",
+    "os",
+    "arch",
+    "cpu",
+    "emulation",
+    "engine",
+    "build",
+    "dependencies",
+    "acceleration",
+    "entropy",
+    "runner",
+    "fixtureBundle",
+    "notes"
+  ],
+  "properties": {
+    "envVersion": { "const": "pqctoday.execution-environment/1" },
+    "envId": { "$ref": "#/$defs/sha256" },
+    "recordedAt": { "$ref": "#/$defs/timestamp" },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "class"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "class": { "enum": ["wasm", "native", "board"] }
+      }
+    },
+    "os": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "kernel", "image"],
+      "properties": {
+        "name": { "$ref": "#/$defs/nstr" },
+        "version": { "$ref": "#/$defs/nstr" },
+        "kernel": { "$ref": "#/$defs/nstr" },
+        "image": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "id"],
+          "properties": {
+            "name": { "$ref": "#/$defs/nstr" },
+            "id": { "$ref": "#/$defs/nstr" }
+          }
+        }
+      }
+    },
+    "arch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["machine", "pointerBits", "endianness"],
+      "properties": {
+        "machine": { "$ref": "#/$defs/nstr" },
+        "pointerBits": { "type": ["integer", "null"] },
+        "endianness": { "enum": ["little", "big", null] }
+      }
+    },
+    "cpu": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "board", "features"],
+      "properties": {
+        "model": { "$ref": "#/$defs/nstr" },
+        "board": { "$ref": "#/$defs/nstr" },
+        "features": { "$ref": "#/$defs/nstr" }
+      }
+    },
+    "emulation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["emulated", "mechanism", "hostMachine", "detection"],
+      "properties": {
+        "emulated": { "type": ["boolean", "null"] },
+        "mechanism": { "$ref": "#/$defs/nstr" },
+        "hostMachine": { "$ref": "#/$defs/nstr" },
+        "detection": { "type": "string" }
+      }
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "implementation",
+        "artifactKind",
+        "artifactPath",
+        "artifactSha256",
+        "sourceRepository",
+        "sourceCommit",
+        "sourceCommitEvidence",
+        "builtAt"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "implementation": { "type": "string" },
+        "artifactKind": { "enum": ["shared-library", "wasm"] },
+        "artifactPath": { "$ref": "#/$defs/nstr" },
+        "artifactSha256": { "$ref": "#/$defs/nsha256" },
+        "sourceRepository": { "$ref": "#/$defs/nstr" },
+        "sourceCommit": { "$ref": "#/$defs/nstr" },
+        "sourceCommitEvidence": { "type": "string" },
+        "builtAt": { "$ref": "#/$defs/nstr" }
+      }
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["buildSystem", "compiler", "flags", "profile", "features", "location"],
+      "properties": {
+        "buildSystem": { "$ref": "#/$defs/nstr" },
+        "compiler": { "$ref": "#/$defs/nstr" },
+        "flags": { "$ref": "#/$defs/nstr" },
+        "profile": { "$ref": "#/$defs/nstr" },
+        "features": { "$ref": "#/$defs/nstr" },
+        "location": { "$ref": "#/$defs/nstr" }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["openssl", "cryptoBackend", "runtime"],
+      "properties": {
+        "openssl": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["linked", "version", "source"],
+          "properties": {
+            "linked": { "type": ["boolean", "null"] },
+            "version": { "$ref": "#/$defs/nstr" },
+            "source": { "type": "string" }
+          }
+        },
+        "cryptoBackend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "version"],
+          "properties": {
+            "name": { "$ref": "#/$defs/nstr" },
+            "version": { "$ref": "#/$defs/nstr" }
+          }
+        },
+        "runtime": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "version"],
+            "properties": {
+              "name": { "type": "string" },
+              "version": { "$ref": "#/$defs/nstr" }
+            }
+          }
+        }
+      }
+    },
+    "acceleration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "detail"],
+      "properties": {
+        "state": { "enum": ["none", "enabled", "unknown"] },
+        "detail": { "type": "string" }
+      }
+    },
+    "entropy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "exercisedByTestedOperations"],
+      "properties": {
+        "source": { "$ref": "#/$defs/nstr" },
+        "exercisedByTestedOperations": { "type": ["boolean", "null"] }
+      }
+    },
+    "runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "language", "languageVersion"],
+      "properties": {
+        "name": { "$ref": "#/$defs/nstr" },
+        "version": { "$ref": "#/$defs/nstr" },
+        "language": { "$ref": "#/$defs/nstr" },
+        "languageVersion": { "$ref": "#/$defs/nstr" }
+      }
+    },
+    "fixtureBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifestSha256", "schemaId", "vsId"],
+      "properties": {
+        "manifestSha256": { "$ref": "#/$defs/nsha256" },
+        "schemaId": { "type": "string" },
+        "vsId": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "nstr": { "type": ["string", "null"] },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "nsha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    }
+  }
+}

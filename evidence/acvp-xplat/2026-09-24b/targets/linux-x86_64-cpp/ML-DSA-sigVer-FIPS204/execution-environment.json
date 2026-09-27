@@ -1,0 +1,97 @@
+{
+  "envVersion": "pqctoday.execution-environment/1",
+  "recordedAt": "2026-09-25T03:39:41.853Z",
+  "target": {
+    "id": "linux-x86_64-cpp",
+    "label": "Native Linux x86-64 (emulated) — C++ engine",
+    "class": "native"
+  },
+  "os": {
+    "name": "Ubuntu 24.04.4 LTS",
+    "version": "24.04",
+    "kernel": "Linux 7.0.14-orbstack-00380-ga7e0a2dc9535",
+    "image": {
+      "name": "pqc-dev-sandbox:latest",
+      "id": "sha256:cce738cdaddf38eb15661a5f9d9b91ea7c95f3d7ade7a777273fdbc25eea125f"
+    }
+  },
+  "arch": {
+    "machine": "x86_64",
+    "pointerBits": 64,
+    "endianness": "little"
+  },
+  "cpu": {
+    "model": "VirtualApple @ 2.50GHz",
+    "board": null,
+    "features": "fpu tsc de cx8 apic sep cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx lm rep_good nopl pni cpuid pclmulqdq ssse3 cx16 sse4_1 popcnt sse4_2 aes lahf_lm movbe fma f16c rdrand bmi1 bmi2"
+  },
+  "emulation": {
+    "emulated": true,
+    "mechanism": "Rosetta 2 x86-64 binary translation (OrbStack linux/amd64 container on Apple silicon)",
+    "hostMachine": "arm64 (Apple M5 Max, macOS 26.6.2, OrbStack; amd64 via Rosetta 2)",
+    "detection": "/proc/self/maps rosetta mapping: present; cpuinfo vendor_id: VirtualApple"
+  },
+  "engine": {
+    "id": "cpp",
+    "implementation": "pqctoday-hsm softhsmv3 C++ (OpenSSL 3.6 backend), native shared library from the pqctoday-sandbox dev-sandbox image",
+    "artifactKind": "shared-library",
+    "artifactPath": "/usr/local/lib/softhsm/libsofthsmv3.so",
+    "artifactSha256": "c613dc02507fd26d2ce4095990f8dbe51f41b851266205b2b5862baacd8e9b18",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": null,
+    "sourceCommitEvidence": "UNKNOWN — not publishable. The artifact comes from the existing image pqc-dev-sandbox:latest sha256:cce738cdaddf38eb15661a5f9d9b91ea7c95f3d7ade7a777273fdbc25eea125f (created 2026-09-17T20:25-05:00; .so mtime 2026-09-18T00:43Z), built by pqctoday-sandbox docker/Dockerfile.dev-sandbox (hsm-builder stage) with `COPY pqctoday-hsm` from a sibling WORKING TREE: the image carries no .git, and neither the commit nor the tree's dirty state was recorded. It was run as found (no rebuild: amd64 builds are outside the permitted pqc-rust build path) to exercise the x86-64 ABI, and is recorded honestly as unattributable.",
+    "builtAt": "2026-09-18T00:43Z (file mtime inside the image)"
+  },
+  "build": {
+    "buildSystem": "CMake (Dockerfile.dev-sandbox hsm-builder stage)",
+    "compiler": "GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 (ELF .comment)",
+    "flags": "per Dockerfile: -DWITH_CRYPTO_BACKEND=openssl -DBUILD_TESTS=OFF -DENABLE_STATIC=OFF -DOPENSSL_ROOT_DIR=/usr/local/ssl, no CMAKE_BUILD_TYPE (CMake default flags); the source tree's own CMake defaults at build time are unknown",
+    "profile": "CMake default (no build type)",
+    "features": null,
+    "location": "docker build of pqctoday-sandbox dev-sandbox (linux/amd64 under Rosetta 2 on Apple silicon)"
+  },
+  "dependencies": {
+    "openssl": {
+      "linked": true,
+      "version": "OpenSSL 3.6.3 9 Jun 2026",
+      "source": "OpenSSL_version(OPENSSL_VERSION) of /usr/local/ssl/lib64/libcrypto.so.3, the only libcrypto mapped after loading the module"
+    },
+    "cryptoBackend": {
+      "name": "OpenSSL libcrypto (EVP)",
+      "version": "OpenSSL 3.6.3 9 Jun 2026"
+    },
+    "runtime": [
+      {
+        "name": "python",
+        "version": "3.12.3"
+      },
+      {
+        "name": "libc",
+        "version": "glibc 2.39"
+      }
+    ]
+  },
+  "acceleration": {
+    "state": "none",
+    "detail": "no hardware accelerator (no FPGA/NPU/crypto offload); CPU ISA extensions only, as translated by Rosetta 2; OpenSSL CPUINFO: OPENSSL_ia32cap=0x6ed8320f4f8b8f15:0x0000000000000108:0x0000000000000000:0x0000000000000000:0x0000000000000000"
+  },
+  "entropy": {
+    "source": "OpenSSL 3.6.3 default DRBG, seeded from getrandom(2)",
+    "exercisedByTestedOperations": false
+  },
+  "runner": {
+    "name": "pqctoday acvp-native (Python/ctypes)",
+    "version": "2.0.0",
+    "language": "python",
+    "languageVersion": "3.12.3"
+  },
+  "fixtureBundle": {
+    "manifestSha256": "966ec2faeba6d85fe862b3bead4f0aebf47b784cecd472c2e5fb3a30905f444f",
+    "schemaId": "ML-DSA/sigVer/FIPS204",
+    "vsId": 42
+  },
+  "notes": [
+    "C_GetInfo: cryptoki 3.2, manufacturer 'SoftHSM', library 'Implementation of PKCS11' 3.0"
+  ],
+  "envId": "3f53dd9966caa3942f0fc652c1ffedf1136cee12f2b5cfbf62b9c4bbca3ce4bc"
+}

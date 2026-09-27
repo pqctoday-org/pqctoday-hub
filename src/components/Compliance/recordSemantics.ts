@@ -10,6 +10,7 @@
  *    Expired, Withdrawn, and any status string we do not recognise — is NOT
  *    current. An unknown status is never defaulted to Active.
  *  - 'ACVP' is the internal type value for NIST CAVP algorithm validations; it
+ *    claims-lint-allow: negation — this documents the label users must NOT see.
  *    is shown to users as "NIST CAVP", never "ACVP certificate".
  *  - 'CSPN' is ANSSI's French national first-level scheme — separate from
  *    Common Criteria, never counted as CC.

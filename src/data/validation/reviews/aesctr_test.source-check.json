@@ -1,0 +1,23 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:aesctr_test",
+  "subjectSha256": "faa68ff5eac18f22965b776a197cf953fa315e8359eb188593d46cdbd6205f93",
+  "fileSha256": "b44589b191232c39c04b8fa7f8d4f982896ff0b95f4a7e04c38c3ee0df6b0616",
+  "result": "match",
+  "tool": "scripts/acvp/check_sp800_38a_ctr.py",
+  "command": "python3 scripts/acvp/check_sp800_38a_ctr.py --check",
+  "upstream": {
+    "repository": "https://csrc.nist.gov/pubs/sp/800/38/a/final",
+    "revision": "66821162de1e7130c5fb5eedb22140d8d6d013ec51af4550bb095c2a9481a00e",
+    "files": [
+      {
+        "path": "NIST SP 800-38A",
+        "sha256": "66821162de1e7130c5fb5eedb22140d8d6d013ec51af4550bb095c2a9481a00e"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 1
+  },
+  "checkedAt": "2026-09-27"
+}

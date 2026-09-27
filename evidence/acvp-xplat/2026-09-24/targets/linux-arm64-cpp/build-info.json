@@ -1,0 +1,23 @@
+{
+  "engine": {
+    "implementation": "pqctoday-hsm softhsmv3 C++ (OpenSSL 3.6 backend), native shared library libsofthsmv3.so",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": "7795799b91c61097cb6cd28704c0ca1ab114a4c7",
+    "sourceCommitEvidence": "Built from a clean detached worktree created for this run (git -C pqctoday-hsm worktree add --detach pqctoday-hsm-acvp-h-7795799b 7795799b…; git status clean before and after the build, worktree removed afterwards). Gitlink submodules hash-sigs @21294a0f and xmss-reference @171ccbd2 populated with `git archive <gitlink sha>` from the local submodule repos; liboqs not needed (WITH_LIBOQS=OFF). Same commit as the C++ WASM bundle (wasm-provenance.json softhsm-cpp-engine).",
+    "builtAt": "2026-09-25T02:42Z"
+  },
+  "build": {
+    "buildSystem": "CMake 3.31.6, out-of-tree, target softhsmv3",
+    "compiler": "c++ (Debian 14.2.0-19) 14.2.0 (ELF .comment: GCC: (Debian 14.2.0-19) 14.2.0)",
+    "flags": "-DCMAKE_BUILD_TYPE=Release (-O3 -DNDEBUG) -DWITH_CRYPTO_BACKEND=openssl -DBUILD_TESTS=OFF -DENABLE_STATIC=OFF -DWITH_LIBOQS=OFF -DOPENSSL_ROOT_DIR=/usr/local/ssl",
+    "profile": "Release",
+    "features": "WITH_LIBOQS=OFF (Classic McEliece only; matches the WASM build, where Emscripten forces it off)",
+    "location": "pqc-rust container (image rust:1 sha256:c6811167278337db5f3b0234964ced5f538f154a2a20f09ec03721d7411c933d, linux/arm64, OrbStack Linux VM on Apple M5 Max) — native arm64, not emulated; private CARGO_TARGET_DIR / CMake build dir under /tmp/acvp-h-9241, removed after the runs"
+  },
+  "entropy": {
+    "source": "OpenSSL 3.6.3 default DRBG, seeded from getrandom(2)"
+  },
+  "notes": [
+    "OpenSSL: /usr/local/ssl OpenSSL 3.6.3 (built 2026-08-26 in the pqc-rust container, linux-aarch64, -O3); the module's RUNPATH resolves libcrypto.so.3 there."
+  ]
+}

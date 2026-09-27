@@ -32,7 +32,7 @@ const JWT_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'jwt-kem-exchange',
     useCase: 'JWE key agreement (ML-KEM-768)',
-    standard: 'FIPS 203 ACVP',
+    standard: 'FIPS 203',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
   },

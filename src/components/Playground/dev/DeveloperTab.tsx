@@ -4,6 +4,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { PkcsDevWorkbench } from './pipeline/PkcsDevWorkbench'
 import { AcvpSuiteWorkbench } from './pipeline/suites/AcvpSuiteWorkbench'
 import { ConformanceSuiteWorkbench } from './pipeline/suites/ConformanceSuiteWorkbench'
+import { AcvpFormatPrototypePanel } from '../acvpio/AcvpFormatPrototypePanel'
 
 /**
  * Which content set the shared Builder/Code workbench (PkcsDevWorkbench)
@@ -54,7 +55,10 @@ export const DeveloperTab = ({ activeSubTab, onSubTabChange }: DeveloperTabProps
     <Tabs value={activeSubTab} onValueChange={(v) => onSubTabChange(v as TestSuite)}>
       <TabsList>
         <TabsTrigger value="standard">Standard</TabsTrigger>
-        {showWorkbenchTabs && <TabsTrigger value="acvp">ACVP</TabsTrigger>}
+        {/* Tab value stays `acvp` (URL `?dtab=acvp` compatibility); the label
+            names the mixed-evidence suite, not ACVP — most rows are not
+            ACVP-backed (remediation plan WS-A, A-1). */}
+        {showWorkbenchTabs && <TabsTrigger value="acvp">Validation</TabsTrigger>}
         {showWorkbenchTabs && <TabsTrigger value="conformance">Conformance</TabsTrigger>}
       </TabsList>
       <TabsContent value="standard">
@@ -63,6 +67,7 @@ export const DeveloperTab = ({ activeSubTab, onSubTabChange }: DeveloperTabProps
       {showWorkbenchTabs && (
         <TabsContent value="acvp">
           <AcvpSuiteWorkbench />
+          <AcvpFormatPrototypePanel />
         </TabsContent>
       )}
       {showWorkbenchTabs && (

@@ -1,0 +1,17 @@
+[
+  {
+    "file": "src/components/PKILearning/modules/Entropy/workshop/EntropyTestingDemo.tsx",
+    "match": "provide NIST-validated entropy for production use",
+    "reason": "Describes third-party hardware entropy sources/HSMs that hold real NIST ESV/CMVP validations, tracked in the Migrate catalog — not a claim about PQC Today's own engines or tests."
+  },
+  {
+    "file": "src/components/Compliance/recordSemantics.ts",
+    "match": "never \"ACVP certificate\"",
+    "reason": "Negation, not a claim: this comment documents that the internal certType value 'ACVP' is rendered to users as \"NIST CAVP\" and must NEVER be shown as \"ACVP certificate\". Flagging it inverts the sentence's meaning."
+  },
+  {
+    "file": "src/data/recordsGlossary.ts",
+    "match": "ACVP itself issues no certificate",
+    "reason": "Negation, not a claim: the glossary's ACVP entry exists to say ACVP is a protocol that issues nothing and that CAVP issues the certificate — the exact misconception this lint enforces against."
+  }
+]

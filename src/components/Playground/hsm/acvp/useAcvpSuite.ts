@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useRef, useEffect } from 'react'
-import { ShieldCheck, BookMarked, FlaskConical } from 'lucide-react'
 import mlkemTestVectors from '@/data/acvp/mlkem_test.json'
 import mldsaTestVectors from '@/data/acvp/mldsa_test.json'
 import mldsaExtendedTestVectors from '@/data/acvp/mldsa_extended_test.json'
@@ -8,7 +7,6 @@ import aesGcmTestVectors from '@/data/acvp/aesgcm_test.json'
 import hmacTestVectors from '@/data/acvp/hmac_test.json'
 import kmacTestVectors from '@/data/acvp/kmac_test.json'
 import rsaOaepTestVectors from '@/data/acvp/rsa_oaep_test.json'
-import rsaPssTestVectors from '@/data/acvp/rsapss_test.json'
 import ecdsaTestVectors from '@/data/acvp/ecdsa_test.json'
 import sha256TestVectors from '@/data/acvp/sha256_test.json'
 import aesCbcTestVectors from '@/data/acvp/aescbc_test.json'
@@ -21,7 +19,7 @@ import aesKwTestVectors from '@/data/acvp/aeskw_test.json'
 import eddsaTestVectors from '@/data/acvp/eddsa_test.json'
 import eddsaEd448TestVectors from '@/data/acvp/eddsa_ed448_test.json'
 import slhdsaCtxTestVectors from '@/data/acvp/slhdsa_ctx_test.json'
-import pbkdf2TestVectors from '@/data/acvp/pbkdf2_test.json'
+import pbkdf2Rfc7914Vectors from '@/data/acvp/pbkdf2_rfc7914_test.json'
 import sha384TestVectors from '@/data/acvp/sha384_test.json'
 import sha512TestVectors from '@/data/acvp/sha512_test.json'
 import sha3_256TestVectors from '@/data/acvp/sha3_256_test.json'
@@ -30,6 +28,7 @@ import { hexToBytes } from '@/utils/dataInputUtils'
 import {
   hsm_initialize,
   hsm_finalize,
+  Pkcs11Error,
   hsm_getFirstSlot,
   hsm_initToken,
   hsm_openUserSession,
@@ -38,11 +37,8 @@ import {
   hsm_importHMACKey,
   hsm_hmacVerifyGeneral,
   hsm_kmacVerify,
-  hsm_importRSAPublicKey,
   hsm_importRSAPrivateKey,
-  hsm_rsaVerify,
   hsm_rsaDecrypt,
-  CKM_SHA256_RSA_PKCS_PSS,
   hsm_importECPublicKey,
   hsm_ecdsaSign,
   hsm_ecdsaVerify,
@@ -53,7 +49,7 @@ import {
   hsm_importMLDSAPublicKey,
   hsm_verifyBytes,
   hsm_verifyBytesMLDSA,
-  type MLDSAPreHash,
+  mldsaPreHashFromAcvp,
   hsm_generateMLDSAKeyPair,
   hsm_sign,
   hsm_verify,
@@ -144,6 +140,37 @@ import {
 } from '@/wasm/softhsm'
 import type { SoftHSMModule, SLHDSASignOptions } from '@/wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
+import { runMldsaAcvpSection, type AcvpCaseMeta } from './sections/mldsaAcvp'
+import { runMldsaDepthSection } from './sections/mldsaDepth'
+import { runMlkemAcvpSection } from './sections/mlkemAcvp'
+import { runMldsaNegBoundarySection } from './sections/mldsaNegBoundary'
+import { runMlkemKeyCheckDepthSection } from './sections/mlkemKeyCheckDepth'
+import { runSlhdsaCoverageSection } from './sections/slhdsaCoverage'
+import { runSlhdsaPreHashSection } from './sections/slhdsaPreHash'
+import { runSlhdsaAcvpSection } from './sections/slhdsaAcvp'
+import { runAesGcmAcvpSection } from './sections/aesGcmAcvp'
+import { runAesKwAcvpSection } from './sections/aesKwAcvp'
+import {
+  runWycheproofEddsaSection,
+  runWycheproofKeywrapSection,
+  runWycheproofRsaPssSection,
+  runWycheproofXdhSection,
+} from './sections/wycheproofNegative'
+import { runMultiMessageSignSection } from './sections/multiMessageSign'
+import type { MultiPartFamily } from '@/data/validation/multipartTargets'
+import { runAesCbcCtrAcvpSection } from './sections/aesCbcCtrAcvp'
+import { runHmacAcvpSection } from './sections/hmacAcvp'
+import { runShaAcvpSection } from './sections/shaAcvp'
+import { runEcdsaSigVerAcvpSection, runEddsaSigVerAcvpSection } from './sections/ecSigVerAcvp'
+import { runRsaSigVerAcvpSection } from './sections/rsaSigVerAcvp'
+import { runKmacAcvpSection, runPbkdf2AcvpSection } from './sections/kdfMacAcvp'
+import { runHkdfAcvpSection, runKbkdfAcvpSection } from './sections/kdfDeriveAcvp'
+import { runAesCbcMctFullSection, runShaMctFullSection } from './sections/mctFullAcvp'
+import {
+  runEcKeyVerAcvpSection,
+  runEcdsaSigGenAcvpSection,
+  runEddsaSigGenAcvpSection,
+} from './sections/ecKeyVerSigGenAcvp'
 import type { HsmKey } from '../HsmContext'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -151,53 +178,21 @@ import type { HsmKey } from '../HsmContext'
 // verbatim from HsmAcvpTesting.tsx (2026-09-02, design handoff
 // design_handoff_kmip_pkcs11_playground WP-P6c) so the Build tab's suite
 // workbench, the standalone results view and the Pyodide `acvp_native`
-// bridge all drive ONE runner. The ~36 test sections inside `runTests` are
+// bridge all drive ONE runner. The test sections inside `runTests` are
 // untouched — this is a move, not a rewrite; parity with the pre-extraction
 // results is what e2e/acvp-validator.spec.ts's ≥40-row assertion checks.
 // ─────────────────────────────────────────────────────────────────────────────
 
-// WS-8 (2026-08-28) — what kind of evidence backs a test's expected value:
-//  - 'nist-acvp': from a NIST ACVP-Server reference vector
-//  - 'published-standard': from a cited public standard's own KAT (e.g. an
-//    RFC), not NIST ACVP specifically — reserved for a future producer this
-//    file doesn't currently have (every vector today is either nist-acvp or
-//    self-consistency)
-//  - 'self-consistency': computed by an independent oracle (Node crypto /
-//    OpenSSL), not sourced from any published KAT — still a real assertion
-//    (the two engines and the oracle must agree), just a weaker one
-export type EvidenceTier = 'nist-acvp' | 'published-standard' | 'self-consistency'
+// Evidence class of a result row: NOT decided here. The workbench looks the
+// row id up in the generated per-case records (src/data/validation/
+// acvpRowEvidence.ts, built from the reviewed vector manifest + testRegistry),
+// so every row shows the manifest's class, parameters, source and limitations
+// and a row that is not registered shows none. (Until 2026-09-24 this file
+// derived a tier from each vector's `_provenance.producer` string, which
+// disagreed with the manifest for aesgcm_test — WS-I.)
 
 /**
- * Derives the evidence tier from a vector file's own `_provenance.producer`
- * string, rather than each of the ~80 pushResult call sites asserting its
- * own tier by hand — the provenance block is the single source of truth
- * (see D-8/WS-4's "provenance data drives behavior" precedent). Returns
- * undefined for vector files with no `_provenance` block at all (most of
- * the pre-WS-4 test files) — the UI shows no tier badge in that case rather
- * than guessing one.
- */
-const deriveEvidenceTier = (
-  provenance: { producer?: string } | null | undefined
-): EvidenceTier | undefined => {
-  const producer = provenance?.producer
-  if (!producer) return undefined
-  if (producer.startsWith('NIST ACVP-Server')) return 'nist-acvp'
-  if (producer.startsWith('self-generated')) return 'self-consistency'
-  return 'published-standard'
-}
-
-export const EVIDENCE_TIER_META: Record<EvidenceTier, { icon: typeof ShieldCheck; label: string }> =
-  {
-    'nist-acvp': { icon: ShieldCheck, label: 'NIST ACVP reference vector' },
-    'published-standard': { icon: BookMarked, label: "Published standard's own KAT" },
-    'self-consistency': {
-      icon: FlaskConical,
-      label: 'Self-consistency (independent oracle, not a published KAT)',
-    },
-  }
-
-/**
- * The 36 test sections below group into 7 algorithm-family categories, used
+ * The test sections below group into the algorithm-family CATEGORIES, used
  * by the left sidebar to let a user run a subset instead of the full suite.
  * Each section is tagged with its category by setting `currentCategory`
  * (see `pushResult` below) right as its enclosing `if (activeCategories.has(...))`
@@ -207,13 +202,13 @@ export type CategoryId =
   'symmetric' | 'hashing_mac' | 'kdf' | 'classical' | 'ml_dsa' | 'slh_stateful' | 'ml_kem'
 
 export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
-  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 6 },
-  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 5 },
-  { id: 'kdf', label: 'KDF', groups: 5 },
-  { id: 'classical', label: 'Classical Asymmetric', groups: 10 },
-  { id: 'ml_dsa', label: 'ML-DSA', groups: 3 },
-  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 5 },
-  { id: 'ml_kem', label: 'ML-KEM', groups: 2 },
+  { id: 'symmetric', label: 'Symmetric / AEAD', groups: 10 },
+  { id: 'hashing_mac', label: 'Hashing & MAC', groups: 10 },
+  { id: 'kdf', label: 'KDF', groups: 8 },
+  { id: 'classical', label: 'Classical Asymmetric', groups: 17 },
+  { id: 'ml_dsa', label: 'ML-DSA', groups: 9 },
+  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 8 },
+  { id: 'ml_kem', label: 'ML-KEM', groups: 4 },
 ]
 
 export const ALL_CATEGORY_IDS: Set<CategoryId> = new Set(CATEGORIES.map((c) => c.id))
@@ -229,7 +224,9 @@ export interface TestResult {
   // the summary counters below, where it has its own bucket.
   status: 'pass' | 'fail' | 'pending' | 'skip'
   details: string
-  evidenceTier?: EvidenceTier
+  // Exact upstream identity (tgId/tcId, mode, context length, source commit,
+  // origin) for rows that have one — see sections/mldsaAcvp.ts.
+  caseMeta?: AcvpCaseMeta
   category: CategoryId
 }
 
@@ -257,8 +254,46 @@ export function useAcvpSuite() {
     addHsmStepLog,
   } = useHsmContext()
 
-  const addLog = (msg: string) =>
-    setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`])
+  // ── Batched streaming commit ────────────────────────────────────────────
+  //
+  // The live table, progress label and execution log are committed to React
+  // state in BATCHES, not once per result row.
+  //
+  // Why (2026-09-25 browser-crash/slow-run fix): `pushResult` used to call
+  // setResults + setProgress, and `addLog` setLogs, for every single row. Each
+  // of those re-renders the whole workbench — a table with one <tr> per row
+  // (6 cells, two lucide SVGs and a CaseEvidenceBadge each), a category
+  // sidebar that re-filters the whole results array 3× per category, and one
+  // <div> per log line. With the 62-group suite that is ~1100 rows × ~2200
+  // full-table renders: O(n²). Measured in Chromium against the production
+  // build, the full Rust-engine run took 173.8 s while the same categories run
+  // in isolation sum to ~60 s of actual crypto — the rest was re-render, and
+  // it pushed the run past e2e/acvp-validator.spec.ts's 180 s completion wait.
+  // Committing at most every COMMIT_MS makes it O(n × commits); the table
+  // still visibly streams (~7 fps) and the final state is force-committed, so
+  // nothing is lost and no assertion sees a partial table.
+  const COMMIT_MS = 150
+  const logBufRef = useRef<string[]>([])
+  const resultBufRef = useRef<TestResult[]>([])
+  const progressBufRef = useRef<{ done: number; current: string } | null>(null)
+  const lastCommitRef = useRef(0)
+  /** True for the whole duration of a run — see the guard at the top of runTests. */
+  const runningRef = useRef(false)
+
+  /** Push the buffered rows/logs/progress into React state (throttled unless forced). */
+  const commitStream = (force = false) => {
+    const now = Date.now()
+    if (!force && now - lastCommitRef.current < COMMIT_MS) return
+    lastCommitRef.current = now
+    setResults(resultBufRef.current.slice())
+    setLogs(logBufRef.current.slice())
+    setProgress(progressBufRef.current)
+  }
+
+  const addLog = (msg: string) => {
+    logBufRef.current[logBufRef.current.length] = `[${new Date().toLocaleTimeString()}] ${msg}`
+    commitStream()
+  }
 
   const ts = () => new Date().toLocaleTimeString([], { hour12: false })
 
@@ -294,7 +329,18 @@ export function useAcvpSuite() {
   }, [])
 
   const runTests = async (overrideCategories?: Set<CategoryId>): Promise<TestResult[]> => {
-    if (loading) return []
+    // Reentrancy guard on a REF, not on the `loading` state.
+    //
+    // `loading` is a render value: two triggers in the same tick (which is
+    // exactly what e2e/acvp-validator.spec.ts does — it dispatches
+    // `e2e:trigger_acvp` and clicks "Run All" back to back, by design, so a
+    // missed trigger can't hang the spec) both read `loading === false` and
+    // both proceed. Two concurrent runs then interleave C_* calls on the same
+    // PKCS#11 session and share the streaming buffers, which made the full
+    // run non-deterministically take ~2× as long or never report completion.
+    // A ref is written synchronously, so the second call returns immediately.
+    if (runningRef.current || loading) return []
+    runningRef.current = true
     // "Run All" (and the e2e trigger) pass ALL_CATEGORY_IDS explicitly here so
     // the full suite runs regardless of the sidebar's checkbox state; "Run
     // Selected" omits the override and uses whatever's currently checked.
@@ -308,14 +354,17 @@ export function useAcvpSuite() {
       const ok = await autoInit()
       if (!ok || !moduleRef.current) {
         addLog('Error: HSM initialization failed. Reload the page and retry.')
+        runningRef.current = false
         return []
       }
     }
 
     setLoading(true)
-    setResults([])
-    setLogs([])
-    setProgress({ done: 0, current: 'Starting…' })
+    logBufRef.current = []
+    resultBufRef.current = []
+    progressBufRef.current = { done: 0, current: 'Starting…' }
+    lastCommitRef.current = 0
+    commitStream(true)
     // Genuinely global reset: a fresh ACVP run starts with an empty
     // inventory regardless of which slot/engine any leftover key came
     // from — the one deliberate use of the 'all' escape hatch outside
@@ -326,16 +375,16 @@ export function useAcvpSuite() {
     // destroyed the visitor's whole session trace (2026-08-13 audit, N14).
     // A step-header marker delimits this run's output in the shared log
     // instead; the pane's own results live in local `logs` state anyway.
-    addHsmStepLog('ACVP Validation Run')
-    addLog('Starting ACVP Validation Suite via PKCS#11...')
+    addHsmStepLog('Cryptographic Validation Workbench run')
+    addLog('Starting Cryptographic Validation Workbench via PKCS#11...')
 
-    const newResults: TestResult[] = []
+    const newResults: TestResult[] = resultBufRef.current
     // Paint the "running" state before the (heavy, synchronous) engine setup.
     await new Promise((resolve) => setTimeout(resolve, 0))
 
     // Which of the 7 categories the section currently executing belongs to —
     // set as the first statement inside each section's `if (activeCategories.has(...))`
-    // guard, below. `pushResult` reads it so none of the ~36 sections' own
+    // guard, below. `pushResult` reads it so none of the sections' own
     // pushResult({...}) call sites need a `category` field added by hand.
     let currentCategory: CategoryId = CATEGORIES[0].id
 
@@ -345,8 +394,8 @@ export function useAcvpSuite() {
     // global push→pushResult rewrite below doesn't recurse into this helper.)
     const pushResult = async (r: Omit<TestResult, 'category'>) => {
       newResults[newResults.length] = { ...r, category: currentCategory }
-      setResults(newResults.slice())
-      setProgress({ done: newResults.length, current: r.algorithm })
+      progressBufRef.current = { done: newResults.length, current: r.algorithm }
+      commitStream()
       // The crypto ops are synchronous WASM calls that block the main thread for
       // the whole run, so React never paints intermediate state. Yield a macrotask
       // after each result so the streamed table + progress label actually render.
@@ -371,6 +420,15 @@ export function useAcvpSuite() {
       eddsa: 'https://www.rfc-editor.org/rfc/rfc8032',
       pbkdf2: 'https://www.rfc-editor.org/rfc/rfc8018',
       hkdf: 'https://www.rfc-editor.org/rfc/rfc5869',
+      kdaHkdf: 'https://csrc.nist.gov/pubs/sp/800/56/c/r2/final',
+      kbkdf: 'https://csrc.nist.gov/pubs/sp/800/108/r1/upd1/final',
+      // Project Wycheproof, maintained by Google / C2SP — the source link every
+      // Wycheproof-sourced row points at (user ruling 2026-09-26: attribute it
+      // to Google, add a link to this source). Apache-2.0; independent-oracle
+      // evidence, never a conformance claim.
+      wycheproof: 'https://github.com/C2SP/wycheproof',
+      pkcs11MessageSign:
+        'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html',
       aeskw: 'https://www.rfc-editor.org/rfc/rfc3394',
       aeskwp: 'https://www.rfc-editor.org/rfc/rfc5649',
       slhdsa: 'https://csrc.nist.gov/pubs/fips/205/final',
@@ -415,7 +473,22 @@ export function useAcvpSuite() {
         } catch {
           // Ignore invalid session handle during cross-engine shutdown
         }
-        hsm_initialize(engine.M, ACVP_GLOBAL_SEED)
+        // The seed rides in CK_C_INITIALIZE_ARGS.pReserved, which PKCS#11 v3.2
+        // §5.4 requires to be NULL_PTR. The C++ engine enforces that (its
+        // pReserved seed hook is compiled only under WITH_ACVP_SEED, off in the
+        // shipped bundle) and returns CKR_ARGUMENTS_BAD — which used to abort
+        // the whole run for C++ and dual mode before a single row. Fall back to
+        // a standard unseeded C_Initialize; no reference-sample row depends on
+        // the seed (verification and deterministic signing are seed-free).
+        try {
+          hsm_initialize(engine.M, ACVP_GLOBAL_SEED)
+        } catch (e: unknown) {
+          if (!(e instanceof Pkcs11Error) || e.rv !== 0x00000007 /* CKR_ARGUMENTS_BAD */) throw e
+          addLog(
+            `[${engine.name}] C_Initialize rejected the non-standard pReserved test seed (CKR_ARGUMENTS_BAD) — continuing with a standard, unseeded C_Initialize`
+          )
+          hsm_initialize(engine.M)
+        }
         const slot = hsm_getFirstSlot(engine.M)
         const initSlot = hsm_initToken(engine.M, slot, '12345678', 'ACVP_Token')
         engine.slot = initSlot
@@ -493,24 +566,31 @@ export function useAcvpSuite() {
           return derWrapped ? pt.slice(2) : pt
         }
 
-        // ── 1. AES-GCM-256 Decrypt KAT (SP 800-38D) ────────────────────
+        // ── 1. AES-GCM-256 Decrypt vs NIST CAVP vector (gcmDecrypt256.rsp) ──
+        // aesgcm_test.json's own _provenance says "published KAT", but its tag
+        // differs from GCM Test Case 16's published tag (AAD dropped; tag
+        // computed by Node/OpenSSL). The WS-B manifest classes it
+        // independent-oracle, so the tier is pinned here instead of derived
+        // from that producer string (katEvidence.test.ts enforces agreement).
         if (activeCategories.has('symmetric')) {
           currentCategory = 'symmetric'
           if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_GCM)) {
             await pushSkip(
               `aes-skip-${eName}`,
               `AES-GCM-256 (${eName})`,
-              'Decrypt KAT',
+              'Decrypt (NIST CAVP vector)',
               REF.aesgcm,
               'AES-GCM-256: mechanism not supported'
             )
           } else {
             const tv = aesGcmTestVectors.testGroups[0].tests[0]
             const id1 = `aes-acvp-${eName}`
-            addLog(`[${eName}] Testing AES-GCM-256 Decrypt KAT (SP 800-38D)...`)
-            addLog(`  ACVP Key: ${tv.key.slice(0, 32)}… | IV: ${tv.iv} | Tag: ${tv.tag}`)
             addLog(
-              `  ACVP CT[${tv.ct.length / 2}B]: ${tv.ct.slice(0, 32)}… | Expected PT: ${tv.pt.slice(0, 32)}…`
+              `[${eName}] Testing AES-GCM-256 Decrypt vs NIST CAVP vector (gcmDecrypt256.rsp)...`
+            )
+            addLog(`  NIST vector Key: ${tv.key.slice(0, 32)}… | IV: ${tv.iv} | Tag: ${tv.tag}`)
+            addLog(
+              `  NIST vector CT[${tv.ct.length / 2}B]: ${tv.ct.slice(0, 32)}… | Expected PT: ${tv.pt.slice(0, 32)}…`
             )
             try {
               const keyBytes = hexToBytes(tv.key)
@@ -534,7 +614,7 @@ export function useAcvpSuite() {
                 handle: aesHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-256 (${eName})`,
+                label: `Oracle AES-256 (${eName})`,
                 engine: engineId,
               })
 
@@ -544,7 +624,7 @@ export function useAcvpSuite() {
               ctWithTag.set(tagBytes, ctBytes.length)
               const recoveredPt = hsm_aesDecrypt(M, hSession, aesHandle, ctWithTag, ivBytes, 'gcm')
 
-              // Compare recovered plaintext against NIST reference
+              // Compare recovered plaintext against the oracle vector's plaintext
               const matches =
                 recoveredPt.length === expectedPt.length &&
                 // eslint-disable-next-line security/detect-object-injection
@@ -554,31 +634,47 @@ export function useAcvpSuite() {
               await pushResult({
                 id: id1,
                 algorithm: `AES-GCM-256 (${eName})`,
-                testCase: 'Decrypt KAT',
+                testCase: 'Decrypt (NIST CAVP vector)',
                 referenceUrl: REF.aesgcm,
                 status: matches ? 'pass' : 'fail',
                 details: matches
                   ? `PT[${recoveredPt.length}B]: ${ptHex}`
                   : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
-                evidenceTier: deriveEvidenceTier(aesGcmTestVectors._provenance),
               })
               addLog(
-                `[${eName}] [id:${id1}] AES-GCM Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
+                `[${eName}] [id:${id1}] AES-GCM Decrypt (oracle vector): ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
               )
             } catch (e: unknown) {
               const errMessage = e instanceof Error ? e.message : String(e)
               await pushResult({
                 id: `aes-err-${eName}`,
                 algorithm: `AES-GCM-256 (${eName})`,
-                testCase: 'Decrypt KAT',
+                testCase: 'Decrypt (NIST CAVP vector)',
                 referenceUrl: REF.aesgcm,
-                evidenceTier: deriveEvidenceTier(aesGcmTestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
               addLog(`[DISCREPANCY] [${eName}] [id:${id1}] AES-GCM: ${errMessage}`)
             }
           }
+        }
+
+        // ── 1b. AES-GCM NIST ACVP-Server reference samples (WS-E) — every
+        // case of the pinned ACVP-AES-GCM-1.0 sample: encrypt byte-match,
+        // decrypt byte-match and upstream authentication failures (rejected,
+        // CK_RV pinned per engine). Self-contained in sections/aesGcmAcvp.ts.
+        if (activeCategories.has('symmetric')) {
+          currentCategory = 'symmetric'
+          await runAesGcmAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.aesgcm,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 2. HMAC-SHA256 Verify KAT (NIST ACVP, truncated) ───────────────
@@ -616,7 +712,7 @@ export function useAcvpSuite() {
                 handle: hmacHandle,
                 family: 'hmac',
                 role: 'secret',
-                label: `ACVP HMAC-SHA256 (${eName})`,
+                label: `NIST sample HMAC-SHA256 (${eName})`,
                 engine: engineId,
               })
 
@@ -636,7 +732,6 @@ export function useAcvpSuite() {
                 algorithm: `HMAC-SHA256 (${eName})`,
                 testCase: 'Verify KAT (NIST ACVP, truncated)',
                 referenceUrl: REF.hmac,
-                evidenceTier: deriveEvidenceTier(hmacTestVectors._provenance),
                 status: isValid ? 'pass' : 'fail',
                 details: isValid
                   ? `MAC[${macBytes.length}B, ${tv.macLen}-bit truncated] verified: ${macHex}`
@@ -652,7 +747,6 @@ export function useAcvpSuite() {
                 algorithm: `HMAC-SHA256 (${eName})`,
                 testCase: 'Verify KAT (NIST ACVP, truncated)',
                 referenceUrl: REF.hmac,
-                evidenceTier: deriveEvidenceTier(hmacTestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -661,80 +755,42 @@ export function useAcvpSuite() {
           }
         }
 
-        // ── 3. RSA-PSS-2048 SigVer KAT (FIPS 186-5) ────────────────────
+        // ── 2b. HMAC key / message / tag-length matrix (WS-E) — NIST HMAC 2.0
+        // AFT for all 11 advertised digests (generate byte-match + verify),
+        // plus product-authored invalid MACs (bit flip, one byte short).
+        // Self-contained in sections/hmacAcvp.ts.
+        if (activeCategories.has('hashing_mac')) {
+          currentCategory = 'hashing_mac'
+          await runHmacAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.hmac,
+            pushResult,
+            addLog,
+          })
+        }
+
+        // ── 3. RSA-PSS-2048 SHA-256 SigVer — Project Wycheproof ────────
+        // 108 cases (63 valid, 45 invalid) from Wycheproof
+        // rsa_pss_2048_sha256_mgf1_32_test.json, replacing the single
+        // Node/OpenSSL-generated case (maintainer ruling 2026-09-26). The NIST
+        // RSA SigVer sample has no SHA2-256 PSS group. independent-oracle
+        // evidence: "agrees with Wycheproof <commit>", never conformance.
         if (activeCategories.has('classical')) {
           currentCategory = 'classical'
-          if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA256_RSA_PKCS_PSS)) {
-            await pushSkip(
-              `rsa-skip-${eName}`,
-              `RSA-PSS-2048 (${eName})`,
-              'SigVer KAT',
-              REF.rsapss,
-              'RSA-PSS-2048: mechanism not supported'
-            )
-          } else {
-            const tv = rsaPssTestVectors.testGroups[0].tests[0]
-            const id3 = `rsa-acvp-${eName}`
-            addLog(`[${eName}] Testing RSA-PSS-2048 SigVer KAT (FIPS 186-5)...`)
-            addLog(`  ACVP Modulus: ${tv.n.slice(0, 32)}… | Exp: ${tv.e}`)
-            addLog(
-              `  ACVP Signature: ${tv.signature.slice(0, 32)}… | Msg: "${tv.msg.slice(0, 40)}"`
-            )
-            try {
-              const modBytes = hexToBytes(tv.n)
-              const expBytes = hexToBytes(tv.e)
-              const sigBytes = hexToBytes(tv.signature)
-
-              // Import known RSA public key — verify only (PKCS#11 v3.2 least privilege)
-              const rsaPubHandle = hsm_importRSAPublicKey(M, hSession, modBytes, expBytes, false)
-              regKey({
-                handle: rsaPubHandle,
-                family: 'rsa',
-                role: 'public',
-                label: `ACVP RSA-2048 Public (${eName})`,
-                variant: '2048',
-                engine: engineId,
-              })
-
-              // Verify known signature
-              const isValid = hsm_rsaVerify(
-                M,
-                hSession,
-                rsaPubHandle,
-                tv.msg,
-                sigBytes,
-                CKM_SHA256_RSA_PKCS_PSS
-              )
-
-              const rsaSigHex = toHex(sigBytes, 16)
-              await pushResult({
-                id: id3,
-                algorithm: `RSA-PSS-2048 (${eName})`,
-                testCase: 'SigVer KAT',
-                referenceUrl: REF.rsapss,
-                status: isValid ? 'pass' : 'fail',
-                details: isValid
-                  ? `Verified sig[${sigBytes.length}B]: ${rsaSigHex}…`
-                  : 'Signature verification failed against FIPS 186-5 vector',
-                evidenceTier: deriveEvidenceTier(rsaPssTestVectors._provenance),
-              })
-              addLog(
-                `[${eName}] [id:${id3}] RSA-PSS SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${rsaSigHex}…`
-              )
-            } catch (e: unknown) {
-              const errMessage = e instanceof Error ? e.message : String(e)
-              await pushResult({
-                id: `rsa-err-${eName}`,
-                algorithm: `RSA-PSS-2048 (${eName})`,
-                testCase: 'SigVer KAT',
-                referenceUrl: REF.rsapss,
-                evidenceTier: deriveEvidenceTier(rsaPssTestVectors._provenance),
-                status: 'fail',
-                details: errMessage,
-              })
-              addLog(`[DISCREPANCY] [${eName}] [id:${id3}] RSA-PSS-2048: ${errMessage}`)
-            }
-          }
+          await runWycheproofRsaPssSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.wycheproof,
+            pushResult,
+            addLog,
+          })
 
           // ── 4. ECDSA P-256 SigVer KAT (FIPS 186-5) ─────────────────────
           if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA256)) {
@@ -749,8 +805,8 @@ export function useAcvpSuite() {
             const tv = ecdsaTestVectors.testGroups[0].tests[0]
             const id4 = `ecdsa-acvp-${eName}`
             addLog(`[${eName}] Testing ECDSA P-256 SigVer KAT (FIPS 186-5)...`)
-            addLog(`  ACVP Qx: ${tv.qx.slice(0, 32)}… | Qy: ${tv.qy.slice(0, 32)}…`)
-            addLog(`  ACVP r: ${tv.r.slice(0, 32)}… | s: ${tv.s.slice(0, 32)}…`)
+            addLog(`  RFC 6979 Qx: ${tv.qx.slice(0, 32)}… | Qy: ${tv.qy.slice(0, 32)}…`)
+            addLog(`  RFC 6979 r: ${tv.r.slice(0, 32)}… | s: ${tv.s.slice(0, 32)}…`)
             try {
               const qx = hexToBytes(tv.qx)
               const qy = hexToBytes(tv.qy)
@@ -767,7 +823,7 @@ export function useAcvpSuite() {
                 handle: ecPubHandle,
                 family: 'ecdsa',
                 role: 'public',
-                label: `ACVP ECDSA P-256 Public (${eName})`,
+                label: `Std KAT ECDSA P-256 Public (${eName})`,
                 variant: 'P-256',
                 engine: engineId,
               })
@@ -785,7 +841,6 @@ export function useAcvpSuite() {
                 details: isValid
                   ? `Verified sig[${sigBytes.length}B]: ${ecSigHex}…`
                   : 'Signature verification failed against FIPS 186-5 vector',
-                evidenceTier: deriveEvidenceTier(ecdsaTestVectors._provenance),
               })
               addLog(
                 `[${eName}] [id:${id4}] ECDSA P-256 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${ecSigHex}…`
@@ -797,7 +852,6 @@ export function useAcvpSuite() {
                 algorithm: `ECDSA P-256 (${eName})`,
                 testCase: 'SigVer KAT',
                 referenceUrl: REF.ecdsa,
-                evidenceTier: deriveEvidenceTier(ecdsaTestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -806,7 +860,91 @@ export function useAcvpSuite() {
           }
         }
 
-        // ── 5. ML-DSA SigVer KAT (FIPS 204) ─────────────────────────────
+        // ── 4b. ECDSA dedicated SigVer (WS-E) — NIST ECDSA-SigVer-FIPS186-5,
+        // P-224/256/384/521 x SHA2-256/512, SHA3-256/512, every upstream
+        // valid/invalid case; SHA2-512/256 and SHAKE groups shown as skips.
+        // Self-contained in sections/ecSigVerAcvp.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          await runEcdsaSigVerAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.ecdsa,
+            pushResult,
+            addLog,
+          })
+        }
+
+        // ── 4c. EdDSA dedicated SigVer (WS-E) — NIST EDDSA-SigVer-1.0,
+        // Ed25519/Ed448, pure and preHash, every upstream valid/invalid case.
+        // Self-contained in sections/ecSigVerAcvp.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          await runEddsaSigVerAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.eddsa,
+            pushResult,
+            addLog,
+          })
+        }
+
+        // ── 4e. ECDSA / EdDSA KeyVer and SigGen (gap-closure P5) — NIST keyVer
+        // (the key is used: sign with d, verify with the point), ECDSA sigGen
+        // verify-back (engine + independent verifier; NIST r, s are not
+        // reproducible) and EdDSA sigGen byte-match. sections/ecKeyVerSigGenAcvp.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          const ecCtx = {
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            pushResult,
+            addLog,
+          }
+          await runEcKeyVerAcvpSection({ ...ecCtx, referenceUrl: REF.ecdsa })
+          await runEcdsaSigGenAcvpSection({ ...ecCtx, referenceUrl: REF.ecdsa })
+          await runEddsaSigGenAcvpSection({ ...ecCtx, referenceUrl: REF.eddsa })
+        }
+
+        // ── 4d. RSA dedicated SigVer (WS-E) — NIST RSA-SigVer-FIPS186-5,
+        // PKCS#1 v1.5/SHA2-256 at 2048/3072/4096 and PSS/SHA3-256/MGF1 at 2048,
+        // every upstream valid/invalid case; SHAKE groups shown as skips.
+        // Self-contained in sections/rsaSigVerAcvp.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          await runRsaSigVerAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.rsapss,
+            pushResult,
+            addLog,
+          })
+        }
+
+        // ── 5. ML-DSA SigVer from upstream sigGen output (FIPS 204) ──────
+        // D2-1 (2026-09-24): these tuples are NIST ACVP-Server *sigGen* output
+        // (pk, msg, signature) re-used locally as positive SigVer inputs — a
+        // transformation, not a dedicated NIST SigVer case. The row text says
+        // so; dedicated sigVer cases with NIST's own expected disposition live
+        // in section 5d (sections/mldsaAcvp.ts).
+        const sigGenLineage = (p: { source_url: string }) => {
+          const m = /ACVP-Server\/([0-9a-f]{8})[0-9a-f]*\/gen-val\/json-files\/([^/]+)\//.exec(
+            p.source_url
+          )
+          return m ? `ACVP-Server@${m[1]} ${m[2]}` : p.source_url
+        }
         if (activeCategories.has('ml_dsa')) {
           currentCategory = 'ml_dsa'
           for (const group of mldsaTestVectors.testGroups) {
@@ -814,6 +952,26 @@ export function useAcvpSuite() {
             const algo = group.parameterSet
             const variantNum = parseInt(algo.split('-')[2]) as 44 | 65 | 87
             const id5 = `mldsa-sigver-${algo}-${eName}`
+            const lineage5 = `upstream sigGen tg${group.tgId}/tc${test.tcId} → local SigVer`
+            const testCase5 = `SigVer · ${lineage5} · pure · ctx 0B`
+            const caseMeta5: AcvpCaseMeta = {
+              origin: 'nist-acvp-server',
+              upstreamOperation: 'sigGen',
+              localOperation: 'sigVer',
+              parameterSet: algo,
+              mode: 'pure',
+              contextBytes: 0,
+              messageBytes: test.msg.length / 2,
+              expected: 'valid',
+              tgId: group.tgId,
+              tcId: test.tcId,
+              source: {
+                repo: 'https://github.com/usnistgov/ACVP-Server',
+                commit: mldsaTestVectors._provenance.source_release,
+                path: 'gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json',
+                sha256: mldsaTestVectors._provenance.source_sha256,
+              },
+            }
             addLog(`[${eName}] Testing ${algo} SigVer (FIPS 204)...`)
             addLog(
               `  ACVP PK: ${test.pk.slice(0, 32)}… | Sig[${test.sig.length / 2}B]: ${test.sig.slice(0, 32)}…`
@@ -829,7 +987,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'ml-dsa',
                 role: 'public',
-                label: `ACVP ${algo} Public (${eName})`,
+                label: `NIST sample ${algo} Public (${eName})`,
                 variant: String(variantNum),
                 engine: engineId,
               })
@@ -840,13 +998,15 @@ export function useAcvpSuite() {
               await pushResult({
                 id: id5,
                 algorithm: `${algo} (${eName})`,
-                testCase: 'SigVer KAT',
+                testCase: testCase5,
                 referenceUrl: REF.mldsa,
-                evidenceTier: deriveEvidenceTier(mldsaTestVectors._provenance),
+                caseMeta: caseMeta5,
                 status: isValid ? 'pass' : 'fail',
-                details: isValid
-                  ? `Verified sig[${sigBytes.length}B]: ${mldsaSigHex}…`
-                  : 'Signature verification failed',
+                details:
+                  (isValid
+                    ? `Verified sig[${sigBytes.length}B]: ${mldsaSigHex}…`
+                    : 'Signature verification failed') +
+                  ` · NIST sigGen output re-used as a positive SigVer tuple (${sigGenLineage(mldsaTestVectors._provenance)})`,
               })
               addLog(
                 `[${eName}] [id:${id5}] ${algo} SigVer: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${mldsaSigHex}…`
@@ -856,9 +1016,9 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `mldsa-err-${algo}-${eName}`,
                 algorithm: `${algo} (${eName})`,
-                testCase: 'SigVer KAT',
+                testCase: testCase5,
                 referenceUrl: REF.mldsa,
-                evidenceTier: deriveEvidenceTier(mldsaTestVectors._provenance),
+                caseMeta: caseMeta5,
                 status: 'fail',
                 details: errorMessage,
               })
@@ -876,6 +1036,24 @@ export function useAcvpSuite() {
           for (const [paramSet, tv] of Object.entries(mldsaExtendedTestVectors.context)) {
             const variantNum = parseInt(paramSet.split('-')[2]) as 44 | 65 | 87
             const id5b = `mldsa-ctx-sigver-${paramSet}-${eName}`
+            const testCase5b = `SigVer · upstream sigGen-tr1 tc${tv.tcId} → local SigVer · pure · ctx ${tv.context.length / 2}B`
+            const caseMeta5b: AcvpCaseMeta = {
+              origin: 'nist-acvp-server',
+              upstreamOperation: 'sigGen',
+              localOperation: 'sigVer',
+              parameterSet: paramSet,
+              mode: 'pure',
+              contextBytes: tv.context.length / 2,
+              messageBytes: tv.message.length / 2,
+              expected: 'valid',
+              tcId: tv.tcId,
+              source: {
+                repo: 'https://github.com/usnistgov/ACVP-Server',
+                commit: mldsaExtendedTestVectors._provenance.source_release,
+                path: 'gen-val/json-files/ML-DSA-sigGen-FIPS204-tr1/internalProjection.json',
+                sha256: mldsaExtendedTestVectors._provenance.source_sha256,
+              },
+            }
             addLog(
               `[${eName}] Testing ${paramSet} SigVer with context (FIPS 204 §5.2, tcId=${tv.tcId})...`
             )
@@ -885,7 +1063,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'ml-dsa',
                 role: 'public',
-                label: `ACVP ${paramSet} Context KAT Public (${eName})`,
+                label: `NIST sample ${paramSet} Context KAT Public (${eName})`,
                 variant: String(variantNum),
                 engine: engineId,
               })
@@ -900,11 +1078,13 @@ export function useAcvpSuite() {
               await pushResult({
                 id: id5b,
                 algorithm: `${paramSet} (${eName})`,
-                testCase: `SigVer KAT (context, ${tv.context.length / 2}B)`,
+                testCase: testCase5b,
                 referenceUrl: REF.mldsa,
-                evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
+                caseMeta: caseMeta5b,
                 status: isValid ? 'pass' : 'fail',
-                details: isValid ? 'NIST vector verified with non-empty context' : 'verify=false',
+                details:
+                  (isValid ? 'Verified with non-empty context' : 'verify=false') +
+                  ` · NIST sigGen output re-used as a positive SigVer tuple (${sigGenLineage(mldsaExtendedTestVectors._provenance)})`,
               })
               addLog(
                 `[${eName}] [id:${id5b}] ${paramSet} context SigVer: ${isValid ? 'PASS' : 'FAIL'}`
@@ -914,9 +1094,9 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `mldsa-ctx-err-${paramSet}-${eName}`,
                 algorithm: `${paramSet} (${eName})`,
-                testCase: 'SigVer KAT (context)',
+                testCase: testCase5b,
                 referenceUrl: REF.mldsa,
-                evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
+                caseMeta: caseMeta5b,
                 status: 'fail',
                 details: errorMessage,
               })
@@ -929,6 +1109,25 @@ export function useAcvpSuite() {
           for (const [paramSet, tv] of Object.entries(mldsaExtendedTestVectors.preHash)) {
             const variantNum = parseInt(paramSet.split('-')[2]) as 44 | 65 | 87
             const id5c = `mldsa-prehash-sigver-${paramSet}-${eName}`
+            const testCase5c = `SigVer · upstream sigGen-tr1 tc${tv.tcId} → local SigVer · HashML-DSA/${tv.hashAlg} · ctx ${(tv.context ?? '').length / 2}B`
+            const caseMeta5c: AcvpCaseMeta = {
+              origin: 'nist-acvp-server',
+              upstreamOperation: 'sigGen',
+              localOperation: 'sigVer',
+              parameterSet: paramSet,
+              mode: 'preHash',
+              hashAlg: tv.hashAlg,
+              contextBytes: (tv.context ?? '').length / 2,
+              messageBytes: tv.message.length / 2,
+              expected: 'valid',
+              tcId: tv.tcId,
+              source: {
+                repo: 'https://github.com/usnistgov/ACVP-Server',
+                commit: mldsaExtendedTestVectors._provenance.source_release,
+                path: 'gen-val/json-files/ML-DSA-sigGen-FIPS204-tr1/internalProjection.json',
+                sha256: mldsaExtendedTestVectors._provenance.source_sha256,
+              },
+            }
             addLog(
               `[${eName}] Testing ${paramSet} HashML-DSA SigVer (${tv.hashAlg}, tcId=${tv.tcId})...`
             )
@@ -938,7 +1137,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'ml-dsa',
                 role: 'public',
-                label: `ACVP ${paramSet} HashML-DSA KAT Public (${eName})`,
+                label: `NIST sample ${paramSet} HashML-DSA KAT Public (${eName})`,
                 variant: String(variantNum),
                 engine: engineId,
               })
@@ -950,17 +1149,19 @@ export function useAcvpSuite() {
                 hexToBytes(tv.signature),
                 {
                   context: tv.context ? hexToBytes(tv.context) : undefined,
-                  preHash: tv.hashAlg as MLDSAPreHash,
+                  preHash: mldsaPreHashFromAcvp(tv.hashAlg),
                 }
               )
               await pushResult({
                 id: id5c,
                 algorithm: `${paramSet} (${eName})`,
-                testCase: `HashML-DSA SigVer KAT (${tv.hashAlg})`,
+                testCase: testCase5c,
                 referenceUrl: REF.mldsa,
-                evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
+                caseMeta: caseMeta5c,
                 status: isValid ? 'pass' : 'fail',
-                details: isValid ? `NIST HashML-DSA/${tv.hashAlg} vector verified` : 'verify=false',
+                details:
+                  (isValid ? `HashML-DSA/${tv.hashAlg} verified` : 'verify=false') +
+                  ` · NIST sigGen output re-used as a positive SigVer tuple (${sigGenLineage(mldsaExtendedTestVectors._provenance)})`,
               })
               addLog(
                 `[${eName}] [id:${id5c}] ${paramSet} HashML-DSA/${tv.hashAlg} SigVer: ${isValid ? 'PASS' : 'FAIL'}`
@@ -970,9 +1171,9 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `mldsa-prehash-err-${paramSet}-${eName}`,
                 algorithm: `${paramSet} (${eName})`,
-                testCase: 'HashML-DSA SigVer KAT',
+                testCase: testCase5c,
                 referenceUrl: REF.mldsa,
-                evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
+                caseMeta: caseMeta5c,
                 status: 'fail',
                 details: errorMessage,
               })
@@ -981,6 +1182,51 @@ export function useAcvpSuite() {
               )
             }
           }
+
+          // ── 5d. ML-DSA reference-sample depth — dedicated NIST SigVer
+          // (positive + negative), product-authored pk/context negatives,
+          // deterministic SigGen byte-match, KeyGen from seed, and honest
+          // skips for upstream groups PKCS#11 cannot express. Self-contained
+          // in sections/mldsaAcvp.ts (WS-D D2-2/D2-3/D2-5, D4).
+          await runMldsaAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mldsa,
+            pushResult,
+            addLog,
+          })
+
+          // ── 5e. ML-DSA context / message-length / pre-hash depth — NIST
+          // deterministic SigGen at ctx 0/255, 8192-byte messages and the
+          // remaining HashML-DSA functions, plus product-authored 1-byte and
+          // 256-byte context probes. Self-contained in sections/mldsaDepth.ts
+          // (WS-D D2-6).
+          await runMldsaDepthSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mldsa,
+            pushResult,
+            addLog,
+          })
+
+          // ── 5f. ML-DSA negative / boundary depth — NIST sigVer at the context
+          // extremes and every HashML-DSA disposition, product-authored
+          // deterministic-sign negatives, hedged signing at ctx 0/255 checked by
+          // the engine and by an independent verifier. sections/mldsaNegBoundary.ts
+          // (gap-closure P5).
+          await runMldsaNegBoundarySection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mldsa,
+            pushResult,
+            addLog,
+          })
 
           // ── 6. ML-DSA Functional Sign+Verify (FIPS 204) — all variants ──
           for (const dsaVariant of [44, 65, 87] as const) {
@@ -993,7 +1239,7 @@ export function useAcvpSuite() {
                 handle: mldsaPair.pubHandle,
                 family: 'ml-dsa',
                 role: 'public',
-                label: `ACVP ${dsaAlgo} Keygen Public (${eName})`,
+                label: `Round-trip ${dsaAlgo} Keygen Public (${eName})`,
                 variant: String(dsaVariant),
                 engine: engineId,
               })
@@ -1001,7 +1247,7 @@ export function useAcvpSuite() {
                 handle: mldsaPair.privHandle,
                 family: 'ml-dsa',
                 role: 'private',
-                label: `ACVP ${dsaAlgo} Keygen Private (${eName})`,
+                label: `Round-trip ${dsaAlgo} Keygen Private (${eName})`,
                 variant: String(dsaVariant),
                 engine: engineId,
               })
@@ -1044,7 +1290,12 @@ export function useAcvpSuite() {
           }
         }
 
-        // ── 7. ML-KEM Decapsulation KAT (FIPS 203) ──────────────────────
+        // ── 7. ML-KEM Decapsulation from upstream encapsulation AFT (FIPS 203) ──
+        // D1-1 (2026-09-24): mlkem_test.json holds cases from the upstream
+        // ENCAPSULATION group (ek, m -> c, k). The hub imports dk and runs
+        // C_DecapsulateKey on c, comparing against k: a transformation, not a
+        // NIST decapsulation case. Row text and caseMeta say so; dedicated
+        // decapsulation VAL cases live in section 7b (sections/mlkemAcvp.ts).
         if (activeCategories.has('ml_kem')) {
           currentCategory = 'ml_kem'
           for (const group of mlkemTestVectors.testGroups) {
@@ -1052,6 +1303,26 @@ export function useAcvpSuite() {
             const algo = group.parameterSet
             const variantNum = (parseInt(algo.split('-')[2]) || 768) as 512 | 768 | 1024
             const id7 = `test-${algo}-decap-${eName}`
+            const testCase7 = `Decapsulate · upstream encapsulation AFT tg${group.tgId}/tc${test.tcId} → local decapsulation`
+            const lineage7 =
+              'NIST encapsulation-group output (dk, c, k) re-used as a decapsulation KAT; upstream m → c not executed ' +
+              '(ACVP-Server@975de31e ML-KEM-encapDecap-FIPS203)'
+            const caseMeta7: AcvpCaseMeta = {
+              origin: 'nist-acvp-server',
+              upstreamOperation: 'encapsulation',
+              localOperation: 'decapsulation',
+              parameterSet: algo,
+              expected: 'byte-match',
+              expectedRv: 'CKR_OK',
+              tgId: group.tgId,
+              tcId: test.tcId,
+              source: {
+                repo: 'https://github.com/usnistgov/ACVP-Server',
+                commit: mlkemTestVectors._provenance.source_release,
+                path: 'gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json',
+                sha256: mlkemTestVectors._provenance.source_sha256,
+              },
+            }
             addLog(`[${eName}] Testing ${algo} Decapsulate KAT...`)
             addLog(
               `  ACVP SK: ${test.sk.slice(0, 32)}… | CT[${test.ct.length / 2}B]: ${test.ct.slice(0, 32)}…`
@@ -1069,7 +1340,7 @@ export function useAcvpSuite() {
                 handle: privHandle,
                 family: 'ml-kem',
                 role: 'private',
-                label: `ACVP ${algo} Private (${eName})`,
+                label: `NIST sample ${algo} Private (${eName})`,
                 variant: String(variantNum),
                 engine: engineId,
               })
@@ -1091,11 +1362,11 @@ export function useAcvpSuite() {
                 await pushResult({
                   id: id7,
                   algorithm: `${algo} (${eName})`,
-                  testCase: 'Decapsulate KAT',
+                  testCase: testCase7,
+                  caseMeta: caseMeta7,
                   referenceUrl: REF.mlkem,
-                  evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
                   status: 'pass',
-                  details: `SS[${recoveredSs.length}B]: ${ssHex}`,
+                  details: `SS[${recoveredSs.length}B]: ${ssHex} · ${lineage7}`,
                 })
                 addLog(`[${eName}] [id:${id7}] ${algo} Decapsulate: PASS | SS: ${ssHex}`)
               } else {
@@ -1108,11 +1379,11 @@ export function useAcvpSuite() {
                 await pushResult({
                   id: id7,
                   algorithm: `${algo} (${eName})`,
-                  testCase: 'Decapsulate KAT',
+                  testCase: testCase7,
+                  caseMeta: caseMeta7,
                   referenceUrl: REF.mlkem,
-                  evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
                   status: 'fail',
-                  details: `SS mismatch: got ${gotHex}... expected ${expHex}...`,
+                  details: `SS mismatch: got ${gotHex}... expected ${expHex}... · ${lineage7}`,
                 })
                 addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Decapsulate: SS mismatch`)
                 // The PKCS#11 call itself succeeded (CKR_OK) — the recovered
@@ -1136,11 +1407,11 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `test-${algo}-err-${eName}`,
                 algorithm: `${algo} (${eName})`,
-                testCase: 'Decapsulate KAT',
+                testCase: testCase7,
+                caseMeta: caseMeta7,
                 referenceUrl: REF.mlkem,
-                evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
                 status: 'fail',
-                details: errorMessage,
+                details: `${errorMessage} · ${lineage7}`,
               })
               addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Error: ${errorMessage}`)
               addHsmLog({
@@ -1156,6 +1427,33 @@ export function useAcvpSuite() {
             }
           }
 
+          // ── 7b. ML-KEM reference-sample depth — keyGen from seed, VAL
+          // decapsulation (incl. implicit rejection) and key checks, honest
+          // encapsulation skip, product-authored boundary probes. Self-
+          // contained in sections/mlkemAcvp.ts (WS-D D1-2..D1-5).
+          await runMlkemAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mlkem,
+            pushResult,
+            addLog,
+          })
+
+          // ── 7c. ML-KEM encapsulation-key check depth — every remaining
+          // invalid NIST ek of the encapsulationKeyCheck groups (FIPS 203 §7.2).
+          // sections/mlkemKeyCheckDepth.ts (gap-closure P5).
+          await runMlkemKeyCheckDepthSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.mlkem,
+            pushResult,
+            addLog,
+          })
+
           // ── 8. ML-KEM Encap+Decap Round-Trip (FIPS 203) ─────────────────
           for (const kemVariant of [512, 768, 1024] as const) {
             const kemAlgo = `ML-KEM-${kemVariant}`
@@ -1167,7 +1465,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'ml-kem',
                 role: 'public',
-                label: `ACVP ${kemAlgo} RT Public (${eName})`,
+                label: `Round-trip ${kemAlgo} RT Public (${eName})`,
                 variant: String(kemVariant),
                 engine: engineId,
               })
@@ -1175,7 +1473,7 @@ export function useAcvpSuite() {
                 handle: privHandle,
                 family: 'ml-kem',
                 role: 'private',
-                label: `ACVP ${kemAlgo} RT Private (${eName})`,
+                label: `Round-trip ${kemAlgo} RT Private (${eName})`,
                 variant: String(kemVariant),
                 engine: engineId,
               })
@@ -1262,14 +1560,14 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'slh-dsa',
                 role: 'public',
-                label: `ACVP ${slhParam.name} Public (${eName})`,
+                label: `Round-trip ${slhParam.name} Public (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privHandle,
                 family: 'slh-dsa',
                 role: 'private',
-                label: `ACVP ${slhParam.name} Private (${eName})`,
+                label: `Round-trip ${slhParam.name} Private (${eName})`,
                 engine: engineId,
               })
               const sigBytes = hsm_slhdsaSign(
@@ -1317,7 +1615,12 @@ export function useAcvpSuite() {
             }
           }
 
-          // ── 9b. SLH-DSA SigVer KAT (FIPS 205) — NIST ACVP vectors, all 12 sets ──
+          // ── 9b. SLH-DSA SigVer from upstream sigGen output (FIPS 205), all 12 sets ──
+          // D3-1 (2026-09-24): each tuple is NIST ACVP-Server *sigGen* output
+          // (pk, msg, ctx, signature) re-used locally as a positive SigVer input —
+          // a transformation, not a dedicated NIST SigVer case. Dedicated sigVer
+          // cases (positive + negative), deterministic sigGen byte-match and
+          // product-authored negatives live in section 9c (sections/slhdsaAcvp.ts).
           // True known-answer test: import the NIST public key and verify the
           // embedded signature over the binary message+context, asserting the
           // result matches the vector's testPassed. (The functional test above
@@ -1346,6 +1649,28 @@ export function useAcvpSuite() {
               >
             )[slhParam.name]
             const id9b = `slhdsa-sigver-kat-${slhParam.name}-${eName}`
+            const tg9b = Number(/tgId=(\d+)/.exec(tv.comment)?.[1] ?? NaN)
+            const testCase9b = `SigVer · upstream sigGen tg${tg9b}/tc${tv.tcId} → local SigVer · pure · ctx ${tv.context.length / 2}B`
+            const lineage9b =
+              'NIST sigGen output re-used as a positive SigVer tuple (ACVP-Server@975de31e SLH-DSA-sigGen-FIPS205)'
+            const caseMeta9b: AcvpCaseMeta = {
+              origin: 'nist-acvp-server',
+              upstreamOperation: 'sigGen',
+              localOperation: 'sigVer',
+              parameterSet: tv.parameterSet,
+              mode: 'pure',
+              contextBytes: tv.context.length / 2,
+              messageBytes: tv.message.length / 2,
+              expected: 'valid',
+              tgId: tg9b,
+              tcId: tv.tcId,
+              source: {
+                repo: 'https://github.com/usnistgov/ACVP-Server',
+                commit: slhdsaCtxTestVectors._provenance.source_release,
+                path: 'gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json',
+                sha256: slhdsaCtxTestVectors._provenance.source_sha256,
+              },
+            }
             addLog(
               `[${eName}] Testing ${tv.parameterSet} SigVer KAT (FIPS 205, NIST ACVP tcId=${tv.tcId})...`
             )
@@ -1363,7 +1688,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'slh-dsa',
                 role: 'public',
-                label: `ACVP ${tv.parameterSet} KAT Public (${eName})`,
+                label: `NIST sample ${tv.parameterSet} KAT Public (${eName})`,
                 engine: engineId,
               })
 
@@ -1371,36 +1696,81 @@ export function useAcvpSuite() {
                 context: ctxBytes,
               })
               const pass = isValid === tv.testPassed
-              newResults.push({
+              await pushResult({
                 id: id9b,
                 algorithm: `${tv.parameterSet} (${eName})`,
-                testCase: 'SigVer KAT (NIST ACVP)',
+                testCase: testCase9b,
                 referenceUrl: REF.slhdsa,
-                evidenceTier: deriveEvidenceTier(slhdsaCtxTestVectors._provenance),
+                caseMeta: caseMeta9b,
                 status: pass ? 'pass' : 'fail',
-                details: pass
-                  ? `NIST vector: verify=${isValid} matches testPassed=${tv.testPassed} ✓`
-                  : `verify=${isValid}, expected testPassed=${tv.testPassed}`,
-                category: currentCategory,
+                details:
+                  (pass
+                    ? `verify=${isValid} matches testPassed=${tv.testPassed}`
+                    : `verify=${isValid}, expected testPassed=${tv.testPassed}`) +
+                  ` · ${lineage9b}`,
               })
               addLog(
                 `[${eName}] [id:${id9b}] ${tv.parameterSet} SigVer KAT: ${pass ? 'PASS' : 'FAIL'} | verify=${isValid}`
               )
             } catch (e: unknown) {
               const errMessage = e instanceof Error ? e.message : String(e)
-              newResults.push({
+              await pushResult({
                 id: `slhdsa-sigver-kat-err-${slhParam.name}-${eName}`,
                 algorithm: `${tv.parameterSet} (${eName})`,
-                testCase: 'SigVer KAT (NIST ACVP)',
+                testCase: testCase9b,
                 referenceUrl: REF.slhdsa,
-                evidenceTier: deriveEvidenceTier(slhdsaCtxTestVectors._provenance),
+                caseMeta: caseMeta9b,
                 status: 'fail',
-                details: errMessage,
-                category: currentCategory,
+                details: `${errMessage} · ${lineage9b}`,
               })
               addLog(`[DISCREPANCY] [${eName}] [id:${id9b}] SLH-DSA SigVer KAT: ${errMessage}`)
             }
           }
+
+          // ── 9c. SLH-DSA reference-sample depth — dedicated NIST SigVer
+          // (pure + pre-hash, positive + negative), deterministic SigGen
+          // byte-match for all 12 sets, product-authored negatives and
+          // probes, honest skips. Self-contained in sections/slhdsaAcvp.ts
+          // (WS-D D3-2..D3-4).
+          await runSlhdsaAcvpSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.slhdsa,
+            pushResult,
+            addLog,
+          })
+
+          // ── 9d. SLH-DSA coverage depth — NIST keyGen from seed, empty-context
+          // deterministic sigGen, and (for the "f" sets) product-authored sign
+          // negatives plus hedged signing at ctx 0/255 checked by the engine and
+          // by an independent verifier. sections/slhdsaCoverage.ts (gap-closure P5).
+          await runSlhdsaCoverageSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.slhdsa,
+            pushResult,
+            addLog,
+          })
+
+          // ── 9e. HashSLH-DSA (pre-hash) depth — the NIST external/preHash
+          // sigGen vectors for all 120 (CKM_HASH_SLH_DSA_<hash> × parameter
+          // set) pairs, run through single-part AND message-based sign/verify,
+          // plus the NIST preHash sigVer negatives (all six upstream reasons)
+          // and pure CKM_SLH_DSA over the message-based interface.
+          // sections/slhdsaPreHash.ts.
+          await runSlhdsaPreHashSection({
+            M,
+            hSession,
+            eName,
+            mechs: engine.mechs,
+            referenceUrl: REF.slhdsa,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 10. SHA-256 Digest KAT (FIPS 180-4) ─────────────────────────
@@ -1437,7 +1807,6 @@ export function useAcvpSuite() {
                   algorithm: `SHA-256 (${eName})`,
                   testCase: `Digest KAT tc=${test.tcId}`,
                   referenceUrl: REF.sha256,
-                  evidenceTier: deriveEvidenceTier(sha256TestVectors._provenance),
                   status: matches ? 'pass' : 'fail',
                   details: matches
                     ? `MD[${digest.length}B]: ${mdHex}`
@@ -1453,7 +1822,6 @@ export function useAcvpSuite() {
                   algorithm: `SHA-256 (${eName})`,
                   testCase: `Digest KAT tc=${test.tcId}`,
                   referenceUrl: REF.sha256,
-                  evidenceTier: deriveEvidenceTier(sha256TestVectors._provenance),
                   status: 'fail',
                   details: errMessage,
                 })
@@ -1528,7 +1896,6 @@ export function useAcvpSuite() {
                   algorithm: `${name} (${eName})`,
                   testCase: `Digest KAT tc=${test.tcId}`,
                   referenceUrl: ref,
-                  evidenceTier: deriveEvidenceTier(vectors._provenance),
                   status: matches ? 'pass' : 'fail',
                   details: matches
                     ? `MD[${digest.length}B]: ${mdHex}`
@@ -1544,7 +1911,6 @@ export function useAcvpSuite() {
                   algorithm: `${name} (${eName})`,
                   testCase: `Digest KAT tc=${test.tcId}`,
                   referenceUrl: ref,
-                  evidenceTier: deriveEvidenceTier(vectors._provenance),
                   status: 'fail',
                   details: errMessage,
                 })
@@ -1554,6 +1920,37 @@ export function useAcvpSuite() {
               }
             }
           }
+        }
+
+        // ── 10f. SHA-2 / SHA-3 message-length boundaries + MCT (WS-E) — NIST
+        // empty / short / block-boundary / longest AFT digests for 10 digests,
+        // standard MCT (first outer iteration), LDT + alternate MCT as skips.
+        // Self-contained in sections/shaAcvp.ts.
+        if (activeCategories.has('hashing_mac')) {
+          currentCategory = 'hashing_mac'
+          await runShaAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.sha256,
+            pushResult,
+            addLog,
+          })
+
+          // ── 10g. SHA MCT, all 100 outer iterations — standard and alternate
+          // version (gap-closure P5). sections/mctFullAcvp.ts.
+          await runShaMctFullSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.sha256,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 11. AES-CBC-256 Decrypt KAT (NIST ACVP-AES-CBC) ────────────────
@@ -1599,7 +1996,7 @@ export function useAcvpSuite() {
                 handle: aesHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-CBC-256 (${eName})`,
+                label: `NIST sample AES-CBC-256 (${eName})`,
                 engine: engineId,
               })
 
@@ -1622,7 +2019,6 @@ export function useAcvpSuite() {
                 algorithm: `AES-CBC-256 (${eName})`,
                 testCase: 'Decrypt KAT (NIST ACVP)',
                 referenceUrl: REF.aescbc,
-                evidenceTier: deriveEvidenceTier(aesCbcTestVectors._provenance),
                 status: matches ? 'pass' : 'fail',
                 details: matches
                   ? `PT[${recoveredPt.length}B]: ${ptHex}`
@@ -1638,7 +2034,6 @@ export function useAcvpSuite() {
                 algorithm: `AES-CBC-256 (${eName})`,
                 testCase: 'Decrypt KAT (NIST ACVP)',
                 referenceUrl: REF.aescbc,
-                evidenceTier: deriveEvidenceTier(aesCbcTestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -1681,7 +2076,7 @@ export function useAcvpSuite() {
                 handle: aesHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-CTR-256 (${eName})`,
+                label: `Std KAT AES-CTR-256 (${eName})`,
                 engine: engineId,
               })
 
@@ -1708,7 +2103,6 @@ export function useAcvpSuite() {
                 details: matches
                   ? `PT[${recoveredPt.length}B]: ${ptHex}`
                   : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
-                evidenceTier: deriveEvidenceTier(aesCtrTestVectors._provenance),
               })
               addLog(
                 `[${eName}] [id:${id12}] AES-CTR Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
@@ -1720,13 +2114,43 @@ export function useAcvpSuite() {
                 algorithm: `AES-CTR-256 (${eName})`,
                 testCase: 'Decrypt KAT',
                 referenceUrl: REF.aesctr,
-                evidenceTier: deriveEvidenceTier(aesCtrTestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
               addLog(`[DISCREPANCY] [${eName}] [id:${id12}] AES-CTR: ${errMessage}`)
             }
           }
+        }
+
+        // ── 12b. AES-CBC / AES-CTR NIST reference samples (WS-E) — CBC AFT
+        // (GFSBox + 1/10-block MMT) and MCT outer iteration 0 for AES-128/
+        // 192/256 both directions, product-authored CBC length/IV probes,
+        // CTR RFC 3686 decrypt + encrypt. sections/aesCbcCtrAcvp.ts.
+        if (activeCategories.has('symmetric')) {
+          currentCategory = 'symmetric'
+          await runAesCbcCtrAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.aescbc,
+            pushResult,
+            addLog,
+          })
+
+          // ── 12d. AES-CBC MCT, all 100 outer iterations (AESAVS §6.4,
+          // gap-closure P5). sections/mctFullAcvp.ts.
+          await runAesCbcMctFullSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.aescbc,
+            pushResult,
+            addLog,
+          })
         }
 
         // ── 13. HMAC-SHA384 Verify KAT (NIST ACVP, truncated) ──────────────
@@ -1757,7 +2181,7 @@ export function useAcvpSuite() {
                 handle: hmacHandle,
                 family: 'hmac',
                 role: 'secret',
-                label: `ACVP HMAC-SHA384 (${eName})`,
+                label: `NIST sample HMAC-SHA384 (${eName})`,
                 engine: engineId,
               })
 
@@ -1775,7 +2199,6 @@ export function useAcvpSuite() {
                 algorithm: `HMAC-SHA384 (${eName})`,
                 testCase: 'Verify KAT (NIST ACVP, truncated)',
                 referenceUrl: REF.hmac,
-                evidenceTier: deriveEvidenceTier(hmac384TestVectors._provenance),
                 status: isValid ? 'pass' : 'fail',
                 details: isValid
                   ? `MAC[${macBytes.length}B, ${tv.macLen}-bit truncated] verified: ${macHex}`
@@ -1791,7 +2214,6 @@ export function useAcvpSuite() {
                 algorithm: `HMAC-SHA384 (${eName})`,
                 testCase: 'Verify KAT (NIST ACVP, truncated)',
                 referenceUrl: REF.hmac,
-                evidenceTier: deriveEvidenceTier(hmac384TestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -1825,7 +2247,7 @@ export function useAcvpSuite() {
                 handle: hmacHandle,
                 family: 'hmac',
                 role: 'secret',
-                label: `ACVP HMAC-SHA512 (${eName})`,
+                label: `NIST sample HMAC-SHA512 (${eName})`,
                 engine: engineId,
               })
 
@@ -1843,7 +2265,6 @@ export function useAcvpSuite() {
                 algorithm: `HMAC-SHA512 (${eName})`,
                 testCase: 'Verify KAT (NIST ACVP, truncated)',
                 referenceUrl: REF.hmac,
-                evidenceTier: deriveEvidenceTier(hmac512TestVectors._provenance),
                 status: isValid ? 'pass' : 'fail',
                 details: isValid
                   ? `MAC[${macBytes.length}B, ${tv.macLen}-bit truncated] verified: ${macHex}`
@@ -1859,7 +2280,6 @@ export function useAcvpSuite() {
                 algorithm: `HMAC-SHA512 (${eName})`,
                 testCase: 'Verify KAT (NIST ACVP, truncated)',
                 referenceUrl: REF.hmac,
-                evidenceTier: deriveEvidenceTier(hmac512TestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -1898,7 +2318,7 @@ export function useAcvpSuite() {
                 handle: ecPubHandle,
                 family: 'ecdsa',
                 role: 'public',
-                label: `ACVP ECDSA P-384 Public (${eName})`,
+                label: `Std KAT ECDSA P-384 Public (${eName})`,
                 variant: 'P-384',
                 engine: engineId,
               })
@@ -1921,7 +2341,6 @@ export function useAcvpSuite() {
                 details: isValid
                   ? `Verified sig[${sigBytes.length}B]: ${ecSigHex}…`
                   : 'Signature verification failed against FIPS 186-5 vector',
-                evidenceTier: deriveEvidenceTier(ecdsaP384TestVectors._provenance),
               })
               addLog(
                 `[${eName}] [id:${id15}] ECDSA P-384 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig: ${ecSigHex}…`
@@ -1933,7 +2352,6 @@ export function useAcvpSuite() {
                 algorithm: `ECDSA P-384 (${eName})`,
                 testCase: 'SigVer KAT',
                 referenceUrl: REF.ecdsa,
-                evidenceTier: deriveEvidenceTier(ecdsaP384TestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -1954,7 +2372,7 @@ export function useAcvpSuite() {
             const edTv = eddsaTestVectors.testGroups[0].tests[0]
             const id16 = `eddsa-sigver-${eName}`
             addLog(`[${eName}] Testing EdDSA Ed25519 SigVer KAT (RFC 8032)...`)
-            addLog(`  ACVP PK: ${edTv.pk} | Sig: ${edTv.signature.slice(0, 32)}…`)
+            addLog(`  RFC 8032 PK: ${edTv.pk} | Sig: ${edTv.signature.slice(0, 32)}…`)
             try {
               const pkBytes = hexToBytes(edTv.pk)
               const msgBytes = hexToBytes(edTv.msg)
@@ -1966,7 +2384,7 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'eddsa',
                 role: 'public',
-                label: `ACVP EdDSA Ed25519 Public (${eName})`,
+                label: `Std KAT EdDSA Ed25519 Public (${eName})`,
                 engine: engineId,
               })
 
@@ -1983,7 +2401,6 @@ export function useAcvpSuite() {
                 details: isValid
                   ? `Verified sig[${sigBytes.length}B]: ${toHex(sigBytes, 16)}…`
                   : 'Signature verification failed against RFC 8032 vector',
-                evidenceTier: deriveEvidenceTier(eddsaTestVectors._provenance),
               })
               addLog(
                 `[${eName}] [id:${id16}] EdDSA Ed25519 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'}`
@@ -1995,7 +2412,6 @@ export function useAcvpSuite() {
                 algorithm: `EdDSA Ed25519 (${eName})`,
                 testCase: 'SigVer KAT',
                 referenceUrl: REF.eddsa,
-                evidenceTier: deriveEvidenceTier(eddsaTestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -2039,7 +2455,7 @@ export function useAcvpSuite() {
                 handle: pubHandle448,
                 family: 'eddsa',
                 role: 'public',
-                label: `ACVP EdDSA Ed448 Public (${eName})`,
+                label: `NIST sample EdDSA Ed448 Public (${eName})`,
                 engine: engineId,
               })
 
@@ -2056,7 +2472,6 @@ export function useAcvpSuite() {
                 algorithm: `EdDSA Ed448 (${eName})`,
                 testCase: 'SigVer KAT (NIST ACVP)',
                 referenceUrl: REF.eddsa,
-                evidenceTier: deriveEvidenceTier(eddsaEd448TestVectors._provenance),
                 status: isValid448 ? 'pass' : 'fail',
                 details: isValid448
                   ? `Verified sig[${sigBytes448.length}B]: ${toHex(sigBytes448, 16)}…`
@@ -2072,7 +2487,6 @@ export function useAcvpSuite() {
                 algorithm: `EdDSA Ed448 (${eName})`,
                 testCase: 'SigVer KAT',
                 referenceUrl: REF.eddsa,
-                evidenceTier: deriveEvidenceTier(eddsaEd448TestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -2094,14 +2508,16 @@ export function useAcvpSuite() {
             )
           } else {
             const id17 = `pbkdf2-kat-${eName}`
-            // WS-7 (2026-08-28): previously hardcoded inline with pbkdf2_test.json
-            // sitting unread alongside it (dead file, G-13/H-6-style gap). Now
-            // reads from the file — same self-consistency vector (tcId 2,
-            // P="password" S="salt" c=4096 dkLen=32), see the file's own
-            // _provenance note for why no NIST ACVP vector exists for this PRF.
-            const pbkdf2Tv = pbkdf2TestVectors.testGroups[0].tests[1]
+            // RFC 7914 §11's second PBKDF2-HMAC-SHA-256 vector (P="Password",
+            // S="NaCl", c=80000, dkLen=64), built by
+            // scripts/acvp/build_rfc7914_pbkdf2.py (2026-09-26). It replaced a
+            // Node/OpenSSL-generated case: NIST's ACVP PBKDF sample has
+            // HMAC-SHA2-224 only. The RFC's c = 1 vector is not run here: the Rust
+            // engine refuses iterations < 1000 (open gap
+            // pbkdf2-min-iterations-divergence).
+            const pbkdf2Tv = pbkdf2Rfc7914Vectors.testGroups[0].tests[1]
             addLog(
-              `[${eName}] Testing PBKDF2-HMAC-SHA256 KAT (self-consistency tcId=${pbkdf2Tv.tcId}, c=${pbkdf2Tv.iterations})...`
+              `[${eName}] Testing PBKDF2-HMAC-SHA256 KAT (RFC 7914 §11, c=${pbkdf2Tv.iterations})...`
             )
             try {
               const password = hexToBytes(pbkdf2Tv.password)
@@ -2128,9 +2544,8 @@ export function useAcvpSuite() {
               await pushResult({
                 id: id17,
                 algorithm: `PBKDF2-HMAC-SHA256 (${eName})`,
-                testCase: 'KAT (c=4096)',
+                testCase: 'RFC 7914 §11 KAT (c=80000)',
                 referenceUrl: REF.pbkdf2,
-                evidenceTier: deriveEvidenceTier(pbkdf2TestVectors._provenance),
                 status: matches ? 'pass' : 'fail',
                 details: matches
                   ? `DK[${derived.length}B] matches vector ✓: ${dkHex}`
@@ -2144,9 +2559,8 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `pbkdf2-kat-err-${eName}`,
                 algorithm: `PBKDF2-HMAC-SHA256 (${eName})`,
-                testCase: 'KAT (c=4096)',
+                testCase: 'RFC 7914 §11 KAT (c=80000)',
                 referenceUrl: REF.pbkdf2,
-                evidenceTier: deriveEvidenceTier(pbkdf2TestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -2181,7 +2595,7 @@ export function useAcvpSuite() {
                 handle: ikmHandle,
                 family: 'kdf',
                 role: 'secret',
-                label: `ACVP HKDF IKM RFC 5869 (${eName})`,
+                label: `Std KAT HKDF IKM RFC 5869 (${eName})`,
                 engine: engineId,
               })
 
@@ -2230,6 +2644,38 @@ export function useAcvpSuite() {
           }
         }
 
+        // ── 18b. PBKDF2 NIST reference samples (WS-E) — PBKDF 1.0, HMAC-SHA2-224
+        // PRF, derived-key byte-match; one 1-iteration case keeps the Rust
+        // iteration-floor divergence visible. sections/kdfMacAcvp.ts.
+        if (activeCategories.has('kdf')) {
+          currentCategory = 'kdf'
+          await runPbkdf2AcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.pbkdf2,
+            pushResult,
+            addLog,
+          })
+
+          // ── 18c. HKDF (KDA SP 800-56Cr2) and SP 800-108 KBKDF NIST reference
+          // samples + the X9.63 unsupported row (gap-closure P5).
+          // sections/kdfDeriveAcvp.ts.
+          const kdfCtx = {
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            pushResult,
+            addLog,
+          }
+          await runHkdfAcvpSection({ ...kdfCtx, referenceUrl: REF.kdaHkdf })
+          await runKbkdfAcvpSection({ ...kdfCtx, referenceUrl: REF.kbkdf })
+        }
+
         // ── 19. AES-KW Wrap KAT (RFC 3394) ────────────────────────────────
         if (activeCategories.has('symmetric')) {
           currentCategory = 'symmetric'
@@ -2267,7 +2713,7 @@ export function useAcvpSuite() {
                 handle: kekHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-KW KEK (${eName})`,
+                label: `Std KAT AES-KW KEK (${eName})`,
                 engine: engineId,
               })
               const targetHandle = hsm_importAESKey(
@@ -2285,7 +2731,7 @@ export function useAcvpSuite() {
                 handle: targetHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-KW Target (${eName})`,
+                label: `Std KAT AES-KW Target (${eName})`,
                 engine: engineId,
               })
 
@@ -2311,7 +2757,6 @@ export function useAcvpSuite() {
                 details: matches
                   ? `Wrapped[${wrapped.length}B]: ${wrappedHex}`
                   : `Mismatch: got ${toHex(wrapped, 8)}… expected ${toHex(expectedWrapped, 8)}…`,
-                evidenceTier: deriveEvidenceTier(aesKwTestVectors._provenance),
               })
               addLog(
                 `[${eName}] [id:${id19}] AES-KW Wrap KAT: ${matches ? 'PASS' : 'FAIL'} | Wrapped: ${wrappedHex}`
@@ -2323,7 +2768,6 @@ export function useAcvpSuite() {
                 algorithm: `AES-KW-256 (${eName})`,
                 testCase: 'Wrap KAT',
                 referenceUrl: REF.aeskw,
-                evidenceTier: deriveEvidenceTier(aesKwTestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -2359,7 +2803,7 @@ export function useAcvpSuite() {
                 handle: kekHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-KWP KEK (${eName})`,
+                label: `Round-trip AES-KWP KEK (${eName})`,
                 engine: engineId,
               })
               const targetHandle = hsm_generateAESKey(
@@ -2377,7 +2821,7 @@ export function useAcvpSuite() {
                 handle: targetHandle,
                 family: 'aes',
                 role: 'secret',
-                label: `ACVP AES-KWP Target (${eName})`,
+                label: `Round-trip AES-KWP Target (${eName})`,
                 engine: engineId,
               })
 
@@ -2440,6 +2884,89 @@ export function useAcvpSuite() {
           }
         }
 
+        // ── 20b. AES-KW / AES-KWP NIST reference samples (WS-E) — wrap
+        // byte-match, unwrap byte-match and upstream integrity failures
+        // (C_UnwrapKey refused, CK_RV pinned per engine), AES-128/192/256,
+        // aligned / one-byte / unaligned payloads. sections/aesKwAcvp.ts.
+        if (activeCategories.has('symmetric')) {
+          currentCategory = 'symmetric'
+          await runAesKwAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.aeskw,
+            pushResult,
+            addLog,
+          })
+        }
+
+        // ── 20c. PROJECT WYCHEPROOF (Google / C2SP) adversarial vectors ────
+        // The reject-path coverage NIST does not publish: X25519/X448 low-order
+        // and twist points, forged/malleable EdDSA signatures, AES-KW/KWP
+        // modified-padding and integrity failures. independent-oracle evidence
+        // only — "agrees with Wycheproof <commit> for this case", never
+        // conformance. sections/wycheproofNegative.ts.
+        if (activeCategories.has('classical')) {
+          currentCategory = 'classical'
+          const wycCtx = {
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.wycheproof,
+            pushResult,
+            addLog,
+          }
+          await runWycheproofXdhSection(wycCtx)
+          await runWycheproofEddsaSection(wycCtx)
+        }
+        if (activeCategories.has('symmetric')) {
+          currentCategory = 'symmetric'
+          await runWycheproofKeywrapSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.wycheproof,
+            pushResult,
+            addLog,
+          })
+        }
+
+        // ── 38. Multi-part message signing round-trip (sections/multiMessageSign.ts) ──
+        // Both engines advertise CKF_MULTI_MESSAGE on every signing mechanism
+        // since hsm d4345f88: C_SignMessageBegin/Next signs 5+11+16 bytes, the
+        // single-part C_Verify must accept it (MACs byte-equal), and multi-part
+        // verify must accept it and refuse a changed message. Functional
+        // round-trip evidence only (fresh keys, no external expected value).
+        {
+          const mmCtx = {
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.pkcs11MessageSign,
+            pushResult,
+            addLog,
+          }
+          const MM_GROUPS: [CategoryId, MultiPartFamily[]][] = [
+            ['hashing_mac', ['hmac']],
+            ['classical', ['rsa', 'ecdsa']],
+            ['ml_dsa', ['mldsa']],
+            ['slh_stateful', ['slhdsa']],
+          ]
+          for (const [cat, fams] of MM_GROUPS) {
+            if (!activeCategories.has(cat)) continue
+            currentCategory = cat
+            await runMultiMessageSignSection(mmCtx, fams)
+          }
+        }
+
         // ── 21. SLH-DSA Context Binding (FIPS 205 §9.2) ───────────────────
         if (activeCategories.has('slh_stateful')) {
           currentCategory = 'slh_stateful'
@@ -2456,14 +2983,14 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'slh-dsa',
                 role: 'public',
-                label: `ACVP SLH-DSA Ctx Binding Public (${eName})`,
+                label: `Round-trip SLH-DSA Ctx Binding Public (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privHandle,
                 family: 'slh-dsa',
                 role: 'private',
-                label: `ACVP SLH-DSA Ctx Binding Private (${eName})`,
+                label: `Round-trip SLH-DSA Ctx Binding Private (${eName})`,
                 engine: engineId,
               })
               const ctxA: SLHDSASignOptions = { context: new TextEncoder().encode('acvp-ctx-A') }
@@ -2534,14 +3061,14 @@ export function useAcvpSuite() {
                 handle: pubHandle,
                 family: 'slh-dsa',
                 role: 'public',
-                label: `ACVP SLH-DSA Det Mode Public (${eName})`,
+                label: `Round-trip SLH-DSA Det Mode Public (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privHandle,
                 family: 'slh-dsa',
                 role: 'private',
-                label: `ACVP SLH-DSA Det Mode Private (${eName})`,
+                label: `Round-trip SLH-DSA Det Mode Private (${eName})`,
                 engine: engineId,
               })
               const detOpts: SLHDSASignOptions = { deterministic: true }
@@ -2635,28 +3162,28 @@ export function useAcvpSuite() {
                 handle: pubA,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X25519 PubKey-A (${eName})`,
+                label: `Round-trip X25519 PubKey-A (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privA,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X25519 PrivKey-A (${eName})`,
+                label: `Round-trip X25519 PrivKey-A (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: pubB,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X25519 PubKey-B (${eName})`,
+                label: `Round-trip X25519 PubKey-B (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privB,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X25519 PrivKey-B (${eName})`,
+                label: `Round-trip X25519 PrivKey-B (${eName})`,
                 engine: engineId,
               })
 
@@ -2764,28 +3291,28 @@ export function useAcvpSuite() {
                 handle: pubA,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X448 PubKey-A (${eName})`,
+                label: `Round-trip X448 PubKey-A (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privA,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X448 PrivKey-A (${eName})`,
+                label: `Round-trip X448 PrivKey-A (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: pubB,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X448 PubKey-B (${eName})`,
+                label: `Round-trip X448 PubKey-B (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privB,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X448 PrivKey-B (${eName})`,
+                label: `Round-trip X448 PrivKey-B (${eName})`,
                 engine: engineId,
               })
 
@@ -2896,28 +3423,28 @@ export function useAcvpSuite() {
                 handle: pubA,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X963-SHA3 PubA (${eName})`,
+                label: `Round-trip X963-SHA3 PubA (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privA,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X963-SHA3 PrivA (${eName})`,
+                label: `Round-trip X963-SHA3 PrivA (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: pubB,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP X963-SHA3 PubB (${eName})`,
+                label: `Round-trip X963-SHA3 PubB (${eName})`,
                 engine: engineId,
               })
               regKey({
                 handle: privB,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP X963-SHA3 PrivB (${eName})`,
+                label: `Round-trip X963-SHA3 PrivB (${eName})`,
                 engine: engineId,
               })
 
@@ -3023,7 +3550,7 @@ export function useAcvpSuite() {
                 handle: hKey,
                 family: 'chacha20',
                 role: 'secret',
-                label: `ACVP ChaCha20 (${eName})`,
+                label: `Round-trip ChaCha20 (${eName})`,
                 engine: engineId,
               })
 
@@ -3392,7 +3919,7 @@ export function useAcvpSuite() {
                 handle: kp.pubHandle,
                 family: 'ecdsa',
                 role: 'public',
-                label: `ACVP ECDSA secp256k1 Public (${eName})`,
+                label: `Round-trip ECDSA secp256k1 Public (${eName})`,
                 variant: 'secp256k1',
                 engine: engineId,
               })
@@ -3400,7 +3927,7 @@ export function useAcvpSuite() {
                 handle: kp.privHandle,
                 family: 'ecdsa',
                 role: 'private',
-                label: `ACVP ECDSA secp256k1 Private (${eName})`,
+                label: `Round-trip ECDSA secp256k1 Private (${eName})`,
                 variant: 'secp256k1',
                 engine: engineId,
               })
@@ -3465,7 +3992,7 @@ export function useAcvpSuite() {
                 handle: ecPubHandle,
                 family: 'ecdsa',
                 role: 'public',
-                label: `ACVP ECDSA P-521 Public (${eName})`,
+                label: `NIST sample ECDSA P-521 Public (${eName})`,
                 variant: 'P-521',
                 engine: engineId,
               })
@@ -3484,7 +4011,6 @@ export function useAcvpSuite() {
                 algorithm: `ECDSA P-521 (${eName})`,
                 testCase: 'SigVer KAT (NIST ACVP)',
                 referenceUrl: REF.ecdsa,
-                evidenceTier: deriveEvidenceTier(ecdsaP521TestVectors._provenance),
                 status: isValid ? 'pass' : 'fail',
                 details: isValid
                   ? `Verified sig[${sigBytes.length}B]: ${ecSigHex}…`
@@ -3500,7 +4026,6 @@ export function useAcvpSuite() {
                 algorithm: `ECDSA P-521 (${eName})`,
                 testCase: 'SigVer KAT',
                 referenceUrl: REF.ecdsa,
-                evidenceTier: deriveEvidenceTier(ecdsaP521TestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -3528,7 +4053,7 @@ export function useAcvpSuite() {
                 handle: kpA.pubHandle,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP ECDH P-521 PubKey-A (${eName})`,
+                label: `Round-trip ECDH P-521 PubKey-A (${eName})`,
                 variant: 'P-521',
                 engine: engineId,
               })
@@ -3536,7 +4061,7 @@ export function useAcvpSuite() {
                 handle: kpA.privHandle,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP ECDH P-521 PrivKey-A (${eName})`,
+                label: `Round-trip ECDH P-521 PrivKey-A (${eName})`,
                 variant: 'P-521',
                 engine: engineId,
               })
@@ -3544,7 +4069,7 @@ export function useAcvpSuite() {
                 handle: kpB.pubHandle,
                 family: 'ecdh',
                 role: 'public',
-                label: `ACVP ECDH P-521 PubKey-B (${eName})`,
+                label: `Round-trip ECDH P-521 PubKey-B (${eName})`,
                 variant: 'P-521',
                 engine: engineId,
               })
@@ -3552,7 +4077,7 @@ export function useAcvpSuite() {
                 handle: kpB.privHandle,
                 family: 'ecdh',
                 role: 'private',
-                label: `ACVP ECDH P-521 PrivKey-B (${eName})`,
+                label: `Round-trip ECDH P-521 PrivKey-B (${eName})`,
                 variant: 'P-521',
                 engine: engineId,
               })
@@ -3617,6 +4142,23 @@ export function useAcvpSuite() {
           }
         }
 
+        // ── 35b. KMAC-128 NIST reference samples (WS-E) — the two byte-aligned
+        // non-XOF MVT cases (customization + output length via the vendor
+        // parameter block). sections/kdfMacAcvp.ts.
+        if (activeCategories.has('hashing_mac')) {
+          currentCategory = 'hashing_mac'
+          await runKmacAcvpSection({
+            M,
+            hSession,
+            eName,
+            slot: engine.slot,
+            mechs: engine.mechs,
+            referenceUrl: REF.kmac,
+            pushResult,
+            addLog,
+          })
+        }
+
         // ── 35. KMAC128 KAT (NIST SP 800-185) ─────────────────────────────
         if (activeCategories.has('hashing_mac')) {
           currentCategory = 'hashing_mac'
@@ -3649,7 +4191,7 @@ export function useAcvpSuite() {
                 handle: kmacHandle,
                 family: 'hmac',
                 role: 'secret',
-                label: `ACVP KMAC128 (${eName})`,
+                label: `Std KAT KMAC128 (${eName})`,
                 engine: engineId,
               })
 
@@ -3667,7 +4209,6 @@ export function useAcvpSuite() {
                 algorithm: `KMAC128 (${eName})`,
                 testCase: 'KAT (SP 800-185 Sample #4)',
                 referenceUrl: REF.kmac,
-                evidenceTier: deriveEvidenceTier(kmacTestVectors._provenance),
                 status: isValid ? 'pass' : 'fail',
                 details: isValid
                   ? `Verified mac[${macBytes.length}B]: ${toHex(macBytes, 8)}…`
@@ -3681,7 +4222,6 @@ export function useAcvpSuite() {
                 algorithm: `KMAC128 (${eName})`,
                 testCase: 'KAT',
                 referenceUrl: REF.kmac,
-                evidenceTier: deriveEvidenceTier(kmacTestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -3690,79 +4230,109 @@ export function useAcvpSuite() {
           }
         }
 
-        // ── 36. RSA-OAEP Decrypt Self-Consistency (no ACVP registration) ──
+        // ── 36. RSA-OAEP decrypt — NIST ACVP KTS-IFC reference samples ──
         if (activeCategories.has('classical')) {
           currentCategory = 'classical'
-          // New category (D-3/D-8): rsa_oaep_test.json was a dead file with
-          // zero importers (G-13/H-6) AND self-generated (H-3/H-4) — checked
-          // NIST's ACVP-Server directory listing directly (2026-08-27): RSA-OAEP
-          // has no ACVP algorithm registration at all, so there is no external
-          // vector to replace this with. Per D-8's fallback, the vector stays
-          // and is tiered honestly as self-consistency: this decrypts the
-          // file's own known ciphertext with an imported CRT private key and
-          // checks it against the file's own known plaintext — proving the
-          // engine's decrypt agrees with the value the fixture was generated
-          // against, not correctness against an external oracle.
+          // rsa_oaep_test.json is NIST's KTS-IFC (SP 800-56B rev 2) sample,
+          // tgId 1 (OAEP SHA2-512) and tgId 3 (OAEP SHA-1): 20 cases, built by
+          // scripts/acvp/build_kts_oaep_subset.py (2026-09-26). It replaced one
+          // Node/OpenSSL-generated case whose note said RSA-OAEP has no ACVP
+          // registration; it does, under KTS-IFC. In KTS-OAEP without a KDF the
+          // transported key is the OAEP payload, so ct must decrypt to pt.
+          //
+          // The OAEP and MGF1 hash come from each group's own hashAlg — a KAT
+          // harness reads the parameters its vectors state (open gap
+          // kat-harness-must-read-stated-parameters).
+          //
+          // Known difference: the C++ engine (OpenSSL) decrypts all 20; the Rust
+          // engine decrypts 2. 18 keys have public exponents of 34-56 bits, which
+          // Rust refuses by design (>= 2^33); the other 2 are SHA-1 OAEP, which
+          // Rust supports since hsm #284 (d4345f88). See open gap
+          // rust-rsa-private-import-requires-cka-value. The 18 Rust rows are
+          // recorded as failures with their reason, so the matrix shows the
+          // engines differ instead of implying parity.
+          const OAEP_HASH: Record<string, 'sha1' | 'sha512'> = {
+            'SHA-1': 'sha1',
+            'SHA2-512': 'sha512',
+          }
           if (engine.mechs.size > 0 && !engine.mechs.has(CKM_RSA_PKCS_OAEP)) {
             await pushSkip(
               `rsaoaep-skip-${eName}`,
               `RSA-OAEP (${eName})`,
-              'Decrypt Self-Consistency',
+              'NIST KTS-IFC OAEP decrypt',
               REF.rsaoaep,
               'RSA-OAEP: mechanism not supported'
             )
           } else {
-            const oaepTv = rsaOaepTestVectors.testGroups[0].tests[0]
-            const id36 = `rsaoaep-selfcheck-${eName}`
-            addLog(`[${eName}] Testing RSA-OAEP Decrypt Self-Consistency (no ACVP registration)...`)
-            try {
-              const privHandle = await hsm_importRSAPrivateKey(M, hSession, {
-                n: hexToBytes(oaepTv.n),
-                e: hexToBytes(oaepTv.e),
-                d: hexToBytes(oaepTv.d),
-                p: hexToBytes(oaepTv.p),
-                q: hexToBytes(oaepTv.q),
-                dp: hexToBytes(oaepTv.dp),
-                dq: hexToBytes(oaepTv.dq),
-                qi: hexToBytes(oaepTv.qi),
-              })
-              regKey({
-                handle: privHandle,
-                family: 'rsa',
-                role: 'private',
-                label: `ACVP RSA-OAEP Private (${eName})`,
-                engine: engineId,
-              })
-
-              const ciphertext = hexToBytes(oaepTv.ct)
-              const decrypted = hsm_rsaDecrypt(M, hSession, privHandle, ciphertext, 'sha256')
-              const decryptedHex = toHex(decrypted, decrypted.length)
-              const matches = decryptedHex === oaepTv.pt
-
-              await pushResult({
-                id: id36,
-                algorithm: `RSA-OAEP (${eName})`,
-                testCase: 'Decrypt Self-Consistency',
-                referenceUrl: REF.rsaoaep,
-                evidenceTier: deriveEvidenceTier(rsaOaepTestVectors._provenance),
-                status: matches ? 'pass' : 'fail',
-                details: matches
-                  ? `Decrypted ${decrypted.length}B matches known plaintext ✓`
-                  : `Decrypted ${decryptedHex.slice(0, 32)}… ≠ expected ${oaepTv.pt.slice(0, 32)}…`,
-              })
-              addLog(`[${eName}] [id:${id36}] RSA-OAEP: ${matches ? 'PASS' : 'FAIL'}`)
-            } catch (e: unknown) {
-              const errMessage = e instanceof Error ? e.message : String(e)
-              await pushResult({
-                id: `rsaoaep-err-${eName}`,
-                algorithm: `RSA-OAEP (${eName})`,
-                testCase: 'Decrypt Self-Consistency',
-                referenceUrl: REF.rsaoaep,
-                evidenceTier: deriveEvidenceTier(rsaOaepTestVectors._provenance),
-                status: 'fail',
-                details: errMessage,
-              })
-              addLog(`[DISCREPANCY] [${eName}] [id:${id36}] RSA-OAEP: ${errMessage}`)
+            for (const g of rsaOaepTestVectors.testGroups) {
+              const hash = OAEP_HASH[g.hashAlg]
+              for (const tv of g.tests) {
+                const id36 = `rsaoaep-nist-tg${g.tgId}-tc${tv.tcId}-${eName}`
+                const eBits = BigInt('0x' + tv.e).toString(2).length
+                const testCase = `NIST KTS-IFC tgId ${g.tgId} tcId ${tv.tcId} · OAEP ${g.hashAlg} · e ${eBits} bits`
+                addLog(`[${eName}] Testing RSA-OAEP decrypt (${testCase})...`)
+                if (!hash) {
+                  await pushResult({
+                    id: id36,
+                    algorithm: `RSA-OAEP (${eName})`,
+                    testCase,
+                    referenceUrl: REF.rsaoaep,
+                    status: 'fail',
+                    details: `vector names an OAEP hash this suite cannot map: ${g.hashAlg}`,
+                  })
+                  continue
+                }
+                try {
+                  const privHandle = await hsm_importRSAPrivateKey(M, hSession, {
+                    n: hexToBytes(tv.n),
+                    e: hexToBytes(tv.e),
+                    d: hexToBytes(tv.d),
+                    p: hexToBytes(tv.p),
+                    q: hexToBytes(tv.q),
+                    dp: hexToBytes(tv.dp),
+                    dq: hexToBytes(tv.dq),
+                    qi: hexToBytes(tv.qi),
+                  })
+                  regKey({
+                    handle: privHandle,
+                    family: 'rsa',
+                    role: 'private',
+                    label: `NIST KTS-IFC RSA-OAEP tc${tv.tcId} Private (${eName})`,
+                    engine: engineId,
+                  })
+                  const decrypted = hsm_rsaDecrypt(M, hSession, privHandle, hexToBytes(tv.ct), hash)
+                  const decryptedHex = toHex(decrypted, decrypted.length)
+                  const matches = decryptedHex.toLowerCase() === tv.pt.toLowerCase()
+                  await pushResult({
+                    id: id36,
+                    algorithm: `RSA-OAEP (${eName})`,
+                    testCase,
+                    referenceUrl: REF.rsaoaep,
+                    status: matches ? 'pass' : 'fail',
+                    details: matches
+                      ? `Decrypted NIST's ciphertext to NIST's ${decrypted.length}B plaintext ✓`
+                      : `Decrypted ${decryptedHex.slice(0, 32)}… ≠ NIST ${tv.pt.slice(0, 32)}…`,
+                  })
+                  addLog(`[${eName}] [id:${id36}] RSA-OAEP: ${matches ? 'PASS' : 'FAIL'}`)
+                } catch (e: unknown) {
+                  const errMessage = e instanceof Error ? e.message : String(e)
+                  const known =
+                    engineId !== 'rust'
+                      ? ''
+                      : eBits > 33
+                        ? ` — documented Rust limitation: public exponents >= 2^33 are refused (open gap rust-rsa-private-import-requires-cka-value); the C++ engine accepts this key`
+                        : ''
+                  await pushResult({
+                    id: id36,
+                    algorithm: `RSA-OAEP (${eName})`,
+                    testCase,
+                    referenceUrl: REF.rsaoaep,
+                    status: 'fail',
+                    details: errMessage + known,
+                  })
+                  addLog(`[DISCREPANCY] [${eName}] [id:${id36}] RSA-OAEP: ${errMessage}${known}`)
+                }
+              }
             }
           }
         }
@@ -3782,10 +4352,15 @@ export function useAcvpSuite() {
           hSessionRef.current = primary.hSession
         }
       }
-      setResults(newResults)
+      runningRef.current = false
       setLoading(false)
-      setProgress(null)
-      addLog('Validation Suite Completed.')
+      progressBufRef.current = null
+      // Force the final commit so the table, the counters and the log are
+      // complete the moment `loading` clears — anything still buffered by the
+      // COMMIT_MS throttle lands here, before the "run completed" line.
+      logBufRef.current[logBufRef.current.length] =
+        `[${new Date().toLocaleTimeString()}] Cryptographic Validation Workbench run completed.`
+      commitStream(true)
     }
     return newResults
   }

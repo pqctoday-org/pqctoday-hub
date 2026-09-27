@@ -1183,9 +1183,9 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     {
       afterPhase: 'dev-cp-5',
       route: '/playground',
-      label: 'Run ACVP Tests',
+      label: 'Run Validation Tests',
       purpose:
-        "Verify our numbers against NIST's own known-answer vectors rather than trusting them.",
+        'Check our numbers against selected public NIST ACVP-Server reference samples and published KATs rather than trusting them.',
     },
   ],
   architect: [
@@ -1262,9 +1262,9 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     {
       afterPhase: 'ops-cp-3',
       route: '/playground',
-      label: 'Run ACVP Tests',
+      label: 'Run Validation Tests',
       purpose:
-        "Verify our numbers against NIST's own known-answer vectors rather than trusting them.",
+        'Check our numbers against selected public NIST ACVP-Server reference samples and published KATs rather than trusting them.',
     },
     {
       afterPhase: 'ops-cp-4a',

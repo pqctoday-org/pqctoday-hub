@@ -62,12 +62,23 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
     kind: { type: 'ecdh-derive', curve: 'P-256' },
   },
   {
-    // Profile A uses X25519 — no ecdh-derive KAT runner support for X25519 yet
+    // Until 2026-09-24 this ran the plain ECDH round-trip above under a KDF
+    // label. It now derives Enc key ‖ ICB ‖ MAC key with the engine's X9.63
+    // KDF and compares them with the values printed in Annex C.4.4.1.
     id: '5g-suci-kdf-b',
     useCase: 'SUCI Profile B key derivation (X9.63-KDF + SHA-256)',
-    standard: '3GPP TS 33.501 §C.3.3 + ANSI X9.63',
-    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/56/a/r3/final',
-    kind: { type: 'ecdh-derive', curve: 'P-256' },
+    standard: '3GPP TS 33.501 Annex C.4.4.1',
+    referenceUrl:
+      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+    kind: { type: 'suci-profile-b', step: '4-kdf' },
+  },
+  {
+    id: '5g-suci-scheme-output-b',
+    useCase: 'SUCI Profile B scheme output (ECDH → KDF → AES-CTR → HMAC)',
+    standard: '3GPP TS 33.501 Annex C.4.4.1',
+    referenceUrl:
+      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+    kind: { type: 'suci-profile-b', step: '7-e2e' },
   },
 ]
 import {
@@ -1757,7 +1768,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
       <KatValidationPanel
         specs={FIVEG_KAT_SPECS}
         label="5G PQC Known Answer Tests"
-        authorityNote="NIST FIPS 203/204 · NIST SP 800-227 (hybrid combiner)"
+        authorityNote="NIST FIPS 203/204 · NIST SP 800-227 (hybrid combiner) · 3GPP TS 33.501 Annex C.4"
       />
     </div>
   )

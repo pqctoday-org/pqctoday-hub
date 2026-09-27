@@ -1,3 +1,16 @@
+// SPDX-License-Identifier: BSD-2-Clause
+/*
+ * @pqctoday/softhsm-wasm — SoftHSMv3 compiled to WebAssembly (PKCS#11 v3.2).
+ *
+ * Notice: Educational and demonstration build — not for production use, in any
+ * environment. Not security-audited, not certified, and not intended to
+ * protect real data.
+ *
+ * This applies wherever this module runs, Node.js included — not only in a
+ * browser. Do not use this module, or anything it produces, to protect real
+ * data or real systems. See ./NOTICE.
+ */
+
 export interface EmscriptenFS {
   mkdir(path: string): void
   writeFile(path: string, data: string | Uint8Array, opts?: object): void
@@ -327,13 +340,16 @@ export interface SoftHSMModule {
     pulSigLen: number
   ): number
   _C_SignMessageBegin(hSession: number, pParam: number, ulParamLen: number): number
+  // PKCS#11 v3.0 §5.15: a NULL pulSignatureLen marks a non-final part; the
+  // final part passes pSignature/pulSignatureLen (both engines implement this).
   _C_SignMessageNext(
     hSession: number,
     pParam: number,
     ulParamLen: number,
     pData: number,
     ulDataLen: number,
-    pbIsLast: number
+    pSig: number,
+    pulSigLen: number
   ): number
   _C_MessageSignFinal(hSession: number): number
   _C_MessageVerifyInit(hSession: number, pMechanism: number, hKey: number): number
@@ -354,8 +370,7 @@ export interface SoftHSMModule {
     pData: number,
     ulDataLen: number,
     pSig: number,
-    ulSigLen: number,
-    pbIsLast: number
+    ulSigLen: number
   ): number
   _C_MessageVerifyFinal(hSession: number): number
 

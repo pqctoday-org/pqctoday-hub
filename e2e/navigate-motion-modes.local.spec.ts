@@ -32,6 +32,14 @@ test.beforeEach(async ({ page }) => {
 // `actionTimeout` isn't enough by the 4th/5th test in this file.
 const SLOW_ACTION = { timeout: 30000 }
 
+// Same reason as SLOW_ACTION, applied to the per-test budget rather than the
+// per-action one: the global 45s (playwright.config.ts) was already close for a
+// ~2,400-node software-rendered WebGL scene, and every interaction in this file
+// now has to (re-)expand the filter panel first — see openPanel — which the
+// spec's original 2026-08-29 shape did not have to pay. 120s is a timeout, not an
+// assertion: nothing here is being masked, the same things are still asserted.
+test.describe.configure({ timeout: 120_000 })
+
 async function waitForGraph(page: Page) {
   await page.goto('/navigate')
   // Not asserting the loading text is visible FIRST — on a warm dev-server
@@ -48,12 +56,97 @@ function tourCaption(page: Page) {
   return page.getByRole('status').filter({ hasText: 'connection' })
 }
 
+/**
+ * MotionControls lives INSIDE the /navigate filter panel, and that panel is not
+ * a static part of the page any more:
+ *   • it starts COLLAPSED to a "Filters" pill so the graph gets the full screen
+ *     (`useState(false)`, ForceClusterView.tsx), and
+ *   • it RE-collapses after PANEL_IDLE_COLLAPSE_MS (3000ms) whenever the user
+ *     stops touching the filter controls
+ * — both from 58651ebb6 "fix(navigate): auto-collapse the filter panel to a pill
+ * after idle" (2026-09-04), i.e. after this spec was written (2026-08-29). The
+ * Off/Spin/Tour buttons, the speed slider, the "Stop N of M" line, "Paused" and
+ * "Resume" are ALL inside it, so every one of those has to be reached through an
+ * open panel.
+ *
+ * Note the idle effect's dependency list — [panelOpen, listOpen, filters,
+ * labelBudget, expandedType] — deliberately does NOT include motion mode or
+ * speed: changing those does not reset the 3s clock. So "open it once at the
+ * start of the test" is not enough; anything that waits (a 2s speed sample, a
+ * 20s tour poll) will have the panel collapse out from under it. Hence: call
+ * this immediately before each panel read/click. It is a no-op when the panel is
+ * already open.
+ */
+async function openPanel(page: Page) {
+  const pill = page.getByRole('button', { name: 'Filters', exact: true })
+  // Anchor on a control that only exists inside the EXPANDED panel, so a failure
+  // here says "the panel never opened" rather than surfacing later as a confusing
+  // missing-button timeout.
+  const off = page.getByRole('button', { name: 'Off', exact: true })
+  // POLLED, not "check once then click once". A single check loses a race that
+  // really happens (seen live): the panel is still open when the pill is looked
+  // for, so there is no pill to click, and it collapses a moment later — leaving
+  // a 30s wait on a button that is now gone and nothing to re-open it. Polling
+  // also absorbs the other end: the graph may still be mounting, so neither the
+  // pill nor the panel exists yet (`{!loading && !error && …}` guards both).
+  await expect
+    .poll(
+      async () => {
+        if (await off.isVisible().catch(() => false)) return 'open'
+        if (await pill.isVisible().catch(() => false)) {
+          // Swallow a click that loses the same race — the next tick retries.
+          await pill.click({ timeout: 5000 }).catch(() => {})
+        }
+        return 'closed'
+      },
+      { timeout: 45000, intervals: [250] }
+    )
+    .toBe('open')
+}
+
+/**
+ * Sets the speed slider, retrying through the panel's idle collapse. `fill()`
+ * resolves the element and THEN types into it; when the 3s collapse lands in
+ * between, playwright reports "element was detached from the DOM, retrying" and
+ * eventually times out (seen live). Re-opening the panel on each attempt, and
+ * confirming the value actually stuck, removes that flake without weakening
+ * anything — the assertion is still "the slider now reads this value".
+ */
+async function setSpeed(page: Page, value: string) {
+  const slider = page.getByRole('slider', { name: 'Rotation and tour speed' })
+  await expect
+    .poll(
+      async () => {
+        await openPanel(page)
+        try {
+          await slider.fill(value, { timeout: 3000 })
+          return await slider.inputValue({ timeout: 2000 })
+        } catch {
+          return null
+        }
+      },
+      { timeout: 45000, intervals: [250] }
+    )
+    .toBe(value)
+}
+
 const progressText = (page: Page) => page.getByText(/Stop \d+ of \d+/)
 
 async function currentStopIndex(page: Page): Promise<number | null> {
-  const text = await progressText(page).textContent()
-  const match = text?.match(/Stop (\d+) of/)
-  return match ? parseInt(match[1], 10) : null
+  // Re-open the panel and read in the SAME short loop. "Stop N of M" lives inside
+  // MotionControls, i.e. inside the panel, and the panel auto-collapses after 3s
+  // of filter idleness (see openPanel) — so `openPanel(); textContent()` with a
+  // long default timeout loses the race whenever the collapse lands between the
+  // two, then blocks for the full timeout with nothing left to re-open it.
+  for (let attempt = 0; attempt < 10; attempt++) {
+    await openPanel(page)
+    const text = await progressText(page)
+      .textContent({ timeout: 2000 })
+      .catch(() => null)
+    const match = text?.match(/Stop (\d+) of/)
+    if (match) return parseInt(match[1], 10)
+  }
+  return null
 }
 
 test('defaults to Spin, and the mode buttons visibly change what the scene does', async ({
@@ -65,6 +158,7 @@ test('defaults to Spin, and the mode buttons visibly change what the scene does'
   })
 
   await waitForGraph(page)
+  await openPanel(page)
 
   const spinButton = page.getByRole('button', { name: 'Spin', exact: true })
   const offButton = page.getByRole('button', { name: 'Off', exact: true })
@@ -75,16 +169,30 @@ test('defaults to Spin, and the mode buttons visibly change what the scene does'
   // before/after a pause, they must be byte-identical once nothing animates
   // (a real assertion here: PNG re-encoding of an UNCHANGED frame is
   // deterministic, so any diff at all means something moved).
+  await openPanel(page)
   await offButton.click(SLOW_ACTION)
   await expect(offButton).toHaveAttribute('aria-pressed', 'true')
-  await page.waitForTimeout(600)
   const canvas = page.locator('canvas').first()
-  const still1 = await canvas.screenshot()
-  await page.waitForTimeout(600)
-  const still2 = await canvas.screenshot()
-  expect(Buffer.compare(still1, still2)).toBe(0)
+  // Polled rather than one fixed pair 600ms apart: the first pair can straddle
+  // the last in-flight animation frame (or a damping tail) after the Off click,
+  // which made this flake. Still a real assertion of stillness and NOT a weaker
+  // one — a rotating scene can never produce two byte-identical PNGs 600ms
+  // apart, so this can only go green on a genuinely frozen canvas; the window
+  // is bounded so "never settles" still fails.
+  await expect
+    .poll(
+      async () => {
+        const a = await canvas.screenshot()
+        await page.waitForTimeout(600)
+        const b = await canvas.screenshot()
+        return Buffer.compare(a, b)
+      },
+      { timeout: 15000, intervals: [100] }
+    )
+    .toBe(0)
 
   // Spin resumes visible motion.
+  await openPanel(page)
   await spinButton.click(SLOW_ACTION)
   await page.waitForTimeout(300)
   const spinning1 = await canvas.screenshot()
@@ -92,8 +200,10 @@ test('defaults to Spin, and the mode buttons visibly change what the scene does'
   const spinning2 = await canvas.screenshot()
   expect(Buffer.compare(spinning1, spinning2)).not.toBe(0)
 
+  await openPanel(page)
   await tourButton.click(SLOW_ACTION)
   await expect(tourButton).toHaveAttribute('aria-pressed', 'true')
+  await openPanel(page)
   await expect(progressText(page)).toBeVisible({ timeout: 5000 })
 
   expect(consoleErrors, `console errors: ${consoleErrors.join('\n')}`).toEqual([])
@@ -122,10 +232,18 @@ test('defaults to Spin, and the mode buttons visibly change what the scene does'
  * transform for opacity:0 elements, so text alone isn't a safe-enough match.
  */
 async function readTypeLabelOffset(page: Page): Promise<{ x: number; y: number } | null> {
+  // 2026-09-26: scans BUTTONS, not divs. makeLabelDiv() in ForceClusterView.tsx
+  // builds each CSS2D label as an <button type="button" aria-label="Focus the X
+  // category"> (the a11y/label-budget work), and CSS2DRenderer writes its
+  // `translate(Xpx,Ypx)` onto that button. The original `querySelectorAll('div')`
+  // scan therefore matched ZERO elements and this helper always returned null —
+  // verified live: 0 divs on /navigate carry an inline transform at all.
   const transform = await page.evaluate(() => {
-    for (const div of Array.from(document.querySelectorAll<HTMLElement>('div'))) {
-      if (div.textContent?.trim() === 'Standard' && div.style.opacity === '1') {
-        return div.style.transform
+    for (const el of Array.from(
+      document.querySelectorAll<HTMLElement>('button[aria-label^="Focus the "]')
+    )) {
+      if (el.textContent?.trim() === 'Standard' && el.style.opacity === '1') {
+        return el.style.transform
       }
     }
     return null
@@ -138,16 +256,17 @@ async function readTypeLabelOffset(page: Page): Promise<{ x: number; y: number }
 
 test('speed slider changes the rotation rate', async ({ page }) => {
   await waitForGraph(page)
-  const speedSlider = page.getByRole('slider', { name: 'Rotation and tour speed' })
   const SAMPLE_WINDOW_MS = 2000
 
-  await speedSlider.fill('0.25')
+  await setSpeed(page, '0.25')
   await page.waitForTimeout(200)
   const slowStart = await readTypeLabelOffset(page)
   await page.waitForTimeout(SAMPLE_WINDOW_MS)
   const slowEnd = await readTypeLabelOffset(page)
 
-  await speedSlider.fill('3')
+  // The 2s sample window above outlives the panel's 3s idle clock, so setSpeed
+  // re-opens the panel itself before touching the slider again.
+  await setSpeed(page, '3')
   await page.waitForTimeout(200)
   const fastStart = await readTypeLabelOffset(page)
   await page.waitForTimeout(SAMPLE_WINDOW_MS)
@@ -169,8 +288,10 @@ test('tour: reaches a node stop with exactly one label visible, shows the captio
   page,
 }) => {
   await waitForGraph(page)
+  await openPanel(page)
   await page.getByRole('button', { name: 'Tour', exact: true }).click(SLOW_ACTION)
 
+  // TourCaption renders outside the filter panel, so this needs no re-open.
   await expect(tourCaption(page)).toBeVisible({ timeout: 15000 })
 
   // Confirmed 2026-08-29 (revising the initial "caption only" plan): the
@@ -188,8 +309,14 @@ test('tour: reaches a node stop with exactly one label visible, shows the captio
   // style) may be visible (opacity 1) while focused on a single node/category
   // — updateLod()'s normal distance tiering would otherwise show hundreds at
   // this camera distance.
+  // `button[…]`, not `div[…]`: makeLabelDiv() returns an HTMLButtonElement (it
+  // keeps the `pointer-events:none` in its cssText). The old `div[…]` selector
+  // matched nothing, so this count was 0 and `<= 1` passed vacuously — the exact
+  // shape of green-that-could-not-be-red this whole remediation is about.
   const visibleLabelCount = await page.evaluate(() => {
-    const candidates = document.querySelectorAll<HTMLElement>('div[style*="pointer-events:none"]')
+    const candidates = document.querySelectorAll<HTMLElement>(
+      'button[style*="pointer-events:none"]'
+    )
     return Array.from(candidates).filter(
       (el) => el.style.opacity === '1' && (el.textContent ?? '').trim().length > 0
     ).length
@@ -201,6 +328,7 @@ test('tour: dragging the canvas pauses it, and Resume continues from the same st
   page,
 }) => {
   await waitForGraph(page)
+  await openPanel(page)
   await page.getByRole('button', { name: 'Tour', exact: true }).click(SLOW_ACTION)
   await expect(progressText(page)).toBeVisible({ timeout: 5000 })
 
@@ -220,6 +348,9 @@ test('tour: dragging the canvas pauses it, and Resume continues from the same st
   await page.mouse.move(cx + 40, cy + 20, { steps: 5 })
   await page.mouse.up()
 
+  // "· Paused" and the Resume button are both inside MotionControls, i.e. inside
+  // the filter panel — which the 20s poll above let collapse.
+  await openPanel(page)
   await expect(page.getByText(/Paused/)).toBeVisible()
   const resumeButton = page.getByRole('button', { name: 'Resume' })
   await expect(resumeButton).toBeVisible(SLOW_ACTION)
@@ -227,7 +358,12 @@ test('tour: dragging the canvas pauses it, and Resume continues from the same st
   const pausedIndex = await currentStopIndex(page)
   expect(pausedIndex).not.toBeNull()
 
+  await openPanel(page)
   await resumeButton.click(SLOW_ACTION)
+  // openPanel BEFORE the toBeHidden assertion, and not after: with the panel
+  // proven open (openPanel anchors on the Off button), "Paused is gone" means
+  // the tour really resumed — not merely that the panel collapsed away.
+  await openPanel(page)
   await expect(page.getByText(/Paused/)).toBeHidden()
 
   const resumedIndex = await currentStopIndex(page)
@@ -239,14 +375,20 @@ test('tour: dragging the canvas pauses it, and Resume continues from the same st
 
 test('mode and speed persist across a reload', async ({ page }) => {
   await waitForGraph(page)
+  await openPanel(page)
   await page.getByRole('button', { name: 'Tour', exact: true }).click(SLOW_ACTION)
-  await page.getByRole('slider', { name: 'Rotation and tour speed' }).fill('2')
+  await setSpeed(page, '2')
+  await openPanel(page)
   await expect(progressText(page)).toBeVisible({ timeout: 5000 })
 
   await page.reload()
   await expect(page.getByText('Building the graph from live hub data...')).toBeHidden({
     timeout: 30000,
   })
+  // `panelOpen` is deliberately NOT persisted — it is plain component state, so a
+  // reload puts the panel back to its collapsed pill. The mode/speed under test
+  // ARE persisted; open the panel to read them.
+  await openPanel(page)
   await expect(page.getByRole('button', { name: 'Tour', exact: true })).toHaveAttribute(
     'aria-pressed',
     'true',

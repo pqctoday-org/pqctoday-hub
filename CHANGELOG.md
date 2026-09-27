@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.127.0] - 2026-09-27
+## [4.129.0] - 2026-09-27
 
 FIPS 140-3 and PCI now each have their own certification module.
 
@@ -41,6 +41,40 @@ FIPS 140-3 and PCI now each have their own certification module.
 ### Fixed
 
 - **The FIPS module now says plainly that P2PE v3.1 is superseded** [view:/learn/fips-140-3-certification] [persona:grc]: the note on which PCI standards accept FIPS Level 3 HSMs now states that P2PE v3.2 replaced v3.1 in June 2025.
+
+## [4.128.0] - 2026-09-27
+
+The validation workbench now says exactly what each test proves, runs trusted public test vectors, and publishes its full coverage and known gaps.
+
+### Added
+
+- **Every test result states its evidence** [view:/playground] [view:/algorithms] [persona:developer] [persona:grc] [persona:researcher]: each workbench and Algorithms test now shows where its expected value comes from (a NIST ACVP-Server sample, Google's Project Wycheproof, a published standard, or a PQC Today round-trip) and what that does and does not prove. None of it is presented as a certification.
+- **Coverage matrix and open gaps, published** [view:/algorithms] [persona:grc] [persona:architect]: the Validation tab shows, for every mechanism, operation and parameter set both HSM engines advertise, whether a test covers it and how, plus the register of known engine gaps and accepted limitations.
+- **More NIST and Wycheproof vectors** [view:/playground] [persona:developer] [persona:researcher]: ML-KEM, ML-DSA and SLH-DSA depth (negatives, boundaries, pre-hash, external mu), classical, symmetric, MAC and KDF families, RSA-OAEP from NIST's key-transport sample, and RSA-PSS, EdDSA, X25519/X448 and AES key-wrap attack cases from Wycheproof.
+- **ECDSA signatures checked against NIST byte for byte** [view:/playground] [persona:developer]: with NIST's own nonce, both engines now reproduce NIST's signatures exactly.
+- **Multi-part message signing tested** [view:/playground] [persona:developer]: signing and verifying a message in parts is now exercised on every signing mechanism both engines offer.
+- **New draft module: ACVP Lab Workflow** [view:/learn] [persona:developer] [persona:grc]: how algorithm validation testing actually runs, from capability registration to evidence. Marked as a draft awaiting review by a lab practitioner.
+- **ACVP-format practice tool** [view:/playground] [persona:developer]: import an ACVP-format test prompt and export a response, entirely in the browser.
+
+### Fixed
+
+- **"ACVP certificate" wording corrected** [view:/learn] [persona:grc] [persona:curious]: learning modules, the quiz and the data now say what ACVP, CAVP and CMVP actually are. ACVP is the testing protocol, CAVP issues algorithm certificates and CMVP validates modules.
+- **Test vectors corrected** [view:/algorithms] [persona:researcher]: an AES-GCM, an RSA-OAEP, a PBKDF2 and an RSA-PSS vector that had been generated locally are replaced with NIST or Wycheproof originals, and a wrong KMAC256 value is corrected from NIST's published sample.
+
+## [4.127.0] - 2026-09-27
+
+Certificates that cover no post-quantum algorithm are now labelled "Classical only", and 40 products have a researched certification verdict.
+
+### Changed
+
+- **"Classical only" certificates are labelled, and never counted as post-quantum progress** [view:/migrate] [view:/compliance] [persona:grc] [persona:architect] [persona:ops]: a product can hold a real FIPS 140-3 or Common Criteria certificate that covers no post-quantum algorithm. Those certificates are now shown with a "Classical only" label, so you can see the product is certified without mistaking it for a post-quantum certification. The FIPS 140-3 progress chart on the Compliance page never counts them.
+
+### Data
+
+- **Certification verdicts researched for 40 products** [view:/migrate] [persona:grc] [persona:ops] [persona:researcher]: 32 products that showed "unknown" now say whether they hold a certificate of their own (5), rely on a certified module they embed (6), have their algorithms validated as the first step towards FIPS 140-3 (2), are in NIST's queue for review (1), or hold none (18). Each verdict rests on the NIST listing or the vendor's own documentation, and the contested ones were checked by a second reviewer. A product that only says it "uses a FIPS-validated HSM" without naming one is marked as holding no certificate.
+- **"Partial" is retired** [view:/migrate] [view:/compliance] [persona:grc]: every product now sits on one of the clear FIPS 140-3 stages: none, algorithms validated, in NIST's queue, or certified. The Go standard library's ML-KEM, the ST33KTPM, the KIOXIA and Nuvoton modules move to certified; Marvell LiquidSecurity 2, the Utimaco u.trust HSM, IBM z16 Crypto Express 8S and Quantum Xchange PhioTX show their validated post-quantum algorithms; and the LS2 HSM family, whose module lists its post-quantum algorithms as not approved, moves to none.
+- **More certificates linked to the right product** [view:/migrate] [persona:grc] [persona:architect]: 23 classical-only certificates are now linked to 19 products, and a Windows 11 certificate is no longer shown on Azure services.
+- **Duplicate entries merged** [view:/migrate] [persona:curious]: CryptoNext's library, ST's X-CUBE-PQC, Red Hat Enterprise Linux 9.8 and the ST33KTPM family each appeared twice; the duplicate is retired in favour of the main entry.
 
 ## [4.126.2] - 2026-09-27
 

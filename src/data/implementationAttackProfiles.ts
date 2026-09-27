@@ -87,7 +87,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       'Use masked implementations (first-order or higher-order masking of NTT operations)',
       'Enable constant-time polynomial arithmetic; avoid branch-dependent execution',
       'Draw all randomness from an SP 800-90A DRBG seeded by an SP 800-90B-validated entropy source',
-      'Use FIPS 140-3 validated modules with CAVP/ACVP certification',
+      'Use FIPS 140-3 validated modules whose algorithms hold CAVP certificates',
       'Source key-generation implementations only from vetted, reproducible builds — a kleptographic backdoor is invisible in the algorithm spec and only auditable in the actual code',
     ],
     references: [
@@ -161,7 +161,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       'Use masked implementations for NTT and rejection sampling',
       'Ensure deterministic nonce generation (hedged against bad RNG)',
       'Deploy redundancy checks to detect fault injection during signing',
-      'Use FIPS 140-3 validated modules with CAVP/ACVP certification',
+      'Use FIPS 140-3 validated modules whose algorithms hold CAVP certificates',
     ],
     references: [
       {

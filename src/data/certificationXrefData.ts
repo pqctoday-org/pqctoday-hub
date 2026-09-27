@@ -21,6 +21,19 @@ interface RawXrefRow {
   status: string
   cert_date: string
   cert_link: string
+  /** pqc_cert_present | no_pqc_cert_classical_only (blank on rows written before 2026-09-27) */
+  pqc_cert_flag?: string
+}
+
+/**
+ * True when a certificate covers no post-quantum algorithm. Reads the matcher's
+ * flag, and falls back to the scrape's own phrase for rows written before the
+ * flag existed — both mean the same thing, so neither may be counted as PQC.
+ */
+export function isClassicalOnlyCert(flag: string | undefined, pqcAlgorithms: string): boolean {
+  if (flag === 'no_pqc_cert_classical_only') return true
+  if (flag === 'pqc_cert_present') return false
+  return /no pqc mechanisms detected/i.test(pqcAlgorithms ?? '')
 }
 
 const { data: allXrefs, metadata } = loadLatestCSV<RawXrefRow, CertificationXref>(
@@ -38,6 +51,7 @@ const { data: allXrefs, metadata } = loadLatestCSV<RawXrefRow, CertificationXref
     status: row.status,
     certDate: row.cert_date,
     certLink: row.cert_link,
+    classicalOnly: isClassicalOnlyCert(row.pqc_cert_flag, row.pqc_algorithms),
   })
 )
 

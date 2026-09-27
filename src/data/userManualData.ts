@@ -130,7 +130,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'HSM Playground',
-        body: 'The /playground/hsm route emulates a PKCS#11 v3.2 HSM via SoftHSMv3 WASM with 10 tabs: Keystore, Symmetric, Key Wrap, Hashing, Sign/Verify, Key Agreement, Key Derivation, Mechanisms, ACVP (NIST KAT vectors), and Logs. Supports C++, Rust, and Dual engine modes with parity cross-check.',
+        body: 'The /playground/hsm route emulates a PKCS#11 v3.2 HSM via SoftHSMv3 WASM with 10 tabs: Keystore, Symmetric, Key Wrap, Hashing, Sign/Verify, Key Agreement, Key Derivation, Mechanisms, Validation (mixed-evidence workbench: selected NIST ACVP-Server reference samples, standard KATs, oracle and functional tests), and Logs. Supports C++, Rust, and Dual engine modes with parity cross-check.',
       },
       {
         heading: 'Individual Tools',
@@ -236,7 +236,7 @@ export const pageManuals: Record<PageId, PageManual> = {
     sections: [
       {
         heading: 'Five Tabs',
-        body: 'The page has 5 tabs: Standardization Bodies (standards orgs), Technical Standards (technical specifications), Certification Schemes (FIPS/ACVP/CC programs), Compliance Frameworks (regulatory requirements), and Cert Records (searchable FIPS/ACVP/CC product certification records with pagination).',
+        body: 'The page has 5 tabs: Standardization Bodies (standards orgs), Technical Standards (technical specifications), Certification Schemes (FIPS 140-3/CAVP/CC programs), Compliance Frameworks (regulatory requirements), and Cert Records (searchable FIPS 140-3/CAVP/CC product certification records with pagination).',
       },
       {
         heading: 'Landscape Tabs (Bodies, Standards, Schemes, Frameworks)',
@@ -273,7 +273,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Product Details',
-        body: 'Click any product to see its full migration profile: current PQC support, migration timeline, certification status (FIPS/ACVP/CC cross-references), vendor links, and product briefs.',
+        body: 'Click any product to see its full migration profile: current PQC support, migration timeline, certification status (FIPS 140-3/CAVP/CC cross-references), vendor links, and product briefs.',
       },
       {
         heading: 'My Products & Comparison',

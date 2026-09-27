@@ -1,0 +1,21 @@
+{
+  "engine": {
+    "implementation": "pqctoday-hsm softhsmv3 C++ (OpenSSL 3.6 backend), native shared library from the pqctoday-sandbox dev-sandbox image",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": null,
+    "sourceCommitEvidence": "UNKNOWN — not publishable. The artifact comes from the existing image pqc-dev-sandbox:latest sha256:cce738cdaddf38eb15661a5f9d9b91ea7c95f3d7ade7a777273fdbc25eea125f (created 2026-09-17T20:25-05:00; .so mtime 2026-09-18T00:43Z), built by pqctoday-sandbox docker/Dockerfile.dev-sandbox (hsm-builder stage) with `COPY pqctoday-hsm` from a sibling WORKING TREE: the image carries no .git, and neither the commit nor the tree's dirty state was recorded. It was run as found (no rebuild: amd64 builds are outside the permitted pqc-rust build path) to exercise the x86-64 ABI, and is recorded honestly as unattributable.",
+    "builtAt": "2026-09-18T00:43Z (file mtime inside the image)"
+  },
+  "build": {
+    "buildSystem": "CMake (Dockerfile.dev-sandbox hsm-builder stage)",
+    "compiler": "GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 (ELF .comment)",
+    "flags": "per Dockerfile: -DWITH_CRYPTO_BACKEND=openssl -DBUILD_TESTS=OFF -DENABLE_STATIC=OFF -DOPENSSL_ROOT_DIR=/usr/local/ssl, no CMAKE_BUILD_TYPE (CMake default flags); the source tree's own CMake defaults at build time are unknown",
+    "profile": "CMake default (no build type)",
+    "features": null,
+    "location": "docker build of pqctoday-sandbox dev-sandbox (linux/amd64 under Rosetta 2 on Apple silicon)"
+  },
+  "entropy": {
+    "source": "OpenSSL 3.6.3 default DRBG, seeded from getrandom(2)"
+  },
+  "notes": []
+}

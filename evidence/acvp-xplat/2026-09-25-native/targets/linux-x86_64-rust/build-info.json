@@ -1,0 +1,32 @@
+{
+  "engine": {
+    "implementation": "pqctoday-hsm softhsmrustv3 (Rust), native cdylib libsofthsmrustv3.so",
+    "sourceRepository": "https://github.com/pqctoday-org/pqctoday-hsm",
+    "sourceCommit": "417c47a224a9859a4a02b90700ca0cdeb30cfebc",
+    "sourceCommitEvidence": "Built from a clean detached worktree created for this run (git -C pqctoday-hsm worktree add --detach pqctoday-hsm-x86-417c47a2 417c47a2…; no submodules needed), bind-mounted into a throwaway container. `git status --porcelain` was empty before and after; the worktree was removed afterwards. Same commit the Rust WASM bundle is anchored to (wasm-provenance.json softhsmrustv3-engine._reanchor20260923: byte-identical rebuild).",
+    "builtAt": "2026-09-25T15:31Z"
+  },
+  "build": {
+    "buildSystem": "cargo 1.96.0 (30a34c682 2026-05-25): cargo +1.96.0 build --release --locked -p softhsmrustv3 --lib (private CARGO_TARGET_DIR)",
+    "compiler": "rustc 1.96.0 (ac68faa20 2026-05-25), host x86_64-unknown-linux-gnu, LLVM 22.1.2 — installed with `rustup toolchain install 1.96.0 --profile minimal` inside the throwaway container to match the Linux Arm64 and macOS builds (the image's default is 1.98.1); ELF .comment also lists LLD 22.1.2 and GCC 13.3.0 for C build-deps",
+    "flags": "RUSTFLAGS unset",
+    "profile": "release (opt-level=\"s\", lto=true — rust/Cargo.toml [profile.release])",
+    "features": "default (no acvp, no hw-accel) — the shipped native feature set; the WASM bundle additionally enables acvp (C_Initialize pReserved RNG-seeding hook, unused: both runners pass NULL)",
+    "location": "throwaway container (docker run --platform linux/amd64) from image pqc-dev-sandbox:latest sha256:cce738cdaddf38eb15661a5f9d9b91ea7c95f3d7ade7a777273fdbc25eea125f, used only for its toolchain — the shared pqc-dev-sandbox container and image were not touched; linux/amd64 under Rosetta 2 (OrbStack on Apple M5 Max), i.e. EMULATED; CARGO_TARGET_DIR /build/rust1 inside that container, removed with it"
+  },
+  "dependencies": {
+    "cryptoBackend": {
+      "name": "RustCrypto ml-kem (patched: rust/ml-kem-patched) + fips204 (patched: rust/fips204-patched)",
+      "version": "ml-kem 0.2.3, fips204 0.4.6 (rust/Cargo.lock @ 417c47a2)"
+    }
+  },
+  "entropy": {
+    "source": "getrandom crate → getrandom(2)"
+  },
+  "notes": [
+    "aws-lc-rs (aws-lc-sys) is statically linked for the RSA / NIST-curve ECDH fast path only (rust/src/crypto/awslc.rs); ML-KEM decapsulation and ML-DSA verification run on the pure-Rust crates. The .so has no libcrypto NEEDED entry.",
+    "hw-accel feature OFF: no FPGA/NPU offload path is compiled in.",
+    "Crates fetched with --locked from crates.io inside the throwaway container.",
+    "Reproducibility: an independent second build in a second fresh throwaway container from the same image (different CARGO_TARGET_DIR) produced the identical SHA-256 4dba14a6ee677e21727af7352648981273626d90695f897a90c626e92037dc42."
+  ]
+}

@@ -290,7 +290,7 @@ export const SCOPE_CHECKLIST: ScopeItem[] = [
   },
   {
     item: 'Algorithms and parameter sets, with their algorithm certificates',
-    whereToRead: 'Security Policy algorithm table (CAVP / ACVP certificate numbers)',
+    whereToRead: 'Security Policy algorithm table (CAVP algorithm certificate numbers)',
   },
   {
     item: 'Physical enclosure and tamper boundary',

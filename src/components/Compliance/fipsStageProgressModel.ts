@@ -140,7 +140,10 @@ export function buildProductStageTimeline(
     // productId first — the identity that survives a rename — then the name,
     // as certificationXrefData.ts documents for legacy rows.
     const certs = certsByProduct.get(p.productId) ?? certsByProduct.get(p.softwareName) ?? []
-    const pqcCerts = certs.filter((c) => isConfirmedPqcAlgorithm(c.pqcAlgorithms))
+    // A classical-only certificate is a real certificate but never PQC progress.
+    const pqcCerts = certs.filter(
+      (c) => !c.classicalOnly && isConfirmedPqcAlgorithm(c.pqcAlgorithms)
+    )
     const dates: Partial<Record<FipsStage, string | null>> = {
       cavp: earliest(pqcCerts.filter((c) => c.certType === 'ACVP').map((c) => c.certDate)),
       in_progress: earliest(

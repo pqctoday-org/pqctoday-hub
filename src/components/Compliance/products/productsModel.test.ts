@@ -23,6 +23,7 @@ function cert(partial: Partial<CertificationXref>): CertificationXref {
     status: 'Active',
     certDate: '2026-01-01',
     certLink: '',
+    classicalOnly: false,
     ...partial,
   }
 }

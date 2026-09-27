@@ -97,7 +97,7 @@ export const MaturityAssessment: React.FC<MaturityAssessmentProps> = ({ onOutput
       return 'Document policy, roll out ACME for public TLS, and subscribe to CMVP change notices.'
     if (average < 4)
       return 'Automate cert renewal end-to-end, instrument SIEM drift alerts, launch FIPS-freshness KPI.'
-    return 'Your posture has reached Tier 4 Adaptive — maintain continuous CMVP/ACVP monitoring and deliver quarterly executive crypto attestation.'
+    return 'Your posture has reached Tier 4 Adaptive — maintain continuous CMVP/CAVP monitoring and deliver quarterly executive crypto attestation.'
   }, [average])
 
   const currentTier = useMemo(() => {

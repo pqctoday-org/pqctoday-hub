@@ -16,6 +16,7 @@ import {
   Building2,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { Cite } from '@/components/PKILearning/modules/AcvpLabWorkflow/components/Cite'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
 
@@ -515,7 +516,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
       {/* Section 6: FIPS 140-3 & ACVP */}
       <CollapsibleSection
         icon={<FileBadge size={24} className="text-primary" />}
-        title="FIPS 140-3 & Algorithmic Validation (ACVP)"
+        title="FIPS 140-3 & Algorithm Validation (CAVP, via ACVP)"
         sectionId="fips-acvp"
       >
         <p>
@@ -537,20 +538,40 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
 
         <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 mt-2">
           <p className="font-semibold text-primary text-sm mb-2">
-            The Testing Mechanism: Known Answer Tests (KATs)
+            The Testing Mechanism: Issued Test Vectors
           </p>
           <p className="text-xs">
-            NIST provides JSON files (<em>.req</em>) containing thousands of inputs, keys, and seeds
-            for specific algorithms. The module under test must process these exact inputs and
-            generate identical outputs, writing them back to a response file (<em>.rsp</em>). If a
-            single bit differs, the algorithm fails validation.
+            ACVP messages are JSON exchanged over HTTPS <Cite s="acvpSpec" at="§6, §8" />. The
+            client registers the algorithm capabilities it implements, the server generates matching
+            test vector sets (the prompt), the implementation computes its answers and uploads them
+            (the response), and the server returns a disposition for each vector set{' '}
+            <Cite s="acvpSpec" at="§12.4" />. A vector set passes only when every test case in it
+            passes, and even then the pass is not itself the validation{' '}
+            <Cite s="acvpSpec" at="§5.4" />. The <em>.req</em>/<em>.rsp</em> request and response
+            files often associated with NIST test vectors belong to ACVP&apos;s predecessor, the
+            CAVS tool (e.g.{' '}
+            <a
+              href="https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/shs/SHAVS.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              SHAVS §6.2.1
+            </a>
+            ), which the CAVP page lists as deprecated by ACVTS <Cite s="cavp" />.
           </p>
         </div>
 
         <p className="mt-3">
-          For PQC algorithms like <strong>ML-KEM</strong> and <strong>ML-DSA</strong>, ACVP testing
-          is rigorous. It covers key generation, encapsulation, decapsulation, and signature
-          verification under deterministic seeds to guarantee cross-platform mathematical parity.
+          For PQC algorithms like <strong>ML-KEM</strong> and <strong>ML-DSA</strong>, the ACVP
+          sub-specifications define test types for key generation, encapsulation and decapsulation,
+          and signature generation and verification <Cite s="acvpMlKem" /> <Cite s="acvpMlDsa" />.
+          FIPS 203 and FIPS 204 expose internal interfaces that take the randomness as an input,
+          which is what lets a test vector fix it <Cite s="fips203" at="§6" />{' '}
+          <Cite s="fips204" at="§6" />. ACVP testing does not cover everything: the same
+          sub-specifications leave out zeroization of intermediate values, DRBG strength, and
+          incorrect-length keys and signatures, and the CMVP laboratory must confirm the algorithm
+          requirements CAVP testing does not reach <Cite s="cmvpMM" at="§2.6.2" />.
         </p>
 
         <ReadingCompleteButton />

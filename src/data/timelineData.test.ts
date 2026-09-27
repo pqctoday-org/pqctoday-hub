@@ -196,6 +196,49 @@ describe('parseTimelineCSV — malformed year hardening', () => {
     expect(errorSpy).toHaveBeenCalled()
   })
 
+  // 2026-09-26: an EMPTY year cell is a data gap (an open-ended, never-sourced
+  // phase boundary), not malformed input. Three real rows have one — Canada
+  // "Remaining Systems Migration" (StartYear), France "Phase 1 - Pre-Quantum
+  // Security" (EndYear), Singapore "Financial Sector Planning" (EndYear) — all
+  // identical on origin/main, so this is production data, not local churn.
+  // Calling those "Malformed year value" on every page load blamed the code for
+  // a content gap and made an unrelated console-cleanliness e2e spec
+  // (wasm-refresh-smoke) permanently red.
+  it('treats an EMPTY year as a data gap: console.warn, NOT console.error', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const csv = [
+      header,
+      'Testland,TL,Agency,Agency Full,,Phase,Migration,,2035,Open Ended Row,desc,,,,,,,,,,,,,,,,,,',
+      'Testland,TL,Agency,Agency Full,,Phase,Research,2026,2027,Good Row,desc,,,,,,,,,,,,,,,,,,',
+    ].join('\n')
+
+    const parsed = parseTimelineCSV(csv)
+    const events = parsed.flatMap((c) => c.bodies.flatMap((b) => b.events))
+
+    // Still withheld from the Gantt — a bar needs two ends, and inventing one
+    // would fabricate geometry the cited source does not support.
+    expect(events.map((e) => e.title)).toEqual(['Good Row'])
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('DATA GAP'))
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Missing year'))
+    // The point of the change: no console.error for an empty cell.
+    expect(errorSpy).not.toHaveBeenCalled()
+  })
+
+  it('still console.errors a malformed cell even when another row is merely empty', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const csv = [
+      header,
+      'Testland,TL,Agency,Agency Full,,Phase,Migration,,2035,Open Ended Row,desc,,,,,,,,,,,,,,,,,,',
+      'Testland,TL,Agency,Agency Full,,Phase,Research,Q1 2030,2031,Bad Row,desc,,,,,,,,,,,,,,,,,,',
+    ].join('\n')
+
+    parseTimelineCSV(csv)
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('Malformed year value'))
+    expect(errorSpy).toHaveBeenCalledTimes(1)
+  })
+
   // Three real rows in the live CSV have one empty year boundary, and each is a
   // DELIBERATE record of what its source does and does not say — not an oversight.
   // Updated 2026-09-26 (timeline r11): the membership of this set changed wholesale.

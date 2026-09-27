@@ -64,6 +64,7 @@ import {
   type MatrixScheme,
 } from '../data/sharedData'
 import { Callout, FictionalBadge } from '../components/sections/CoreSections'
+import { withEducationNoticeMarkdown } from '@/data/educationNotice'
 
 const PATH_IDS: CertPathId[] = ['fips', 'cc', 'eucc-eidas', 'pci']
 const isPath = (v: unknown): v is CertPathId =>
@@ -206,7 +207,10 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
   const claimFlags = useMemo(() => lintClaims(s.claims), [s.claims])
   const deadlines = useMemo(() => marketDeadlineRows().filter((m) => m.customers.length), [])
   const generatedAt = useMemo(() => new Date().toISOString().slice(0, 10), [])
-  const markdown = useMemo(() => capstoneMarkdown(s, generatedAt), [s, generatedAt])
+  const markdown = useMemo(
+    () => withEducationNoticeMarkdown(capstoneMarkdown(s, generatedAt)),
+    [s, generatedAt]
+  )
 
   const componentLabel = (id: AnchorComponentId) =>
     ANCHOR_SCENARIO.components.find((c) => c.id === id)?.label ?? id

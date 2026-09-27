@@ -21,7 +21,7 @@ const manifest: ModuleManifest = {
     { id: 'performance-testing-method', label: 'Performance Benchmarking' },
     { id: 'interop-testing', label: 'Interoperability & RFC' },
     { id: 'side-channel-tvla', label: 'TVLA Side-Channel Testing' },
-    { id: 'fips-acvp', label: 'FIPS ACVP Validation' },
+    { id: 'fips-acvp', label: 'FIPS 140-3 & ACVP Testing' },
   ],
   workshopSteps: [
     { id: 'passive-discovery-lab', label: 'Passive Crypto Discovery Lab' },
@@ -30,7 +30,7 @@ const manifest: ModuleManifest = {
     { id: 'interop-test-matrix', label: 'Interoperability Test Matrix' },
     { id: 'tvla-leakage-analyzer', label: 'TVLA Leakage Analyzer' },
     { id: 'test-strategy-builder', label: 'Test Strategy Builder' },
-    { id: 'acvp-validator', label: 'NIST ACVP Validation' },
+    { id: 'acvp-validator', label: 'ACVP Workflow & Validation Tests' },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {

@@ -129,7 +129,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      'FIPS 140-3 boundary does not yet cover PQC algorithms per NIST CMVP. PQC APIs available outside the FIPS module; verify ACVP submission status at csrc.nist.gov. ESV: E335 wolfEntropy (1 Jul 2026).',
+      'FIPS 140-3 boundary does not yet cover PQC algorithms per NIST CMVP. PQC APIs available outside the FIPS module; verify CAVP algorithm validation status at csrc.nist.gov. ESV: E335 wolfEntropy (1 Jul 2026).',
   },
   {
     id: 'bc-fips',

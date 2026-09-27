@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pqctoday.validation-review/v1",
+  "title": "Two-person evidence review record (ACVP remediation plan J-5)",
+  "description": "One file per reviewed item, named <anything>.review.json in this directory. Written by the reviewers, never generated. Enforced by src/data/validation/reviewRecords.ts via npm run gen:release-evidence:check: two distinct named reviewers (source verification and claim review), ISO dates not in the future, an item id listed in public/data/validation/release-evidence.json reviews.items, and the subject SHA-256 the reviewers saw (a record whose subject has since changed is shown as stale-review, not as a review).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "item",
+    "subjectSha256",
+    "author",
+    "sourceVerification",
+    "claimReview",
+    "decision"
+  ],
+  "properties": {
+    "schema": { "const": "pqctoday.validation-review/v1" },
+    "item": {
+      "type": "string",
+      "pattern": "^(vector-source|coverage-waiver|public-claim|learn-module-practitioner):.+$",
+      "description": "Review item id, e.g. vector-source:mldsa_sigver_test or coverage-waiver:baseline-CKM_RSA_PKCS."
+    },
+    "subjectSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "The item's subjectSha256 at review time (print it with npm run gen:release-evidence -- --print-review-items)."
+    },
+    "author": {
+      "type": "string",
+      "minLength": 2,
+      "description": "Who authored the test, source import or claim under review."
+    },
+    "sourceVerification": { "$ref": "#/$defs/entry" },
+    "claimReview": { "$ref": "#/$defs/entry" },
+    "decision": { "enum": ["approved", "changes-requested", "rejected"] }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "date", "decision"],
+      "properties": {
+        "reviewer": {
+          "type": "string",
+          "minLength": 2,
+          "description": "A person's full name — not a role, not a placeholder."
+        },
+        "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+        "decision": { "enum": ["approved", "changes-requested", "rejected"] },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

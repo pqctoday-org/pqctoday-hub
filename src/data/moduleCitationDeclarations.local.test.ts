@@ -91,6 +91,51 @@ function claimWindow(text: string, from: number): string {
 
 const norm = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, '')
 
+/**
+ * The source with its comments removed, for reading `getStandard(...)` calls out
+ * of.
+ *
+ * ADDED 2026-09-25. The raw-source scan counted a `getStandard('id')` that only
+ * appears INSIDE a comment as a live declaration. Three modules
+ * (ComplianceStrategy, DataAssetSensitivity, PQCBusinessCase) carry the note
+ * "REPOINTED 2026-08-23: was getStandard('FIPS-140-3') ..." above their now-
+ * correct `getStandard('FIPS-140-3-STANDARD')` call, and the deprecated-row check
+ * reported all three — the repointing it was asking for had already happened, in
+ * the very comment it was reading. The code was right and the scanner was wrong.
+ *
+ * It cuts the other way too, and worse: a commented-out declaration counted
+ * toward `declared`, so the dated-mention sweep could be satisfied by a citation
+ * the module no longer makes. That is a false NEGATIVE, so stripping comments
+ * makes this file stricter, not laxer.
+ *
+ * Line comments are only stripped when the `//` is not inside a string literal —
+ * an odd number of quotes ahead of it on the line means it is part of a URL or
+ * prose (`'https://...'`) and the rest of the line must be kept.
+ */
+function withoutComments(src: string): string {
+  return src
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .split('\n')
+    .map((line) => {
+      let i = line.indexOf('//')
+      while (i !== -1) {
+        const before = line.slice(0, i)
+        const quotes = (before.match(/['"`]/g) ?? []).length
+        if (quotes % 2 === 0) return before
+        i = line.indexOf('//', i + 2)
+      }
+      return line
+    })
+    .join('\n')
+}
+
+/** Every reference_id a module actually declares in code. */
+function declaredIds(src: string): Set<string> {
+  return new Set(
+    [...withoutComments(src).matchAll(/getStandard\(\s*['"]([^'"]+)['"]\s*\)/g)].map((m) => m[1])
+  )
+}
+
 /** The latest library CSV, resolved once. Throws rather than silently reading
  *  nothing — an empty parse would make every assertion here pass vacuously. */
 function libraryCsvPath(): string {
@@ -164,12 +209,19 @@ function pickCandidate(candidates: string[], window: string): string {
  * occurrence and equally on a fixed one left here. Entries leave as modules are
  * reviewed; nothing is hidden, every one is named.
  */
-const PENDING_ORDERING_REVIEW = [
-  'APISecurityJWT:RFC-9964',
-  'CryptoMgmtModernization:FIPS-140-3',
-  'CryptoMgmtModernization:NIST-SP-800-131A-Rev3',
-  'EnergyUtilities:NIST SP 800-82 Rev. 3',
-  'OpsQuantumImpact:NIST-SP-800-57-Pt1-R5',
+const PENDING_ORDERING_REVIEW: string[] = [
+  // EMPTIED 2026-09-25 — all five were resolved the way this note asked for, by
+  // declaring the document, and each declaration was verified in the module's
+  // own standards[] before the entry was removed:
+  //   APISecurityJWT             -> getStandard('RFC-9964')
+  //   CryptoMgmtModernization    -> getStandard('FIPS-140-3-STANDARD')
+  //                                 and getStandard('NIST-SP-800-131A-Rev3')
+  //   EnergyUtilities            -> getStandard('NIST SP 800-82 Rev. 3')
+  //   OpsQuantumImpact           -> getStandard('NIST-SP-800-57-Pt1-R5')
+  // The four-document sampler cap that made the ordering a dilemma was lifted on
+  // 2026-08-22 (see the DECLARED notes in the module files), which is why
+  // "declare and displace" stopped costing anything and the reviews could take
+  // the first of the two honest resolutions.
 ].sort()
 
 interface Finding {
@@ -188,9 +240,7 @@ function sweep(ids: string[]): { flagged: Finding[]; unresolved: string[] } {
     if (!fs.existsSync(contentPath)) continue
     const src = fs.readFileSync(contentPath, 'utf8')
 
-    const declared = new Set(
-      [...src.matchAll(/getStandard\(\s*['"]([^'"]+)['"]\s*\)/g)].map((m) => m[1])
-    )
+    const declared = declaredIds(src)
     const block = src.match(/relatedStandards:\s*\n?\s*(['"`])([\s\S]*?)\1\s*,/)
     if (!block) continue
     const prose = block[2]
@@ -239,6 +289,27 @@ describe('learn module citation declarations', () => {
     expect(ids.length).toBeGreaterThan(500)
   })
 
+  it('reads declarations from code only, never from a comment', () => {
+    // Guards `withoutComments`, which both assertions below now depend on. The
+    // commented form is the exact shape three modules carry ("REPOINTED ...: was
+    // getStandard('FIPS-140-3')"), and the URL case is the one a naive
+    // strip-to-end-of-line would corrupt.
+    const sample = [
+      "    // REPOINTED 2026-08-23: was getStandard('FIPS-140-3'), which captured only",
+      "    getStandard('FIPS-140-3-STANDARD'),",
+      "    getStandard('RFC 9999'), // trailing note, not a declaration",
+      "    getStandard('SEE-https://example.test/x'), // after a URL",
+      "    /* getStandard('BLOCK-COMMENTED') */",
+      "    getStandard('LAST-ONE'),",
+    ].join('\n')
+    expect([...declaredIds(sample)].sort()).toEqual([
+      'FIPS-140-3-STANDARD',
+      'LAST-ONE',
+      'RFC 9999',
+      'SEE-https://example.test/x',
+    ])
+  })
+
   it('every dated or versioned document mention is declared in the module standards[]', () => {
     const { flagged } = sweep(ids)
     const report = flagged
@@ -275,8 +346,8 @@ describe('learn module citation declarations', () => {
       const contentPath = path.join(MODULES_DIR, dir, 'content.ts')
       if (!fs.existsSync(contentPath)) continue
       const src = fs.readFileSync(contentPath, 'utf8')
-      for (const m of src.matchAll(/getStandard\(\s*['"]([^'"]+)['"]\s*\)/g)) {
-        if (deprecated.has(m[1])) offenders.push(`${dir}: ${m[1]}`)
+      for (const id of declaredIds(src)) {
+        if (deprecated.has(id)) offenders.push(`${dir}: ${id}`)
       }
     }
     expect(

@@ -1,0 +1,58 @@
+{
+  "runId": "2026-09-24",
+  "note": "Every plan §11 Q3 target, run or not. 'not run' is a status, never a pass; a target whose execution-environment.json misses identity is run but NOT publishable (see matrix.md).",
+  "targets": [
+    { "id": "wasm-cpp", "status": "run" },
+    { "id": "wasm-rust", "status": "run" },
+    {
+      "id": "macos-arm64-cpp",
+      "status": "not run",
+      "reason": "No native macOS engine without Xcode/host compilers: the only macOS dylibs on this machine (pqctoday-hsm/build_union, build_audit_0812) were host-built from dirty working trees with no provable commit, and building one would need Xcode/host cc, which the hsm build policy forbids."
+    },
+    {
+      "id": "macos-arm64-rust",
+      "status": "not run",
+      "reason": "No native macOS engine without Xcode/host cargo: the only macOS libsofthsmrustv3.dylib files (pqctoday-hsm/rust/target, kmip/target, openmls-provider/target) were host-built from dirty working trees with no provable commit, and building one would need host cargo, which the hsm build policy forbids."
+    },
+    {
+      "id": "linux-x86_64-cpp",
+      "status": "run",
+      "reason": "Emulated (Rosetta 2) inside pqc-dev-sandbox, on the image's existing libsofthsmv3.so, whose source commit is unknown (image built from a working tree)."
+    },
+    {
+      "id": "linux-x86_64-rust",
+      "status": "run",
+      "reason": "Emulated (Rosetta 2) inside pqc-network, on the image's existing libsofthsmrustv3.so, whose source commit is unknown (image built from a working tree)."
+    },
+    {
+      "id": "linux-arm64-cpp",
+      "status": "run",
+      "reason": "Native arm64 in pqc-rust, engine built for this run from a clean detached hsm worktree at 7795799b (the C++ WASM bundle's commit)."
+    },
+    {
+      "id": "linux-arm64-rust",
+      "status": "run",
+      "reason": "Native arm64 in pqc-rust, engine built for this run from a clean detached hsm worktree at 417c47a2 (the Rust WASM bundle's commit)."
+    },
+    {
+      "id": "imx95-cpp",
+      "status": "not run",
+      "reason": "Board target — WS-H phase 2 (H-3), not part of this run."
+    },
+    {
+      "id": "imx95-rust",
+      "status": "not run",
+      "reason": "Board target — WS-H phase 2 (H-3), not part of this run."
+    },
+    {
+      "id": "kv260-cpp",
+      "status": "not run",
+      "reason": "Board target — WS-H phase 2 (H-3), not part of this run."
+    },
+    {
+      "id": "kv260-rust",
+      "status": "not run",
+      "reason": "Board target — WS-H phase 2 (H-3), not part of this run."
+    }
+  ]
+}

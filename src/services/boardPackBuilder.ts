@@ -18,6 +18,11 @@
  * Pure data builder — no React, no DOM. Returns a Blob ready for download.
  */
 import JSZip from 'jszip'
+import {
+  EDUCATION_NOTICE,
+  withEducationNoticeCsv,
+  withEducationNoticeMarkdown,
+} from '@/data/educationNotice'
 import type { AssessmentResult, MigrationEffortItem } from '@/hooks/assessmentTypes'
 
 export interface BoardPackProfile {
@@ -169,6 +174,7 @@ function buildComplianceCsv(result: AssessmentResult): string {
 function buildProfileJson(result: AssessmentResult, profile: BoardPackProfile): string {
   return JSON.stringify(
     {
+      notice: EDUCATION_NOTICE,
       profile,
       score: {
         risk: result.riskScore,
@@ -269,13 +275,27 @@ export async function buildBoardPackBlob(input: BuildBoardPackInput): Promise<Bl
   const { result, profile, appVersion } = input
   const zip = new JSZip()
   const folder = zip.folder('board-pack')!
-  folder.file('README.md', buildReadme(profile, appVersion))
-  folder.file('executive-summary.md', buildExecutiveSummary(result, profile))
-  folder.file('key-findings.md', buildKeyFindings(result))
-  folder.file('recommended-actions.md', buildRecommendedActions(result))
-  folder.file('compliance-deadlines.csv', buildComplianceCsv(result))
+  // A board pack is read, forwarded and quoted by people who never opened this
+  // app, so the notice is in the archive AND in every file inside it — a reader
+  // who opens only `key-findings.md` still meets it (education-notice
+  // remediation 2026-09-26).
+  folder.file(
+    'NOTICE.md',
+    `# Status notice\n\n${EDUCATION_NOTICE}\n\nEvery figure, finding, deadline and recommendation in this pack was produced\nby an educational and demonstration platform from self-reported inputs. None\nof it is an assessment, an audit, a certification, or legal or compliance\nadvice, and none of it may be relied upon as such.\n`
+  )
+  folder.file('README.md', withEducationNoticeMarkdown(buildReadme(profile, appVersion)))
+  folder.file(
+    'executive-summary.md',
+    withEducationNoticeMarkdown(buildExecutiveSummary(result, profile))
+  )
+  folder.file('key-findings.md', withEducationNoticeMarkdown(buildKeyFindings(result)))
+  folder.file(
+    'recommended-actions.md',
+    withEducationNoticeMarkdown(buildRecommendedActions(result))
+  )
+  folder.file('compliance-deadlines.csv', withEducationNoticeCsv(buildComplianceCsv(result)))
   folder.file('profile.json', buildProfileJson(result, profile))
-  folder.file('program-effort.md', buildProgramEffort(result))
+  folder.file('program-effort.md', withEducationNoticeMarkdown(buildProgramEffort(result)))
   return zip.generateAsync({ type: 'blob' })
 }
 

@@ -32,7 +32,7 @@ import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../ui/tabs'
 import { useHsmContext, type EngineMode } from '../../hsm/HsmContext'
-import { ensureDevSlot, openDevSlotSession, reloginDevSlotSession, DEV_SLOT_LABEL } from './devSlot'
+import { ensureDevSlot, ensureDevSlotSession, DEV_SLOT_LABEL } from './devSlot'
 import { discoverHsmObjectsOnSession } from '../../keystore/discoverHsmObjects'
 import { DevSandboxDiffNote } from './DevSandboxDiffNote'
 import { installMonacoSelfHost } from '../monacoSelfHost'
@@ -134,31 +134,24 @@ export type PkcsDevWorkbenchProps = Record<string, never>
 
 export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
   const hsmCtx = useHsmContext()
-  const { forgetSession } = hsmCtx
   const { moduleRef, rawModuleRef, isReady, autoInit, engineMode } = hsmCtx
 
   // A session on the Developer slot, kept open for the UI's own use —
-  // querying a key's real attributes when the Key inspector is clicked,
-  // after the script's OWN session (opened/closed inside the generated
-  // Python) is long gone. Opened lazily on first need, closed on unmount.
-  // Generated keys are token=True specifically so this session can still
-  // find them (see pipelineCodegen.ts's emitGenerate).
-  const devSlotSessionRef = useRef<number | null>(null)
-  useEffect(
-    () => () => {
-      if (devSlotSessionRef.current !== null && rawModuleRef.current) {
-        try {
-          rawModuleRef.current._C_CloseSession(devSlotSessionRef.current)
-        } catch {
-          // tab is unmounting — nothing left to report this to
-        }
-        // Keys registered on this session are unreachable once it's closed —
-        // drop them so they don't linger as orphans in the shared registry.
-        forgetSession(devSlotSessionRef.current)
-      }
-    },
-    [rawModuleRef, forgetSession]
-  )
+  // querying a key's real attributes when the Key inspector is clicked, and
+  // scanning for the objects a run created, after the script's OWN session
+  // (opened/closed inside the generated Python) is long gone. Generated keys
+  // are token=True specifically so this session can still find them (see
+  // pipelineCodegen.ts's emitGenerate).
+  //
+  // This component deliberately does NOT own that session's lifecycle, and in
+  // particular has no unmount cleanup for it. It used to (close + a
+  // `forgetSession` purge of every key registered on it), which became a real
+  // user-facing defect once the key inventory moved to its own Inspect › Keys
+  // tab: HsmPlayground unmounts this panel on a tab switch, so walking from
+  // Build to Inspect deleted the keys the user had just generated. Ownership
+  // now sits with the WASM module's own lifetime, in devSlot.ts — see the
+  // "ONE kept-open Developer-slot session" comment there for the full scope
+  // argument and for what the original cleanup was protecting against.
 
   // G7: called from a `useEffect` (not module top level — see
   // monacoSelfHost.ts's header for why that broke a real production build),
@@ -452,12 +445,11 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
         // until the NEXT run's script logs out again.
         if (rawModuleRef.current && devSlot !== null) {
           try {
-            if (devSlotSessionRef.current === null) {
-              devSlotSessionRef.current = openDevSlotSession(rawModuleRef.current, devSlot)
-            } else {
-              reloginDevSlotSession(rawModuleRef.current, devSlotSessionRef.current)
-            }
-            discoverHsmObjectsOnSession(rawModuleRef.current, devSlotSessionRef.current, hsmCtx)
+            // ensureDevSlotSession opens on first use and re-logs-in on every
+            // later call, so the open/relogin branch this used to spell out by
+            // hand now lives with the session's owner.
+            const devSession = ensureDevSlotSession(rawModuleRef.current, devSlot)
+            discoverHsmObjectsOnSession(rawModuleRef.current, devSession, hsmCtx)
           } catch {
             // best-effort — a registration failure isn't a run failure
           }

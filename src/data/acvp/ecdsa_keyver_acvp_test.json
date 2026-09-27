@@ -1,0 +1,174 @@
+{
+  "_provenance": {
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_repo": "https://github.com/usnistgov/ACVP-Server",
+    "source_commit": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "source_path": "gen-val/json-files/ECDSA-KeyVer-FIPS186-5/internalProjection.json",
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ECDSA-KeyVer-FIPS186-5/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "source_sha256": "b8c47508838e8fb9f57eac1fbfda75a4f0b7d340e3a685bc667a19fc8c8c4aaa",
+    "source_git_blob_sha": "fcf68c30755eae275df5baff37f0ba7f7eedc2c7",
+    "retrieved": "2026-09-25",
+    "upstream_operation": "keyVer (qx, qy -> testPassed, reason)",
+    "local_operation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_EC, CKA_EC_PARAMS = named curve, CKA_EC_POINT = 04||qx||qy) and CKO_PRIVATE_KEY from the upstream d; C_Sign(CKM_ECDSA_SHA256) of a fixed message with d, then C_VerifyInit/C_Verify with the public key. Valid key: C_Verify must return CKR_OK. Invalid key: must be refused at C_CreateObject, C_VerifyInit or C_Verify with a code other than CKR_SIGNATURE_INVALID / CKR_SIGNATURE_LEN_RANGE (a signature error means the point was never validated)",
+    "transformation": "subset only; every retained field is byte-copied from the upstream file (hex case preserved); no value is re-derived",
+    "subset_policy": "Deterministic. Every case of the P-256, P-384 and P-521 groups (1 valid, 2 invalid each). P-224 (outside the capability map EC curve set) and the binary B-/K- curves (neither engine lists them) are in notExecuted as metadata only.",
+    "retained_fields": "tcId, testPassed, reason, d, qx, qy",
+    "test_only_key_material": "d values are public NIST ACVP-Server sample data, imported as session objects (CKA_TOKEN=false) and destroyed after the case"
+  },
+  "vsId": 0,
+  "algorithm": "ECDSA",
+  "mode": "keyVer",
+  "revision": "FIPS186-5",
+  "testGroups": [
+    {
+      "tgId": 2,
+      "testType": "AFT",
+      "curve": "P-256",
+      "tests": [
+        {
+          "tcId": 4,
+          "testPassed": true,
+          "reason": "none",
+          "d": "7E25D5338947A963674B34DC1199FE705AA26E73264538ED0789F616382AE2CB",
+          "qx": "7E01D79021449D59C97CE27DD7221110ACFD86BFC11255058981EA2D20ECA111",
+          "qy": "EADA8CDBAE1835A6CB19F3D36F91C0B30394808DC3A9FAA3333D9DEB8E7E7CEB"
+        },
+        {
+          "tcId": 5,
+          "testPassed": false,
+          "reason": "x or y out of range",
+          "d": "6510EA8FB676FD7A0AFA16E6424EFD2B35078B69A26E4A8DAF73244E367B354B",
+          "qx": "0153E4349D53D820D44172A0424D82D8A2570A60C9A81819C974FB79A49786B967",
+          "qy": "5B8BA4EDFC093EAE4CBB88E09C88909B57066B9C35F4FD8A274C52522322FF52"
+        },
+        {
+          "tcId": 6,
+          "testPassed": false,
+          "reason": "point not on curve",
+          "d": "C1ACDD136C32F040EAF79455AA7BABA0F4797134D94E640148EBE4D0329EDD3A",
+          "qx": "618CF3688603AE38589C95AFF36ED517EA4AD327A295BBDBBD88202DDBA4B980",
+          "qy": "CD5E352F7F7ED94515EA7EEF8AC8191F792DD34F0BEDF8034C29EB462E92EDE3"
+        }
+      ]
+    },
+    {
+      "tgId": 3,
+      "testType": "AFT",
+      "curve": "P-384",
+      "tests": [
+        {
+          "tcId": 7,
+          "testPassed": false,
+          "reason": "x or y out of range",
+          "d": "0986045B476C2C7DF10FD9AF0D7B1FCFE3D4B949F428255E03B0EEB91F936D08B03D682D15CEB48645D3FBDB2721354F",
+          "qx": "379EF74D6803EE0A6CF3303BCAF06CE7082632BE5D59124D89C1F92AAEE8C4BA2B8341E6DFA610F4688122D4C880EB82",
+          "qy": "015E804D2F627C9690673314611E22987BB9183E166F6549620897698F3F1BD0426AA395192F77254DDF84CA00CD9DACAE"
+        },
+        {
+          "tcId": 8,
+          "testPassed": true,
+          "reason": "none",
+          "d": "D84B8DA4C0B8370788DA067DF3DA2737303869BF111D8F287992AF76E578B0391F682EB381AB1A61998696AED08F1D2E",
+          "qx": "FBD76D79F50928C6920FCFF70BBB4A7788B24F7E2F36EC00CFBFD0AFFE16925A76B06A22F5D7B240D7B183AE1509A45B",
+          "qy": "ACA995C43F87D79D8B93BB1DAB70EF76F4129873B3BEC31A1A39CD66076FB7C18993CFB971FFD5FDE29EC8251D098F72"
+        },
+        {
+          "tcId": 9,
+          "testPassed": false,
+          "reason": "point not on curve",
+          "d": "DF493EFF38D9C1B33DB98AF66B1A767F965FEAF71D1E4D925BEFA047E0D8960B868505A135A775654CFDBD9AC2330C12",
+          "qx": "A5723B5E82CF703E93DC73A43A3A30D76858C3DCE6CDE2CE75B981F04CD3E9D08C2695581C3ACA21E72C0490A10B71FE",
+          "qy": "EF24BB74C339ED8C19B2D95BBFFF39BB1542426DF0B6BD68BF6A3890FA858ABED668A8E4EB9E838BD535E5F75D564AA1"
+        }
+      ]
+    },
+    {
+      "tgId": 4,
+      "testType": "AFT",
+      "curve": "P-521",
+      "tests": [
+        {
+          "tcId": 10,
+          "testPassed": false,
+          "reason": "point not on curve",
+          "d": "0106801ED94D3F94BEFBD0535A9B1EA58E5E57D63A7573E2AADA36D982F8834E181507EBB962A5F3254697A522A5C175C5E4ACF475D22D09F239817F4164DB55A0F3",
+          "qx": "002F7C2CB2AED780A5A38942972014C3D415844DECA89236341CC044F545461D178270DB628B47E9D70F9D77806AC66B4918CC063F719863FDBDAA16AE18DC1F1E0B",
+          "qy": "002CA61A47CB546AE3E50B54C07D85E24AE6CFEF4ED41BDC39DD8F5B89D768DAA05A7AF26E5E9B50B2320A8CD2FE89C6E7F16F46774E61981924041743433D1EA572"
+        },
+        {
+          "tcId": 11,
+          "testPassed": false,
+          "reason": "x or y out of range",
+          "d": "00F7FA2DEF5EDF957416A0BBAE191550C3383FD1B6B5BC4FF1151ABC24CE389F3786D63707D1B18803DBAAB2B3F1C607C36CD26E658354562F02FFA1E7E3701FC854",
+          "qx": "035CB1098807803F8BFA7EB3A70E43097F6FECAFC39C77A7E53029BA189F37C9F400034693198630DB207B98DFDEDBA248FB02D88FC395A2CF5867BAC50E86FE0EB2",
+          "qy": "0138942DDC06B6482AFD2593BE835DA7FBAA6FEF7C8973BF45003348290761585F0E1BCCE52DD729D04358C13EF46F3009E3A1D2A9715F141AF5CABF7455C05F67E2"
+        },
+        {
+          "tcId": 12,
+          "testPassed": true,
+          "reason": "none",
+          "d": "01F548A937D80192E14C619DA9E9F87650C5FF8F94332797825FF5A151AA0938B44A4F8155FD2954EF4B2626A42213B4B8C65282BB3F5ED0779DA7612CF0DD087307",
+          "qx": "01E70C8B3B501B9537FD0A182DDF9A1244D5F6885E1BA03EB23E6A5B0B558BE03CDF0B282F72BEEDCC9417CEDEA7CB6C6188E567105A5CB0FD89648FB6A55148B891",
+          "qy": "00B1949040F8C34F8F201EE63C1A203BA01154FA02EF9A80BA1F8D2A6438FE73EAD16B9A7867A8AAB03559C80948A08B8B44E90DF90B94ED8F0CE3062EC98BE7290A"
+        }
+      ]
+    }
+  ],
+  "notExecuted": [
+    {
+      "tgId": 1,
+      "curve": "P-224",
+      "cases": 3,
+      "why": "curve-not-in-capability-map"
+    },
+    {
+      "tgId": 5,
+      "curve": "B-233",
+      "cases": 3,
+      "why": "curve-not-supported-by-either-engine"
+    },
+    {
+      "tgId": 6,
+      "curve": "B-283",
+      "cases": 3,
+      "why": "curve-not-supported-by-either-engine"
+    },
+    {
+      "tgId": 7,
+      "curve": "B-409",
+      "cases": 3,
+      "why": "curve-not-supported-by-either-engine"
+    },
+    {
+      "tgId": 8,
+      "curve": "B-571",
+      "cases": 3,
+      "why": "curve-not-supported-by-either-engine"
+    },
+    {
+      "tgId": 9,
+      "curve": "K-233",
+      "cases": 3,
+      "why": "curve-not-supported-by-either-engine"
+    },
+    {
+      "tgId": 10,
+      "curve": "K-283",
+      "cases": 3,
+      "why": "curve-not-supported-by-either-engine"
+    },
+    {
+      "tgId": 11,
+      "curve": "K-409",
+      "cases": 3,
+      "why": "curve-not-supported-by-either-engine"
+    },
+    {
+      "tgId": 12,
+      "curve": "K-571",
+      "cases": 3,
+      "why": "curve-not-supported-by-either-engine"
+    }
+  ]
+}

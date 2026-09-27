@@ -99,6 +99,7 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'secrets-management-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   'network-security-pqc': { phasesServed: ['p6'], legs: ['learn', 'practice', 'reference'] },
   'pqc-testing-validation': { phasesServed: ['p6'], legs: ['learn', 'practice', 'reference'] },
+  'acvp-lab-workflow': { phasesServed: ['p6'], legs: ['learn', 'practice', 'reference'] },
   'iam-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'secure-boot-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   'os-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
