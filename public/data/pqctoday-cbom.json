@@ -12810,8 +12810,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "320ad8fdd30c2bc3",
+      "bom-ref": "367684f2bbace2c0",
       "name": "IDEMIA PQC Accelerator",
+      "version": "PQC Accelerator 2025",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -15129,8 +15130,8 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "9e3c07906892263b",
-      "name": "Ascertia ADSS PKI Server",
+      "bom-ref": "3b5e3982f4b2d770",
+      "name": "Ascertia ADSS Server",
       "version": "ADSS Server v8.4",
       "cryptoProperties": {
         "assetType": "related-crypto-material",

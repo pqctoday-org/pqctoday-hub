@@ -29,6 +29,16 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.124.1] - 2026-09-26
+
+A full check of every migration-catalogue product against its own cited document: where a product listed specific post-quantum algorithms its source never mentions, the listing now says only what the source actually supports.
+
+### Fixed
+
+- **98 products named post-quantum algorithms their own source document never mentions.** [view:/migrate] [persona:ops] [persona:grc] [persona:developer] Every product that lists a specific algorithm — 515 of them — was checked against the document it cites, by two independent reviewers. In most cases the source says only "post-quantum" or "NIST standards" while the listing named ML-KEM, ML-DSA or others. Those listings now name only what the source supports, and say plainly when it names no specific algorithm. Where a product is known to support more, the fix is a better source, not a guess.
+- **17 products claimed an algorithm validation that isn't theirs.** [view:/migrate] [view:/compliance] [persona:grc] [persona:ops] Each had been linked to a NIST CAVP validation that, on inspection, belongs to someone else — OpenSSL's pointed at Chainguard's and Oracle's OpenSSL providers, Google Cloud KMS at the BoringSSL module underneath it. The validation claim is removed; the algorithms the product supports are kept.
+- **3 more duplicate products retired, and one renamed.** [view:/migrate] [persona:ops] Google Cloud KMS was listed a second time under an encryption-gateway category; IDEMIA's accelerator was listed again as a "secure element" its source never names; and Ascertia's signing server was folded into the one platform its documentation describes, now listed as Ascertia ADSS Server. Searching an old name still finds the product. The catalogue lists 890 active products.
+
 ## [4.124.0] - 2026-09-26
 
 A new Learn module on how cryptographic products get certified, and a Migrate catalogue that now tells a certificate apart from the algorithm validation that comes before it.
