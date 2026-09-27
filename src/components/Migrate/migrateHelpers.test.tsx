@@ -18,6 +18,7 @@ function makeCert(over: Partial<CertificationXref>): CertificationXref {
     status: 'active',
     certDate: '2026-01-01',
     certLink: 'https://example.com/cert-1',
+    classicalOnly: false,
     ...over,
   }
 }

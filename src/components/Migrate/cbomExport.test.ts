@@ -45,6 +45,7 @@ describe('extractPqcAlgorithms', () => {
         status: 'Active',
         certDate: '2026-01-01',
         certLink: 'https://example.com/cert',
+        classicalOnly: false,
       },
     ]
     const algos = extractPqcAlgorithms(baseItem, certs)
