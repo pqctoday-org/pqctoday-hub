@@ -182,10 +182,7 @@ export const REGIONAL_SCHEMES: readonly RegionalScheme[] = [
     ],
     pqc: 'Policy #33 (31 August 2026, effective 1 January 2027): products — certified by NIAP or a CCRA partner — that do not meet CNSA 2.0 for every cryptographic function are not accepted into evaluation from 1 January 2028 and not posted to the Product Compliant List from 1 January 2029. CNSA 1.0 cut-offs: 1 January 2027 and 1 July 2027.',
     sources: [
-      {
-        label: 'NIAP Policy #33',
-        url: 'https://www.niap-ccevs.org/',
-      },
+      { label: 'NIAP Policy #33', libraryId: 'NIAP-CCEVS-POLICY-33' },
       { label: 'CNSA 2.0', libraryId: 'NSA CNSA 2.0' },
       { label: 'NIAP policy letters', libraryId: 'NIAP-CCEVS-POLICY' },
     ],
