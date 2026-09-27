@@ -34,6 +34,11 @@ const SMOKE_SPECS = [
   // measurement 2026-08-23). Remove from this list only if it stops being
   // reliably fast/green in CI, and prefer fixing the flake first.
   'acvp-validator.spec.ts',
+  // The ML-DSA path shown live at FIPS 'n' CHIPS (26 Oct 2026): ML-DSA-65
+  // tg3/tc43 and tg3/tc35 on both engines, the HashML-DSA skip row, and the
+  // ACVP-format prompt import of the public ML-DSA sigVer sample. ~8 s together.
+  'acvp-mldsa-evidence.spec.ts',
+  'acvp-io-prototype.spec.ts',
 ]
 // Deliberately EXCLUDED from smoke (verified slow / load-sensitive — they hit the
 // 45s timeout on a saturated machine, so they'd make the gate flaky): onboarding,

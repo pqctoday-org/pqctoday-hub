@@ -18,7 +18,9 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     })
   })
 
-  test('validates ML-KEM and ML-DSA via direct ACVP execution trigger', async ({ page }) => {
+  test('validates symmetric, hashing & MAC, KDF and ML-KEM via the direct ACVP execution trigger', async ({
+    page,
+  }) => {
     // Navigate to the playground sandbox route where ACVP testing mounts.
     // ACVP moved from its own top-level tab into a Developer sub-tab
     // (2026-08-31) — ?tab=developer&dtab=acvp selects both the top-level
@@ -61,15 +63,19 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // Action: Programmatic State Dispatch
     // We dispatch custom E2E event periodically until the results state changes.
     //
-    // 2026-09-27: every category EXCEPT slh_stateful. The whole suite no longer
-    // fits a browser budget: measured on the production build (Chromium, Rust
-    // engine) it had run 18 minutes and 1,592 rows, all passing, and was still
-    // inside the SLH-DSA "s" sets (2.6-11 s per signature on the Rust engine).
-    // SLH-DSA and the stateful schemes stay covered where time allows: the
-    // dual-engine Node run (useAcvpSuite.runResults.local) and the nightly
+    // 2026-09-27: a fixed, fast subset. The whole suite no longer fits a
+    // browser budget. Measured on the production build (Chromium, Rust engine):
+    // the full run had gone 18 minutes (1,592 rows, all passing) and was still
+    // inside the SLH-DSA "s" sets; every category except slh_stateful took
+    // 605 s for 2,991 rows, of which symmetric + hashing_mac + kdf finished
+    // inside the first 180 s and classical (RSA-heavy) and the ML-DSA depth
+    // sections took the rest. This spec now runs symmetric, hashing_mac, kdf
+    // and ml_kem, and asserts zero unexpected failures over all of them.
+    // classical, ml_dsa and slh_stateful are covered on BOTH engines by the
+    // Node run (useAcvpSuite.runResults.local, gate:local) and the nightly
     // SLH-DSA suite. The "Run All" fallback click is gone for the same reason:
     // racing the trigger, it would start the full suite.
-    const E2E_CATEGORIES = ['symmetric', 'hashing_mac', 'kdf', 'classical', 'ml_dsa', 'ml_kem']
+    const E2E_CATEGORIES = ['symmetric', 'hashing_mac', 'kdf', 'ml_kem']
     let testsRunning = false
     for (let i = 0; i < 20; i++) {
       // dispatch event
@@ -193,8 +199,11 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // KBKDF (38, then 4) and Ed-ph context (8) entries are GONE — hsm #277 and
     // #290 fixed both engine defects and their open gaps are closed. What
     // remains is exactly the recorded failure set:
-    const KNOWN_RED_ROWS: { match: RegExp; why: string; count: number }[] = [
+    // `category`: an entry is checked only when its category ran (see
+    // E2E_CATEGORIES). Counts are for the Rust engine this spec initialises.
+    const KNOWN_RED_ROWS: { category: string; match: RegExp; why: string; count: number }[] = [
       {
+        category: 'classical',
         // open-gaps.json `rust-rsa-private-import-requires-cka-value` (accepted
         // limitation, maintainer decision): 18 of NIST's 20 KTS-IFC OAEP keys
         // have public exponents >= 2^33, which the Rust engine refuses by design.
@@ -206,9 +215,12 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
         // NIST PBKDF sample tg1/tc20: iterationCount 1. Both engines refuse
         // fewer than 1000 iterations (aligned since the P3 rebuild), so the row
         // stays red on both, deliberately kept in the suite (sections/kdfMacAcvp.ts).
+        // This spec runs the Rust engine only, so one row (the C++ one is the
+        // Node dual-engine run's).
+        category: 'kdf',
         match: /PBKDF2-HMAC-SHA2-224 \((?:C\+\+|Rust)\).*iterations < 1000/,
         why: 'PBKDF2 minimum iterations (both engines refuse < 1000; row deliberately kept red)',
-        count: 2,
+        count: 1,
       },
     ]
     const knownRedSeen = KNOWN_RED_ROWS.map(() => 0)
@@ -241,10 +253,15 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // Every known-red finding is still present at exactly its recorded count.
     // If one drops, the engine was fixed: narrow or delete its KNOWN_RED_ROWS
     // entry and close its open gap with the bundle commit as evidence.
+    const ran = (k: { category: string }) => E2E_CATEGORIES.includes(k.category)
     expect(
-      Object.fromEntries(KNOWN_RED_ROWS.map((k, i) => [k.why, knownRedSeen[i]])), // eslint-disable-line security/detect-object-injection
+      Object.fromEntries(
+        KNOWN_RED_ROWS.map((k, i) => [k.why, knownRedSeen[i]]).filter((_, i) =>
+          ran(KNOWN_RED_ROWS[i])
+        )
+      ),
       'KNOWN_RED_ROWS entry is stale'
-    ).toEqual(Object.fromEntries(KNOWN_RED_ROWS.map((k) => [k.why, k.count])))
+    ).toEqual(Object.fromEntries(KNOWN_RED_ROWS.filter(ran).map((k) => [k.why, k.count])))
   })
 
   test('running a single category runs only that category, and a helper shared across two categories stays in scope', async ({

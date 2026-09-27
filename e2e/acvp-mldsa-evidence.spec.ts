@@ -84,6 +84,22 @@ test.describe('ACVP workbench — ML-DSA reference samples (dual engine)', () =>
       )
 
       // Product-authored negative: passes, but carries no NIST evidence class.
+      // The ML-DSA-65 pair shown live at FIPS 'n' CHIPS (26 Oct 2026): tg3/tc43
+      // verifies, tg3/tc35 (modified message) is refused with
+      // CKR_SIGNATURE_INVALID — on both engines.
+      const demoPos = row(`ML-DSA-65 (${engine})`, 'NIST sigVer tg3/tc43')
+      await expect(demoPos).toHaveCount(1)
+      await expect(demoPos).toHaveAttribute('data-status', 'pass')
+      await expect(demoPos).toContainText('expect valid')
+      const demoNeg = row(`ML-DSA-65 (${engine})`, 'NIST sigVer tg3/tc35')
+      await expect(demoNeg).toHaveCount(1)
+      await expect(demoNeg).toHaveAttribute('data-status', 'pass')
+      await expect(demoNeg).toContainText('expect invalid (modified message)')
+      await expect(demoNeg.locator('td').nth(4)).toHaveAttribute(
+        'title',
+        /C_Verify → CKR_SIGNATURE_INVALID \(expected CKR_SIGNATURE_INVALID\)/
+      )
+
       const local = row(`ML-DSA-44 (${engine})`, 'product-authored negative · public-key bit flip')
       await expect(local).toHaveCount(1)
       await expect(local).toHaveAttribute('data-status', 'pass')
