@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.126.0] - 2026-09-27
+
+Fifteen more product claims now say only what their own documents support, and six catalogue entries that were really web-page titles are fixed.
+
+### Data
+
+- **15 product claims corrected after a full read of their documents** [view:/migrate] [persona:architect] [persona:ops] [persona:grc]: Earlier checks read only excerpts of these long documents. On a full read, each document supported less than the catalogue said, so the claim now matches the document. For example, Google Tink now lists ML-DSA only, and SUPERCOP is shown as a benchmark suite, not a PQC product.
+- **Six entries named after a web page, not a product, are fixed** [view:/migrate] [persona:architect] [persona:ops] [persona:curious]: "Dashboard - PQProbe" is now **PQProbe**, and "PQConnect: Intro" is now **PQConnect**. An Alibaba Cloud blog post is now listed as the product it describes, **Alibaba Cloud ESA (Edge Security Acceleration)**, which turns on hybrid ML-KEM key exchange by default. Three entries are retired: a duplicate HAETAE entry (merged into the HAETAE Reference Implementation), Tencent's PQC information portal and the Lean Consensus roadmap page, none of which is a product. Old names still find the renamed products.
+- **Migration phases** [view:/migrate] [persona:ops] [persona:architect]: now set for three STMicroelectronics NESLIB library entries, and one entry's phase uses the standard name.
+- **Evidence records for 10 products** [view:/migrate] [persona:grc] [persona:researcher]: now match the documents actually on file.
+
+### Changed
+
+- **New catalogue check** [persona:developer]: a warning when a product's name looks like a scraped web-page title, so this kind of entry can't slip back in.
+
 ## [4.125.2] - 2026-09-27
 
 France's post-quantum migration phases are now confirmed from ANSSI's own guidance, and the assistant can quote the source text for a few more references.
