@@ -47,6 +47,15 @@
       "firstSeen": "2026-09-26"
     },
     {
+      "product_id": "Oracle-OpenSSL-FIPS-Provider",
+      "list": "MIP",
+      "module": "Oracle OpenSSL FIPS Provider",
+      "vendor": "Oracle Corporation",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-06-12",
+      "firstSeen": "2026-09-26"
+    },
+    {
       "product_id": "TASS-Crypto-Engine-LMS",
       "list": "MIP",
       "module": "TASS Crypto Engine",
@@ -62,6 +71,15 @@
       "vendor": "Beijing JN TASS Technology Co., Ltd.",
       "nistStage": "Comment Resolution - CMVP",
       "date": "2026-09-23",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "The-OpenSSL-Corporation-OpenSSL-FIPS-Pro",
+      "list": "MIP",
+      "module": "OpenSSL FIPS Provider",
+      "vendor": "The OpenSSL Corporation",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-09-21",
       "firstSeen": "2026-09-26"
     },
     {
@@ -89,6 +107,33 @@
       "vendor": "Blackberry Limited",
       "nistStage": "Comment Resolution - Lab",
       "date": "2026-08-14",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "boringcrypto",
+      "list": "MIP",
+      "module": "BoringCrypto",
+      "vendor": "Google, LLC",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-07-06",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "boringcrypto",
+      "list": "MIP",
+      "module": "BoringCrypto",
+      "vendor": "Google, LLC",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-06-05",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "boringcrypto",
+      "list": "MIP",
+      "module": "BoringCrypto",
+      "vendor": "Google, LLC",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-05-18",
       "firstSeen": "2026-09-26"
     },
     {
@@ -200,6 +245,15 @@
       "firstSeen": "2026-09-26"
     },
     {
+      "product_id": "dell-bsafe-crypto-module-for-c",
+      "list": "MIP",
+      "module": "Dell BSAFE Crypto Module for C 3.1",
+      "vendor": "Dell Australia Pty Limited, BSAFE Product Team",
+      "nistStage": "Review",
+      "date": "2026-09-23",
+      "firstSeen": "2026-09-26"
+    },
+    {
       "product_id": "entrust-nshield",
       "list": "MIP",
       "module": "nShield 5s Hardware Security Module",
@@ -260,6 +314,15 @@
       "vendor": "i4p informatics ltd.",
       "nistStage": "Implementation Under Test",
       "date": "2025-10-07",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "openssl",
+      "list": "MIP",
+      "module": "OpenSSL FIPS Provider",
+      "vendor": "The OpenSSL Corporation",
+      "nistStage": "Comment Resolution - Lab",
+      "date": "2026-09-21",
       "firstSeen": "2026-09-26"
     },
     {
@@ -413,6 +476,24 @@
       "vendor": "Microsoft Corporation",
       "nistStage": "Implementation Under Test",
       "date": "2025-04-10",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "wolfcrypt-post-quantum",
+      "list": "MIP",
+      "module": "wolfCrypt",
+      "vendor": "wolfSSL Inc.",
+      "nistStage": "Pending Resubmission",
+      "date": "2026-04-16",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "wolfcrypt-post-quantum",
+      "list": "IUT",
+      "module": "wolfCrypt Post Quantum",
+      "vendor": "wolfSSL Inc.",
+      "nistStage": "Implementation Under Test",
+      "date": "2026-01-06",
       "firstSeen": "2026-09-26"
     }
   ]
