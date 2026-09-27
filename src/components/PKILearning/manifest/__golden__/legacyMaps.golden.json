@@ -2099,11 +2099,6 @@
         "optional": true
       },
       {
-        "id": "pp-security-ic",
-        "label": "PP case: Security IC Platform",
-        "optional": true
-      },
-      {
         "id": "eucc-scheme",
         "label": "EUCC is a scheme, not a PP"
       },
@@ -2114,6 +2109,11 @@
       {
         "id": "pp-en419221-5",
         "label": "PP case: EN 419221-5 HSM"
+      },
+      {
+        "id": "pp-security-ic",
+        "label": "PP case: Security IC Platform",
+        "optional": true
       },
       {
         "id": "eucc-pqc-today",
