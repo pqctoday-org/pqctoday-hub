@@ -253,10 +253,16 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'What each certification scheme proves, scope before level, and what adding PQC changes in a certified product.',
       icon: 'Award',
     },
-    'fips-pci-certification': {
-      label: 'FIPS 140-3 & PCI Certification',
+    'fips-140-3-certification': {
+      label: 'FIPS 140-3 Certification',
       description:
-        'FIPS 140-3 and the CMVP, algorithm validation vs module certificates, PCI PTS HSM and the payment operating stack.',
+        'FIPS 140-3 and the CMVP, security levels, the validation queue, and algorithm validation vs module certificates.',
+      icon: 'Award',
+    },
+    'pci-certification': {
+      label: 'PCI Certification',
+      description:
+        'PCI PTS HSM device approval, what v5.0 changed, and the payment operating stack (PIN, P2PE, KMO).',
       icon: 'Award',
     },
     'cc-eucc-certification': {

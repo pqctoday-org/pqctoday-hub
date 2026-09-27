@@ -19,7 +19,7 @@ import {
   type ScopeManifest,
 } from '../components/PKILearning/manifest/learnPathScope'
 
-const MODULE_STORE_VERSION = 16
+const MODULE_STORE_VERSION = 17
 const KPI_HISTORY_CAP = 30
 
 // Ephemeral session tracker — NOT in Zustand state, intentionally non-persisted.
@@ -910,6 +910,15 @@ export const useModuleStore = create<ModuleState>()(
             )
           }
           state.version = '16.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 16 → Version 17: the first MODULE_ID_RENAMES entry
+        // (fips-pci-certification → fips-140-3-certification, 2026-09-27 split
+        // of the FIPS 140-3 & PCI deep dive). No data changes here; the bump
+        // makes persist run migrate once, so the rename map below is applied.
+        if (version <= 16) {
+          state.version = '17.0.0'
           state.timestamp = Date.now()
         }
 

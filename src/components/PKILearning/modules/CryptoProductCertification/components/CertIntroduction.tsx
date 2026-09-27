@@ -40,8 +40,8 @@ interface CertIntroductionProps {
 }
 
 /**
- * Shared Learn-tab renderer for the three certification modules (LM-065
- * fundamentals, LM-067 FIPS 140-3 & PCI, LM-068 CC/EUCC/eIDAS): the
+ * Shared Learn-tab renderer for the four certification modules (LM-065
+ * fundamentals, LM-067 FIPS 140-3, LM-068 CC/EUCC/eIDAS, LM-071 PCI): the
  * practitioner disclaimer once, then each manifest section from the module's
  * own registry.
  */

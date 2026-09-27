@@ -7,7 +7,7 @@ import { MODULE_CITED_STANDARDS } from '@/data/moduleContentRegistry'
 import { getLibraryItemsForModule } from '@/data/libraryData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { MANIFEST_BY_ID } from '../manifest/registry'
-import manifest from '../modules/FipsPciCertification/manifest'
+import manifest from '../modules/CcEuccCertification/manifest'
 
 /**
  * Guards the seam added 2026-08-21.
@@ -91,9 +91,11 @@ describe('ModuleReferencesTab — cited standards', () => {
  * module those use declares learnPaths at all.
  */
 describe('ModuleReferencesTab — learn-path scoping', () => {
-  // LM-065's scheme paths moved to the deep dives on 2026-09-27; LM-067 now
-  // carries the fips/pci learn paths and their referencePaths.
-  const CERT = 'fips-pci-certification'
+  // LM-065's scheme paths moved to the deep dives on 2026-09-27. LM-067
+  // (FIPS/PCI) was split again the same day into single-route modules, so
+  // LM-068 (cc / eucc-eidas paths) is the certification module that still
+  // carries learn paths and referencePaths.
+  const CERT = 'cc-eucc-certification'
   const titleOf = (id: string) => MODULE_CITED_STANDARDS[CERT]?.find((s) => s.id === id)?.title
 
   afterEach(() => {
@@ -103,27 +105,27 @@ describe('ModuleReferencesTab — learn-path scoping', () => {
   it('shows every cited standard when no path is chosen', () => {
     useModuleStore.getState().setActiveLearnPath(CERT, '')
     renderTab(CERT)
-    for (const id of ['FIPS-140-3-STANDARD', 'PCI-PTS-Program-Guide-v1-9']) {
+    for (const id of ['COMMON-CRITERIA', 'eIDAS-2-Regulation']) {
       expect(screen.getAllByRole('link', { name: titleOf(id) || id }).length).toBeGreaterThan(0)
     }
   })
 
   it('hides the other schemes when a path is chosen', () => {
-    useModuleStore.getState().setActiveLearnPath(CERT, 'pci')
+    useModuleStore.getState().setActiveLearnPath(CERT, 'eucc-eidas')
     renderTab(CERT)
     expect(
       screen.getAllByRole('link', {
-        name: titleOf('PCI-PTS-Program-Guide-v1-9') || 'PCI-PTS-Program-Guide-v1-9',
+        name: titleOf('eIDAS-2-Regulation') || 'eIDAS-2-Regulation',
       }).length
     ).toBeGreaterThan(0)
-    for (const id of ['FIPS-140-3-STANDARD', 'NIST-SP-800-140B']) {
+    for (const id of ['COMMON-CRITERIA', 'CC-2022-PART3']) {
       expect(screen.queryByRole('link', { name: titleOf(id) || id })).not.toBeInTheDocument()
     }
   })
 
-  it('scopes every LM-067 reference to a path (no untagged row to fall through)', () => {
-    // Since the 2026-09-27 split every document LM-067 cites belongs to one
-    // scheme, so all of them are path-tagged. The rule that an UNTAGGED
+  it('scopes every LM-068 reference to a path (no untagged row to fall through)', () => {
+    // Since the 2026-09-27 split every document LM-068 cites belongs to one
+    // or both of its paths, so all of them are path-tagged. The rule that an UNTAGGED
     // reference stays visible on every path is pinned with a fixture in
     // manifest/learnPathScope.test.ts ("path B … does see the shared one").
     const cited = MODULE_CITED_STANDARDS[CERT] ?? []

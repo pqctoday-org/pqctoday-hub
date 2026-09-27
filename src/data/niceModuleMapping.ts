@@ -428,9 +428,9 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: false,
   },
   {
-    // Added 2026-09-27 (split out of crypto-product-certification): the FIPS
-    // 140-3 / CMVP and PCI deep dive, same governance-and-risk footing.
-    moduleId: 'fips-pci-certification',
+    // Added 2026-09-27 (split out of crypto-product-certification, then from
+    // PCI the same day): the FIPS 140-3 / CMVP deep dive, same governance-and-risk footing.
+    moduleId: 'fips-140-3-certification',
     competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
     tier: 'practitioner',
     workRoles: ['risk-manager', 'is-security-manager', 'security-architect'],
@@ -440,6 +440,15 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     // Added 2026-09-27 (split out of crypto-product-certification): the Common
     // Criteria / EUCC / eIDAS deep dive, same governance-and-risk footing.
     moduleId: 'cc-eucc-certification',
+    competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
+    tier: 'practitioner',
+    workRoles: ['risk-manager', 'is-security-manager', 'security-architect'],
+    isCommonGround: false,
+  },
+  {
+    // Added 2026-09-27 (split out of the FIPS 140-3 & PCI deep dive): the PCI
+    // PTS HSM / payment operating stack deep dive, same governance-and-risk footing.
+    moduleId: 'pci-certification',
     competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
     tier: 'practitioner',
     workRoles: ['risk-manager', 'is-security-manager', 'security-architect'],

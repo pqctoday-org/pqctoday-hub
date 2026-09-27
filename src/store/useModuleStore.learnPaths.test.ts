@@ -122,9 +122,9 @@ describe('module store — path-scoped steps and optional references (fixture)',
 })
 
 describe('module store — persisted shape unchanged by WS-0', () => {
-  it('stays at persist version 16 and the migrate ladder keeps activeLearnPath', () => {
+  it('stays at persist version 17 and the migrate ladder keeps activeLearnPath', () => {
     const opts = useModuleStore.persist.getOptions()
-    expect(opts.version).toBe(16)
+    expect(opts.version).toBe(17)
     const persisted = {
       version: '16.0.0',
       timestamp: 1,

@@ -738,7 +738,6 @@ export const ROUTE_OPTIONS: readonly {
 export const exercises: ExerciseItem[] = [
   {
     id: 'fips-level-is-fit-not-height',
-    paths: ['fips'],
     title: 'Level is a fit, not a score',
     description:
       'Open the planner on the on-premises appliance and try overall Level 4, then Level 3. Read the feedback for each.',
@@ -749,7 +748,6 @@ export const exercises: ExerciseItem[] = [
   },
   {
     id: 'fips-cloud-partition-inherits',
-    paths: ['fips'],
     title: 'What level is a tenant partition?',
     description:
       'Switch to the cloud-service scenario and answer the trust service provider’s question about their partition.',
@@ -760,7 +758,6 @@ export const exercises: ExerciseItem[] = [
   },
   {
     id: 'fips-level1-software-boundary',
-    paths: ['fips'],
     title: 'A Level 1 software module is a real validation',
     description:
       'Plan the host-side crypto library: draw its boundary and pick its level, then compare with the AWS-LC and Juniper Security Policies in the Learn tab.',
@@ -771,7 +768,6 @@ export const exercises: ExerciseItem[] = [
   },
   {
     id: 'fips-pqc-change-route',
-    paths: ['fips'],
     title: 'Which route adds ML-KEM to a validated module?',
     description:
       'In any scenario, choose the CMVP route for adding ML-KEM and ML-DSA under customer deadline pressure.',
@@ -782,7 +778,6 @@ export const exercises: ExerciseItem[] = [
   },
   {
     id: 'fips-mip-is-not-evidence',
-    paths: ['fips'],
     title: 'Write a claim procurement can rely on',
     description:
       'Pick the procurement claim for the cloud partition and see why the MIP-based one fails.',
@@ -793,7 +788,6 @@ export const exercises: ExerciseItem[] = [
   },
   {
     id: 'fips-level4-physical-case',
-    paths: ['fips'],
     title: 'The one Level 4 case',
     description:
       'Open the offline root-key HSM at an unattended site and decide between Level 3 and Level 4.',
@@ -807,7 +801,7 @@ export const exercises: ExerciseItem[] = [
 // ── Step question (appended verbatim to src/data/stepExercises.ts) ─────────
 
 export const stepExercises: Record<string, StepExercise> = {
-  'fips-pci-certification/fips-level-planner': {
+  'fips-140-3-certification/fips-level-planner': {
     prompt:
       'A customer’s PQC deadline is close, so Orrin N7 adds ML-KEM and ML-DSA to its already-validated HSM firmware. Which CMVP route does the planner accept?',
     options: [
@@ -824,8 +818,8 @@ export const stepExercises: Record<string, StepExercise> = {
 // ── Version-sensitive claims → src/data/contentFreshness.ts ────────────────
 
 const SECTIONS_SOURCE =
-  'src/components/PKILearning/modules/FipsPciCertification/components/sections/FipsSections.tsx'
-const DATA_SOURCE = 'src/components/PKILearning/modules/FipsPciCertification/data/fipsData.ts'
+  'src/components/PKILearning/modules/Fips1403Certification/components/sections/FipsSections.tsx'
+const DATA_SOURCE = 'src/components/PKILearning/modules/Fips1403Certification/data/fipsData.ts'
 
 export const FIPS_FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {

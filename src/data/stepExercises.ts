@@ -1221,9 +1221,9 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     why: 'The composite score is a weighted average, so the four weights must always sum to 100%; when one slider moves, the remainder is redistributed across the other three in the same ratio they already had, and the last one absorbs any rounding.',
   },
 
-  // ── crypto-product-certification (PCI author, 2026-09-24) — keep identical to
-  //    modules/FipsPciCertification/data/pciData.ts `stepExercises` ──
-  'fips-pci-certification/pci-evidence-review': {
+  // ── pci-certification (PCI author, 2026-09-24) — keep identical to
+  //    modules/PciCertification/data/pciData.ts `stepExercises` ──
+  'pci-certification/pci-evidence-review': {
     prompt:
       'A payment HSM’s PTS listing carries the Post Quantum Cryptography (PQC) notation. What does that notation establish?',
     options: [
@@ -1237,7 +1237,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
 
   // ── crypto-product-certification — FIPS author (2026-09-24) ──
-  'fips-pci-certification/fips-level-planner': {
+  'fips-140-3-certification/fips-level-planner': {
     prompt:
       'A customer’s PQC deadline is close, so Orrin N7 adds ML-KEM and ML-DSA to its already-validated HSM firmware. Which CMVP route does the planner accept?',
     options: [

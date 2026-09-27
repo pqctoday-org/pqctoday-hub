@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // OWNER: Scaffold
 import type { FC } from 'react'
-import { ClipboardCheck, Layers } from 'lucide-react'
+import { Layers } from 'lucide-react'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import { CertIntroduction } from '@/components/PKILearning/modules/CryptoProductCertification/components/CertIntroduction'
 import { CertExercises } from '@/components/PKILearning/modules/CryptoProductCertification/components/CertExercises'
@@ -22,22 +22,15 @@ const PARTS: WorkshopPart[] = [
       'Plan the FIPS 140-3 security level and module boundary for the appliance and cloud-partition variants of the anchor HSM.',
     icon: Layers,
   },
-  {
-    id: 'pci-evidence-review',
-    title: 'Payment HSM evidence review',
-    description:
-      'Review a payment HSM’s evidence: PTS listing, Security Policy, FIPS certificate and KMO/PIN assessment scope.',
-    icon: ClipboardCheck,
-  },
 ]
 
 const stepIndex = (stepId: string): number =>
   (manifest.workshopSteps ?? []).findIndex((s) => s.id === stepId)
 
-export const FipsPciCertificationModule: FC = () => (
+export const Fips1403CertificationModule: FC = () => (
   <ModuleShell
     manifest={manifest}
-    description="FIPS 140-3 / CMVP and PCI PTS HSM in depth: what each certificate proves, how to read it, and what adding post-quantum cryptography changes for each. Start with LM-065 for the fundamentals the two schemes share."
+    description="FIPS 140-3 and the CMVP in depth: what a certificate proves, how to read one, and what adding post-quantum cryptography changes for a validated module. Start with LM-065 for the fundamentals every scheme shares; PCI PTS HSM is covered in LM-071."
     learn={(api) => (
       <CertIntroduction
         manifest={manifest}

@@ -223,7 +223,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.pqctoday.com/learn/fips-pci-certification</loc>
+    <loc>https://www.pqctoday.com/learn/fips-140-3-certification</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -297,6 +297,12 @@
   <url>
     <loc>https://www.pqctoday.com/learn/os-pqc</loc>
     <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.pqctoday.com/learn/pci-certification</loc>
+    <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

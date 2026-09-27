@@ -1,6 +1,6 @@
 ### What This Is About
 
-Security products such as hardware security modules (HSMs) carry certificates: FIPS 140-3 in the US and Canada, Common Criteria internationally, EUCC in the European Union, and PCI approval for payment devices. This module explains what each certificate proves, why you read what a certificate covers before its level, and what happens when a certified product adds post-quantum cryptography. Two follow-on modules go deeper into FIPS 140-3 and PCI, and into Common Criteria, EUCC and eIDAS.
+Security products such as hardware security modules (HSMs) carry certificates: FIPS 140-3 in the US and Canada, Common Criteria internationally, EUCC in the European Union, and PCI approval for payment devices. This module explains what each certificate proves, why you read what a certificate covers before its level, and what happens when a certified product adds post-quantum cryptography. Three follow-on modules go deeper: into FIPS 140-3; into Common Criteria, EUCC and eIDAS; and into PCI.
 
 ### Why It Matters
 

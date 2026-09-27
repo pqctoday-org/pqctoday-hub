@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // OWNER: Scaffold
 /**
- * Render parity + scaffold contract (build spec §4) for Cryptographic Product Certification: Fundamentals. Four authors fill owner files in parallel;
+ * Render parity + scaffold contract (build spec §4) for FIPS 140-3 Certification. Four authors fill owner files in parallel;
  * these assertions keep their parts wired to the fixed manifest ids.
  */
 import { afterEach, describe, it, expect } from 'vitest'
@@ -11,16 +11,14 @@ import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { STEP_EXERCISES } from '@/data/stepExercises'
 import { useModuleStore } from '@/store/useModuleStore'
-import { CryptoProductCertificationModule } from './index'
+import { Fips1403CertificationModule } from './index'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
 import manifest from './manifest'
-import { PRACTITIONER_DISCLAIMER } from './components/sectionRegistry'
+import { PRACTITIONER_DISCLAIMER } from '@/components/PKILearning/modules/CryptoProductCertification/components/sectionRegistry'
 import { SECTION_COMPONENTS } from './components/sectionRegistry'
 import { ALL_EXERCISES } from './data/allExercises'
-import * as CoreSections from './components/sections/CoreSections'
-import * as SharedSections from './components/sections/SharedSections'
-import * as coreData from './data/coreData'
-import * as sharedData from './data/sharedData'
+import * as FipsSections from './components/sections/FipsSections'
+import * as fipsData from './data/fipsData'
 
 const pascal = (id: string) =>
   id
@@ -35,21 +33,19 @@ const pathIds = (manifest.learnPaths ?? []).map((p) => p.id)
 const renderModule = (search = '') =>
   render(
     <EmbedProvider>
-      <MemoryRouter initialEntries={[`/learn/crypto-product-certification${search}`]}>
-        <CryptoProductCertificationModule />
+      <MemoryRouter initialEntries={[`/learn/fips-140-3-certification${search}`]}>
+        <Fips1403CertificationModule />
       </MemoryRouter>
     </EmbedProvider>
   )
 
-describe('CryptoProductCertification render parity', () => {
+describe('Fips1403Certification render parity', () => {
   afterEach(() => useModuleStore.getState().setActiveLearnPath(manifest.id, ''))
 
   it('renders the gradient header, the in-page description, and all six tabs', () => {
     renderModule()
-    expect(
-      screen.getByRole('heading', { name: 'Cryptographic Product Certification: Fundamentals' })
-    ).toBeInTheDocument()
-    expect(screen.getByText(/What a FIPS 140-3, Common Criteria, EUCC or PCI/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'FIPS 140-3 Certification' })).toBeInTheDocument()
+    expect(screen.getByText(/FIPS 140-3 and the CMVP in depth/)).toBeInTheDocument()
     for (const name of [
       'Learn',
       'Visual',
@@ -69,33 +65,27 @@ describe('CryptoProductCertification render parity', () => {
     expect(notes[0]).toHaveTextContent(PRACTITIONER_DISCLAIMER)
   })
 
+  it('renders only its own scheme’s sections (the other scheme moved to its own module)', () => {
+    renderModule()
+    const heading = (name: string) => screen.queryByRole('heading', { level: 2, name })
+    expect(heading('FIPS 140-3 and the CMVP')).toBeInTheDocument()
+    expect(heading('PTS HSM device approval')).not.toBeInTheDocument()
+  })
+
   it('ships no draft placeholder — every owner file has real content', () => {
     renderModule()
     expect(screen.queryByTestId('draft-pending')).not.toBeInTheDocument()
     expect(screen.queryByText(/content pending/i)).not.toBeInTheDocument()
   })
-
-  it('declares no learn paths: every section and step is part of the fundamentals', () => {
-    expect(manifest.learnPaths ?? []).toEqual([])
-    renderModule()
-    const heading = (name: string) => screen.queryByRole('heading', { level: 2, name })
-    expect(heading('Four schemes, four questions')).toBeInTheDocument()
-    expect(heading('What PQC changes in certification')).toBeInTheDocument()
-    // the scheme deep dives moved to LM-067 / LM-068 / LM-071
-    expect(heading('FIPS 140-3 and the CMVP')).not.toBeInTheDocument()
-    expect(heading('The Common Criteria model')).not.toBeInTheDocument()
-  })
 })
 
-describe('CryptoProductCertification scaffold contract (build spec §4)', () => {
+describe('Fips1403Certification scaffold contract (build spec §4)', () => {
   it('every Learn section id has exactly one owner component, and nothing else does', () => {
     expect([...SECTION_COMPONENTS.keys()].sort()).toEqual([...sectionIds].sort())
   })
 
   it('section files export one component per section id, named in PascalCase from the id', () => {
-    const exported = new Map<string, unknown>(
-      [CoreSections, SharedSections].flatMap((m) => Object.entries(m))
-    )
+    const exported = new Map<string, unknown>([FipsSections].flatMap((m) => Object.entries(m)))
     for (const id of sectionIds) {
       expect(exported.has(pascal(id)), `${id} → ${pascal(id)}`).toBe(true)
       expect(SECTION_COMPONENTS.get(id)?.Component, id).toBe(exported.get(pascal(id)))
@@ -136,8 +126,7 @@ describe('CryptoProductCertification scaffold contract (build spec §4)', () => 
 
   it('owner stepExercises are keyed to this module’s steps and match src/data/stepExercises.ts', () => {
     const owned = {
-      ...coreData.stepExercises,
-      ...sharedData.stepExercises,
+      ...fipsData.stepExercises,
     }
     const shared = new Map(Object.entries(STEP_EXERCISES))
     for (const [key, exercise] of Object.entries(owned)) {
