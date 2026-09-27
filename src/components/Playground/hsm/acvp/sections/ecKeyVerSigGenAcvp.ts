@@ -21,7 +21,7 @@
 //  - EdDSA SigGen (EDDSA-SigGen-1.0): EdDSA is deterministic — C_Sign with the
 //    NIST d (and CK_EDDSA_PARAMS phFlag / context) must byte-match NIST.
 import { hexToBytes } from '@/utils/dataInputUtils'
-import { rvName } from '@/wasm/softhsm'
+import { hsm_generateECKeyPair, rvName } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import {
   CKA_CLASS,
@@ -282,10 +282,20 @@ async function ecdsaOracle() {
     if (!hf) throw new Error(`no digest for ${hashAlg}`)
     return hf(msg)
   }
-  const verify = (curve: string, hashAlg: string, sig: Uint8Array, msg: Uint8Array, pub: Uint8Array) => {
+  const verify = (
+    curve: string,
+    hashAlg: string,
+    sig: Uint8Array,
+    msg: Uint8Array,
+    pub: Uint8Array
+  ) => {
     const c = curves[curve] // eslint-disable-line security/detect-object-injection
     if (!c) throw new Error(`no oracle for ${curve}/${hashAlg}`)
-    return c.verify(sig, digest(hashAlg, msg), pub, { prehash: false, lowS: false, format: 'compact' })
+    return c.verify(sig, digest(hashAlg, msg), pub, {
+      prehash: false,
+      lowS: false,
+      format: 'compact',
+    })
   }
   return { verify, digest }
 }
@@ -464,6 +474,53 @@ export async function runEcdsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
       })
     }
   }
+  // Explicit-k is defined for P-256/384/521 only (hsm #281); the EC parameter
+  // group also lists secp256k1, so pin the documented refusal there:
+  // C_SignInit with a secp256k1 key → CKR_KEY_TYPE_INCONSISTENT.
+  const probeId = `ecdsa-explicit-k-secp256k1-refused-${eName}`
+  const probeAlg = `ECDSA explicit-k secp256k1 (${eName})`
+  const probeCase =
+    'Probe · C_SignInit(CKM_PQCTODAY_ECDSA_EXPLICIT_K) with a generated secp256k1 key · expect CKR_KEY_TYPE_INCONSISTENT (the mechanism covers P-256/384/521 only)'
+  const probeMeta: AcvpCaseMeta = {
+    origin: 'product-authored-probe',
+    upstreamOperation: 'none',
+    localOperation: 'sigGen-explicit-k',
+    parameterSet: 'secp256k1',
+    expected: 'return-code',
+    expectedRv: 'CKR_KEY_TYPE_INCONSISTENT',
+    source: srcOf(P),
+  }
+  if (kWhy) {
+    await skipRow(ctx, {
+      id: probeId,
+      algorithm: probeAlg,
+      testCase: probeCase,
+      meta: probeMeta,
+      why: kWhy,
+    })
+    return
+  }
+  await runRow(ctx, {
+    id: probeId,
+    algorithm: probeAlg,
+    testCase: probeCase,
+    meta: probeMeta,
+    source: 'PQC Today-authored probe of the mechanism contract, not a NIST vector',
+    exec: (): RowOutcome => {
+      const kp = hsm_generateECKeyPair(M, h, 'secp256k1')
+      const m = rawMech(M, kMech, pBytes(M, new Uint8Array(32).fill(1)))
+      try {
+        const rv = M._C_SignInit(h, m.ptr, kp.privHandle) >>> 0
+        if (rv === CKR_OK) M._C_SignFinal?.(h, 0, 0)
+        const o = `C_SignInit → ${rvName(rv)}`
+        return { ok: rvName(rv) === 'CKR_KEY_TYPE_INCONSISTENT', observed: o, details: o }
+      } finally {
+        m.free()
+        destroy(M, h, kp.privHandle)
+        destroy(M, h, kp.pubHandle)
+      }
+    },
+  })
 }
 
 interface EddsaSigGenGroup {

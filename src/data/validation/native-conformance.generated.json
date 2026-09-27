@@ -4,8 +4,8 @@
   "generator": "scripts/import-native-conformance.ts",
   "hsm": {
     "repo": "pqctoday-org/pqctoday-hsm",
-    "pinnedCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
-    "pinnedCommitDate": "2026-09-25",
+    "pinnedCommit": "d4345f88546b9b38399d5e8b175e463f3bf6a070",
+    "pinnedCommitDate": "2026-09-27",
     "pinnedCommitPublished": true
   },
   "wasmProvenanceFile": "public/wasm/wasm-provenance.json",
@@ -17,34 +17,34 @@
       "sourceFile": "p11_v32_compliance_test.cpp",
       "reportFiles": ["cpp_compliance_report.json", "cpp_compliance_report.md"],
       "report": {
-        "reportCommit": "d6e55d86759df4f4ff9cebe150f62aed9e12a2c2",
-        "reportCommitDate": "2026-09-25",
-        "reportDate": "2026-09-25 15:52:44 UTC",
-        "engineCommit": "2a8e174d837754a9f6b1a2560cfbb89bda593351",
-        "engineCommitAsStated": "2a8e174d837754a9f6b1a2560cfbb89bda593351",
-        "engineCommitDate": "2026-09-25",
+        "reportCommit": "292e28cd8ab5497a353a40b4e183170fc99200f9",
+        "reportCommitDate": "2026-09-26",
+        "reportDate": "2026-09-26 23:28:07 UTC",
+        "engineCommit": "fe60fcf14129a3915bc552eccabe8ba10b31f873",
+        "engineCommitAsStated": "fe60fcf14129a3915bc552eccabe8ba10b31f873",
+        "engineCommitDate": "2026-09-26",
         "engineAsStated": "./build/src/lib/libsofthsmv3.so",
         "target": "not recorded",
         "hostPlatform": "not recorded",
         "counts": {
-          "pass": 891,
+          "pass": 893,
           "fail": 0,
           "skip": 51,
           "xfail": 0,
-          "total": 942
+          "total": 944
         },
         "groups": 65,
         "caseIdentity": "suite-assigned",
         "caseIdScheme": "<category>/<test> from cpp_compliance_report.json",
         "staleness": {
-          "commitsFromEngineToPinnedMain": 46,
+          "commitsFromEngineToPinnedMain": 15,
           "engineCommitOnPinnedMainHistory": true
         },
         "wasm": {
           "bundle": "softhsm-cpp-engine",
-          "bundleHsmCommit": "d1f74a52e9396d2577e12def81d88c6654df8473",
+          "bundleHsmCommit": "d4345f88546b9b38399d5e8b175e463f3bf6a070",
           "engineCommitEqualsBundleCommit": false,
-          "commitsFromEngineToBundle": 91,
+          "commitsFromEngineToBundle": 17,
           "commitsFromBundleToEngine": 0
         },
         "cases": [
@@ -591,6 +591,7 @@
           ["Invariant/OutOfScope_0x000003b0", "skip"],
           ["Invariant/OutOfScope_0x80000004", "skip"],
           ["Invariant/OutOfScope_0x80000003", "skip"],
+          ["Invariant/Sign_0x80000015", "pass"],
           ["Invariant/Digest_0x00000240", "pass"],
           ["Invariant/Sign_0x00000241", "pass"],
           ["Invariant/Verify_0x00000241", "pass"],
@@ -854,6 +855,7 @@
           ["MsgCrypt/DecryptRoundTrip_OneShot_PlaintextMatch", "pass"],
           ["MsgSign/C_MessageSignInit", "pass"],
           ["MsgSign/C_SignMessageBegin", "pass"],
+          ["MsgSign/C_SignMessageNext_NonFinalPart", "pass"],
           ["MsgSign/C_SignMessageNext", "pass"],
           ["MsgSign/C_MessageSignInit_RSA_RejectsSignCtxParam", "pass"],
           ["MsgVerify/C_MessageVerifyInit", "pass"],
@@ -995,7 +997,7 @@
       "openGaps": [
         "The report does not record the host OS or CPU architecture it ran on.",
         "The report does not record the build target (platform/ABI) of the engine under test.",
-        "The report was produced at an engine commit 46 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+        "The report was produced at an engine commit 15 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
         "The engine commit differs from the commit this Hub’s C++ WASM bundle was built from, so these results are not results for the engine running in this browser."
       ]
     },
@@ -1006,34 +1008,34 @@
       "sourceFile": "rust/test_p11_conformance.js",
       "reportFiles": ["rust/RUST_P11_V32_CONFORMANCE_REPORT.md"],
       "report": {
-        "reportCommit": "37ca1f749733d2720ca8f80b3bfef87e26b146a9",
-        "reportCommitDate": "2026-09-25",
-        "reportDate": "2026-09-25T16:23:27.751Z",
-        "engineCommit": "ede1a0ada54fd266517bc9a7fa879468a65bbde1",
-        "engineCommitAsStated": "ede1a0ada54f",
-        "engineCommitDate": "2026-09-25",
+        "reportCommit": "fe60fcf14129a3915bc552eccabe8ba10b31f873",
+        "reportCommitDate": "2026-09-26",
+        "reportDate": "2026-09-26T23:06:54.328Z",
+        "engineCommit": "795907f49371d2bc5f8dcc0a118f958b943a2020",
+        "engineCommitAsStated": "795907f49371",
+        "engineCommitDate": "2026-09-26",
         "engineAsStated": "softhsmrustv3 (Rust), wasm32 build with `--features acvp`",
         "target": "wasm32 build with `--features acvp`",
         "hostPlatform": "not recorded",
         "counts": {
-          "pass": 1092,
+          "pass": 1093,
           "fail": 0,
           "skip": null,
           "xfail": null,
-          "total": 1092
+          "total": 1093
         },
         "groups": 52,
         "caseIdentity": "derived-from-transcript",
         "caseIdScheme": "<section> › <check label>[ #n] from the report’s \"Full transcript\" (harness assigns no ids)",
         "staleness": {
-          "commitsFromEngineToPinnedMain": 40,
+          "commitsFromEngineToPinnedMain": 16,
           "engineCommitOnPinnedMainHistory": true
         },
         "wasm": {
           "bundle": "softhsmrustv3-engine",
-          "bundleHsmCommit": "d1f74a52e9396d2577e12def81d88c6654df8473",
+          "bundleHsmCommit": "d4345f88546b9b38399d5e8b175e463f3bf6a070",
           "engineCommitEqualsBundleCommit": false,
-          "commitsFromEngineToBundle": 85,
+          "commitsFromEngineToBundle": 18,
           "commitsFromBundleToEngine": 0
         },
         "cases": [
@@ -1342,7 +1344,7 @@
             "pass"
           ],
           [
-            "F1 — mechanism table reconciliation (R6.2) › all 174 advertised mechanisms answerable → 0 missing",
+            "F1 — mechanism table reconciliation (R6.2) › all 175 advertised mechanisms answerable → 0 missing",
             "pass"
           ],
           [
@@ -4117,7 +4119,7 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › fixture: live advertised mechanism count → 174",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › fixture: live advertised mechanism count → 175",
             "pass"
           ],
           [
@@ -5273,14 +5275,18 @@
             "pass"
           ],
           [
-            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › G9: probed at least one real operation for every flag-bearing advertised mechanism (288 probes total)",
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › 0x80000015 SignInit: dispatch reached (not CKR_MECHANISM_INVALID) → got 0x63",
+            "pass"
+          ],
+          [
+            "G9 — advertise-vs-dispatch invariant: every advertised mechanism has a real dispatch path (new) › G9: probed at least one real operation for every flag-bearing advertised mechanism (289 probes total)",
             "pass"
           ]
         ]
       },
       "openGaps": [
         "The report does not record the host OS or CPU architecture it ran on.",
-        "The report was produced at an engine commit 40 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+        "The report was produced at an engine commit 16 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
         "The engine commit differs from the commit this Hub’s Rust WASM bundle was built from, so these results are not results for the engine running in this browser.",
         "The harness assigns no case ids: ids are derived from section heading + check label (ordinal-suffixed where a label repeats), and change if the harness rewords a label.",
         "The harness has no skip status: an unsupported case can only pass or fail."

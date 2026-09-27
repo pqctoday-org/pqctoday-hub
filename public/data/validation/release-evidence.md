@@ -15,14 +15,14 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | Vector files (active / quarantined / total)             |       74 / 0 / 74 | `src/data/validation/validation-counts.generated.json`            |
 | Cases (active / quarantined / total)                    | 2,785 / 0 / 2,785 | `src/data/validation/validation-counts.generated.json`            |
 | Active cases: positive / negative                       |       2,017 / 768 | `src/data/validation/validation-counts.generated.json`            |
-| C++: advertised capability cells (denominator)          |             1,635 | `public/data/validation/coverage-matrix.json`                     |
-| Rust: advertised capability cells (denominator)         |             1,028 | `public/data/validation/coverage-matrix.json`                     |
-| Coverage waivers (entries; all statuses)                |                23 | `src/data/validation/coverage-waivers.json`                       |
+| C++: advertised capability cells (denominator)          |             2,215 | `public/data/validation/coverage-matrix.json`                     |
+| Rust: advertised capability cells (denominator)         |             2,231 | `public/data/validation/coverage-matrix.json`                     |
+| Coverage waivers (entries; all statuses)                |                22 | `src/data/validation/coverage-waivers.json`                       |
 | Waivers approved                                        |                 0 | `src/data/validation/coverage-waivers.json`                       |
-| Open gaps (register entries)                            |               133 | `public/data/validation/coverage-matrix.json`                     |
-| Workbench test groups / families                        |            62 / 7 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
+| Open gaps (register entries)                            |               110 | `public/data/validation/coverage-matrix.json`                     |
+| Workbench test groups / families                        |            66 / 7 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
-**Waivers:** All 23 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5).
+**Waivers:** All 22 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5).
 
 ## Vector files and cases by evidence class
 
@@ -45,55 +45,55 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 ### C++ engine
 
-165 mechanisms · 1,635 advertised cells (denominator) · 31 unsupported cells shown separately · source commit `a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb`
+166 mechanisms · 2,215 advertised cells (denominator) · 39 unsupported cells shown separately · source commit `d4345f88546b9b38399d5e8b175e463f3bf6a070`
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
-| positive    |     184 |   1,254 |      197 |       1,635 |
-| negative    |      78 |      63 |    1,494 |       1,635 |
-| boundary    |      41 |     173 |    1,421 |       1,635 |
-| state-error |     869 |       0 |      766 |       1,635 |
-| **overall** |      15 |   1,538 |       82 |       1,635 |
+| positive    |     187 |   1,870 |      158 |       2,215 |
+| negative    |      78 |      64 |    2,073 |       2,215 |
+| boundary    |      41 |     173 |    2,001 |       2,215 |
+| state-error |     917 |       0 |    1,298 |       2,215 |
+| **overall** |      15 |   2,158 |       42 |       2,215 |
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |            1,553 |         1,552 |             9 |
+| wasm          | registered |            2,173 |         2,172 |             3 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
 Artifacts:
 
-- `public/wasm/softhsm.wasm` — SHA-256 `045eb1ac28f0c61e9c2c3313ee59cb3e1ddf60622346b69ee1bdadcf8d4374f7`
+- `public/wasm/softhsm.wasm` — SHA-256 `07b60e20deb17a54958802de62faf54d4b6671e69c7142a830fd66d11ad0ceba`
 - `public/wasm/softhsm.js` — SHA-256 `367f93cfbcd2bab3575cd05d8e5aeb244ec7e054b69445ae7cdd018e5fbd0547`
 
 ### Rust engine
 
-174 mechanisms · 1,028 advertised cells (denominator) · 638 unsupported cells shown separately · source commit `a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb`
+175 mechanisms · 2,231 advertised cells (denominator) · 23 unsupported cells shown separately · source commit `d4345f88546b9b38399d5e8b175e463f3bf6a070`
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
-| positive    |     183 |     678 |      167 |       1,028 |
-| negative    |      75 |      47 |      906 |       1,028 |
-| boundary    |      41 |     112 |      875 |       1,028 |
-| state-error |     586 |       0 |      442 |       1,028 |
-| **overall** |      15 |     954 |       59 |       1,028 |
+| positive    |     188 |   1,885 |      158 |       2,231 |
+| negative    |      78 |      64 |    2,089 |       2,231 |
+| boundary    |      42 |     173 |    2,016 |       2,231 |
+| state-error |     923 |       0 |    1,308 |       2,231 |
+| **overall** |      15 |   2,167 |       49 |       2,231 |
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |              969 |           967 |             6 |
+| wasm          | registered |            2,182 |         2,171 |            43 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
 Artifacts:
 
-- `src/wasm/softhsmrustv3_bg.wasm` — SHA-256 `da70e554367bf58c4e83d9e30a3f96c79d818123dc7cdaf77acd1e4457356408`
+- `src/wasm/softhsmrustv3_bg.wasm` — SHA-256 `790793bb9d0fac9bbec6580a388b2b431e662f9342137738487af7bd889a0034`
 - `src/wasm/softhsmrustv3_bg.js` — SHA-256 `8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8`
 
 ## Recorded runs
 
-- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-26 at hub `982e64c62579`; 4,432 results: cpp 2,178 pass, 38 skip; rust 1,639 pass, 577 skip.
-- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-27 at hub `0f960cc9442e`; 94 results: rust 94 pass.
-- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-26 at hub `982e64c62579`; 7,022 results: cpp 3,488 pass, 23 fail; rust 3,461 pass, 50 fail.
+- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-27 at hub `863739807bb7`; 5,004 results: cpp 2,442 pass, 60 skip; rust 2,477 pass, 25 skip.
+- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-27 at hub `863739807bb7`; 94 results: rust 94 pass.
+- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-09-27 at hub `863739807bb7`; 8,436 results: cpp 4,209 pass, 5 fail, 4 skip; rust 4,172 pass, 46 fail.
   - **fail** on rust: `acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/1/tests/0`
   - **fail** on rust: `acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/1/tests/1`
   - **fail** on rust: `acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/3/tests/0`
@@ -102,80 +102,58 @@ Artifacts:
   - **fail** on rust: `acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/6/tests/1`
   - **fail** on rust: `acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/7/tests/0`
   - **fail** on rust: `acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/7/tests/1`
-  - **fail** on cpp: `acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/0/tests/1`
-  - **fail** on cpp: `acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/0/tests/2`
-  - **fail** on cpp: `acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/1/tests/0`
-  - **fail** on cpp: `acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/1/tests/2`
-  - **fail** on cpp: `acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/2/tests/0`
-  - **fail** on cpp: `acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/2/tests/1`
   - **fail** on cpp: `acvp.04e.keyver#eddsa_keyver_acvp_test#/testGroups/0/tests/0`
   - **fail** on cpp: `acvp.04e.keyver#eddsa_keyver_acvp_test#/testGroups/0/tests/3`
   - **fail** on cpp: `acvp.04e.keyver#eddsa_keyver_acvp_test#/testGroups/1/tests/1`
   - **fail** on cpp: `acvp.04e.keyver#eddsa_keyver_acvp_test#/testGroups/1/tests/3`
   - **fail** on cpp: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/12/tests/0`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/13/tests/0`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/15/tests/0`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/16/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/18/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/19/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/20/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/21/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/22/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/23/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/24/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/25/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/26/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/27/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/28/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/29/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/30/tests/0`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/31/tests/0`
   - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/31/tests/0`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/32/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/32/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/33/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/34/tests/0`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/35/tests/0`
   - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/35/tests/0`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/36/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/36/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/37/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/38/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/39/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/40/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/41/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/42/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/43/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/44/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/45/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/46/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/47/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/48/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/49/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/50/tests/0`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/51/tests/0`
   - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/51/tests/0`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/52/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/52/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/53/tests/0`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/54/tests/0`
   - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/54/tests/0`
-  - **fail** on cpp: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/55/tests/0`
-  - **fail** on rust: `acvp.18c.kbkdf#kbkdf_acvp_test#/testGroups/55/tests/0`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/0`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/1`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/2`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/3`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/4`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/5`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/6`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/7`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/8`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/9`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/1/tests/0`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/1/tests/2`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/1/tests/3`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/1/tests/4`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/1/tests/6`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/1/tests/7`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/1/tests/8`
+  - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/1/tests/9`
   - **fail** on rust: `acvp.37.wycheproof-eddsa#wycheproof_ed448_test#/testGroups/3/tests/21`
   - **fail** on rust: `acvp.37.wycheproof-eddsa#wycheproof_ed448_test#/testGroups/3/tests/22`
   - **fail** on rust: `acvp.37.wycheproof-eddsa#wycheproof_ed448_test#/testGroups/3/tests/23`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHA2-128f-msg-deterministic`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHA2-128s-msg-deterministic`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHA2-192f-msg-deterministic`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHA2-192s-msg-deterministic`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHA2-256f-msg-deterministic`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHA2-256s-msg-deterministic`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHAKE-128f-msg-deterministic`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHAKE-128s-msg-deterministic`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHAKE-192f-msg-deterministic`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHAKE-192s-msg-deterministic`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHAKE-256f-msg-deterministic`
+  - **fail** on rust: `acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_SLH_DSA-SLH-DSA-SHAKE-256s-msg-deterministic`
 
 ## Native engine conformance suites (imported, not executed by the Hub)
 
-Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser. Pinned hsm commit `a22e6ca0838e` (2026-09-25).
+Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser. Pinned hsm commit `d4345f88546b` (2026-09-27).
 
 | Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                     |
 | ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | -------------------------------------------------------------------------------- |
-| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   891 |    0 |           51 |   942 | `2a8e174d8377` (2026-09-25) |                                          46 | no — bundle `d1f74a52e939`: 91 commit(s) ahead of the engine commit, 0 behind it |
-| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,092 |    0 | not reported | 1,092 | `ede1a0ada54f` (2026-09-25) |                                          40 | no — bundle `d1f74a52e939`: 85 commit(s) ahead of the engine commit, 0 behind it |
+| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   893 |    0 |           51 |   944 | `fe60fcf14129` (2026-09-26) |                                          15 | no — bundle `d4345f88546b`: 17 commit(s) ahead of the engine commit, 0 behind it |
+| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,093 |    0 | not reported | 1,093 | `795907f49371` (2026-09-26) |                                          16 | no — bundle `d4345f88546b`: 18 commit(s) ahead of the engine commit, 0 behind it |
 | Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                                |
 
 ## Cross-target evidence runs
@@ -298,46 +276,45 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Open-gaps register
 
-133 entries — by status: open 129, accepted-limitation 3, in-progress 1; by origin: curated 36, generated 97; owner unassigned: 133.
+110 entries — by status: open 105, accepted-limitation 4, in-progress 1; by origin: curated 35, generated 75; owner unassigned: 110.
 
-| Curated gap                                                                                                                                          | Status              | Plan item       | Owner      |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | --------------- | ---------- |
-| ML-DSA hedged signing with a caller-supplied rnd is not reachable through PKCS #11                                                                   | open                | D2-4            | unassigned |
-| HashML-DSA with SHA2-512/224 or SHA2-512/256 has no PKCS #11 mechanism                                                                               | accepted-limitation | D2-6            | unassigned |
-| ML-DSA internal interface (raw M′) is not expressible through PKCS #11                                                                               | accepted-limitation | D2-5            | unassigned |
-| KMAC256 vector case quarantined                                                                                                                      | open                | B-2 / E (KMAC)  | unassigned |
-| 106 C++/Rust C_GetMechanismInfo disagreements                                                                                                        | open                | G-9             | unassigned |
-| 9 mechanisms advertised by Rust only                                                                                                                 | open                | G-9             | unassigned |
-| Rust dispatches CKM_BIP32__\_LEGACY without advertising them; C++ still dispatches RIPEMD160_ only under its own non-advertised build flag           | open                | G-7             | unassigned |
-| Native targets not run                                                                                                                               | open                | H-2             | unassigned |
-| Hardware targets not run                                                                                                                             | open                | H-3 / Q3        | unassigned |
-| Run results recorded only for the workbench and katRunner, on the wasm engines, in Node                                                              | open                | C-4 / H-1 / H-7 | unassigned |
-| Native 976/815-check engine suites not in the evidence pipeline                                                                                      | open                | G-6             | unassigned |
-| PKCS #11 API-behavior matrix not built                                                                                                               | open                | G-3 / G-4       | unassigned |
-| SLH-DSA NIST sigGen cases registered but not executed                                                                                                | open                | D3-4            | unassigned |
-| Supported ACVP test types (AFT/MCT/LDT/VAL) not declared per algorithm                                                                               | open                | C-1             | unassigned |
-| Some test surfaces are not in the test registry                                                                                                      | open                | C-2             | unassigned |
-| ECDSA P-521 NIST sample failed on C++ — hub CKA_EC_POINT encoding (fixed hub-side)                                                                   | in-progress         | E (ECDSA) / J-7 | unassigned |
-| SUCI key-injection helper is rejected by the C++ engine                                                                                              | open                | A-3             | unassigned |
-| PKCS #11 v3.2 gives no single key-handle / key-type code for C_DecapsulateKey — not probed                                                           | open                | G-8             | unassigned |
-| Classical NIST reference samples cover only what the pinned upstream samples register                                                                | open                | E               | unassigned |
-| Classical families still without NIST ACVP-Server cases after WS-E and gap-closure P5                                                                | open                | E               | unassigned |
-| ANSI X9.63 KDF on a caller-supplied shared secret has no PKCS #11 mechanism                                                                          | accepted-limitation | E               | unassigned |
-| C++: SP 800-108 KDFs ignore where the caller places the counter in the PRF input (FIXED IN REVIEW, hsm PR #275 — not yet on main)                    | open                | E               | unassigned |
-| Rust: feedback and double-pipeline KBKDF reject the mandatory ITERATION_VARIABLE data parameter                                                      | open                | E               | unassigned |
-| Rust: C_CreateObject rejects a spec-complete RSA private key unless a non-standard CKA_VALUE is added — and our own import helper has been hiding it | open                | E               | unassigned |
-| C++: invalid ECDSA / EdDSA public points are imported and used without validation                                                                    | open                | E               | unassigned |
-| Ed25519 / Ed448: small-order public points are not rejected, and NO official NIST vector exists to test it                                           | open                | E               | unassigned |
-| Rust: invalid public points are refused only at C_Verify, with a code C_Verify does not list                                                         | open                | E / G-8         | unassigned |
-| Rust: Ed25519ph / Ed448ph signing drops the CK_EDDSA_PARAMS context (pre-hash path only)                                                             | open                | E               | unassigned |
-| Instrument scope mistaken for coverage: three corpus blind spots plus the reachability holes that hid them                                           | open                | E               | unassigned |
-| A KAT harness must READ a parameter the vector states, never assume it — and an ungated harness accumulates its own defects                          | open                | E               | unassigned |
-| Rust: three invalid-encoding Ed448 signatures VERIFY — unused bits of R are not checked                                                              | open                | E               | unassigned |
-| Rust: X25519/X448 ECDH returns the all-zero shared secret and computes with low-order points                                                         | open                | E               | unassigned |
-| Both engines compute with X25519/X448 points on the twist (defensible; posture recorded rather than assumed)                                         | open                | E               | unassigned |
-| 166 in-scope Wycheproof files (38,056 cases, 18,371 invalid) are not yet executed                                                                    | open                | E               | unassigned |
-| The 6 vendored Wycheproof files have no two-person review record                                                                                     | open                | E               | unassigned |
-| The hsm gate builds the WASM engine with a 2 MiB stack while the shipped artifact uses 8 MiB — it validates a configuration nobody ships             | open                | E               | unassigned |
+| Curated gap                                                                                                                                                  | Status              | Plan item       | Owner      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------- | --------------- | ---------- |
+| ML-DSA hedged signing with a caller-supplied rnd is not reachable through PKCS #11                                                                           | open                | D2-4            | unassigned |
+| HashML-DSA with SHA2-512/224 or SHA2-512/256 has no PKCS #11 mechanism                                                                                       | accepted-limitation | D2-6            | unassigned |
+| ML-DSA internal interface (raw M′) is not expressible through PKCS #11                                                                                       | accepted-limitation | D2-5            | unassigned |
+| KMAC256 vector case is correct but not executed                                                                                                              | open                | B-2 / E (KMAC)  | unassigned |
+| 106 C++/Rust C_GetMechanismInfo disagreements                                                                                                                | open                | G-9             | unassigned |
+| 9 mechanisms advertised by Rust only                                                                                                                         | open                | G-9             | unassigned |
+| Rust dispatches CKM_BIP32__\_LEGACY without advertising them; C++ still dispatches RIPEMD160_ only under its own non-advertised build flag                   | open                | G-7             | unassigned |
+| Native targets not run                                                                                                                                       | open                | H-2             | unassigned |
+| Hardware targets not run                                                                                                                                     | open                | H-3 / Q3        | unassigned |
+| Run results recorded only for the workbench and katRunner, on the wasm engines, in Node                                                                      | open                | C-4 / H-1 / H-7 | unassigned |
+| Native 976/815-check engine suites not in the evidence pipeline                                                                                              | open                | G-6             | unassigned |
+| PKCS #11 API-behavior matrix not built                                                                                                                       | open                | G-3 / G-4       | unassigned |
+| SLH-DSA NIST sigGen cases registered but not executed                                                                                                        | open                | D3-4            | unassigned |
+| Supported ACVP test types (AFT/MCT/LDT/VAL) not declared per algorithm                                                                                       | open                | C-1             | unassigned |
+| Some test surfaces are not in the test registry                                                                                                              | open                | C-2             | unassigned |
+| ECDSA P-521 NIST sample failed on C++ — hub CKA_EC_POINT encoding (fixed hub-side)                                                                           | in-progress         | E (ECDSA) / J-7 | unassigned |
+| SUCI key-injection helper is rejected by the C++ engine                                                                                                      | open                | A-3             | unassigned |
+| PKCS #11 v3.2 gives no single key-handle / key-type code for C_DecapsulateKey — not probed                                                                   | open                | G-8             | unassigned |
+| Classical NIST reference samples cover only what the pinned upstream samples register                                                                        | open                | E               | unassigned |
+| Classical families still without NIST ACVP-Server cases after WS-E and gap-closure P5                                                                        | open                | E               | unassigned |
+| ANSI X9.63 KDF on a caller-supplied shared secret has no PKCS #11 mechanism                                                                                  | accepted-limitation | E               | unassigned |
+| Rust: feedback and double-pipeline KBKDF place the counter wrongly when it comes before the iteration value (was: rejected the ITERATION_VARIABLE parameter) | open                | E               | unassigned |
+| Rust: RSA keys with a public exponent of 2^33 or more are refused (18 of NIST's 20 KTS-IFC OAEP keys); the CKA_VALUE and SHA-1 OAEP halves are fixed         | accepted-limitation | E               | unassigned |
+| C++: invalid EdDSA public points are imported and used without validation (ECDSA fixed)                                                                      | open                | E               | unassigned |
+| Ed25519 / Ed448: small-order public points are not rejected, and NO official NIST vector exists to test it                                                   | open                | E               | unassigned |
+| Rust: invalid public points are refused only at C_Verify, with a code C_Verify does not list                                                                 | open                | E / G-8         | unassigned |
+| Rust: Ed25519ph / Ed448ph signing drops the CK_EDDSA_PARAMS context (pre-hash path only)                                                                     | open                | E               | unassigned |
+| Instrument scope mistaken for coverage: three corpus blind spots plus the reachability holes that hid them                                                   | open                | E               | unassigned |
+| A KAT harness must READ a parameter the vector states, never assume it — and an ungated harness accumulates its own defects                                  | open                | E               | unassigned |
+| Rust: generic CKM_HASH_SLH_DSA message signing ignores CKH_DETERMINISTIC_REQUIRED                                                                            | open                | E               | unassigned |
+| Rust: three invalid-encoding Ed448 signatures VERIFY — unused bits of R are not checked                                                                      | open                | E               | unassigned |
+| Rust: X25519/X448 ECDH returns the all-zero shared secret and computes with low-order points                                                                 | open                | E               | unassigned |
+| Both engines compute with X25519/X448 points on the twist (defensible; posture recorded rather than assumed)                                                 | open                | E               | unassigned |
+| 166 in-scope Wycheproof files (38,056 cases, 18,371 invalid) are not yet executed                                                                            | open                | E               | unassigned |
+| The hsm gate builds the WASM engine with a 2 MiB stack while the shipped artifact uses 8 MiB — it validates a configuration nobody ships                     | open                | E               | unassigned |
 
 ## Awaiting two-person review (plan J-5)
 
@@ -348,7 +325,7 @@ Valid review records: 70.
 | Kind                      | Items not approved |
 | ------------------------- | -----------------: |
 | vector-source             |                  2 |
-| coverage-waiver           |                 23 |
+| coverage-waiver           |                 22 |
 | public-claim              |                  3 |
 | learn-module-practitioner |                  1 |
 
@@ -367,7 +344,7 @@ Machine-evaluated. A human item is never marked PASS.
 
 |   # | Item                                                                                                       | Status             | Evidence                                                                                                                                                                                                                                                                                                                                                                              | Basis                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | --: | ---------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                                                                                     | All 5963 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                                                                                   |
+|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                                                                                     | All 6827 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                                                                                   |
 |   2 | All active vectors have provenance or are blocked/quarantined                                              | **PASS**           | `src/data/validation/vector-manifest.json`<br>`src/data/validation/validation-counts.generated.json`                                                                                                                                                                                                                                                                                  | 74 active vector files, 0 without provenance; 0 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×3.                                                                                                                                                                                                                                                                                                                                                      |
 |   3 | Deck, script, UI and report counts are generated from the same manifest                                    | **HUMAN-REQUIRED** | `src/data/validation/validation-counts.generated.json`<br>`public/data/validation/release-evidence.json`<br>`scripts/audit-validation-claims.ts`                                                                                                                                                                                                                                      | This report and the UI read the generated counts (validation-counts.generated.json). The deck and script live outside this repo, so a person must run `npm run gen:release-evidence:check -- <presentation dir>` on the FINAL deck; `npm run release:freeze -- --presentation <dir>` records that result in the freeze manifest.                                                                                                                                                                                                                             |
 |   4 | The disclaimer is visible in the workbench and the report                                                  | **PASS**           | `src/components/Playground/dev/pipeline/suites/AcvpSuiteWorkbench.tsx`<br>`src/components/Algorithms/KATView.tsx`<br>`src/components/Algorithms/CoverageMatrixView.tsx`<br>`public/data/validation/coverage-matrix.{md,html,json}`<br>`public/data/validation/release-evidence.md`<br>`e2e/validation-release-evidence.spec.ts`                                                       | Workbench, Algorithms KAT view and coverage matrix render <ValidationDisclaimer/> (the one shared constant); all three coverage exports (.md, .html and the machine-readable .json) and this report carry it verbatim; e2e/validation-release-evidence.spec.ts asserts it is visible in a browser.                                                                                                                                                                                                                                                           |
@@ -394,12 +371,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `2560cad0b5bdb71023e0576bae214dc0075e649f48c4b289911834021522d40d` |
-| `src/data/validation/coverage-waivers.json`                             | `87b928d900e95f966e744aed284f4b11933e03f3dab9ced277d1072154702980` |
-| `src/data/validation/native-conformance.generated.json`                 | `f28a026649addce7e9bd55ecc531e8b9a5117c10a31382d3443213c9b2828b26` |
-| `src/data/validation/open-gaps.json`                                    | `01ee96809f8b963d85678d2b39308515a5c38df37e6ee982cf022bcec15a153c` |
-| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `3e3de40a719f4fb1b6081667b0c700012c1f6280372e4e8b824d1899352a12cd` |
-| `src/data/validation/run-results/wasm-node-katRunner.json`              | `b1f085d0e3a6d863a84d5e16f401ca0a1c74ac5841ef52a8a229a717c418fef4` |
-| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `67fa98bf8bbc49e2a67350eb1a35dcfe99b2b0f62d30d1648445f2ebc775abb4` |
+| `public/data/validation/coverage-matrix.json`                           | `7bb27128e6e97d17a3ee4b4d2355fc98618b1953bd9a6a6e0c1cc00a59cef7d2` |
+| `src/data/validation/coverage-waivers.json`                             | `466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e` |
+| `src/data/validation/native-conformance.generated.json`                 | `37d00760c9cba609527e8679a61c3816762947a90f203cce45dbe1085dbb1b78` |
+| `src/data/validation/open-gaps.json`                                    | `46672ab3072d8c13e1f2b678f38f6e5ba6012147f941f7dae0d90bb33c879a58` |
+| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `e7238e030e0ed056f730b00712780f663f48096329130b8c8a7e736ef018fafc` |
+| `src/data/validation/run-results/wasm-node-katRunner.json`              | `3594c71f9798571749742f676881e1a3c04b5ed6d656de8be1184ded1ce7b238` |
+| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `7c6d6b75848d0990116110fa49859aca83ab2bf82db18fead1faf4a1b6dfbe16` |
 | `src/data/validation/validation-counts.generated.json`                  | `2181e3bd71e91c333908adc0b1b9a8dba547342bd566eab3a34d87d60dd80b6a` |
 | `src/data/validation/vector-manifest.json`                              | `2ac136aa9e454e63ebee3a4b354f4aab6a5c5ed3d98f3507ee825fef95ab8577` |

@@ -109,11 +109,13 @@ describe('generate-coverage-matrix (committed inputs)', () => {
       // gap-closure P5 — 07c rust-mlkem-no-key-input-checks, 04e.keyver
       // cpp-ec-public-key-not-validated, 04e.ecdsa-siggen
       // g8-rust-advertised-cells-do-not-execute (SHA-224), 04e.eddsa-siggen
-      // rust-eddsa-ph-context-ignored, 18c.kbkdf cpp-kbkdf-counter-position-ignored
-      // / rust-kbkdf-iteration-variable-rejected; Wycheproof —
-      // 37.wycheproof-eddsa rust-ed448-accepts-noncanonical-r.
+      // rust-eddsa-ph-context-ignored, 18c.kbkdf
+      // rust-kbkdf-iteration-variable-rejected (C++ fixed by hsm #275); Wycheproof —
+      // 37.wycheproof-eddsa rust-ed448-accepts-noncanonical-r; 36 (NIST KTS-IFC
+      // RSA-OAEP) rust-rsa-private-import-requires-cka-value (exponent limit);
+      // 38.msgmp rust-hash-slh-dsa-deterministic-not-honoured.
       expect(f.registryCase, f.registryCase).toMatch(
-        /^acvp\.(07b\.keycheck|07c\.ekcheck-depth|09c\.(sigver|siggen-det)|01b|04b|04d|04e\.(keyver|ecdsa-siggen|eddsa-siggen)|12b\.probes|18b|18c\.kbkdf|35b|37\.wycheproof-eddsa)#/
+        /^acvp\.(07b\.keycheck|07c\.ekcheck-depth|09c\.(sigver|siggen-det)|01b|04b|04d|04e\.(keyver|ecdsa-siggen|eddsa-siggen)|12b\.probes|18b|18c\.kbkdf|35b|36|37\.wycheproof-eddsa|38\.msgmp)#/
       )
       expect(
         matrix.openGaps.some((g) => g.id === `recorded-fail:${f.registryCase}:${f.engine}`)

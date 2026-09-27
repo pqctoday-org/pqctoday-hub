@@ -7,8 +7,9 @@
 //
 // Every engine finding is pinned row by row, so a fixed engine turns the pin red
 // instead of silently changing the evidence:
-//   cpp-kbkdf-counter-position-ignored, rust-kbkdf-iteration-variable-rejected,
-//   cpp-ec-public-key-not-validated, rust-ec-public-key-refused-late,
+//   rust-kbkdf-iteration-variable-rejected (narrowed: 'before iterator' only),
+//   cpp-ec-public-key-not-validated (EdDSA only since hsm d4345f88),
+//   rust-ec-public-key-refused-late,
 //   rust-eddsa-ph-context-ignored, g8-rust-advertised-cells-do-not-execute (ECDSA SHA-224).
 //
 // Venue: `*.local.test.ts` — run by `npm run test:local` (local gate only).
@@ -113,8 +114,8 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
   it('runs every new section on both engines with identical case sets', () => {
     const cpp = rows().filter((r) => engineOf(r) === 'C++')
     const rust = rows().filter((r) => engineOf(r) === 'Rust')
-    // 30 HKDF + 56 KBKDF + 1 X9.63 skip + 17 keyVer + 24 × 2 ECDSA sigGen + 16 EdDSA sigGen
-    expect(cpp).toHaveLength(30 + 56 + 1 + 17 + 48 + 16)
+    // 30 HKDF + 56 KBKDF + 1 X9.63 skip + 17 keyVer + 24 × 3 ECDSA sigGen + 16 EdDSA sigGen
+    expect(cpp).toHaveLength(30 + 56 + 1 + 17 + 72 + 16)
     expect(rust.map(caseKey)).toEqual(cpp.map(caseKey))
   })
 
@@ -133,31 +134,29 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
   })
 
   it('KBKDF: pins the per-engine layout findings exactly', () => {
+    // Measured 2026-09-27 on the bundles built from hsm d4345f88. C++ now
+    // byte-matches every group (hsm #275 fixed cpp-kbkdf-counter-position-ignored).
+    // Rust now accepts the ITERATION_VARIABLE parameter (hsm #274) and matches
+    // every group EXCEPT the four 'before iterator' ones (feedback and double
+    // pipeline, HMAC and CMAC), where it derives a different key: the counter is
+    // not placed before the iteration value (rust-kbkdf-iteration-variable-rejected,
+    // narrowed).
     const v = readVectors('kbkdf_acvp_test.json')
-    const cppFails = (g: { kdfMode: string; counterLocation: string }) =>
-      g.kdfMode === 'counter'
-        ? g.counterLocation !== 'before fixed data'
-        : ['before iterator', 'after fixed data'].includes(g.counterLocation)
-    let cppFailed = 0
+    let rustFailed = 0
     for (const g of v.testGroups)
       for (const t of g.tests) {
         const key = `kbkdf-nist-${g.kdfMode.split(' ')[0]}-${macSlug(g.macMode)}-tg${g.tgId}-tc${t.tcId}`
         const cpp = row(`${key}-C++`)!
         const rust = row(`${key}-Rust`)!
         expect(classesOf(cpp.id)).toEqual(['nist-acvp-reference-sample'])
-        if (cppFails(g)) {
-          cppFailed++
-          expect(cpp.status, cpp.details).toBe('fail')
-          expect(cpp.caseMeta?.observed).toBe('differs') // cpp-kbkdf-counter-position-ignored
-        } else expect(cpp.status, cpp.details).toBe('pass')
-        if (g.kdfMode === 'counter') expect(rust.status, rust.details).toBe('pass')
-        else {
-          // rust-kbkdf-iteration-variable-rejected
+        expect(cpp.status, cpp.details).toBe('pass')
+        if (g.kdfMode !== 'counter' && g.counterLocation === 'before iterator') {
+          rustFailed++
           expect(rust.status).toBe('fail')
-          expect(rust.caseMeta?.observed).toBe('C_DeriveKey → CKR_MECHANISM_PARAM_INVALID')
-        }
+          expect(rust.caseMeta?.observed).toBe('differs')
+        } else expect(rust.status, rust.details).toBe('pass')
       }
-    expect(cppFailed).toBe(12)
+    expect(rustFailed).toBe(4)
   })
 
   it('X9.63 on a caller-supplied Z is an explicit skip — never pass, never tiered', () => {
@@ -169,7 +168,7 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
     }
   })
 
-  it('keyVer: valid keys work on both; invalid points are refused by Rust (late) and accepted by C++', () => {
+  it('keyVer: valid keys work on both; invalid points are refused by Rust (late); C++ refuses invalid ECDSA points at import but still accepts invalid EdDSA points', () => {
     for (const [file, fam] of [
       ['ecdsa_keyver_acvp_test.json', 'ecdsa'],
       ['eddsa_keyver_acvp_test.json', 'eddsa'],
@@ -186,8 +185,15 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
               expect(r.caseMeta?.observed).toBe('C_Verify → CKR_OK')
             }
           } else {
-            expect(cpp.status).toBe('fail') // cpp-ec-public-key-not-validated
-            expect(cpp.caseMeta?.observed).toBe('C_Verify → CKR_SIGNATURE_INVALID')
+            if (fam === 'ecdsa') {
+              // Measured 2026-09-27 (hsm d4345f88): C++ now validates an ECDSA
+              // point at import and refuses it with CKR_PUBLIC_KEY_INVALID.
+              expect(cpp.status, cpp.details).toBe('pass')
+              expect(cpp.caseMeta?.observed).toBe('C_CreateObject → CKR_PUBLIC_KEY_INVALID')
+            } else {
+              expect(cpp.status).toBe('fail') // cpp-ec-public-key-not-validated (EdDSA only now)
+              expect(cpp.caseMeta?.observed).toBe('C_Verify → CKR_SIGNATURE_INVALID')
+            }
             expect(rust.status, rust.details).toBe('pass') // rust-ec-public-key-refused-late
             expect(rust.caseMeta?.observed).toBe('C_Verify → CKR_KEY_TYPE_INCONSISTENT')
           }
@@ -196,20 +202,34 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
     }
   })
 
-  it('ECDSA sigGen verify-back: engine round-trip + independent oracle, on both engines including SHA-224 (E11a fixed: Rust now dispatches CKM_ECDSA_SHA224)', () => {
+  it('ECDSA sigGen: NIST r || s byte-match with NIST k (hsm #281), plus engine round-trip + independent oracle, on both engines including SHA-224', () => {
     const v = readVectors('ecdsa_siggen_acvp_test.json')
     for (const g of v.testGroups)
       for (const t of g.tests)
         for (const engine of ENGINES) {
           const base = `ecdsa-siggen-${g.curve}-${g.hashAlg.toLowerCase()}-tg${g.tgId}-tc${t.tcId}`
+          const kat = row(`${base}-kat-${engine}`)!
           const rt = row(`${base}-rt-${engine}`)!
           const or = row(`${base}-oracle-${engine}`)!
+          // hsm #281: NIST's own k through CKM_PQCTODAY_ECDSA_EXPLICIT_K must
+          // reproduce NIST's r || s exactly, on both engines, every curve/hash.
+          expect(classesOf(kat.id)).toEqual(['nist-acvp-reference-sample'])
+          expect(kat.status, kat.details).toBe('pass')
+          expect(kat.caseMeta?.observed).toBe('r || s byte-equal')
           expect(classesOf(rt.id)).toEqual(['functional-round-trip'])
           expect(classesOf(or.id)).toEqual(['independent-oracle'])
           expect(rt.status, rt.details).toBe('pass')
           expect(rt.caseMeta?.observed).toBe('C_Verify → CKR_OK')
           expect(or.status, or.details).toBe('pass')
         }
+  })
+
+  it('explicit-k refuses a secp256k1 key with CKR_KEY_TYPE_INCONSISTENT on both engines', () => {
+    for (const engine of ENGINES) {
+      const r = results.find((x) => x.id === `ecdsa-explicit-k-secp256k1-refused-${engine}`)!
+      expect(r.status, r.details).toBe('pass')
+      expect(r.caseMeta?.observed).toBe('C_SignInit → CKR_KEY_TYPE_INCONSISTENT')
+    }
   })
 
   it('EdDSA sigGen: C++ byte-matches all; Rust fails exactly the preHash cases (context ignored)', () => {
@@ -246,11 +266,15 @@ describe('P5 WS-E remainder sections — sabotaged expectations fail', () => {
     const ed = readVectors('eddsa_siggen_acvp_test.json')
     const eg = ed.testGroups.find((g: { preHash: boolean }) => !g.preHash)
     eg.tests[0].signature = flipHex(eg.tests[0].signature)
+    const ec = readVectors('ecdsa_siggen_acvp_test.json')
+    const ecg = ec.testGroups[0]
+    ecg.tests[0].s = flipHex(ecg.tests[0].s)
 
     vi.resetModules()
     vi.doMock('@/data/acvp/hkdf_acvp_test.json', () => ({ default: hk }))
     vi.doMock('@/data/acvp/kbkdf_acvp_test.json', () => ({ default: kb }))
     vi.doMock('@/data/acvp/eddsa_siggen_acvp_test.json', () => ({ default: ed }))
+    vi.doMock('@/data/acvp/ecdsa_siggen_acvp_test.json', () => ({ default: ec }))
     try {
       const results = await run(['kdf', 'classical'])
       const row = (id: string) => results.find((r) => r.id === id)
@@ -269,10 +293,16 @@ describe('P5 WS-E remainder sections — sabotaged expectations fail', () => {
         expect(
           row(`eddsa-siggen-nist-${scheme}-tg${eg.tgId}-tc${eg.tests[0].tcId}-${engine}`)?.status
         ).toBe('fail')
+        expect(
+          row(
+            `ecdsa-siggen-${ecg.curve}-${ecg.hashAlg.toLowerCase()}-tg${ecg.tgId}-tc${ecg.tests[0].tcId}-kat-${engine}`
+          )?.status
+        ).toBe('fail')
       }
     } finally {
       vi.doUnmock('@/data/acvp/hkdf_acvp_test.json')
       vi.doUnmock('@/data/acvp/kbkdf_acvp_test.json')
+      vi.doUnmock('@/data/acvp/ecdsa_siggen_acvp_test.json')
       vi.doUnmock('@/data/acvp/eddsa_siggen_acvp_test.json')
     }
   }, 600_000)

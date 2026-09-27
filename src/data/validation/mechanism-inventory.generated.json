@@ -9,16 +9,16 @@
         "artifacts": [
           {
             "path": "public/wasm/softhsm.wasm",
-            "sha256": "045eb1ac28f0c61e9c2c3313ee59cb3e1ddf60622346b69ee1bdadcf8d4374f7"
+            "sha256": "07b60e20deb17a54958802de62faf54d4b6671e69c7142a830fd66d11ad0ceba"
           },
           {
             "path": "public/wasm/softhsm.js",
             "sha256": "367f93cfbcd2bab3575cd05d8e5aeb244ec7e054b69445ae7cdd018e5fbd0547"
           }
         ],
-        "sourceCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
+        "sourceCommit": "d4345f88546b9b38399d5e8b175e463f3bf6a070",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
-        "builtAt": "2026-09-25",
+        "builtAt": "2026-09-27",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
       },
       "capture": {
@@ -27,8 +27,8 @@
       },
       "inventory": {
         "schema": "pqctoday.mechanism-inventory/v1",
-        "mechanismCount": 165,
-        "inventorySha256": "ab37207c3f6e0422335b40e8d1c4fa0a9da88d0db7ef0c49137f36a1ee3177ff",
+        "mechanismCount": 166,
+        "inventorySha256": "3c0cdeb9a8d11423609d9428071d90d2623c33694e472399cdec15c8d41349f3",
         "mechanisms": [
           {
             "type": 0,
@@ -109,13 +109,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000005",
             "name": "CKM_MD5_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -123,13 +136,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000006",
             "name": "CKM_SHA1_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -151,13 +177,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000000d",
             "name": "CKM_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -165,13 +204,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000000e",
             "name": "CKM_SHA1_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -221,13 +273,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000001d",
             "name": "CKM_ML_DSA",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -235,13 +300,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000001f",
             "name": "CKM_HASH_ML_DSA",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -249,13 +327,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000023",
             "name": "CKM_HASH_ML_DSA_SHA224",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -263,13 +354,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000024",
             "name": "CKM_HASH_ML_DSA_SHA256",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -277,13 +381,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000025",
             "name": "CKM_HASH_ML_DSA_SHA384",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -291,13 +408,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000026",
             "name": "CKM_HASH_ML_DSA_SHA512",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -305,13 +435,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000027",
             "name": "CKM_HASH_ML_DSA_SHA3_224",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -319,13 +462,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000028",
             "name": "CKM_HASH_ML_DSA_SHA3_256",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -333,13 +489,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000029",
             "name": "CKM_HASH_ML_DSA_SHA3_384",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -347,13 +516,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000002a",
             "name": "CKM_HASH_ML_DSA_SHA3_512",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -361,13 +543,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000002b",
             "name": "CKM_HASH_ML_DSA_SHAKE128",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -375,13 +570,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000002c",
             "name": "CKM_HASH_ML_DSA_SHAKE256",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -403,13 +611,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000002e",
             "name": "CKM_SLH_DSA",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -417,13 +638,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000034",
             "name": "CKM_HASH_SLH_DSA",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -431,13 +665,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000036",
             "name": "CKM_HASH_SLH_DSA_SHA224",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -445,13 +692,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000037",
             "name": "CKM_HASH_SLH_DSA_SHA256",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -459,13 +719,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000038",
             "name": "CKM_HASH_SLH_DSA_SHA384",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -473,13 +746,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000039",
             "name": "CKM_HASH_SLH_DSA_SHA512",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -487,13 +773,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000003a",
             "name": "CKM_HASH_SLH_DSA_SHA3_224",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -501,13 +800,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000003b",
             "name": "CKM_HASH_SLH_DSA_SHA3_256",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -515,13 +827,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000003c",
             "name": "CKM_HASH_SLH_DSA_SHA3_384",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -529,13 +854,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000003d",
             "name": "CKM_HASH_SLH_DSA_SHA3_512",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -543,13 +881,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000003e",
             "name": "CKM_HASH_SLH_DSA_SHAKE128",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -557,13 +908,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000003f",
             "name": "CKM_HASH_SLH_DSA_SHAKE256",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -571,13 +935,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000040",
             "name": "CKM_SHA256_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -585,13 +962,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000041",
             "name": "CKM_SHA384_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -599,13 +989,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000042",
             "name": "CKM_SHA512_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -613,13 +1016,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000043",
             "name": "CKM_SHA256_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -627,13 +1043,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000044",
             "name": "CKM_SHA384_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -641,13 +1070,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000045",
             "name": "CKM_SHA512_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -655,13 +1097,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000046",
             "name": "CKM_SHA224_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -669,13 +1124,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000047",
             "name": "CKM_SHA224_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -697,13 +1165,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000049",
             "name": "CKM_SHA512_224_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -711,13 +1192,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000004a",
             "name": "CKM_SHA512_224_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -753,13 +1247,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000004d",
             "name": "CKM_SHA512_256_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -767,13 +1274,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000004e",
             "name": "CKM_SHA512_256_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -795,13 +1315,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000060",
             "name": "CKM_SHA3_256_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -809,13 +1342,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000061",
             "name": "CKM_SHA3_384_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -823,13 +1369,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000062",
             "name": "CKM_SHA3_512_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -837,13 +1396,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000063",
             "name": "CKM_SHA3_256_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -851,13 +1423,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000064",
             "name": "CKM_SHA3_384_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -865,13 +1450,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000065",
             "name": "CKM_SHA3_512_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -879,13 +1477,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000066",
             "name": "CKM_SHA3_224_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -893,13 +1504,26 @@
             "infoRv": 0,
             "ulMinKeySize": 512,
             "ulMaxKeySize": 16384,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x00000067",
             "name": "CKM_SHA3_224_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -921,13 +1545,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000211",
             "name": "CKM_MD5_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -935,13 +1572,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000212",
             "name": "CKM_MD5_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -963,13 +1613,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000221",
             "name": "CKM_SHA_1_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -977,13 +1640,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000222",
             "name": "CKM_SHA_1_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1005,13 +1681,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000251",
             "name": "CKM_SHA256_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1019,13 +1708,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000252",
             "name": "CKM_SHA256_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1047,13 +1749,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000256",
             "name": "CKM_SHA224_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1061,13 +1776,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000257",
             "name": "CKM_SHA224_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1089,13 +1817,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000261",
             "name": "CKM_SHA384_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1103,13 +1844,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000262",
             "name": "CKM_SHA384_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1131,13 +1885,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000271",
             "name": "CKM_SHA512_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1145,13 +1912,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000272",
             "name": "CKM_SHA512_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1173,13 +1953,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002b1",
             "name": "CKM_SHA3_256_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1187,13 +1980,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002b2",
             "name": "CKM_SHA3_256_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1215,13 +2021,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002b6",
             "name": "CKM_SHA3_224_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1229,13 +2048,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002b7",
             "name": "CKM_SHA3_224_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1257,13 +2089,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002c1",
             "name": "CKM_SHA3_384_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1271,13 +2116,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002c2",
             "name": "CKM_SHA3_384_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1299,13 +2157,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002d1",
             "name": "CKM_SHA3_512_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1313,13 +2184,26 @@
             "infoRv": 0,
             "ulMinKeySize": 0,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002d2",
             "name": "CKM_SHA3_512_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1551,21 +2435,29 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 26224664,
+            "flags": 26224696,
             "typeHex": "0x00001041",
             "name": "CKM_ECDSA",
             "family": "asymmetric",
-            "flagsHex": "0x01902818",
+            "flagsHex": "0x01902838",
             "flagNames": [
               "CKF_MESSAGE_SIGN",
               "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
               "CKF_EC_OID",
               "CKF_EC_UNCOMPRESS"
             ],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1573,21 +2465,29 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 26224664,
+            "flags": 26224696,
             "typeHex": "0x00001042",
             "name": "CKM_ECDSA_SHA1",
             "family": "asymmetric",
-            "flagsHex": "0x01902818",
+            "flagsHex": "0x01902838",
             "flagNames": [
               "CKF_MESSAGE_SIGN",
               "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
               "CKF_EC_OID",
               "CKF_EC_UNCOMPRESS"
             ],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1595,21 +2495,29 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 26224664,
+            "flags": 26224696,
             "typeHex": "0x00001043",
             "name": "CKM_ECDSA_SHA224",
             "family": "asymmetric",
-            "flagsHex": "0x01902818",
+            "flagsHex": "0x01902838",
             "flagNames": [
               "CKF_MESSAGE_SIGN",
               "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
               "CKF_EC_OID",
               "CKF_EC_UNCOMPRESS"
             ],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1617,21 +2525,29 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 26224664,
+            "flags": 26224696,
             "typeHex": "0x00001044",
             "name": "CKM_ECDSA_SHA256",
             "family": "asymmetric",
-            "flagsHex": "0x01902818",
+            "flagsHex": "0x01902838",
             "flagNames": [
               "CKF_MESSAGE_SIGN",
               "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
               "CKF_EC_OID",
               "CKF_EC_UNCOMPRESS"
             ],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1639,21 +2555,29 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 26224664,
+            "flags": 26224696,
             "typeHex": "0x00001045",
             "name": "CKM_ECDSA_SHA384",
             "family": "asymmetric",
-            "flagsHex": "0x01902818",
+            "flagsHex": "0x01902838",
             "flagNames": [
               "CKF_MESSAGE_SIGN",
               "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
               "CKF_EC_OID",
               "CKF_EC_UNCOMPRESS"
             ],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1661,21 +2585,29 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 26224664,
+            "flags": 26224696,
             "typeHex": "0x00001046",
             "name": "CKM_ECDSA_SHA512",
             "family": "asymmetric",
-            "flagsHex": "0x01902818",
+            "flagsHex": "0x01902838",
             "flagNames": [
               "CKF_MESSAGE_SIGN",
               "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
               "CKF_EC_OID",
               "CKF_EC_UNCOMPRESS"
             ],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1683,21 +2615,29 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 26224664,
+            "flags": 26224696,
             "typeHex": "0x00001047",
             "name": "CKM_ECDSA_SHA3_224",
             "family": "asymmetric",
-            "flagsHex": "0x01902818",
+            "flagsHex": "0x01902838",
             "flagNames": [
               "CKF_MESSAGE_SIGN",
               "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
               "CKF_EC_OID",
               "CKF_EC_UNCOMPRESS"
             ],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1705,21 +2645,29 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 26224664,
+            "flags": 26224696,
             "typeHex": "0x00001048",
             "name": "CKM_ECDSA_SHA3_256",
             "family": "asymmetric",
-            "flagsHex": "0x01902818",
+            "flagsHex": "0x01902838",
             "flagNames": [
               "CKF_MESSAGE_SIGN",
               "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
               "CKF_EC_OID",
               "CKF_EC_UNCOMPRESS"
             ],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1727,21 +2675,29 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 26224664,
+            "flags": 26224696,
             "typeHex": "0x00001049",
             "name": "CKM_ECDSA_SHA3_384",
             "family": "asymmetric",
-            "flagsHex": "0x01902818",
+            "flagsHex": "0x01902838",
             "flagNames": [
               "CKF_MESSAGE_SIGN",
               "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
               "CKF_EC_OID",
               "CKF_EC_UNCOMPRESS"
             ],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1749,21 +2705,29 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 26224664,
+            "flags": 26224696,
             "typeHex": "0x0000104a",
             "name": "CKM_ECDSA_SHA3_512",
             "family": "asymmetric",
-            "flagsHex": "0x01902818",
+            "flagsHex": "0x01902838",
             "flagNames": [
               "CKF_MESSAGE_SIGN",
               "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
               "CKF_EC_OID",
               "CKF_EC_UNCOMPRESS"
             ],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -1771,12 +2735,19 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 805830656,
+            "flags": 832045056,
             "typeHex": "0x00001050",
             "name": "CKM_ECDH1_DERIVE",
             "family": "kdf",
-            "flagsHex": "0x30080000",
-            "flagNames": ["CKF_DERIVE", "CKF_ENCAPSULATE", "CKF_DECAPSULATE"],
+            "flagsHex": "0x31980000",
+            "flagNames": [
+              "CKF_DERIVE",
+              "CKF_EC_F_P",
+              "CKF_EC_OID",
+              "CKF_EC_UNCOMPRESS",
+              "CKF_ENCAPSULATE",
+              "CKF_DECAPSULATE"
+            ],
             "requiredOperations": ["derive", "encapsulate", "decapsulate"],
             "findings": []
           },
@@ -1785,12 +2756,12 @@
             "infoRv": 0,
             "ulMinKeySize": 112,
             "ulMaxKeySize": 521,
-            "flags": 524288,
+            "flags": 26738688,
             "typeHex": "0x00001051",
             "name": "CKM_ECDH1_COFACTOR_DERIVE",
             "family": "kdf",
-            "flagsHex": "0x00080000",
-            "flagNames": ["CKF_DERIVE"],
+            "flagsHex": "0x01980000",
+            "flagNames": ["CKF_DERIVE", "CKF_EC_F_P", "CKF_EC_OID", "CKF_EC_UNCOMPRESS"],
             "requiredOperations": ["derive"],
             "findings": []
           },
@@ -2360,6 +3331,20 @@
             "findings": []
           },
           {
+            "type": 2147483669,
+            "infoRv": 0,
+            "ulMinKeySize": 256,
+            "ulMaxKeySize": 521,
+            "flags": 26216448,
+            "typeHex": "0x80000015",
+            "name": "CKM_PQCTODAY_ECDSA_EXPLICIT_K",
+            "family": "asymmetric",
+            "flagsHex": "0x01900800",
+            "flagNames": ["CKF_SIGN", "CKF_EC_F_P", "CKF_EC_OID", "CKF_EC_UNCOMPRESS"],
+            "requiredOperations": ["sign"],
+            "findings": []
+          },
+          {
             "type": 2147483904,
             "infoRv": 0,
             "ulMinKeySize": 16,
@@ -2404,8 +3389,8 @@
           {
             "type": 2147487832,
             "infoRv": 0,
-            "ulMinKeySize": 0,
-            "ulMaxKeySize": 0,
+            "ulMinKeySize": 255,
+            "ulMaxKeySize": 255,
             "flags": 524288,
             "typeHex": "0x80001058",
             "name": "CKM_X25519",
@@ -2418,8 +3403,8 @@
           {
             "type": 2147487833,
             "infoRv": 0,
-            "ulMinKeySize": 0,
-            "ulMaxKeySize": 0,
+            "ulMinKeySize": 448,
+            "ulMaxKeySize": 448,
             "flags": 524288,
             "typeHex": "0x80001059",
             "name": "CKM_X448",
@@ -2432,8 +3417,8 @@
           {
             "type": 2147487835,
             "infoRv": 0,
-            "ulMinKeySize": 0,
-            "ulMaxKeySize": 0,
+            "ulMinKeySize": 16,
+            "ulMaxKeySize": 64,
             "flags": 524288,
             "typeHex": "0x8000105b",
             "name": "CKM_BIP32_MASTER_DERIVE",
@@ -2446,8 +3431,8 @@
           {
             "type": 2147487836,
             "infoRv": 0,
-            "ulMinKeySize": 0,
-            "ulMaxKeySize": 0,
+            "ulMinKeySize": 32,
+            "ulMaxKeySize": 32,
             "flags": 524288,
             "typeHex": "0x8000105c",
             "name": "CKM_BIP32_CHILD_DERIVE",
@@ -2466,16 +3451,16 @@
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "da70e554367bf58c4e83d9e30a3f96c79d818123dc7cdaf77acd1e4457356408"
+            "sha256": "790793bb9d0fac9bbec6580a388b2b431e662f9342137738487af7bd889a0034"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
             "sha256": "8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8"
           }
         ],
-        "sourceCommit": "a22e6ca0838e0b7e0d9cbc6e2a14b4d4df3fdfeb",
+        "sourceCommit": "d4345f88546b9b38399d5e8b175e463f3bf6a070",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
-        "builtAt": "2026-09-25",
+        "builtAt": "2026-09-27",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
       },
       "capture": {
@@ -2484,8 +3469,8 @@
       },
       "inventory": {
         "schema": "pqctoday.mechanism-inventory/v1",
-        "mechanismCount": 174,
-        "inventorySha256": "05d32d8b25193269edf03f62a5090890bb55c371b67402e7065802b83f3bd475",
+        "mechanismCount": 175,
+        "inventorySha256": "366ef17caddc24534e53a22131cf126751ec3563347e0b3f7a26a3a1326abbf5",
         "mechanisms": [
           {
             "type": 0,
@@ -2552,13 +3537,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000005",
             "name": "CKM_MD5_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2566,13 +3564,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000006",
             "name": "CKM_SHA1_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2594,13 +3605,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000000d",
             "name": "CKM_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2608,13 +3632,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000000e",
             "name": "CKM_SHA1_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2664,13 +3701,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000001d",
             "name": "CKM_ML_DSA",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2678,13 +3728,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000001f",
             "name": "CKM_HASH_ML_DSA",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2692,13 +3755,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000023",
             "name": "CKM_HASH_ML_DSA_SHA224",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2706,13 +3782,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000024",
             "name": "CKM_HASH_ML_DSA_SHA256",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2720,13 +3809,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000025",
             "name": "CKM_HASH_ML_DSA_SHA384",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2734,13 +3836,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000026",
             "name": "CKM_HASH_ML_DSA_SHA512",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2748,13 +3863,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000027",
             "name": "CKM_HASH_ML_DSA_SHA3_224",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2762,13 +3890,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000028",
             "name": "CKM_HASH_ML_DSA_SHA3_256",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2776,13 +3917,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000029",
             "name": "CKM_HASH_ML_DSA_SHA3_384",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2790,13 +3944,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000002a",
             "name": "CKM_HASH_ML_DSA_SHA3_512",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2804,13 +3971,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000002b",
             "name": "CKM_HASH_ML_DSA_SHAKE128",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2818,13 +3998,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1312,
             "ulMaxKeySize": 2592,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000002c",
             "name": "CKM_HASH_ML_DSA_SHAKE256",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2846,13 +4039,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10264,
+            "flags": 10296,
             "typeHex": "0x0000002e",
             "name": "CKM_SLH_DSA",
             "family": "pqc",
-            "flagsHex": "0x00002818",
-            "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify", "message-sign", "message-verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2860,13 +4066,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000034",
             "name": "CKM_HASH_SLH_DSA",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2874,13 +4093,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000036",
             "name": "CKM_HASH_SLH_DSA_SHA224",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2888,13 +4120,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000037",
             "name": "CKM_HASH_SLH_DSA_SHA256",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2902,13 +4147,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000038",
             "name": "CKM_HASH_SLH_DSA_SHA384",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2916,13 +4174,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000039",
             "name": "CKM_HASH_SLH_DSA_SHA512",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2930,13 +4201,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000003a",
             "name": "CKM_HASH_SLH_DSA_SHA3_224",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2944,13 +4228,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000003b",
             "name": "CKM_HASH_SLH_DSA_SHA3_256",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2958,13 +4255,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000003c",
             "name": "CKM_HASH_SLH_DSA_SHA3_384",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2972,13 +4282,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000003d",
             "name": "CKM_HASH_SLH_DSA_SHA3_512",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -2986,13 +4309,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000003e",
             "name": "CKM_HASH_SLH_DSA_SHAKE128",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3000,13 +4336,26 @@
             "infoRv": 0,
             "ulMinKeySize": 32,
             "ulMaxKeySize": 64,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000003f",
             "name": "CKM_HASH_SLH_DSA_SHAKE256",
             "family": "pqc",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3014,13 +4363,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000040",
             "name": "CKM_SHA256_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3028,13 +4390,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000041",
             "name": "CKM_SHA384_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3042,13 +4417,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000042",
             "name": "CKM_SHA512_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3056,13 +4444,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000043",
             "name": "CKM_SHA256_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3070,13 +4471,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000044",
             "name": "CKM_SHA384_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3084,13 +4498,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000045",
             "name": "CKM_SHA512_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3098,13 +4525,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000046",
             "name": "CKM_SHA224_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3112,13 +4552,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000047",
             "name": "CKM_SHA224_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3140,13 +4593,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000049",
             "name": "CKM_SHA512_224_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3154,13 +4620,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000004a",
             "name": "CKM_SHA512_224_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3196,13 +4675,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000004d",
             "name": "CKM_SHA512_256_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3210,13 +4702,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x0000004e",
             "name": "CKM_SHA512_256_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3238,13 +4743,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000060",
             "name": "CKM_SHA3_256_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3252,13 +4770,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000061",
             "name": "CKM_SHA3_384_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3266,13 +4797,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000062",
             "name": "CKM_SHA3_512_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3280,13 +4824,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000063",
             "name": "CKM_SHA3_256_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3294,13 +4851,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000064",
             "name": "CKM_SHA3_384_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3308,13 +4878,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000065",
             "name": "CKM_SHA3_512_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3322,13 +4905,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000066",
             "name": "CKM_SHA3_224_RSA_PKCS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3336,13 +4932,26 @@
             "infoRv": 0,
             "ulMinKeySize": 2048,
             "ulMaxKeySize": 4096,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000067",
             "name": "CKM_SHA3_224_RSA_PKCS_PSS",
             "family": "asymmetric",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3364,13 +4973,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000211",
             "name": "CKM_MD5_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3378,13 +5000,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000212",
             "name": "CKM_MD5_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3406,13 +5041,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000221",
             "name": "CKM_SHA_1_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3420,13 +5068,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000222",
             "name": "CKM_SHA_1_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3448,13 +5109,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000241",
             "name": "CKM_RIPEMD160_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3462,13 +5136,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000242",
             "name": "CKM_RIPEMD160_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3490,13 +5177,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000251",
             "name": "CKM_SHA256_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3504,13 +5204,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000252",
             "name": "CKM_SHA256_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3532,13 +5245,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000256",
             "name": "CKM_SHA224_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3546,13 +5272,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000257",
             "name": "CKM_SHA224_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3574,13 +5313,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000261",
             "name": "CKM_SHA384_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3588,13 +5340,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000262",
             "name": "CKM_SHA384_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3616,13 +5381,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000271",
             "name": "CKM_SHA512_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3630,13 +5408,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x00000272",
             "name": "CKM_SHA512_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3658,13 +5449,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002b1",
             "name": "CKM_SHA3_256_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3672,13 +5476,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002b2",
             "name": "CKM_SHA3_256_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3700,13 +5517,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002b6",
             "name": "CKM_SHA3_224_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3714,13 +5544,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002b7",
             "name": "CKM_SHA3_224_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3742,13 +5585,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002c1",
             "name": "CKM_SHA3_384_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3756,13 +5612,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002c2",
             "name": "CKM_SHA3_384_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3784,13 +5653,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002d1",
             "name": "CKM_SHA3_512_HMAC",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -3798,13 +5680,26 @@
             "infoRv": 0,
             "ulMinKeySize": 1,
             "ulMaxKeySize": 512,
-            "flags": 10240,
+            "flags": 10296,
             "typeHex": "0x000002d2",
             "name": "CKM_SHA3_512_HMAC_GENERAL",
             "family": "hash",
-            "flagsHex": "0x00002800",
-            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
-            "requiredOperations": ["sign", "verify"],
+            "flagsHex": "0x00002838",
+            "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
+              "CKF_SIGN",
+              "CKF_VERIFY"
+            ],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -4042,12 +5937,15 @@
             "infoRv": 0,
             "ulMinKeySize": 224,
             "ulMaxKeySize": 521,
-            "flags": 93333504,
+            "flags": 93333560,
             "typeHex": "0x00001041",
             "name": "CKM_ECDSA",
             "family": "asymmetric",
-            "flagsHex": "0x05902800",
+            "flagsHex": "0x05902838",
             "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
@@ -4055,7 +5953,14 @@
               "CKF_EC_UNCOMPRESS",
               "CKF_EC_CURVENAME"
             ],
-            "requiredOperations": ["sign", "verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -4063,12 +5968,15 @@
             "infoRv": 0,
             "ulMinKeySize": 224,
             "ulMaxKeySize": 521,
-            "flags": 93333504,
+            "flags": 93333560,
             "typeHex": "0x00001042",
             "name": "CKM_ECDSA_SHA1",
             "family": "asymmetric",
-            "flagsHex": "0x05902800",
+            "flagsHex": "0x05902838",
             "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
@@ -4076,7 +5984,14 @@
               "CKF_EC_UNCOMPRESS",
               "CKF_EC_CURVENAME"
             ],
-            "requiredOperations": ["sign", "verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -4084,12 +5999,15 @@
             "infoRv": 0,
             "ulMinKeySize": 224,
             "ulMaxKeySize": 521,
-            "flags": 93333504,
+            "flags": 93333560,
             "typeHex": "0x00001043",
             "name": "CKM_ECDSA_SHA224",
             "family": "asymmetric",
-            "flagsHex": "0x05902800",
+            "flagsHex": "0x05902838",
             "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
@@ -4097,7 +6015,14 @@
               "CKF_EC_UNCOMPRESS",
               "CKF_EC_CURVENAME"
             ],
-            "requiredOperations": ["sign", "verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -4105,12 +6030,15 @@
             "infoRv": 0,
             "ulMinKeySize": 224,
             "ulMaxKeySize": 521,
-            "flags": 93333504,
+            "flags": 93333560,
             "typeHex": "0x00001044",
             "name": "CKM_ECDSA_SHA256",
             "family": "asymmetric",
-            "flagsHex": "0x05902800",
+            "flagsHex": "0x05902838",
             "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
@@ -4118,7 +6046,14 @@
               "CKF_EC_UNCOMPRESS",
               "CKF_EC_CURVENAME"
             ],
-            "requiredOperations": ["sign", "verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -4126,12 +6061,15 @@
             "infoRv": 0,
             "ulMinKeySize": 224,
             "ulMaxKeySize": 521,
-            "flags": 93333504,
+            "flags": 93333560,
             "typeHex": "0x00001045",
             "name": "CKM_ECDSA_SHA384",
             "family": "asymmetric",
-            "flagsHex": "0x05902800",
+            "flagsHex": "0x05902838",
             "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
@@ -4139,7 +6077,14 @@
               "CKF_EC_UNCOMPRESS",
               "CKF_EC_CURVENAME"
             ],
-            "requiredOperations": ["sign", "verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -4147,12 +6092,15 @@
             "infoRv": 0,
             "ulMinKeySize": 224,
             "ulMaxKeySize": 521,
-            "flags": 93333504,
+            "flags": 93333560,
             "typeHex": "0x00001046",
             "name": "CKM_ECDSA_SHA512",
             "family": "asymmetric",
-            "flagsHex": "0x05902800",
+            "flagsHex": "0x05902838",
             "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
@@ -4160,7 +6108,14 @@
               "CKF_EC_UNCOMPRESS",
               "CKF_EC_CURVENAME"
             ],
-            "requiredOperations": ["sign", "verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -4168,12 +6123,15 @@
             "infoRv": 0,
             "ulMinKeySize": 224,
             "ulMaxKeySize": 521,
-            "flags": 93333504,
+            "flags": 93333560,
             "typeHex": "0x00001047",
             "name": "CKM_ECDSA_SHA3_224",
             "family": "asymmetric",
-            "flagsHex": "0x05902800",
+            "flagsHex": "0x05902838",
             "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
@@ -4181,7 +6139,14 @@
               "CKF_EC_UNCOMPRESS",
               "CKF_EC_CURVENAME"
             ],
-            "requiredOperations": ["sign", "verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -4189,12 +6154,15 @@
             "infoRv": 0,
             "ulMinKeySize": 224,
             "ulMaxKeySize": 521,
-            "flags": 93333504,
+            "flags": 93333560,
             "typeHex": "0x00001048",
             "name": "CKM_ECDSA_SHA3_256",
             "family": "asymmetric",
-            "flagsHex": "0x05902800",
+            "flagsHex": "0x05902838",
             "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
@@ -4202,7 +6170,14 @@
               "CKF_EC_UNCOMPRESS",
               "CKF_EC_CURVENAME"
             ],
-            "requiredOperations": ["sign", "verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -4210,12 +6185,15 @@
             "infoRv": 0,
             "ulMinKeySize": 224,
             "ulMaxKeySize": 521,
-            "flags": 93333504,
+            "flags": 93333560,
             "typeHex": "0x00001049",
             "name": "CKM_ECDSA_SHA3_384",
             "family": "asymmetric",
-            "flagsHex": "0x05902800",
+            "flagsHex": "0x05902838",
             "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
@@ -4223,7 +6201,14 @@
               "CKF_EC_UNCOMPRESS",
               "CKF_EC_CURVENAME"
             ],
-            "requiredOperations": ["sign", "verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -4231,12 +6216,15 @@
             "infoRv": 0,
             "ulMinKeySize": 224,
             "ulMaxKeySize": 521,
-            "flags": 93333504,
+            "flags": 93333560,
             "typeHex": "0x0000104a",
             "name": "CKM_ECDSA_SHA3_512",
             "family": "asymmetric",
-            "flagsHex": "0x05902800",
+            "flagsHex": "0x05902838",
             "flagNames": [
+              "CKF_MESSAGE_SIGN",
+              "CKF_MESSAGE_VERIFY",
+              "CKF_MULTI_MESSAGE",
               "CKF_SIGN",
               "CKF_VERIFY",
               "CKF_EC_F_P",
@@ -4244,7 +6232,14 @@
               "CKF_EC_UNCOMPRESS",
               "CKF_EC_CURVENAME"
             ],
-            "requiredOperations": ["sign", "verify"],
+            "requiredOperations": [
+              "sign",
+              "verify",
+              "message-sign",
+              "message-verify",
+              "message-sign-multipart",
+              "message-verify-multipart"
+            ],
             "findings": []
           },
           {
@@ -4970,6 +6965,26 @@
             "findings": []
           },
           {
+            "type": 2147483669,
+            "infoRv": 0,
+            "ulMinKeySize": 256,
+            "ulMaxKeySize": 521,
+            "flags": 93325312,
+            "typeHex": "0x80000015",
+            "name": "CKM_PQCTODAY_ECDSA_EXPLICIT_K",
+            "family": "asymmetric",
+            "flagsHex": "0x05900800",
+            "flagNames": [
+              "CKF_SIGN",
+              "CKF_EC_F_P",
+              "CKF_EC_OID",
+              "CKF_EC_UNCOMPRESS",
+              "CKF_EC_CURVENAME"
+            ],
+            "requiredOperations": ["sign"],
+            "findings": []
+          },
+          {
             "type": 2147483904,
             "infoRv": 0,
             "ulMinKeySize": 16,
@@ -5157,13 +7172,11 @@
         "name": "CKM_MD5_RSA_PKCS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5171,13 +7184,11 @@
         "name": "CKM_SHA1_RSA_PKCS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5197,13 +7208,11 @@
         "name": "CKM_RSA_PKCS_PSS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5211,233 +7220,11 @@
         "name": "CKM_SHA1_RSA_PKCS_PSS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x0000001f",
-        "name": "CKM_HASH_ML_DSA",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000023",
-        "name": "CKM_HASH_ML_DSA_SHA224",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000024",
-        "name": "CKM_HASH_ML_DSA_SHA256",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000025",
-        "name": "CKM_HASH_ML_DSA_SHA384",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000026",
-        "name": "CKM_HASH_ML_DSA_SHA512",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000027",
-        "name": "CKM_HASH_ML_DSA_SHA3_224",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000028",
-        "name": "CKM_HASH_ML_DSA_SHA3_256",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000029",
-        "name": "CKM_HASH_ML_DSA_SHA3_384",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x0000002a",
-        "name": "CKM_HASH_ML_DSA_SHA3_512",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x0000002b",
-        "name": "CKM_HASH_ML_DSA_SHAKE128",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x0000002c",
-        "name": "CKM_HASH_ML_DSA_SHAKE256",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000034",
-        "name": "CKM_HASH_SLH_DSA",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000036",
-        "name": "CKM_HASH_SLH_DSA_SHA224",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000037",
-        "name": "CKM_HASH_SLH_DSA_SHA256",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000038",
-        "name": "CKM_HASH_SLH_DSA_SHA384",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x00000039",
-        "name": "CKM_HASH_SLH_DSA_SHA512",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x0000003a",
-        "name": "CKM_HASH_SLH_DSA_SHA3_224",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x0000003b",
-        "name": "CKM_HASH_SLH_DSA_SHA3_256",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x0000003c",
-        "name": "CKM_HASH_SLH_DSA_SHA3_384",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x0000003d",
-        "name": "CKM_HASH_SLH_DSA_SHA3_512",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x0000003e",
-        "name": "CKM_HASH_SLH_DSA_SHAKE128",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
-        }
-      },
-      {
-        "typeHex": "0x0000003f",
-        "name": "CKM_HASH_SLH_DSA_SHAKE256",
-        "cpp": {
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
-        },
-        "rust": {
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5445,13 +7232,11 @@
         "name": "CKM_SHA256_RSA_PKCS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5459,13 +7244,11 @@
         "name": "CKM_SHA384_RSA_PKCS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5473,13 +7256,11 @@
         "name": "CKM_SHA512_RSA_PKCS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5487,13 +7268,11 @@
         "name": "CKM_SHA256_RSA_PKCS_PSS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5501,13 +7280,11 @@
         "name": "CKM_SHA384_RSA_PKCS_PSS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5515,13 +7292,11 @@
         "name": "CKM_SHA512_RSA_PKCS_PSS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5529,13 +7304,11 @@
         "name": "CKM_SHA224_RSA_PKCS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5543,13 +7316,11 @@
         "name": "CKM_SHA224_RSA_PKCS_PSS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5621,13 +7392,11 @@
         "name": "CKM_SHA3_256_RSA_PKCS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5635,13 +7404,11 @@
         "name": "CKM_SHA3_384_RSA_PKCS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5649,13 +7416,11 @@
         "name": "CKM_SHA3_512_RSA_PKCS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5663,13 +7428,11 @@
         "name": "CKM_SHA3_256_RSA_PKCS_PSS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5677,13 +7440,11 @@
         "name": "CKM_SHA3_384_RSA_PKCS_PSS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5691,13 +7452,11 @@
         "name": "CKM_SHA3_512_RSA_PKCS_PSS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5705,13 +7464,11 @@
         "name": "CKM_SHA3_224_RSA_PKCS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -5719,13 +7476,11 @@
         "name": "CKM_SHA3_224_RSA_PKCS_PSS",
         "cpp": {
           "ulMinKeySize": 512,
-          "ulMaxKeySize": 16384,
-          "flagNames": ["CKF_MESSAGE_SIGN", "CKF_MESSAGE_VERIFY", "CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 16384
         },
         "rust": {
           "ulMinKeySize": 2048,
-          "ulMaxKeySize": 4096,
-          "flagNames": ["CKF_SIGN", "CKF_VERIFY"]
+          "ulMaxKeySize": 4096
         }
       },
       {
@@ -6084,6 +7839,7 @@
           "flagNames": [
             "CKF_MESSAGE_SIGN",
             "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6094,6 +7850,9 @@
         "rust": {
           "ulMinKeySize": 224,
           "flagNames": [
+            "CKF_MESSAGE_SIGN",
+            "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6111,6 +7870,7 @@
           "flagNames": [
             "CKF_MESSAGE_SIGN",
             "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6121,6 +7881,9 @@
         "rust": {
           "ulMinKeySize": 224,
           "flagNames": [
+            "CKF_MESSAGE_SIGN",
+            "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6138,6 +7901,7 @@
           "flagNames": [
             "CKF_MESSAGE_SIGN",
             "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6148,6 +7912,9 @@
         "rust": {
           "ulMinKeySize": 224,
           "flagNames": [
+            "CKF_MESSAGE_SIGN",
+            "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6165,6 +7932,7 @@
           "flagNames": [
             "CKF_MESSAGE_SIGN",
             "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6175,6 +7943,9 @@
         "rust": {
           "ulMinKeySize": 224,
           "flagNames": [
+            "CKF_MESSAGE_SIGN",
+            "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6192,6 +7963,7 @@
           "flagNames": [
             "CKF_MESSAGE_SIGN",
             "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6202,6 +7974,9 @@
         "rust": {
           "ulMinKeySize": 224,
           "flagNames": [
+            "CKF_MESSAGE_SIGN",
+            "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6219,6 +7994,7 @@
           "flagNames": [
             "CKF_MESSAGE_SIGN",
             "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6229,6 +8005,9 @@
         "rust": {
           "ulMinKeySize": 224,
           "flagNames": [
+            "CKF_MESSAGE_SIGN",
+            "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6246,6 +8025,7 @@
           "flagNames": [
             "CKF_MESSAGE_SIGN",
             "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6256,6 +8036,9 @@
         "rust": {
           "ulMinKeySize": 224,
           "flagNames": [
+            "CKF_MESSAGE_SIGN",
+            "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6273,6 +8056,7 @@
           "flagNames": [
             "CKF_MESSAGE_SIGN",
             "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6283,6 +8067,9 @@
         "rust": {
           "ulMinKeySize": 224,
           "flagNames": [
+            "CKF_MESSAGE_SIGN",
+            "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6300,6 +8087,7 @@
           "flagNames": [
             "CKF_MESSAGE_SIGN",
             "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6310,6 +8098,9 @@
         "rust": {
           "ulMinKeySize": 224,
           "flagNames": [
+            "CKF_MESSAGE_SIGN",
+            "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6327,6 +8118,7 @@
           "flagNames": [
             "CKF_MESSAGE_SIGN",
             "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6337,6 +8129,9 @@
         "rust": {
           "ulMinKeySize": 224,
           "flagNames": [
+            "CKF_MESSAGE_SIGN",
+            "CKF_MESSAGE_VERIFY",
+            "CKF_MULTI_MESSAGE",
             "CKF_SIGN",
             "CKF_VERIFY",
             "CKF_EC_F_P",
@@ -6351,7 +8146,14 @@
         "name": "CKM_ECDH1_DERIVE",
         "cpp": {
           "ulMinKeySize": 112,
-          "flagNames": ["CKF_DERIVE", "CKF_ENCAPSULATE", "CKF_DECAPSULATE"]
+          "flagNames": [
+            "CKF_DERIVE",
+            "CKF_EC_F_P",
+            "CKF_EC_OID",
+            "CKF_EC_UNCOMPRESS",
+            "CKF_ENCAPSULATE",
+            "CKF_DECAPSULATE"
+          ]
         },
         "rust": {
           "ulMinKeySize": 256,
@@ -6371,7 +8173,7 @@
         "name": "CKM_ECDH1_COFACTOR_DERIVE",
         "cpp": {
           "ulMinKeySize": 112,
-          "flagNames": ["CKF_DERIVE"]
+          "flagNames": ["CKF_DERIVE", "CKF_EC_F_P", "CKF_EC_OID", "CKF_EC_UNCOMPRESS"]
         },
         "rust": {
           "ulMinKeySize": 256,
@@ -6462,6 +8264,22 @@
         }
       },
       {
+        "typeHex": "0x80000015",
+        "name": "CKM_PQCTODAY_ECDSA_EXPLICIT_K",
+        "cpp": {
+          "flagNames": ["CKF_SIGN", "CKF_EC_F_P", "CKF_EC_OID", "CKF_EC_UNCOMPRESS"]
+        },
+        "rust": {
+          "flagNames": [
+            "CKF_SIGN",
+            "CKF_EC_F_P",
+            "CKF_EC_OID",
+            "CKF_EC_UNCOMPRESS",
+            "CKF_EC_CURVENAME"
+          ]
+        }
+      },
+      {
         "typeHex": "0x80000100",
         "name": "CKM_KMAC_128",
         "cpp": {
@@ -6506,13 +8324,9 @@
         "typeHex": "0x80001058",
         "name": "CKM_X25519",
         "cpp": {
-          "ulMinKeySize": 0,
-          "ulMaxKeySize": 0,
           "flagNames": ["CKF_DERIVE"]
         },
         "rust": {
-          "ulMinKeySize": 255,
-          "ulMaxKeySize": 255,
           "flagNames": [
             "CKF_DERIVE",
             "CKF_EC_F_P",
@@ -6526,13 +8340,9 @@
         "typeHex": "0x80001059",
         "name": "CKM_X448",
         "cpp": {
-          "ulMinKeySize": 0,
-          "ulMaxKeySize": 0,
           "flagNames": ["CKF_DERIVE"]
         },
         "rust": {
-          "ulMinKeySize": 448,
-          "ulMaxKeySize": 448,
           "flagNames": [
             "CKF_DERIVE",
             "CKF_EC_F_P",
@@ -6546,20 +8356,8 @@
         "typeHex": "0x8000105b",
         "name": "CKM_BIP32_MASTER_DERIVE",
         "cpp": {
-          "ulMinKeySize": 0,
-          "ulMaxKeySize": 0
-        },
-        "rust": {
-          "ulMinKeySize": 32,
-          "ulMaxKeySize": 32
-        }
-      },
-      {
-        "typeHex": "0x8000105c",
-        "name": "CKM_BIP32_CHILD_DERIVE",
-        "cpp": {
-          "ulMinKeySize": 0,
-          "ulMaxKeySize": 0
+          "ulMinKeySize": 16,
+          "ulMaxKeySize": 64
         },
         "rust": {
           "ulMinKeySize": 32,

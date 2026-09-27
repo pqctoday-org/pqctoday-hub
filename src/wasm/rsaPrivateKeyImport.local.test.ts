@@ -116,21 +116,22 @@ describe('C++ engine (OpenSSL): every NIST case', () => {
   }, 120000)
 })
 
-describe('Rust engine: two documented refusals, so no NIST OAEP case decrypts', () => {
-  // Measured 2026-09-26, and read from the source (pqctoday-hsm rust/src/ffi.rs,
-  // oaep_padding): every Rust OAEP path supports hashAlg SHA-256/384/512 only.
-  // The two small-exponent keys are both in the SHA-1 group (tgId 3), so Rust
-  // refuses them at C_DecryptInit with CKR_MECHANISM_PARAM_INVALID; the other 18
-  // are refused at import for their exponent. Net: 0 of NIST's 20 OAEP cases
-  // decrypt on Rust, while C++ decrypts all 20. Both refusals are pinned so a
+describe('Rust engine: the 2 small-exponent cases decrypt; the 18 wide-exponent keys are refused', () => {
+  // Measured 2026-09-27 on the bundle built from hsm d4345f88. hsm #284 made
+  // every Rust OAEP path accept SHA-1 (and SHA-224) as well as SHA-256/384/512;
+  // before it, the two small-exponent keys (both in the SHA-1 group, tgId 3)
+  // were refused at C_DecryptInit with CKR_MECHANISM_PARAM_INVALID. The other
+  // 18 are still refused at import for their public exponent (>= 2^33), a
+  // documented Rust limit kept by decision. Net: 2 of NIST's 20 OAEP cases
+  // decrypt on Rust, while C++ decrypts all 20. Both counts are pinned so a
   // change to either fails here (open gap rust-rsa-private-import-requires-cka-value).
-  it('refuses SHA-1 OAEP for the 2 small-exponent NIST cases (CKR_MECHANISM_PARAM_INVALID)', async () => {
+  it('decrypts both SHA-1 small-exponent NIST cases to NIST plaintexts', async () => {
     const M = (await S.getSoftHSMRustModule()) as SoftHSMModule
     const hSession = openSession(M)
     expect(SMALL.every((c) => c.hash === 'sha1')).toBe(true)
     for (const c of SMALL) {
-      await expect(decryptCase(M, hSession, c), `tgId ${c.tgId} tcId ${c.tcId}`).rejects.toThrow(
-        /CKR_MECHANISM_PARAM_INVALID/
+      expect(await decryptCase(M, hSession, c), `tgId ${c.tgId} tcId ${c.tcId}`).toBe(
+        c.pt.toLowerCase()
       )
     }
     S.hsm_finalize(M, hSession)
