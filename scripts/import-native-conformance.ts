@@ -55,7 +55,7 @@ import {
  * Move the pin — and re-run the importer — when hsm commits regenerated
  * reports; --check says when that has happened on hsm main.
  */
-export const PINNED_HSM_COMMIT = '632302e8f7f2476e631796401d4eacad0407d550'
+export const PINNED_HSM_COMMIT = '68278dfe69ad26eddf43ba2d23a76f8a3285528a'
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '..', '..')
 export const NATIVE_CONFORMANCE_OUT = join(

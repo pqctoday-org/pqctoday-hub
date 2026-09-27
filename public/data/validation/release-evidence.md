@@ -117,12 +117,12 @@ Artifacts:
 
 ## Native engine conformance suites (imported, not executed by the Hub)
 
-Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser. Pinned hsm commit `632302e8f7f2` (2026-09-27).
+Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser. Pinned hsm commit `68278dfe69ad` (2026-09-27).
 
 | Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                      |
 | ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | --------------------------------------------------------------------------------- |
-| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   959 |    0 |            2 |   961 | `3ae536da0201` (2026-09-27) |                                           5 | no — bundle `68278dfe69ad`: 32 commit(s) ahead of the engine commit, 0 behind it  |
-| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,093 |    0 | not reported | 1,093 | `795907f49371` (2026-09-26) |                                          76 | no — bundle `68278dfe69ad`: 112 commit(s) ahead of the engine commit, 0 behind it |
+| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   961 |    0 |            2 |   966 | `7f95629c989a` (2026-09-27) |                                           8 | no — bundle `68278dfe69ad`: 13 commit(s) ahead of the engine commit, 0 behind it  |
+| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,093 |    0 | not reported | 1,093 | `795907f49371` (2026-09-26) |                                          94 | no — bundle `68278dfe69ad`: 112 commit(s) ahead of the engine commit, 0 behind it |
 | Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                                 |
 
 ## Cross-target evidence runs
@@ -336,7 +336,7 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
 | `public/data/validation/coverage-matrix.json`                           | `0f23f618fc46a63ac255e80b864b9f89db6c1556bbe2bc39fa30e3245b5857a3` |
 | `src/data/validation/coverage-waivers.json`                             | `466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e` |
-| `src/data/validation/native-conformance.generated.json`                 | `1740e7bf84df84a3aa06462bd6646dd018932bbc4af95bfd03566adfa00bafdd` |
+| `src/data/validation/native-conformance.generated.json`                 | `b79a2bc01179c09c48b0628958e7f6bc196261453024e2009dc9e174f9fd75ae` |
 | `src/data/validation/open-gaps.json`                                    | `9c48aa2daa3ae5f503c9fa0c489881d81973813b86fb7d721b638ceb6c03b5a9` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `2224652b318108bade8fa293be0059ae4b7f8e27d1b1a06e9a0474c215626098` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `ba5bfe5fb83803690533d3b841eef51e1bdf873d5ff4c17c991643772796e40b` |
