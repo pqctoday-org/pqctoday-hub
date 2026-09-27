@@ -11,12 +11,13 @@
 //    be refused at C_CreateObject, C_VerifyInit or C_Verify with a code other
 //    than CKR_SIGNATURE_INVALID / CKR_SIGNATURE_LEN_RANGE (a signature error
 //    means the point was never validated).
-//  - ECDSA SigGen verify-back (ECDSA-SigGen-FIPS186-5, P-256/384/521 × the
-//    eight CKM_ECDSA_<hash> mechanisms): the NIST key signs the NIST message;
-//    C_Sign draws its own nonce, so NIST r, s cannot be reproduced. The
-//    signature is verified by the same engine with the NIST public key
-//    (functional round-trip) and, in its own row, by @noble/curves over the
-//    @noble/hashes digest (independent oracle — agreement, not a NIST value).
+//  - ECDSA SigGen (ECDSA-SigGen-FIPS186-5, P-256/384/521 × eight hashes), three
+//    rows per case: (1) NIST byte-match — C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K,
+//    pParameter = NIST's k left-padded to the order length) over the digest
+//    must return exactly NIST's r || s (hsm #281; skipped on a bundle that
+//    does not advertise the mechanism); (2) CKM_ECDSA_<hash> with the engine's
+//    own nonce, verified back by the same engine (functional round-trip); (3)
+//    that signature verified by @noble/curves (independent oracle).
 //  - EdDSA SigGen (EDDSA-SigGen-1.0): EdDSA is deterministic — C_Sign with the
 //    NIST d (and CK_EDDSA_PARAMS phFlag / context) must byte-match NIST.
 import { hexToBytes } from '@/utils/dataInputUtils'
@@ -46,6 +47,7 @@ import {
   WSE_CK,
   WSE_MECH,
   hexUp,
+  pBytes,
   pEddsa,
   rawMech,
   runRow,
@@ -254,7 +256,7 @@ interface EcdsaSigGenGroup {
   d: string
   qx: string
   qy: string
-  tests: { tcId: number; message: string }[]
+  tests: { tcId: number; message: string; k: string; r: string; s: string }[]
 }
 
 /** noble digest + curve for the oracle rows (loaded lazily, inside the section). */
@@ -275,12 +277,17 @@ async function ecdsaOracle() {
     'SHA3-384': sha3.sha3_384,
     'SHA3-512': sha3.sha3_512,
   }
-  return (curve: string, hashAlg: string, sig: Uint8Array, msg: Uint8Array, pub: Uint8Array) => {
-    const c = curves[curve] // eslint-disable-line security/detect-object-injection
+  const digest = (hashAlg: string, msg: Uint8Array): Uint8Array => {
     const hf = hashes[hashAlg] // eslint-disable-line security/detect-object-injection
-    if (!c || !hf) throw new Error(`no oracle for ${curve}/${hashAlg}`)
-    return c.verify(sig, hf(msg), pub, { prehash: false, lowS: false, format: 'compact' })
+    if (!hf) throw new Error(`no digest for ${hashAlg}`)
+    return hf(msg)
   }
+  const verify = (curve: string, hashAlg: string, sig: Uint8Array, msg: Uint8Array, pub: Uint8Array) => {
+    const c = curves[curve] // eslint-disable-line security/detect-object-injection
+    if (!c) throw new Error(`no oracle for ${curve}/${hashAlg}`)
+    return c.verify(sig, digest(hashAlg, msg), pub, { prehash: false, lowS: false, format: 'compact' })
+  }
+  return { verify, digest }
 }
 
 export async function runEcdsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promise<void> {
@@ -290,7 +297,9 @@ export async function runEcdsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
     testGroups: EcdsaSigGenGroup[]
   }
   const P = f._provenance
-  const verifyOracle = await ecdsaOracle()
+  const { verify: verifyOracle, digest } = await ecdsaOracle()
+  const kMech = WSE_MECH.CKM_PQCTODAY_ECDSA_EXPLICIT_K
+  const kWhy = unsupportedReason(mechs, kMech, 'CKM_PQCTODAY_ECDSA_EXPLICIT_K')
   for (const g of f.testGroups) {
     const mechName = ECDSA_SIGGEN_MECH[g.hashAlg]
     const mech = mechName ? WSE_MECH[mechName] : undefined // eslint-disable-line security/detect-object-injection
@@ -315,6 +324,68 @@ export async function runEcdsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
         source: srcOf(P),
       }
       const tcBase = `SigGen verify-back · NIST ECDSA sigGen tg${g.tgId}/tc${t.tcId} key + message · ${g.curve} · ${g.hashAlg} · msg ${msg.length}B`
+      // (1) NIST byte-match with NIST's own k. NIST sometimes drops a leading
+      // zero byte (P-521 k of 65 bytes), so k, r and s are left-padded to n.
+      const want = (leftPad(t.r, n) + leftPad(t.s, n)).toUpperCase()
+      const katMeta: AcvpCaseMeta = {
+        ...meta,
+        localOperation: 'sigGen-explicit-k',
+        expected: 'byte-match',
+      }
+      const katCase = `SigGen · NIST ECDSA sigGen tg${g.tgId}/tc${t.tcId} · ${g.curve} · ${g.hashAlg} · msg ${msg.length}B · C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, NIST k) over the ${g.hashAlg} digest · expect NIST r || s byte-match`
+      if (kWhy) {
+        await skipRow(ctx, {
+          id: `${base}-kat-${eName}`,
+          algorithm,
+          testCase: katCase,
+          meta: katMeta,
+          why: kWhy,
+        })
+      } else {
+        await runRow(ctx, {
+          id: `${base}-kat-${eName}`,
+          algorithm,
+          testCase: katCase,
+          meta: katMeta,
+          source: srcTag(P),
+          exec: () => {
+            const priv = importEcPrivate(
+              M,
+              h,
+              WSE_CK.CKK_EC,
+              CURVE_OID[g.curve],
+              hexToBytes(leftPad(g.d, n))
+            )
+            const m = rawMech(M, kMech, pBytes(M, hexToBytes(leftPad(t.k, n))))
+            try {
+              if (priv.rv !== CKR_OK) {
+                const o = `C_CreateObject → ${rvName(priv.rv)}`
+                return { ok: false, observed: o, details: o }
+              }
+              const out = signRaw(M, h, m, priv.handle, digest(g.hashAlg, msg))
+              if (!out.out) {
+                const o = `${out.step} → ${rvName(out.rv)}`
+                return { ok: false, observed: o, details: o }
+              }
+              const got = hexUp(out.out)
+              return got === want
+                ? {
+                    ok: true,
+                    observed: 'r || s byte-equal',
+                    details: `r || s [${out.out.length}B] byte-equal to NIST's (${sha256Tag(out.out)})`,
+                  }
+                : {
+                    ok: false,
+                    observed: `r || s ${got}`,
+                    details: `mismatch: got ${got}, NIST ${want}`,
+                  }
+            } finally {
+              m.free()
+              destroy(M, h, priv.handle)
+            }
+          },
+        })
+      }
       if (why) {
         for (const kind of ['rt', 'oracle'])
           await skipRow(ctx, {
@@ -332,7 +403,7 @@ export async function runEcdsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
       await runRow(ctx, {
         id: `${base}-rt-${eName}`,
         algorithm,
-        testCase: `${tcBase} · C_Sign then C_Verify with the NIST public key (round-trip; NIST r, s not reproducible — C_Sign draws its own nonce)`,
+        testCase: `${tcBase} · C_Sign then C_Verify with the NIST public key (round-trip: CKM_ECDSA_<hash> draws its own nonce, so this row cannot byte-match; the -kat row does)`,
         meta,
         source: srcTag(P),
         exec: () => {

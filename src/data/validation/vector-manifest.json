@@ -5964,7 +5964,7 @@
     {
       "id": "ecdsa_siggen_acvp_test",
       "path": "src/data/acvp/ecdsa_siggen_acvp_test.json",
-      "sha256": "eb423bb9756a4db7ea6faf6f7b3f69a78edd2cca16da4ef890e8a90a7391a3a4",
+      "sha256": "509475923dc38c27cbad894b57705dc1f1691a578d986cc46ea6ed7a991e22cc",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -5995,7 +5995,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -6104,7 +6104,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-256",
             "hashAlg": "SHA2-224",
@@ -6116,8 +6116,7 @@
             "tgId": 13,
             "tcId": 121
           },
-          "lineage": ["ecdsa-siggen-acvp-test-1"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-1"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/1/tests/0",
@@ -6126,7 +6125,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-256",
             "hashAlg": "SHA2-256",
@@ -6138,8 +6137,7 @@
             "tgId": 14,
             "tcId": 131
           },
-          "lineage": ["ecdsa-siggen-acvp-test-2"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-2"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/2/tests/0",
@@ -6148,7 +6146,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-256",
             "hashAlg": "SHA2-384",
@@ -6160,8 +6158,7 @@
             "tgId": 15,
             "tcId": 141
           },
-          "lineage": ["ecdsa-siggen-acvp-test-3"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-3"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/3/tests/0",
@@ -6170,7 +6167,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-256",
             "hashAlg": "SHA2-512",
@@ -6182,8 +6179,7 @@
             "tgId": 16,
             "tcId": 151
           },
-          "lineage": ["ecdsa-siggen-acvp-test-4"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-4"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/4/tests/0",
@@ -6192,7 +6188,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-256",
             "hashAlg": "SHA3-224",
@@ -6204,8 +6200,7 @@
             "tgId": 19,
             "tcId": 181
           },
-          "lineage": ["ecdsa-siggen-acvp-test-5"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-5"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/5/tests/0",
@@ -6214,7 +6209,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-256",
             "hashAlg": "SHA3-256",
@@ -6226,8 +6221,7 @@
             "tgId": 20,
             "tcId": 191
           },
-          "lineage": ["ecdsa-siggen-acvp-test-6"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-6"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/6/tests/0",
@@ -6236,7 +6230,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-256",
             "hashAlg": "SHA3-384",
@@ -6248,8 +6242,7 @@
             "tgId": 21,
             "tcId": 201
           },
-          "lineage": ["ecdsa-siggen-acvp-test-7"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-7"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/7/tests/0",
@@ -6258,7 +6251,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-256",
             "hashAlg": "SHA3-512",
@@ -6270,8 +6263,7 @@
             "tgId": 22,
             "tcId": 211
           },
-          "lineage": ["ecdsa-siggen-acvp-test-8"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-8"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/8/tests/0",
@@ -6280,7 +6272,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-384",
             "hashAlg": "SHA2-224",
@@ -6292,8 +6284,7 @@
             "tgId": 25,
             "tcId": 241
           },
-          "lineage": ["ecdsa-siggen-acvp-test-9"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-9"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/9/tests/0",
@@ -6302,7 +6293,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-384",
             "hashAlg": "SHA2-256",
@@ -6314,8 +6305,7 @@
             "tgId": 26,
             "tcId": 251
           },
-          "lineage": ["ecdsa-siggen-acvp-test-10"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-10"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/10/tests/0",
@@ -6324,7 +6314,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-384",
             "hashAlg": "SHA2-384",
@@ -6336,8 +6326,7 @@
             "tgId": 27,
             "tcId": 261
           },
-          "lineage": ["ecdsa-siggen-acvp-test-11"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-11"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/11/tests/0",
@@ -6346,7 +6335,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-384",
             "hashAlg": "SHA2-512",
@@ -6358,8 +6347,7 @@
             "tgId": 28,
             "tcId": 271
           },
-          "lineage": ["ecdsa-siggen-acvp-test-12"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-12"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/12/tests/0",
@@ -6368,7 +6356,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-384",
             "hashAlg": "SHA3-224",
@@ -6380,8 +6368,7 @@
             "tgId": 31,
             "tcId": 301
           },
-          "lineage": ["ecdsa-siggen-acvp-test-13"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-13"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/13/tests/0",
@@ -6390,7 +6377,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-384",
             "hashAlg": "SHA3-256",
@@ -6402,8 +6389,7 @@
             "tgId": 32,
             "tcId": 311
           },
-          "lineage": ["ecdsa-siggen-acvp-test-14"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-14"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/14/tests/0",
@@ -6412,7 +6398,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-384",
             "hashAlg": "SHA3-384",
@@ -6424,8 +6410,7 @@
             "tgId": 33,
             "tcId": 321
           },
-          "lineage": ["ecdsa-siggen-acvp-test-15"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-15"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/15/tests/0",
@@ -6434,7 +6419,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-384",
             "hashAlg": "SHA3-512",
@@ -6446,8 +6431,7 @@
             "tgId": 34,
             "tcId": 331
           },
-          "lineage": ["ecdsa-siggen-acvp-test-16"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-16"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/16/tests/0",
@@ -6456,7 +6440,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-521",
             "hashAlg": "SHA2-224",
@@ -6468,8 +6452,7 @@
             "tgId": 37,
             "tcId": 361
           },
-          "lineage": ["ecdsa-siggen-acvp-test-17"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-17"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/17/tests/0",
@@ -6478,7 +6461,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-521",
             "hashAlg": "SHA2-256",
@@ -6490,8 +6473,7 @@
             "tgId": 38,
             "tcId": 371
           },
-          "lineage": ["ecdsa-siggen-acvp-test-18"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-18"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/18/tests/0",
@@ -6500,7 +6482,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-521",
             "hashAlg": "SHA2-384",
@@ -6512,8 +6494,7 @@
             "tgId": 39,
             "tcId": 381
           },
-          "lineage": ["ecdsa-siggen-acvp-test-19"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-19"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/19/tests/0",
@@ -6522,7 +6503,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-521",
             "hashAlg": "SHA2-512",
@@ -6534,8 +6515,7 @@
             "tgId": 40,
             "tcId": 391
           },
-          "lineage": ["ecdsa-siggen-acvp-test-20"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-20"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/20/tests/0",
@@ -6544,7 +6524,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-521",
             "hashAlg": "SHA3-224",
@@ -6556,8 +6536,7 @@
             "tgId": 43,
             "tcId": 421
           },
-          "lineage": ["ecdsa-siggen-acvp-test-21"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-21"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/21/tests/0",
@@ -6566,7 +6545,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-521",
             "hashAlg": "SHA3-256",
@@ -6578,8 +6557,7 @@
             "tgId": 44,
             "tcId": 431
           },
-          "lineage": ["ecdsa-siggen-acvp-test-22"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-22"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/22/tests/0",
@@ -6588,7 +6566,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-521",
             "hashAlg": "SHA3-384",
@@ -6600,8 +6578,7 @@
             "tgId": 45,
             "tcId": 441
           },
-          "lineage": ["ecdsa-siggen-acvp-test-23"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-23"]
         },
         {
           "caseId": "ecdsa_siggen_acvp_test#/testGroups/23/tests/0",
@@ -6610,7 +6587,7 @@
             "name": "ECDSA",
             "revision": "FIPS186-5"
           },
-          "operation": "sigGen-verify-back",
+          "operation": "sigGen",
           "parameters": {
             "curve": "P-521",
             "hashAlg": "SHA3-512",
@@ -6622,8 +6599,7 @@
             "tgId": 46,
             "tcId": 451
           },
-          "lineage": ["ecdsa-siggen-acvp-test-24"],
-          "evidenceClass": "functional-round-trip"
+          "lineage": ["ecdsa-siggen-acvp-test-24"]
         }
       ],
       "lineage": [
@@ -6631,7 +6607,7 @@
           "id": "ecdsa-siggen-acvp-test-1",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/0/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6639,19 +6615,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6659,7 +6627,7 @@
           "id": "ecdsa-siggen-acvp-test-2",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/1/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6667,19 +6635,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6687,7 +6647,7 @@
           "id": "ecdsa-siggen-acvp-test-3",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/2/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6695,19 +6655,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6715,7 +6667,7 @@
           "id": "ecdsa-siggen-acvp-test-4",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/3/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6723,19 +6675,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6743,7 +6687,7 @@
           "id": "ecdsa-siggen-acvp-test-5",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/4/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6751,19 +6695,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6771,7 +6707,7 @@
           "id": "ecdsa-siggen-acvp-test-6",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/5/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6779,19 +6715,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6799,7 +6727,7 @@
           "id": "ecdsa-siggen-acvp-test-7",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/6/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6807,19 +6735,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6827,7 +6747,7 @@
           "id": "ecdsa-siggen-acvp-test-8",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/7/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6835,19 +6755,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6855,7 +6767,7 @@
           "id": "ecdsa-siggen-acvp-test-9",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/8/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6863,19 +6775,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6883,7 +6787,7 @@
           "id": "ecdsa-siggen-acvp-test-10",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/9/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6891,19 +6795,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6911,7 +6807,7 @@
           "id": "ecdsa-siggen-acvp-test-11",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/10/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6919,19 +6815,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6939,7 +6827,7 @@
           "id": "ecdsa-siggen-acvp-test-12",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/11/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6947,19 +6835,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6967,7 +6847,7 @@
           "id": "ecdsa-siggen-acvp-test-13",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/12/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -6975,19 +6855,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -6995,7 +6867,7 @@
           "id": "ecdsa-siggen-acvp-test-14",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/13/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -7003,19 +6875,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -7023,7 +6887,7 @@
           "id": "ecdsa-siggen-acvp-test-15",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/14/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -7031,19 +6895,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -7051,7 +6907,7 @@
           "id": "ecdsa-siggen-acvp-test-16",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/15/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -7059,19 +6915,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -7079,7 +6927,7 @@
           "id": "ecdsa-siggen-acvp-test-17",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/16/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -7087,19 +6935,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -7107,7 +6947,7 @@
           "id": "ecdsa-siggen-acvp-test-18",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/17/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -7115,19 +6955,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -7135,7 +6967,7 @@
           "id": "ecdsa-siggen-acvp-test-19",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/18/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -7143,19 +6975,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -7163,7 +6987,7 @@
           "id": "ecdsa-siggen-acvp-test-20",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/19/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -7171,19 +6995,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -7191,7 +7007,7 @@
           "id": "ecdsa-siggen-acvp-test-21",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/20/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -7199,19 +7015,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -7219,7 +7027,7 @@
           "id": "ecdsa-siggen-acvp-test-22",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/21/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -7227,19 +7035,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -7247,7 +7047,7 @@
           "id": "ecdsa-siggen-acvp-test-23",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/22/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -7255,19 +7055,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         },
@@ -7275,7 +7067,7 @@
           "id": "ecdsa-siggen-acvp-test-24",
           "appliesTo": ["ecdsa_siggen_acvp_test#/testGroups/23/tests/0"],
           "upstreamOperation": "ECDSA sigGen FIPS186-5 AFT",
-          "localOperation": "C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+          "localOperation": "C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
           "transformations": [
             {
               "type": "subset",
@@ -7283,19 +7075,11 @@
             },
             {
               "type": "field-drop",
-              "detail": "upstream fields not carried: deferred, k, r, s"
-            },
-            {
-              "type": "field-drop",
-              "detail": "k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign."
-            },
-            {
-              "type": "operation-change",
-              "detail": "Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case)."
+              "detail": "upstream fields not carried: deferred"
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried \u2014 k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped."
             }
           ]
         }

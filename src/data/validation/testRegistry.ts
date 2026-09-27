@@ -507,7 +507,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
   acvp(
     '04e.ecdsa-siggen',
     '§4e.2 (sections/ecKeyVerSigGenAcvp.ts)',
-    'ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)',
+    'ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)',
     casesOf('ecdsa_siggen_acvp_test').flatMap((c) => {
       const curve = param(c, 'curve')
       const hashAlg = param(c, 'hashAlg')
@@ -517,10 +517,22 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       return [
         mc(
           c.caseId,
+          NIST,
+          'positive',
+          [x('CKM_PQCTODAY_ECDSA_EXPLICIT_K', 'sign', curve)],
+          `${base}-kat-{engine}`
+        ),
+        lc(
+          'acvp.04e.ecdsa-siggen',
+          `${curve}-${hashAlg}-rt`,
           RT,
           'positive',
           [x(mech, 'sign', curve), x(mech, 'verify', curve)],
-          `${base}-rt-{engine}`
+          {
+            rowId: `${base}-rt-{engine}`,
+            parameters: { messageBytes: Number(param(c, 'messageBytes')) },
+            note: `CKM_ECDSA_<hash> with the engine's own nonce over ${c.caseId} (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.`,
+          }
         ),
         lc(
           'acvp.04e.ecdsa-siggen',
@@ -537,7 +549,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
         ),
       ]
     }),
-    'The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped).'
+    'Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message.'
   ),
   acvp(
     '04e.eddsa-siggen',

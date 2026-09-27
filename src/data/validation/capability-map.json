@@ -1193,6 +1193,13 @@
       "section": null,
       "vendorDefined": true
     },
+    "CKM_PQCTODAY_ECDSA_EXPLICIT_K": {
+      "algorithm": "ECDSA sign with a caller-supplied nonce k (sign only; the digest is the input)",
+      "revision": "FIPS 186-5",
+      "section": null,
+      "vendorDefined": true,
+      "parameterSets": "EC"
+    },
     "CKM_CONCATENATE_BASE_AND_KEY": {
       "algorithm": "Concatenate base key and key",
       "revision": "PKCS #11 v3.2",

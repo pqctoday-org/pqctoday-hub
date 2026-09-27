@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:ecdsa_siggen_acvp_test",
-  "subjectSha256": "1c2414d2af2364e2625ee16f8f30cbec97b4c3f044c4444aefcf2cdcd0537c96",
-  "fileSha256": "eb423bb9756a4db7ea6faf6f7b3f69a78edd2cca16da4ef890e8a90a7391a3a4",
+  "subjectSha256": "032bd2fac35c0230751042b298457527a49d68b72c96c60f847205616ada082d",
+  "fileSha256": "509475923dc38c27cbad894b57705dc1f1691a578d986cc46ea6ed7a991e22cc",
   "result": "match",
   "tool": "scripts/acvp/subset_reproduce.py",
   "command": "python3 scripts/acvp/subset_reproduce.py --id ecdsa_siggen_acvp_test --strict",
@@ -18,7 +18,7 @@
   },
   "compared": {
     "cases": 24,
-    "values": 240
+    "values": 312
   },
   "checkedAt": "2026-09-27"
 }

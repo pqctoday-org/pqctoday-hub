@@ -869,6 +869,14 @@ export const MECH_TABLE: Record<number, MechEntry> = {
     description: 'HPKE seal/open via C_EncapsulateKey/C_DecapsulateKey (RFC 9180, vendor)',
     family: 'kdf',
   },
+  // hsm #281 (47bba6c4): ECDSA with a caller-supplied nonce. pParameter = k,
+  // big-endian, the order's byte length; input is the digest; sign only.
+  0x80000015: {
+    name: 'CKM_PQCTODAY_ECDSA_EXPLICIT_K',
+    description:
+      'ECDSA sign with a caller-supplied nonce k (FIPS 186-5 sigGen KAT; teaching key-recovery primitive, vendor)',
+    family: 'asymmetric',
+  },
   0x80001057: {
     name: 'CKM_EDDSA_PH',
     description: 'Ed25519ph prehashed EdDSA (RFC 8032; pkcs11t.h vendor codepoint)',

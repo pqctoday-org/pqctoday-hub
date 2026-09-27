@@ -23,14 +23,14 @@
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "3e3de40a719f4fb1b6081667b0c700012c1f6280372e4e8b824d1899352a12cd",
     "src/data/validation/run-results/wasm-node-katRunner.json": "b1f085d0e3a6d863a84d5e16f401ca0a1c74ac5841ef52a8a229a717c418fef4",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "67fa98bf8bbc49e2a67350eb1a35dcfe99b2b0f62d30d1648445f2ebc775abb4",
-    "src/data/validation/validation-counts.generated.json": "0124f70fd5631427e0cd2a1a2e705f6213342f601b1b0d10853f6fa9b5812766",
-    "src/data/validation/vector-manifest.json": "cd6039c8567ce51c85788b7d4194bd5c4176569c477e74bbec50ed302faecc6c"
+    "src/data/validation/validation-counts.generated.json": "2181e3bd71e91c333908adc0b1b9a8dba547342bd566eab3a34d87d60dd80b6a",
+    "src/data/validation/vector-manifest.json": "2ac136aa9e454e63ebee3a4b354f4aab6a5c5ed3d98f3507ee825fef95ab8577"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "854195b3e656b81024b4166802d1525c8707cd9e4047d8b09228367869eb020d",
+    "manifestCanonicalSha256": "f13e56033a0b1f653a2d810921647ffc2e773a21d2c2b6d2c176a6f046a6340c",
     "nistReferenceSampleFiles": 53,
-    "nistReferenceSampleCases": 940,
+    "nistReferenceSampleCases": 964,
     "vectorFiles": {
       "total": 74,
       "active": 74,
@@ -53,12 +53,12 @@
       "quarantined": 0
     },
     "activeCasesByClass": {
-      "nist-acvp-reference-sample": 940,
+      "nist-acvp-reference-sample": 964,
       "acvts-issued-vector": 0,
       "published-standard-kat": 22,
       "independent-oracle": 1795,
       "cross-implementation-differential": 0,
-      "functional-round-trip": 26,
+      "functional-round-trip": 2,
       "oasis-profile-case": 0,
       "product-mechanism-probe": 2,
       "unverified": 0

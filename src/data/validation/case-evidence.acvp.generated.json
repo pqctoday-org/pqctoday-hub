@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "854195b3e656b81024b4166802d1525c8707cd9e4047d8b09228367869eb020d",
-    "registrySha256": "fc1e1ceb444804185fe86de6d5e5a2b01f5f48a86ef6faffeda68aad1a3411dc"
+    "manifestSha256": "f13e56033a0b1f653a2d810921647ffc2e773a21d2c2b6d2c176a6f046a6340c",
+    "registrySha256": "a4cae233a76b6d29a0652ea709939d2f9f76a7a0cb6b6c607cada5324b595aab"
   },
   "records": {
     "acvp.01#aesgcm_test#/testGroups/0/tests/0": {
@@ -16829,17 +16829,17 @@
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/0/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/0/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/0/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-256",
@@ -16856,33 +16856,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA224 sign P-256",
-        "CKM_ECDSA_SHA224 verify P-256"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-256"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 121) taken from upstream tgId 13 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/1/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/1/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/1/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-256",
@@ -16899,33 +16896,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA256 sign P-256",
-        "CKM_ECDSA_SHA256 verify P-256"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-256"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 131) taken from upstream tgId 14 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/10/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/10/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/10/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-384",
@@ -16942,33 +16936,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA384 sign P-384",
-        "CKM_ECDSA_SHA384 verify P-384"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-384"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 261) taken from upstream tgId 27 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/11/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/11/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/11/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-384",
@@ -16985,33 +16976,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA512 sign P-384",
-        "CKM_ECDSA_SHA512 verify P-384"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-384"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 271) taken from upstream tgId 28 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/12/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/12/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/12/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-384",
@@ -17028,33 +17016,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_224 sign P-384",
-        "CKM_ECDSA_SHA3_224 verify P-384"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-384"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 301) taken from upstream tgId 31 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/13/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/13/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/13/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-384",
@@ -17071,33 +17056,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_256 sign P-384",
-        "CKM_ECDSA_SHA3_256 verify P-384"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-384"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 311) taken from upstream tgId 32 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/14/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/14/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/14/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-384",
@@ -17114,33 +17096,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_384 sign P-384",
-        "CKM_ECDSA_SHA3_384 verify P-384"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-384"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 321) taken from upstream tgId 33 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/15/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/15/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/15/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-384",
@@ -17157,33 +17136,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_512 sign P-384",
-        "CKM_ECDSA_SHA3_512 verify P-384"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-384"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 331) taken from upstream tgId 34 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/16/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/16/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/16/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-521",
@@ -17200,33 +17176,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA224 sign P-521",
-        "CKM_ECDSA_SHA224 verify P-521"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-521"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 361) taken from upstream tgId 37 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/17/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/17/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/17/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-521",
@@ -17243,33 +17216,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA256 sign P-521",
-        "CKM_ECDSA_SHA256 verify P-521"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-521"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 371) taken from upstream tgId 38 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/18/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/18/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/18/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-521",
@@ -17286,33 +17256,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA384 sign P-521",
-        "CKM_ECDSA_SHA384 verify P-521"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-521"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 381) taken from upstream tgId 39 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/19/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/19/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/19/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-521",
@@ -17329,33 +17296,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA512 sign P-521",
-        "CKM_ECDSA_SHA512 verify P-521"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-521"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 391) taken from upstream tgId 40 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/2/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/2/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/2/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-256",
@@ -17372,33 +17336,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA384 sign P-256",
-        "CKM_ECDSA_SHA384 verify P-256"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-256"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 141) taken from upstream tgId 15 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/20/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/20/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/20/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-521",
@@ -17415,33 +17376,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_224 sign P-521",
-        "CKM_ECDSA_SHA3_224 verify P-521"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-521"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 421) taken from upstream tgId 43 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/21/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/21/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/21/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-521",
@@ -17458,33 +17416,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_256 sign P-521",
-        "CKM_ECDSA_SHA3_256 verify P-521"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-521"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 431) taken from upstream tgId 44 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/22/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/22/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/22/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-521",
@@ -17501,33 +17456,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_384 sign P-521",
-        "CKM_ECDSA_SHA3_384 verify P-521"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-521"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 441) taken from upstream tgId 45 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/23/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/23/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/23/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-521",
@@ -17544,33 +17496,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_512 sign P-521",
-        "CKM_ECDSA_SHA3_512 verify P-521"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-521"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 451) taken from upstream tgId 46 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/3/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/3/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/3/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-256",
@@ -17587,33 +17536,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA512 sign P-256",
-        "CKM_ECDSA_SHA512 verify P-256"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-256"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 151) taken from upstream tgId 16 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/4/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/4/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/4/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-256",
@@ -17630,33 +17576,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_224 sign P-256",
-        "CKM_ECDSA_SHA3_224 verify P-256"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-256"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 181) taken from upstream tgId 19 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/5/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/5/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/5/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-256",
@@ -17673,33 +17616,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_256 sign P-256",
-        "CKM_ECDSA_SHA3_256 verify P-256"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-256"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 191) taken from upstream tgId 20 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/6/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/6/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/6/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-256",
@@ -17716,33 +17656,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_384 sign P-256",
-        "CKM_ECDSA_SHA3_384 verify P-256"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-256"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 201) taken from upstream tgId 21 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/7/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/7/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/7/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-256",
@@ -17759,33 +17696,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA3_512 sign P-256",
-        "CKM_ECDSA_SHA3_512 verify P-256"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-256"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 211) taken from upstream tgId 22 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/8/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/8/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/8/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-384",
@@ -17802,33 +17736,30 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA224 sign P-384",
-        "CKM_ECDSA_SHA224 verify P-384"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-384"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 241) taken from upstream tgId 25 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/9/tests/0": {
       "id": "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/9/tests/0",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
         "rust"
       ],
       "caseId": "ecdsa_siggen_acvp_test#/testGroups/9/tests/0",
-      "evidenceClass": "functional-round-trip",
+      "evidenceClass": "nist-acvp-reference-sample",
       "polarity": "positive",
       "algorithm": "ECDSA FIPS186-5",
-      "operation": "sigGen-verify-back",
+      "operation": "sigGen",
       "testType": "AFT",
       "parameters": {
         "curve": "P-384",
@@ -17845,23 +17776,20 @@
         "revision": "975de31eb83d87039ec88934fdc47d8c312b892d"
       },
       "exercises": [
-        "CKM_ECDSA_SHA256 sign P-384",
-        "CKM_ECDSA_SHA256 verify P-384"
+        "CKM_PQCTODAY_ECDSA_EXPLICIT_K sign P-384"
       ],
       "limitations": [
-        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_ECDSA_<hash>) with the upstream d over the upstream message; the signature is verified back (engine + independent verifier), not compared to r, s",
+        "Upstream: ECDSA sigGen FIPS186-5 AFT → executed here: C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, pParameter = the upstream k left-padded to the order length) with the upstream d over the upstream message's digest; r || s byte-compared with the upstream r, s (hsm #281). The same key and message are also signed with CKM_ECDSA_<hash> and verified back (local registry cases)",
         "subset: 1 case (upstream tcId 251) taken from upstream tgId 26 (10 cases in that group; 2880 in the upstream file).",
-        "field-drop: upstream fields not carried: deferred, k, r, s",
-        "field-drop: k, r and s dropped: the token draws its own nonce, so the upstream signature cannot be reproduced through C_Sign.",
-        "operation-change: Upstream sigGen expects (r, s) for a given k; the hub checks only that the engine signature verifies (evidence class functional-round-trip for this case).",
-        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. Only the group key (d, qx, qy) and the message are carried: the upstream k, r and s are NOT carried — k is the signer's secret nonce and C_Sign draws its own, so r, s cannot be reproduced.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "field-drop: upstream fields not carried: deferred",
+        "subset: Subset policy (file _provenance.subset_policy): Deterministic. P-256/384/521 x the eight hashes with a PKCS#11 v3.2 CKM_ECDSA_<hash> mechanism (SHA2-224/256/384/512, SHA3-224/256/384/512), plain (non-conformance, non-component) groups: the lowest tcId. The group key (d, qx, qy) and the message, k, r and s are carried byte for byte; only `deferred` is dropped.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-224-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-224-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -17882,13 +17810,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/0/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-224-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-224-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-256-SHA2-224-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA224 sign P-256",
+        "CKM_ECDSA_SHA224 verify P-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/0/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-256-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-256-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -17909,13 +17862,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/1/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-256-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-256-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-256-SHA2-256-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA256 sign P-256",
+        "CKM_ECDSA_SHA256 verify P-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/1/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-384-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-384-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -17936,13 +17914,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/2/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-384-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-384-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-256-SHA2-384-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA384 sign P-256",
+        "CKM_ECDSA_SHA384 verify P-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/2/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-512-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-512-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -17963,13 +17966,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/3/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-512-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-512-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-256-SHA2-512-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA512 sign P-256",
+        "CKM_ECDSA_SHA512 verify P-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/3/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-224-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-224-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -17990,13 +18018,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/4/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-224-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-224-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-256-SHA3-224-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_224 sign P-256",
+        "CKM_ECDSA_SHA3_224 verify P-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/4/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-256-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-256-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18017,13 +18070,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/5/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-256-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-256-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-256-SHA3-256-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_256 sign P-256",
+        "CKM_ECDSA_SHA3_256 verify P-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/5/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-384-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-384-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18044,13 +18122,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/6/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-384-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-384-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-256-SHA3-384-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_384 sign P-256",
+        "CKM_ECDSA_SHA3_384 verify P-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/6/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-512-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-512-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18071,13 +18174,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/7/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-512-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-512-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-256-SHA3-512-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_512 sign P-256",
+        "CKM_ECDSA_SHA3_512 verify P-256"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/7/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-224-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-224-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18098,13 +18226,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/8/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-224-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-224-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-384-SHA2-224-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA224 sign P-384",
+        "CKM_ECDSA_SHA224 verify P-384"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/8/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-256-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-256-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18125,13 +18278,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/9/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-256-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-256-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-384-SHA2-256-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA256 sign P-384",
+        "CKM_ECDSA_SHA256 verify P-384"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/9/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-384-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-384-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18152,13 +18330,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/10/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-384-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-384-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-384-SHA2-384-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA384 sign P-384",
+        "CKM_ECDSA_SHA384 verify P-384"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/10/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-512-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-512-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18179,13 +18382,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/11/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-512-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-512-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-384-SHA2-512-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA512 sign P-384",
+        "CKM_ECDSA_SHA512 verify P-384"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/11/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-224-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-224-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18206,13 +18434,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/12/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-224-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-224-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-384-SHA3-224-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_224 sign P-384",
+        "CKM_ECDSA_SHA3_224 verify P-384"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/12/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-256-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-256-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18233,13 +18486,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/13/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-256-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-256-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-384-SHA3-256-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_256 sign P-384",
+        "CKM_ECDSA_SHA3_256 verify P-384"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/13/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-384-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-384-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18260,13 +18538,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/14/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-384-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-384-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-384-SHA3-384-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_384 sign P-384",
+        "CKM_ECDSA_SHA3_384 verify P-384"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/14/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-512-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-512-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18287,13 +18590,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/15/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-512-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-512-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-384-SHA3-512-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_512 sign P-384",
+        "CKM_ECDSA_SHA3_512 verify P-384"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/15/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-224-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-224-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18314,13 +18642,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/16/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-224-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-224-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-521-SHA2-224-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA224 sign P-521",
+        "CKM_ECDSA_SHA224 verify P-521"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/16/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-256-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-256-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18341,13 +18694,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/17/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-256-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-256-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-521-SHA2-256-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA256 sign P-521",
+        "CKM_ECDSA_SHA256 verify P-521"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/17/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-384-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-384-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18368,13 +18746,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/18/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-384-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-384-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-521-SHA2-384-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA384 sign P-521",
+        "CKM_ECDSA_SHA384 verify P-521"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/18/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-512-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-512-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18395,13 +18798,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/19/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-512-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-512-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-521-SHA2-512-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA512 sign P-521",
+        "CKM_ECDSA_SHA512 verify P-521"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/19/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-224-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-224-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18422,13 +18850,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/20/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-224-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-224-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-521-SHA3-224-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_224 sign P-521",
+        "CKM_ECDSA_SHA3_224 verify P-521"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/20/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-256-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-256-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18449,13 +18902,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/21/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-256-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-256-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-521-SHA3-256-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_256 sign P-521",
+        "CKM_ECDSA_SHA3_256 verify P-521"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/21/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-384-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-384-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18476,13 +18954,38 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/22/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-384-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-384-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-521-SHA3-384-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_384 sign P-521",
+        "CKM_ECDSA_SHA3_384 verify P-521"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/22/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-512-oracle": {
       "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-512-oracle",
       "test": "acvp.04e.ecdsa-siggen",
-      "title": "ECDSA sigGen verify-back: NIST key + message signed by the engine (NIST r, s not reproducible), verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
       "runner": "useAcvpSuite",
       "engines": [
         "cpp",
@@ -18503,7 +19006,32 @@
       ],
       "limitations": [
         "The engine signature over ecdsa_siggen_acvp_test#/testGroups/23/tests/0 (NIST key + message) verified by an independent implementation: agreement with that oracle, not a NIST expected value.",
-        "The manifest records these cases as functional-round-trip: the NIST file supplies the key and message only (k, r, s dropped)."
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
+      ]
+    },
+    "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-512-rt": {
+      "id": "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-512-rt",
+      "test": "acvp.04e.ecdsa-siggen",
+      "title": "ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.04e.ecdsa-siggen/P-521-SHA3-512-rt",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {
+        "messageBytes": 128
+      },
+      "exercises": [
+        "CKM_ECDSA_SHA3_512 sign P-521",
+        "CKM_ECDSA_SHA3_512 verify P-521"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "CKM_ECDSA_<hash> with the engine's own nonce over ecdsa_siggen_acvp_test#/testGroups/23/tests/0 (NIST key + message), verified back by the same engine: a functional round-trip, not a NIST expected value.",
+        "Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message."
       ]
     },
     "acvp.04e.eddsa-siggen#eddsa_siggen_acvp_test#/testGroups/0/tests/0": {
@@ -148525,149 +149053,221 @@
     "ecdsa-keyver-nist-P-521-tg4-tc12-{engine}": [
       "acvp.04e.keyver#ecdsa_keyver_acvp_test#/testGroups/2/tests/2"
     ],
+    "ecdsa-siggen-P-256-sha2-224-tg13-tc121-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/0/tests/0"
+    ],
     "ecdsa-siggen-P-256-sha2-224-tg13-tc121-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-224-oracle"
     ],
     "ecdsa-siggen-P-256-sha2-224-tg13-tc121-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/0/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-224-rt"
+    ],
+    "ecdsa-siggen-P-256-sha2-256-tg14-tc131-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/1/tests/0"
     ],
     "ecdsa-siggen-P-256-sha2-256-tg14-tc131-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-256-oracle"
     ],
     "ecdsa-siggen-P-256-sha2-256-tg14-tc131-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/1/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-256-rt"
+    ],
+    "ecdsa-siggen-P-256-sha2-384-tg15-tc141-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/2/tests/0"
     ],
     "ecdsa-siggen-P-256-sha2-384-tg15-tc141-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-384-oracle"
     ],
     "ecdsa-siggen-P-256-sha2-384-tg15-tc141-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/2/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-384-rt"
+    ],
+    "ecdsa-siggen-P-256-sha2-512-tg16-tc151-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/3/tests/0"
     ],
     "ecdsa-siggen-P-256-sha2-512-tg16-tc151-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-512-oracle"
     ],
     "ecdsa-siggen-P-256-sha2-512-tg16-tc151-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/3/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA2-512-rt"
+    ],
+    "ecdsa-siggen-P-256-sha3-224-tg19-tc181-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/4/tests/0"
     ],
     "ecdsa-siggen-P-256-sha3-224-tg19-tc181-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-224-oracle"
     ],
     "ecdsa-siggen-P-256-sha3-224-tg19-tc181-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/4/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-224-rt"
+    ],
+    "ecdsa-siggen-P-256-sha3-256-tg20-tc191-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/5/tests/0"
     ],
     "ecdsa-siggen-P-256-sha3-256-tg20-tc191-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-256-oracle"
     ],
     "ecdsa-siggen-P-256-sha3-256-tg20-tc191-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/5/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-256-rt"
+    ],
+    "ecdsa-siggen-P-256-sha3-384-tg21-tc201-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/6/tests/0"
     ],
     "ecdsa-siggen-P-256-sha3-384-tg21-tc201-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-384-oracle"
     ],
     "ecdsa-siggen-P-256-sha3-384-tg21-tc201-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/6/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-384-rt"
+    ],
+    "ecdsa-siggen-P-256-sha3-512-tg22-tc211-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/7/tests/0"
     ],
     "ecdsa-siggen-P-256-sha3-512-tg22-tc211-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-512-oracle"
     ],
     "ecdsa-siggen-P-256-sha3-512-tg22-tc211-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/7/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-256-SHA3-512-rt"
+    ],
+    "ecdsa-siggen-P-384-sha2-224-tg25-tc241-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/8/tests/0"
     ],
     "ecdsa-siggen-P-384-sha2-224-tg25-tc241-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-224-oracle"
     ],
     "ecdsa-siggen-P-384-sha2-224-tg25-tc241-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/8/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-224-rt"
+    ],
+    "ecdsa-siggen-P-384-sha2-256-tg26-tc251-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/9/tests/0"
     ],
     "ecdsa-siggen-P-384-sha2-256-tg26-tc251-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-256-oracle"
     ],
     "ecdsa-siggen-P-384-sha2-256-tg26-tc251-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/9/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-256-rt"
+    ],
+    "ecdsa-siggen-P-384-sha2-384-tg27-tc261-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/10/tests/0"
     ],
     "ecdsa-siggen-P-384-sha2-384-tg27-tc261-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-384-oracle"
     ],
     "ecdsa-siggen-P-384-sha2-384-tg27-tc261-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/10/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-384-rt"
+    ],
+    "ecdsa-siggen-P-384-sha2-512-tg28-tc271-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/11/tests/0"
     ],
     "ecdsa-siggen-P-384-sha2-512-tg28-tc271-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-512-oracle"
     ],
     "ecdsa-siggen-P-384-sha2-512-tg28-tc271-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/11/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA2-512-rt"
+    ],
+    "ecdsa-siggen-P-384-sha3-224-tg31-tc301-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/12/tests/0"
     ],
     "ecdsa-siggen-P-384-sha3-224-tg31-tc301-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-224-oracle"
     ],
     "ecdsa-siggen-P-384-sha3-224-tg31-tc301-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/12/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-224-rt"
+    ],
+    "ecdsa-siggen-P-384-sha3-256-tg32-tc311-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/13/tests/0"
     ],
     "ecdsa-siggen-P-384-sha3-256-tg32-tc311-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-256-oracle"
     ],
     "ecdsa-siggen-P-384-sha3-256-tg32-tc311-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/13/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-256-rt"
+    ],
+    "ecdsa-siggen-P-384-sha3-384-tg33-tc321-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/14/tests/0"
     ],
     "ecdsa-siggen-P-384-sha3-384-tg33-tc321-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-384-oracle"
     ],
     "ecdsa-siggen-P-384-sha3-384-tg33-tc321-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/14/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-384-rt"
+    ],
+    "ecdsa-siggen-P-384-sha3-512-tg34-tc331-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/15/tests/0"
     ],
     "ecdsa-siggen-P-384-sha3-512-tg34-tc331-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-512-oracle"
     ],
     "ecdsa-siggen-P-384-sha3-512-tg34-tc331-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/15/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-384-SHA3-512-rt"
+    ],
+    "ecdsa-siggen-P-521-sha2-224-tg37-tc361-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/16/tests/0"
     ],
     "ecdsa-siggen-P-521-sha2-224-tg37-tc361-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-224-oracle"
     ],
     "ecdsa-siggen-P-521-sha2-224-tg37-tc361-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/16/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-224-rt"
+    ],
+    "ecdsa-siggen-P-521-sha2-256-tg38-tc371-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/17/tests/0"
     ],
     "ecdsa-siggen-P-521-sha2-256-tg38-tc371-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-256-oracle"
     ],
     "ecdsa-siggen-P-521-sha2-256-tg38-tc371-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/17/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-256-rt"
+    ],
+    "ecdsa-siggen-P-521-sha2-384-tg39-tc381-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/18/tests/0"
     ],
     "ecdsa-siggen-P-521-sha2-384-tg39-tc381-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-384-oracle"
     ],
     "ecdsa-siggen-P-521-sha2-384-tg39-tc381-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/18/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-384-rt"
+    ],
+    "ecdsa-siggen-P-521-sha2-512-tg40-tc391-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/19/tests/0"
     ],
     "ecdsa-siggen-P-521-sha2-512-tg40-tc391-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-512-oracle"
     ],
     "ecdsa-siggen-P-521-sha2-512-tg40-tc391-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/19/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA2-512-rt"
+    ],
+    "ecdsa-siggen-P-521-sha3-224-tg43-tc421-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/20/tests/0"
     ],
     "ecdsa-siggen-P-521-sha3-224-tg43-tc421-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-224-oracle"
     ],
     "ecdsa-siggen-P-521-sha3-224-tg43-tc421-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/20/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-224-rt"
+    ],
+    "ecdsa-siggen-P-521-sha3-256-tg44-tc431-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/21/tests/0"
     ],
     "ecdsa-siggen-P-521-sha3-256-tg44-tc431-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-256-oracle"
     ],
     "ecdsa-siggen-P-521-sha3-256-tg44-tc431-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/21/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-256-rt"
+    ],
+    "ecdsa-siggen-P-521-sha3-384-tg45-tc441-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/22/tests/0"
     ],
     "ecdsa-siggen-P-521-sha3-384-tg45-tc441-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-384-oracle"
     ],
     "ecdsa-siggen-P-521-sha3-384-tg45-tc441-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/22/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-384-rt"
+    ],
+    "ecdsa-siggen-P-521-sha3-512-tg46-tc451-kat-{engine}": [
+      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/23/tests/0"
     ],
     "ecdsa-siggen-P-521-sha3-512-tg46-tc451-oracle-{engine}": [
       "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-512-oracle"
     ],
     "ecdsa-siggen-P-521-sha3-512-tg46-tc451-rt-{engine}": [
-      "acvp.04e.ecdsa-siggen#ecdsa_siggen_acvp_test#/testGroups/23/tests/0"
+      "acvp.04e.ecdsa-siggen#local:acvp.04e.ecdsa-siggen/P-521-SHA3-512-rt"
     ],
     "ecdsa-sigver-nist-P-224-SHA2-256-tg1-tc1-{engine}": [
       "acvp.04b#ecdsa_sigver_acvp_test#/testGroups/0/tests/0"

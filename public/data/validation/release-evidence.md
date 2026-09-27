@@ -11,7 +11,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | Figure                                                  |             Value | Source                                                            |
 | ------------------------------------------------------- | ----------------: | ----------------------------------------------------------------- |
 | Selected public NIST ACVP-Server reference-sample files |                53 | `src/data/validation/validation-counts.generated.json`            |
-| NIST ACVP-Server reference-sample cases (active)        |               940 | `src/data/validation/validation-counts.generated.json`            |
+| NIST ACVP-Server reference-sample cases (active)        |               964 | `src/data/validation/validation-counts.generated.json`            |
 | Vector files (active / quarantined / total)             |       74 / 0 / 74 | `src/data/validation/validation-counts.generated.json`            |
 | Cases (active / quarantined / total)                    | 2,785 / 0 / 2,785 | `src/data/validation/validation-counts.generated.json`            |
 | Active cases: positive / negative                       |       2,017 / 768 | `src/data/validation/validation-counts.generated.json`            |
@@ -28,12 +28,12 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Evidence class                    | Files | Active cases |
 | --------------------------------- | ----: | -----------: |
-| nist-acvp-reference-sample        |    53 |          940 |
+| nist-acvp-reference-sample        |    53 |          964 |
 | acvts-issued-vector               |     0 |            0 |
 | published-standard-kat            |    11 |           22 |
 | independent-oracle                |     8 |        1,795 |
 | cross-implementation-differential |     0 |            0 |
-| functional-round-trip             |     2 |           26 |
+| functional-round-trip             |     2 |            2 |
 | oasis-profile-case                |     0 |            0 |
 | product-mechanism-probe           |     0 |            2 |
 | unverified                        |     0 |            0 |
@@ -401,5 +401,5 @@ Machine-evaluated. A human item is never marked PASS.
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `3e3de40a719f4fb1b6081667b0c700012c1f6280372e4e8b824d1899352a12cd` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `b1f085d0e3a6d863a84d5e16f401ca0a1c74ac5841ef52a8a229a717c418fef4` |
 | `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `67fa98bf8bbc49e2a67350eb1a35dcfe99b2b0f62d30d1648445f2ebc775abb4` |
-| `src/data/validation/validation-counts.generated.json`                  | `0124f70fd5631427e0cd2a1a2e705f6213342f601b1b0d10853f6fa9b5812766` |
-| `src/data/validation/vector-manifest.json`                              | `cd6039c8567ce51c85788b7d4194bd5c4176569c477e74bbec50ed302faecc6c` |
+| `src/data/validation/validation-counts.generated.json`                  | `2181e3bd71e91c333908adc0b1b9a8dba547342bd566eab3a34d87d60dd80b6a` |
+| `src/data/validation/vector-manifest.json`                              | `2ac136aa9e454e63ebee3a4b354f4aab6a5c5ed3d98f3507ee825fef95ab8577` |
