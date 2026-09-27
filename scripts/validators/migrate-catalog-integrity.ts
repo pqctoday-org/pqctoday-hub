@@ -40,7 +40,9 @@
  *       boundary ("non-FIPS operating mode", "non-Approved mode"). The one
  *       false positive of 87 when the column was populated.
  *
- * Severity: MC-1, MC-4 and MC-5 ERROR (identity / controlled vocabulary).
+ * MC-7  No cell holds its own column name (36 pqc_support cells in 4.124.1).
+ *
+ * Severity: MC-1, MC-4, MC-5 and MC-7 ERROR (identity / controlled vocabulary).
  * MC-2, MC-3 and MC-6 WARNING: legacy rows and prose heuristics are reported,
  * and the row-level fix goes through review.
  */
@@ -307,6 +309,33 @@ export function checkApprovedBoundaryClaims(rows: CsvRow[], file: string): Findi
   return findings
 }
 
+/**
+ * MC-7 — no cell holds its own column name.
+ *
+ * Release 4.124.1 (2026-09-26) shipped 36 active rows whose pqc_support read
+ * literally "pqc_support": the R3-16 review parser took the first backticked
+ * token of "Corrected `pqc_support`: `Yes (…)`" — the column name — instead of
+ * the value after the colon. Every other check passed, because "pqc_support"
+ * is a non-empty string. A header value in a data cell is never data.
+ */
+export function checkColumnNameCells(rows: CsvRow[], file: string): Finding[] {
+  const findings: Finding[] = []
+  rows.forEach((row, i) => {
+    for (const [col, value] of Object.entries(row)) {
+      if (col && (value || '').trim() === col) {
+        findings.push({
+          csv: file,
+          row: i + 2,
+          field: col,
+          value,
+          message: `${row.product_id}: ${col} holds its own column name — a writer put the header where the value belongs`,
+        })
+      }
+    }
+  })
+  return findings
+}
+
 /** The generation before the latest pqc_product_catalog file, by date then _rN. */
 function previousCatalog(): CsvRow[] {
   const prefix = 'pqc_product_catalog_'
@@ -374,6 +403,13 @@ export function runMigrateCatalogIntegrity(
       'WARNING',
       file,
       checkApprovedBoundaryClaims(rows, file)
+    ),
+    result(
+      'MC-7',
+      'No migrate catalogue cell holds its own column name',
+      'ERROR',
+      file,
+      checkColumnNameCells(rows, file)
     ),
   ]
 }

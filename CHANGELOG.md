@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.125.1] - 2026-09-27
+
+Product certifications now show where each product stands on the road to a FIPS 140-3 certificate — algorithms validated, in progress at NIST, or certified — and 27 product verdicts were re-checked against the official NIST records.
+
+### Added
+
+- **See how far the catalogue has progressed toward post-quantum certification** [view:/compliance] [persona:grc] [persona:executive] [persona:ops]: the Product Records chart now shows each product's stage — no post-quantum validation yet, algorithms validated (CAVP, the prerequisite), in progress at NIST, or certified — with a view by catalogue product and a view by NIST listing.
+- **"In progress" now comes straight from NIST** [view:/migrate] [view:/compliance] [persona:grc] [persona:ops]: a product is marked as in progress only when NIST lists its module as a Module In Process or Implementation Under Test. 22 products carry that stage today; we keep a dated record of the lists, which NIST itself does not publish.
+
+### Fixed
+
+- **27 product certification verdicts corrected against NIST's own records** [view:/migrate] [persona:grc] [persona:ops] [persona:developer]: products that claimed a post-quantum certification were each checked against NIST's certificate and algorithm-validation listings. Dell BSAFE Crypto-J keeps its certification (FIPS 140-3 #5361). AWS KMS, iOS 26 / macOS 26, Quantum Xchange, CryptoNext and X-CUBE-PQC are at the algorithm-validation stage. s2n-tls, Securosys CloudHSM, Google Cloud KMS and Crypto4A QxHSM / QxEDGE now show that they rely on a validated module inside rather than holding their own certificate. Eleven products with no post-quantum certificate or algorithm validation no longer claim one.
+- **Certificates behind each verdict are now shown** [view:/migrate] [persona:grc] [persona:developer]: 20 certificate links that products' verdicts rely on were missing from their product pages — among them AWS KMS, AWS-LC, BoringSSL, Securosys Primus HSM and Dell BSAFE Crypto-J — and now appear, each backed by the NIST listing.
+
 ## [4.125.0] - 2026-09-27
 
 The certification Learn module is now three shorter modules: a fundamentals module every learner starts with, and two deep dives you take only for the schemes you need.
