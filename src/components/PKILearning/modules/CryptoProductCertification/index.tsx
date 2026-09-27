@@ -1,13 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // OWNER: Scaffold
 import type { FC } from 'react'
-import {
-  ArrowRightLeft,
-  Frame,
-  GitCompareArrows,
-  Globe,
-  ListChecks,
-} from 'lucide-react'
+import { ArrowRightLeft, Frame, GitCompareArrows, Globe, ListChecks } from 'lucide-react'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import { CertIntroduction } from './components/CertIntroduction'
 import { CertExercises } from './components/CertExercises'

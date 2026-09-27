@@ -1430,9 +1430,10 @@ export const PpSecurityIc = () => (
 export const EuccPqcToday = () => (
   <Section>
     <P>
-      Of the four schemes in this module, EUCC has the most specific post-quantum guidance in force
-      today. It sits in a guideline, not in the regulation — but it is the version ENISA marks as
-      applicable, and it is addressed to developers and evaluators.
+      Of the four schemes this certification series covers — FIPS 140-3, Common Criteria, EUCC and
+      PCI — EUCC has the most specific post-quantum guidance in force today. It sits in a guideline,
+      not in the regulation — but it is the version ENISA marks as applicable, and it is addressed
+      to developers and evaluators.
     </P>
 
     <Callout tone="current" title={`Applicable today (as of ${AS_OF_LABEL})`}>
