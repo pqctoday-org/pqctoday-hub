@@ -56,6 +56,15 @@
       "firstSeen": "2026-09-26"
     },
     {
+      "product_id": "Quantum-Xchange-PhioTX",
+      "list": "IUT",
+      "module": "PhioTX - D",
+      "vendor": "Quantum Xchange, Inc",
+      "nistStage": "Implementation Under Test",
+      "date": "2024-09-24",
+      "firstSeen": "2026-09-26"
+    },
+    {
       "product_id": "TASS-Crypto-Engine-LMS",
       "list": "MIP",
       "module": "TASS Crypto Engine",
@@ -335,6 +344,15 @@
       "firstSeen": "2026-09-26"
     },
     {
+      "product_id": "fortanix-data-security-manager",
+      "list": "MIP",
+      "module": "Fortanix DSM Appliance",
+      "vendor": "Fortanix, Inc.",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-09-25",
+      "firstSeen": "2026-09-26"
+    },
+    {
       "product_id": "fortinet-fortios",
       "list": "MIP",
       "module": "FortiOS 7.2/7.4",
@@ -386,6 +404,24 @@
       "vendor": "i4p informatics ltd.",
       "nistStage": "Implementation Under Test",
       "date": "2025-10-07",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ibm-z16-crypto-express-8s",
+      "list": "IUT",
+      "module": "IBM 4770-001 CCA Hardware Security Module",
+      "vendor": "IBM",
+      "nistStage": "Implementation Under Test",
+      "date": "2025-01-14",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "ibm-z16-crypto-express-8s",
+      "list": "MIP",
+      "module": "IBM 4770-001 EP11 Hardware Security Module",
+      "vendor": "IBM",
+      "nistStage": "Pending Review",
+      "date": "2026-09-21",
       "firstSeen": "2026-09-26"
     },
     {
@@ -547,6 +583,15 @@
       "module": "Canonical Ltd. Ubuntu 26.04 Libgcrypt Cryptographic Module",
       "vendor": "Canonical Group Limited",
       "nistStage": "Implementation Under Test",
+      "date": "2026-07-27",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "utimaco-utrust-hsm",
+      "list": "MIP",
+      "module": "u.trust Anchor CSe",
+      "vendor": "Utimaco IS GmbH",
+      "nistStage": "Comment Resolution - Lab",
       "date": "2026-07-27",
       "firstSeen": "2026-09-26"
     },

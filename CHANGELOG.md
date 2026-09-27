@@ -48,6 +48,30 @@ The validation workbench now says exactly what each test proves, runs trusted pu
 - **"ACVP certificate" wording corrected** [view:/learn] [persona:grc] [persona:curious]: learning modules, the quiz and the data now say what ACVP, CAVP and CMVP actually are. ACVP is the testing protocol, CAVP issues algorithm certificates and CMVP validates modules.
 - **Test vectors corrected** [view:/algorithms] [persona:researcher]: an AES-GCM, an RSA-OAEP, a PBKDF2 and an RSA-PSS vector that had been generated locally are replaced with NIST or Wycheproof originals, and a wrong KMAC256 value is corrected from NIST's published sample.
 
+## [4.127.0] - 2026-09-27
+
+Certificates that cover no post-quantum algorithm are now labelled "Classical only", and 40 products have a researched certification verdict.
+
+### Changed
+
+- **"Classical only" certificates are labelled, and never counted as post-quantum progress** [view:/migrate] [view:/compliance] [persona:grc] [persona:architect] [persona:ops]: a product can hold a real FIPS 140-3 or Common Criteria certificate that covers no post-quantum algorithm. Those certificates are now shown with a "Classical only" label, so you can see the product is certified without mistaking it for a post-quantum certification. The FIPS 140-3 progress chart on the Compliance page never counts them.
+
+### Data
+
+- **Certification verdicts researched for 40 products** [view:/migrate] [persona:grc] [persona:ops] [persona:researcher]: 32 products that showed "unknown" now say whether they hold a certificate of their own (5), rely on a certified module they embed (6), have their algorithms validated as the first step towards FIPS 140-3 (2), are in NIST's queue for review (1), or hold none (18). Each verdict rests on the NIST listing or the vendor's own documentation, and the contested ones were checked by a second reviewer. A product that only says it "uses a FIPS-validated HSM" without naming one is marked as holding no certificate.
+- **"Partial" is retired** [view:/migrate] [view:/compliance] [persona:grc]: every product now sits on one of the clear FIPS 140-3 stages: none, algorithms validated, in NIST's queue, or certified. The Go standard library's ML-KEM, the ST33KTPM, the KIOXIA and Nuvoton modules move to certified; Marvell LiquidSecurity 2, the Utimaco u.trust HSM, IBM z16 Crypto Express 8S and Quantum Xchange PhioTX show their validated post-quantum algorithms; and the LS2 HSM family, whose module lists its post-quantum algorithms as not approved, moves to none.
+- **More certificates linked to the right product** [view:/migrate] [persona:grc] [persona:architect]: 23 classical-only certificates are now linked to 19 products, and a Windows 11 certificate is no longer shown on Azure services.
+- **Duplicate entries merged** [view:/migrate] [persona:curious]: CryptoNext's library, ST's X-CUBE-PQC, Red Hat Enterprise Linux 9.8 and the ST33KTPM family each appeared twice; the duplicate is retired in favour of the main entry.
+
+## [4.126.2] - 2026-09-27
+
+Every country on the timeline shows its flag again.
+
+### Fixed
+
+- **Missing country flags restored** [view:/timeline] [view:/leaders] [persona:curious] [persona:executive] [persona:grc]: 19 countries on the timeline (among them Saudi Arabia, Brazil, Hong Kong, Jordan, the UAE, Finland, Denmark and Norway) and Ireland on the Leaders page showed a two-letter code instead of a flag, because the flag image was missing. All 20 are added, using public-domain images from Wikimedia Commons.
+- **A check keeps it that way** [persona:developer]: a test now fails when the timeline or the Leaders page asks for a flag that isn't in the site's flag folder.
+
 ## [4.126.1] - 2026-09-27
 
 Hundreds of product versions and dates are filled in from their own sources, and a batch of outdated or wrong values is fixed.
