@@ -37,6 +37,7 @@ The certification Learn module is now three shorter modules: a fundamentals modu
 
 - **Cryptographic Product Certification is now three modules instead of one long one.** [view:/learn/crypto-product-certification] [view:/learn/fips-pci-certification] [view:/learn/cc-eucc-certification] [persona:grc] The original module had four two-hour paths in one place. It is now _Cryptographic Product Certification: Fundamentals_ (about an hour: what each certificate proves, why you read a certificate's scope before its level, what adding post-quantum cryptography changes, and the "one product, four markets" capstone), plus two deep dives of about an hour each: _FIPS 140-3 & PCI Certification_ and _Common Criteria, EUCC & eIDAS Certification_. Each deep dive keeps its own learn paths, exercises and references, and the fundamentals link to them. All content carries over unchanged; progress on sections that moved to a deep dive starts fresh there.
 - **The certification quiz questions now belong to the module that teaches them.** [view:/learn/quiz] [persona:grc] FIPS 140-3 and PCI questions move to the FIPS & PCI deep dive, Common Criteria and EUCC questions to the CC & EUCC deep dive, and the fundamentals gain a new question on reading a certificate's scope before its level.
+
 ## [4.124.3] - 2026-09-27
 
 Timeline dates checked against their sources: phases whose source gives no end date are now shown as open-ended instead of being hidden, and several milestones move to the years their sources actually state.
