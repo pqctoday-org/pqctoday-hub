@@ -2,7 +2,7 @@
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
     "manifestSha256": "f13e56033a0b1f653a2d810921647ffc2e773a21d2c2b6d2c176a6f046a6340c",
-    "registrySha256": "56fe8ffe550baf1a74fb417c78d6fd4f6e3f85f6e7251ba160f352694eb7a153"
+    "registrySha256": "2fe5f154a20167ff4711bcd20398f3cb38207e7c3d22d2513b65ee4861bf4faa"
   },
   "records": {
     "acvp.01#aesgcm_test#/testGroups/0/tests/0": {
@@ -151571,6 +151571,52 @@
         "Evidence: functional round-trip (fresh keys; no external expected value). The verify row also asserts a refusal when the last message part is changed."
       ]
     },
+    "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-msg-deterministic": {
+      "id": "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-msg-deterministic",
+      "test": "acvp.38.msgmp",
+      "title": "Multi-part message signing (C_SignMessageBegin/Next, C_VerifyMessageBegin/Next) round-trip on every advertised signing mechanism",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-msg-deterministic",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_HASH_ML_DSA message-sign ML-DSA-44 deterministic",
+        "CKM_HASH_ML_DSA message-verify ML-DSA-44",
+        "CKM_HASH_ML_DSA verify ML-DSA-44"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "Evidence: functional round-trip (fresh keys; no external expected value). The verify row also asserts a refusal when the last message part is changed."
+      ]
+    },
+    "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-msg-hedged": {
+      "id": "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-msg-hedged",
+      "test": "acvp.38.msgmp",
+      "title": "Multi-part message signing (C_SignMessageBegin/Next, C_VerifyMessageBegin/Next) round-trip on every advertised signing mechanism",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-msg-hedged",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_HASH_ML_DSA message-sign ML-DSA-44 hedged",
+        "CKM_HASH_ML_DSA message-verify ML-DSA-44",
+        "CKM_HASH_ML_DSA verify ML-DSA-44"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "Evidence: functional round-trip (fresh keys; no external expected value). The verify row also asserts a refusal when the last message part is changed."
+      ]
+    },
     "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-sign": {
       "id": "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-sign",
       "test": "acvp.38.msgmp",
@@ -151613,6 +151659,52 @@
         "Evidence: functional round-trip (fresh keys; no external expected value). The verify row also asserts a refusal when the last message part is changed."
       ]
     },
+    "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-msg-deterministic": {
+      "id": "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-msg-deterministic",
+      "test": "acvp.38.msgmp",
+      "title": "Multi-part message signing (C_SignMessageBegin/Next, C_VerifyMessageBegin/Next) round-trip on every advertised signing mechanism",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-msg-deterministic",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_HASH_ML_DSA message-sign ML-DSA-65 deterministic",
+        "CKM_HASH_ML_DSA message-verify ML-DSA-65",
+        "CKM_HASH_ML_DSA verify ML-DSA-65"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "Evidence: functional round-trip (fresh keys; no external expected value). The verify row also asserts a refusal when the last message part is changed."
+      ]
+    },
+    "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-msg-hedged": {
+      "id": "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-msg-hedged",
+      "test": "acvp.38.msgmp",
+      "title": "Multi-part message signing (C_SignMessageBegin/Next, C_VerifyMessageBegin/Next) round-trip on every advertised signing mechanism",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-msg-hedged",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_HASH_ML_DSA message-sign ML-DSA-65 hedged",
+        "CKM_HASH_ML_DSA message-verify ML-DSA-65",
+        "CKM_HASH_ML_DSA verify ML-DSA-65"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "Evidence: functional round-trip (fresh keys; no external expected value). The verify row also asserts a refusal when the last message part is changed."
+      ]
+    },
     "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-sign": {
       "id": "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-sign",
       "test": "acvp.38.msgmp",
@@ -151649,6 +151741,52 @@
       "parameters": {},
       "exercises": [
         "CKM_HASH_ML_DSA message-verify-multipart ML-DSA-65"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "Evidence: functional round-trip (fresh keys; no external expected value). The verify row also asserts a refusal when the last message part is changed."
+      ]
+    },
+    "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-87-msg-deterministic": {
+      "id": "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-87-msg-deterministic",
+      "test": "acvp.38.msgmp",
+      "title": "Multi-part message signing (C_SignMessageBegin/Next, C_VerifyMessageBegin/Next) round-trip on every advertised signing mechanism",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-87-msg-deterministic",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_HASH_ML_DSA message-sign ML-DSA-87 deterministic",
+        "CKM_HASH_ML_DSA message-verify ML-DSA-87",
+        "CKM_HASH_ML_DSA verify ML-DSA-87"
+      ],
+      "limitations": [
+        "No external expected value: the output is checked only by the same or a paired implementation.",
+        "Evidence: functional round-trip (fresh keys; no external expected value). The verify row also asserts a refusal when the last message part is changed."
+      ]
+    },
+    "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-87-msg-hedged": {
+      "id": "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-87-msg-hedged",
+      "test": "acvp.38.msgmp",
+      "title": "Multi-part message signing (C_SignMessageBegin/Next, C_VerifyMessageBegin/Next) round-trip on every advertised signing mechanism",
+      "runner": "useAcvpSuite",
+      "engines": [
+        "cpp",
+        "rust"
+      ],
+      "caseId": "local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-87-msg-hedged",
+      "evidenceClass": "functional-round-trip",
+      "polarity": "positive",
+      "parameters": {},
+      "exercises": [
+        "CKM_HASH_ML_DSA message-sign ML-DSA-87 hedged",
+        "CKM_HASH_ML_DSA message-verify ML-DSA-87",
+        "CKM_HASH_ML_DSA verify ML-DSA-87"
       ],
       "limitations": [
         "No external expected value: the output is checked only by the same or a paired implementation.",
@@ -163046,17 +163184,35 @@
     "msgmp-CKM_HASH_ML_DSA_SHAKE256-ML-DSA-87-verify-{engine}": [
       "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA_SHAKE256-ML-DSA-87-verify"
     ],
+    "msgmp-CKM_HASH_ML_DSA-ML-DSA-44-msg-deterministic-{engine}": [
+      "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-msg-deterministic"
+    ],
+    "msgmp-CKM_HASH_ML_DSA-ML-DSA-44-msg-hedged-{engine}": [
+      "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-msg-hedged"
+    ],
     "msgmp-CKM_HASH_ML_DSA-ML-DSA-44-sign-{engine}": [
       "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-sign"
     ],
     "msgmp-CKM_HASH_ML_DSA-ML-DSA-44-verify-{engine}": [
       "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-44-verify"
     ],
+    "msgmp-CKM_HASH_ML_DSA-ML-DSA-65-msg-deterministic-{engine}": [
+      "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-msg-deterministic"
+    ],
+    "msgmp-CKM_HASH_ML_DSA-ML-DSA-65-msg-hedged-{engine}": [
+      "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-msg-hedged"
+    ],
     "msgmp-CKM_HASH_ML_DSA-ML-DSA-65-sign-{engine}": [
       "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-sign"
     ],
     "msgmp-CKM_HASH_ML_DSA-ML-DSA-65-verify-{engine}": [
       "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-65-verify"
+    ],
+    "msgmp-CKM_HASH_ML_DSA-ML-DSA-87-msg-deterministic-{engine}": [
+      "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-87-msg-deterministic"
+    ],
+    "msgmp-CKM_HASH_ML_DSA-ML-DSA-87-msg-hedged-{engine}": [
+      "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-87-msg-hedged"
     ],
     "msgmp-CKM_HASH_ML_DSA-ML-DSA-87-sign-{engine}": [
       "acvp.38.msgmp#local:acvp.38.msgmp/CKM_HASH_ML_DSA-ML-DSA-87-sign"

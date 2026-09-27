@@ -91,7 +91,7 @@ describe('multi-part message signing round-trip, both engines', () => {
       t.paramSets.flatMap((ps) => {
         const stem = multipartRowStem(t.mechanism, ps)
         const single =
-          t.mechanism === 'CKM_HASH_SLH_DSA'
+          t.mechanism === 'CKM_HASH_SLH_DSA' || t.mechanism === 'CKM_HASH_ML_DSA'
             ? [`${stem}-msg-hedged-${engine}`, `${stem}-msg-deterministic-${engine}`]
             : []
         return [...single, `${stem}-sign-${engine}`, `${stem}-verify-${engine}`]
@@ -115,32 +115,10 @@ describe('multi-part message signing round-trip, both engines', () => {
         'msgmp-CKM_RIPEMD160_HMAC_GENERAL-any-verify-C++',
       ].sort()
     )
-    // ENGINE FINDING (measured 2026-09-27, open gap
-    // rust-hash-slh-dsa-deterministic-not-honoured): on the Rust engine, generic
-    // CKM_HASH_SLH_DSA single-part message signing with CKH_DETERMINISTIC_REQUIRED
-    // returns a DIFFERENT (valid) signature each time, on all 12 parameter sets.
-    // C++ is deterministic. Pinned as failures, not waived: a fix turns this red.
-    const failed = rows.filter((r) => r.status === 'fail')
-    expect(failed.map((r) => r.id).sort()).toEqual(
-      Object.keys({
-        'SLH-DSA-SHA2-128s': 0,
-        'SLH-DSA-SHAKE-128s': 0,
-        'SLH-DSA-SHA2-128f': 0,
-        'SLH-DSA-SHAKE-128f': 0,
-        'SLH-DSA-SHA2-192s': 0,
-        'SLH-DSA-SHAKE-192s': 0,
-        'SLH-DSA-SHA2-192f': 0,
-        'SLH-DSA-SHAKE-192f': 0,
-        'SLH-DSA-SHA2-256s': 0,
-        'SLH-DSA-SHAKE-256s': 0,
-        'SLH-DSA-SHA2-256f': 0,
-        'SLH-DSA-SHAKE-256f': 0,
-      })
-        .map((ps) => `msgmp-CKM_HASH_SLH_DSA-${ps}-msg-deterministic-Rust`)
-        .sort()
-    )
-    for (const r of failed)
-      expect(r.caseMeta?.observed).toMatch(/→ CKR_OK; C_Verify → CKR_OK; repeat DIFFERS$/)
+    // The Rust generic HashSLH-DSA/HashML-DSA hedge-variant defect this section
+    // found (12 deterministic rows) was fixed by hsm #290; measured 2026-09-27 on
+    // hsm 1c5ed893: no row fails on either engine.
+    expect(rows.filter((r) => r.status === 'fail').map((r) => `${r.id}: ${r.details}`)).toEqual([])
   })
 
   it('MACs match single-part byte for byte; verify rows refuse the changed message', () => {

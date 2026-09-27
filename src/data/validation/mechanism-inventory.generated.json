@@ -9,14 +9,14 @@
         "artifacts": [
           {
             "path": "public/wasm/softhsm.wasm",
-            "sha256": "4172205eb755df039f11af878d8389a7046d7859b987a8df135c2fe7d7c651bd"
+            "sha256": "ae7f1d377c4155e883b76644e7c5c84eaec96f25336184fcd7e9e6c354ba32bb"
           },
           {
             "path": "public/wasm/softhsm.js",
             "sha256": "367f93cfbcd2bab3575cd05d8e5aeb244ec7e054b69445ae7cdd018e5fbd0547"
           }
         ],
-        "sourceCommit": "6d1a5287f39890e8735b5376687d9a925b849ef4",
+        "sourceCommit": "1c5ed89362ea4b05dc5932a89563c94aeb0d4cba",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
         "builtAt": "2026-09-27",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
@@ -3451,14 +3451,14 @@
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "d0be4252c509822d68b875e1e82bcde70ffa4a4ed1c1225a526a65226969af24"
+            "sha256": "dc5a6fc8066df236ebd91a6b4f5b07144e1364e130a76e2a16c8955bbf2c3f3c"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
             "sha256": "8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8"
           }
         ],
-        "sourceCommit": "6d1a5287f39890e8735b5376687d9a925b849ef4",
+        "sourceCommit": "1c5ed89362ea4b05dc5932a89563c94aeb0d4cba",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
         "builtAt": "2026-09-27",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
@@ -3470,7 +3470,7 @@
       "inventory": {
         "schema": "pqctoday.mechanism-inventory/v1",
         "mechanismCount": 175,
-        "inventorySha256": "366ef17caddc24534e53a22131cf126751ec3563347e0b3f7a26a3a1326abbf5",
+        "inventorySha256": "6790d2efdc85ce38bd9fe4afdaef534d33ed749cf02ce116d51531e0509219da",
         "mechanisms": [
           {
             "type": 0,
@@ -7076,8 +7076,8 @@
           {
             "type": 2147487835,
             "infoRv": 0,
-            "ulMinKeySize": 32,
-            "ulMaxKeySize": 32,
+            "ulMinKeySize": 16,
+            "ulMaxKeySize": 64,
             "flags": 524288,
             "typeHex": "0x8000105b",
             "name": "CKM_BIP32_MASTER_DERIVE",
@@ -8350,18 +8350,6 @@
             "CKF_EC_UNCOMPRESS",
             "CKF_EC_CURVENAME"
           ]
-        }
-      },
-      {
-        "typeHex": "0x8000105b",
-        "name": "CKM_BIP32_MASTER_DERIVE",
-        "cpp": {
-          "ulMinKeySize": 16,
-          "ulMaxKeySize": 64
-        },
-        "rust": {
-          "ulMinKeySize": 32,
-          "ulMaxKeySize": 32
         }
       }
     ]

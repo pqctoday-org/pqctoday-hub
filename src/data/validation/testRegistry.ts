@@ -2009,9 +2009,9 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
       t.paramSets.flatMap((ps) => {
         const set = ps === '*' ? undefined : ps
         const stem = multipartRowStem(t.mechanism, ps)
-        // Generic CKM_HASH_SLH_DSA: single-part message sign/verify rows too.
+        // Generic CKM_HASH_SLH_DSA / CKM_HASH_ML_DSA: single-part message sign/verify rows too.
         const single =
-          t.mechanism === 'CKM_HASH_SLH_DSA'
+          t.mechanism === 'CKM_HASH_SLH_DSA' || t.mechanism === 'CKM_HASH_ML_DSA'
             ? (['hedged', 'deterministic'] as const).map((v) =>
                 lc(
                   'acvp.38.msgmp',

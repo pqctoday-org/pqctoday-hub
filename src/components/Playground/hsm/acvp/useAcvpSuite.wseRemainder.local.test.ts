@@ -7,9 +7,8 @@
 //
 // Every engine finding is pinned row by row, so a fixed engine turns the pin red
 // instead of silently changing the evidence:
-//   rust-kbkdf-iteration-variable-rejected (narrowed: 'before iterator' only),
-//   cpp-ec-public-key-not-validated (EdDSA only since hsm d4345f88),
-//   rust-ec-public-key-refused-late,
+//   (KBKDF placement, EC point validation, Ed-ph context: all fixed by hsm
+//   #275/#277/#285/#290 and re-measured 2026-09-27 on 1c5ed893),
 //   rust-eddsa-ph-context-ignored, g8-rust-advertised-cells-do-not-execute (ECDSA SHA-224).
 //
 // Venue: `*.local.test.ts` — run by `npm run test:local` (local gate only).
@@ -133,30 +132,19 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
         }
   })
 
-  it('KBKDF: pins the per-engine layout findings exactly', () => {
-    // Measured 2026-09-27 on the bundles built from hsm d4345f88. C++ now
-    // byte-matches every group (hsm #275 fixed cpp-kbkdf-counter-position-ignored).
-    // Rust now accepts the ITERATION_VARIABLE parameter (hsm #274) and matches
-    // every group EXCEPT the four 'before iterator' ones (feedback and double
-    // pipeline, HMAC and CMAC), where it derives a different key: the counter is
-    // not placed before the iteration value (rust-kbkdf-iteration-variable-rejected,
-    // narrowed).
+  it('KBKDF: every NIST layout byte-matches on both engines', () => {
+    // C++ placement fixed by hsm #275; Rust ITERATION_VARIABLE accepted (#274)
+    // and placed correctly (#277). Measured 2026-09-27 on hsm 1c5ed893.
     const v = readVectors('kbkdf_acvp_test.json')
-    let rustFailed = 0
     for (const g of v.testGroups)
       for (const t of g.tests) {
         const key = `kbkdf-nist-${g.kdfMode.split(' ')[0]}-${macSlug(g.macMode)}-tg${g.tgId}-tc${t.tcId}`
-        const cpp = row(`${key}-C++`)!
-        const rust = row(`${key}-Rust`)!
-        expect(classesOf(cpp.id)).toEqual(['nist-acvp-reference-sample'])
-        expect(cpp.status, cpp.details).toBe('pass')
-        if (g.kdfMode !== 'counter' && g.counterLocation === 'before iterator') {
-          rustFailed++
-          expect(rust.status).toBe('fail')
-          expect(rust.caseMeta?.observed).toBe('differs')
-        } else expect(rust.status, rust.details).toBe('pass')
+        for (const engine of ENGINES) {
+          const r = row(`${key}-${engine}`)!
+          expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
+          expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
+        }
       }
-    expect(rustFailed).toBe(4)
   })
 
   it('X9.63 on a caller-supplied Z is an explicit skip — never pass, never tiered', () => {
@@ -168,7 +156,7 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
     }
   })
 
-  it('keyVer: valid keys work on both; invalid points are refused by Rust (late); C++ refuses invalid ECDSA points at import but still accepts invalid EdDSA points', () => {
+  it('keyVer: valid keys work on both; both engines refuse every invalid point as a key error (hsm #285)', () => {
     for (const [file, fam] of [
       ['ecdsa_keyver_acvp_test.json', 'ecdsa'],
       ['eddsa_keyver_acvp_test.json', 'eddsa'],
@@ -185,17 +173,16 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
               expect(r.caseMeta?.observed).toBe('C_Verify → CKR_OK')
             }
           } else {
-            if (fam === 'ecdsa') {
-              // Measured 2026-09-27 (hsm d4345f88): C++ now validates an ECDSA
-              // point at import and refuses it with CKR_PUBLIC_KEY_INVALID.
-              expect(cpp.status, cpp.details).toBe('pass')
-              expect(cpp.caseMeta?.observed).toBe('C_CreateObject → CKR_PUBLIC_KEY_INVALID')
-            } else {
-              expect(cpp.status).toBe('fail') // cpp-ec-public-key-not-validated (EdDSA only now)
-              expect(cpp.caseMeta?.observed).toBe('C_Verify → CKR_SIGNATURE_INVALID')
+            // Since hsm #285 (bundles 1c5ed893) BOTH engines refuse an invalid
+            // point as a key error (C_CreateObject / C_VerifyInit), never as a
+            // signature error — which would mean the point was never validated.
+            for (const r of [cpp, rust]) {
+              expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
+              expect(r.caseMeta?.observed ?? '').not.toMatch(/CKR_SIGNATURE_(INVALID|LEN_RANGE)/)
             }
-            expect(rust.status, rust.details).toBe('pass') // rust-ec-public-key-refused-late
-            expect(rust.caseMeta?.observed).toBe('C_Verify → CKR_KEY_TYPE_INCONSISTENT')
+            expect(rust.caseMeta?.observed).toMatch(
+              /^C_CreateObject → CKR_PUBLIC_KEY_INVALID$|^C_VerifyInit → /
+            )
           }
           expect(classesOf(cpp.id)).toEqual(['nist-acvp-reference-sample'])
         }
@@ -232,7 +219,7 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
     }
   })
 
-  it('EdDSA sigGen: C++ byte-matches all; Rust fails exactly the preHash cases (context ignored)', () => {
+  it('EdDSA sigGen: both engines byte-match every NIST case, preHash included (hsm #290)', () => {
     const v = readVectors('eddsa_siggen_acvp_test.json')
     for (const g of v.testGroups)
       for (const t of g.tests) {
@@ -242,10 +229,7 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
         const rust = row(`${key}-Rust`)!
         expect(cpp.status, cpp.details).toBe('pass')
         expect(classesOf(cpp.id)).toEqual(['nist-acvp-reference-sample'])
-        if (g.preHash) {
-          expect(rust.status).toBe('fail') // rust-eddsa-ph-context-ignored
-          expect(rust.caseMeta?.observed).toBe('differs')
-        } else expect(rust.status, rust.details).toBe('pass')
+        expect(rust.status, rust.details).toBe('pass') // Ed-ph context fixed by hsm #290
       }
   })
 })

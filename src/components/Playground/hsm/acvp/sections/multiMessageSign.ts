@@ -149,7 +149,7 @@ function signMultipart(
     for (let i = 0; i < parts.length; i++) {
       const last = i === parts.length - 1
       M.setValue(lenPtr, SIG_BUF, 'i32')
-      // eslint-disable-next-line security/detect-object-injection
+
       rv = withBytes(
         M,
         parts[i],
@@ -189,7 +189,6 @@ function verifyMultipart(
         M,
         parts[i],
         (dp) =>
-          // eslint-disable-line security/detect-object-injection
           last
             ? withBytes(
                 M,
@@ -416,9 +415,10 @@ export async function runMultiMessageSignSection(
             }
           },
         })
-        // Generic CKM_HASH_SLH_DSA also advertises single-part message
-        // signing; nothing else exercises it, so cover it here per hedge variant.
-        if (t.mechanism === 'CKM_HASH_SLH_DSA') {
+        // Generic CKM_HASH_SLH_DSA / CKM_HASH_ML_DSA: single-part message sign +
+        // verify per hedge variant; the deterministic row also asserts that two
+        // signatures are byte-equal (CKH_DETERMINISTIC_REQUIRED honoured).
+        if (t.mechanism === 'CKM_HASH_SLH_DSA' || t.mechanism === 'CKM_HASH_ML_DSA') {
           for (const [variant, hedge] of [
             ['hedged', 1],
             ['deterministic', 2],

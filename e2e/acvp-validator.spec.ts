@@ -187,37 +187,26 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // NEW row goes red it is not matched here and fails as an unexpected row.
     // The engine defects themselves are open and unpatched — nothing here
     // claims otherwise, and no case was removed, skipped or narrowed.
+    // 2026-09-27 (bundles from hsm 1c5ed893, re-recorded run results): the
+    // KBKDF (38, then 4) and Ed-ph context (8) entries are GONE — hsm #277 and
+    // #290 fixed both engine defects and their open gaps are closed. What
+    // remains is exactly the recorded failure set:
     const KNOWN_RED_ROWS: { match: RegExp; why: string; count: number }[] = [
       {
-        // open-gaps.json `rust-kbkdf-iteration-variable-rejected`: PKCS#11 v3.2
-        // §6.42.4/§6.42.5 make CK_SP800_108_ITERATION_VARIABLE mandatory in
-        // feedback and double-pipeline mode; the Rust engine answers
-        // CKR_MECHANISM_PARAM_INVALID for every such layout, so "all 38
-        // feedback / double-pipeline NIST KDF 1.0 rows fail".
-        match: /KBKDF (?:feedback|double pipeline iteration).*CKR_MECHANISM_PARAM_INVALID/,
-        why: 'rust-kbkdf-iteration-variable-rejected (Rust rejects the mandatory ITERATION_VARIABLE data parameter)',
-        count: 38,
+        // open-gaps.json `rust-rsa-private-import-requires-cka-value` (accepted
+        // limitation, maintainer decision): 18 of NIST's 20 KTS-IFC OAEP keys
+        // have public exponents >= 2^33, which the Rust engine refuses by design.
+        match: /RSA-OAEP \(Rust\).*public exponents >= 2\^33 are refused/,
+        why: 'rust RSA public-exponent limit (18 NIST KTS-IFC keys, accepted limitation)',
+        count: 18,
       },
       {
-        // open-gaps.json `rust-eddsa-ph-context-ignored`: C_Sign(CKM_EDDSA,
-        // phFlag = true, non-empty context) signs for an EMPTY context, so
-        // "all 8 preHash NIST EDDSA-SigGen-1.0 cases (contexts 96–248 bytes)
-        // differ from NIST". Pure Ed25519/Ed448 with contexts byte-match, and
-        // the C++ engine matches all 16 — so this must stay narrow to the
-        // 'ph' variants and to a NIST mismatch.
-        match: /Ed(?:25519|448)ph \(Rust\).*differs from NIST expected.*phFlag true/,
-        why: 'rust-eddsa-ph-context-ignored (Rust Ed25519ph/Ed448ph ignores CK_EDDSA_PARAMS context)',
-        count: 8,
-      },
-      {
-        // open-gaps.json `pbkdf2-min-iterations-divergence`: the Rust engine
-        // refuses iteration counts below 1000. sections/kdfMacAcvp.ts keeps
-        // the iterationCount-1 case in the suite deliberately ("so that Rust
-        // row stays red") rather than dropping it, so the divergence stays
-        // visible instead of silently disappearing from the vector subset.
-        match: /PBKDF2-HMAC-SHA2-224 \(Rust\).*CKR_MECHANISM_PARAM_INVALID.*iterations < 1000/,
-        why: 'pbkdf2-min-iterations-divergence (Rust refuses fewer than 1000 iterations; row deliberately kept red)',
-        count: 1,
+        // NIST PBKDF sample tg1/tc20: iterationCount 1. Both engines refuse
+        // fewer than 1000 iterations (aligned since the P3 rebuild), so the row
+        // stays red on both, deliberately kept in the suite (sections/kdfMacAcvp.ts).
+        match: /PBKDF2-HMAC-SHA2-224 \((?:C\+\+|Rust)\).*iterations < 1000/,
+        why: 'PBKDF2 minimum iterations (both engines refuse < 1000; row deliberately kept red)',
+        count: 2,
       },
     ]
     const knownRedSeen = KNOWN_RED_ROWS.map(() => 0)

@@ -2,7 +2,7 @@
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
     "manifestSha256": "f13e56033a0b1f653a2d810921647ffc2e773a21d2c2b6d2c176a6f046a6340c",
-    "registrySha256": "56fe8ffe550baf1a74fb417c78d6fd4f6e3f85f6e7251ba160f352694eb7a153"
+    "registrySha256": "2fe5f154a20167ff4711bcd20398f3cb38207e7c3d22d2513b65ee4861bf4faa"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {

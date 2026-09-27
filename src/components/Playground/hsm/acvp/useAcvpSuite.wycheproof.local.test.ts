@@ -191,26 +191,23 @@ describe('Project Wycheproof (Google / C2SP) adversarial vectors, both engines',
 
   // ── PINNED ENGINE FINDINGS (measured 2026-09-26, Wycheproof @ 3fa63dd0) ────
 
-  it('pins the ONLY hard reject-path failure: Rust verifies 3 invalid-encoding Ed448 signatures', () => {
-    // Wycheproof ed448_test tg4/tc63-65: bits 448-454 of R are unused and MUST
-    // be zero (RFC 8032 §5.2.3), so a signature with one of them set is an
-    // invalid encoding. C++ refuses all 70 invalid Ed448 cases; Rust accepts
-    // these 3. Pinned as a FAILURE, not waived: fixing the Rust engine turns
-    // this red and the gap row must then be closed.
-    const failed = rows.filter((r) => r.status === 'fail').map((r) => r.id)
-    expect(failed.sort()).toEqual([
+  it('no Wycheproof case fails on either engine (Rust Ed448 canonical-R fixed by hsm #290)', () => {
+    // Until the bundles built from hsm 1c5ed893, Rust VERIFIED ed448_test
+    // tg4/tc63-65 (unused bits of R set: invalid encoding, RFC 8032 §5.2.3).
+    // hsm #290 added the check; measured 2026-09-27: zero failures on both.
+    expect(rows.filter((r) => r.status === 'fail').map((r) => r.id)).toEqual([])
+    for (const id of [
       'wyc-ed448-tg4-tc63-Rust',
       'wyc-ed448-tg4-tc64-Rust',
       'wyc-ed448-tg4-tc65-Rust',
     ])
-    for (const id of failed) {
-      const r = rows.find((x) => x.id === id)!
-      expect(r.caseMeta?.observed).toBe('C_Verify → CKR_OK')
-      expect(r.details).toMatch(/VERIFIED a signature Wycheproof marks invalid/)
-    }
+      expect(rows.find((x) => x.id === id)!.caseMeta?.observed).not.toBe('C_Verify → CKR_OK')
   })
 
   it('pins how each engine treats low-order X25519/X448 public keys', () => {
+    // Rust counts re-measured 2026-09-27 on hsm 1c5ed893 (#290 added the
+    // contributory-behaviour check): low-order refused 9 -> 40, zero shared
+    // secret 9 -> 40, twist 3 -> 8.
     // These are Wycheproof `acceptable` cases — refusing them and accepting them
     // are both defensible, so the ROW passes either way. The numbers below are
     // the security-relevant fact the row alone does not tell you, and they are
@@ -225,16 +222,16 @@ describe('Project Wycheproof (Google / C2SP) adversarial vectors, both engines',
     }
     // C++ refuses nearly every low-order key; Rust accepts most of them.
     expect(behaviour('LowOrderPublic', 'C++')).toEqual({ n: 45, refused: 42, accepted: 3 })
-    expect(behaviour('LowOrderPublic', 'Rust')).toEqual({ n: 45, refused: 9, accepted: 36 })
+    expect(behaviour('LowOrderPublic', 'Rust')).toEqual({ n: 45, refused: 40, accepted: 5 })
     // ZeroSharedSecret: the derived secret is all-zero. C++ refuses all 42;
     // Rust returns the all-zero secret for 33 of them (contributory-behaviour
     // check absent — RFC 7748 §6.1 "check whether the output is all-zero").
     expect(behaviour('ZeroSharedSecret', 'C++')).toEqual({ n: 42, refused: 42, accepted: 0 })
-    expect(behaviour('ZeroSharedSecret', 'Rust')).toEqual({ n: 42, refused: 9, accepted: 33 })
+    expect(behaviour('ZeroSharedSecret', 'Rust')).toEqual({ n: 42, refused: 40, accepted: 2 })
     // Points on the twist: both engines compute with them (RFC 7748 allows it
     // for X25519/X448 by design — the twist is secure).
     expect(behaviour('Twist', 'C++')).toEqual({ n: 455, refused: 9, accepted: 446 })
-    expect(behaviour('Twist', 'Rust')).toEqual({ n: 455, refused: 3, accepted: 452 })
+    expect(behaviour('Twist', 'Rust')).toEqual({ n: 455, refused: 8, accepted: 447 })
   })
 
   it('pins RSA-PSS SHA-256 (rsa_pss_2048_sha256_mgf1_32): both engines pass all 108 cases', () => {
@@ -275,7 +272,7 @@ describe('Project Wycheproof (Google / C2SP) adversarial vectors, both engines',
           `${key}/${engine}`
         ).toBe(0)
     expect(count('ed448', 'C++', 'invalid').filter((r) => r.status === 'fail').length).toBe(0)
-    expect(count('ed448', 'Rust', 'invalid').filter((r) => r.status === 'fail').length).toBe(3)
+    expect(count('ed448', 'Rust', 'invalid').filter((r) => r.status === 'fail').length).toBe(0)
     // x25519_test carries no `invalid` case at all at this commit: every
     // low-order / zero-shared-secret / twist case there is `acceptable`.
     expect(count('x25519', 'C++', 'invalid').length).toBe(0)

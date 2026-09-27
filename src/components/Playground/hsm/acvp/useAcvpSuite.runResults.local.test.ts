@@ -189,9 +189,12 @@ describe('useAcvpSuite run results for the coverage matrix (both engines, real w
     // is second-hand, not measured here, and is the reason the budget is not
     // simply 2x the solo number. 1_500_000 is ~2.9x the solo measurement and
     // ~2.2x the reported contended one.
+    // RE-MEASURED 2026-09-27 after §38 (multi-part message signing, all 80
+    // mechanisms incl. 12 SLH-DSA sets): 1830 s alone on the M4 Pro with other
+    // sessions' container jobs running; budget raised to 3_600_000 (~2x).
     // Re-measure rather than nudge this if a new section lands: the failure
     // mode of a too-small budget is a timeout that reads like a product bug.
-  }, 1_500_000)
+  }, 3_600_000)
 
   it('every registered useAcvpSuite rowId was produced for both engines', () => {
     const produced = new Set(rows.map((r) => r.id))
