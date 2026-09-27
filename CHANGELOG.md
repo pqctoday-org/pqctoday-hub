@@ -29,6 +29,30 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.124.4] - 2026-09-27
+
+Product certifications now show where each product stands on the road to a FIPS 140-3 certificate — algorithms validated, in progress at NIST, or certified — and 27 product verdicts were re-checked against the official NIST records.
+
+### Added
+
+- **See how far the catalogue has progressed toward post-quantum certification** [view:/compliance] [persona:grc] [persona:executive] [persona:ops]: the Product Records chart now shows each product's stage — no post-quantum validation yet, algorithms validated (CAVP, the prerequisite), in progress at NIST, or certified — with a view by catalogue product and a view by NIST listing.
+- **"In progress" now comes straight from NIST** [view:/migrate] [view:/compliance] [persona:grc] [persona:ops]: a product is marked as in progress only when NIST lists its module as a Module In Process or Implementation Under Test. 22 products carry that stage today; we keep a dated record of the lists, which NIST itself does not publish.
+
+### Fixed
+
+- **27 product certification verdicts corrected against NIST's own records** [view:/migrate] [persona:grc] [persona:ops] [persona:developer]: products that claimed a post-quantum certification were each checked against NIST's certificate and algorithm-validation listings. Dell BSAFE Crypto-J keeps its certification (FIPS 140-3 #5361). AWS KMS, iOS 26 / macOS 26, Quantum Xchange, CryptoNext and X-CUBE-PQC are at the algorithm-validation stage. s2n-tls, Securosys CloudHSM, Google Cloud KMS and Crypto4A QxHSM / QxEDGE now show that they rely on a validated module inside rather than holding their own certificate. Eleven products with no post-quantum certificate or algorithm validation no longer claim one.
+- **Certificates behind each verdict are now shown** [view:/migrate] [persona:grc] [persona:developer]: 20 certificate links that products' verdicts rely on were missing from their product pages — among them AWS KMS, AWS-LC, BoringSSL, Securosys Primus HSM and Dell BSAFE Crypto-J — and now appear, each backed by the NIST listing.
+
+## [4.124.3] - 2026-09-27
+
+Timeline dates checked against their sources: phases whose source gives no end date are now shown as open-ended instead of being hidden, and several milestones move to the years their sources actually state.
+
+### Fixed
+
+- **Timeline phases with no stated end date are shown, not hidden.** [view:/timeline] [persona:grc] [persona:executive] Three phases have a start but no end in any source: France ANSSI's hybridization and standalone-PQC phases (the agency gives only "at least 2030" / "not earlier than 2030") and Singapore MAS's financial-sector planning. The chart used to drop them and log an error; they now run to the chart's edge with a fading end, labelled "no end date stated by source". Tables, cards and exports say "onward" instead of inventing an end year.
+- **Canada, France and Singapore timeline years corrected from their sources.** [view:/timeline] [persona:grc] [persona:executive] Canada's two migration phases, which no source describes separately, are now the single Transition Phase (2028–2035) that the Government of Canada's policy notice defines; France's first phase ends around 2025, as ANSSI's own roadmap shows; Singapore's MAS quantum advisory is dated to when it was issued (2024), not to a 2028 deadline it never set; and Japan's CRYPTREC guideline carries its published title.
+- **Three standards cross-references pointed at the wrong document.** [view:/library] [persona:researcher] [persona:grc] Two links to ISO/IEC 19790 were labelled as a NIST practice guide, and one NCCoE link pointed at ISO 19790 instead of the interoperability-and-performance volume (SP 1800-38C) its own quote describes. All three now match their evidence.
+
 ## [4.124.2] - 2026-09-27
 
 ### Fixed

@@ -31,6 +31,7 @@ import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 
 import { FilterChip } from '../common/FilterChip'
 import { Button } from '@/components/ui/button'
+import { OPEN_ENDED_NOTE } from '@/utils/timelinePeriod'
 
 interface SimpleGanttChartProps {
   data: GanttCountryData[]
@@ -417,7 +418,12 @@ export const SimpleGanttChart = ({
   const renderPhaseCells = (phaseData: TimelinePhase, rowIdx: number, phaseIdx: number) => {
     const cells: React.ReactNode[] = []
     const startYear = Math.max(yearRange.start, phaseData.startYear)
-    const endYear = Math.min(yearRange.end, phaseData.endYear)
+    // Open-ended (D22): the source states no end, so the bar runs to the chart's
+    // edge and fades instead of stopping at an invented year.
+    const openEnded = Boolean(phaseData.openEnded) && phaseData.type !== 'Milestone'
+    const endYear = openEnded ? yearRange.end : Math.min(yearRange.end, phaseData.endYear)
+    const fadeFor = (year: number) =>
+      openEnded && endYear > startYear ? 1 - (0.75 * (year - startYear)) / (endYear - startYear) : 1
     const colors = phaseColors[phaseData.phase as Phase] || {
       start: 'hsl(var(--muted-foreground))',
       end: 'hsl(var(--muted))',
@@ -436,11 +442,13 @@ export const SimpleGanttChart = ({
           <td
             key={year}
             className={`p-0 h-10 overflow-visible relative ${year === currentYear ? 'border-l-2 border-primary/50' : ''}`}
+            title={openEnded && isFirst ? `${phaseData.title}: ${OPEN_ENDED_NOTE}` : undefined}
+            data-open-ended={openEnded ? 'true' : undefined}
             style={{
-              borderRight: isLast ? '1px solid var(--color-border)' : 'none',
+              borderRight: isLast && !openEnded ? '1px solid var(--color-border)' : 'none',
               backgroundColor: isMilestone ? 'transparent' : colors.start,
               boxShadow: isMilestone ? 'none' : `0 0 8px ${colors.glow}`,
-              opacity: isMilestone ? 1 : 0.9,
+              opacity: isMilestone ? 1 : 0.9 * fadeFor(year),
               zIndex: isFirst || isMilestone ? 20 : 0,
               contain: 'layout style', // Optimize WebKit rendering
             }}
@@ -452,7 +460,7 @@ export const SimpleGanttChart = ({
               onKeyDown={(e) => handlePhaseKeyDown(e, phaseData, rowIdx, phaseIdx)}
               data-phase-row={rowIdx}
               data-phase-col={phaseIdx}
-              aria-label={`${phaseData.phase}: ${phaseData.title}`}
+              aria-label={`${phaseData.phase}: ${phaseData.title}${openEnded ? ` (${OPEN_ENDED_NOTE})` : ''}`}
               tabIndex={isFirst ? 0 : -1}
             >
               {isMilestone && isFirst ? (

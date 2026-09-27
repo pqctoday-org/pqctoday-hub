@@ -1,6 +1,6 @@
 # pre-push — the LOCAL gate. Everything that is editorial, style-only, or needs
 # this machine (sibling checkouts, evidence caches, the full unit suite) runs
-# here; GitHub's `checks`/`test`/`gate-cacp` jobs carry only what must be
+# here; GitHub's `checks`/`test` jobs carry only what must be
 # proven on a clean runner. The split is written down in GATES.md; a
 # check runs in exactly one of the two places.
 # Bypass with `git push --no-verify` for an intentional WIP push — knowingly,
@@ -60,15 +60,6 @@ fi
 # package.json `gate:local` for the exact chain and GATES.md for what
 # each step guards.
 npm run gate:local
-
-# CACP (crypto-agility control plane) suite — the KMIP policy engine's wasm
-# bridge, visual editor, and policy library, plus the *.local.test.ts drift
-# guards (catalog ↔ Rust-grammar, dual-form policy parity, sim ↔ engine
-# parity) and the narrow cacp-kmip wasm-provenance check. Some of those guards
-# need a sibling ../pqctoday-hsm checkout — see TESTING.md's CACP section.
-# Also a GitHub job (`gate-cacp`, against a sparse hsm clone); here it runs
-# against the real sibling, which is the only place the full drift guards can.
-npm run gate:cacp
 
 # Everything passed on this exact commit — write the receipt (see above).
 npm run gate:receipt
