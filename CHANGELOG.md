@@ -35,27 +35,14 @@ Fifteen more product claims now say only what their own documents support, and s
 
 ### Data
 
-- **15 product claims corrected after a full read of their documents.** Earlier checks read only excerpts of these long documents. On a full read, each document supported less than the catalogue said, so the claim now matches the document. For example, Google Tink now lists ML-DSA only, and SUPERCOP is shown as a benchmark suite, not a PQC product.
-- **Six entries named after a web page, not a product, are fixed.** "Dashboard - PQProbe" is now **PQProbe**, and "PQConnect: Intro" is now **PQConnect**. An Alibaba Cloud blog post is now listed as the product it describes, **Alibaba Cloud ESA (Edge Security Acceleration)**, which turns on hybrid ML-KEM key exchange by default. Three entries are retired: a duplicate HAETAE entry (merged into the HAETAE Reference Implementation), Tencent's PQC information portal and the Lean Consensus roadmap page, none of which is a product. Old names still find the renamed products.
-- **Migration phases** are now set for three STMicroelectronics NESLIB library entries, and one entry's phase uses the standard name.
-- **Evidence records for 10 products** now match the documents actually on file.
+- **15 product claims corrected after a full read of their documents** [view:/migrate] [persona:architect] [persona:ops] [persona:grc]: Earlier checks read only excerpts of these long documents. On a full read, each document supported less than the catalogue said, so the claim now matches the document. For example, Google Tink now lists ML-DSA only, and SUPERCOP is shown as a benchmark suite, not a PQC product.
+- **Six entries named after a web page, not a product, are fixed** [view:/migrate] [persona:architect] [persona:ops] [persona:curious]: "Dashboard - PQProbe" is now **PQProbe**, and "PQConnect: Intro" is now **PQConnect**. An Alibaba Cloud blog post is now listed as the product it describes, **Alibaba Cloud ESA (Edge Security Acceleration)**, which turns on hybrid ML-KEM key exchange by default. Three entries are retired: a duplicate HAETAE entry (merged into the HAETAE Reference Implementation), Tencent's PQC information portal and the Lean Consensus roadmap page, none of which is a product. Old names still find the renamed products.
+- **Migration phases** [view:/migrate] [persona:ops] [persona:architect]: now set for three STMicroelectronics NESLIB library entries, and one entry's phase uses the standard name.
+- **Evidence records for 10 products** [view:/migrate] [persona:grc] [persona:researcher]: now match the documents actually on file.
 
 ### Changed
 
-- **New catalogue check:** a warning when a product's name looks like a scraped web-page title, so this kind of entry can't slip back in.
-## [4.125.2] - 2026-09-27
-
-France's post-quantum migration phases are now confirmed from ANSSI's own guidance, and the assistant can quote the source text for a few more references.
-
-### Fixed
-
-- **France's Phase 2 and Phase 3 are confirmed from ANSSI's own text** [view:/timeline] [persona:grc] [persona:executive]: the two later phases of ANSSI's post-quantum transition plan were re-checked against ANSSI's published guidance and are now marked as validated. ANSSI gives no end year for either phase, so the timeline draws them as open-ended rather than inventing a finish date.
-- **The PCI exercise uses distinct example certificate numbers** [view:/learn/fips-pci-certification] [persona:grc] [persona:ops]: the example CMVP certificate and the example PCI PTS approval in the FIPS 140-3 and PCI deep dive had the same made-up number, which could read as one document. They now have separate numbers, both still clearly labelled as fictional.
-- **Two learning modules no longer share an ID with another module** [view:/learn] [persona:curious]: Government and Defense PQC and Trust Services PQC each carried a catalogue number already used by a different module, which could mix up their progress tracking. Each now has its own number, and a check stops this from happening again.
-
-### Data
-
-- **The assistant can quote the source for more references** [view:/] [persona:researcher] [persona:grc]: the assistant's search index was rebuilt with an updated set of source passages, so 1,156 reference entries now carry short quotes from the original document (up from 1,150).
+- **New catalogue check** [persona:developer]: a warning when a product's name looks like a scraped web-page title, so this kind of entry can't slip back in.
 
 ## [4.125.1] - 2026-09-27
 
