@@ -1,43 +1,54 @@
 {
   "algorithm": "AES-GCM",
-  "source": "SP 800-38D (key from McGrew-Viega Test Case 16, AES-256)",
+  "source": "NIST CAVP GCM test vectors (CAVS 14.0), gcmDecrypt256.rsp",
+  "_provenance": {
+    "producer": "NIST Cryptographic Algorithm Validation Program (CAVP) GCM test vectors, CAVS 14.0, generated 2012-08-31",
+    "source_url": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/mac/gcmtestvectors.zip",
+    "source_member": "gcmDecrypt256.rsp",
+    "source_sha256": "ed318735a517d5a85c82d2846c23dcf56e57a352fb0f0a163d9e7617a7bd12ad",
+    "retrieved": "2026-09-26",
+    "generator": "python3 scripts/acvp/build_gcm_cavp_kat.py --rsp <gcmDecrypt256.rsp> (re-verify with --check)",
+    "selection": "Sections [Keylen = 256] [IVlen = 96] [AADlen = 0] [Taglen = 128] with PTlen 128, 256 and 408: the first case in each that decrypts (not FAIL). The shape every reader consumes; plaintexts of 16, 32 and 51 bytes.",
+    "field_mapping": "key <- Key; iv <- IV; pt <- PT; ct <- CT; tag <- Tag, verbatim. ptLen and count identify the source section and case.",
+    "independent_check": "Every case recomputed with python-cryptography AESGCM; NIST's CT||Tag reproduces for all three.",
+    "correction": "REPLACES three Node/OpenSSL-generated cases, one of which reused the GCM paper's Test Case 16 inputs without its AAD (so its tag matched nothing published)."
+  },
   "testGroups": [
     {
       "keyLen": 256,
       "ivLen": 96,
       "tagLen": 128,
+      "aadLen": 0,
       "direction": "decrypt",
       "tests": [
         {
-          "key": "feffe9928665731c6d6a8f9467308308feffe9928665731c6d6a8f9467308308",
-          "iv": "cafebabefacedbaddecaf888",
-          "pt": "d9313225f88406e5a55909c5aff5269a86a7a9531534f7da2e4c303d8a318a721c3c0c95956809532fcf0e2449a6b525b16aedf5aa0de657ba637b39",
-          "ct": "522dc1f099567d07f47f37a32a84427d643a8cdcbfe5c0c97598a2bd2555d1aa8cb08e48590dbb3da7b08b1056828838c5f61e6393ba7a0abcc9f662",
-          "tag": "eb9f796c8d356fc31a8433884b696f4f"
+          "ptLen": 128,
+          "count": 0,
+          "key": "4c8ebfe1444ec1b2d503c6986659af2c94fafe945f72c1e8486a5acfedb8a0f8",
+          "iv": "473360e0ad24889959858995",
+          "pt": "7789b41cb3ee548814ca0b388c10b343",
+          "ct": "d2c78110ac7e8f107c0df0570bd7c90c",
+          "tag": "c26a379b6d98ef2852ead8ce83a833a7"
         },
         {
-          "key": "36a4ed7db4d78d522c39b52bdee527b4c8ce09b474c8687225b4bd6aa13e8e75",
-          "iv": "da4c7d646411c4c7c1a0b110",
-          "pt": "4145532d3235362d47434d2041435650206578747261207465737420766563746f7220666f72206d6f64756c652d7370656369666963204b415420646966666572656e74696174696f6e",
-          "ct": "a62ce7f35358268ac9fb8e5f1406933da2c3211790748a77378169506a1b96f9abd98f6bbccc094df4524523747a7244682536c576a1be343c639ea28710853de270c352c67dccac4c12",
-          "tag": "6c4fb2ce62bcba137f251381bc379764"
+          "ptLen": 256,
+          "count": 0,
+          "key": "c3d99825f2181f4808acd2068eac7441a65bd428f14d2aab43fefc0129091139",
+          "iv": "cafabd9672ca6c79a2fbdc22",
+          "pt": "25431587e9ecffc7c37f8d6d52a9bc3310651d46fb0e3bad2726c8f2db653749",
+          "ct": "84e5f23f95648fa247cb28eef53abec947dbf05ac953734618111583840bd980",
+          "tag": "79651c875f7941793d42bbd0af1cce7c"
         },
         {
-          "key": "51ec7461158bebc9a7845d0abbaf8e414a08a89bdb723d7178c0756db561872b",
-          "iv": "e2fa0b34db87fdbda55fddac",
-          "pt": "4145532d3235362d47434d2041435650206578747261207465737420766563746f7220666f72206d6f64756c652d7370656369666963204b415420646966666572656e74696174696f6e",
-          "ct": "1066e01d97daecfbffa1c5617a1ed258d9d66c5bbecb47d6b04eb18848d445abb51b3b5b5bed895edcc79401674ec00ff5452c091b8546ed9ce695f2f155254db619e90aef7177f8a725",
-          "tag": "01d836326b9d3f4bbf26d25afc5066af"
+          "ptLen": 408,
+          "count": 0,
+          "key": "4433db5fe066960bdd4e1d4d418b641c14bfcef9d574e29dcd0995352850f1eb",
+          "iv": "0e396446655582838f27f72f",
+          "pt": "d602c06b947abe06cf6aa2c5c1562e29062ad6220da9bc9c25d66a60bd85a80d4fbcc1fb4919b6566be35af9819aba836b8b47",
+          "ct": "b0d254abe43bdb563ead669192c1e57e9a85c51dba0f1c8501d1ce92273f1ce7e140dcfac94757fabb128caad16912cead0607",
+          "tag": "ffd0b02c92dbfcfbe9d58f7ff9e6f506"
         }
       ]
     }
-  ],
-  "_provenance": {
-    "source_url": "https://csrc.nist.gov/pubs/sp/800/38/d/final",
-    "source_release": null,
-    "retrieved": null,
-    "producer": "SP 800-38D + McGrew/Viega \"The Galois/Counter Mode of Operation\" Test Case 16 (AES-256) (published KAT sample, not from ACVP)",
-    "source_sha256": null,
-    "note": "WS-10(c) (2026-08-28): backfilled provenance for evidence-tier derivation. Key/IV/tag are the widely-cited McGrew-Viega AES-256-GCM test case referenced by SP 800-38D's design rationale, not ACVP-Server-generated \u2014 a published-standard KAT. Independently re-verified (all 3 sub-cases) against the Node crypto (OpenSSL) oracle before backfill."
-  }
+  ]
 }

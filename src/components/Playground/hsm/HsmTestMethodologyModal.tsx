@@ -38,7 +38,7 @@ const METHODOLOGY_ROWS: { algo: string; tested: string; limits: string }[] = [
   {
     algo: 'AES-GCM',
     tested:
-      'AES-256-GCM decryption of one OpenSSL-oracle vector (built from GCM Test Case 16 inputs with the AAD dropped and the tag computed by OpenSSL) — an independent-oracle comparison, not a published KAT and not an ACVP vector [§1].',
+      "AES-256-GCM decryption of a NIST CAVP published example (gcmDecrypt256.rsp: AES-256, 96-bit IV, no AAD, 128-bit tag) — a published-standard KAT from NIST's legacy CAVP test vectors, not an ACVP-Server sample [§1].",
     limits:
       'the published GCM Test Case 16 itself, ACVP AES-GCM vectors, encryption against expected values, other key / IV / tag lengths, authentication-failure cases.',
   },

@@ -565,7 +565,7 @@ export function useAcvpSuite() {
           return derWrapped ? pt.slice(2) : pt
         }
 
-        // ── 1. AES-GCM-256 Decrypt vs OpenSSL-oracle vector ────────────
+        // ── 1. AES-GCM-256 Decrypt vs NIST CAVP vector (gcmDecrypt256.rsp) ──
         // aesgcm_test.json's own _provenance says "published KAT", but its tag
         // differs from GCM Test Case 16's published tag (AAD dropped; tag
         // computed by Node/OpenSSL). The WS-B manifest classes it
@@ -577,17 +577,19 @@ export function useAcvpSuite() {
             await pushSkip(
               `aes-skip-${eName}`,
               `AES-GCM-256 (${eName})`,
-              'Decrypt (OpenSSL-oracle vector)',
+              'Decrypt (NIST CAVP vector)',
               REF.aesgcm,
               'AES-GCM-256: mechanism not supported'
             )
           } else {
             const tv = aesGcmTestVectors.testGroups[0].tests[0]
             const id1 = `aes-acvp-${eName}`
-            addLog(`[${eName}] Testing AES-GCM-256 Decrypt vs OpenSSL-oracle vector...`)
-            addLog(`  Oracle vector Key: ${tv.key.slice(0, 32)}… | IV: ${tv.iv} | Tag: ${tv.tag}`)
             addLog(
-              `  Oracle vector CT[${tv.ct.length / 2}B]: ${tv.ct.slice(0, 32)}… | Expected PT: ${tv.pt.slice(0, 32)}…`
+              `[${eName}] Testing AES-GCM-256 Decrypt vs NIST CAVP vector (gcmDecrypt256.rsp)...`
+            )
+            addLog(`  NIST vector Key: ${tv.key.slice(0, 32)}… | IV: ${tv.iv} | Tag: ${tv.tag}`)
+            addLog(
+              `  NIST vector CT[${tv.ct.length / 2}B]: ${tv.ct.slice(0, 32)}… | Expected PT: ${tv.pt.slice(0, 32)}…`
             )
             try {
               const keyBytes = hexToBytes(tv.key)
@@ -631,7 +633,7 @@ export function useAcvpSuite() {
               await pushResult({
                 id: id1,
                 algorithm: `AES-GCM-256 (${eName})`,
-                testCase: 'Decrypt (OpenSSL-oracle vector)',
+                testCase: 'Decrypt (NIST CAVP vector)',
                 referenceUrl: REF.aesgcm,
                 status: matches ? 'pass' : 'fail',
                 details: matches
@@ -646,7 +648,7 @@ export function useAcvpSuite() {
               await pushResult({
                 id: `aes-err-${eName}`,
                 algorithm: `AES-GCM-256 (${eName})`,
-                testCase: 'Decrypt (OpenSSL-oracle vector)',
+                testCase: 'Decrypt (NIST CAVP vector)',
                 referenceUrl: REF.aesgcm,
                 status: 'fail',
                 details: errMessage,

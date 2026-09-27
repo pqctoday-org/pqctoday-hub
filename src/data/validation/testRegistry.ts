@@ -339,10 +339,10 @@ const digestCases = (fileId: string, vectors: DigestVectors, mech: string, prefi
   })
 
 const USE_ACVP_SUITE: RegisteredTest[] = [
-  acvp('01', '§1', 'AES-GCM-256 decrypt', [
+  acvp('01', '§1', 'AES-GCM-256 decrypt: NIST CAVP gcmDecrypt256.rsp published example', [
     mc(
       'aesgcm_test#/testGroups/0/tests/0',
-      ORACLE,
+      STD,
       'positive',
       [x('CKM_AES_GCM', 'decrypt', 'AES-256')],
       'aes-acvp-{engine}'
@@ -2102,7 +2102,7 @@ const KAT_RUNNER: RegisteredTest[] = [
   ),
   kat('aesgcm-decrypt', 'AES-GCM-256 decrypt (testIndex 0)', [
     k(
-      mc('aesgcm_test#/testGroups/0/tests/0', ORACLE, 'positive', [
+      mc('aesgcm_test#/testGroups/0/tests/0', STD, 'positive', [
         x('CKM_AES_GCM', 'decrypt', 'AES-256'),
       ]),
       { type: 'aesgcm-decrypt' }

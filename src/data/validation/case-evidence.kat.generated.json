@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "cc2e5ef36baca3057b5e37d6789034d8225f4066ca43c493c96a1704245f933f",
-    "registrySha256": "061ce9cd9b23a27d916e60b9ca7e9d7e63454a6f5ca0d18261f0db9a2c4a0cce"
+    "manifestSha256": "ec46f488440f09c6e5e98cb7803f48816c6fab7117891ee62564fec9541aacfb",
+    "registrySha256": "02a235595c275a237e82d449e5c7da7b664f943f4b2a9f7df6de0777b0e7cf69"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
@@ -141,31 +141,34 @@
         "rust"
       ],
       "caseId": "aesgcm_test#/testGroups/0/tests/0",
-      "evidenceClass": "independent-oracle",
+      "evidenceClass": "published-standard-kat",
       "polarity": "positive",
       "algorithm": "AES-GCM",
       "operation": "decrypt",
-      "testType": "oracle-generated",
+      "testType": "published-example",
       "parameters": {
-        "direction": "decrypt",
+        "aadLen": 0,
         "ivLen": 96,
         "keyLen": 256,
+        "ptLen": 128,
         "tagLen": 128
       },
       "upstream": {
-        "label": "McGrew-Viega GCM spec Test Case 16 inputs, AAD removed, tag recomputed"
+        "label": "CAVP gcmDecrypt256.rsp [Keylen=256][IVlen=96][PTlen=128][AADlen=0][Taglen=128] Count=0"
       },
       "source": {
-        "citation": "Node crypto (OpenSSL) output; case 1 reuses the key/IV/plaintext of McGrew-Viega GCM Test Case 16 without its AAD"
+        "citation": "NIST CAVP GCM test vectors (CAVS 14.0, 2012-08-31), gcmDecrypt256.rsp",
+        "url": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/mac/gcmtestvectors.zip",
+        "revision": "CAVS 14.0 (2012-08-31)"
       },
       "exercises": [
         "CKM_AES_GCM decrypt AES-256"
       ],
       "limitations": [
-        "Upstream: GCM authenticated encryption, Test Case 16 (K, IV, 60-byte P, A = feedface...abaddad2 -> C, T = 76fc6ece...) → executed here: decrypt (C_Decrypt AES-GCM, no AAD, compare plaintext)",
-        "inputs-modified-expected-recomputed: The published AAD was dropped; ciphertext is unchanged (CTR keystream does not depend on AAD) but the tag eb9f796c... is the oracle output for empty AAD, not the published tag 76fc6ece0f4e1768cddf8853bb2d551b.",
-        "The oracle version that produced the expected value is not recorded.",
-        "Oracle: Node.js crypto (OpenSSL backend) (version not recorded)"
+        "Upstream: CAVP GCM decrypt (AES-256, 96-bit IV, no AAD, 128-bit tag) → executed here: C_Decrypt(CKM_AES_GCM) of CT||Tag, byte-compared with PT",
+        "subset: The first decrypting (not FAIL) case of each section with PTlen 128, 256 and 408 bits.",
+        "field-rename: Key -> key; IV -> iv; PT -> pt; CT -> ct; Tag -> tag",
+        "field-add: local-only fields: ptLen, count (identify the source section and case)"
       ]
     },
     "kat.aesgcm-functional#local:kat.aesgcm-functional/1": {
@@ -3428,7 +3431,7 @@
     "acvp/aesctr_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/aesctr_test.json": "published-standard-kat",
     "acvp/aesgcm_acvp_test.json": "nist-acvp-reference-sample",
-    "acvp/aesgcm_test.json": "independent-oracle",
+    "acvp/aesgcm_test.json": "published-standard-kat",
     "acvp/aeskw_acvp_test.json": "nist-acvp-reference-sample",
     "acvp/aeskw_test.json": "published-standard-kat",
     "acvp/composite-sigs-jose-kat.json": "functional-round-trip",

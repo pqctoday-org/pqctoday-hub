@@ -25,10 +25,12 @@ describe('per-case evidence records (generated from the manifest + registry)', (
   })
 
   it('a workbench row reads the manifest class, not its producer string (aesgcm_test)', () => {
-    // aesgcm_test's in-file producer says "published KAT"; the reviewed manifest
-    // records an OpenSSL-oracle tag. The row must show the manifest's class.
+    // The row shows the reviewed manifest's class, never a label inside the vector
+    // file. aesgcm_test was Node/OpenSSL output (independent-oracle) until
+    // 2026-09-26; it is now NIST's CAVP gcmDecrypt256.rsp, which the manifest
+    // records as a published NIST example set.
     expect(evidenceForRowId('aes-acvp-C++').map((r) => r.evidenceClass)).toEqual([
-      'independent-oracle',
+      'published-standard-kat',
     ])
     const p521 = evidenceForRowId('ecdsa521-acvp-Rust')
     expect(p521.map((r) => r.evidenceClass)).toEqual(['nist-acvp-reference-sample'])

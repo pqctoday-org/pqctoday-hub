@@ -16,19 +16,19 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "04108bcab4a9feb9d12c8a10f0f5fe274617f85db9df99259d5f30850c7841f3",
+    "public/data/validation/coverage-matrix.json": "05c4c49c160c816dd07b047c478ac59fc603bff721fcf2e6d88ad1abc24a9781",
     "src/data/validation/coverage-waivers.json": "87b928d900e95f966e744aed284f4b11933e03f3dab9ced277d1072154702980",
     "src/data/validation/native-conformance.generated.json": "75d81d8ab8250f66574c6722d3bdf36911bcc3ba2b5b18902c93604bdf64efd7",
     "src/data/validation/open-gaps.json": "4c97f71fc7b244584f7282c0abafe9dd11a43235b591c385e13a67aa633590b0",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "3e3de40a719f4fb1b6081667b0c700012c1f6280372e4e8b824d1899352a12cd",
     "src/data/validation/run-results/wasm-node-katRunner.json": "6a836ba693944b9439f582f3d7c0e8f9e6af56b2607b572d9390c978af05af90",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "67fa98bf8bbc49e2a67350eb1a35dcfe99b2b0f62d30d1648445f2ebc775abb4",
-    "src/data/validation/validation-counts.generated.json": "617e2fafc08fbbb5d944f49edb5dff489ebe026302127e01d512961556d7e37f",
-    "src/data/validation/vector-manifest.json": "9f3416f6d5aec66935b614ae8c8b4580ae7cb125c0cda6abcc459c3843585714"
+    "src/data/validation/validation-counts.generated.json": "4bcff1b8ba843b62441a48e2f64ede7e0213b24cdc06c226ee9678e53bc95004",
+    "src/data/validation/vector-manifest.json": "fcf015cd25b9dc6a26cb2b5e3a1957724bc657ae0f3f95003393dff666113dfb"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "cc2e5ef36baca3057b5e37d6789034d8225f4066ca43c493c96a1704245f933f",
+    "manifestCanonicalSha256": "ec46f488440f09c6e5e98cb7803f48816c6fab7117891ee62564fec9541aacfb",
     "nistReferenceSampleFiles": 53,
     "nistReferenceSampleCases": 940,
     "vectorFiles": {
@@ -39,8 +39,8 @@
     "filesByClass": {
       "nist-acvp-reference-sample": 53,
       "acvts-issued-vector": 0,
-      "published-standard-kat": 9,
-      "independent-oracle": 9,
+      "published-standard-kat": 10,
+      "independent-oracle": 8,
       "cross-implementation-differential": 0,
       "functional-round-trip": 2,
       "oasis-profile-case": 0,
@@ -55,8 +55,8 @@
     "activeCasesByClass": {
       "nist-acvp-reference-sample": 940,
       "acvts-issued-vector": 0,
-      "published-standard-kat": 16,
-      "independent-oracle": 1695,
+      "published-standard-kat": 19,
+      "independent-oracle": 1692,
       "cross-implementation-differential": 0,
       "functional-round-trip": 26,
       "oasis-profile-case": 0,
@@ -69,7 +69,7 @@
     },
     "filesWithPublishabilityGap": {
       "generator-script-not-in-repo": 1,
-      "oracle-version-not-recorded": 5
+      "oracle-version-not-recorded": 4
     }
   },
   "coverage": {
@@ -113,8 +113,8 @@
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 670,
-              "standard-kat": 1,
-              "oracle": 34,
+              "standard-kat": 2,
+              "oracle": 33,
               "differential": 0,
               "round-trip": 292,
               "behavior-only": 441,
@@ -217,8 +217,8 @@
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 430,
-              "standard-kat": 3,
-              "oracle": 33,
+              "standard-kat": 4,
+              "oracle": 32,
               "differential": 0,
               "round-trip": 179,
               "behavior-only": 216,
@@ -2801,7 +2801,7 @@
       {
         "id": "vector-source:aesgcm_test",
         "kind": "vector-source",
-        "title": "src/data/acvp/aesgcm_test.json — independent-oracle (Node crypto (OpenSSL) output; case 1 reuses the key/IV/plaintext of McGrew-Viega GCM Test Case 16 without its AAD)",
+        "title": "src/data/acvp/aesgcm_test.json — published-standard-kat (NIST CAVP GCM test vectors (CAVS 14.0, 2012-08-31), gcmDecrypt256.rsp)",
         "requirement": "Two distinct named reviewers: source verification (the expected values come from the cited source) and implementation review (the test executes and labels them as the manifest says).",
         "status": "awaiting-review"
       },
@@ -3457,7 +3457,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "73 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×5."
+      "basis": "73 active vector files, 0 without provenance; 1 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): generator-script-not-in-repo ×1, oracle-version-not-recorded ×4."
     },
     {
       "n": 3,

@@ -35,7 +35,7 @@ const TESTING_KAT_SPECS: KatTestSpec[] = [
   },
   {
     id: 'test-aesgcm-acvp',
-    useCase: 'AES-GCM decryption (OpenSSL-oracle vector)',
+    useCase: 'AES-GCM decryption (NIST CAVP vector)',
     standard: 'SP 800-38D',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
     kind: { type: 'aesgcm-decrypt' },

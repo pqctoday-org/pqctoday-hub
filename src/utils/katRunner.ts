@@ -480,9 +480,9 @@ async function runSLHDSAFunctionalKAT(
 // ── Classical algorithm KAT implementations ──────────────────────────────────
 
 /**
- * AES-256-GCM decryption vs an OpenSSL-oracle vector — built from GCM Test Case 16's inputs
- * with the AAD dropped and the tag computed by Node/OpenSSL (WS-B manifest: independent-oracle),
- * so neither a published KAT nor an ACVP vector.
+ * AES-256-GCM decryption vs NIST's CAVP GCM test vectors (gcmDecrypt256.rsp, AES-256,
+ * 96-bit IV, no AAD, 128-bit tag; built by scripts/acvp/build_gcm_cavp_kat.py). Replaced
+ * the Node/OpenSSL-generated cases on 2026-09-26 (manifest: published-standard-kat).
  * Imports key, decrypts ct||tag with IV, compares against expected pt.
  */
 async function runAESGCMDecryptKAT(
@@ -512,7 +512,7 @@ async function runAESGCMDecryptKAT(
   if (matches) {
     return {
       status: 'pass',
-      details: `Imported key → decrypted the OpenSSL-oracle vector's ciphertext+tag → plaintext matches its expected value (${recoveredPt.length}B)`,
+      details: `Imported key → decrypted NIST's CAVP ciphertext+tag → plaintext matches NIST's expected value (${recoveredPt.length}B)`,
     }
   }
   return {

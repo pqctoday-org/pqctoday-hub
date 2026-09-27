@@ -5,10 +5,10 @@
   "inputs": {
     "src/data/validation/mechanism-inventory.generated.json": "1dffda6f6e559c76d467deb5e445d1bcdb1e452a05e470c5526f6c2417bfc276",
     "src/data/validation/capability-map.json": "6a2727016428d5d98be0e2d1f0d19eddbd07b744ff5b83433981b67cf3faa4a4",
-    "src/data/validation/vector-manifest.json": "9f3416f6d5aec66935b614ae8c8b4580ae7cb125c0cda6abcc459c3843585714",
+    "src/data/validation/vector-manifest.json": "fcf015cd25b9dc6a26cb2b5e3a1957724bc657ae0f3f95003393dff666113dfb",
     "src/data/validation/coverage-waivers.json": "87b928d900e95f966e744aed284f4b11933e03f3dab9ced277d1072154702980",
     "src/data/validation/open-gaps.json": "4c97f71fc7b244584f7282c0abafe9dd11a43235b591c385e13a67aa633590b0",
-    "src/data/validation/testRegistry.ts": "6046b36f1d90634a6e1a0c36bc20078f0cfb9679a4d9c3997d3aca3d9fbf2133"
+    "src/data/validation/testRegistry.ts": "5b004cbe21380562d70156e7c82ad4ea8f7835f96b21f48b6b16f5106f752d88"
   },
   "statuses": [
     "acvts-issued",
@@ -179,8 +179,8 @@
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 670,
-              "standard-kat": 1,
-              "oracle": 34,
+              "standard-kat": 2,
+              "oracle": 33,
               "differential": 0,
               "round-trip": 292,
               "behavior-only": 441,
@@ -289,8 +289,8 @@
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 430,
-              "standard-kat": 3,
-              "oracle": 33,
+              "standard-kat": 4,
+              "oracle": 32,
               "differential": 0,
               "round-trip": 179,
               "behavior-only": 216,
@@ -1956,7 +1956,7 @@
     "CKM_BIP32_CHILD_DERIVE": {"mechanism":"CKM_BIP32_CHILD_DERIVE","typeHex":"0x8000105c","algorithm":"BIP32 child key derivation","revision":"BIP-0032","section":null,"family":"kdf","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}}
   },
   "cases": [
-    {"id":"acvp.01#aesgcm_test#/testGroups/0/tests/0","test":"acvp.01","runner":"useAcvpSuite","caseId":"aesgcm_test#/testGroups/0/tests/0","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["cpp","rust"],"rowId":"aes-acvp-{engine}"},
+    {"id":"acvp.01#aesgcm_test#/testGroups/0/tests/0","test":"acvp.01","runner":"useAcvpSuite","caseId":"aesgcm_test#/testGroups/0/tests/0","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["cpp","rust"],"rowId":"aes-acvp-{engine}"},
     {"id":"acvp.01b#aesgcm_acvp_test#/testGroups/0/tests/0","test":"acvp.01b","runner":"useAcvpSuite","caseId":"aesgcm_acvp_test#/testGroups/0/tests/0","evidenceClass":"nist-acvp-reference-sample","status":"nist-reference","polarity":"positive","engines":["cpp","rust"],"rowId":"aesgcm-nist-k128-tg1-tc1-{engine}"},
     {"id":"acvp.01b#aesgcm_acvp_test#/testGroups/0/tests/1","test":"acvp.01b","runner":"useAcvpSuite","caseId":"aesgcm_acvp_test#/testGroups/0/tests/1","evidenceClass":"nist-acvp-reference-sample","status":"nist-reference","polarity":"positive","engines":["cpp","rust"],"rowId":"aesgcm-nist-k128-tg1-tc2-{engine}"},
     {"id":"acvp.01b#aesgcm_acvp_test#/testGroups/0/tests/2","test":"acvp.01b","runner":"useAcvpSuite","caseId":"aesgcm_acvp_test#/testGroups/0/tests/2","evidenceClass":"nist-acvp-reference-sample","status":"nist-reference","polarity":"positive","engines":["cpp","rust"],"rowId":"aesgcm-nist-k128-tg1-tc3-{engine}"},
@@ -5528,7 +5528,7 @@
     {"id":"kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192f","test":"kat.slhdsa-sigver","runner":"katRunner","caseId":"slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-192f","evidenceClass":"nist-acvp-reference-sample","status":"nist-reference","polarity":"positive","engines":["rust"]},
     {"id":"kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256s","test":"kat.slhdsa-sigver","runner":"katRunner","caseId":"slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256s","evidenceClass":"nist-acvp-reference-sample","status":"nist-reference","polarity":"positive","engines":["rust"]},
     {"id":"kat.slhdsa-sigver#slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256f","test":"kat.slhdsa-sigver","runner":"katRunner","caseId":"slhdsa_ctx_test#/sigVer/SLH-DSA-SHAKE-256f","evidenceClass":"nist-acvp-reference-sample","status":"nist-reference","polarity":"positive","engines":["rust"]},
-    {"id":"kat.aesgcm-decrypt#aesgcm_test#/testGroups/0/tests/0","test":"kat.aesgcm-decrypt","runner":"katRunner","caseId":"aesgcm_test#/testGroups/0/tests/0","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"]},
+    {"id":"kat.aesgcm-decrypt#aesgcm_test#/testGroups/0/tests/0","test":"kat.aesgcm-decrypt","runner":"katRunner","caseId":"aesgcm_test#/testGroups/0/tests/0","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["rust"]},
     {"id":"kat.aescbc-decrypt#aescbc_test#/testGroups/0/tests/0","test":"kat.aescbc-decrypt","runner":"katRunner","caseId":"aescbc_test#/testGroups/0/tests/0","evidenceClass":"nist-acvp-reference-sample","status":"nist-reference","polarity":"positive","engines":["rust"]},
     {"id":"kat.aesctr-roundtrip#aesctr_test#/testGroups/0/tests/0","test":"kat.aesctr-roundtrip","runner":"katRunner","caseId":"aesctr_test#/testGroups/0/tests/0","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["rust"]},
     {"id":"kat.aeskw-wrap#aeskw_test#/testGroups/0/tests/0","test":"kat.aeskw-wrap","runner":"katRunner","caseId":"aeskw_test#/testGroups/0/tests/0","evidenceClass":"published-standard-kat","status":"standard-kat","polarity":"positive","engines":["rust"]},
@@ -9342,7 +9342,7 @@
     {"k":"CKM_AES_GCM|encrypt|AES-256|*","c":"CKM_AES_GCM","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"state-error":["behavior-only","covered",[3710,3726,3742,3758,3774,3790,3805]]},"run":[7,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[3577]],"state-error":["behavior-only","covered",[3710,3726,3742,3758,3774,3790,3805]]},"run":[8,0]}},"par":{"positive":"not-established","negative":"not-established","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_AES_GCM|decrypt|AES-128|*","c":"CKM_AES_GCM","tt":["AFT"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[31,32,35,36,37,38,39,40,41,42,44,45,46,48,51,52,53,54,59,60]],"negative":["nist-reference","covered",[33,34,43,47,49,50,55,56,57,58]],"state-error":["behavior-only","covered",[3829,3845,3861,3877,3893,3909,3924]]},"run":[37,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[31,32,35,36,37,38,39,40,41,42,44,45,46,48,51,52,53,54,59,60]],"negative":["nist-reference","covered",[33,34,43,47,49,50,55,56,57,58]],"state-error":["behavior-only","covered",[3829,3845,3861,3877,3893,3909,3924]]},"run":[37,0]}},"par":{"positive":"parity","negative":"parity","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_AES_GCM|decrypt|AES-192|*","c":"CKM_AES_GCM","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"state-error":["behavior-only","covered",[3829,3845,3861,3877,3893,3909,3924]]},"run":[7,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"state-error":["behavior-only","covered",[3829,3845,3861,3877,3893,3909,3924]]},"run":[7,0]}},"par":{"positive":"not-established","negative":"not-established","boundary":"not-established","state-error":"parity"}},
-    {"k":"CKM_AES_GCM|decrypt|AES-256|*","c":"CKM_AES_GCM","tt":["oracle-generated"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["oracle","sampled",[0]],"state-error":["behavior-only","covered",[3829,3845,3861,3877,3893,3909,3924]]},"run":[8,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["oracle","covered",[0,3572,3577]],"state-error":["behavior-only","covered",[3829,3845,3861,3877,3893,3909,3924]]},"run":[10,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"parity"}},
+    {"k":"CKM_AES_GCM|decrypt|AES-256|*","c":"CKM_AES_GCM","tt":["published-example"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["standard-kat","sampled",[0]],"state-error":["behavior-only","covered",[3829,3845,3861,3877,3893,3909,3924]]},"run":[8,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["standard-kat","covered",[0,3572,3577]],"state-error":["behavior-only","covered",[3829,3845,3861,3877,3893,3909,3924]]},"run":[10,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_AES_GCM|message-encrypt|AES-128|*","c":"CKM_AES_GCM","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[5272]],"state-error":["behavior-only","covered",[5273,5274,5275,5276,5277]]},"run":[6,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[5272]],"state-error":["behavior-only","covered",[5273,5274,5275,5276,5277]]},"run":[6,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_AES_GCM|message-encrypt|AES-192|*","c":"CKM_AES_GCM","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[5272]],"state-error":["behavior-only","covered",[5273,5274,5275,5276,5277]]},"run":[6,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[5272]],"state-error":["behavior-only","covered",[5273,5274,5275,5276,5277]]},"run":[6,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_AES_GCM|message-encrypt|AES-256|*","c":"CKM_AES_GCM","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[5272]],"state-error":["behavior-only","covered",[5273,5274,5275,5276,5277]]},"run":[6,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[5272]],"state-error":["behavior-only","covered",[5273,5274,5275,5276,5277]]},"run":[6,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"parity"}},
