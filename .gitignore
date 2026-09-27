@@ -807,6 +807,8 @@ src/.!*!.DS_Store
 !scripts/generate-coverage-matrix.test.ts
 # WS-I per-case evidence records generator
 !scripts/generate-case-evidence.ts
+# Merged timeline enrichment lookup (27 Sep 2026, 86 MB chunk fix)
+!scripts/generate-timeline-enrichments.ts
 # WS-J release evidence report (gen:release-evidence:check, in gate:data:audits)
 # and the release freeze manifest tool (release:freeze) + their tests.
 !scripts/generate-release-evidence.ts

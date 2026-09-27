@@ -48,10 +48,13 @@ import { WORKSHOP_TOOLS, SANDBOX_TOOL_PREFIX } from '../src/components/Playgroun
 /** Chronological sort key for MMDDYYYY-dated filenames, which sort
  *  lexicographically wrong across year boundaries (01…2027 < 12…2026). */
 function datedFileKey(filename: string): string {
-  const m = filename.match(/(\d{2})(\d{2})(\d{4})/)
+  const m = filename.match(/(\d{2})(\d{2})(\d{4})(?:_r(\d+))?/)
   if (!m) return `0000-00-00_${filename}`
-  const [, mm, dd, yyyy] = m
-  return `${yyyy}-${mm}-${dd}`
+  const [, mm, dd, yyyy, rev] = m
+  // Same-date revisions (`…09272026_r1…`) sort after the unrevised file and
+  // numerically among themselves (_r10 after _r9). Before this, two files of
+  // one date tied and the winner fell out of the sort's tie order.
+  return `${yyyy}-${mm}-${dd}_${(rev ?? '0').padStart(4, '0')}`
 }
 
 /**
